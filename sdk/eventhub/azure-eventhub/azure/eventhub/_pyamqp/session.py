@@ -4,6 +4,7 @@
 # license information.
 #--------------------------------------------------------------------------
 
+from threading import Lock
 import uuid
 import logging
 from enum import Enum
@@ -74,6 +75,7 @@ class Session(object):
         self._connection = connection
         self._output_handles = {}
         self._input_handles = {}
+        self._lock = Lock()
 
     def __enter__(self):
         self.begin()
@@ -91,18 +93,20 @@ class Session(object):
     def _set_state(self, new_state):
         # type: (SessionState) -> None
         """Update the session state."""
-        if new_state is None:
-            return
-        previous_state = self.state
-        self.state = new_state
-        _LOGGER.info("Session state changed: %r -> %r", previous_state, new_state, extra=self.network_trace_params)
-        for link in self.links.values():
-            link._on_session_state_change()
+        with self._lock:
+            if new_state is None:
+                return
+            previous_state = self.state
+            self.state = new_state
+            _LOGGER.info("Session state changed: %r -> %r", previous_state, new_state, extra=self.network_trace_params)
+            for link in self.links.values():
+                link._on_session_state_change()
 
     def _on_connection_state_change(self):
-        if self._connection.state in [ConnectionState.CLOSE_RCVD, ConnectionState.END]:
-            if self.state not in [SessionState.DISCARDING, SessionState.UNMAPPED]:
-                self._set_state(SessionState.DISCARDING)
+        with self._lock:
+            if self._connection.state in [ConnectionState.CLOSE_RCVD, ConnectionState.END]:
+                if self.state not in [SessionState.DISCARDING, SessionState.UNMAPPED]:
+                    self._set_state(SessionState.DISCARDING)
 
     def _get_next_output_handle(self):
         # type: () -> int
@@ -112,264 +116,284 @@ class Session(object):
         :returns: The next available outgoing handle number.
         :rtype: int
         """
-        if len(self._output_handles) >= self.handle_max:
-            raise ValueError("Maximum number of handles ({}) has been reached.".format(self.handle_max))
-        next_handle = next(i for i in range(1, self.handle_max) if i not in self._output_handles)
-        return next_handle
+        with self._lock:
+            if len(self._output_handles) >= self.handle_max:
+                raise ValueError("Maximum number of handles ({}) has been reached.".format(self.handle_max))
+            next_handle = next(i for i in range(1, self.handle_max) if i not in self._output_handles)
+            return next_handle
     
     def _outgoing_begin(self):
-        begin_frame = BeginFrame(
-            remote_channel=self.remote_channel if self.state == SessionState.BEGIN_RCVD else None,
-            next_outgoing_id=self.next_outgoing_id,
-            outgoing_window=self.outgoing_window,
-            incoming_window=self.incoming_window,
-            handle_max=self.handle_max,
-            offered_capabilities=self.offered_capabilities if self.state == SessionState.BEGIN_RCVD else None,
-            desired_capabilities=self.desired_capabilities if self.state == SessionState.UNMAPPED else None,
-            properties=self.properties,
-        )
-        if self.network_trace:
-            _LOGGER.info("-> %r", begin_frame, extra=self.network_trace_params)
-        self._connection._process_outgoing_frame(self.channel, begin_frame)
+        with self._lock:
+            begin_frame = BeginFrame(
+                remote_channel=self.remote_channel if self.state == SessionState.BEGIN_RCVD else None,
+                next_outgoing_id=self.next_outgoing_id,
+                outgoing_window=self.outgoing_window,
+                incoming_window=self.incoming_window,
+                handle_max=self.handle_max,
+                offered_capabilities=self.offered_capabilities if self.state == SessionState.BEGIN_RCVD else None,
+                desired_capabilities=self.desired_capabilities if self.state == SessionState.UNMAPPED else None,
+                properties=self.properties,
+            )
+            if self.network_trace:
+                _LOGGER.info("-> %r", begin_frame, extra=self.network_trace_params)
+            self._connection._process_outgoing_frame(self.channel, begin_frame)
 
     def _incoming_begin(self, frame):
-        if self.network_trace:
-            _LOGGER.info("<- %r", BeginFrame(*frame), extra=self.network_trace_params)
-        self.handle_max = frame[4]  # handle_max
-        self.next_incoming_id = frame[1]  # next_outgoing_id
-        self.remote_incoming_window = frame[2]  # incoming_window
-        self.remote_outgoing_window = frame[3]  # outgoing_window
-        if self.state == SessionState.BEGIN_SENT:
-            self.remote_channel = frame[0]  # remote_channel
-            self._set_state(SessionState.MAPPED)
-        elif self.state == SessionState.UNMAPPED:
-            self._set_state(SessionState.BEGIN_RCVD)
-            self._outgoing_begin()
-            self._set_state(SessionState.MAPPED)
+        with self._lock:
+            if self.network_trace:
+                _LOGGER.info("<- %r", BeginFrame(*frame), extra=self.network_trace_params)
+            self.handle_max = frame[4]  # handle_max
+            self.next_incoming_id = frame[1]  # next_outgoing_id
+            self.remote_incoming_window = frame[2]  # incoming_window
+            self.remote_outgoing_window = frame[3]  # outgoing_window
+            if self.state == SessionState.BEGIN_SENT:
+                self.remote_channel = frame[0]  # remote_channel
+                self._set_state(SessionState.MAPPED)
+            elif self.state == SessionState.UNMAPPED:
+                self._set_state(SessionState.BEGIN_RCVD)
+                self._outgoing_begin()
+                self._set_state(SessionState.MAPPED)
 
     def _outgoing_end(self, error=None):
-        end_frame = EndFrame(error=error)
-        if self.network_trace:
-            _LOGGER.info("-> %r", end_frame, extra=self.network_trace_params)
-        self._connection._process_outgoing_frame(self.channel, end_frame)
+        with self._lock:
+            end_frame = EndFrame(error=error)
+            if self.network_trace:
+                _LOGGER.info("-> %r", end_frame, extra=self.network_trace_params)
+            self._connection._process_outgoing_frame(self.channel, end_frame)
 
     def _incoming_end(self, frame):
-        if self.network_trace:
-            _LOGGER.info("<- %r", EndFrame(*frame), extra=self.network_trace_params)
-        if self.state not in [SessionState.END_RCVD, SessionState.END_SENT, SessionState.DISCARDING]:
-            self._set_state(SessionState.END_RCVD)
-            # TODO: Clean up all links
-            # TODO: handling error
-            self._outgoing_end()
-        self._set_state(SessionState.UNMAPPED)
+        with self._lock:
+            if self.network_trace:
+                _LOGGER.info("<- %r", EndFrame(*frame), extra=self.network_trace_params)
+            if self.state not in [SessionState.END_RCVD, SessionState.END_SENT, SessionState.DISCARDING]:
+                self._set_state(SessionState.END_RCVD)
+                # TODO: Clean up all links
+                # TODO: handling error
+                self._outgoing_end()
+            self._set_state(SessionState.UNMAPPED)
 
     def _outgoing_attach(self, frame):
-        self._connection._process_outgoing_frame(self.channel, frame)
+        with self._lock:
+            self._connection._process_outgoing_frame(self.channel, frame)
 
     def _incoming_attach(self, frame):
-        try:
-            self._input_handles[frame[1]] = self.links[frame[0].decode('utf-8')]  # name and handle
-            self._input_handles[frame[1]]._incoming_attach(frame)
-        except KeyError:
-            outgoing_handle = self._get_next_output_handle()  # TODO: catch max-handles error
-            if frame[2] == Role.Sender:  # role
-                new_link = ReceiverLink.from_incoming_frame(self, outgoing_handle, frame)
-            else:
-                new_link = SenderLink.from_incoming_frame(self, outgoing_handle, frame)
-            new_link._incoming_attach(frame)
-            self.links[frame[0]] = new_link
-            self._output_handles[outgoing_handle] = new_link
-            self._input_handles[frame[1]] = new_link
-        except ValueError:
-            pass  # TODO: Reject link
+        with self._lock:
+            try:
+                self._input_handles[frame[1]] = self.links[frame[0].decode('utf-8')]  # name and handle
+                self._input_handles[frame[1]]._incoming_attach(frame)
+            except KeyError:
+                outgoing_handle = self._get_next_output_handle()  # TODO: catch max-handles error
+                if frame[2] == Role.Sender:  # role
+                    new_link = ReceiverLink.from_incoming_frame(self, outgoing_handle, frame)
+                else:
+                    new_link = SenderLink.from_incoming_frame(self, outgoing_handle, frame)
+                new_link._incoming_attach(frame)
+                self.links[frame[0]] = new_link
+                self._output_handles[outgoing_handle] = new_link
+                self._input_handles[frame[1]] = new_link
+            except ValueError:
+                pass  # TODO: Reject link
     
     def _outgoing_flow(self, frame=None):
-        link_flow = frame or {}
-        link_flow.update({
-            'next_incoming_id': self.next_incoming_id,
-            'incoming_window': self.incoming_window,
-            'next_outgoing_id': self.next_outgoing_id,
-            'outgoing_window': self.outgoing_window
-        })
-        flow_frame = FlowFrame(**link_flow)
-        if self.network_trace:
-            _LOGGER.info("-> %r", flow_frame, extra=self.network_trace_params)
-        self._connection._process_outgoing_frame(self.channel, flow_frame)
+        with self._lock:
+            link_flow = frame or {}
+            link_flow.update({
+                'next_incoming_id': self.next_incoming_id,
+                'incoming_window': self.incoming_window,
+                'next_outgoing_id': self.next_outgoing_id,
+                'outgoing_window': self.outgoing_window
+            })
+            flow_frame = FlowFrame(**link_flow)
+            if self.network_trace:
+                _LOGGER.info("-> %r", flow_frame, extra=self.network_trace_params)
+            self._connection._process_outgoing_frame(self.channel, flow_frame)
 
     def _incoming_flow(self, frame):
-        if self.network_trace:
-            _LOGGER.info("<- %r", FlowFrame(*frame), extra=self.network_trace_params)
-        self.next_incoming_id = frame[2]  # next_outgoing_id
-        remote_incoming_id = frame[0] or self.next_outgoing_id  #  next_incoming_id  TODO "initial-outgoing-id"
-        self.remote_incoming_window = remote_incoming_id + frame[1] - self.next_outgoing_id  # incoming_window
-        self.remote_outgoing_window = frame[3]  # outgoing_window
-        if frame[4] is not None:  # handle
-            self._input_handles[frame[4]]._incoming_flow(frame)
-        else:
-            for link in self._output_handles.values():
-                if self.remote_incoming_window > 0 and not link._is_closed:
-                    link._incoming_flow(frame)
+        with self._lock:
+            if self.network_trace:
+                _LOGGER.info("<- %r", FlowFrame(*frame), extra=self.network_trace_params)
+            self.next_incoming_id = frame[2]  # next_outgoing_id
+            remote_incoming_id = frame[0] or self.next_outgoing_id  #  next_incoming_id  TODO "initial-outgoing-id"
+            self.remote_incoming_window = remote_incoming_id + frame[1] - self.next_outgoing_id  # incoming_window
+            self.remote_outgoing_window = frame[3]  # outgoing_window
+            if frame[4] is not None:  # handle
+                self._input_handles[frame[4]]._incoming_flow(frame)
+            else:
+                for link in self._output_handles.values():
+                    if self.remote_incoming_window > 0 and not link._is_closed:
+                        link._incoming_flow(frame)
 
     def _outgoing_transfer(self, delivery):
-        if self.state != SessionState.MAPPED:
-            delivery.transfer_state = SessionTransferState.ERROR
-        if self.remote_incoming_window <= 0:
-            delivery.transfer_state = SessionTransferState.BUSY
-        else:
-            payload = delivery.frame['payload']
-            payload_size = len(payload)
+        with self._lock:
+            if self.state != SessionState.MAPPED:
+                delivery.transfer_state = SessionTransferState.ERROR
+            if self.remote_incoming_window <= 0:
+                delivery.transfer_state = SessionTransferState.BUSY
+            else:
+                payload = delivery.frame['payload']
+                payload_size = len(payload)
 
-            delivery.frame['delivery_id'] = self.next_outgoing_id
-            # calculate the transfer frame encoding size excluding the payload
-            delivery.frame['payload'] = b""
-            # TODO: encoding a frame would be expensive, we might want to improve depending on the perf test results
-            encoded_frame = encode_frame(TransferFrame(**delivery.frame))[1]
-            transfer_overhead_size = len(encoded_frame)
+                delivery.frame['delivery_id'] = self.next_outgoing_id
+                # calculate the transfer frame encoding size excluding the payload
+                delivery.frame['payload'] = b""
+                # TODO: encoding a frame would be expensive, we might want to improve depending on the perf test results
+                encoded_frame = encode_frame(TransferFrame(**delivery.frame))[1]
+                transfer_overhead_size = len(encoded_frame)
 
-            # available size for payload per frame is calculated as following:
-            # remote max frame size - transfer overhead (calculated) - header (8 bytes)
-            available_frame_size = self._connection._remote_max_frame_size - transfer_overhead_size - 8
+                # available size for payload per frame is calculated as following:
+                # remote max frame size - transfer overhead (calculated) - header (8 bytes)
+                available_frame_size = self._connection._remote_max_frame_size - transfer_overhead_size - 8
 
-            start_idx = 0
-            remaining_payload_cnt = payload_size
-            # encode n-1 frames if payload_size > available_frame_size
-            while remaining_payload_cnt > available_frame_size:
+                start_idx = 0
+                remaining_payload_cnt = payload_size
+                # encode n-1 frames if payload_size > available_frame_size
+                while remaining_payload_cnt > available_frame_size:
+                    tmp_delivery_frame = {
+                        'handle': delivery.frame['handle'],
+                        'delivery_tag': delivery.frame['delivery_tag'],
+                        'message_format': delivery.frame['message_format'],
+                        'settled': delivery.frame['settled'],
+                        'more': True,
+                        'rcv_settle_mode': delivery.frame['rcv_settle_mode'],
+                        'state': delivery.frame['state'],
+                        'resume': delivery.frame['resume'],
+                        'aborted': delivery.frame['aborted'],
+                        'batchable': delivery.frame['batchable'],
+                        'payload': payload[start_idx:start_idx+available_frame_size],
+                        'delivery_id': self.next_outgoing_id
+                    }
+                    self._connection._process_outgoing_frame(self.channel, TransferFrame(**tmp_delivery_frame))
+                    start_idx += available_frame_size
+                    remaining_payload_cnt -= available_frame_size
+
+                # encode the last frame
                 tmp_delivery_frame = {
                     'handle': delivery.frame['handle'],
                     'delivery_tag': delivery.frame['delivery_tag'],
                     'message_format': delivery.frame['message_format'],
                     'settled': delivery.frame['settled'],
-                    'more': True,
+                    'more': False,
                     'rcv_settle_mode': delivery.frame['rcv_settle_mode'],
                     'state': delivery.frame['state'],
                     'resume': delivery.frame['resume'],
                     'aborted': delivery.frame['aborted'],
                     'batchable': delivery.frame['batchable'],
-                    'payload': payload[start_idx:start_idx+available_frame_size],
+                    'payload': payload[start_idx:],
                     'delivery_id': self.next_outgoing_id
                 }
                 self._connection._process_outgoing_frame(self.channel, TransferFrame(**tmp_delivery_frame))
-                start_idx += available_frame_size
-                remaining_payload_cnt -= available_frame_size
-
-            # encode the last frame
-            tmp_delivery_frame = {
-                'handle': delivery.frame['handle'],
-                'delivery_tag': delivery.frame['delivery_tag'],
-                'message_format': delivery.frame['message_format'],
-                'settled': delivery.frame['settled'],
-                'more': False,
-                'rcv_settle_mode': delivery.frame['rcv_settle_mode'],
-                'state': delivery.frame['state'],
-                'resume': delivery.frame['resume'],
-                'aborted': delivery.frame['aborted'],
-                'batchable': delivery.frame['batchable'],
-                'payload': payload[start_idx:],
-                'delivery_id': self.next_outgoing_id
-            }
-            self._connection._process_outgoing_frame(self.channel, TransferFrame(**tmp_delivery_frame))
-            self.next_outgoing_id += 1
-            self.remote_incoming_window -= 1
-            self.outgoing_window -= 1
-            delivery.transfer_state = SessionTransferState.OKAY
+                self.next_outgoing_id += 1
+                self.remote_incoming_window -= 1
+                self.outgoing_window -= 1
+                delivery.transfer_state = SessionTransferState.OKAY
 
     def _incoming_transfer(self, frame):
-        self.next_incoming_id += 1
-        self.remote_outgoing_window -= 1
-        self.incoming_window -= 1
-        try:
-            self._input_handles[frame[0]]._incoming_transfer(frame)  # handle
-        except KeyError:
-            pass  #TODO: "unattached handle"
-        if self.incoming_window == 0:
-            self.incoming_window = self.target_incoming_window
-            self._outgoing_flow()
+        with self._lock:
+            self.next_incoming_id += 1
+            self.remote_outgoing_window -= 1
+            self.incoming_window -= 1
+            try:
+                self._input_handles[frame[0]]._incoming_transfer(frame)  # handle
+            except KeyError:
+                pass  #TODO: "unattached handle"
+            if self.incoming_window == 0:
+                self.incoming_window = self.target_incoming_window
+                self._outgoing_flow()
 
     def _outgoing_disposition(self, frame):
-        self._connection._process_outgoing_frame(self.channel, frame)
+        with self._lock:
+            self._connection._process_outgoing_frame(self.channel, frame)
 
     def _incoming_disposition(self, frame):
-        if self.network_trace:
-            _LOGGER.info("<- %r", DispositionFrame(*frame), extra=self.network_trace_params)
-        for link in self._input_handles.values():
-            link._incoming_disposition(frame)
+        with self._lock:
+            if self.network_trace:
+                _LOGGER.info("<- %r", DispositionFrame(*frame), extra=self.network_trace_params)
+            for link in self._input_handles.values():
+                link._incoming_disposition(frame)
 
     def _outgoing_detach(self, frame):
-        self._connection._process_outgoing_frame(self.channel, frame)
+        with self._lock:
+            self._connection._process_outgoing_frame(self.channel, frame)
 
     def _incoming_detach(self, frame):
-        try:
-            link = self._input_handles[frame[0]]  # handle
-            link._incoming_detach(frame)
-            # if link._is_closed:  TODO
-            #     self.links.pop(link.name, None)
-            #     self._input_handles.pop(link.remote_handle, None)
-            #     self._output_handles.pop(link.handle, None)
-        except KeyError:
-            pass  # TODO: close session with unattached-handle
+        with self._lock:
+            try:
+                link = self._input_handles[frame[0]]  # handle
+                link._incoming_detach(frame)
+                # if link._is_closed:  TODO
+                #     self.links.pop(link.name, None)
+                #     self._input_handles.pop(link.remote_handle, None)
+                #     self._output_handles.pop(link.handle, None)
+            except KeyError:
+                pass  # TODO: close session with unattached-handle
 
     def _wait_for_response(self, wait, end_state):
-        # type: (Union[bool, float], SessionState) -> None
-        if wait == True:
-            self._connection.listen(wait=False)
-            while self.state != end_state:
-                time.sleep(self.idle_wait_time)
+        with self._lock:
+            # type: (Union[bool, float], SessionState) -> None
+            if wait == True:
                 self._connection.listen(wait=False)
-        elif wait:
-            self._connection.listen(wait=False)
-            timeout = time.time() + wait
-            while self.state != end_state:
-                if time.time() >= timeout:
-                    break
-                time.sleep(self.idle_wait_time)
+                while self.state != end_state:
+                    time.sleep(self.idle_wait_time)
+                    self._connection.listen(wait=False)
+            elif wait:
                 self._connection.listen(wait=False)
+                timeout = time.time() + wait
+                while self.state != end_state:
+                    if time.time() >= timeout:
+                        break
+                    time.sleep(self.idle_wait_time)
+                    self._connection.listen(wait=False)
 
     def begin(self, wait=False):
-        self._outgoing_begin()
-        self._set_state(SessionState.BEGIN_SENT)
-        if wait:
-            self._wait_for_response(wait, SessionState.BEGIN_SENT)
-        elif not self.allow_pipelined_open:
-            raise ValueError("Connection has been configured to not allow piplined-open. Please set 'wait' parameter.")
+        with self._lock:
+            self._outgoing_begin()
+            self._set_state(SessionState.BEGIN_SENT)
+            if wait:
+                self._wait_for_response(wait, SessionState.BEGIN_SENT)
+            elif not self.allow_pipelined_open:
+                raise ValueError("Connection has been configured to not allow piplined-open. Please set 'wait' parameter.")
 
     def end(self, error=None, wait=False):
-        # type: (Optional[AMQPError]) -> None
-        try:
-            if self.state not in [SessionState.UNMAPPED, SessionState.DISCARDING]:
-                self._outgoing_end(error=error)
-            # TODO: destroy all links
-            new_state = SessionState.DISCARDING if error else SessionState.END_SENT
-            self._set_state(new_state)
-            self._wait_for_response(wait, SessionState.UNMAPPED)
-        except Exception as exc:
-            _LOGGER.info("An error occurred when ending the session: %r", exc)
-            self._set_state(SessionState.UNMAPPED)
+        with self._lock:
+            # type: (Optional[AMQPError]) -> None
+            try:
+                if self.state not in [SessionState.UNMAPPED, SessionState.DISCARDING]:
+                    self._outgoing_end(error=error)
+                # TODO: destroy all links
+                new_state = SessionState.DISCARDING if error else SessionState.END_SENT
+                self._set_state(new_state)
+                self._wait_for_response(wait, SessionState.UNMAPPED)
+            except Exception as exc:
+                _LOGGER.info("An error occurred when ending the session: %r", exc)
+                self._set_state(SessionState.UNMAPPED)
 
     def create_receiver_link(self, source_address, **kwargs):
-        assigned_handle = self._get_next_output_handle()
-        link = ReceiverLink(
-            self,
-            handle=assigned_handle,
-            source_address=source_address,
-            network_trace=kwargs.pop('network_trace', self.network_trace),
-            network_trace_params=dict(self.network_trace_params),
-            **kwargs)
-        self.links[link.name] = link
-        self._output_handles[assigned_handle] = link
-        return link
+        with self._lock:
+            assigned_handle = self._get_next_output_handle()
+            link = ReceiverLink(
+                self,
+                handle=assigned_handle,
+                source_address=source_address,
+                network_trace=kwargs.pop('network_trace', self.network_trace),
+                network_trace_params=dict(self.network_trace_params),
+                **kwargs)
+            self.links[link.name] = link
+            self._output_handles[assigned_handle] = link
+            return link
 
     def create_sender_link(self, target_address, **kwargs):
-        assigned_handle = self._get_next_output_handle()
-        link = SenderLink(
-            self,
-            handle=assigned_handle,
-            target_address=target_address,
-            network_trace=kwargs.pop('network_trace', self.network_trace),
-            network_trace_params=dict(self.network_trace_params),
-            **kwargs)
-        self._output_handles[assigned_handle] = link
-        self.links[link.name] = link
-        return link
+        with self._lock:
+            assigned_handle = self._get_next_output_handle()
+            link = SenderLink(
+                self,
+                handle=assigned_handle,
+                target_address=target_address,
+                network_trace=kwargs.pop('network_trace', self.network_trace),
+                network_trace_params=dict(self.network_trace_params),
+                **kwargs)
+            self._output_handles[assigned_handle] = link
+            self.links[link.name] = link
+            return link
     
     def create_request_response_link_pair(self, endpoint, **kwargs):
         return ManagementLink(
