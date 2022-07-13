@@ -27,7 +27,7 @@ import platform
 import sys
 import pytest
 from devtools_testutils import test_proxy
-from devtools_testutils.sanitizers import add_remove_header_sanitizer, add_general_regex_sanitizer, set_custom_default_matcher
+from devtools_testutils.sanitizers import add_body_key_sanitizer, add_general_regex_sanitizer, set_custom_default_matcher
 
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
@@ -44,4 +44,7 @@ def add_aeg_sanitizer(test_proxy):
     add_general_regex_sanitizer(
         value="fakeresource",
         regex="(?<=\\/\\/)[a-z-]+(?=\\.westus2-1\\.ingest\\.monitor\\.azure\\.com)"
+    )
+    add_body_key_sanitizer(
+        json_path="access_token", value="fakekey"
     )
