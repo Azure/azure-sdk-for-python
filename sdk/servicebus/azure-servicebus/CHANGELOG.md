@@ -1,13 +1,25 @@
 # Release History
 
-## 7.8.0 (2022-07-07)
+## 7.8.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 7.8.0 (2022-07-06)
+
+This version will be the last version to officially support Python 3.6, future versions will require Python 3.7+.
 
 ### Features Added
 
 - In `ServiceBusClient`, `get_queue_receiver`, `get_subscription_receiver`, `get_queue_sender`, and `get_topic_sender` now accept
 an optional `client_identifier` argument which allows for specifying a custom identifier for the respective sender or receiver. It can
 be useful during debugging as Service Bus associates the id with errors and helps with easier correlation.
-- `ServiceBusReceiver` and `ServiceBusSender` have an added property `identifier` which returns the `client_identifier` for the current instance.
+- `ServiceBusReceiver` and `ServiceBusSender` have an added property `client_identifier` which returns the `client_identifier` for the current instance.
 
 ## 7.7.0 (2022-06-07)
 

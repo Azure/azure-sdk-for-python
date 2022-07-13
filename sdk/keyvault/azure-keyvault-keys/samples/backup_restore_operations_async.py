@@ -45,7 +45,7 @@ async def run_sample():
     # Let's create a Key of type RSA.
     # if the key already exists in the Key Vault, then a new version of the key is created.
     print("\n.. Create Key")
-    key = await client.create_key("keyName", "RSA")
+    key = await client.create_key("keyNameAsync", "RSA")
     print("Key with name '{0}' created with key type '{1}'".format(key.name, key.key_type))
 
     # Backups are good to have, if in case keys gets deleted accidentally.

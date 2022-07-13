@@ -1,6 +1,12 @@
 # Release History
 
-## 12.9.0 (Unreleased)
+## 12.10.0b1 (Unreleased)
+
+### Features Added
+
+### Bugs Fixed
+
+## 12.9.0 (2022-07-07)
 
 ### Features Added
 - Stable release of features from 12.9.0b1.

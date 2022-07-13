@@ -102,7 +102,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         self._config.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
-        self.configure_encryption(kwargs)
+        self._configure_encryption(kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
