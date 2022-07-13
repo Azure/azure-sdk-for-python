@@ -503,8 +503,8 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_update_upsert_merge_entities.py
-                :start-after: [START query_entities]
-                :end-before: [END query_entities]
+                :start-after: [START list_entities]
+                :end-before: [END list_entities]
                 :language: python
                 :dedent: 16
                 :caption: List all entities held within a table

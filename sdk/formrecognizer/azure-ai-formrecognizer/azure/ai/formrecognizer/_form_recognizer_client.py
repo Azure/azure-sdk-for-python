@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -6,8 +5,10 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, IO, Union, List, TYPE_CHECKING
+from typing import Any, IO, Union, List
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
 
 from ._response_handlers import (
@@ -19,11 +20,7 @@ from ._helpers import get_content_type
 from ._api_versions import FormRecognizerApiVersion
 from ._form_base_client import FormRecognizerClientBase
 from ._polling import AnalyzePolling
-
-if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential, TokenCredential
-    from azure.core.polling import LROPoller
-    from ._models import FormPage, RecognizedForm
+from ._models import FormPage, RecognizedForm
 
 
 class FormRecognizerClient(FormRecognizerClientBase):
@@ -66,10 +63,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             :caption: Creating the FormRecognizerClient with a token credential.
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
         api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
-        super(FormRecognizerClient, self).__init__(
+        super().__init__(
             endpoint=endpoint,
             credential=credential,
             api_version=api_version,
@@ -86,8 +82,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         return prepare_prebuilt_models(analyze_result)
 
     @distributed_trace
-    def begin_recognize_receipts(self, receipt, **kwargs):
-        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
+    def begin_recognize_receipts(
+        self, receipt: Union[bytes, IO[bytes]], **kwargs: Any
+    )  -> LROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
@@ -167,8 +164,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_recognize_receipts_from_url(self, receipt_url, **kwargs):
-        # type: (str, Any) -> LROPoller[List[RecognizedForm]]
+    def begin_recognize_receipts_from_url(self, receipt_url: str, **kwargs: Any) -> LROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given sales receipt.
         The input document must be the location (URL) of the receipt to be analyzed.
 
@@ -235,8 +231,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_recognize_business_cards(self, business_card, **kwargs):
-        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
+    def begin_recognize_business_cards(
+        self, business_card: Union[bytes, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given business card.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
@@ -304,8 +301,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             raise e
 
     @distributed_trace
-    def begin_recognize_business_cards_from_url(self, business_card_url, **kwargs):
-        # type: (str, Any) -> LROPoller[List[RecognizedForm]]
+    def begin_recognize_business_cards_from_url(
+        self, business_card_url: str, **kwargs: Any
+    ) -> LROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given business card.
         The input document must be the location (URL) of the card to be analyzed.
 
@@ -352,8 +350,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             raise e
 
     @distributed_trace
-    def begin_recognize_identity_documents(self, identity_document, **kwargs):
-        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
+    def begin_recognize_identity_documents(
+        self, identity_document: Union[bytes, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given identity document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
@@ -419,9 +418,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
     @distributed_trace
     def begin_recognize_identity_documents_from_url(
-        self, identity_document_url, **kwargs
-    ):
-        # type: (str, Any) -> LROPoller[List[RecognizedForm]]
+        self, identity_document_url: str, **kwargs: Any
+    ) -> LROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given identity document.
         The input document must be the location (URL) of the identity document to be analyzed.
 
@@ -465,8 +463,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             raise e
 
     @distributed_trace
-    def begin_recognize_invoices(self, invoice, **kwargs):
-        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
+    def begin_recognize_invoices(
+        self, invoice: Union[bytes, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given invoice.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
@@ -533,8 +532,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             raise e
 
     @distributed_trace
-    def begin_recognize_invoices_from_url(self, invoice_url, **kwargs):
-        # type: (str, Any) -> LROPoller[List[RecognizedForm]]
+    def begin_recognize_invoices_from_url(self, invoice_url: str, **kwargs: Any) -> LROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given invoice.
         The input document must be the location (URL) of the invoice to be analyzed.
 
@@ -587,8 +585,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         return prepare_content_result(analyze_result)
 
     @distributed_trace
-    def begin_recognize_content(self, form, **kwargs):
-        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[FormPage]]
+    def begin_recognize_content(
+        self, form: Union[bytes, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[List[FormPage]]:
         """Extract text and content/layout information from a given document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
@@ -677,8 +676,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_recognize_content_from_url(self, form_url, **kwargs):
-        # type: (str, Any) -> LROPoller[List[FormPage]]
+    def begin_recognize_content_from_url(self, form_url: str, **kwargs: Any) -> LROPoller[List[FormPage]]:
         """Extract text and layout information from a given document.
         The input document must be the location (URL) of the document to be analyzed.
 
@@ -744,8 +742,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_recognize_custom_forms(self, model_id, form, **kwargs):
-        # type: (str, Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
+    def begin_recognize_custom_forms(
+        self, model_id: str, form: Union[bytes, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[List[RecognizedForm]]:
         """Analyze a custom form with a model trained with or without labels. The form
         to analyze should be of the same type as the forms that were used to train the model.
         The input document must be of one of the supported content types - 'application/pdf',
@@ -833,8 +832,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_recognize_custom_forms_from_url(self, model_id, form_url, **kwargs):
-        # type: (str, str, Any) -> LROPoller[List[RecognizedForm]]
+    def begin_recognize_custom_forms_from_url(
+        self, model_id: str, form_url: str, **kwargs: Any
+    ) -> LROPoller[List[RecognizedForm]]:
         """Analyze a custom form with a model trained with or without labels. The form
         to analyze should be of the same type as the forms that were used to train the model.
         The input document must be the location (URL) of the document to be analyzed.
@@ -898,16 +898,13 @@ class FormRecognizerClient(FormRecognizerClientBase):
             **kwargs
         )
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close the :class:`~azure.ai.formrecognizer.FormRecognizerClient` session."""
         return self._client.close()
 
-    def __enter__(self):
-        # type: () -> FormRecognizerClient
+    def __enter__(self) -> "FormRecognizerClient":
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)  # pylint:disable=no-member

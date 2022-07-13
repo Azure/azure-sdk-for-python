@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -31,8 +30,7 @@ class AsyncDocumentModelAdministrationLROPoller(AsyncLROPoller[PollingReturnType
         return {}
 
     @property
-    def operation_id(self):
-        # type: () -> str
+    def operation_id(self) -> str:
         """The operation ID of the model operation.
 
         :rtype: str
@@ -42,8 +40,7 @@ class AsyncDocumentModelAdministrationLROPoller(AsyncLROPoller[PollingReturnType
         )
 
     @property
-    def operation_kind(self):
-        # type: () -> str
+    def operation_kind(self) -> str:
         """The model operation kind. For example, 'documentModelBuild', 'documentModelCompose',
         'documentModelCopyTo'.
 
@@ -52,8 +49,7 @@ class AsyncDocumentModelAdministrationLROPoller(AsyncLROPoller[PollingReturnType
         return self._current_body.get("kind", None)
 
     @property
-    def percent_completed(self):
-        # type: () -> int
+    def percent_completed(self) -> int:
         """Operation progress (0-100).
 
         :rtype: int
@@ -62,8 +58,7 @@ class AsyncDocumentModelAdministrationLROPoller(AsyncLROPoller[PollingReturnType
         return 0 if percent_completed is None else percent_completed
 
     @property
-    def resource_location_url(self):
-        # type: () -> str
+    def resource_location_url(self) -> str:
         """URL of the resource targeted by this operation.
 
         :rtype: str
@@ -71,8 +66,7 @@ class AsyncDocumentModelAdministrationLROPoller(AsyncLROPoller[PollingReturnType
         return self._current_body.get("resourceLocation", None)
 
     @property
-    def created_on(self):
-        # type: () -> datetime.datetime
+    def created_on(self) -> datetime.datetime:
         """Date and time (UTC) when the operation was created.
 
         :rtype: ~datetime.datetime
@@ -83,8 +77,7 @@ class AsyncDocumentModelAdministrationLROPoller(AsyncLROPoller[PollingReturnType
         return created_on
 
     @property
-    def last_updated_on(self):
-        # type: () -> datetime.datetime
+    def last_updated_on(self) -> datetime.datetime:
         """Date and time (UTC) when the operation was last updated.
 
         :rtype: ~datetime.datetime
