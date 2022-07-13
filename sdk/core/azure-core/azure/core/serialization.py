@@ -141,10 +141,7 @@ class AzureJSONEncoder(JSONEncoder):
 
     def default(self, o):  # pylint: disable=too-many-return-statements
         if _is_model(o):
-            dict_model = dict(o)
-            for readonly_property in o._readonly_properties:
-                dict_model.pop(readonly_property, None)
-            return dict_model
+            return dict(o)
         if isinstance(o, (bytes, bytearray)):
             return base64.b64encode(o).decode()
         try:
@@ -288,7 +285,7 @@ class _MyMutableMapping(MutableMapping):
     def pop(self, key: str, default: typing.Any) -> typing.Any:
         ...
 
-    def pop(self, key: str, default: typing.Any = _UNSET) -> typing.Any:
+    def pop(self, key: typing.Any, default: typing.Any = _UNSET) -> typing.Any:
         if default is _UNSET:
             return self._data.pop(key)
         return self._data.pop(key, default)
@@ -310,7 +307,7 @@ class _MyMutableMapping(MutableMapping):
     def setdefault(self, key: str, default: typing.Any) -> typing.Any:
         ...
 
-    def setdefault(self, key: str, default: typing.Any = _UNSET) -> typing.Any:
+    def setdefault(self, key: typing.Any, default: typing.Any = _UNSET) -> typing.Any:
         if default is _UNSET:
             return self._data.setdefault(key)
         return self._data.setdefault(key, default)
