@@ -51,7 +51,7 @@ class AutoScaleTest(unittest.TestCase):
         created_container = await self.created_database.create_container(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percentage=0)
+            offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
 
         )
         created_container_properties = await created_container.get_throughput()
@@ -66,16 +66,16 @@ class AutoScaleTest(unittest.TestCase):
             created_container = await self.created_database.create_container(
                 id='container_with_wrong_auto_scale_settings',
                 partition_key=PartitionKey(path="/id"),
-                offer_throughput=Offer(auto_scale_max_throughput=200, auto_scale_increment_percentage=0)
+                offer_throughput=Offer(auto_scale_max_throughput=200, auto_scale_increment_percent=0)
             )
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, http_constants.StatusCodes.BAD_REQUEST)
 
-    async def test_auto_scale_increment_percentage(self):
+    async def test_auto_scale_increment_percent(self):
         created_container = await self.created_database.create_container(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percentage=1)
+            offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percent=1)
 
         )
         created_container_properties = await created_container.get_throughput()
@@ -91,7 +91,7 @@ class AutoScaleTest(unittest.TestCase):
             created_container = await self.created_database.create_container(
                 id='container_with_wrong_auto_scale_settings',
                 partition_key=PartitionKey(path="/id"),
-                offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percentage=-25)
+                offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percent=-25)
 
             )
             await self.created_database.delete_container(created_container)
@@ -117,7 +117,7 @@ class AutoScaleTest(unittest.TestCase):
         created_container = await self.created_database.create_container_if_not_exists(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            offer_throughput=Offer(auto_scale_max_throughput=1000, auto_scale_increment_percentage=0)
+            offer_throughput=Offer(auto_scale_max_throughput=1000, auto_scale_increment_percent=0)
         )
         created_container_properties = await created_container.get_throughput()
         # Testing the incorrect input value of the max_throughput
@@ -129,7 +129,7 @@ class AutoScaleTest(unittest.TestCase):
         created_container = await self.created_database.create_container_if_not_exists(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percentage=2)
+            offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percent=2)
 
         )
         created_container_properties = await created_container.get_throughput()
@@ -150,7 +150,7 @@ class AutoScaleTest(unittest.TestCase):
         created_container = await created_database.create_container(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            offer_throughput=Offer(auto_scale_max_throughput=8000, auto_scale_increment_percentage=0)
+            offer_throughput=Offer(auto_scale_max_throughput=8000, auto_scale_increment_percent=0)
 
         )
         created_container_properties = await created_container.get_throughput()
@@ -163,7 +163,7 @@ class AutoScaleTest(unittest.TestCase):
         created_container = await self.created_database.create_container_if_not_exists(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percentage=7)
+            offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percent=7)
 
         )
         created_container_properties = await created_container.get_throughput()
