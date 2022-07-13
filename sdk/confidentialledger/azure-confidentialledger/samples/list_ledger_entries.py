@@ -70,7 +70,7 @@ def main():
             ledger_certificate_path=ledger_certificate_file.name,
         )
 
-        post_poller = ledger_client.begin_post_ledger_entry({"contents": "First message"})
+        post_poller = ledger_client.begin_create_ledger_entry({"contents": "First message"})
         first_transaction_id = post_poller.result()["transactionId"]
 
         print(
@@ -84,9 +84,9 @@ def main():
                 f"Writing '{entry_contents}' to the ledger."
             )
 
-            ledger_client.post_ledger_entry({"contents": entry_contents})
+            ledger_client.create_ledger_entry({"contents": entry_contents})
 
-        post_poller = ledger_client.begin_post_ledger_entry({"contents": "Last message"})
+        post_poller = ledger_client.begin_create_ledger_entry({"contents": "Last message"})
         last_transaction_id = post_poller.result()["transactionId"]
 
         print(

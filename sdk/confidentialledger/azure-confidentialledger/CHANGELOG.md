@@ -12,9 +12,11 @@ GA Data Plane Python SDK for Confidential Ledger.
 - `sub_ledger_id` fields are now named `collection_id`.
 - `azure.confidentialledger.identity_service` has been renamed to `azure.confidentialledger.certificate`.
 - `ConfidentialLedgerIdentityServiceClient` is now `ConfidentialLedgerCertificateClient`.
+- `post_ledger_entry` has been renamed to `create_ledger_entry`.
 
 ### Other Changes
 - Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+- Convenience poller methods added for certain long-running operations.
 - Add new supported API versions: `2022-20-04-preview` and `2022-05-13`.
 
 ## 1.0.0b1 (2021-05-12)

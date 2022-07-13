@@ -14,32 +14,30 @@ from azure.core.pipeline import policies
 from ._version import VERSION
 
 
-class ConfidentialLedgerCertificateClientConfiguration(
-    Configuration
-):  # pylint: disable=too-many-instance-attributes
+class ConfidentialLedgerCertificateClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for ConfidentialLedgerCertificateClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param identity_service_uri: The Identity Service URL, for example
-     https://identity.accledger.azure.com. Required.
-    :type identity_service_uri: str
+    :param certificate_client_endpoint: The certificate client endpoint, for example
+     https://identity.confidential-ledger.core.azure.com. Required.
+    :type certificate_client_endpoint: str
     :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, identity_service_uri: str, **kwargs: Any) -> None:
+    def __init__(self, certificate_client_endpoint: str, **kwargs: Any) -> None:
         super(ConfidentialLedgerCertificateClientConfiguration, self).__init__(**kwargs)
         api_version = kwargs.pop("api_version", "2022-05-13")  # type: str
 
-        if identity_service_uri is None:
-            raise ValueError("Parameter 'identity_service_uri' must not be None.")
+        if certificate_client_endpoint is None:
+            raise ValueError("Parameter 'certificate_client_endpoint' must not be None.")
 
-        self.identity_service_uri = identity_service_uri
+        self.certificate_client_endpoint = certificate_client_endpoint
         self.api_version = api_version
-        kwargs.setdefault("sdk_moniker", "confidentialledger-identity-service/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "confidentialledger-certificate/{}".format(VERSION))
         self._configure(**kwargs)
 
     def _configure(

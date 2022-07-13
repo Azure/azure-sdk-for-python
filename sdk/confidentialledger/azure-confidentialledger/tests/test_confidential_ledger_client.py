@@ -66,7 +66,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
 
     def append_entry_flow_actions(self, client):
         entry_contents = "Test entry from Python SDK"
-        append_result = client.post_ledger_entry({"contents": entry_contents})
+        append_result = client.create_ledger_entry({"contents": entry_contents})
         assert append_result["transactionId"]
         assert append_result["collectionId"]
 
@@ -101,7 +101,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         assert latest_entry["contents"] == entry_contents
         assert latest_entry["collectionId"] == append_result_sub_ledger_id
 
-        poller = client.begin_post_ledger_entry(
+        poller = client.begin_create_ledger_entry(
             {"contents": "Test entry 2 from Python SDK"}
         )
         poller.wait()
@@ -140,7 +140,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
     def append_entry_flow_with_collection_id_actions(self, client):
         collection_id = "132"
         entry_contents = f"Test entry from Python SDK. Collection: {collection_id}"
-        append_result = client.post_ledger_entry(
+        append_result = client.create_ledger_entry(
             {"contents": entry_contents},
             collection_id=collection_id,
         )
@@ -178,7 +178,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         assert latest_entry["contents"] == entry_contents
         assert latest_entry["collectionId"] == append_result_sub_ledger_id
 
-        poller = client.begin_post_ledger_entry(
+        poller = client.begin_create_ledger_entry(
             {"contents": f"Test entry 2 from Python SDK. Collection: {collection_id}"},
             collection_id=collection_id,
         )
@@ -200,7 +200,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
 
         collections = client.list_collections()
         collection_ids = set()
-        for collection in collections["collections"]:
+        for collection in collections:
             collection_ids.add(collection["collectionId"])
         assert collection_id in collection_ids
 
@@ -237,9 +237,9 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             )
 
             if i != num_messages_sent - 1:
-                append_result = client.post_ledger_entry({"contents": message}, **kwargs)
+                append_result = client.create_ledger_entry({"contents": message}, **kwargs)
             else:
-                append_poller = client.begin_post_ledger_entry({"contents": message}, **kwargs)
+                append_poller = client.begin_create_ledger_entry({"contents": message}, **kwargs)
                 append_result = append_poller.result()
 
             messages[i % num_collections].append(
@@ -324,11 +324,13 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         self.verification_methods_actions(client)
 
     def verification_methods_actions(self, client):
-        consortium = client.get_consortium_members()
-        assert len(consortium["members"]) == 1
-        for member in consortium["members"]:
+        consortium = client.list_consortium_members()
+        consortium_size = 0
+        for member in consortium:
             assert member["certificate"]
             assert member["id"]
+            consortium_size += 1
+        assert consortium_size == 1
 
         constitution = client.get_constitution()
         assert constitution["script"]

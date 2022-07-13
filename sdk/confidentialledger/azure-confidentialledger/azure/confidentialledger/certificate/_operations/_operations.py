@@ -99,8 +99,11 @@ class ConfidentialLedgerCertificateClientOperationsMixin(MixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "identityServiceUri": self._serialize.url(
-                "self._config.identity_service_uri", self._config.identity_service_uri, "str", skip_quote=True
+            "certificateClientEndpoint": self._serialize.url(
+                "self._config.certificate_client_endpoint",
+                self._config.certificate_client_endpoint,
+                "str",
+                skip_quote=True,
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore

@@ -68,7 +68,7 @@ def main():
 
         # Write a ledger entry.
         try:
-            post_entry_result = ledger_client.post_ledger_entry(
+            post_entry_result = ledger_client.create_ledger_entry(
                 {"contents": "Hello world!"}
             )
             transaction_id = post_entry_result["transactionId"]
@@ -110,7 +110,7 @@ def main():
             print(
                 f"Writing another entry. This time, we'll have the client method wait for commit."
             )
-            post_poller = ledger_client.begin_post_ledger_entry(
+            post_poller = ledger_client.begin_create_ledger_entry(
                 {"contents": "Hello world again!"}
             )
             new_post_result = post_poller.result()

@@ -82,7 +82,7 @@ def main():
                 else:
                     msg = f"{sender}'s message {msg_idx}"
 
-                post_poller = ledger_client.begin_post_ledger_entry(
+                post_poller = ledger_client.begin_create_ledger_entry(
                     entry={"contents": msg}, collection_id=sender,
                 )
                 post_result = post_poller.result()
@@ -147,7 +147,7 @@ def main():
 
         collection_ids = []
         collections = ledger_client.list_collections()
-        for collection in collections["collections"]:
+        for collection in collections:
             collection_ids.append(collection["collectionId"])
 
         print(

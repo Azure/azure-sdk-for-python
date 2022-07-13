@@ -27,19 +27,19 @@ class ConfidentialLedgerClient(
     """The ConfidentialLedgerClient writes and retrieves ledger entries against the Confidential
     Ledger service.
 
-    :param ledger_uri: The Confidential Ledger URL, for example
+    :param ledger_endpoint: The Confidential Ledger URL, for example
      https://contoso.confidentialledger.azure.com. Required.
-    :type ledger_uri: str
+    :type ledger_endpoint: str
     :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, ledger_uri: str, **kwargs: Any
+        self, ledger_endpoint: str, **kwargs: Any
     ) -> None:
-        _endpoint = "{ledgerUri}"
-        self._config = ConfidentialLedgerClientConfiguration(ledger_uri=ledger_uri, **kwargs)
+        _endpoint = "{ledgerEndpoint}"
+        self._config = ConfidentialLedgerClientConfiguration(ledger_endpoint=ledger_endpoint, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -66,8 +66,8 @@ class ConfidentialLedgerClient(
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
+            "ledgerEndpoint": self._serialize.url(
+                "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
 

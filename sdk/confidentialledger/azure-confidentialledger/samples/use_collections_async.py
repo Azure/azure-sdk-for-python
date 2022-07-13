@@ -90,7 +90,7 @@ async def main():
                         else:
                             msg = f"{sender}'s message {msg_idx}"
 
-                        post_poller = await ledger_client.begin_post_ledger_entry(
+                        post_poller = await ledger_client.begin_create_ledger_entry(
                             entry={"contents": msg}, collection_id=sender,
                         )
                         post_result = await post_poller.result()
@@ -159,8 +159,8 @@ async def main():
                         )
 
                 collection_ids = []
-                collections = await ledger_client.list_collections()
-                for collection in collections["collections"]:
+                collections = ledger_client.list_collections()
+                async for collection in collections:
                     collection_ids.append(collection["collectionId"])
 
                 print(

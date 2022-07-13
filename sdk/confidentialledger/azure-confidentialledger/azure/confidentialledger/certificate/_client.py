@@ -24,23 +24,23 @@ if TYPE_CHECKING:
 class ConfidentialLedgerCertificateClient(
     ConfidentialLedgerCertificateClientOperationsMixin
 ):  # pylint: disable=client-accepts-api-version-keyword
-    """The ConfidentialLedgerCertificateClient is used to retrieve the TLS certificate required
-    for connecting to a Confidential Ledger.
+    """The ConfidentialLedgerCertificateClient is used to retrieve the TLS certificate required for
+    connecting to a Confidential Ledger.
 
-    :param identity_service_uri: The Identity Service URL, for example
-     https://identity.accledger.azure.com. Required.
-    :type identity_service_uri: str
+    :param certificate_client_endpoint: The certificate client endpoint, for example
+     https://identity.confidential-ledger.core.azure.com. Required.
+    :type certificate_client_endpoint: str
     :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, identity_service_uri: str, **kwargs: Any
+        self, certificate_client_endpoint: str, **kwargs: Any
     ) -> None:
-        _endpoint = "{identityServiceUri}"
+        _endpoint = "{certificateClientEndpoint}"
         self._config = ConfidentialLedgerCertificateClientConfiguration(
-            identity_service_uri=identity_service_uri, **kwargs
+            certificate_client_endpoint=certificate_client_endpoint, **kwargs
         )
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
@@ -68,8 +68,11 @@ class ConfidentialLedgerCertificateClient(
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "identityServiceUri": self._serialize.url(
-                "self._config.identity_service_uri", self._config.identity_service_uri, "str", skip_quote=True
+            "certificateClientEndpoint": self._serialize.url(
+                "self._config.certificate_client_endpoint",
+                self._config.certificate_client_endpoint,
+                "str",
+                skip_quote=True,
             ),
         }
 

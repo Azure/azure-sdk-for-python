@@ -77,7 +77,7 @@ async def main():
                 # Write a ledger entry.
                 try:
                     entry_contents = "Hello world!"
-                    post_poller = await ledger_client.begin_post_ledger_entry(
+                    post_poller = await ledger_client.begin_create_ledger_entry(
                         {"contents": entry_contents}
                     )
                     post_entry_result = await post_poller.result()

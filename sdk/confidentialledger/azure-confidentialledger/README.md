@@ -134,7 +134,7 @@ ledger_client = ConfidentialLedgerClient(
     ledger_certificate_path=ledger_tls_cert_file_name
 )
 
-post_entry_result = ledger_client.post_ledger_entry(
+post_entry_result = ledger_client.create_ledger_entry(
         {"contents": "Hello world!"}
     )
 transaction_id = post_entry_result["transactionId"]
@@ -167,7 +167,7 @@ ledger_client = ConfidentialLedgerClient(
     ledger_certificate_path=ledger_tls_cert_file_name
 )
 
-post_poller = ledger_client.begin_post_ledger_entry(
+post_poller = ledger_client.begin_create_ledger_entry(
     {"contents": "Hello world again!"}
 )
 new_post_result = post_poller.result()
@@ -203,7 +203,7 @@ ledger_client = ConfidentialLedgerClient(
     ledger_certificate_path=ledger_tls_cert_file_name
 )
 
-post_poller = ledger_client.begin_post_ledger_entry(
+post_poller = ledger_client.begin_create_ledger_entry(
     {"contents": "Original hello"}
 )
 post_result = post_poller.result()
@@ -216,7 +216,7 @@ print(
 
 prior_transaction_id = latest_entry["transactionId"]
 
-post_poller = ledger_client.begin_post_ledger_entry(
+post_poller = ledger_client.begin_create_ledger_entry(
     {"contents": "Hello!"}
 )
 post_result = post_poller.result()
@@ -252,17 +252,17 @@ ledger_client = ConfidentialLedgerClient(
     ledger_certificate_path=ledger_tls_cert_file_name
 )
 
-post_poller = ledger_client.begin_post_ledger_entry(
+post_poller = ledger_client.begin_create_ledger_entry(
     {"contents": "First message"}
 )
 first_transaction_id = post_poller.result()["transactionId"]
 
 for i in range(10):
-    ledger_client.post_ledger_entry(
+    ledger_client.create_ledger_entry(
         {"contents": f"Message {i}"}
     )
 
-post_poller = ledger_client.begin_post_ledger_entry(
+post_poller = ledger_client.begin_create_ledger_entry(
     {"contents": "Last message"}
 )
 last_transaction_id = post_poller.result()["transactionId"]

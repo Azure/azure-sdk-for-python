@@ -76,7 +76,7 @@ async def main():
             async with ledger_client:
                 # Write a ledger entry.
                 try:
-                    post_entry_result = await ledger_client.post_ledger_entry(
+                    post_entry_result = await ledger_client.create_ledger_entry(
                         {"contents": "Hello world!"}
                     )
                     transaction_id = post_entry_result["transactionId"]
@@ -122,7 +122,7 @@ async def main():
                         f"Writing another entry. This time, we'll have the client method wait for "
                         "commit."
                     )
-                    post_poller = await ledger_client.begin_post_ledger_entry(
+                    post_poller = await ledger_client.begin_create_ledger_entry(
                         {"contents": "Hello world again!"}
                     )
                     new_post_result = await post_poller.result()

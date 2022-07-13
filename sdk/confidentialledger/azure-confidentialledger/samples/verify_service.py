@@ -72,8 +72,8 @@ def main():
             "Confidential Ledger. Microsoft participates in the consortium to maintain the "
             "Confidential Ledger instance."
         )
-        consortium = ledger_client.get_consortium_members()
-        for member in consortium["members"]:
+        consortium = ledger_client.list_consortium_members()
+        for member in consortium:
             print(
                 f'\tMember {member["id"]} has certificate (truncated) '
                 f'{member["certificate"][:24]}...'

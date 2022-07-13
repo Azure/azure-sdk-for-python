@@ -69,7 +69,7 @@ def main():
         # Write a ledger entry.
         try:
             entry_contents = "Hello world!"
-            post_poller = ledger_client.begin_post_ledger_entry(
+            post_poller = ledger_client.begin_create_ledger_entry(
                 {"contents": entry_contents}
             )
             post_entry_result = post_poller.result()

@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -26,9 +26,9 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ..._operations._operations import (
+    build_create_ledger_entry_request,
     build_create_or_update_user_request,
     build_delete_user_request,
-    build_get_consortium_members_request,
     build_get_constitution_request,
     build_get_current_ledger_entry_request,
     build_get_enclave_quotes_request,
@@ -37,8 +37,8 @@ from ..._operations._operations import (
     build_get_transaction_status_request,
     build_get_user_request,
     build_list_collections_request,
+    build_list_consortium_members_request,
     build_list_ledger_entries_request,
-    build_post_ledger_entry_request,
 )
 from .._vendor import MixinABC
 
@@ -85,8 +85,8 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
+            "ledgerEndpoint": self._serialize.url(
+                "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -111,14 +111,14 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
 
         return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def get_consortium_members(self, **kwargs: Any) -> JSON:
-        """Gets the consortium members.
+    @distributed_trace
+    def list_consortium_members(self, **kwargs: Any) -> AsyncIterable[JSON]:
+        """Lists the consortium members.
 
         Consortium members can manage the Confidential Ledger.
 
-        :return: JSON object
-        :rtype: JSON
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -126,54 +126,71 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
 
                 # response body for status code(s): 200
                 response == {
-                    "members": [
-                        {
-                            "certificate": "str",  # PEM-encoded certificate associated
-                              with the member. Required.
-                            "id": "str"  # Identifier assigned to the member. Required.
-                        }
-                    ]
+                    "certificate": "str",  # PEM-encoded certificate associated with the member.
+                      Required.
+                    "id": "str"  # Identifier assigned to the member. Required.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_get_consortium_members_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
-            ),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        response = pipeline_response.http_response
+                request = build_list_consortium_members_request(
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "ledgerEndpoint": self._serialize.url(
+                        "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                path_format_arguments = {
+                    "ledgerEndpoint": self._serialize.url(
+                        "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+            return request
 
-        if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["members"]
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
 
-        return cast(JSON, deserialized)
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def get_enclave_quotes(self, **kwargs: Any) -> JSON:
@@ -220,8 +237,8 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
+            "ledgerEndpoint": self._serialize.url(
+                "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -246,65 +263,84 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
 
         return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def list_collections(self, **kwargs: Any) -> List[JSON]:
+    @distributed_trace
+    def list_collections(self, **kwargs: Any) -> AsyncIterable[JSON]:
         """Retrieves a list of collection ids present in the Confidential Ledger.
 
         Collection ids are user-created collections of ledger entries.
 
-        :return: list of JSON object
-        :rtype: list[JSON]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response == [
-                    {
-                        "collectionId": "str"  # Required.
-                    }
-                ]
+                response == {
+                    "collectionId": "str"  # Required.
+                }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[List[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_list_collections_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
-            ),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        response = pipeline_response.http_response
+                request = build_list_collections_request(
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "ledgerEndpoint": self._serialize.url(
+                        "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                path_format_arguments = {
+                    "ledgerEndpoint": self._serialize.url(
+                        "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+            return request
 
-        if cls:
-            return cls(pipeline_response, cast(List[JSON], deserialized), {})
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["collections"]
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
 
-        return cast(List[JSON], deserialized)
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
     def list_ledger_entries(
@@ -363,8 +399,8 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                     params=_params,
                 )
                 path_format_arguments = {
-                    "ledgerUri": self._serialize.url(
-                        "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
+                    "ledgerEndpoint": self._serialize.url(
+                        "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
                     ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -376,8 +412,8 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                 _next_request_params["api-version"] = self._config.api_version
                 request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "ledgerUri": self._serialize.url(
-                        "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
+                    "ledgerEndpoint": self._serialize.url(
+                        "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
                     ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -408,7 +444,7 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
         return AsyncItemPaged(get_next, extract_data)
 
     @overload
-    async def post_ledger_entry(
+    async def create_ledger_entry(
         self, entry: JSON, *, collection_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
         """Writes a ledger entry.
@@ -445,7 +481,7 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
         """
 
     @overload
-    async def post_ledger_entry(
+    async def create_ledger_entry(
         self, entry: IO, *, collection_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
         """Writes a ledger entry.
@@ -473,7 +509,7 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
         """
 
     @distributed_trace_async
-    async def post_ledger_entry(
+    async def create_ledger_entry(
         self, entry: Union[JSON, IO], *, collection_id: Optional[str] = None, **kwargs: Any
     ) -> JSON:
         """Writes a ledger entry.
@@ -516,7 +552,7 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
         else:
             _json = entry
 
-        request = build_post_ledger_entry_request(
+        request = build_create_ledger_entry_request(
             collection_id=collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -526,8 +562,8 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
+            "ledgerEndpoint": self._serialize.url(
+                "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -609,8 +645,8 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
+            "ledgerEndpoint": self._serialize.url(
+                "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -695,8 +731,8 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
+            "ledgerEndpoint": self._serialize.url(
+                "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -760,8 +796,8 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
+            "ledgerEndpoint": self._serialize.url(
+                "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -825,8 +861,8 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
+            "ledgerEndpoint": self._serialize.url(
+                "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -878,8 +914,8 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
+            "ledgerEndpoint": self._serialize.url(
+                "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -935,8 +971,8 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
+            "ledgerEndpoint": self._serialize.url(
+                "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1087,8 +1123,8 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri", self._config.ledger_uri, "str", skip_quote=True
+            "ledgerEndpoint": self._serialize.url(
+                "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore

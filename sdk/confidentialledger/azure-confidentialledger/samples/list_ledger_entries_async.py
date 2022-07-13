@@ -78,7 +78,7 @@ async def main():
         # Using the async objects as a context manager ensures they are properly closed after use.
         async with credential:
             async with ledger_client:
-                post_poller = await ledger_client.begin_post_ledger_entry(
+                post_poller = await ledger_client.begin_create_ledger_entry(
                     {"contents": "First message"}
                 )
                 poller_result = await post_poller.result()
@@ -94,9 +94,9 @@ async def main():
                     print(
                         f"Writing '{entry_contents}' to the ledger."
                     )
-                    await ledger_client.post_ledger_entry({"contents": entry_contents})
+                    await ledger_client.create_ledger_entry({"contents": entry_contents})
 
-                post_poller = await ledger_client.begin_post_ledger_entry(
+                post_poller = await ledger_client.begin_create_ledger_entry(
                     {"contents": "Last message"}
                 )
                 poller_result = await post_poller.result()

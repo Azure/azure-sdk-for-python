@@ -140,7 +140,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
 
         return LROPoller(self._client, initial_response, None, polling_method)
 
-    def begin_post_ledger_entry(
+    def begin_create_ledger_entry(
         self,
         entry: Union[JSON, IO],
         *,
@@ -168,11 +168,11 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
             headers,
         )
 
-        post_pipeline_response, post_result, post_headers = self.post_ledger_entry(
+        post_pipeline_response, post_result, post_headers = self.create_ledger_entry(
             entry, collection_id=collection_id, **kwargs
         )
 
-        # Delete the cls because it should only apply to the post_ledger_entry response, not the
+        # Delete the cls because it should only apply to the create_ledger_entry response, not the
         # wait_for_commit call.
         del kwargs["cls"]
 
@@ -182,11 +182,11 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         kwargs["polling_interval"] = lro_delay
 
         if cls:
-            kwargs["_post_ledger_entry_response"] = cls(
+            kwargs["_create_ledger_entry_response"] = cls(
                 post_pipeline_response, cast(JSON, post_result), post_headers  # type: ignore
             )
         else:
-            kwargs["_post_ledger_entry_response"] = post_result
+            kwargs["_create_ledger_entry_response"] = post_result
 
         return self.begin_wait_for_commit(transaction_id, **kwargs)
 
@@ -202,9 +202,9 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
-        # If this poller was called from begin_post_ledger_entry, we should return the
-        # post_ledger_entry response, not the transaction status.
-        post_result = kwargs.pop("_post_ledger_entry_response", None)
+        # If this poller was called from begin_create_ledger_entry, we should return the
+        # create_ledger_entry response, not the transaction status.
+        post_result = kwargs.pop("_create_ledger_entry_response", None)
         deserialization_callback = lambda x: x if post_result is None else post_result
 
         def operation() -> JSON:
@@ -223,7 +223,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
 
         return LROPoller(self._client, initial_response, deserialization_callback, polling_method)
 
-    def post_ledger_entry(
+    def create_ledger_entry(
         self,
         entry: Union[JSON, IO],
         *,
@@ -267,4 +267,4 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
                 "transactionId": headers["x-ms-ccf-transaction-id"],
             },
         )
-        return super().post_ledger_entry(entry, collection_id=collection_id, **kwargs)
+        return super().create_ledger_entry(entry, collection_id=collection_id, **kwargs)
