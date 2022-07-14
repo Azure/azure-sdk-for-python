@@ -7,11 +7,13 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._storage_management_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class CheckNameAvailabilityResult(msrest.serialization.Model):
@@ -22,7 +24,7 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
      and cannot be used.
     :vartype name_available: bool
     :ivar reason: The reason that a storage account name could not be used. The Reason element is
-     only returned if NameAvailable is false. Possible values include: "AccountNameInvalid",
+     only returned if NameAvailable is false. Known values are: "AccountNameInvalid",
      "AlreadyExists".
     :vartype reason: str or ~azure.mgmt.storage.v2015_06_15.models.Reason
     :ivar message: The error message explaining the Reason value in more detail.
@@ -39,7 +41,7 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
         self,
         *,
         name_available: Optional[bool] = None,
-        reason: Optional[Union[str, "Reason"]] = None,
+        reason: Optional[Union[str, "_models.Reason"]] = None,
         message: Optional[str] = None,
         **kwargs
     ):
@@ -49,7 +51,7 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
          and cannot be used.
         :paramtype name_available: bool
         :keyword reason: The reason that a storage account name could not be used. The Reason element
-         is only returned if NameAvailable is false. Possible values include: "AccountNameInvalid",
+         is only returned if NameAvailable is false. Known values are: "AccountNameInvalid",
          "AlreadyExists".
         :paramtype reason: str or ~azure.mgmt.storage.v2015_06_15.models.Reason
         :keyword message: The error message explaining the Reason value in more detail.
@@ -215,9 +217,9 @@ class StorageAccount(Resource):
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar provisioning_state: The status of the storage account at the time the operation was
-     called. Possible values include: "Creating", "ResolvingDNS", "Succeeded".
+     called. Known values are: "Creating", "ResolvingDNS", "Succeeded".
     :vartype provisioning_state: str or ~azure.mgmt.storage.v2015_06_15.models.ProvisioningState
-    :ivar account_type: The type of the storage account. Possible values include: "Standard_LRS",
+    :ivar account_type: The type of the storage account. Known values are: "Standard_LRS",
      "Standard_ZRS", "Standard_GRS", "Standard_RAGRS", "Premium_LRS".
     :vartype account_type: str or ~azure.mgmt.storage.v2015_06_15.models.AccountType
     :ivar primary_endpoints: The URLs that are used to perform a retrieval of a public blob, queue,
@@ -226,7 +228,7 @@ class StorageAccount(Resource):
     :ivar primary_location: The location of the primary data center for the storage account.
     :vartype primary_location: str
     :ivar status_of_primary: The status indicating whether the primary location of the storage
-     account is available or unavailable. Possible values include: "Available", "Unavailable".
+     account is available or unavailable. Known values are: "Available", "Unavailable".
     :vartype status_of_primary: str or ~azure.mgmt.storage.v2015_06_15.models.AccountStatus
     :ivar last_geo_failover_time: The timestamp of the most recent instance of a failover to the
      secondary location. Only the most recent timestamp is retained. This element is not returned if
@@ -238,7 +240,7 @@ class StorageAccount(Resource):
     :vartype secondary_location: str
     :ivar status_of_secondary: The status indicating whether the secondary location of the storage
      account is available or unavailable. Only available if the SKU name is Standard_GRS or
-     Standard_RAGRS. Possible values include: "Available", "Unavailable".
+     Standard_RAGRS. Known values are: "Available", "Unavailable".
     :vartype status_of_secondary: str or ~azure.mgmt.storage.v2015_06_15.models.AccountStatus
     :ivar creation_time: The creation date and time of the storage account in UTC.
     :vartype creation_time: ~datetime.datetime
@@ -280,17 +282,17 @@ class StorageAccount(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        provisioning_state: Optional[Union[str, "ProvisioningState"]] = None,
-        account_type: Optional[Union[str, "AccountType"]] = None,
-        primary_endpoints: Optional["Endpoints"] = None,
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
+        account_type: Optional[Union[str, "_models.AccountType"]] = None,
+        primary_endpoints: Optional["_models.Endpoints"] = None,
         primary_location: Optional[str] = None,
-        status_of_primary: Optional[Union[str, "AccountStatus"]] = None,
+        status_of_primary: Optional[Union[str, "_models.AccountStatus"]] = None,
         last_geo_failover_time: Optional[datetime.datetime] = None,
         secondary_location: Optional[str] = None,
-        status_of_secondary: Optional[Union[str, "AccountStatus"]] = None,
+        status_of_secondary: Optional[Union[str, "_models.AccountStatus"]] = None,
         creation_time: Optional[datetime.datetime] = None,
-        custom_domain: Optional["CustomDomain"] = None,
-        secondary_endpoints: Optional["Endpoints"] = None,
+        custom_domain: Optional["_models.CustomDomain"] = None,
+        secondary_endpoints: Optional["_models.Endpoints"] = None,
         **kwargs
     ):
         """
@@ -299,10 +301,10 @@ class StorageAccount(Resource):
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
         :keyword provisioning_state: The status of the storage account at the time the operation was
-         called. Possible values include: "Creating", "ResolvingDNS", "Succeeded".
+         called. Known values are: "Creating", "ResolvingDNS", "Succeeded".
         :paramtype provisioning_state: str or ~azure.mgmt.storage.v2015_06_15.models.ProvisioningState
-        :keyword account_type: The type of the storage account. Possible values include:
-         "Standard_LRS", "Standard_ZRS", "Standard_GRS", "Standard_RAGRS", "Premium_LRS".
+        :keyword account_type: The type of the storage account. Known values are: "Standard_LRS",
+         "Standard_ZRS", "Standard_GRS", "Standard_RAGRS", "Premium_LRS".
         :paramtype account_type: str or ~azure.mgmt.storage.v2015_06_15.models.AccountType
         :keyword primary_endpoints: The URLs that are used to perform a retrieval of a public blob,
          queue, or table object. Note that Standard_ZRS and Premium_LRS accounts only return the blob
@@ -311,7 +313,7 @@ class StorageAccount(Resource):
         :keyword primary_location: The location of the primary data center for the storage account.
         :paramtype primary_location: str
         :keyword status_of_primary: The status indicating whether the primary location of the storage
-         account is available or unavailable. Possible values include: "Available", "Unavailable".
+         account is available or unavailable. Known values are: "Available", "Unavailable".
         :paramtype status_of_primary: str or ~azure.mgmt.storage.v2015_06_15.models.AccountStatus
         :keyword last_geo_failover_time: The timestamp of the most recent instance of a failover to the
          secondary location. Only the most recent timestamp is retained. This element is not returned if
@@ -323,7 +325,7 @@ class StorageAccount(Resource):
         :paramtype secondary_location: str
         :keyword status_of_secondary: The status indicating whether the secondary location of the
          storage account is available or unavailable. Only available if the SKU name is Standard_GRS or
-         Standard_RAGRS. Possible values include: "Available", "Unavailable".
+         Standard_RAGRS. Known values are: "Available", "Unavailable".
         :paramtype status_of_secondary: str or ~azure.mgmt.storage.v2015_06_15.models.AccountStatus
         :keyword creation_time: The creation date and time of the storage account in UTC.
         :paramtype creation_time: ~datetime.datetime
@@ -402,7 +404,7 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
      characters and a value with a length no greater than 256 characters.
     :vartype tags: dict[str, str]
     :ivar account_type: The sku name. Required for account creation; optional for update. Note that
-     in older versions, sku name was called accountType. Possible values include: "Standard_LRS",
+     in older versions, sku name was called accountType. Known values are: "Standard_LRS",
      "Standard_ZRS", "Standard_GRS", "Standard_RAGRS", "Premium_LRS".
     :vartype account_type: str or ~azure.mgmt.storage.v2015_06_15.models.AccountType
     """
@@ -422,7 +424,7 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        account_type: Optional[Union[str, "AccountType"]] = None,
+        account_type: Optional[Union[str, "_models.AccountType"]] = None,
         **kwargs
     ):
         """
@@ -437,8 +439,8 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
          characters and a value with a length no greater than 256 characters.
         :paramtype tags: dict[str, str]
         :keyword account_type: The sku name. Required for account creation; optional for update. Note
-         that in older versions, sku name was called accountType. Possible values include:
-         "Standard_LRS", "Standard_ZRS", "Standard_GRS", "Standard_RAGRS", "Premium_LRS".
+         that in older versions, sku name was called accountType. Known values are: "Standard_LRS",
+         "Standard_ZRS", "Standard_GRS", "Standard_RAGRS", "Premium_LRS".
         :paramtype account_type: str or ~azure.mgmt.storage.v2015_06_15.models.AccountType
         """
         super(StorageAccountCreateParameters, self).__init__(**kwargs)
@@ -493,7 +495,7 @@ class StorageAccountListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["StorageAccount"]] = None,
+        value: Optional[List["_models.StorageAccount"]] = None,
         **kwargs
     ):
         """
@@ -542,8 +544,8 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
     :vartype tags: dict[str, str]
     :ivar account_type: The account type. Note that StandardZRS and PremiumLRS accounts cannot be
      changed to other account types, and other account types cannot be changed to StandardZRS or
-     PremiumLRS. Possible values include: "Standard_LRS", "Standard_ZRS", "Standard_GRS",
-     "Standard_RAGRS", "Premium_LRS".
+     PremiumLRS. Known values are: "Standard_LRS", "Standard_ZRS", "Standard_GRS", "Standard_RAGRS",
+     "Premium_LRS".
     :vartype account_type: str or ~azure.mgmt.storage.v2015_06_15.models.AccountType
     :ivar custom_domain: User domain assigned to the storage account. Name is the CNAME source.
      Only one custom domain is supported per storage account at this time. To clear the existing
@@ -561,8 +563,8 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        account_type: Optional[Union[str, "AccountType"]] = None,
-        custom_domain: Optional["CustomDomain"] = None,
+        account_type: Optional[Union[str, "_models.AccountType"]] = None,
+        custom_domain: Optional["_models.CustomDomain"] = None,
         **kwargs
     ):
         """
@@ -570,8 +572,8 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
         :paramtype tags: dict[str, str]
         :keyword account_type: The account type. Note that StandardZRS and PremiumLRS accounts cannot
          be changed to other account types, and other account types cannot be changed to StandardZRS or
-         PremiumLRS. Possible values include: "Standard_LRS", "Standard_ZRS", "Standard_GRS",
-         "Standard_RAGRS", "Premium_LRS".
+         PremiumLRS. Known values are: "Standard_LRS", "Standard_ZRS", "Standard_GRS", "Standard_RAGRS",
+         "Premium_LRS".
         :paramtype account_type: str or ~azure.mgmt.storage.v2015_06_15.models.AccountType
         :keyword custom_domain: User domain assigned to the storage account. Name is the CNAME source.
          Only one custom domain is supported per storage account at this time. To clear the existing
@@ -589,8 +591,8 @@ class Usage(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar unit: Required. The unit of measurement. Possible values include: "Count", "Bytes",
-     "Seconds", "Percent", "CountsPerSecond", "BytesPerSecond".
+    :ivar unit: Required. The unit of measurement. Known values are: "Count", "Bytes", "Seconds",
+     "Percent", "CountsPerSecond", "BytesPerSecond".
     :vartype unit: str or ~azure.mgmt.storage.v2015_06_15.models.UsageUnit
     :ivar current_value: Required. The current count of the allocated resources in the
      subscription.
@@ -619,14 +621,14 @@ class Usage(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        unit: Union[str, "UsageUnit"],
+        unit: Union[str, "_models.UsageUnit"],
         current_value: int,
         limit: int,
-        name: "UsageName",
+        name: "_models.UsageName",
         **kwargs
     ):
         """
-        :keyword unit: Required. The unit of measurement. Possible values include: "Count", "Bytes",
+        :keyword unit: Required. The unit of measurement. Known values are: "Count", "Bytes",
          "Seconds", "Percent", "CountsPerSecond", "BytesPerSecond".
         :paramtype unit: str or ~azure.mgmt.storage.v2015_06_15.models.UsageUnit
         :keyword current_value: Required. The current count of the allocated resources in the
@@ -659,7 +661,7 @@ class UsageListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Usage"]] = None,
+        value: Optional[List["_models.Usage"]] = None,
         **kwargs
     ):
         """
