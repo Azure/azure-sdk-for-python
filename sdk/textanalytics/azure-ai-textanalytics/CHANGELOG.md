@@ -5,6 +5,7 @@
 ### Features Added
 
 - Added `begin_recognize_custom_entities` client method to recognize custom named entities in documents.
+- Added `begin_single_label_classify` client method to perform custom single label classification on documents.
 - Added `begin_multi_label_classify` client method to perform custom multi label classification on documents.
 
 ### Breaking Changes
