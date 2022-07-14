@@ -9,6 +9,8 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Fixed README typo.
+    ([#???](https://github.com/Azure/azure-sdk-for-python/pull/???))
 
 ## 1.0.0b6 (2022-06-10)
 
