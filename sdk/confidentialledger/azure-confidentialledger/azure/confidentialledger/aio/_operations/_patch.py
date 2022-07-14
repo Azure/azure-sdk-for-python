@@ -62,6 +62,19 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
     async def begin_get_ledger_entry(
         self, transaction_id: str, *, collection_id: Optional[str] = None, **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
+        """Returns a poller to fetch the ledger entry at the specified transaction id.
+        
+        A collection id may optionally be specified to indicate the collection from which to fetch
+        the value.
+
+        :param transaction_id: Identifies a write transaction. Required.
+        :type transaction_id: str
+        :keyword collection_id: The collection id. Default value is None.
+        :paramtype collection_id: str
+        :return: An instance of LROPoller that returns a JSON object for the ledger entry.
+        :rtype: ~azure.core.polling.LROPoller[JSON]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
@@ -82,6 +95,15 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         return AsyncLROPoller(self._client, initial_response, None, polling_method)
 
     async def begin_get_receipt(self, transaction_id: str, **kwargs: Any) -> AsyncLROPoller[JSON]:
+        """Returns a poller for getting a receipt certifying ledger contents at a particular
+        transaction id.
+
+        :param transaction_id: Identifies a write transaction. Required.
+        :type transaction_id: str
+        :return: An instance of LROPoller that returns a JSON object for the receipt.
+        :rtype: ~azure.core.polling.LROPoller[JSON]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
@@ -108,9 +130,18 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         collection_id: Optional[str] = None,
         **kwargs: Any,
     ) -> AsyncLROPoller[JSON]:
-        """Writes a ledger entry and returns a poller to wait for it to be durably committed.
+        """Writes a ledger entry and returns a poller to wait for it to be durably committed. The
+        poller returns the result for the initial call to create the ledger entry.
 
         A collection id may optionally be specified.
+
+        :param entry: Ledger entry.
+        :type entry: Union[JSON, IO]
+        :keyword collection_id: The collection id. Default value is None.
+        :paramtype collection_id: str
+        :return: An instance of LROPoller that returns a JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
 
         # Pop arguments that are unexpected in the pipeline.
@@ -159,6 +190,12 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         """Creates a poller that queries the state of the specified transaction until it is
         Committed, a state that indicates the transaction is durably stored in the Confidential
         Ledger.
+
+        :param transaction_id: Identifies a write transaction. Required.
+        :type transaction_id: str
+        :return: An instance of LROPoller returning a JSON object describing the transaction status.
+        :rtype: ~azure.core.polling.LROPoller[JSON]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", 0.5)

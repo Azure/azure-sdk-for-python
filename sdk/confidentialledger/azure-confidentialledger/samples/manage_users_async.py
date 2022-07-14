@@ -48,7 +48,7 @@ async def main():
     except KeyError:
         LOG.error(
             "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - "
-            "please set if before running the example"
+            "please set it before running the example"
         )
         sys.exit(1)
 

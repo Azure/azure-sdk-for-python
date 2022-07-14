@@ -15,6 +15,7 @@ USAGE:
     1) CONFIDENTIALLEDGER_ENDPOINT - the endpoint of the Confidential Ledger.
 """
 
+import hashlib
 import logging
 import os
 import sys
@@ -40,7 +41,7 @@ def main():
     except KeyError:
         LOG.error(
             "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - "
-            "please set if before running the example"
+            "please set it before running the example"
         )
         sys.exit(1)
 
@@ -83,7 +84,7 @@ def main():
             "The constitution is a collection of JavaScript code that defines actions available to "
             "members and vets proposals by members to execute those actions."
         )
-        import hashlib
+
         constitution = ledger_client.get_constitution()
         assert (
             constitution["digest"].lower() ==
