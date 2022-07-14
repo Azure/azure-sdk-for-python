@@ -5,21 +5,9 @@
 
 import pytest
 import time
-import threading 
 from azure.identity import EnvironmentCredential, DefaultAzureCredential
-from azure.eventhub._pyamqp import SendClient, authentication
-from azure.eventhub._pyamqp.message import Message
-from azure.eventhub._pyamqp.authentication import AccessToken
-from azure.eventhub._pyamqp import utils as pyamqp_utils
 from azure.eventhub import EventHubProducerClient, EventHubSharedKeyCredential
 from azure.eventhub._client_base import EventHubSASTokenCredential
-from azure.eventhub._constants import (
-    MGMT_PARTITION_OPERATION,
-    MGMT_STATUS_CODE,
-    MGMT_STATUS_DESC,
-    READ_OPERATION
-)
-
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 @pytest.mark.livetest
@@ -79,9 +67,3 @@ def test_mgmt_call_azure_named_key_credential(live_eventhub):
 
     client._start_producer("0",60)
     assert True
-
-def gen_sas_token(uri, policy, key, abs_expiry):
-    token = pyamqp_utils.generate_sas_token(uri, policy, key, abs_expiry).encode()
-    return AccessToken(token=token, expires_on=abs_expiry)
-    
-
