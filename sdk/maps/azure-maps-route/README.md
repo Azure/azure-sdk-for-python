@@ -100,7 +100,7 @@ objects are async context managers and define async `close` methods.
 The following sections provide several code snippets covering some of the most common Azure Maps Route tasks, including:
 
 - [Request and Get Route Directions](#request-and-get-route-directions)
-- [Reqest and Get Route Range](#reqest-and-get-route-range)
+- [Request and Get Route Range](#reqest-and-get-route-range)
 - [Get Route Matrix](#get-route-matrix)
 - [Get Route Directions Batch](#get-route-directions-batch)
 
@@ -114,14 +114,14 @@ from azure.maps.route import MapsRouteClient
 route_directions_result = client.get_route_directions(route_points=[LatLon(47.60323, -122.33028), LatLon(53.2, -106)]);
 ```
 
-### Reqest and Get Route Range
+### Request and Get Route Range
 
 This service will calculate a set of locations that can be reached from the origin point by given coordinates and based on fuel, energy,  time or distance budget that is specified.
 
 ```python
 from azure.maps.route import MapsRouteClient
 
-route_range_result = client.get_route_range(LatLon(47.60323, -122.33028), time_budget_in_sec=6000);
+route_range_result = client.get_route_range(coordinates=LatLon(47.60323, -122.33028), time_budget_in_sec=6000);
 ```
 
 ### Get Route Matrix
@@ -216,9 +216,6 @@ python samples/async_samples/sample_get_route_directions_async.py
 
 Further detail please refer to [Samples Introduction](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-route/samples/README.md)
 
-### Additional documentation
-
-For more extensive documentation on Azure Maps Route, see the [Azure Maps Route documentation](https://docs.microsoft.com/rest/api/maps/route) on docs.microsoft.com.
 ### Additional documentation
 
 For more extensive documentation on Azure Maps Route, see the [Azure Maps Route documentation](https://docs.microsoft.com/rest/api/maps/route) on docs.microsoft.com.
