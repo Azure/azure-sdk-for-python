@@ -6,7 +6,7 @@ import datetime
 import base64
 import functools
 import json
-from typing import Any, Mapping
+from typing import Any, Mapping, cast
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling import AsyncLROPoller
 from azure.core.polling.base_polling import OperationFailed, BadStatus
@@ -293,19 +293,19 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
     def actions_failed_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties["tasks"]["failed"]
+        return self._current_body.additional_properties.get("tasks", {}).get("failed", None)
 
     @property
     def actions_in_progress_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties["tasks"]["inProgress"]
+        return self._current_body.additional_properties.get("tasks", {}).get("inProgress", None)
 
     @property
     def actions_succeeded_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties["tasks"]["completed"]
+        return self._current_body.additional_properties.get("tasks", {}).get("completed", None)
 
     @property
     def last_modified_on(self):
@@ -317,7 +317,7 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
     def total_actions_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties["tasks"]["total"]
+        return self._current_body.additional_properties.get("tasks", {}).get("total", None)
 
     @property
     def id(self):
@@ -407,11 +407,16 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
         :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
         """
 
+        cast(AsyncAnalyzeActionsLROPollingMethod, self.polling_method)
+        client = self.polling_method()._text_analytics_client  # pylint: disable=protected-access
+
         try:
-            client = self._polling_method._text_analytics_client
             await client.begin_analyze_text_cancel_job(self.id, polling=False)
         except ValueError:
             raise ValueError("Cancellation not supported by API versions v3.0, v3.1.")
+        except HttpResponseError as error:
+            from .._response_handlers import process_http_response_error
+            process_http_response_error(error)
 
 
 class AsyncTextAnalyticsLROPoller(AsyncAnalyzeActionsLROPoller[PollingReturnType]):

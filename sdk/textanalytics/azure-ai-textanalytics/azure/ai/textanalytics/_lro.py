@@ -7,7 +7,7 @@ import base64
 import functools
 import json
 import datetime
-from typing import Any, Mapping
+from typing import Any, Mapping, cast
 from urllib.parse import urlencode
 from azure.core.polling._poller import PollingReturnType
 from azure.core.exceptions import HttpResponseError
@@ -326,19 +326,19 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
     def actions_failed_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties["tasks"]["failed"]
+        return self._current_body.additional_properties.get("tasks", {}).get("failed", None)
 
     @property
     def actions_in_progress_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties["tasks"]["inProgress"]
+        return self._current_body.additional_properties.get("tasks", {}).get("inProgress", None)
 
     @property
     def actions_succeeded_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties["tasks"]["completed"]
+        return self._current_body.additional_properties.get("tasks", {}).get("completed", None)
 
     @property
     def last_modified_on(self):
@@ -350,7 +350,7 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
     def total_actions_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties["tasks"]["total"]
+        return self._current_body.additional_properties.get("tasks", {}).get("total", None)
 
     @property
     def id(self):
@@ -441,14 +441,19 @@ class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
         """
 
         # Join the thread so we no longer have to wait for a result from it.
-        self._thread.join(timeout=0)
+        if self._thread:
+            self._thread.join(timeout=0)
+
+        cast(AnalyzeActionsLROPollingMethod, self.polling_method)
+        client = self.polling_method()._text_analytics_client  # pylint: disable=protected-access
 
         try:
-            client = self._polling_method._text_analytics_client
             client.begin_analyze_text_cancel_job(self.id, polling=False)
         except ValueError:
             raise ValueError("Cancellation not supported by API versions v3.0, v3.1.")
-
+        except HttpResponseError as error:
+            from ._response_handlers import process_http_response_error
+            process_http_response_error(error)
 
 class TextAnalyticsLROPoller(AnalyzeActionsLROPoller[PollingReturnType]):
 
