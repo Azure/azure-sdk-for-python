@@ -36,6 +36,7 @@
         "premiumAccountName": "[concat('prem', parameters('baseName'))]",
         "versionedAccountName": "[concat('ver', parameters('baseName'))]",
         "dataLakeAccountName": "[concat('dtlk', parameters('baseName'))]",
+        "dataLakeEncryptionScopeName": "[concat(parameters('baseName'), 'dtlk', '/encryptionScope')]",
         "dataLakeSoftDeleteAccountName": "[concat('dtlksd', parameters('baseName'))]",
         "premiumFileAccountName": "[concat('premf', parameters('baseName'))]",
         "keyvaultName": "[concat(parameters('baseName'), 'kvlt')]",
@@ -378,6 +379,16 @@
             "dependsOn": [
                 "[variables('dataLakeAccountName')]"
             ]
+        },
+        {
+          "type": "Microsoft.Storage/storageAccounts/encryptionScopes",
+          "apiVersion": "[variables('storageApiVersion')]",
+          "name": "[concat(variables('dataLakeAccountName'), '/hnstestscope1')]",
+          "properties": {
+          },
+          "dependsOn": [
+            "[variables('dataLakeAccountName')]"
+          ]
         },
         {
           "type": "Microsoft.Storage/storageAccounts",

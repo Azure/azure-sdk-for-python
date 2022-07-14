@@ -17,6 +17,7 @@ from azure.storage.blob import AccessPolicy as BlobAccessPolicy
 from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
 from azure.storage.blob import DelimitedJsonDialect as BlobDelimitedJSON
 from azure.storage.blob import ArrowDialect as BlobArrowDialect
+from azure.storage.blob import ContainerEncryptionScope as BlobContainerEncryptionScope
 from azure.storage.blob import CustomerProvidedEncryptionKey as BlobCustomerProvidedEncryptionKey
 from azure.storage.blob._models import ContainerPropertiesPaged
 from azure.storage.blob._generated.models import Logging as GenLogging, Metrics as GenMetrics, \
@@ -46,6 +47,8 @@ class FileSystemProperties(DictMixin):
         Represents whether the file system has a legal hold.
     :ivar dict metadata: A dict with name-value pairs to associate with the
         file system as metadata.
+    :ivar ~azure.storage.filedatalake.FileSystemEncryptionScope encryption_scope:
+        The default encryption scope configuration for the file system.
     :ivar bool deleted:
         Whether this file system was deleted.
     :ivar str deleted_version:
@@ -56,7 +59,7 @@ class FileSystemProperties(DictMixin):
     Additionally, the file system name is available as ``file_system_props["name"]``.
     """
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.name = None
         self.last_modified = None
         self.etag = None
@@ -67,6 +70,12 @@ class FileSystemProperties(DictMixin):
         self.metadata = None
         self.deleted = None
         self.deleted_version = None
+        default_encryption_scope = kwargs.get('x-ms-default-encryption-scope')
+        if default_encryption_scope:
+            self.encryption_scope = FileSystemEncryptionScope(
+                default_encryption_scope=default_encryption_scope,
+                prevent_encryption_scope_override=kwargs.get('x-ms-deny-encryption-scope-override', False)
+            )
 
     @classmethod
     def _from_generated(cls, generated):
@@ -82,6 +91,7 @@ class FileSystemProperties(DictMixin):
         props.has_immutability_policy = generated.properties.has_immutability_policy
         props.has_legal_hold = generated.properties.has_legal_hold
         props.metadata = generated.metadata
+        props.encryption_scope = FileSystemEncryptionScope._from_generated(generated)  #pylint: disable=protected-access
         return props
 
     @classmethod
@@ -132,6 +142,11 @@ class DirectoryProperties(DictMixin):
         conditionally.
     :ivar bool deleted: if the current directory marked as deleted
     :ivar dict metadata: Name-value pairs associated with the directory as metadata.
+    :ivar str encryption_scope:
+        A predefined encryption scope used to encrypt the data on the service. An encryption
+        scope can be created using the Management API and referenced here by name. If a default
+        encryption scope has been defined at the file system, this value will override it if the
+        file system level scope is configured to allow overrides. Otherwise an error will be raised.
     :ivar ~azure.storage.filedatalake.LeaseProperties lease:
         Stores all the lease information for the directory.
     :ivar ~datetime.datetime last_modified:
@@ -153,6 +168,7 @@ class DirectoryProperties(DictMixin):
         self.creation_time = kwargs.get('x-ms-creation-time')
         self.deleted_time = None
         self.remaining_retention_days = None
+        self.encryption_scope = kwargs.get('x-ms-encryption-scope')
 
 
 class FileProperties(DictMixin):
@@ -162,6 +178,11 @@ class FileProperties(DictMixin):
         conditionally.
     :ivar bool deleted: if the current file marked as deleted
     :ivar dict metadata: Name-value pairs associated with the file as metadata.
+    :ivar str encryption_scope:
+        A predefined encryption scope used to encrypt the data on the service. An encryption
+        scope can be created using the Management API and referenced here by name. If a default
+        encryption scope has been defined at the file system, this value will override it if the
+        file system level scope is configured to allow overrides. Otherwise an error will be raised.
     :ivar ~azure.storage.filedatalake.LeaseProperties lease:
         Stores all the lease information for the file.
     :ivar ~datetime.datetime last_modified:
@@ -187,6 +208,7 @@ class FileProperties(DictMixin):
         self.expiry_time = kwargs.get("x-ms-expiry-time")
         self.remaining_retention_days = None
         self.content_settings = ContentSettings(**kwargs)
+        self.encryption_scope = kwargs.get('x-ms-encryption-scope')
 
 
 class PathProperties(DictMixin):
@@ -207,6 +229,11 @@ class PathProperties(DictMixin):
     :ivar int content_length: The size of file if the path is a file.
     :ivar datetime creation_time: The creation time of the file/directory.
     :ivar datetime expiry_time: The expiry time of the file/directory.
+    :ivar str encryption_scope:
+        A predefined encryption scope used to encrypt the data on the service. An encryption
+        scope can be created using the Management API and referenced here by name. If a default
+        encryption scope has been defined at the file system, this value will override it if the
+        file system level scope is configured to allow overrides. Otherwise an error will be raised.
     """
 
     def __init__(self, **kwargs):
@@ -220,6 +247,7 @@ class PathProperties(DictMixin):
         self.content_length = kwargs.get('content_length', None)
         self.creation_time = kwargs.get('creation_time', None)
         self.expiry_time = kwargs.get('expiry_time', None)
+        self.encryption_scope = kwargs.get('x-ms-encryption-scope', None)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -234,6 +262,7 @@ class PathProperties(DictMixin):
         path_prop.content_length = generated.content_length
         path_prop.creation_time = _filetime_to_datetime(generated.creation_time)
         path_prop.expiry_time = _filetime_to_datetime(generated.expiry_time)
+        path_prop.encryption_scope = generated.encryption_scope
         return path_prop
 
 
@@ -773,6 +802,22 @@ class CustomerProvidedEncryptionKey(BlobCustomerProvidedEncryptionKey):
         Base64-encoded SHA256 of the encryption key.
     :ivar str algorithm:
         Specifies the algorithm to use when encrypting data using the given key. Must be AES256.
+    """
+
+class FileSystemEncryptionScope(BlobContainerEncryptionScope):
+    """The default encryption scope configuration for a file system.
+
+    This scope is used implicitly for all future writes within the file system,
+    but can be overridden per blob operation.
+
+    .. versionadded:: 12.9.0
+
+    :param str default_encryption_scope:
+        Specifies the default encryption scope to set on the container and use for
+        all future writes.
+    :param bool prevent_encryption_scope_override:
+        If true, prevents any request from specifying a different encryption scope than the scope
+        set on the container. Default value is false.
     """
 
 

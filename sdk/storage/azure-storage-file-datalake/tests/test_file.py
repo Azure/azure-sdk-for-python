@@ -19,6 +19,7 @@ from azure.storage.filedatalake import ContentSettings, generate_account_sas, ge
     DataLakeFileClient, FileSystemClient, DataLakeDirectoryClient, FileSasPermissions, generate_file_system_sas, \
     FileSystemSasPermissions
 from azure.storage.filedatalake import DataLakeServiceClient
+from azure.storage.filedatalake._models import FileSystemEncryptionScope
 from settings.testcase import DataLakePreparer
 from devtools_testutils.storage import StorageTestCase
 
@@ -26,6 +27,9 @@ from devtools_testutils.storage import StorageTestCase
 TEST_DIRECTORY_PREFIX = 'directory'
 TEST_FILE_PREFIX = 'file'
 FILE_PATH = 'file_output.temp.dat'
+TEST_FILE_SYSTEM_ENCRYPTION_KEY_SCOPE = FileSystemEncryptionScope(
+    default_encryption_scope="hnstestscope1")
+TEST_HNS_SAS_ENCRYPTION_SCOPE = "hnstestscope1"
 # ------------------------------------------------------------------------------
 
 
@@ -902,6 +906,67 @@ class FileTest(StorageTestCase):
         file_client.append_data(data_bytes, 0, 3)
         file_client.flush_data(3)
         new_client = file_client.rename_file(file_client.file_system_name+'/'+'newname')
+
+        data = new_client.download_file().readall()
+        self.assertEqual(data, data_bytes)
+        self.assertEqual(new_client.path_name, "newname")
+
+    @DataLakePreparer()
+    def test_file_encryption_scope(self, datalake_storage_account_name, datalake_storage_account_key):
+        # Arrange
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key, logging_enable=True)
+        self.config = self.dsc._config
+        self.file_system_name = self.get_resource_name('filesystem')
+        file_name = 'testfile'
+        file_system = self.dsc.get_file_system_client(self.file_system_name)
+        try:
+            file_system.create_file_system(file_system_encryption_scope=TEST_FILE_SYSTEM_ENCRYPTION_KEY_SCOPE)
+        except ResourceExistsError:
+            pass
+
+        file_client = file_system.create_file(file_name)
+        props = file_client.get_file_properties()
+
+        # Assert
+        self.assertTrue(props)
+        self.assertIsNotNone(props['encryption_scope'])
+        self.assertEqual(props['encryption_scope'], TEST_FILE_SYSTEM_ENCRYPTION_KEY_SCOPE.default_encryption_scope)
+
+    @pytest.mark.live_test_only
+    @DataLakePreparer()
+    def test_hns_encryption_scope_sas(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        token = generate_account_sas(
+            self.dsc.account_name,
+            self.dsc.credential.account_key,
+            ResourceTypes(object=True),
+            AccountSasPermissions(write=True, read=True, create=True, delete=True),
+            datetime.utcnow() + timedelta(hours=5),
+            encryption_scope=TEST_HNS_SAS_ENCRYPTION_SCOPE,
+        )
+        self.assertTrue(token.__contains__(TEST_HNS_SAS_ENCRYPTION_SCOPE))
+
+    @pytest.mark.skip(reason="Service bug, requires further investigation.")
+    @DataLakePreparer()
+    def test_rename_file_with_account_sas(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        token = generate_account_sas(
+            self.dsc.account_name,
+            self.dsc.credential.account_key,
+            ResourceTypes(object=True),
+            AccountSasPermissions(write=True, read=True, create=True, delete=True),
+            datetime.utcnow() + timedelta(hours=5),
+
+        )
+
+        # read the created file which is under root directory
+        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, "oldfile", credential=token)
+        file_client.create_file()
+        data_bytes = b"abc"
+        file_client.append_data(data_bytes, 0, 3)
+        file_client.flush_data(3)
+        new_client = file_client.rename_file(file_client.file_system_name + '/' + 'newname')
 
         data = new_client.download_file().readall()
         self.assertEqual(data, data_bytes)

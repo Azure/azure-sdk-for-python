@@ -65,6 +65,8 @@ def generate_account_sas(
         restricts the request to those IP addresses.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
+    :keyword str encryption_scope:
+        Specifies the encryption scope for a request made so that all write operations will be service encrypted.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """

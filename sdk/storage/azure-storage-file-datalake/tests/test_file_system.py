@@ -10,7 +10,7 @@ import unittest
 from datetime import datetime, timedelta
 
 from azure.core import MatchConditions
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
 
 from azure.storage.filedatalake import(
     AccessPolicy,
@@ -20,12 +20,15 @@ from azure.storage.filedatalake import(
     PublicAccess,
     ResourceTypes,
     generate_account_sas)
+from azure.storage.filedatalake._models import FileSystemEncryptionScope
 
 from settings.testcase import DataLakePreparer
 from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
+TEST_FILE_SYSTEM_ENCRYPTION_KEY_SCOPE = FileSystemEncryptionScope(
+    default_encryption_scope="hnstestscope1")
 # ------------------------------------------------------------------------------
 
 
@@ -86,6 +89,23 @@ class FileSystemTest(StorageTestCase):
 
         # Assert
         self.assertTrue(created)
+
+    @DataLakePreparer()
+    def test_create_file_system_encryption_scope(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system_name = self._get_file_system_reference()
+
+        # Act
+        file_system_client = self.dsc.get_file_system_client(file_system_name)
+        file_system_client.create_file_system(file_system_encryption_scope=TEST_FILE_SYSTEM_ENCRYPTION_KEY_SCOPE)
+        props = file_system_client.get_file_system_properties()
+
+        # Assert
+        self.assertTrue(props)
+        self.assertIsNotNone(props['encryption_scope'])
+        self.assertEqual(props['encryption_scope'].default_encryption_scope,
+                         TEST_FILE_SYSTEM_ENCRYPTION_KEY_SCOPE.default_encryption_scope)
 
     @DataLakePreparer()
     def test_file_system_exists(self, datalake_storage_account_name, datalake_storage_account_key):

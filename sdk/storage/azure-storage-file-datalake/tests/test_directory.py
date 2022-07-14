@@ -15,7 +15,8 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError, Resour
 from azure.storage.filedatalake import ContentSettings, DirectorySasPermissions, DataLakeDirectoryClient, \
     generate_file_system_sas, FileSystemSasPermissions
 from azure.storage.filedatalake import DataLakeServiceClient, generate_directory_sas
-from azure.storage.filedatalake._models import AccessControlChangeResult, AccessControlChangeCounters
+from azure.storage.filedatalake._models import AccessControlChangeResult, AccessControlChangeCounters, \
+    FileSystemEncryptionScope
 from azure.storage.filedatalake._serialize import _SUPPORTED_API_VERSIONS
 
 from settings.testcase import DataLakePreparer
@@ -26,6 +27,8 @@ TEST_DIRECTORY_PREFIX = 'directory'
 REMOVE_ACL = "mask," + "default:user,default:group," + \
              "user:ec3595d6-2c17-4696-8caa-7e139758d24a,group:ec3595d6-2c17-4696-8caa-7e139758d24a," + \
              "default:user:ec3595d6-2c17-4696-8caa-7e139758d24a,default:group:ec3595d6-2c17-4696-8caa-7e139758d24a"
+TEST_FILE_SYSTEM_ENCRYPTION_KEY_SCOPE = FileSystemEncryptionScope(
+    default_encryption_scope="hnstestscope1")
 
 
 # ------------------------------------------------------------------------------
@@ -1094,6 +1097,29 @@ class DirectoryTest(StorageTestCase):
         self.assertTrue(properties)
         self.assertIsNotNone(properties.metadata)
         self.assertEqual(properties.metadata['hello'], metadata['hello'])
+
+    @DataLakePreparer()
+    def test_directory_encryption_scope(self, datalake_storage_account_name, datalake_storage_account_key):
+        # Arrange
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key, logging_enable=True)
+        self.config = self.dsc._config
+        self.file_system_name = self.get_resource_name('filesystem')
+        dir_name = 'testdir'
+        file_system = self.dsc.get_file_system_client(self.file_system_name)
+        try:
+            file_system.create_file_system(file_system_encryption_scope=TEST_FILE_SYSTEM_ENCRYPTION_KEY_SCOPE)
+        except ResourceExistsError:
+            pass
+
+        file_system.create_directory(dir_name)
+        directory_client = file_system.get_directory_client(dir_name)
+        props = directory_client.get_directory_properties()
+
+        # Assert
+        self.assertTrue(props)
+        self.assertIsNotNone(props['encryption_scope'])
+        self.assertEqual(props['encryption_scope'], TEST_FILE_SYSTEM_ENCRYPTION_KEY_SCOPE.default_encryption_scope)
 
     @pytest.mark.live_test_only
     @DataLakePreparer()

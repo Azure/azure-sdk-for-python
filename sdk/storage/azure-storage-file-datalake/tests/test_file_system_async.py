@@ -15,6 +15,7 @@ from azure.core import MatchConditions
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 
+from azure.storage.filedatalake._models import FileSystemEncryptionScope
 from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient, FileSystemClient
 from azure.storage.filedatalake import(
     AccessPolicy,
@@ -33,6 +34,8 @@ from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
+TEST_FILE_SYSTEM_ENCRYPTION_KEY_SCOPE = FileSystemEncryptionScope(
+    default_encryption_scope="hnstestscope1")
 # ------------------------------------------------------------------------------
 
 class AiohttpTestTransport(AioHttpTransport):
@@ -108,6 +111,24 @@ class FileSystemTest(StorageTestCase):
 
         # Assert
         self.assertTrue(created)
+
+    @DataLakePreparer()
+    async def test_create_file_system_encryption_scope(self,
+                                                       datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system_name = self._get_file_system_reference()
+
+        # Act
+        file_system_client = self.dsc.get_file_system_client(file_system_name)
+        await file_system_client.create_file_system(file_system_encryption_scope=TEST_FILE_SYSTEM_ENCRYPTION_KEY_SCOPE)
+        props = await file_system_client.get_file_system_properties()
+
+        # Assert
+        self.assertTrue(props)
+        self.assertIsNotNone(props['encryption_scope'])
+        self.assertEqual(props['encryption_scope'].default_encryption_scope,
+                         TEST_FILE_SYSTEM_ENCRYPTION_KEY_SCOPE.default_encryption_scope)
 
     @DataLakePreparer()
     async def test_file_system_exists(self, datalake_storage_account_name, datalake_storage_account_key):

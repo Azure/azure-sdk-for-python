@@ -38,6 +38,7 @@ class QueryStringConstants(object):
     SIGNED_KEY_EXPIRY = 'ske'
     SIGNED_KEY_SERVICE = 'sks'
     SIGNED_KEY_VERSION = 'skv'
+    SIGNED_ENCRYPTION_SCOPE = 'ses'
 
     # for ADLS
     SIGNED_AUTHORIZED_OID = 'saoid'
@@ -74,6 +75,7 @@ class QueryStringConstants(object):
             QueryStringConstants.SIGNED_KEY_EXPIRY,
             QueryStringConstants.SIGNED_KEY_SERVICE,
             QueryStringConstants.SIGNED_KEY_VERSION,
+            QueryStringConstants.SIGNED_ENCRYPTION_SCOPE,
             # for ADLS
             QueryStringConstants.SIGNED_AUTHORIZED_OID,
             QueryStringConstants.SIGNED_UNAUTHORIZED_OID,
@@ -104,7 +106,7 @@ class SharedAccessSignature(object):
         self.x_ms_version = x_ms_version
 
     def generate_account(self, services, resource_types, permission, expiry, start=None,
-                         ip=None, protocol=None):
+                         ip=None, protocol=None, **kwargs):
         '''
         Generates a shared access signature for the account.
         Use the returned signature with the sas_token parameter of the service
@@ -145,10 +147,14 @@ class SharedAccessSignature(object):
         :param str protocol:
             Specifies the protocol permitted for a request made. The default value
             is https,http. See :class:`~azure.storage.common.models.Protocol` for possible values.
+        :keyword str encryption_scope:
+            Optional. If specified, this is the encryption scope to use when sending requests
+            authorized with this SAS URI.
         '''
         sas = _SharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_account(services, resource_types)
+        sas.add_encryption_scope(**kwargs)
         sas.add_account_signature(self.account_name, self.account_key)
 
         return sas.get_token()
@@ -185,6 +191,9 @@ class _SharedAccessHelper(object):
     def add_account(self, services, resource_types):
         self._add_query(QueryStringConstants.SIGNED_SERVICES, services)
         self._add_query(QueryStringConstants.SIGNED_RESOURCE_TYPES, resource_types)
+    
+    def add_encryption_scope(self, **kwargs):
+        self._add_query(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE, kwargs.pop('encryption_scope', None))
 
     def add_override_response_headers(self, cache_control,
                                       content_disposition,
@@ -211,7 +220,8 @@ class _SharedAccessHelper(object):
              get_value_to_append(QueryStringConstants.SIGNED_EXPIRY) +
              get_value_to_append(QueryStringConstants.SIGNED_IP) +
              get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL) +
-             get_value_to_append(QueryStringConstants.SIGNED_VERSION))
+             get_value_to_append(QueryStringConstants.SIGNED_VERSION) + 
+             get_value_to_append(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE))
 
         self._add_query(QueryStringConstants.SIGNED_SIGNATURE,
                         sign_string(account_key, string_to_sign))
