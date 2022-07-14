@@ -85,6 +85,28 @@ class SampleTablesQuery(object):
                 print(e.message)
         # [END query_entities]
 
+    def sample_query_entities_without_metadata(self):
+        from azure.data.tables import TableClient
+        from azure.core.exceptions import HttpResponseError
+
+        print("Entities with name: marker")
+        # [START query_entities]
+        with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
+            try:
+                parameters = {"name": "marker"}
+                name_filter = "Name eq @name"
+                headers = {"Accept" : "application/json;odata=nometadata"}
+                queried_entities = table_client.query_entities(
+                    query_filter=name_filter, select=["Brand", "Color"], parameters=parameters, headers=headers
+                )
+
+                for entity_chosen in queried_entities:
+                    print(entity_chosen)
+
+            except HttpResponseError as e:
+                print(e.message)
+        # [END query_entities]
+
     def sample_query_entities_multiple_params(self):
         from azure.data.tables import TableClient
         from azure.core.exceptions import HttpResponseError
@@ -139,6 +161,7 @@ if __name__ == "__main__":
     try:
         stq.insert_random_entities()
         stq.sample_query_entities()
+        stq.sample_query_entities_without_metadata()
         stq.sample_query_entities_multiple_params()
         stq.sample_query_entities_values()
     except:

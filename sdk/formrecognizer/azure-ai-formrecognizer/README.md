@@ -17,7 +17,7 @@ _Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For mor
 ## Getting started
 
 ### Prerequisites
-* Python 3.6 or later is required to use this package.
+* Python 3.7 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and a
 [Cognitive Services or Form Recognizer resource][FR_or_CS_resource] to use this package.
 
@@ -166,7 +166,7 @@ More information about analyzing documents, including supported features, locale
 ### DocumentModelAdministrationClient
 `DocumentModelAdministrationClient` provides operations for:
 
-- Building custom models to analyze specific fields you specify by labeling your custom documents. A `DocumentModel` is returned indicating the document type(s) the model can analyze, as well as the estimated confidence for each field. See the [service documentation][fr-build-model] for a more detailed explanation.
+- Building custom models to analyze specific fields you specify by labeling your custom documents. A `DocumentModelInfo` is returned indicating the document type(s) the model can analyze, as well as the estimated confidence for each field. See the [service documentation][fr-build-model] for a more detailed explanation.
 - Creating a composed model from a collection of existing models.
 - Managing models created in your account.
 - Listing document model operations or getting a specific model operation created within the last 24 hours.
@@ -518,7 +518,7 @@ credential = AzureKeyCredential("<api_key>")
 
 document_model_admin_client = DocumentModelAdministrationClient(endpoint, credential)
 
-account_info = document_model_admin_client.get_account_info()
+account_info = document_model_admin_client.get_resource_info()
 print("Our account has {} custom models, and we can have at most {} custom models".format(
     account_info.document_model_count, account_info.document_model_limit
 ))
