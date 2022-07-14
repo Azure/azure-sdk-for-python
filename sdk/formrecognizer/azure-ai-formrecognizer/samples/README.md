@@ -36,7 +36,7 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 |[sample_analyze_tax_us_w2.py][sample_analyze_tax_us_w2] and [sample_analyze_tax_us_w2_async.py][sample_analyze_tax_us_w2_async]|Analyze document text and pre-trained fields and values pertaining to US tax W-2 forms using a prebuilt model|
 |[sample_analyze_custom_documents.py][sample_analyze_custom_documents] and [sample_analyze_custom_documents_async.py][sample_analyze_custom_documents_async]|Analyze custom documents with your custom model to extract text, field values, selection marks, and table data from documents|
 |[sample_build_model.py][sample_build_model] and [sample_build_model_async.py][sample_build_model_async]|Build a custom model|
-|[sample_create_composed_model.py][sample_composed_model] and [sample_create_composed_model_async.py][sample_composed_model_async]|Create a composed model from a collection of existing models to be called with a single model ID|
+|[sample_compose_model.py][sample_composed_model] and [sample_compose_model_async.py][sample_composed_model_async]|Create a composed model from a collection of existing models to be called with a single model ID|
 |[sample_manage_models.py][sample_manage_models] and [sample_manage_models_async.py][sample_manage_models_async]|Manage the models in your account|
 |[sample_get_operations.py][sample_get_operations] and [sample_get_operations_async.py][sample_get_operations_async]|Get and list the document model operations created within the past 24 hours|
 |[sample_copy_model_to.py][sample_copy] and [sample_copy_model_to_async.py][sample_copy_async]|Copy a custom model from one Form Recognizer resource to another|
@@ -132,8 +132,8 @@ what you can do with the Azure Form Recognizer client library.
 [sample_analyze_custom_documents_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/async_samples/sample_analyze_custom_documents_async.py
 [sample_build_model]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/sample_build_model.py
 [sample_build_model_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/async_samples/sample_build_model_async.py
-[sample_composed_model]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/sample_create_composed_model.py
-[sample_composed_model_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/async_samples/sample_create_composed_model_async.py
+[sample_composed_model]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/sample_compose_model.py
+[sample_composed_model_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/async_samples/sample_compose_model_async.py
 [sample_manage_models]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/sample_manage_models.py
 [sample_manage_models_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/async_samples/sample_manage_models_async.py
 [sample_get_operations]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/sample_get_operations.py

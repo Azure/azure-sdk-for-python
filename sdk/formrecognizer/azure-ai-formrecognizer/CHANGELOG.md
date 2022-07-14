@@ -5,6 +5,11 @@
 ### Features Added
 
 ### Breaking Changes
+- Renamed `begin_create_composed_model()` on `DocumentModelAdministrationClient` to `begin_compose_model()`.
+- Renamed `get_account_info()` on `DocumentModelAdministrationClient` to `get_resource_info()`.
+- Renamed `AccountInfo` model to `ResourceInfo`.
+- Renamed `DocumentModelInfo` model to `DocumentModelSummary`.
+- Renamed `DocumentModel` to `DocumentModelInfo`.
 
 ### Bugs Fixed
 

@@ -148,7 +148,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # wait until the policy has gone into effect
         if self.is_live:
             self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
-            time.sleep(35)
+            time.sleep(40)
 
     def _disable_soft_delete(self):
         delete_retention_policy = RetentionPolicy(enabled=False)
