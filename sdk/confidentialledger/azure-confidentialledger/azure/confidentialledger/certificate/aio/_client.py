@@ -27,20 +27,20 @@ class ConfidentialLedgerCertificateClient(
     """The ConfidentialLedgerCertificateClient is used to retrieve the TLS certificate required for
     connecting to a Confidential Ledger.
 
-    :param certificate_client_endpoint: The certificate client endpoint, for example
-     https://identity.confidential-ledger.core.azure.com. Required.
-    :type certificate_client_endpoint: str
+    :param certificate_endpoint: The certificate endpoint (or "Identity Service Endpoint" in the
+     Azure portal), for example https://identity.confidential-ledger.core.azure.com. Required.
+    :type certificate_endpoint: str
     :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, certificate_client_endpoint: str, **kwargs: Any
+        self, certificate_endpoint: str, **kwargs: Any
     ) -> None:
-        _endpoint = "{certificateClientEndpoint}"
+        _endpoint = "{certificateEndpoint}"
         self._config = ConfidentialLedgerCertificateClientConfiguration(
-            certificate_client_endpoint=certificate_client_endpoint, **kwargs
+            certificate_endpoint=certificate_endpoint, **kwargs
         )
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
@@ -68,11 +68,8 @@ class ConfidentialLedgerCertificateClient(
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "certificateClientEndpoint": self._serialize.url(
-                "self._config.certificate_client_endpoint",
-                self._config.certificate_client_endpoint,
-                "str",
-                skip_quote=True,
+            "certificateEndpoint": self._serialize.url(
+                "self._config.certificate_endpoint", self._config.certificate_endpoint, "str", skip_quote=True
             ),
         }
 
