@@ -100,9 +100,7 @@ objects are async context managers and define async `close` methods.
 The following sections provide several code snippets covering some of the most common Azure Maps Route tasks, including:
 
 - [Request and Get Route Directions](#request-and-get-route-directions)
-
 - [Reqest and Get Route Range](#reqest-and-get-route-range)
-
 - [Get Route Matrix](#get-route-matrix)
 - [Get Route Directions Batch](#get-route-directions-batch)
 
@@ -193,6 +191,34 @@ Still running into issues? If you encounter any bugs or have suggestions, please
 
 ## Next steps
 
+### More sample code
+
+Get started with our [Maps Route samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-route/samples) ([Async Version samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-route/samples/async_samples)).
+
+Several Azure Maps Route Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Maps Route
+
+```bash
+set AZURE_SUBSCRIPTION_KEY="<RealSubscriptionKey>"
+
+pip install azure-maps-route --pre
+
+python samples/sample_authentication.py
+python sample/sample_get_route_range.py
+python samples/sample_get_route_directions.py
+python samples/sample_request_route_matrix.py
+python samples/async_samples/sample_authentication_async.py
+python samples/async_samples/sample_get_route_range_async.py
+python samples/async_samples/sample_request_route_matrix_async.py
+python samples/async_samples/sample_get_route_directions_async.py
+```
+
+> Notes: `--pre` flag can be optionally added, it is to include pre-release and development versions for `pip install`. By default, `pip` only finds stable versions.
+
+Further detail please refer to [Samples Introduction](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-route/samples/README.md)
+
+### Additional documentation
+
+For more extensive documentation on Azure Maps Route, see the [Azure Maps Route documentation](https://docs.microsoft.com/rest/api/maps/route) on docs.microsoft.com.
 ### Additional documentation
 
 For more extensive documentation on Azure Maps Route, see the [Azure Maps Route documentation](https://docs.microsoft.com/rest/api/maps/route) on docs.microsoft.com.

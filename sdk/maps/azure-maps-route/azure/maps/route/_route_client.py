@@ -19,6 +19,7 @@ from ._generated.models import (
     PostRouteMatrixRequestBody,
     BatchRequestBody,
     AlternativeRouteType,
+    TextFormat
 )
 
 from .models import (
@@ -29,11 +30,6 @@ if TYPE_CHECKING:
     from typing import Union, Any, List, Optional
     from azure.core.credentials import TokenCredential
     from azure.core.polling import LROPoller
-
-def latlon_to_string(route_point_list):
-    for route_point in route_point_list:
-        query_items = ":".join(f"{route_point.lat},{route_point.lon}")
-    return query_items
 
 # By default, use the latest supported API version
 class MapsRouteClient(MapsRouteClientBase):
@@ -77,124 +73,124 @@ class MapsRouteClient(MapsRouteClientBase):
 
         :param route_points: The Coordinate from which the range calculation should start.
         :type route_points: List[~azure.maps.route._models.LatLon]
-        :param max_alternatives: Number of desired alternative routes to be calculated.
-        :type max_alternatives: int
-        :param alternative_type: Controls the optimality, with respect to the given planning criteria,
+        :keyword max_alternatives: Number of desired alternative routes to be calculated.
+        :paramtype max_alternatives: int
+        :keyword alternative_type: Controls the optimality, with respect to the given planning criteria,
          of the calculated alternatives compared to the reference route.
-        :type alternative_type: str or ~azure.maps.route.models.AlternativeRouteType
-        :param min_deviation_distance: All alternative routes returned will follow the reference route
+        :paramtype alternative_type: str or ~azure.maps.route.models.AlternativeRouteType
+        :keyword min_deviation_distance: All alternative routes returned will follow the reference route
          (see section POST Requests) from the origin point of the calculateRoute request for at least
          this number of meters
-        :type min_deviation_distance: int
-        :param arrive_at: The date and time of arrival at the destination point. It must be specified
+        :paramtype min_deviation_distance: int
+        :keyword arrive_at: The date and time of arrival at the destination point. It must be specified
          as a dateTime.
-        :type arrive_at: ~datetime.datetime
-        :param depart_at: The date and time of departure from the origin point.
-        :type depart_at: ~datetime.datetime
-        :param min_deviation_time: All alternative routes
-        :type min_deviation_time: int
-        :param instructions_type: If specified, guidance instructions will be returned.
-        :type instructions_type: str or ~azure.maps.route.models.RouteInstructionsType
-        :param language: The language parameter determines the language of the guidance messages.
-        :type language: str
-        :param compute_best_order: Re-order the route waypoints using a fast heuristic algorithm to
+        :paramtype arrive_at: ~datetime.datetime
+        :keyword depart_at: The date and time of departure from the origin point.
+        :paramtype depart_at: ~datetime.datetime
+        :keyword min_deviation_time: All alternative routes
+        :paramtype min_deviation_time: int
+        :keyword instructions_type: If specified, guidance instructions will be returned.
+        :paramtype instructions_type: str or ~azure.maps.route.models.RouteInstructionsType
+        :keyword language: The language parameter determines the language of the guidance messages.
+        :paramtype language: str
+        :keyword compute_best_order: Re-order the route waypoints using a fast heuristic algorithm to
          reduce the route length.
-        :type compute_best_order: bool
-        :param route_representation: Specifies the representation of the set of routes provided as
+        :paramtype compute_best_order: bool
+        :keyword route_representation: Specifies the representation of the set of routes provided as
          response.
-        :type route_representation: str or ~azure.maps.route.models.RouteRepresentation
-        :param compute_travel_time_for: Specifies whether to return additional travel times using
+        :paramtype route_representation: str or ~azure.maps.route.models.RouteRepresentation
+        :keyword compute_travel_time_for: Specifies whether to return additional travel times using
          different types of traffic information (none, historic, live) as well as the default
          best-estimate travel time.
-        :type compute_travel_time_for: str or ~azure.maps.route.models.ComputeTravelTimeFor
-        :param vehicle_heading: The directional heading of the vehicle in degrees starting at true
+        :paramtype compute_travel_time_for: str or ~azure.maps.route.models.ComputeTravelTimeFor
+        :keyword vehicle_heading: The directional heading of the vehicle in degrees starting at true
          North and continuing in clockwise direction.
-        :type vehicle_heading: int
-        :param report: Specifies which data should be reported for diagnosis purposes.
-        :type report: str
-        :param section_type: Specifies which of the section types is reported in the route response.
-        :type section_type: str or ~azure.maps.route.models.SectionType
-        :param vehicle_axle_weight: Weight per axle of the vehicle in kg.
-        :type vehicle_axle_weight: int
-        :param vehicle_width: Width of the vehicle in meters.
-        :type vehicle_width: float
-        :param vehicle_height: Height of the vehicle in meters.
-        :type vehicle_height: float
-        :param vehicle_length: Length of the vehicle in meters.
-        :type vehicle_length: float
-        :param vehicle_max_speed: Maximum speed of the vehicle in km/hour.
-        :type vehicle_max_speed: int
-        :param vehicle_weight: Weight of the vehicle in kilograms.
-        :type vehicle_weight: int
-        :param vehicle_commercial: Vehicle is used for commercial purposes and thus may not be allowed
+        :paramtype vehicle_heading: int
+        :keyword report: Specifies which data should be reported for diagnosis purposes.
+        :paramtype report: str
+        :keyword section_type: Specifies which of the section types is reported in the route response.
+        :paramtype section_type: str or ~azure.maps.route.models.SectionType
+        :keyword vehicle_axle_weight: Weight per axle of the vehicle in kg.
+        :paramtype vehicle_axle_weight: int
+        :keyword vehicle_width: Width of the vehicle in meters.
+        :paramtype vehicle_width: float
+        :keyword vehicle_height: Height of the vehicle in meters.
+        :paramtype vehicle_height: float
+        :keyword vehicle_length: Length of the vehicle in meters.
+        :paramtype vehicle_length: float
+        :keyword vehicle_max_speed: Maximum speed of the vehicle in km/hour.
+        :paramtype vehicle_max_speed: int
+        :keyword vehicle_weight: Weight of the vehicle in kilograms.
+        :paramtype vehicle_weight: int
+        :keyword vehicle_commercial: Vehicle is used for commercial purposes and thus may not be allowed
          to drive  on some roads.
-        :type vehicle_commercial: bool
-        :param windingness: Level of turns for thrilling route.
-        :type windingness: str or ~azure.maps.route.models.WindingnessLevel
-        :param hilliness: Degree of hilliness for thrilling route.
-        :type hilliness: str or ~azure.maps.route.models.HillinessDegree
-        :param travel_mode: The mode of travel for the requested route.
-        :type travel_mode: str or ~azure.maps.route.models.TravelMode
-        :param avoid: Specifies something that the route calculation should try to avoid when
+        :paramtype vehicle_commercial: bool
+        :keyword windingness: Level of turns for thrilling route.
+        :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
+        :keyword hilliness: Degree of hilliness for thrilling route.
+        :paramtype hilliness: str or ~azure.maps.route.models.HillinessDegree
+        :keyword travel_mode: The mode of travel for the requested route.
+        :paramtype travel_mode: str or ~azure.maps.route.models.TravelMode
+        :keyword avoid: Specifies something that the route calculation should try to avoid when
          determining the route.
-        :type avoid: list[str or ~azure.maps.route.models.RouteAvoidType]
-        :param traffic: Input values:
+        :paramtype avoid: list[str or ~azure.maps.route.models.RouteAvoidType]
+        :keyword traffic: Input values:
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
          data is ignored during routing, the effect of historic traffic on effective road speeds is still
          incorporated.
-        :type traffic: bool
-        :param route_type: The type of route requested.
-        :type route_type: str or ~azure.maps.route.models.RouteType
-        :param vehicle_load_type: Types of cargo that may be classified as hazardous materials and
+        :paramtype traffic: bool
+        :keyword route_type: The type of route requested.
+        :paramtype route_type: str or ~azure.maps.route.models.RouteType
+        :keyword vehicle_load_type: Types of cargo that may be classified as hazardous materials and
          restricted from some roads.
-        :type vehicle_load_type: str or ~azure.maps.route.models.VehicleLoadType
-        :param vehicle_engine_type: Engine type of the vehicle.
-        :type vehicle_engine_type: str or ~azure.maps.route.models.VehicleEngineType
-        :param constant_speed_consumption_in_liters_per_hundred_km: Specifies the speed-dependent
+        :paramtype vehicle_load_type: str or ~azure.maps.route.models.VehicleLoadType
+        :keyword vehicle_engine_type: Engine type of the vehicle.
+        :paramtype vehicle_engine_type: str or ~azure.maps.route.models.VehicleEngineType
+        :keyword constant_speed_consumption_in_liters_per_hundred_km: Specifies the speed-dependent
          component of consumption.
-        :type constant_speed_consumption_in_liters_per_hundred_km: float
-        :param current_fuel_in_liters: Specifies the current supply of fuel in liters.
-        :type current_fuel_in_liters: float
-        :param auxiliary_power_in_liters_per_hour: Specifies the amount of fuel consumed for sustaining
+        :paramtype constant_speed_consumption_in_liters_per_hundred_km: float
+        :keyword current_fuel_in_liters: Specifies the current supply of fuel in liters.
+        :paramtype current_fuel_in_liters: float
+        :keyword auxiliary_power_in_liters_per_hour: Specifies the amount of fuel consumed for sustaining
          auxiliary systems of the vehicle, in liters per hour.
-        :type auxiliary_power_in_liters_per_hour: float
-        :param fuel_energy_density_in_m_joules_per_liter: Specifies the amount of chemical energy
+        :paramtype auxiliary_power_in_liters_per_hour: float
+        :keyword fuel_energy_density_in_m_joules_per_liter: Specifies the amount of chemical energy
          stored in one liter of fuel in megajoules (MJ).
-        :type fuel_energy_density_in_m_joules_per_liter: float
-        :param acceleration_efficiency: Specifies the efficiency of converting chemical energy stored
+        :paramtype fuel_energy_density_in_m_joules_per_liter: float
+        :keyword acceleration_efficiency: Specifies the efficiency of converting chemical energy stored
          in fuel to kinetic energy when the vehicle accelerates.
-        :type acceleration_efficiency: float
-        :param deceleration_efficiency: Specifies the efficiency of converting kinetic energy to saved
+        :paramtype acceleration_efficiency: float
+        :keyword deceleration_efficiency: Specifies the efficiency of converting kinetic energy to saved
          (not consumed) fuel when the vehicle decelerates.
-        :type deceleration_efficiency: float
-        :param uphill_efficiency: Specifies the efficiency of converting chemical energy stored in fuel
+        :paramtype deceleration_efficiency: float
+        :keyword uphill_efficiency: Specifies the efficiency of converting chemical energy stored in fuel
          to potential energy when the vehicle gains elevation.
-        :type uphill_efficiency: float
-        :param downhill_efficiency: Specifies the efficiency of converting potential energy to saved
+        :paramtype uphill_efficiency: float
+        :keyword downhill_efficiency: Specifies the efficiency of converting potential energy to saved
          (not consumed) fuel when the vehicle loses elevation.
-        :type downhill_efficiency: float
-        :param constant_speed_consumption_in_kwh_per_hundred_km: Specifies the speed-dependent component
+        :paramtype downhill_efficiency: float
+        :keyword constant_speed_consumption_in_kwh_per_hundred_km: Specifies the speed-dependent component
          of consumption.
-        :type constant_speed_consumption_in_kwh_per_hundred_km: str
-        :param current_charge_ink_wh: Specifies the current electric energy supply in kilowatt hours
+        :paramtype constant_speed_consumption_in_kwh_per_hundred_km: str
+        :keyword current_charge_ink_wh: Specifies the current electric energy supply in kilowatt hours
          (kWh).
-        :type current_charge_ink_wh: str
-        :param max_charge_ink_wh: Specifies the maximum electric energy supply in kilowatt hours (kWh)
+        :paramtype current_charge_ink_wh: str
+        :keyword max_charge_ink_wh: Specifies the maximum electric energy supply in kilowatt hours (kWh)
          that may be stored in the vehicle's battery.
-        :type max_charge_ink_wh: str
+        :paramtype max_charge_ink_wh: str
         :keyword str auxiliary_power_in_kw: Specifies the amount of power consumed for sustaining auxiliary
          systems, in kilowatts (kW).
         :return: RouteDirectionsResponse
         :rtype: ~azure.maps.route.models.RouteDirectionsResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-
-        query_items = ""
+        query_items=""
         if route_points:
-            query_items = latlon_to_string(route_points)
+            query_items = ":".join([(str(route_point.lat)+","+str(route_point.lon)) for route_point in route_points])
 
         return self._route_client.get_route_directions(
+            format=TextFormat.JSON,
             query=query_items,
             constant_speed_consumption_in_liters_per_hundredkm=kwargs.get(
                 'constant_speed_consumption_in_liters_per_hundred_km', None
@@ -229,102 +225,104 @@ class MapsRouteClient(MapsRouteClientBase):
          Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec, or
          distanceBudgetInMeters) must be used.
         :type fuel_budget_in_liters: float
-        :param energy_budget_in_kwh: Electric energy budget in kilowatt hours (kWh) that determines
+        :keyword energy_budget_in_kwh: Electric energy budget in kilowatt hours (kWh) that determines
          maximal range which can be travelled using the specified Electric Consumption
          Model.
-        :type energy_budget_in_kwh: float
-        :param time_budget_in_sec: Time budget in seconds that determines maximal range which can be
+        :paramtype energy_budget_in_kwh: float
+        :keyword time_budget_in_sec: Time budget in seconds that determines maximal range which can be
          travelled using driving time. The Consumption Model will only affect the range when routeType
          is eco. Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
          or distanceBudgetInMeters) must be used.
-        :type time_budget_in_sec: float
-        :param distance_budget_in_meters: Distance budget in meters that determines maximal range which
+        :paramtype time_budget_in_sec: float
+        :keyword distance_budget_in_meters: Distance budget in meters that determines maximal range which
          can be travelled using driving distance.
-        :type distance_budget_in_meters: float
-        :param depart_at: The date and time of departure from the origin point. Departure times apart
+        :paramtype distance_budget_in_meters: float
+        :keyword depart_at: The date and time of departure from the origin point. Departure times apart
          from now must be specified as a dateTime. When a time zone offset is not specified, it will be
          assumed to be that of the origin point. The departAt value must be in the future in the
          date-time format (1996-12-19T16:39:57-08:00).
-        :type depart_at: ~datetime.datetime
-        :param route_type: The type of route requested.
-        :type route_type: str or ~azure.maps.route.models.RouteType
-        :type traffic: bool
-        :param avoid: Specifies something that the route calculation should try to avoid when
+        :paramtype depart_at: ~datetime.datetime
+        :keyword route_type: The type of route requested.
+        :paramtype route_type: str or ~azure.maps.route.models.RouteType
+        :paramtype traffic: bool
+        :keyword avoid: Specifies something that the route calculation should try to avoid when
          determining the route.
-        :type avoid: list[str or ~azure.maps.route.models.RouteAvoidType]
-        :param travel_mode: The mode of travel for the requested route.
-        :type travel_mode: str or ~azure.maps.route.models.TravelMode
-        :param hilliness: Degree of hilliness for thrilling route.
-        :type hilliness: str or ~azure.maps.route.models.HillinessDegree
-        :param windingness: Level of turns for thrilling route.
-        :type windingness: str or ~azure.maps.route.models.WindingnessLevel
-        :param vehicle_axle_weight: Weight per axle of the vehicle in kg. A value of 0 means that
+        :paramtype avoid: list[str or ~azure.maps.route.models.RouteAvoidType]
+        :keyword travel_mode: The mode of travel for the requested route.
+        :paramtype travel_mode: str or ~azure.maps.route.models.TravelMode
+        :keyword hilliness: Degree of hilliness for thrilling route.
+        :paramtype hilliness: str or ~azure.maps.route.models.HillinessDegree
+        :keyword windingness: Level of turns for thrilling route.
+        :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
+        :keyword vehicle_axle_weight: Weight per axle of the vehicle in kg. A value of 0 means that
          weight restrictions per axle are not considered.
-        :type vehicle_axle_weight: int
-        :param vehicle_width: Width of the vehicle in meters. A value of 0 means that width
+        :paramtype vehicle_axle_weight: int
+        :keyword vehicle_width: Width of the vehicle in meters. A value of 0 means that width
          restrictions are not considered.
-        :type vehicle_width: float
-        :param vehicle_height: Height of the vehicle in meters. A value of 0 means that height
+        :paramtype vehicle_width: float
+        :keyword vehicle_height: Height of the vehicle in meters. A value of 0 means that height
          restrictions are not considered.
-        :type vehicle_height: float
-        :param vehicle_length: Length of the vehicle in meters. A value of 0 means that length
+        :paramtype vehicle_height: float
+        :keyword vehicle_length: Length of the vehicle in meters. A value of 0 means that length
          restrictions are not considered.
-        :type vehicle_length: float
-        :param vehicle_max_speed: Maximum speed of the vehicle in km/hour.
-        :type vehicle_max_speed: int
-        :param vehicle_weight: Weight of the vehicle in kilograms.
-        :type vehicle_weight: int
-        :param vehicle_commercial: Vehicle is used for commercial purposes and thus may not be allowed
+        :paramtype vehicle_length: float
+        :keyword vehicle_max_speed: Maximum speed of the vehicle in km/hour.
+        :paramtype vehicle_max_speed: int
+        :keyword vehicle_weight: Weight of the vehicle in kilograms.
+        :paramtype vehicle_weight: int
+        :keyword vehicle_commercial: Vehicle is used for commercial purposes and thus may not be allowed
          to drive on some roads.
-        :type vehicle_commercial: bool
-        :param vehicle_load_type: Types of cargo that may be classified as hazardous materials and
+        :paramtype vehicle_commercial: bool
+        :keyword vehicle_load_type: Types of cargo that may be classified as hazardous materials and
          restricted from some roads.
-        :type vehicle_load_type: str or ~azure.maps.route.models.VehicleLoadType
-        :param vehicle_engine_type: Engine type of the vehicle.
-        :type vehicle_engine_type: str or ~azure.maps.route.models.VehicleEngineType
-        :param constant_speed_consumption_in_liters_per_hundred_km: Specifies the speed-dependent
+        :paramtype vehicle_load_type: str or ~azure.maps.route.models.VehicleLoadType
+        :keyword vehicle_engine_type: Engine type of the vehicle.
+        :paramtype vehicle_engine_type: str or ~azure.maps.route.models.VehicleEngineType
+        :keyword constant_speed_consumption_in_liters_per_hundred_km: Specifies the speed-dependent
          component of consumption.
-        :type constant_speed_consumption_in_liters_per_hundred_km: float
-        :param current_fuel_in_liters: Specifies the current supply of fuel in liters.
-        :type current_fuel_in_liters: float
-        :param auxiliary_power_in_liters_per_hour: Specifies the amount of fuel consumed for sustaining
+        :paramtype constant_speed_consumption_in_liters_per_hundred_km: float
+        :keyword current_fuel_in_liters: Specifies the current supply of fuel in liters.
+        :paramtype current_fuel_in_liters: float
+        :keyword auxiliary_power_in_liters_per_hour: Specifies the amount of fuel consumed for sustaining
          auxiliary systems of the vehicle, in liters per hour.
-        :type auxiliary_power_in_liters_per_hour: float
-        :param fuel_energy_density_in_m_joules_per_liter: Specifies the amount of chemical energy
+        :paramtype auxiliary_power_in_liters_per_hour: float
+        :keyword fuel_energy_density_in_m_joules_per_liter: Specifies the amount of chemical energy
          stored in one liter of fuel in megajoules (MJ).
-        :type fuel_energy_density_in_m_joules_per_liter: float
-        :param acceleration_efficiency: Specifies the efficiency of converting chemical energy stored
+        :paramtype fuel_energy_density_in_m_joules_per_liter: float
+        :keyword acceleration_efficiency: Specifies the efficiency of converting chemical energy stored
          in fuel to kinetic energy when the vehicle accelerates
-        :type acceleration_efficiency: float
-        :param deceleration_efficiency: Specifies the efficiency of converting kinetic energy to saved
+        :paramtype acceleration_efficiency: float
+        :keyword deceleration_efficiency: Specifies the efficiency of converting kinetic energy to saved
          (not consumed) fuel when the vehicle decelerates.
-        :type deceleration_efficiency: float
-        :param uphill_efficiency: Specifies the efficiency of converting chemical energy stored in fuel
+        :paramtype deceleration_efficiency: float
+        :keyword uphill_efficiency: Specifies the efficiency of converting chemical energy stored in fuel
          to potential energy when the vehicle gains elevation
-        :type uphill_efficiency: float
-        :param downhill_efficiency: Specifies the efficiency of converting potential energy to saved
+        :paramtype uphill_efficiency: float
+        :keyword downhill_efficiency: Specifies the efficiency of converting potential energy to saved
          (not consumed) fuel when the vehicle loses elevation
-        :type downhill_efficiency: float
-        :param constant_speed_consumption_in_kwh_per_hundred_km: Specifies the speed-dependent component
+        :paramtype downhill_efficiency: float
+        :keyword constant_speed_consumption_in_kwh_per_hundred_km: Specifies the speed-dependent component
          of consumption.
-        :type constant_speed_consumption_in_kwh_per_hundred_km: str
-        :param current_charge_in_kwh: Specifies the current electric energy supply in kilowatt hours
+        :paramtype constant_speed_consumption_in_kwh_per_hundred_km: str
+        :keyword current_charge_in_kwh: Specifies the current electric energy supply in kilowatt hours
          (kWh).
-        :type current_charge_in_kwh: str
-        :param max_charge_in_kwh: Specifies the maximum electric energy supply in kilowatt hours (kWh)
+        :paramtype current_charge_in_kwh: str
+        :keyword max_charge_in_kwh: Specifies the maximum electric energy supply in kilowatt hours (kWh)
          that may be stored in the vehicle's battery.
-        :type max_charge_in_kwh: str
-        :param auxiliary_power_in_kw: Specifies the amount of power consumed for sustaining auxiliary
+        :paramtype max_charge_in_kwh: str
+        :keyword auxiliary_power_in_kw: Specifies the amount of power consumed for sustaining auxiliary
          systems, in kilowatts (kW).
-        :type auxiliary_power_in_kw: str
+        :paramtype auxiliary_power_in_kw: str
         :return: GetRouteRangeResponse
         :rtype: ~azure.maps.route.models.GetRouteRangeResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         coordinates = LatLon() if not coordinates else coordinates
+        query = str(coordinates.lat)+","+str(coordinates.lon)
 
         return self._route_client.get_route_range(
-            query=f"{coordinates.lat, coordinates.lon}",
+            format=TextFormat.JSON,
+            query=query,
             energy_budget_ink_wh=kwargs.get('energy_budget_in_kwh', None),
             constant_speed_consumption_in_liters_per_hundredkm=kwargs.get(
                 'constant_speed_consumption_in_liters_per_hundred_km', None
@@ -351,112 +349,112 @@ class MapsRouteClient(MapsRouteClientBase):
 
         :param route_points_batch: A list of the Coordinate list from which the range calculation should start.
         :type route_points_batch: BatchRequestBody
-        :param max_alternatives: Number of desired alternative routes to be calculated.
-        :type max_alternatives: int
-        :param alternative_type: Controls the optimality, with respect to the given planning criteria,
+        :keyword max_alternatives: Number of desired alternative routes to be calculated.
+        :paramtype max_alternatives: int
+        :keyword alternative_type: Controls the optimality, with respect to the given planning criteria,
          of the calculated alternatives compared to the reference route.
-        :type alternative_type: str or ~azure.maps.route.models.AlternativeRouteType
-        :param min_deviation_distance: All alternative routes returned will follow the reference route
+        :paramtype alternative_type: str or ~azure.maps.route.models.AlternativeRouteType
+        :keyword min_deviation_distance: All alternative routes returned will follow the reference route
          (see section POST Requests) from the origin point of the calculateRoute request for at least
          this number of meters
-        :type min_deviation_distance: int
-        :param arrive_at: The date and time of arrival at the destination point. It must be specified
+        :paramtype min_deviation_distance: int
+        :keyword arrive_at: The date and time of arrival at the destination point. It must be specified
          as a dateTime.
-        :type arrive_at: ~datetime.datetime
-        :param depart_at: The date and time of departure from the origin point.
-        :type depart_at: ~datetime.datetime
-        :param min_deviation_time: All alternative routes
-        :type min_deviation_time: int
-        :param instructions_type: If specified, guidance instructions will be returned.
-        :type instructions_type: str or ~azure.maps.route.models.RouteInstructionsType
-        :param language: The language parameter determines the language of the guidance messages.
-        :type language: str
-        :param compute_best_order: Re-order the route waypoints using a fast heuristic algorithm to
+        :paramtype arrive_at: ~datetime.datetime
+        :keyword depart_at: The date and time of departure from the origin point.
+        :paramtype depart_at: ~datetime.datetime
+        :keyword min_deviation_time: All alternative routes
+        :paramtype min_deviation_time: int
+        :keyword instructions_type: If specified, guidance instructions will be returned.
+        :paramtype instructions_type: str or ~azure.maps.route.models.RouteInstructionsType
+        :keyword language: The language parameter determines the language of the guidance messages.
+        :paramtype language: str
+        :keyword compute_best_order: Re-order the route waypoints using a fast heuristic algorithm to
          reduce the route length.
-        :type compute_best_order: bool
-        :param route_representation: Specifies the representation of the set of routes provided as
+        :paramtype compute_best_order: bool
+        :keyword route_representation: Specifies the representation of the set of routes provided as
          response.
-        :type route_representation: str or ~azure.maps.route.models.RouteRepresentation
-        :param compute_travel_time_for: Specifies whether to return additional travel times using
+        :paramtype route_representation: str or ~azure.maps.route.models.RouteRepresentation
+        :keyword compute_travel_time_for: Specifies whether to return additional travel times using
          different types of traffic information (none, historic, live) as well as the default
          best-estimate travel time.
-        :type compute_travel_time_for: str or ~azure.maps.route.models.ComputeTravelTimeFor
-        :param vehicle_heading: The directional heading of the vehicle in degrees starting at true
+        :paramtype compute_travel_time_for: str or ~azure.maps.route.models.ComputeTravelTimeFor
+        :keyword vehicle_heading: The directional heading of the vehicle in degrees starting at true
          North and continuing in clockwise direction.
-        :type vehicle_heading: int
-        :param report: Specifies which data should be reported for diagnosis purposes.
-        :type report: str
-        :param section_type: Specifies which of the section types is reported in the route response.
-        :type section_type: str or ~azure.maps.route.models.SectionType
-        :param vehicle_axle_weight: Weight per axle of the vehicle in kg.
-        :type vehicle_axle_weight: int
-        :param vehicle_width: Width of the vehicle in meters.
-        :type vehicle_width: float
-        :param vehicle_height: Height of the vehicle in meters.
-        :type vehicle_height: float
-        :param vehicle_length: Length of the vehicle in meters.
-        :type vehicle_length: float
-        :param vehicle_max_speed: Maximum speed of the vehicle in km/hour.
-        :type vehicle_max_speed: int
-        :param vehicle_weight: Weight of the vehicle in kilograms.
-        :type vehicle_weight: int
-        :param vehicle_commercial: Vehicle is used for commercial purposes and thus may not be allowed
+        :paramtype vehicle_heading: int
+        :keyword report: Specifies which data should be reported for diagnosis purposes.
+        :paramtype report: str
+        :keyword section_type: Specifies which of the section types is reported in the route response.
+        :paramtype section_type: str or ~azure.maps.route.models.SectionType
+        :keyword vehicle_axle_weight: Weight per axle of the vehicle in kg.
+        :paramtype vehicle_axle_weight: int
+        :keyword vehicle_width: Width of the vehicle in meters.
+        :paramtype vehicle_width: float
+        :keyword vehicle_height: Height of the vehicle in meters.
+        :paramtype vehicle_height: float
+        :keyword vehicle_length: Length of the vehicle in meters.
+        :paramtype vehicle_length: float
+        :keyword vehicle_max_speed: Maximum speed of the vehicle in km/hour.
+        :paramtype vehicle_max_speed: int
+        :keyword vehicle_weight: Weight of the vehicle in kilograms.
+        :paramtype vehicle_weight: int
+        :keyword vehicle_commercial: Vehicle is used for commercial purposes and thus may not be allowed
          to drive  on some roads.
-        :type vehicle_commercial: bool
-        :param windingness: Level of turns for thrilling route.
-        :type windingness: str or ~azure.maps.route.models.WindingnessLevel
-        :param hilliness: Degree of hilliness for thrilling route.
-        :type hilliness: str or ~azure.maps.route.models.HillinessDegree
-        :param travel_mode: The mode of travel for the requested route.
-        :type travel_mode: str or ~azure.maps.route.models.TravelMode
-        :param avoid: Specifies something that the route calculation should try to avoid when
+        :paramtype vehicle_commercial: bool
+        :keyword windingness: Level of turns for thrilling route.
+        :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
+        :keyword hilliness: Degree of hilliness for thrilling route.
+        :paramtype hilliness: str or ~azure.maps.route.models.HillinessDegree
+        :keyword travel_mode: The mode of travel for the requested route.
+        :paramtype travel_mode: str or ~azure.maps.route.models.TravelMode
+        :keyword avoid: Specifies something that the route calculation should try to avoid when
          determining the route.
-        :type avoid: list[str or ~azure.maps.route.models.RouteAvoidType]
-        :param traffic: Input values:
+        :paramtype avoid: list[str or ~azure.maps.route.models.RouteAvoidType]
+        :keyword traffic: Input values:
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
          data is ignored during routing, the effect of historic traffic on effective road speeds is still
          incorporated.
-        :type traffic: bool
-        :param route_type: The type of route requested.
-        :type route_type: str or ~azure.maps.route.models.RouteType
-        :param vehicle_load_type: Types of cargo that may be classified as hazardous materials and
+        :paramtype traffic: bool
+        :keyword route_type: The type of route requested.
+        :paramtype route_type: str or ~azure.maps.route.models.RouteType
+        :keyword vehicle_load_type: Types of cargo that may be classified as hazardous materials and
          restricted from some roads.
-        :type vehicle_load_type: str or ~azure.maps.route.models.VehicleLoadType
-        :param vehicle_engine_type: Engine type of the vehicle.
-        :type vehicle_engine_type: str or ~azure.maps.route.models.VehicleEngineType
-        :param constant_speed_consumption_in_liters_per_hundred_km: Specifies the speed-dependent
+        :paramtype vehicle_load_type: str or ~azure.maps.route.models.VehicleLoadType
+        :keyword vehicle_engine_type: Engine type of the vehicle.
+        :paramtype vehicle_engine_type: str or ~azure.maps.route.models.VehicleEngineType
+        :keyword constant_speed_consumption_in_liters_per_hundred_km: Specifies the speed-dependent
          component of consumption.
-        :type constant_speed_consumption_in_liters_per_hundred_km: float
-        :param current_fuel_in_liters: Specifies the current supply of fuel in liters.
-        :type current_fuel_in_liters: float
-        :param auxiliary_power_in_liters_per_hour: Specifies the amount of fuel consumed for sustaining
+        :paramtype constant_speed_consumption_in_liters_per_hundred_km: float
+        :keyword current_fuel_in_liters: Specifies the current supply of fuel in liters.
+        :paramtype current_fuel_in_liters: float
+        :keyword auxiliary_power_in_liters_per_hour: Specifies the amount of fuel consumed for sustaining
          auxiliary systems of the vehicle, in liters per hour.
-        :type auxiliary_power_in_liters_per_hour: float
-        :param fuel_energy_density_in_m_joules_per_liter: Specifies the amount of chemical energy
+        :paramtype auxiliary_power_in_liters_per_hour: float
+        :keyword fuel_energy_density_in_m_joules_per_liter: Specifies the amount of chemical energy
          stored in one liter of fuel in megajoules (MJ).
-        :type fuel_energy_density_in_m_joules_per_liter: float
-        :param acceleration_efficiency: Specifies the efficiency of converting chemical energy stored
+        :paramtype fuel_energy_density_in_m_joules_per_liter: float
+        :keyword acceleration_efficiency: Specifies the efficiency of converting chemical energy stored
          in fuel to kinetic energy when the vehicle accelerates.
-        :type acceleration_efficiency: float
-        :param deceleration_efficiency: Specifies the efficiency of converting kinetic energy to saved
+        :paramtype acceleration_efficiency: float
+        :keyword deceleration_efficiency: Specifies the efficiency of converting kinetic energy to saved
          (not consumed) fuel when the vehicle decelerates.
-        :type deceleration_efficiency: float
-        :param uphill_efficiency: Specifies the efficiency of converting chemical energy stored in fuel
+        :paramtype deceleration_efficiency: float
+        :keyword uphill_efficiency: Specifies the efficiency of converting chemical energy stored in fuel
          to potential energy when the vehicle gains elevation.
-        :type uphill_efficiency: float
-        :param downhill_efficiency: Specifies the efficiency of converting potential energy to saved
+        :paramtype uphill_efficiency: float
+        :keyword downhill_efficiency: Specifies the efficiency of converting potential energy to saved
          (not consumed) fuel when the vehicle loses elevation.
-        :type downhill_efficiency: float
-        :param constant_speed_consumption_in_kwh_per_hundred_km: Specifies the speed-dependent component
+        :paramtype downhill_efficiency: float
+        :keyword constant_speed_consumption_in_kwh_per_hundred_km: Specifies the speed-dependent component
          of consumption.
-        :type constant_speed_consumption_in_kwh_per_hundred_km: str
-        :param current_charge_ink_wh: Specifies the current electric energy supply in kilowatt hours
+        :paramtype constant_speed_consumption_in_kwh_per_hundred_km: str
+        :keyword current_charge_ink_wh: Specifies the current electric energy supply in kilowatt hours
          (kWh).
-        :type current_charge_ink_wh: str
-        :param max_charge_ink_wh: Specifies the maximum electric energy supply in kilowatt hours (kWh)
+        :paramtype current_charge_ink_wh: str
+        :keyword max_charge_ink_wh: Specifies the maximum electric energy supply in kilowatt hours (kWh)
          that may be stored in the vehicle's battery.
-        :type max_charge_ink_wh: str
+        :paramtype max_charge_ink_wh: str
         :keyword str auxiliary_power_in_kw: Specifies the amount of power consumed for sustaining auxiliary
          systems, in kilowatts (kW).
         :return: RouteDirectionsResponse
@@ -479,6 +477,7 @@ class MapsRouteClient(MapsRouteClientBase):
            }
         """
         return self._route_client.post_route_directions_batch_sync(
+            format=TextFormat.JSON,
             post_route_directions_batch_request_body=route_points_batch,
             **kwargs
         )
@@ -496,119 +495,120 @@ class MapsRouteClient(MapsRouteClientBase):
 
         :param route_points_batch: A list of the Coordinate list from which the range calculation should start.
         :type route_points_batch: BatchRequestBody
-        :param max_alternatives: Number of desired alternative routes to be calculated.
-        :type max_alternatives: int
-        :param alternative_type: Controls the optimality, with respect to the given planning criteria,
+        :keyword max_alternatives: Number of desired alternative routes to be calculated.
+        :paramtype max_alternatives: int
+        :keyword alternative_type: Controls the optimality, with respect to the given planning criteria,
          of the calculated alternatives compared to the reference route.
-        :type alternative_type: str or ~azure.maps.route.models.AlternativeRouteType
-        :param min_deviation_distance: All alternative routes returned will follow the reference route
+        :paramtype alternative_type: str or ~azure.maps.route.models.AlternativeRouteType
+        :keyword min_deviation_distance: All alternative routes returned will follow the reference route
          (see section POST Requests) from the origin point of the calculateRoute request for at least
          this number of meters
-        :type min_deviation_distance: int
-        :param arrive_at: The date and time of arrival at the destination point. It must be specified
+        :paramtype min_deviation_distance: int
+        :keyword arrive_at: The date and time of arrival at the destination point. It must be specified
          as a dateTime.
-        :type arrive_at: ~datetime.datetime
-        :param depart_at: The date and time of departure from the origin point.
-        :type depart_at: ~datetime.datetime
-        :param min_deviation_time: All alternative routes
-        :type min_deviation_time: int
-        :param instructions_type: If specified, guidance instructions will be returned.
-        :type instructions_type: str or ~azure.maps.route.models.RouteInstructionsType
-        :param language: The language parameter determines the language of the guidance messages.
-        :type language: str
-        :param compute_best_order: Re-order the route waypoints using a fast heuristic algorithm to
+        :paramtype arrive_at: ~datetime.datetime
+        :keyword depart_at: The date and time of departure from the origin point.
+        :paramtype depart_at: ~datetime.datetime
+        :keyword min_deviation_time: All alternative routes
+        :paramtype min_deviation_time: int
+        :keyword instructions_type: If specified, guidance instructions will be returned.
+        :paramtype instructions_type: str or ~azure.maps.route.models.RouteInstructionsType
+        :keyword language: The language parameter determines the language of the guidance messages.
+        :paramtype language: str
+        :keyword compute_best_order: Re-order the route waypoints using a fast heuristic algorithm to
          reduce the route length.
-        :type compute_best_order: bool
-        :param route_representation: Specifies the representation of the set of routes provided as
+        :paramtype compute_best_order: bool
+        :keyword route_representation: Specifies the representation of the set of routes provided as
          response.
-        :type route_representation: str or ~azure.maps.route.models.RouteRepresentation
-        :param compute_travel_time_for: Specifies whether to return additional travel times using
+        :paramtype route_representation: str or ~azure.maps.route.models.RouteRepresentation
+        :keyword compute_travel_time_for: Specifies whether to return additional travel times using
          different types of traffic information (none, historic, live) as well as the default
          best-estimate travel time.
-        :type compute_travel_time_for: str or ~azure.maps.route.models.ComputeTravelTimeFor
-        :param vehicle_heading: The directional heading of the vehicle in degrees starting at true
+        :paramtype compute_travel_time_for: str or ~azure.maps.route.models.ComputeTravelTimeFor
+        :keyword vehicle_heading: The directional heading of the vehicle in degrees starting at true
          North and continuing in clockwise direction.
-        :type vehicle_heading: int
-        :param report: Specifies which data should be reported for diagnosis purposes.
-        :type report: str
-        :param section_type: Specifies which of the section types is reported in the route response.
-        :type section_type: str or ~azure.maps.route.models.SectionType
-        :param vehicle_axle_weight: Weight per axle of the vehicle in kg.
-        :type vehicle_axle_weight: int
-        :param vehicle_width: Width of the vehicle in meters.
-        :type vehicle_width: float
-        :param vehicle_height: Height of the vehicle in meters.
-        :type vehicle_height: float
-        :param vehicle_length: Length of the vehicle in meters.
-        :type vehicle_length: float
-        :param vehicle_max_speed: Maximum speed of the vehicle in km/hour.
-        :type vehicle_max_speed: int
-        :param vehicle_weight: Weight of the vehicle in kilograms.
-        :type vehicle_weight: int
-        :param vehicle_commercial: Vehicle is used for commercial purposes and thus may not be allowed
+        :paramtype vehicle_heading: int
+        :keyword report: Specifies which data should be reported for diagnosis purposes.
+        :paramtype report: str
+        :keyword section_type: Specifies which of the section types is reported in the route response.
+        :paramtype section_type: str or ~azure.maps.route.models.SectionType
+        :keyword vehicle_axle_weight: Weight per axle of the vehicle in kg.
+        :paramtype vehicle_axle_weight: int
+        :keyword vehicle_width: Width of the vehicle in meters.
+        :paramtype vehicle_width: float
+        :keyword vehicle_height: Height of the vehicle in meters.
+        :paramtype vehicle_height: float
+        :keyword vehicle_length: Length of the vehicle in meters.
+        :paramtype vehicle_length: float
+        :keyword vehicle_max_speed: Maximum speed of the vehicle in km/hour.
+        :paramtype vehicle_max_speed: int
+        :keyword vehicle_weight: Weight of the vehicle in kilograms.
+        :paramtype vehicle_weight: int
+        :keyword vehicle_commercial: Vehicle is used for commercial purposes and thus may not be allowed
          to drive  on some roads.
-        :type vehicle_commercial: bool
-        :param windingness: Level of turns for thrilling route.
-        :type windingness: str or ~azure.maps.route.models.WindingnessLevel
-        :param hilliness: Degree of hilliness for thrilling route.
-        :type hilliness: str or ~azure.maps.route.models.HillinessDegree
-        :param travel_mode: The mode of travel for the requested route.
-        :type travel_mode: str or ~azure.maps.route.models.TravelMode
-        :param avoid: Specifies something that the route calculation should try to avoid when
+        :paramtype vehicle_commercial: bool
+        :keyword windingness: Level of turns for thrilling route.
+        :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
+        :keyword hilliness: Degree of hilliness for thrilling route.
+        :paramtype hilliness: str or ~azure.maps.route.models.HillinessDegree
+        :keyword travel_mode: The mode of travel for the requested route.
+        :paramtype travel_mode: str or ~azure.maps.route.models.TravelMode
+        :keyword avoid: Specifies something that the route calculation should try to avoid when
          determining the route.
-        :type avoid: list[str or ~azure.maps.route.models.RouteAvoidType]
-        :param traffic: Input values:
+        :paramtype avoid: list[str or ~azure.maps.route.models.RouteAvoidType]
+        :keyword traffic: Input values:
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
          data is ignored during routing, the effect of historic traffic on effective road speeds is still
          incorporated.
-        :type traffic: bool
-        :param route_type: The type of route requested.
-        :type route_type: str or ~azure.maps.route.models.RouteType
-        :param vehicle_load_type: Types of cargo that may be classified as hazardous materials and
+        :paramtype traffic: bool
+        :keyword route_type: The type of route requested.
+        :paramtype route_type: str or ~azure.maps.route.models.RouteType
+        :keyword vehicle_load_type: Types of cargo that may be classified as hazardous materials and
          restricted from some roads.
-        :type vehicle_load_type: str or ~azure.maps.route.models.VehicleLoadType
-        :param vehicle_engine_type: Engine type of the vehicle.
-        :type vehicle_engine_type: str or ~azure.maps.route.models.VehicleEngineType
-        :param constant_speed_consumption_in_liters_per_hundred_km: Specifies the speed-dependent
+        :paramtype vehicle_load_type: str or ~azure.maps.route.models.VehicleLoadType
+        :keyword vehicle_engine_type: Engine type of the vehicle.
+        :paramtype vehicle_engine_type: str or ~azure.maps.route.models.VehicleEngineType
+        :keyword constant_speed_consumption_in_liters_per_hundred_km: Specifies the speed-dependent
          component of consumption.
-        :type constant_speed_consumption_in_liters_per_hundred_km: float
-        :param current_fuel_in_liters: Specifies the current supply of fuel in liters.
-        :type current_fuel_in_liters: float
-        :param auxiliary_power_in_liters_per_hour: Specifies the amount of fuel consumed for sustaining
+        :paramtype constant_speed_consumption_in_liters_per_hundred_km: float
+        :keyword current_fuel_in_liters: Specifies the current supply of fuel in liters.
+        :paramtype current_fuel_in_liters: float
+        :keyword auxiliary_power_in_liters_per_hour: Specifies the amount of fuel consumed for sustaining
          auxiliary systems of the vehicle, in liters per hour.
-        :type auxiliary_power_in_liters_per_hour: float
-        :param fuel_energy_density_in_m_joules_per_liter: Specifies the amount of chemical energy
+        :paramtype auxiliary_power_in_liters_per_hour: float
+        :keyword fuel_energy_density_in_m_joules_per_liter: Specifies the amount of chemical energy
          stored in one liter of fuel in megajoules (MJ).
-        :type fuel_energy_density_in_m_joules_per_liter: float
-        :param acceleration_efficiency: Specifies the efficiency of converting chemical energy stored
+        :paramtype fuel_energy_density_in_m_joules_per_liter: float
+        :keyword acceleration_efficiency: Specifies the efficiency of converting chemical energy stored
          in fuel to kinetic energy when the vehicle accelerates.
-        :type acceleration_efficiency: float
-        :param deceleration_efficiency: Specifies the efficiency of converting kinetic energy to saved
+        :paramtype acceleration_efficiency: float
+        :keyword deceleration_efficiency: Specifies the efficiency of converting kinetic energy to saved
          (not consumed) fuel when the vehicle decelerates.
-        :type deceleration_efficiency: float
-        :param uphill_efficiency: Specifies the efficiency of converting chemical energy stored in fuel
+        :paramtype deceleration_efficiency: float
+        :keyword uphill_efficiency: Specifies the efficiency of converting chemical energy stored in fuel
          to potential energy when the vehicle gains elevation.
-        :type uphill_efficiency: float
-        :param downhill_efficiency: Specifies the efficiency of converting potential energy to saved
+        :paramtype uphill_efficiency: float
+        :keyword downhill_efficiency: Specifies the efficiency of converting potential energy to saved
          (not consumed) fuel when the vehicle loses elevation.
-        :type downhill_efficiency: float
-        :param constant_speed_consumption_in_kwh_per_hundred_km: Specifies the speed-dependent component
+        :paramtype downhill_efficiency: float
+        :keyword constant_speed_consumption_in_kwh_per_hundred_km: Specifies the speed-dependent component
          of consumption.
-        :type constant_speed_consumption_in_kwh_per_hundred_km: str
-        :param current_charge_ink_wh: Specifies the current electric energy supply in kilowatt hours
+        :paramtype constant_speed_consumption_in_kwh_per_hundred_km: str
+        :keyword current_charge_ink_wh: Specifies the current electric energy supply in kilowatt hours
          (kWh).
-        :type current_charge_ink_wh: str
-        :param max_charge_ink_wh: Specifies the maximum electric energy supply in kilowatt hours (kWh)
+        :paramtype current_charge_ink_wh: str
+        :keyword max_charge_ink_wh: Specifies the maximum electric energy supply in kilowatt hours (kWh)
          that may be stored in the vehicle's battery.
-        :type max_charge_ink_wh: str
+        :paramtype max_charge_ink_wh: str
         :keyword str auxiliary_power_in_kw: Specifies the amount of power consumed for sustaining auxiliary
          systems, in kilowatts (kW).
         :return: RouteDirectionsResponse
-        :rtype: ~azure.maps.route.models.RouteDirectionsResponse
+        :rtype: ~azure.core.polling.LROPoller[~azure.maps.route.models.RouteDirectionsResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         poller = self._route_client.begin_post_route_directions_batch(
+            format=TextFormat.JSON,
             requests=route_points_batch,
             **kwargs
         )
@@ -670,62 +670,63 @@ class MapsRouteClient(MapsRouteClientBase):
          compute the route distance, travel time and other summary for each cell of the matrix based on
          the input parameters.
         :type route_matrix_query: ~azure.maps.route.models.PostRouteMatrixRequestBody
-        :param wait_for_results: Boolean to indicate whether to execute the request synchronously. If
+        :keyword wait_for_results: Boolean to indicate whether to execute the request synchronously. If
          set to true, user will get a 200 response if the request is finished under 120 seconds.
          Otherwise, user will get a 202 response right away. Please refer to the API description for
          more details on 202 response. **Supported only for async request**.
-        :type wait_for_results: bool
-        :param compute_travel_time_for: Specifies whether to return additional travel times using
+        :paramtype wait_for_results: bool
+        :keyword compute_travel_time_for: Specifies whether to return additional travel times using
          different types of traffic information (none, historic, live) as well as the default
          best-estimate travel time.
-        :type compute_travel_time_for: str or ~azure.maps.route.models.ComputeTravelTimeFor
-        :param section_type: Specifies which of the section types is reported in the route response.
-        :type section_type: str or ~azure.maps.route.models.SectionType
-        :param arrive_at: The date and time of arrival at the destination point.
-        :type arrive_at: ~datetime.datetime
-        :param depart_at: The date and time of departure from the origin point.
-        :type depart_at: ~datetime.datetime
-        :param vehicle_axle_weight: Weight per axle of the vehicle in kg. A value of 0 means that
+        :paramtype compute_travel_time_for: str or ~azure.maps.route.models.ComputeTravelTimeFor
+        :keyword section_type: Specifies which of the section types is reported in the route response.
+        :paramtype section_type: str or ~azure.maps.route.models.SectionType
+        :keyword arrive_at: The date and time of arrival at the destination point.
+        :paramtype arrive_at: ~datetime.datetime
+        :keyword depart_at: The date and time of departure from the origin point.
+        :paramtype depart_at: ~datetime.datetime
+        :keyword vehicle_axle_weight: Weight per axle of the vehicle in kg. A value of 0 means that
          weight restrictions per axle are not considered.
-        :type vehicle_axle_weight: int
-        :param vehicle_length: Length of the vehicle in meters. A value of 0 means that length
+        :paramtype vehicle_axle_weight: int
+        :keyword vehicle_length: Length of the vehicle in meters. A value of 0 means that length
          restrictions are not considered.
-        :type vehicle_length: float
-        :param vehicle_height: Height of the vehicle in meters. A value of 0 means that height
+        :paramtype vehicle_length: float
+        :keyword vehicle_height: Height of the vehicle in meters. A value of 0 means that height
          restrictions are not considered.
-        :type vehicle_height: float
-        :param vehicle_width: Width of the vehicle in meters. A value of 0 means that width
+        :paramtype vehicle_height: float
+        :keyword vehicle_width: Width of the vehicle in meters. A value of 0 means that width
          restrictions are not considered.
-        :type vehicle_width: float
-        :param vehicle_max_speed: Maximum speed of the vehicle in km/hour.
-        :type vehicle_max_speed: int
-        :param vehicle_weight: Weight of the vehicle in kilograms.
-        :type vehicle_weight: int
-        :param windingness: Level of turns for thrilling route.
-        :type windingness: str or ~azure.maps.route.models.WindingnessLevel
-        :param hilliness: Degree of hilliness for thrilling route.
-        :type hilliness: str or ~azure.maps.route.models.HillinessDegree
-        :param travel_mode: The mode of travel for the requested route.
-        :type travel_mode: str or ~azure.maps.route.models.TravelMode
-        :param avoid: Specifies something that the route calculation should try to avoid when
+        :paramtype vehicle_width: float
+        :keyword vehicle_max_speed: Maximum speed of the vehicle in km/hour.
+        :paramtype vehicle_max_speed: int
+        :keyword vehicle_weight: Weight of the vehicle in kilograms.
+        :paramtype vehicle_weight: int
+        :keyword windingness: Level of turns for thrilling route.
+        :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
+        :keyword hilliness: Degree of hilliness for thrilling route.
+        :paramtype hilliness: str or ~azure.maps.route.models.HillinessDegree
+        :keyword travel_mode: The mode of travel for the requested route.
+        :paramtype travel_mode: str or ~azure.maps.route.models.TravelMode
+        :keyword avoid: Specifies something that the route calculation should try to avoid when
          determining the route.
-        :type avoid: list[str or ~azure.maps.route.models.RouteAvoidType]
-        :param traffic: Input values:
+        :paramtype avoid: list[str or ~azure.maps.route.models.RouteAvoidType]
+        :keyword traffic: Input values:
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
          data is ignored during routing, the effect of historic traffic on effective road speeds is still
          incorporated.
-        :type traffic: bool
-        :param route_type: The type of route requested.
-        :type route_type: str or ~azure.maps.route.models.RouteType
-        :param vehicle_load_type: Types of cargo that may be classified as hazardous materials and
+        :paramtype traffic: bool
+        :keyword route_type: The type of route requested.
+        :paramtype route_type: str or ~azure.maps.route.models.RouteType
+        :keyword vehicle_load_type: Types of cargo that may be classified as hazardous materials and
          restricted from some roads.
-        :type vehicle_load_type: str or ~azure.maps.route.models.VehicleLoadType
+        :paramtype vehicle_load_type: str or ~azure.maps.route.models.VehicleLoadType
         :return: RouteMatrixResponse
         :rtype: ~azure.maps.route.models.RouteMatrixResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._route_client.post_route_matrix_sync(
+            format=TextFormat.JSON,
             post_route_matrix_request_body=route_matrix_query,
             **kwargs
         )
@@ -749,63 +750,61 @@ class MapsRouteClient(MapsRouteClientBase):
          compute the route distance, travel time and other summary for each cell of the matrix based on
          the input parameters.
         :type route_matrix_query: ~azure.maps.route.models.PostRouteMatrixRequestBody
-        :param wait_for_results: Boolean to indicate whether to execute the request synchronously. If
+        :keyword wait_for_results: Boolean to indicate whether to execute the request synchronously. If
          set to true, user will get a 200 response if the request is finished under 120 seconds.
          Otherwise, user will get a 202 response right away. Please refer to the API description for
          more details on 202 response. **Supported only for async request**.
-        :type wait_for_results: bool
-        :param compute_travel_time_for: Specifies whether to return additional travel times using
+        :paramtype wait_for_results: bool
+        :keyword compute_travel_time_for: Specifies whether to return additional travel times using
          different types of traffic information (none, historic, live) as well as the default
          best-estimate travel time.
-        :type compute_travel_time_for: str or ~azure.maps.route.models.ComputeTravelTimeFor
-        :param section_type: Specifies which of the section types is reported in the route response.
-        :type section_type: str or ~azure.maps.route.models.SectionType
-        :param arrive_at: The date and time of arrival at the destination point.
-        :type arrive_at: ~datetime.datetime
-        :param depart_at: The date and time of departure from the origin point.
-        :type depart_at: ~datetime.datetime
-        :param vehicle_axle_weight: Weight per axle of the vehicle in kg. A value of 0 means that
+        :paramtype compute_travel_time_for: str or ~azure.maps.route.models.ComputeTravelTimeFor
+        :keyword section_type: Specifies which of the section types is reported in the route response.
+        :paramtype section_type: str or ~azure.maps.route.models.SectionType
+        :keyword arrive_at: The date and time of arrival at the destination point.
+        :paramtype arrive_at: ~datetime.datetime
+        :keyword depart_at: The date and time of departure from the origin point.
+        :paramtype depart_at: ~datetime.datetime
+        :keyword vehicle_axle_weight: Weight per axle of the vehicle in kg. A value of 0 means that
          weight restrictions per axle are not considered.
-        :type vehicle_axle_weight: int
-        :param vehicle_length: Length of the vehicle in meters. A value of 0 means that length
+        :paramtype vehicle_axle_weight: int
+        :keyword vehicle_length: Length of the vehicle in meters. A value of 0 means that length
          restrictions are not considered.
-        :type vehicle_length: float
-        :param vehicle_height: Height of the vehicle in meters. A value of 0 means that height
+        :paramtype vehicle_length: float
+        :keyword vehicle_height: Height of the vehicle in meters. A value of 0 means that height
          restrictions are not considered.
-        :type vehicle_height: float
-        :param vehicle_width: Width of the vehicle in meters. A value of 0 means that width
+        :paramtype vehicle_height: float
+        :keyword vehicle_width: Width of the vehicle in meters. A value of 0 means that width
          restrictions are not considered.
-        :type vehicle_width: float
-        :param vehicle_max_speed: Maximum speed of the vehicle in km/hour.
-        :type vehicle_max_speed: int
-        :param vehicle_weight: Weight of the vehicle in kilograms.
-        :type vehicle_weight: int
-        :param windingness: Level of turns for thrilling route.
-        :type windingness: str or ~azure.maps.route.models.WindingnessLevel
-        :param hilliness: Degree of hilliness for thrilling route.
-        :type hilliness: str or ~azure.maps.route.models.HillinessDegree
-        :param travel_mode: The mode of travel for the requested route.
-        :type travel_mode: str or ~azure.maps.route.models.TravelMode
-        :param avoid: Specifies something that the route calculation should try to avoid when
+        :paramtype vehicle_width: float
+        :keyword vehicle_max_speed: Maximum speed of the vehicle in km/hour.
+        :paramtype vehicle_max_speed: int
+        :keyword vehicle_weight: Weight of the vehicle in kilograms.
+        :paramtype vehicle_weight: int
+        :keyword windingness: Level of turns for thrilling route.
+        :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
+        :keyword hilliness: Degree of hilliness for thrilling route.
+        :paramtype hilliness: str or ~azure.maps.route.models.HillinessDegree
+        :keyword travel_mode: The mode of travel for the requested route.
+        :paramtype travel_mode: str or ~azure.maps.route.models.TravelMode
+        :keyword avoid: Specifies something that the route calculation should try to avoid when
          determining the route.
-        :type avoid: list[str or ~azure.maps.route.models.RouteAvoidType]
-        :param traffic: Input values:
-         * true - Do consider all available traffic information during routing
-         * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored during routing, the effect of historic traffic on effective road speeds is still
-         incorporated.
-        :type traffic: bool
-        :param route_type: The type of route requested.
-        :type route_type: str or ~azure.maps.route.models.RouteType
-        :param vehicle_load_type: Types of cargo that may be classified as hazardous materials and
+        :paramtype avoid: list[str or ~azure.maps.route.models.RouteAvoidType]
+        :keyword traffic: Input data is ignored during routing,
+         the effect of historic traffic on effective road speeds is still incorporated.
+        :paramtype traffic: bool
+        :keyword route_type: The type of route requested.
+        :paramtype route_type: str or ~azure.maps.route.models.RouteType
+        :keyword vehicle_load_type: Types of cargo that may be classified as hazardous materials and
          restricted from some roads.
-        :type vehicle_load_type: str or ~azure.maps.route.models.VehicleLoadType
+        :paramtype vehicle_load_type: str or ~azure.maps.route.models.VehicleLoadType
         :return: RouteMatrixResponse
-        :rtype: ~azure.maps.route.models.RouteMatrixResponse
+        :rtype: ~azure.core.polling.LROPoller[~azure.maps.route.models.RouteMatrixResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
         poller = self._route_client.begin_post_route_matrix(
+            format=TextFormat.JSON,
             post_route_matrix_request_body=route_matrix_query,
             **kwargs
         )
