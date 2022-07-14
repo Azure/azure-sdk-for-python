@@ -30,7 +30,7 @@
 /sdk/identity/                                                       @mccoyp @schaabs @xiangyan99
 
 # PRLabel: %Event Hubs
-/sdk/eventhub/                                                       @annatisch @yunhaoling @swathipil @rakshith91
+/sdk/eventhub/                                                       @annatisch @swathipil @kashifkhan @l0lawrence
 
 # PRLabel: %Storage
 /sdk/storage/                                                        @annatisch @tasherif-msft @jalauzon-msft @vincenttran-msft
@@ -99,7 +99,7 @@
 /sdk/deviceupdate/                                                   @dpokluda @sedols
 
 # PRLabel: %Event Grid
-/sdk/eventgrid/                                                      @lmazuel @yunhaoling @swathipil @rakshith91
+/sdk/eventgrid/                                                      @lmazuel @swathipil @rakshith91
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
@@ -126,7 +126,7 @@
 /sql/sql/                                                            @jaredmoo
 
 # PRLabel: %Service Bus
-/sdk/servicebus/                                                     @annatisch @yunhaoling @swathipil @rakshith91
+/sdk/servicebus/                                                     @annatisch @swathipil @kashifkhan @l0lawrence
 
 # PRLabel: %Synapse
 /sdk/synapse/                                                        @wonner @idear1203 @xiangyan99
