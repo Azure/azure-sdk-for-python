@@ -48,7 +48,7 @@ function Get-python-OnboardedDocsMsPackages($DocRepoLocation) {
   return $onboardedPackages
 }
 
-function Get-python-PackageLevelReadme($packageMetadata) {  
+function GetPackageLevelReadme($packageMetadata) {  
   # Fallback for package name
   $packageLevelReadmeName = $packageMetadata.Package
   if ($packageLevelReadmeName.StartsWith('azure-')) {
@@ -63,9 +63,13 @@ function Get-python-PackageLevelReadme($packageMetadata) {
   }
   return $packageLevelReadmeName
 }
+ 
+function Get-python-PackageLevelReadme($packageMetadata) {  
+  return GetPackageLevelReadme -packageMetadata $packageMetadata
+}
 
 function Get-python-DocsMsTocData($packageMetadata, $docRepoLocation) {
-  $packageLevelReadmeName = Get-python-PackageLevelReadme -packageMetadata $packageMetadata
+  $packageLevelReadmeName = GetPackageLevelReadme -packageMetadata $packageMetadata
 
   $packageTocHeader = $packageMetadata.Package
   if ($packageMetadata.DisplayName) {
