@@ -947,31 +947,6 @@ class FileTest(StorageTestCase):
         )
         self.assertTrue(token.__contains__(TEST_HNS_SAS_ENCRYPTION_SCOPE))
 
-    @pytest.mark.skip(reason="Service bug, requires further investigation.")
-    @DataLakePreparer()
-    def test_rename_file_with_account_sas(self, datalake_storage_account_name, datalake_storage_account_key):
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        token = generate_account_sas(
-            self.dsc.account_name,
-            self.dsc.credential.account_key,
-            ResourceTypes(object=True),
-            AccountSasPermissions(write=True, read=True, create=True, delete=True),
-            datetime.utcnow() + timedelta(hours=5),
-
-        )
-
-        # read the created file which is under root directory
-        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, "oldfile", credential=token)
-        file_client.create_file()
-        data_bytes = b"abc"
-        file_client.append_data(data_bytes, 0, 3)
-        file_client.flush_data(3)
-        new_client = file_client.rename_file(file_client.file_system_name + '/' + 'newname')
-
-        data = new_client.download_file().readall()
-        self.assertEqual(data, data_bytes)
-        self.assertEqual(new_client.path_name, "newname")
-
     @pytest.mark.live_test_only
     @DataLakePreparer()
     def test_rename_file_with_file_system_sas(self, datalake_storage_account_name, datalake_storage_account_key):
