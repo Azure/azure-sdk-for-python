@@ -342,6 +342,13 @@ class JobOperations(_ScopeDependentOperations):
         :return: a ValidationResult object containing all found errors.
         :rtype: ValidationResult
         """
+        return self._validate(job, raise_on_failure=raise_on_failure, **kwargs)
+
+    @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.INTERNALCALL)
+    def _validate(self, job: Job, *, raise_on_failure: bool = False, **kwargs) -> ValidationResult:
+        """Implementation of validate. Add this function to avoid calling validate() directly in create_or_update(),
+        which will impact telemetry statistics & bring experimental warning in create_or_update().
+        """
         git_code_validation_result = _ValidationResultBuilder.success()
         # TODO: move this check to Job._validate after validation is supported for all job types
         # If private features are enable and job has code value of type str we need to check
@@ -422,7 +429,7 @@ class JobOperations(_ScopeDependentOperations):
         if job.compute == LOCAL_COMPUTE_TARGET:
             job.environment_variables[COMMON_RUNTIME_ENV_VAR] = "true"
 
-        self.validate(job, raise_on_failure=True)
+        self._validate(job, raise_on_failure=True)
 
         # Create all dependent resources
         self._resolve_arm_id_or_upload_dependencies(job)

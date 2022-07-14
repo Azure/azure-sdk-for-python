@@ -247,20 +247,30 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         # jobs validations are done in _customized_validate()
         return ["jobs"]
 
-    def _customized_validate(self) -> ValidationResult:
-        """Validate that all provided inputs and parameters are valid for current pipeline and components in it."""
-        validation_result = super(PipelineJob, self)._customized_validate()
+    def _validate_compute_is_set(self):
+        validation_result = self._create_empty_validation_result()
+        if self.compute is not None:
+            return validation_result
+        if self.settings is not None and self.settings.default_compute is not None:
+            return validation_result
 
         no_compute_nodes = []
         for node_name, node in self.jobs.items():
             if hasattr(node, "compute") and node.compute is None:
                 no_compute_nodes.append(node_name)
-        if not self.compute:
-            for node_name in no_compute_nodes:
-                validation_result.append_error(
-                    yaml_path=f"jobs.{node_name}.compute",
-                    message="Compute not set",
-                )
+        for node_name in no_compute_nodes:
+            validation_result.append_error(
+                yaml_path=f"jobs.{node_name}.compute",
+                message="Compute not set",
+            )
+        return validation_result
+
+    def _customized_validate(self) -> ValidationResult:
+        """Validate that all provided inputs and parameters are valid for current pipeline and components in it."""
+        validation_result = super(PipelineJob, self)._customized_validate()
+
+        # Validate compute
+        validation_result.merge_with(self._validate_compute_is_set())
 
         for node_name, node in self.jobs.items():
             if isinstance(node, BaseNode):
