@@ -525,7 +525,7 @@ class TestHealth(TextAnalyticsTest):
             polling_interval=self._interval(),
         )
         response = poller.result()
-
+        assert isinstance(poller, AnalyzeHealthcareEntitiesLROPoller)
         results = list(response)
         document_order = ["1", "2", "3", "4"]
         for doc_idx, result in enumerate(results):
