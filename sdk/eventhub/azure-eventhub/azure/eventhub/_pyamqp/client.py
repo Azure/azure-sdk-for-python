@@ -122,11 +122,10 @@ class AMQPClient(object):
     :type encoding: str
     """
 
-    def __init__(self, hostname, auth=None, client_name=None, debug=False, **kwargs):
+    def __init__(self, hostname, auth=None, **kwargs):
         self._hostname = hostname
         self._auth = auth
-        self._name = client_name if client_name else str(uuid.uuid4())
-        self.debug_trace = debug
+        self._name = kwargs.pop("client_name", str(uuid.uuid4()))
 
         self._shutdown = False
         self._connection = None
