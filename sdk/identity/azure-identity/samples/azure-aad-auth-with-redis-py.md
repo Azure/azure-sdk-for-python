@@ -32,7 +32,7 @@ from azure.identity import DefaultAzureCredential
 
 scope = "https://*.cacheinfra.windows.net:10225/appid/.default"  # The scope will be changed for AAD Public Preview
 host = ""  # Required
-port = 6379  # Required
+port = 6380  # Required
 user_name = ""  # Required
 
 
@@ -69,7 +69,7 @@ from azure.identity import DefaultAzureCredential
 
 scope = "https://*.cacheinfra.windows.net:10225/appid/.default"  # The scope will be changed for AAD Public Preview
 host = ""  # Required
-port = 6379  # Required
+port = 6380  # Required
 user_name = ""  # Required
 
 def re_authentication():
