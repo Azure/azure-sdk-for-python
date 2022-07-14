@@ -1527,10 +1527,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
         storage_resource_group_name = kwargs.pop("storage_resource_group_name")
 
-        variables = kwargs.pop("variables")
-        if self.is_live:
-            expiry_time = datetime.utcnow() + timedelta(seconds=10)
-            variables = {"expiry_time": expiry_time.isoformat()}
+        variables = kwargs.pop("variables", {})
+        expiry_time = datetime.utcnow() + timedelta(seconds=10)
+        expiry_time_string = variables.setdefault("expiry_time", expiry_time.isoformat())
 
         bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
@@ -1548,7 +1547,7 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         blob_name = self.get_resource_name('vlwblob')
         blob = bsc.get_blob_client(container_name, blob_name)
 
-        expires = datetime.strptime(variables["expiry_time"], "%Y-%m-%dT%H:%M:%S.%f")
+        expires = datetime.strptime(expiry_time_string, "%Y-%m-%dT%H:%M:%S.%f")
         immutability_policy = ImmutabilityPolicy(expiry_time=expires, policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         blob.create_append_blob(immutability_policy=immutability_policy,
                                 legal_hold=True)
