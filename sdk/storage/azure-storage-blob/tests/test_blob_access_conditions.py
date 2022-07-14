@@ -2867,9 +2867,6 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             for i in range(5):
                 resp = blob.append_block(u'block {0}'.format(i), etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
-        # Assert
-        #assert StorageErrorCode.condition_not_met == e.value.error_code
-
     @BlobPreparer()
     @recorded_by_proxy
     def test_append_block_with_if_none_match(self, **kwargs):
