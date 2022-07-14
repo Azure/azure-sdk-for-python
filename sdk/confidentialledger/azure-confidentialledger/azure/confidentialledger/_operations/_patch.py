@@ -102,7 +102,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         self, transaction_id: str, *, collection_id: Optional[str] = None, **kwargs: Any
     ) -> LROPoller[JSON]:
         """Returns a poller to fetch the ledger entry at the specified transaction id.
-        
+
         A collection id may optionally be specified to indicate the collection from which to fetch
         the value.
 
