@@ -306,7 +306,7 @@ def _get_deserialization_callback_from_task_type(task_type):  # pylint: disable=
         return sentiment_result
     if task_type == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES:
         return custom_entities_result
-    if task_type == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY:
+    if task_type == _AnalyzeActionsType.SINGLE_LABEL_CLASSIFY:
         return classify_document_result
     if task_type == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY:
         return classify_document_result

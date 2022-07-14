@@ -5,42 +5,40 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_single_category_classify.py
+FILE: sample_single_label_classify.py
 
 DESCRIPTION:
     This sample demonstrates how to classify documents into a single custom category. For example,
     movie plot summaries can be categorized into a single movie genre like "Mystery", "Drama", "Thriller",
-    "Comedy", "Action", etc. Classifying documents is available as an action type through
+    "Comedy", "Action", etc. Classifying documents is also available as an action type through
     the begin_analyze_actions API.
 
     For information on regional support of custom features and how to train a model to
     classify your documents, see https://aka.ms/azsdk/textanalytics/customfunctionalities
 
 USAGE:
-    python sample_single_category_classify.py
+    python sample_single_label_classify.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
     2) AZURE_LANGUAGE_KEY - your Language subscription key
-    3) SINGLE_CATEGORY_CLASSIFY_PROJECT_NAME - your Language Studio project name
-    4) SINGLE_CATEGORY_CLASSIFY_DEPLOYMENT_NAME - your Language Studio deployment name
+    3) SINGLE_LABEL_CLASSIFY_PROJECT_NAME - your Language Studio project name
+    4) SINGLE_LABEL_CLASSIFY_DEPLOYMENT_NAME - your Language Studio deployment name
 """
 
 
 import os
 
 
-def sample_classify_document_single_category():
+def sample_classify_document_single_label():
+    # [START single_label_classify]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.textanalytics import (
-        TextAnalyticsClient,
-        SingleCategoryClassifyAction
-    )
+    from azure.ai.textanalytics import TextAnalyticsClient
 
     endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
     key = os.environ["AZURE_LANGUAGE_KEY"]
-    project_name = os.environ["SINGLE_CATEGORY_CLASSIFY_PROJECT_NAME"]
-    deployment_name = os.environ["SINGLE_CATEGORY_CLASSIFY_DEPLOYMENT_NAME"]
+    project_name = os.environ["SINGLE_LABEL_CLASSIFY_PROJECT_NAME"]
+    deployment_name = os.environ["SINGLE_LABEL_CLASSIFY_DEPLOYMENT_NAME"]
     path_to_sample_document = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
@@ -57,29 +55,25 @@ def sample_classify_document_single_category():
     with open(path_to_sample_document) as fd:
         document = [fd.read()]
 
-    poller = text_analytics_client.begin_analyze_actions(
+    poller = text_analytics_client.begin_single_label_classify(
         document,
-        actions=[
-            SingleCategoryClassifyAction(
-                project_name=project_name,
-                deployment_name=deployment_name
-            ),
-        ],
+        project_name=project_name,
+        deployment_name=deployment_name
     )
 
     document_results = poller.result()
-    for doc, classification_results in zip(document, document_results):
-        for classification_result in classification_results:
-            if not classification_result.is_error:
-                classification = classification_result.classifications[0]
-                print("The document text '{}' was classified as '{}' with confidence score {}.".format(
-                    doc, classification.category, classification.confidence_score)
-                )
-            else:
-                print("Document text '{}' has an error with code '{}' and message '{}'".format(
-                    doc, classification_result.code, classification_result.message
-                ))
+    for doc, classification_result in zip(document, document_results):
+        if not classification_result.is_error:
+            classification = classification_result.classifications[0]
+            print("The document text '{}' was classified as '{}' with confidence score {}.".format(
+                doc, classification.category, classification.confidence_score)
+            )
+        else:
+            print("Document text '{}' has an error with code '{}' and message '{}'".format(
+                doc, classification_result.code, classification_result.message
+            ))
+    # [END single_label_classify]
 
 
 if __name__ == "__main__":
-    sample_classify_document_single_category()
+    sample_classify_document_single_label()
