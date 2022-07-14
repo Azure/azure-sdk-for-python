@@ -94,7 +94,7 @@ def _determine_action_type(action):  # pylint: disable=too-many-return-statement
     if action.__class__.__name__ == "CustomSingleLabelClassificationLROTask":
         return _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY
     if action.__class__.__name__ == "CustomMultiLabelClassificationLROTask":
-        return _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
+        return _AnalyzeActionsType.MULTI_LABEL_CLASSIFY
     if action.__class__.__name__ == "HealthcareLROTask":
         return _AnalyzeActionsType.ANALYZE_HEALTHCARE_ENTITIES
     return _AnalyzeActionsType.EXTRACT_KEY_PHRASES
