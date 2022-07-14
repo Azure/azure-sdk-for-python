@@ -1750,7 +1750,7 @@ class _AnalyzeActionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     )
     ANALYZE_SENTIMENT = "analyze_sentiment"  #: Sentiment Analysis action.
     RECOGNIZE_CUSTOM_ENTITIES = "recognize_custom_entities"
-    SINGLE_CATEGORY_CLASSIFY = "single_category_classify"
+    SINGLE_LABEL_CLASSIFY = "single_label_classify"
     MULTI_CATEGORY_CLASSIFY = "multi_category_classify"
     ANALYZE_HEALTHCARE_ENTITIES = "analyze_healthcare_entities"
 
