@@ -79,8 +79,8 @@ jobs:
           --ml-wheel-folder="$(Build.ArtifactStagingDirectory)/azure-ai-ml"
 
     - pwsh: |
-        cat "$(mlrepo)/sdk/build.sh"
-      displayName: Display Updated Build.sh
+        cat "$(mlrepo)/sdk/setup.sh"
+      displayName: Display Updated setup.sh
       continueOnError: true
 
 
