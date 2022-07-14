@@ -1,20 +1,23 @@
+import asyncio
 import pytest
-from azure.monitor.ingestion import LogsIngestionClient
-from azure.identity import ClientSecretCredential
+from azure.monitor.ingestion.aio import LogsIngestionClient
+from azure.identity.aio import ClientSecretCredential
 
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
 from preparer import IngestionPreparer
 
-class TestLogsIngestionClient(AzureRecordedTestCase):
-    @pytest.mark.live_test_only
+
+class TestLogsIngestionClientAsync(AzureRecordedTestCase):
     @IngestionPreparer()
-    @recorded_by_proxy
-    def test_send_logs(self, variables, azure_monitor_dce, azure_monitor_dcr_id, monitor_client_id, monitor_client_secret, monitor_tenant_id):
+    @recorded_by_proxy_async
+    async def test_send_logs_async(self, variables, azure_monitor_dce, azure_monitor_dcr_id, monitor_client_id, monitor_client_secret, monitor_tenant_id):
         credential = ClientSecretCredential(
         client_id = monitor_client_id,
         client_secret = monitor_client_secret,
         tenant_id = monitor_tenant_id
-        )
+    )
+
         client = LogsIngestionClient(endpoint=azure_monitor_dce, credential=credential)
         body = [
             {
@@ -29,4 +32,4 @@ class TestLogsIngestionClient(AzureRecordedTestCase):
             }
             ]
 
-        response = client.upload(rule_id=azure_monitor_dcr_id, stream_name="Custom-MyTableRawData", logs=body)
+        response = await client.upload(rule_id=azure_monitor_dcr_id, stream_name="Custom-MyTableRawData", logs=body)

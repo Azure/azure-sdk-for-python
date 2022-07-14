@@ -428,6 +428,19 @@
       ]
     },
     {
+      "filename": "sdk/monitor/test-resources.json",
+      "words": [
+        "azconfig",
+        "azmonitordce",
+        "euap",
+        "azmonitordcr",
+        "azmonitorlogsws",
+        "authr",
+        "dcrrole",
+        "pergb"
+      ]
+    },
+    {
       "filename": "sdk/schemaregistry/**/tests/**/*.py",
       "words": [
         "favo",

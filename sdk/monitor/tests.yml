@@ -4,6 +4,7 @@ stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: monitor
+      TestProxy: true
       TestTimeoutInMinutes: 300
       BuildTargetingString: azure-monitor-*
       EnvVars:
@@ -14,7 +15,4 @@ stages:
         LOG_WORKSPACE_ID: $(azure-monitor-query-log-workspace)
         SECONDARY_WORKSPACE_ID: $(python-query-secondary-workspace-id)
         METRICS_RESOURCE_URI: $(azure-monitor-query-metrics-uri)
-        DATA_COLLECTION_ENDPOINT: $(azure-monitor-ingestion-dcr-endpoint)
-        LOGS_DCR_RULE_ID: $(azure-monitor-ingestion-dcr-rule-id)
-        LOGS_DCR_STREAM_NAME: $(azure-monitor-ingestion-dcr-stream-name)
         AZURE_TEST_RUN_LIVE: 'true'
