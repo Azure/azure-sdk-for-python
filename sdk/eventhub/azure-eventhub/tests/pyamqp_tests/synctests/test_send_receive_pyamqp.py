@@ -4,18 +4,15 @@
 # --------------------------------------------------------------------------------------------
 
 import pytest
-import asyncio
-import logging
 
-from azure.eventhub._pyamqp.aio import _authentication_async
-from azure.eventhub._pyamqp.aio import ReceiveClientAsync, SendClientAsync
+from azure.eventhub._pyamqp import authentication, ReceiveClient, SendClient
 from azure.eventhub._pyamqp.constants import TransportType
 from azure.eventhub._pyamqp.message import Message
 
 
-async def send_message(live_eventhub):
+def send_message(live_eventhub):
     uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
-    sas_auth = _authentication_async.SASTokenAuthAsync(
+    sas_auth = authentication.SASTokenAuth(
         uri=uri,
         audience=uri,
         username=live_eventhub['key_name'],
@@ -29,13 +26,13 @@ async def send_message(live_eventhub):
     
     message = Message(value="Single Message")
 
-    async with SendClientAsync(live_eventhub['hostname'], target, auth=sas_auth, debug=True, transport_type=TransportType.Amqp) as send_client:
-        await send_client.send_message_async(message)
+    with SendClient(live_eventhub['hostname'], target, auth=sas_auth, debug=True, transport_type=TransportType.Amqp) as send_client:
+        send_client.send_message(message)
 
-@pytest.mark.asyncio
-async def test_event_hubs_client_web_socket_async(live_eventhub):
+
+def test_event_hubs_client_amqp(live_eventhub):
     uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
-    sas_auth = _authentication_async.SASTokenAuthAsync(
+    sas_auth = authentication.SASTokenAuth(
         uri=uri,
         audience=uri,
         username=live_eventhub['key_name'],
@@ -48,9 +45,8 @@ async def test_event_hubs_client_web_socket_async(live_eventhub):
         live_eventhub['consumer_group'],
         live_eventhub['partition'])
 
-    await send_message(live_eventhub=live_eventhub)
+    send_message(live_eventhub=live_eventhub)
 
-    async with ReceiveClientAsync(live_eventhub['hostname'] + '/$servicebus/websocket/', source, auth=sas_auth, debug=False, timeout=500, prefetch=1, transport_type=TransportType.AmqpOverWebsocket) as receive_client:
-        messages = await receive_client.receive_message_batch_async(max_batch_size=1)
+    with ReceiveClient(live_eventhub['hostname'], source, auth=sas_auth, debug=False, timeout=500, prefetch=1, transport_type=TransportType.Amqp) as receive_client:
+        messages = receive_client.receive_message_batch(max_batch_size=1)
         assert len(messages) > 0
-
