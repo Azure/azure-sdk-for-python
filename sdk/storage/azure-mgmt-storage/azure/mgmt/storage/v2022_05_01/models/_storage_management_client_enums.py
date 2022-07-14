@@ -268,7 +268,7 @@ class LargeFileSharesState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLED = "Disabled"
     ENABLED = "Enabled"
 
-class LeaseContainerRequestAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class LeaseContainerRequestPropertyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the lease action. Can be one of the available actions.
     """
 

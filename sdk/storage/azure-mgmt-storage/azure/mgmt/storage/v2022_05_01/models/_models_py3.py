@@ -3450,7 +3450,8 @@ class LeaseContainerRequest(msrest.serialization.Model):
 
     :ivar action: Required. Specifies the lease action. Can be one of the available actions. Known
      values are: "Acquire", "Renew", "Change", "Release", "Break".
-    :vartype action: str or ~azure.mgmt.storage.v2022_05_01.models.LeaseContainerRequestAction
+    :vartype action: str or
+     ~azure.mgmt.storage.v2022_05_01.models.LeaseContainerRequestPropertyType
     :ivar lease_id: Identifies the lease. Can be specified in any valid GUID string format.
     :vartype lease_id: str
     :ivar break_period: Optional. For a break action, proposed duration the lease should continue
@@ -3479,7 +3480,7 @@ class LeaseContainerRequest(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        action: Union[str, "_models.LeaseContainerRequestAction"],
+        action: Union[str, "_models.LeaseContainerRequestPropertyType"],
         lease_id: Optional[str] = None,
         break_period: Optional[int] = None,
         lease_duration: Optional[int] = None,
@@ -3489,7 +3490,8 @@ class LeaseContainerRequest(msrest.serialization.Model):
         """
         :keyword action: Required. Specifies the lease action. Can be one of the available actions.
          Known values are: "Acquire", "Renew", "Change", "Release", "Break".
-        :paramtype action: str or ~azure.mgmt.storage.v2022_05_01.models.LeaseContainerRequestAction
+        :paramtype action: str or
+         ~azure.mgmt.storage.v2022_05_01.models.LeaseContainerRequestPropertyType
         :keyword lease_id: Identifies the lease. Can be specified in any valid GUID string format.
         :paramtype lease_id: str
         :keyword break_period: Optional. For a break action, proposed duration the lease should
