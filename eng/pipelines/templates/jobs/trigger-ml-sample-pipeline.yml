@@ -26,7 +26,7 @@ jobs:
     steps:
     - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
       parameters:
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BuildTargetingString: "azure-*"
 
     - template: ../steps/build-artifacts.yml
       parameters:
