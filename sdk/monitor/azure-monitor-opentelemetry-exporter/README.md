@@ -25,7 +25,7 @@ To use this package, you must have:
 
 ### Instantiate the client
 
-Interaction with Azure monitor exporter starts with an instance of the `AzureMonitorTraceExporter` class for distributed tracing or `AzureMonitorTraceExporter` for logging. You will need a **connection_string** to instantiate the object.
+Interaction with Azure monitor exporter starts with an instance of the `AzureMonitorTraceExporter` class for distributed tracing or `AzureMonitorLogExporter` for logging. You will need a **connection_string** to instantiate the object.
 Please find the samples linked below for demonstration as to how to construct the exporter using a connection string.
 
 #### Logging
