@@ -28,12 +28,25 @@ jobs:
       parameters:
         BuildTargetingString: "azure-*"
 
-    - template: ../steps/build-artifacts.yml
-      parameters:
-        ServiceDirectory: 'ml'
-        BuildDocs: false
-        TestPipeline: false
-        Artifacts: ${{ parameters.Artifacts }}
+    - script: |
+        echo "##vso[build.addbuildtag]Scheduled"
+      displayName: 'Tag scheduled builds'
+      condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
+
+    - task: UsePythonVersion@0
+      displayName: 'Use Python $(PythonVersion)'
+      inputs:
+        versionSpec: $(PythonVersion)
+
+    - script: |
+        pip install -r eng/ci_tools.txt
+      displayName: 'Prep Environment'
+
+    - task: PythonScript@0
+      displayName: 'Generate Packages'
+      inputs:
+        scriptPath: 'scripts/devops_tasks/build_packages.py'
+        arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --devbuild="$(SetDevVersion)"'
 
     # generate the packages
     - pwsh: |
