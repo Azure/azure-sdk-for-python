@@ -1,0 +1,75 @@
+parameters:
+  - name: ServiceDirectory
+    type: string
+    default: 'ml'
+  - name: Artifacts
+    type: object
+    default: 
+    - name: azure-ai-ml
+      safeName: azureaiml
+      skipVerifyChangeLog: true
+  - name: SamplesRepo
+    type: string
+    default: 'https://github.com/scbedd/azureml-examples.git'
+
+jobs:
+  - job: 'Build_Upload_PR'
+    displayName: "Build, Upload, and PR Azure ML Changeset"
+    timeoutInMinutes: 90
+    variables:
+    - template: ../variables/globals.yml
+
+    pool:
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04
+
+    steps:
+    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+      parameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
+    - template: ../steps/build-artifacts.yml
+      parameters:
+        ServiceDirectory: 'ml'
+        BuildDocs: false
+        TestPipeline: false
+        Artifacts: ${{ parameters.Artifacts }}
+
+    # generate the packages
+    - pwsh: |
+        Get-ChildItem "$(Build.ArtifactStagingDirectory)" -R
+      displayName: Output Staging Directory
+      continueOnError: true
+
+    # foreach package, upload to a blob storage location, store that URI as an alongside the artifact under
+    # <full_whl_or_sdist_name>.bloblocation
+
+    # clone the samples repo
+    - pwsh: |
+        git clone --depth 1 ${{ parameters.SamplesRepo }} $(Agent.BuildDirectory)/ml
+        Write-Host "##vso[task.setvariable variable=mlrepo;]$(Agent.BuildDirectory)/ml"
+      displayName: Clone the ML Samples Repo
+      continueOnError: true
+
+    - pwsh: |
+        Get-ChildItem "$(mlrepo)" -R
+      displayName: Output Staging Directory
+      continueOnError: true
+
+    - task: PythonScript@0
+      displayName: 'Generate Samples Repo Changes'
+      continueOnError: true
+      inputs:
+        scriptPath: 'scripts/devops_tasks/generate_ml_sample_update.py'
+        arguments: >-
+          --ml-repo="$(mlrepo)"
+          --ml-wheel-folder="$(Build.ArtifactStagingDirectory)/azure-ai-ml"
+
+    - pwsh: |
+        cat "$(mlrepo)/sdk/build.sh"
+      displayName: Display Updated Build.sh
+      continueOnError: true
+
+
+    # call into detect changes
+    # call into submit PR
