@@ -145,29 +145,29 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
         invalid_url = url+"/"+"tableName"
         # test table client has the same table name as in url
         tc = TableClient(invalid_url, "tableName", credential=tables_primary_storage_account_key)
-        with pytest.raises(ValueError) as excinfo:
+        with pytest.raises(ValueError) as exc:
             tc.create_table()
-            assert ("table specified does not exist") in str(excinfo)
-            assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(excinfo)
+        assert ("table specified does not exist") in str(exc.value)
+        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
         # test table client has a different table name as in url
         tc2 = TableClient(invalid_url, "tableName2", credential=tables_primary_storage_account_key)
-        with pytest.raises(ValueError) as excinfo:
+        with pytest.raises(ValueError) as exc:
             tc2.create_table()
-            assert ("table specified does not exist") in str(excinfo)
-            assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(excinfo)
+        assert ("table specified does not exist") in str(exc.value)
+        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
 
         valid_tc = TableClient(url, "tableName", credential=tables_primary_storage_account_key)
         valid_tc.create_table()
         # test creating a table when it already exists
-        with pytest.raises(ValueError) as excinfo:
+        with pytest.raises(ValueError) as exc:
             tc.create_table()
-            assert ("values are not specified") in str(excinfo)
-            assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(excinfo)
+        assert ("values are not specified") in str(exc.value)
+        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
         # test deleting a table when it already exists
-        with pytest.raises(ValueError) as excinfo:
+        with pytest.raises(ValueError) as exc:
             tc.delete_table()
-            assert ("URI does not match number of key properties for the resource") in str(excinfo)
-            assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(excinfo)
+        assert ("URI does not match number of key properties for the resource") in str(exc.value)
+        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
         valid_tc.delete_table()
 
 
