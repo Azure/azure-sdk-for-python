@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_action_healthcare.py
+FILE: sample_analyze_healthcare_action.py
 
 DESCRIPTION:
     This sample demonstrates how to submit a collection of text documents for analysis, which uses the
@@ -14,7 +14,7 @@ DESCRIPTION:
     The response will contain results from each of the individual actions specified in the request.
 
 USAGE:
-    python sample_analyze_action_healthcare.py
+    python sample_analyze_healthcare_action.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
@@ -25,7 +25,7 @@ USAGE:
 import os
 
 
-def sample_analyze_action_healthcare():
+def sample_analyze_healthcare_action():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import (
         TextAnalyticsClient,
@@ -56,7 +56,7 @@ def sample_analyze_action_healthcare():
         display_name="Sample Text Analysis",
         actions=[
             AnalyzeHealthcareEntitiesAction(),
-            RecognizePiiEntitiesAction(),
+            RecognizePiiEntitiesAction(domain_filter="phi"),
         ],
     )
 
@@ -108,4 +108,4 @@ def sample_analyze_action_healthcare():
 
 
 if __name__ == "__main__":
-    sample_analyze_action_healthcare()
+    sample_analyze_healthcare_action()
