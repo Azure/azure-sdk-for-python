@@ -1,9 +1,11 @@
+from contextlib import suppress
 import json
 import logging
 import os
 import re
 
 from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
+import black
 from pathlib import Path
 from subprocess import check_call
 from typing import List
@@ -126,3 +128,28 @@ def judge_tag_preview(path: str) -> bool:
 
     _LOGGER.info(f'find single api version:{api_version}')
     return 'preview' in api_version
+
+
+def format_samples(sdk_code_path) -> None:
+    generate_sample_path = Path(sdk_code_path + '/generate_sample')
+    if not os.path.exists(generate_sample_path):
+        _LOGGER.info(f'not find generate_sample')
+        return
+    
+    for root, ds, files in os.walk(generate_sample_path):
+        for file in files:
+            if file.suffix != '.py':
+                continue
+            sample = Path(root+file)
+
+            with open(path, 'r') as fr:
+                file_content = fr.read()
+
+            with suppress(black.NothingChanged):
+                file_content = read_file(path)
+                file_content = black.format_file_contents(file_content, fast=True, mode=_BLACK_MODE)
+
+            with open(path, 'w') as fw:
+                fw.write(file_content)
+
+    _LOGGER.info(f'format generate_sample successfully')
