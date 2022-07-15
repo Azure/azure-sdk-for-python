@@ -22,8 +22,12 @@ from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake._models import AnalyticsLogging, Metrics, RetentionPolicy, \
-    StaticWebsite, CorsRule
+    StaticWebsite, CorsRule, ServiceClientEncryptionScope
 
+# ------------------------------------------------------------------------------
+TEST_FILE_SYSTEM_PREFIX = 'filesystem'
+TEST_SERVICE_CLIENT_ENCRYPTION_KEY_SCOPE = ServiceClientEncryptionScope(
+    default_encryption_scope="hnstestscope1")
 # ------------------------------------------------------------------------------
 
 
@@ -348,3 +352,21 @@ class DatalakeServiceTest(StorageTestCase):
         assert client.url == 'https://foo.dfs.core.windows.net/fsname/dname'
         assert client.primary_hostname == 'foo.dfs.core.windows.net'
         assert not client.secondary_hostname
+
+    @DataLakePreparer()
+    def test_create_file_system_encryption_scope(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system_name = "testfs"
+
+        # Act
+        file_system_client = self.dsc.create_file_system(
+            file_system=file_system_name,
+            service_client_encryption_scope=TEST_SERVICE_CLIENT_ENCRYPTION_KEY_SCOPE)
+        props = file_system_client.get_file_system_properties()
+
+        # Assert
+        self.assertTrue(props)
+        self.assertIsNotNone(props['encryption_scope'])
+        self.assertEqual(props['encryption_scope'].default_encryption_scope,
+                         TEST_SERVICE_CLIENT_ENCRYPTION_KEY_SCOPE.default_encryption_scope)

@@ -813,11 +813,27 @@ class FileSystemEncryptionScope(BlobContainerEncryptionScope):
     .. versionadded:: 12.9.0
 
     :param str default_encryption_scope:
-        Specifies the default encryption scope to set on the container and use for
+        Specifies the default encryption scope to set on the file system and use for
         all future writes.
     :param bool prevent_encryption_scope_override:
         If true, prevents any request from specifying a different encryption scope than the scope
-        set on the container. Default value is false.
+        set on the file system. Default value is false.
+    """
+
+class ServiceClientEncryptionScope(BlobContainerEncryptionScope):
+    """The default encryption scope configuration for a service client.
+
+    This scope is used implicitly for all future writes within the service client,
+    but can be overridden per blob operation.
+
+    .. versionadded:: 12.9.0
+
+    :param str default_encryption_scope:
+        Specifies the default encryption scope to set on the service client and use for
+        all future writes.
+    :param bool prevent_encryption_scope_override:
+        If true, prevents any request from specifying a different encryption scope than the scope
+        set on the service client. Default value is false.
     """
 
 
