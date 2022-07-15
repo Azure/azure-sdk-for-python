@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/labeler@v3
       - name: add labels
+        uses: actions/labeler@v3
         if: env.BASE_BRANCH == 'main'
         with:
           github_token: ${{ secrets.GH_AZURE_SDK_PROJECT_PAT }}
