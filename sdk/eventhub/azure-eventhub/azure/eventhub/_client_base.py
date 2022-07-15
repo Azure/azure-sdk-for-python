@@ -376,7 +376,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             mgmt_client = AMQPClient(
                 hostname,
                 auth=mgmt_auth,
-                debug=self._config.network_tracing,
+                network_trace=self._config.network_tracing,
                 transport_type=self._config.transport_type,
                 http_proxy=self._config.http_proxy,
                 custom_endpoint_address=custom_endpoint_address,
@@ -386,7 +386,8 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 mgmt_client.open()
                 while not mgmt_client.client_ready():
                     time.sleep(0.05)
-                mgmt_msg.application_properties["security_token"] = mgmt_auth.get_token()
+                access_token = mgmt_auth.get_token()
+                mgmt_msg.application_properties["security_token"] = access_token.token
                 response = mgmt_client.mgmt_request(
                     mgmt_msg,
                     operation=READ_OPERATION.decode(),
