@@ -347,3 +347,18 @@ def test_raw_deserializer(http_request, http_response, requests_transport_respon
     assert result == u"é"
     assert response.context["response_encoding"] == "utf-8-sig"
     del request.context['response_encoding']
+
+def test_json_merge_patch():
+    assert ContentDecodePolicy.deserialize_from_text('{"hello": "world"}', mime_type="application/merge-patch+json") == {"hello": "world"}
+
+def test_json_regex():
+    assert not ContentDecodePolicy.JSON_REGEXP.match("text/plain")
+    assert ContentDecodePolicy.JSON_REGEXP.match("application/json")
+    assert ContentDecodePolicy.JSON_REGEXP.match("text/json")
+    assert ContentDecodePolicy.JSON_REGEXP.match("application/merge-patch+json")
+    assert ContentDecodePolicy.JSON_REGEXP.match("application/ld+json")
+    assert ContentDecodePolicy.JSON_REGEXP.match("application/vnd.microsoft.appconfig.kv+json")
+    assert not ContentDecodePolicy.JSON_REGEXP.match("application/+json")
+    assert not ContentDecodePolicy.JSON_REGEXP.match("application/not-json")
+    assert not ContentDecodePolicy.JSON_REGEXP.match("application/iamjson")
+    assert not ContentDecodePolicy.JSON_REGEXP.match("fake/json")

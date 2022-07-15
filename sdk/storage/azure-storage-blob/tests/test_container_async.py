@@ -844,7 +844,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         # Assert
         with self.assertRaises(HttpResponseError):
             await container.acquire_lease()
-        self.sleep(15)
+        self.sleep(17)
         await container.acquire_lease()
 
     @BlobPreparer()

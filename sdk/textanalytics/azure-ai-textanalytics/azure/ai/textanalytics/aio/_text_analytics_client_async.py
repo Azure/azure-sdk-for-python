@@ -5,7 +5,6 @@
 # pylint: disable=too-many-lines
 
 from typing import Union, Any, List, Dict, TYPE_CHECKING, cast
-from functools import partial
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
@@ -25,6 +24,7 @@ from .._response_handlers import (
     sentiment_result,
     language_result,
     pii_entities_result,
+    _get_result_from_continuation_token
 )
 from ._response_handlers_async import healthcare_paged_result, analyze_paged_result
 from .._models import (
@@ -46,7 +46,7 @@ from .._models import (
     AnalyzeHealthcareEntitiesResult,
     RecognizeCustomEntitiesAction,
     RecognizeCustomEntitiesResult,
-    SingleCategoryClassifyAction,
+    SingleLabelClassifyAction,
     MultiCategoryClassifyAction,
     ClassifyDocumentResult,
     AnalyzeHealthcareEntitiesAction
@@ -58,6 +58,7 @@ from ._lro_async import (
     AsyncAnalyzeActionsLROPollingMethod,
     AsyncAnalyzeHealthcareEntitiesLROPoller,
     AsyncAnalyzeActionsLROPoller,
+    AsyncTextAnalyticsLROPoller,
 )
 
 
@@ -812,8 +813,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         except HttpResponseError as error:
             return process_http_response_error(error)
 
+    # pylint: disable=unused-argument
     def _healthcare_result_callback(
-        self, doc_id_order, raw_response, deserialized, headers, show_stats=False
+        self, raw_response, deserialized, doc_id_order, task_id_order=None, show_stats=False, bespoke=False
     ):
         if deserialized is None:
             models = self._client.models(api_version=self._api_version)
@@ -825,7 +827,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             self._client.analyze_text_job_status if is_language_api(self._api_version) else self._client.health_status,
             raw_response,
             deserialized,
-            headers,
             show_stats=show_stats,
         )
 
@@ -917,26 +918,20 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         display_name = kwargs.pop("display_name", None)
 
         if continuation_token:
-            def get_result_from_cont_token(initial_response, pipeline_response):
-                doc_id_order = initial_response.context.options["doc_id_order"]
-                show_stats = initial_response.context.options["show_stats"]
-                return self._healthcare_result_callback(
-                    doc_id_order, pipeline_response, None, {}, show_stats=show_stats
-                )
-
             return cast(
                 AsyncAnalyzeHealthcareEntitiesLROPoller[
                     AsyncItemPaged[Union[AnalyzeHealthcareEntitiesResult, DocumentError]]
                 ],
-                AsyncAnalyzeHealthcareEntitiesLROPoller.from_continuation_token(
-                    polling_method=AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
+                _get_result_from_continuation_token(
+                    self._client._client,  # pylint: disable=protected-access
+                    continuation_token,
+                    AsyncAnalyzeHealthcareEntitiesLROPoller,
+                    AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
                         text_analytics_client=self._client,
                         timeout=polling_interval,
                         **kwargs
                     ),
-                    client=self._client._client,  # pylint: disable=protected-access
-                    deserialization_callback=get_result_from_cont_token,
-                    continuation_token=continuation_token
+                    self._healthcare_result_callback
                 )
             )
 
@@ -944,8 +939,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         doc_id_order = [doc.get("id") for doc in docs]
         my_cls = kwargs.pop(
             "cls",
-            partial(
-                self._healthcare_result_callback, doc_id_order, show_stats=show_stats
+            lambda pipeline_response, deserialized, _: self._healthcare_result_callback(
+                pipeline_response, deserialized, doc_id_order, show_stats=show_stats
             ),
         )
         models = self._client.models(api_version=self._api_version)
@@ -1024,7 +1019,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             return process_http_response_error(error)
 
     def _analyze_result_callback(
-        self, doc_id_order, task_order, raw_response, deserialized, headers, show_stats=False
+        self, raw_response, deserialized, doc_id_order, task_id_order=None, show_stats=False, bespoke=False
     ):
 
         if deserialized is None:
@@ -1033,12 +1028,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             deserialized = response_cls.deserialize(raw_response)
         return analyze_paged_result(
             doc_id_order,
-            task_order,
+            task_id_order,
             self._client.analyze_text_job_status if is_language_api(self._api_version) else self._client.analyze_status,
             raw_response,
             deserialized,
-            headers,
             show_stats=show_stats,
+            bespoke=bespoke
         )
 
     @distributed_trace_async
@@ -1057,7 +1052,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 ExtractKeyPhrasesAction,
                 AnalyzeSentimentAction,
                 RecognizeCustomEntitiesAction,
-                SingleCategoryClassifyAction,
+                SingleLabelClassifyAction,
                 MultiCategoryClassifyAction,
                 AnalyzeHealthcareEntitiesAction,
             ]
@@ -1102,7 +1097,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :type actions:
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
             RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or
-            RecognizeCustomEntitiesAction or SingleCategoryClassifyAction or
+            RecognizeCustomEntitiesAction or SingleLabelClassifyAction or
             MultiCategoryClassifyAction or AnalyzeHealthcareEntitiesAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
@@ -1138,7 +1133,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. versionadded:: v3.1
             The *begin_analyze_actions* client method.
         .. versionadded:: 2022-04-01-preview
-            The *RecognizeCustomEntitiesAction*, *SingleCategoryClassifyAction*,
+            The *RecognizeCustomEntitiesAction*, *SingleLabelClassifyAction*,
             *MultiCategoryClassifyAction*, and *AnalyzeHealthcareEntitiesAction* input options and the
             corresponding *RecognizeCustomEntitiesResult*, *ClassifyDocumentResult*,
             and *AnalyzeHealthcareEntitiesResult* result objects
@@ -1161,26 +1156,22 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", None)
         polling_interval = kwargs.pop("polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
+        poller_cls = kwargs.pop("poller_cls", AsyncAnalyzeActionsLROPoller)
+        bespoke = kwargs.pop("bespoke", False)
 
         if continuation_token:
-            def get_result_from_cont_token(initial_response, pipeline_response):
-                doc_id_order = initial_response.context.options["doc_id_order"]
-                task_id_order = initial_response.context.options["task_id_order"]
-                show_stats = initial_response.context.options["show_stats"]
-                return self._analyze_result_callback(
-                    doc_id_order, task_id_order, pipeline_response, None, {}, show_stats=show_stats
-                )
-
             return cast(
                 AsyncAnalyzeActionsResponse,
-                AsyncAnalyzeActionsLROPoller.from_continuation_token(
-                    polling_method=AsyncAnalyzeActionsLROPollingMethod(
+                _get_result_from_continuation_token(
+                    self._client._client,  # pylint: disable=protected-access
+                    continuation_token,
+                    AsyncAnalyzeActionsLROPoller,
+                    AsyncAnalyzeActionsLROPollingMethod(
                         timeout=polling_interval,
                         **kwargs
                     ),
-                    client=self._client._client,  # pylint: disable=protected-access
-                    deserialization_callback=get_result_from_cont_token,
-                    continuation_token=continuation_token
+                    self._analyze_result_callback,
+                    bespoke
                 )
             )
 
@@ -1201,6 +1192,19 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             raise TypeError("Unsupported action type in list.") from e
         task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]
 
+        response_cls = kwargs.pop(
+            "cls",
+            lambda pipeline_response, deserialized, _:
+                self._analyze_result_callback(
+                    pipeline_response,
+                    deserialized,
+                    doc_id_order,
+                    task_id_order=task_order,
+                    show_stats=show_stats,
+                    bespoke=bespoke
+                ),
+        )
+
         try:
             if is_language_api(self._api_version):
                 return cast(
@@ -1211,15 +1215,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                             display_name=display_name,
                             tasks=generated_tasks
                         ),
-                        cls=kwargs.pop(
-                            "cls",
-                            partial(
-                                self._analyze_result_callback,
-                                doc_id_order,
-                                task_order,
-                                show_stats=show_stats,
-                            ),
-                        ),
+                        cls=response_cls,
                         polling=AsyncAnalyzeActionsLROPollingMethod(
                             timeout=polling_interval,
                             show_stats=show_stats,
@@ -1233,6 +1229,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                             **kwargs
                         ),
                         continuation_token=continuation_token,
+                        poller_cls=poller_cls,
                         **kwargs
                     )
                 )
@@ -1267,15 +1264,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 AsyncAnalyzeActionsResponse,
                 await self._client.begin_analyze(
                     body=analyze_body,
-                    cls=kwargs.pop(
-                        "cls",
-                        partial(
-                            self._analyze_result_callback,
-                            doc_id_order,
-                            task_order,
-                            show_stats=show_stats,
-                        ),
-                    ),
+                    cls=response_cls,
                     polling=AsyncAnalyzeActionsLROPollingMethod(
                         timeout=polling_interval,
                         show_stats=show_stats,
@@ -1292,5 +1281,236 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     **kwargs,
                 )
             )
+        except HttpResponseError as error:
+            return process_http_response_error(error)
+
+
+    @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="2022-05-01"
+    )
+    async def begin_recognize_custom_entities(
+        self,
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        project_name: str,
+        deployment_name: str,
+        **kwargs: Any,
+    ) -> AsyncTextAnalyticsLROPoller[AsyncItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]]:
+        """Start a long-running custom named entity recognition operation.
+
+        For information on regional support of custom features and how to train a model to
+        recognize custom entities, see https://aka.ms/azsdk/textanalytics/customentityrecognition
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
+        :param str project_name: Required. This field indicates the project name for the model.
+        :param str deployment_name: This field indicates the deployment name for the model.
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            If not set, uses "en" for English as default. Per-document language will
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Language API.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+            logged on the service side for troubleshooting. By default, the Language service logs your
+            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+            the service's natural language processing functions. Setting this parameter to true,
+            disables input logging and may limit our ability to remediate issues that occur. Please see
+            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+            additional details, and Microsoft Responsible AI principles at
+            https://www.microsoft.com/ai/responsible-ai.
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.
+            `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+            you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
+            see https://aka.ms/text-analytics-offsets
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token:
+            Call `continuation_token()` on the poller object to save the long-running operation (LRO)
+            state into an opaque token. Pass the value as the `continuation_token` keyword argument
+            to restart the LRO from a saved state.
+        :keyword str display_name: An optional display name to set for the requested analysis.
+        :return: An instance of an AsyncTextAnalyticsLROPoller. Call `result()` on the this
+            object to return a heterogeneous pageable of
+            :class:`~azure.ai.textanalytics.RecognizeCustomEntitiesResult` and
+            :class:`~azure.ai.textanalytics.DocumentError`.
+        :rtype:
+            ~azure.ai.textanalytics.aio.AsyncTextAnalyticsLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.RecognizeCustomEntitiesResult or ~azure.ai.textanalytics.DocumentError]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: 2022-05-01
+            The *begin_recognize_custom_entities* client method.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_recognize_custom_entities_async.py
+                :start-after: [START recognize_custom_entities_async]
+                :end-before: [END recognize_custom_entities_async]
+                :language: python
+                :dedent: 4
+                :caption: Recognize custom entities in a batch of documents.
+        """
+
+        continuation_token = kwargs.pop("continuation_token", None)
+        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
+        polling_interval = kwargs.pop("polling_interval", 5)
+
+        if continuation_token:
+            return cast(
+                AsyncTextAnalyticsLROPoller[AsyncItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]],
+                _get_result_from_continuation_token(
+                    self._client._client,  # pylint: disable=protected-access
+                    continuation_token,
+                    AsyncTextAnalyticsLROPoller,
+                    AsyncAnalyzeActionsLROPollingMethod(
+                        timeout=polling_interval,
+                        **kwargs
+                    ),
+                    self._analyze_result_callback,
+                    bespoke=True
+                )
+            )
+
+        try:
+            return cast(
+                AsyncTextAnalyticsLROPoller[
+                    AsyncItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]
+                ],
+                await self.begin_analyze_actions(
+                    documents,
+                    actions=[
+                        RecognizeCustomEntitiesAction(
+                            project_name=project_name,
+                            deployment_name=deployment_name,
+                            string_index_type=string_index_type,
+                            disable_service_logs=disable_service_logs
+                        )
+                    ],
+                    polling_interval=polling_interval,
+                    poller_cls=AsyncTextAnalyticsLROPoller,
+                    bespoke=True,
+                    **kwargs
+                )
+            )
+
+        except HttpResponseError as error:
+            return process_http_response_error(error)
+
+    @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="2022-05-01"
+    )
+    async def begin_single_label_classify(
+        self,
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        project_name: str,
+        deployment_name: str,
+        **kwargs: Any,
+    ) -> AsyncTextAnalyticsLROPoller[AsyncItemPaged[Union[ClassifyDocumentResult, DocumentError]]]:
+        """Start a long-running custom single label classification operation.
+
+        For information on regional support of custom features and how to train a model to
+        classify your documents, see https://aka.ms/azsdk/textanalytics/customfunctionalities
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
+        :param str project_name: Required. This field indicates the project name for the model.
+        :param str deployment_name: This field indicates the deployment name for the model.
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            If not set, uses "en" for English as default. Per-document language will
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Language API.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+            logged on the service side for troubleshooting. By default, the Language service logs your
+            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+            the service's natural language processing functions. Setting this parameter to true,
+            disables input logging and may limit our ability to remediate issues that occur. Please see
+            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+            additional details, and Microsoft Responsible AI principles at
+            https://www.microsoft.com/ai/responsible-ai.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token:
+            Call `continuation_token()` on the poller object to save the long-running operation (LRO)
+            state into an opaque token. Pass the value as the `continuation_token` keyword argument
+            to restart the LRO from a saved state.
+        :keyword str display_name: An optional display name to set for the requested analysis.
+        :return: An instance of an AsyncTextAnalyticsLROPoller. Call `result()` on the this
+            object to return a heterogeneous pageable of
+            :class:`~azure.ai.textanalytics.ClassifyDocumentResult` and
+            :class:`~azure.ai.textanalytics.DocumentError`.
+        :rtype:
+            ~azure.ai.textanalytics.aio.AsyncTextAnalyticsLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.ClassifyDocumentResult or ~azure.ai.textanalytics.DocumentError]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: 2022-05-01
+            The *begin_single_label_classify* client method.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_single_label_classify_async.py
+                :start-after: [START single_label_classify_async]
+                :end-before: [END single_label_classify_async]
+                :language: python
+                :dedent: 4
+                :caption: Perform single label classification on a batch of documents.
+        """
+
+        continuation_token = kwargs.pop("continuation_token", None)
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
+        polling_interval = kwargs.pop("polling_interval", 5)
+
+        if continuation_token:
+            return cast(
+                AsyncTextAnalyticsLROPoller[AsyncItemPaged[Union[ClassifyDocumentResult, DocumentError]]],
+                _get_result_from_continuation_token(
+                    self._client._client,  # pylint: disable=protected-access
+                    continuation_token,
+                    AsyncTextAnalyticsLROPoller,
+                    AsyncAnalyzeActionsLROPollingMethod(
+                        timeout=polling_interval,
+                        **kwargs
+                    ),
+                    self._analyze_result_callback,
+                    bespoke=True
+                )
+            )
+
+        try:
+            return cast(
+                AsyncTextAnalyticsLROPoller[
+                    AsyncItemPaged[Union[ClassifyDocumentResult, DocumentError]]
+                ],
+                await self.begin_analyze_actions(
+                    documents,
+                    actions=[
+                        SingleLabelClassifyAction(
+                            project_name=project_name,
+                            deployment_name=deployment_name,
+                            disable_service_logs=disable_service_logs
+                        )
+                    ],
+                    polling_interval=polling_interval,
+                    poller_cls=AsyncTextAnalyticsLROPoller,
+                    bespoke=True,
+                    **kwargs
+                )
+            )
+
         except HttpResponseError as error:
             return process_http_response_error(error)

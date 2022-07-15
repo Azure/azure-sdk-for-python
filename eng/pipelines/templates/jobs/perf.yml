@@ -1,0 +1,111 @@
+parameters:
+  - name: serviceDirectory
+    type: string
+    default: ''
+  - name: services
+    type: string
+    default: ''
+  - name: packageVersions
+    type: string
+    default: '.*'
+  - name: tests
+    type: string
+    default: ''
+  - name: arguments
+    type: string
+    default: '' 
+  - name: iterations
+    type: number
+    default: '5'
+  - name: envVars
+    type: object
+    default: {}
+  - name: additionalArguments
+    type: string
+    default: ''
+
+variables:
+  - template: /eng/pipelines/templates/variables/globals.yml
+  - name: Pool
+    value: 'azsdk-pool-mms-ubuntu-2004-perf'
+  - name: OSVmImage
+    value: 'MMSUbuntu20.04'
+  - name: PythonVersion
+    value: '3.7'
+
+resources:
+  repositories:
+  - repository: azure-sdk-tools
+    type: github
+    endpoint: Azure
+    name: Azure/azure-sdk-tools
+
+jobs:
+- job: Perf
+  timeoutInMinutes: 360
+  pool:
+    name: $(Pool)
+    vmImage: $(OSVmImage)
+  steps:
+    - checkout: self
+      path: s
+
+    - checkout: azure-sdk-tools
+      path: s/azure-sdk-tools
+
+    - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+      parameters:
+        AgentImage: $(OSVmImage)
+
+    - task: UsePythonVersion@0
+      displayName: "Use Python $(PythonVersion)"
+      inputs:
+        versionSpec: $(PythonVersion)
+
+    - template: /eng/common/TestResources/deploy-test-resources.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.serviceDirectory }}
+        Location: westus
+        ResourceType: perf
+
+    - pwsh: |
+        set-content -path config.yml -value "WorkingDirectories:"
+        add-content -path config.yml -value "  Python: $(Agent.BuildDirectory)/s"
+      workingDirectory: azure-sdk-tools/tools/perf-automation/Azure.Sdk.Tools.PerfAutomation
+      displayName: Create config.yml
+
+    - script: >-
+        dotnet run -- run
+        --no-sync
+        --languages python
+        --services "${{ parameters.services }}"
+        --package-versions "${{ parameters.packageVersions }}"
+        --tests "${{ parameters.tests }}"
+        --arguments "${{ parameters.arguments }}"
+        --iterations ${{ parameters.iterations }}
+        ${{ parameters.additionalArguments }}
+      workingDirectory: azure-sdk-tools/tools/perf-automation/Azure.Sdk.Tools.PerfAutomation
+      env:
+        ${{ each var in parameters.EnvVars }}:
+          ${{ var.key }}: ${{ var.value }}
+      displayName: Run perf tests
+
+    - pwsh: |
+        get-content results.csv
+      workingDirectory: azure-sdk-tools/tools/perf-automation/Azure.Sdk.Tools.PerfAutomation/results
+      displayName: Print results.csv
+
+    - pwsh: |
+        get-content results.json
+      workingDirectory: azure-sdk-tools/tools/perf-automation/Azure.Sdk.Tools.PerfAutomation/results
+      displayName: Print results.json
+
+    - template: /eng/common/TestResources/remove-test-resources.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.serviceDirectory }}
+        ResourceType: perf
+
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: azure-sdk-tools/tools/perf-automation/Azure.Sdk.Tools.PerfAutomation/results
+        artifactName: results

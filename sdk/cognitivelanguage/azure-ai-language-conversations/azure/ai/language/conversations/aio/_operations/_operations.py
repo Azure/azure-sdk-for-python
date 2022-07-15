@@ -9,33 +9,36 @@
 import sys
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ..._operations._operations import build_analyze_conversation_request
+from ..._operations._operations import build_analyze_conversation_request, build_conversation_analysis_request
 from .._vendor import MixinABC
+
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
-T = TypeVar('T')
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class ConversationAnalysisClientOperationsMixin(MixinABC):
 
+class ConversationAnalysisClientOperationsMixin(MixinABC):
     @overload
-    async def analyze_conversation(
-        self,
-        task: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> JSON:
+    async def analyze_conversation(self, task: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         """Analyzes the input conversation utterance.
 
         :param task: A single conversational task to execute. Required.
@@ -62,8 +65,10 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                               conversation item in BCP 47 language representation.
                             "modality": "str",  # Optional. Enumeration of supported
                               conversational modalities. Known values are: "transcript" and "text".
-                            "participantId": "str"  # The participant ID of a
+                            "participantId": "str",  # The participant ID of a
                               conversation item. Required.
+                            "role": "str"  # Optional. The role of the participant. Known
+                              values are: "agent", "customer", and "generic".
                         }
                     },
                     "kind": "Conversation",
@@ -109,13 +114,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         """
 
     @overload
-    async def analyze_conversation(
-        self,
-        task: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> JSON:
+    async def analyze_conversation(self, task: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         """Analyzes the input conversation utterance.
 
         :param task: A single conversational task to execute. Required.
@@ -148,13 +147,8 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                 response == analyze_conversation_task_result
         """
 
-
     @distributed_trace_async
-    async def analyze_conversation(
-        self,
-        task: Union[JSON, IO],
-        **kwargs: Any
-    ) -> JSON:
+    async def analyze_conversation(self, task: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Analyzes the input conversation utterance.
 
         :param task: A single conversational task to execute. Is either a model type or a IO type.
@@ -187,16 +181,14 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                 # response body for status code(s): 200
                 response == analyze_conversation_task_result
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/json"
         _json = None
@@ -215,14 +207,12 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -241,4 +231,415 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
         return cast(JSON, deserialized)
 
+    async def _conversation_analysis_initial(self, task: Union[JSON, IO], **kwargs: Any) -> Optional[JSON]:
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(task, (IO, bytes)):
+            _content = task
+        else:
+            _json = task
+
+        request = build_conversation_analysis_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 202:
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+
+    @overload
+    async def begin_conversation_analysis(
+        self, task: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[JSON]:
+        """Submit analysis job for conversations.
+
+        Submit a collection of conversations for analysis. Specify one or more unique tasks to be
+        executed.
+
+        :param task: The collection of conversations to analyze and one or more tasks to execute.
+         Required.
+        :type task: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                task = {
+                    "analysisInput": {
+                        "conversations": [
+                            conversation
+                        ]
+                    },
+                    "displayName": "str",  # Optional. Optional display name for the analysis
+                      job.
+                    "tasks": [
+                        analyze_conversation_lro_task
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # Required.
+                    "displayName": "str",  # Optional.
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "message": "str",  # Error message. Required.
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional.
+                    "jobId": "str",  # Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required.
+                    "nextLink": "str",  # Optional.
+                    "statistics": {
+                        "conversationsCount": 0,  # Number of conversations submitted in the
+                          request. Required.
+                        "erroneousConversationsCount": 0,  # Number of invalid documents.
+                          This includes empty, over-size limit or non-supported languages documents.
+                          Required.
+                        "transactionsCount": 0,  # Number of transactions for the request.
+                          Required.
+                        "validConversationsCount": 0  # Number of conversations documents.
+                          This excludes empty, over-size limit or non-supported languages documents.
+                          Required.
+                    },
+                    "status": "str",  # Required. Known values are: "notStarted", "running",
+                      "succeeded", "partiallyCompleted", "failed", "cancelled", and "cancelling".
+                    "tasks": {
+                        "completed": 0,  # Count of tasks completed successfully. Required.
+                        "failed": 0,  # Count of tasks that failed. Required.
+                        "inProgress": 0,  # Count of tasks in progress currently. Required.
+                        "items": [
+                            analyze_conversation_job_result
+                        ],
+                        "total": 0  # Total count of tasks submitted as part of the job.
+                          Required.
+                    }
+                }
+        """
+
+    @overload
+    async def begin_conversation_analysis(
+        self, task: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[JSON]:
+        """Submit analysis job for conversations.
+
+        Submit a collection of conversations for analysis. Specify one or more unique tasks to be
+        executed.
+
+        :param task: The collection of conversations to analyze and one or more tasks to execute.
+         Required.
+        :type task: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # Required.
+                    "displayName": "str",  # Optional.
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "message": "str",  # Error message. Required.
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional.
+                    "jobId": "str",  # Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required.
+                    "nextLink": "str",  # Optional.
+                    "statistics": {
+                        "conversationsCount": 0,  # Number of conversations submitted in the
+                          request. Required.
+                        "erroneousConversationsCount": 0,  # Number of invalid documents.
+                          This includes empty, over-size limit or non-supported languages documents.
+                          Required.
+                        "transactionsCount": 0,  # Number of transactions for the request.
+                          Required.
+                        "validConversationsCount": 0  # Number of conversations documents.
+                          This excludes empty, over-size limit or non-supported languages documents.
+                          Required.
+                    },
+                    "status": "str",  # Required. Known values are: "notStarted", "running",
+                      "succeeded", "partiallyCompleted", "failed", "cancelled", and "cancelling".
+                    "tasks": {
+                        "completed": 0,  # Count of tasks completed successfully. Required.
+                        "failed": 0,  # Count of tasks that failed. Required.
+                        "inProgress": 0,  # Count of tasks in progress currently. Required.
+                        "items": [
+                            analyze_conversation_job_result
+                        ],
+                        "total": 0  # Total count of tasks submitted as part of the job.
+                          Required.
+                    }
+                }
+        """
+
+    @distributed_trace_async
+    async def begin_conversation_analysis(self, task: Union[JSON, IO], **kwargs: Any) -> AsyncLROPoller[JSON]:
+        """Submit analysis job for conversations.
+
+        Submit a collection of conversations for analysis. Specify one or more unique tasks to be
+        executed.
+
+        :param task: The collection of conversations to analyze and one or more tasks to execute. Is
+         either a model type or a IO type. Required.
+        :type task: JSON or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # Required.
+                    "displayName": "str",  # Optional.
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "message": "str",  # Error message. Required.
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional.
+                    "jobId": "str",  # Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required.
+                    "nextLink": "str",  # Optional.
+                    "statistics": {
+                        "conversationsCount": 0,  # Number of conversations submitted in the
+                          request. Required.
+                        "erroneousConversationsCount": 0,  # Number of invalid documents.
+                          This includes empty, over-size limit or non-supported languages documents.
+                          Required.
+                        "transactionsCount": 0,  # Number of transactions for the request.
+                          Required.
+                        "validConversationsCount": 0  # Number of conversations documents.
+                          This excludes empty, over-size limit or non-supported languages documents.
+                          Required.
+                    },
+                    "status": "str",  # Required. Known values are: "notStarted", "running",
+                      "succeeded", "partiallyCompleted", "failed", "cancelled", and "cancelling".
+                    "tasks": {
+                        "completed": 0,  # Count of tasks completed successfully. Required.
+                        "failed": 0,  # Count of tasks that failed. Required.
+                        "inProgress": 0,  # Count of tasks in progress currently. Required.
+                        "items": [
+                            analyze_conversation_job_result
+                        ],
+                        "total": 0  # Total count of tasks submitted as part of the job.
+                          Required.
+                    }
+                }
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._conversation_analysis_initial(  # type: ignore
+                task=task, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )  # type: AsyncPollingMethod
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)

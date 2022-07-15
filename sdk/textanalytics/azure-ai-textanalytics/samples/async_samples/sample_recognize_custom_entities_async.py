@@ -9,7 +9,7 @@ FILE: sample_recognize_custom_entities_async.py
 
 DESCRIPTION:
     This sample demonstrates how to recognize custom entities in documents.
-    Recognizing custom entities is available as an action type through the begin_analyze_actions API.
+    Recognizing custom entities is also available as an action type through the begin_analyze_actions API.
 
     For information on regional support of custom features and how to train a model to
     recognize custom entities, see https://aka.ms/azsdk/textanalytics/customentityrecognition
@@ -30,9 +30,9 @@ import asyncio
 
 
 async def sample_recognize_custom_entities_async():
+    # [START recognize_custom_entities_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
-    from azure.ai.textanalytics import RecognizeCustomEntitiesAction
 
     endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
     key = os.environ["AZURE_LANGUAGE_KEY"]
@@ -56,20 +56,15 @@ async def sample_recognize_custom_entities_async():
         document = [fd.read()]
 
     async with text_analytics_client:
-        poller = await text_analytics_client.begin_analyze_actions(
+        poller = await text_analytics_client.begin_recognize_custom_entities(
             document,
-            actions=[
-                RecognizeCustomEntitiesAction(
-                    project_name=project_name,
-                    deployment_name=deployment_name
-                ),
-            ],
+            project_name=project_name,
+            deployment_name=deployment_name
         )
 
         document_results = await poller.result()
 
-        async for result in document_results:
-            custom_entities_result = result[0]  # first document, first result
+        async for custom_entities_result in document_results:
             if not custom_entities_result.is_error:
                 for entity in custom_entities_result.entities:
                     print(
@@ -82,6 +77,7 @@ async def sample_recognize_custom_entities_async():
                     custom_entities_result.code, custom_entities_result.message
                     )
                 )
+    # [END recognize_custom_entities_async]
 
 
 async def main():

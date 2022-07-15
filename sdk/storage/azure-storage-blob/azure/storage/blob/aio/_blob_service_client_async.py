@@ -4,38 +4,44 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
+
 import functools
 import warnings
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List,
+    Any, Dict, List, Optional, Union,
     TYPE_CHECKING
 )
 
-from azure.core.exceptions import HttpResponseError
-from azure.core.tracing.decorator import distributed_trace
-from azure.core.pipeline import AsyncPipeline
-from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline import AsyncPipeline
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .._shared.models import LocationMode
-from .._shared.policies_async import ExponentialRetry
+
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
-from .._shared.response_handlers import return_response_headers, process_storage_error
+from .._shared.response_handlers import (
+    parse_to_internal_user_delegation_key,
+    process_storage_error,
+    return_response_headers,
+)
+from .._shared.models import LocationMode
 from .._shared.parser import _to_utc_datetime
-from .._shared.response_handlers import parse_to_internal_user_delegation_key
+from .._shared.policies_async import ExponentialRetry
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import StorageServiceProperties, KeyInfo
 from .._blob_service_client import BlobServiceClient as BlobServiceClientBase
-from ._container_client_async import ContainerClient
-from ._blob_client_async import BlobClient
-from .._models import ContainerProperties
 from .._deserialize import service_stats_deserialize, service_properties_deserialize
+from .._encryption import StorageEncryptionMixin
+from .._models import ContainerProperties
 from .._serialize import get_api_version
+from ._blob_client_async import BlobClient
+from ._container_client_async import ContainerClient
 from ._models import ContainerPropertiesPaged, FilteredBlobPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from .._shared.models import AccountSasPermissions, ResourceTypes, UserDelegationKey
+    from .._shared.models import UserDelegationKey
     from ._lease_async import BlobLeaseClient
     from .._models import (
         BlobProperties,
@@ -48,7 +54,7 @@ if TYPE_CHECKING:
     )
 
 
-class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
+class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, StorageEncryptionMixin):
     """A client to interact with the Blob Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -119,6 +125,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._configure_encryption(kwargs)
 
     @distributed_trace_async
     async def get_user_delegation_key(self, key_start_time,  # type: datetime

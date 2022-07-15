@@ -246,9 +246,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         renamed_file_system = FileSystemClient(
                 "{}://{}".format(self.scheme, self.primary_hostname), file_system_name=new_name,
                 credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
-                _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-                require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-                key_resolver_function=self.key_resolver_function)
+                _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts)
         return renamed_file_system
 
     @distributed_trace_async
@@ -667,14 +665,13 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             (-1) for a lease that never expires. A non-infinite lease can be
             between 15 and 60 seconds. A lease duration cannot be changed
             using renew or change.
-        :keyword expiry_options:
-            Indicates mode of the expiry time.
-            Possible values include: 'NeverExpire', 'RelativeToNow', 'Absolute'"
-        :paramtype expiry_options: Literal["NeverExpire", "RelativeToNow", "Absolute"]
         :keyword expires_on:
             The time to set the file to expiry.
-            When expiry_options is RelativeTo*, expires_on should be an int in milliseconds.
-            If the type of expires_on is datetime, it should be in UTC time.
+            If the type of expires_on is an int, expiration time will be set
+            as the number of milliseconds elapsed from creation time.
+            If the type of expires_on is datetime, expiration time will be set
+            absolute to the time provided. If no time zone info is provided, this
+            will be interpreted as UTC.
         :paramtype expires_on: datetime or int
         :keyword str permissions:
             Optional and only valid if Hierarchical Namespace
@@ -845,11 +842,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                                        api_version=self.api_version,
                                        _configuration=self._config, _pipeline=_pipeline,
                                        _hosts=self._hosts,
-                                       require_encryption=self.require_encryption,
-                                       key_encryption_key=self.key_encryption_key,
-                                       key_resolver_function=self.key_resolver_function,
-                                       loop=self._loop
-                                       )
+                                       loop=self._loop)
 
     def get_file_client(self, file_path  # type: Union[FileProperties, str]
                         ):
@@ -885,10 +878,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
             api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function, loop=self._loop)
+            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline, loop=self._loop)
 
     @distributed_trace
     def list_deleted_paths(self, **kwargs):
