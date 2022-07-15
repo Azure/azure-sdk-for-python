@@ -2715,15 +2715,16 @@ class DocumentLine:
             else [],
         )
 
-    def get_words(self, **kwargs: Any) -> Iterable["DocumentWord"]:  # pylint: disable=unused-argument
-        """Get the words found in the spans of this DocumentLine.
+    @property
+    def words(self) -> Iterable["DocumentWord"]:  # pylint: disable=unused-argument
+        """The words found in the spans of this DocumentLine.
 
         :return: iterable[DocumentWord]
         :rtype: iterable[DocumentWord]
         """
         if not self._parent:
             raise ValueError(
-                "Cannot use get_words() on a model that has been converted from a dictionary. "
+                "Cannot use 'words' property on a model that has been converted from a dictionary. "
                 "Missing reference to parent element."
                 )
         result = []

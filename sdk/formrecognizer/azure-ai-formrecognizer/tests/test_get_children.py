@@ -28,7 +28,7 @@ class TestGetChildren(FormRecognizerTest):
         poller = client.begin_analyze_document("prebuilt-document", document)
         result = poller.result()
         
-        elements = result.pages[0].lines[0].get_words()
+        elements = result.pages[0].lines[0].words
         assert len(elements) == 1
         assert elements[0].content == "Contoso"
 
@@ -47,10 +47,10 @@ class TestGetChildren(FormRecognizerTest):
         analyze_result = AnalyzeResult.from_dict(d)
 
         with pytest.raises(ValueError):
-            elements = analyze_result.pages[0].lines[0].get_words()
+            elements = analyze_result.pages[0].lines[0].words
 
         # check that the error occurs when directly converting a DocumentLine from a dict
         d = result.pages[0].lines[0].to_dict()
         line = DocumentLine.from_dict(d)
         with pytest.raises(ValueError):
-            elements = line.get_words()
+            elements = line.words
