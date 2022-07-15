@@ -8,7 +8,12 @@ DEPENDENCIES = [
     # Packaging
     "packaging",
     "wheel",
-    "black==22.1.0",
+    "mypy-extensions>=0.4.3",
+    "click>=8.0.0",
+    "tomli>=1.1.0",
+    "black==22.6.0",
+    "typing-extensions>=3.10.0.0",
+    "colorama",
     "Jinja2==2.1.2",
     "MarkupSafe==2.0.1",
     "pytoml",
