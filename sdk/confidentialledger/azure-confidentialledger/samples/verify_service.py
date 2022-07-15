@@ -55,15 +55,21 @@ def main():
     # The Confidential Ledger's TLS certificate must be written to a file to be used by the
     # ConfidentialLedgerClient. Here, we write it to a temporary file so that is is cleaned up
     # automatically when the program exits.
-    with tempfile.NamedTemporaryFile("w", suffix=".pem") as ledger_certificate_file:
-        ledger_certificate_file.write(ledger_certificate["ledgerTlsCertificate"])
-        ledger_certificate_file.flush()
+    with tempfile.TemporaryDirectory() as tempdir:
+        ledger_cert_file = os.path.join(tempdir, f"{ledger_id}.pem")
+        with open(ledger_cert_file, "w") as outfile:
+            outfile.write(ledger_certificate["ledgerTlsCertificate"])
+
+        print(
+            f"Ledger certificate has been written to {ledger_cert_file}. "
+            "It will be deleted when the script completes."
+        )
 
         # Build a client through AAD
         ledger_client = ConfidentialLedgerClient(
             ledger_endpoint,
             credential=DefaultAzureCredential(),
-            ledger_certificate_path=ledger_certificate_file.name,
+            ledger_certificate_path=ledger_cert_file,
         )
         
         print("Retrieving information that can be used to validate a Confidential Ledger.")
