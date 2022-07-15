@@ -23,15 +23,28 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-"""
+import platform
+import sys
+import pytest
+from devtools_testutils import test_proxy
+from devtools_testutils.sanitizers import add_body_key_sanitizer, add_general_regex_sanitizer, set_custom_default_matcher
 
-This `utils` module provides functionality that is intended to be used by developers
-building on top of `azure-core`.
+# Ignore async tests for Python < 3.5
+collect_ignore_glob = []
+if sys.version_info < (3, 5):
+    collect_ignore_glob.append("*_async.py")
+    collect_ignore_glob.append("test_cncf*")
 
-"""
-from ._connection_string_parser import (
-    parse_connection_string
-)
-from ._utils import case_insensitive_dict, CaseInsensitiveDict
-
-__all__ = ["parse_connection_string", "case_insensitive_dict", "CaseInsensitiveDict"]
+@pytest.fixture(scope="session", autouse=True)
+def add_aeg_sanitizer(test_proxy):
+    # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+    set_custom_default_matcher(
+        compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+    )
+    add_general_regex_sanitizer(
+        value="fakeresource",
+        regex="(?<=\\/\\/)[a-z-]+(?=\\.westus2-1\\.ingest\\.monitor\\.azure\\.com)"
+    )
+    add_body_key_sanitizer(
+        json_path="access_token", value="fakekey"
+    )
