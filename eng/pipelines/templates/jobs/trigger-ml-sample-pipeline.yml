@@ -49,13 +49,11 @@ jobs:
         scriptPath: 'scripts/devops_tasks/build_packages.py'
         arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --devbuild="$(SetDevVersion)"'
 
-    # generate the packages
     - pwsh: |
         Get-ChildItem "$(Build.ArtifactStagingDirectory)" -R
       displayName: Output Staging Directory
       continueOnError: true
 
-    # clone the samples repo
     - pwsh: |
         git clone --depth 1 ${{ parameters.SamplesRepo }} $(Agent.BuildDirectory)/ml
         Write-Host "##vso[task.setvariable variable=mlrepo;]$(Agent.BuildDirectory)/ml"
@@ -67,7 +65,6 @@ jobs:
       displayName: Output Staging Directory
       continueOnError: true
 
-    # this package should 
     - task: PythonScript@0
       displayName: 'Generate Samples Repo Changes'
       continueOnError: true
