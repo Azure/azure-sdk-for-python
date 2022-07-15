@@ -15,17 +15,18 @@ async def send_logs():
     client = LogsIngestionClient(endpoint=endpoint, credential=credential, logging_enable=True)
 
     rule_id = os.environ['LOGS_DCR_RULE_ID']
-    body = []
-
-    for i in range(50000):
-      body.append(
-        {
+    body = [
+          {
             "Time": "2021-12-08T23:51:14.1104269Z",
             "Computer": "Computer1",
-            "AdditionalContext": "sabhyrav-" + str(i)
+            "AdditionalContext": "sabhyrav-2"
+          },
+          {
+            "Time": "2021-12-08T23:51:14.1104269Z",
+            "Computer": "Computer2",
+            "AdditionalContext": "sabhyrav"
           }
-      )
-
+        ]
 
     response = await client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
     if response.status != UploadLogsStatus.SUCCESS:
