@@ -52,22 +52,18 @@ jobs:
     - pwsh: |
         Get-ChildItem "$(Build.ArtifactStagingDirectory)" -R
       displayName: Output Staging Directory
-      continueOnError: true
 
     - pwsh: |
         git clone --depth 1 ${{ parameters.SamplesRepo }} $(Agent.BuildDirectory)/ml
         Write-Host "##vso[task.setvariable variable=mlrepo;]$(Agent.BuildDirectory)/ml"
       displayName: Clone the ML Samples Repo
-      continueOnError: true
 
     - pwsh: |
         Get-ChildItem "$(mlrepo)" -R
       displayName: Output Staging Directory
-      continueOnError: true
 
     - task: PythonScript@0
       displayName: 'Generate Samples Repo Changes'
-      continueOnError: true
       env:
         BLOB_CONNECTION_STRING: $(azure-sdk-docsupport-cs)
       inputs:
@@ -80,12 +76,12 @@ jobs:
     - pwsh: |
         cat "$(mlrepo)/sdk/setup.sh"
       displayName: Display Updated setup.sh
-      continueOnError: true
 
     - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
       parameters:
         RepoName: azureml-examples
         PRBranchName: test-ml-sdk-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
+        BaseBranchName: main
         CommitMsg: "Update sdk/setup.sh to target fresh built azure-ai-ml wheel."
         PRTitle: "SDK Samples Run generated from $(Build.BuildId)"
         WorkingDirectory: $(mlrepo)
