@@ -4,9 +4,11 @@ from subprocess import run
 
 from typing import List
 from ci_tools.functions import discover_targeted_packages, str_to_bool, process_requires
+from ci_tools.parsing import ParsedSetup
 from ci_tools.variables import discover_repo_root, get_artifact_directory
 from ci_tools.versioning.version_set_dev import se
-
+from ci_tools.versioning.version_shared import set_version_py, set_dev_classifier
+from ci_tools.versioning.version_set_dev import get_dev_version, format_build_id
 
 def build(args, repo_root_arg=None) -> None:
     parser = argparse.ArgumentParser(
@@ -96,9 +98,10 @@ def build(args, repo_root_arg=None) -> None:
 
     targeted_packages = discover_targeted_packages(args.glob_string, target_dir, args.package_filter_string)
     artifact_directory = get_artifact_directory(args.distribution_directory)
+    build_id = format_build_id(args.build_id)
 
     build_packages(
-        targeted_packages, artifact_directory, str_to_bool(args.is_dev_build), str_to_bool(args.apiview_closure)
+        targeted_packages, artifact_directory, str_to_bool(args.is_dev_build), str_to_bool(args.apiview_closure), build_id
     )
 
 
@@ -110,11 +113,14 @@ def build_packages(
     distribution_directory: str = None,
     is_dev_build: bool = False,
     build_apiview_artifact: bool = False,
+    build_id: str = ""
 ):
     # TODO: function updates requirements
     logging.info("Generating Package Using Python {}".format(sys.version))
 
     for package_root in targeted_packages:
+        setup_parsed = ParsedSetup.from_path(package_root)
+
         package_name_in_artifacts = os.path.join(os.path.basename(package_root))
         dist_dir = os.path.join(distribution_directory, package_name_in_artifacts)
         if is_dev_build:
@@ -122,9 +128,12 @@ def build_packages(
             # update the requirements to alpha version if the required version is not on pypi
             process_requires(package_root)
 
-            # set the dev version
+            new_version = get_dev_version(setup_parsed.version, build_id)
 
-            # set the dev classifier
+            # print("{0}: {1} -> {2}".format(setup_parsed.name, setup_parsed.version, new_version))
+
+            set_version_py(version.setup_filename, new_version)
+            set_dev_classifier(version.setup_filename, new_version)
 
         create_package(package_root, dist_dir)
 
