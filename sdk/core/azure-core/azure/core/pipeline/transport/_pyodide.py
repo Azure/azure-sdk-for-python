@@ -32,12 +32,16 @@ from pyodide.http import pyfetch  # pylint: disable=import-error
 from requests.structures import CaseInsensitiveDict  # FIXME
 
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline import Pipeline
 from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
 from ._requests_asyncio import AsyncioRequestsTransport
 
 class PyodideTransport(AsyncioRequestsTransport):
-    """Implements a basic HTTP sender using the pyodide javascript fetch api."""
+    """Implements a basic HTTP sender using the Pyodide Javascript Fetch API.
+
+    WARNING: Pyodide is still an alpha technology. As such, this transport
+    is highly experimental and subject to breaking changes. This transport was
+    built around Pyodide version 0.20.0.
+    """
 
     async def send(self, request, **kwargs):  # type: ignore
         """Send request object according to configuration.
@@ -84,8 +88,7 @@ class PyodideTransport(AsyncioRequestsTransport):
 
 
 class PyodideTransportResponse(AsyncHttpResponseImpl):
-    """Async response object for the pyodide transport.
-    """
+    """Async response object for the `PyodideTransport`."""
 
     def __init__(self, **kwargs):
         super(PyodideTransportResponse, self).__init__(**kwargs)
@@ -119,9 +122,6 @@ class PyodideStreamDownloadGenerator(AsyncIterator):
         # indicates how many unread bytes there are in `self.stream`
         self.buffer_left = 0
         self.done = False
-
-    def __aiter__(self):
-        return self
 
     async def __anext__(self):
         if self.closed:
