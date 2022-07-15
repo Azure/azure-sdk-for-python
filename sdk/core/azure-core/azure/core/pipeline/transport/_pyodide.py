@@ -27,15 +27,14 @@
 from collections.abc import AsyncIterator
 from io import BytesIO
 
-from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline import Pipeline
-from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
 from pyodide import JsException  # pylint: disable=import-error
 from pyodide.http import pyfetch  # pylint: disable=import-error
 from requests.structures import CaseInsensitiveDict  # FIXME
 
+from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline import Pipeline
+from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
 from ._requests_asyncio import AsyncioRequestsTransport
-
 
 class PyodideTransport(AsyncioRequestsTransport):
     """Implements a basic HTTP sender using the pyodide javascript fetch api."""
@@ -48,6 +47,7 @@ class PyodideTransport(AsyncioRequestsTransport):
         :return: An HTTPResponse object.
         :rtype: PyodideResponseTransport
         """
+        stream_response = kwargs.pop("stream_response", False)
         endpoint = request.url
         request_headers = dict(request.headers)
         init = {
@@ -77,54 +77,69 @@ class PyodideTransport(AsyncioRequestsTransport):
             headers=headers,
             stream_download_generator=PyodideStreamDownloadGenerator,
         )
-        await transport_response.read()
+        if not stream_response:
+            await transport_response.load_body()
+
         return transport_response
 
 
 class PyodideTransportResponse(AsyncHttpResponseImpl):
-    """Async response object for the pyodide transport."""
+    """Async response object for the pyodide transport.
+    """
+
+    def __init__(self, **kwargs):
+        super(PyodideTransportResponse, self).__init__(**kwargs)
+        # clone to avoid reading from the same `FetchResponse` a second time in `load_body`.
+        self.reader = self.internal_response.clone().js_response.body.getReader()
 
     async def close(self):
-        """This is kinda weird but AsyncHttpResponseImpl assumed that
-        the internal response is a `requests.Reponse` object (I think).
-
-        Also, you can't really close connections at will using pyfetch.
+        """We don't actually have control over closing connections in the browser, so we just pretend
+        to close.
         """
         self._is_closed = True
 
     async def load_body(self):
         """Load the body of the response."""
         if self._content is None:
-            # This line can only be called once. Subsequent calls will raise an `OSError`.
-            self._content = await self.internal_response.bytes()
+            self._content = await self._internal_response.bytes()
 
 
 class PyodideStreamDownloadGenerator(AsyncIterator):
     """Simple stream download generator that returns the contents of
     a request.
-
-    :param pipeline: The pipeline object
-    :param response: The response object.
     """
 
-    def __init__(self, pipeline: Pipeline, response: PyodideTransportResponse, **__) -> None:
-        self.pipeline = pipeline
+    def __init__(self, response: PyodideTransportResponse, **__) -> None:
         self.block_size = response.block_size
         self.response = response
-        self.stream = None
+        # use this to efficiently store bytes.
+        self.stream = BytesIO()
+        self.closed = False
+        # We cannot control how many bytes we get from `response.reader`. `self.buffer_left`
+        # indicates how many unread bytes there are in `self.stream`
+        self.buffer_left = 0
         self.done = False
-    
+
+    def __aiter__(self):
+        return self
 
     async def __anext__(self):
-        """Assume that all the data we need is in `_internal_response`."""
-        if self.stream is None:
-            await self.response.load_body()
-            self.stream = BytesIO(self.response.content)
-            self.stream.seek(0)
-
-        chunk = self.stream.read(self.block_size)
-        if not chunk:
-            self.done = True
+        if self.closed:
             raise StopAsyncIteration()
-        else:
-            return chunk
+
+        # remember the initial stream position
+        start_pos = self.stream.tell()
+        # move stream position to the end
+        self.stream.read()
+        # read from reader until there is no more data or we have `self.block_size` unread bytes.
+        while self.buffer_left < self.block_size:
+            read = await self.response.reader.read()
+            if read.done:
+                self.closed = True
+                break
+            self.buffer_left += self.stream.write(bytes(read.value))
+
+        # move the stream position back to where we started
+        self.stream.seek(start_pos)
+        self.buffer_left -= self.block_size
+        return self.stream.read(self.block_size)

@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added Pyodide-compatible transport.
+
 ### Breaking Changes
 
 ### Bugs Fixed

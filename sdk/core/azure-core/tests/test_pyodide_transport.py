@@ -1,5 +1,6 @@
 """Tests that mock the browser layer."""
 import sys
+from typing import NamedTuple
 from unittest import mock
 
 import pytest
@@ -33,7 +34,7 @@ class TestPyodideTransportClass:
         with mock.patch.dict(sys.modules, patch_dict):
             # weird stuff is hppenig here, have to do full import.
             # if I do `from azure.core.pipline.transport import _pyodide`
-            # I end up with `_pyodide = 'pyodide'` ????????=-p
+            # I end up with `_pyodide = 'pyodide'` ???????
             import azure.core.pipeline.transport._pyodide
 
             yield azure.core.pipeline.transport._pyodide
@@ -117,3 +118,22 @@ class TestPyodideTransportClass:
             await pipeline.run(request)
         # 3 retries plus the original request.
         assert mock_pyfetch.call_count == retry_total + 1
+
+    @pytest.mark.asyncio
+    async def test_download_generator(self, transport):
+        """Test that the download generator is working correctly."""
+        class ReaderReturn(NamedTuple):
+            value: bytes
+            done: bool
+
+        response_mock = mock.Mock()
+        response_mock.block_size = 5
+        response_mock.reader.read = mock.AsyncMock()
+        response_mock.reader.read.return_value = ReaderReturn(value=b"01", done=False)
+        generator = transport.PyodideStreamDownloadGenerator(response=response_mock)
+
+        assert len(await generator.__anext__()) == response_mock.block_size
+        assert response_mock.reader.read.call_count == 3
+        assert len(await generator.__anext__()) == response_mock.block_size 
+        # 5 becuase there is a leftover byte from the previous `__anext__` call.
+        assert response_mock.reader.read.call_count == 5
