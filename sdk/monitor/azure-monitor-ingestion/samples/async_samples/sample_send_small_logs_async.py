@@ -35,4 +35,4 @@ async def send_logs():
 
 
 if __name__ == '__main__':
-    asyncio.run(await send_logs())
+    asyncio.run(send_logs())
