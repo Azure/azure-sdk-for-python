@@ -135,5 +135,5 @@ class TestPyodideTransportClass:
         assert len(await generator.__anext__()) == response_mock.block_size
         assert response_mock.reader.read.call_count == 3
         assert len(await generator.__anext__()) == response_mock.block_size 
-        # 5 becuase there is a leftover byte from the previous `__anext__` call.
+        # 5 because there is a leftover byte from the previous `__anext__` call.
         assert response_mock.reader.read.call_count == 5
