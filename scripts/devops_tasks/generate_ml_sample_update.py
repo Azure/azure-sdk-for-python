@@ -2,7 +2,6 @@
 import argparse
 import glob
 import os
-import pdb
 import re
 
 from azure.storage.blob import BlobServiceClient
