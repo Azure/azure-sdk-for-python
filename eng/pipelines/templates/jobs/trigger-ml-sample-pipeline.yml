@@ -72,18 +72,24 @@ jobs:
       displayName: 'Generate Samples Repo Changes'
       continueOnError: true
       env:
-        BLOB_ACCESS_KEY: $(azure-sdk-artifacts-cs)
+        BLOB_CONNECTION_STRING: $(azure-sdk-docsupport-cs)
       inputs:
         scriptPath: 'scripts/devops_tasks/generate_ml_sample_update.py'
         arguments: >-
           --ml-repo="$(mlrepo)"
           --ml-wheel-folder="$(Build.ArtifactStagingDirectory)/azure-ai-ml"
+          --build-id="$(Build.BuildId)"
 
     - pwsh: |
         cat "$(mlrepo)/sdk/setup.sh"
       displayName: Display Updated setup.sh
       continueOnError: true
 
-
-    # call into detect changes
-    # call into submit PR
+    # - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+    #   parameters:
+    #     RepoName: azureml-examples
+    #     RepoOwner: scbedd
+    #     PRBranchName: test-ml-sdk-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
+    #     CommitMsg: "Update sdk/setup.sh to target fresh built azure-ai-ml wheel."
+    #     PRTitle: "SDK Samples Run generated from $(Build.BuildId)"
+    #     WorkingDirectory: $(mlrepo)
