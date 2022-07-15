@@ -1,47 +1,47 @@
 parameters:
-  - name: serviceDirectory
-    type: string
-    default: ''
-  - name: services
-    type: string
-    default: ''
-  - name: packageVersions
-    type: string
-    default: '.*'
-  - name: tests
-    type: string
-    default: '.*'
-  - name: arguments
-    type: string
-    default: '.*' 
-  - name: iterations
-    type: number
-    default: '5'
-  - name: additionalArguments
-    type: string
-    default: ''
-  - name: envVars
-    type: object
-    default: {}
+- name: ServiceDirectory
+  type: string
+  default: ''
+- name: Services
+  type: string
+  default: ''
+- name: PackageVersions
+  type: string
+  default: '.*'
+- name: Tests
+  type: string
+  default: '.*'
+- name: Arguments
+  type: string
+  default: '.*'
+- name: Iterations
+  type: number
+  default: '5'
+- name: AdditionalArguments
+  type: string
+  default: ''
+- name: EnvVars
+  type: object
+  default: {}
 
 extends:
   template: /eng/common/pipelines/templates/jobs/perf.yml
   parameters:
-    variables:
-      - template: /eng/pipelines/templates/variables/globals.yml
-      - name: PythonVersion
-        value: '3.7'
-    language: Python
-    installLanguageSteps:
-      - task: UsePythonVersion@0
-        displayName: "Use Python $(PythonVersion)"
-        inputs:
-          versionSpec: $(PythonVersion)
-    serviceDirectory: ${{ parameters.serviceDirectory }}
-    services: ${{ parameters.services }}
-    packageVersions: ${{ parameters.packageVersions }}
-    tests: ${{ parameters.tests }}
-    arguments: ${{ parameters.arguments }}
-    iterations: ${{ parameters.iterations }}
-    additionalArguments: ${{ parameters.additionalArguments }}
-    envVars: ${{ parameters.envVars}}
+    Variables:
+    - template: /eng/pipelines/templates/variables/globals.yml
+    - name: PythonVersion
+      value: '3.7'
+    Language: Python
+    InstallLanguageSteps:
+    - task: UsePythonVersion@0
+      displayName: "Use Python $(PythonVersion)"
+      inputs:
+        versionSpec: $(PythonVersion)
+    ServiceDirectory: ${{ parameters.ServiceDirectory }}
+    Services: ${{ parameters.Services }}
+    PackageVersions: ${{ parameters.PackageVersions }}
+    Tests: ${{ parameters.Tests }}
+    Arguments: ${{ parameters.Arguments }}
+    Iterations: ${{ parameters.Iterations }}
+    AdditionalArguments: ${{ parameters.AdditionalArguments }}
+    EnvVars: ${{ parameters.EnvVars}}
