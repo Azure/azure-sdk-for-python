@@ -14,7 +14,7 @@ DEPENDENCIES = [
     "black==22.6.0",
     "typing-extensions>=3.10.0.0",
     "colorama",
-    "Jinja2",
+    "Jinja2==3.1.2",
     "MarkupSafe==2.0.1",
     "pytoml",
     "json-delta>=2.0",
