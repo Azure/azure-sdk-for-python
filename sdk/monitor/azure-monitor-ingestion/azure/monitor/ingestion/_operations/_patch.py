@@ -47,7 +47,7 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
             with concurrent.futures.ThreadPoolExecutor(max_concurrency) as executor:
                 future_to_req = {
                     executor.submit(
-                        super().upload,
+                        super(MonitorIngestionClientOperationsMixin, self).upload,
                         rule_id,
                         stream=stream_name,
                         body=request,
