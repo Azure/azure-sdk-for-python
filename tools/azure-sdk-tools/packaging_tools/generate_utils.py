@@ -135,7 +135,7 @@ def format_samples(sdk_code_path) -> None:
     if not os.path.exists(generate_sample_path):
         _LOGGER.info(f'not find generate_sample')
         return
-    
+
     for root, ds, files in os.walk(generate_sample_path):
         for file in files:
             if file.suffix != '.py':
