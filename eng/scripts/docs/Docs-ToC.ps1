@@ -105,7 +105,7 @@ function addManagementPackage($serviceEntry, $packageName) {
   return $serviceEntry
 }
 
-function Get-python-RepositoryLink ($packageInfo) {
+function Get-python-RepositoryLink($packageInfo) {
   return "$RepositoryUri/$($packageInfo.Package)"
 }
 function Get-python-UpdatedDocsMsToc($toc) {
