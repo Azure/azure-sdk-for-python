@@ -85,11 +85,11 @@ jobs:
       displayName: Display Updated setup.sh
       continueOnError: true
 
-    # - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
-    #   parameters:
-    #     RepoName: azureml-examples
-    #     RepoOwner: scbedd
-    #     PRBranchName: test-ml-sdk-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
-    #     CommitMsg: "Update sdk/setup.sh to target fresh built azure-ai-ml wheel."
-    #     PRTitle: "SDK Samples Run generated from $(Build.BuildId)"
-    #     WorkingDirectory: $(mlrepo)
+    - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+      parameters:
+        RepoName: azureml-examples
+        RepoOwner: scbedd
+        PRBranchName: test-ml-sdk-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
+        CommitMsg: "Update sdk/setup.sh to target fresh built azure-ai-ml wheel."
+        PRTitle: "SDK Samples Run generated from $(Build.BuildId)"
+        WorkingDirectory: $(mlrepo)
