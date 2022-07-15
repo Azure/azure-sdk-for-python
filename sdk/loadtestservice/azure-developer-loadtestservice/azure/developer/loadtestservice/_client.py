@@ -14,7 +14,12 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import LoadTestClientConfiguration
 from ._serialization import Deserializer, Serializer
-from .operations import AppComponentOperations, ServerMetricsOperations, TestOperations, TestRunOperations
+from .operations import (
+    AppComponentOperations,
+    ServerMetricsOperations,
+    TestOperations,
+    TestRunOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -43,20 +48,30 @@ class LoadTestClient:  # pylint: disable=client-accepts-api-version-keyword
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: "TokenCredential", **kwargs: Any
+    ) -> None:
         _endpoint = "https://{Endpoint}"
-        self._config = LoadTestClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = LoadTestClientConfiguration(
+            endpoint=endpoint, credential=credential, **kwargs
+        )
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.app_component = AppComponentOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.server_metrics = ServerMetricsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.app_component = AppComponentOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.server_metrics = ServerMetricsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.test = TestOperations(  # type: ignore  # pylint: disable=abstract-class-instantiated
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.test_run = TestRunOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.test_run = TestRunOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
@@ -78,10 +93,14 @@ class LoadTestClient:  # pylint: disable=client-accepts-api-version-keyword
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
 
-        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        request_copy.url = self._client.format_url(
+            request_copy.url, **path_format_arguments
+        )
         return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
