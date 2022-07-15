@@ -1750,7 +1750,7 @@ class _AnalyzeActionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     )
     ANALYZE_SENTIMENT = "analyze_sentiment"  #: Sentiment Analysis action.
     RECOGNIZE_CUSTOM_ENTITIES = "recognize_custom_entities"
-    SINGLE_CATEGORY_CLASSIFY = "single_category_classify"
+    SINGLE_LABEL_CLASSIFY = "single_label_classify"
     MULTI_CATEGORY_CLASSIFY = "multi_category_classify"
     ANALYZE_HEALTHCARE_ENTITIES = "analyze_healthcare_entities"
 
@@ -2375,8 +2375,8 @@ class ClassifyDocumentResult(DictMixin):
         )
 
 
-class SingleCategoryClassifyAction(DictMixin):
-    """SingleCategoryClassifyAction encapsulates the parameters for starting a long-running custom single category
+class SingleLabelClassifyAction(DictMixin):
+    """SingleLabelClassifyAction encapsulates the parameters for starting a long-running custom single label
     classification operation. For information on regional support of custom features and how to train a model to
     classify your documents, see https://aka.ms/azsdk/textanalytics/customfunctionalities
 
@@ -2413,7 +2413,7 @@ class SingleCategoryClassifyAction(DictMixin):
         self.disable_service_logs = kwargs.get('disable_service_logs', None)
 
     def __repr__(self):
-        return "SingleCategoryClassifyAction(project_name={}, deployment_name={}, " \
+        return "SingleLabelClassifyAction(project_name={}, deployment_name={}, " \
                "disable_service_logs={})".format(
             self.project_name,
             self.deployment_name,

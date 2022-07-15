@@ -24,6 +24,8 @@ from ._models_py3 import FirewallRuleListResult
 from ._models_py3 import GetPrivateDnsZoneSuffixResponse
 from ._models_py3 import HighAvailability
 from ._models_py3 import Identity
+from ._models_py3 import LogFile
+from ._models_py3 import LogFileListResult
 from ._models_py3 import MaintenanceWindow
 from ._models_py3 import NameAvailability
 from ._models_py3 import NameAvailabilityRequest
@@ -64,11 +66,14 @@ from ._my_sql_management_client_enums import (
     IsDynamicConfig,
     IsReadOnly,
     ReplicationRole,
+    ResetAllToDefault,
     ServerState,
     ServerVersion,
     SkuTier,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'Backup',
     'CapabilitiesListResult',
@@ -88,6 +93,8 @@ __all__ = [
     'GetPrivateDnsZoneSuffixResponse',
     'HighAvailability',
     'Identity',
+    'LogFile',
+    'LogFileListResult',
     'MaintenanceWindow',
     'NameAvailability',
     'NameAvailabilityRequest',
@@ -125,7 +132,10 @@ __all__ = [
     'IsDynamicConfig',
     'IsReadOnly',
     'ReplicationRole',
+    'ResetAllToDefault',
     'ServerState',
     'ServerVersion',
     'SkuTier',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

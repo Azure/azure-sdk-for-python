@@ -210,3 +210,26 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         assert result.documents[0].fields.get("FullSignature").value_type == "signature"
         # this will notify us of changes in the service, currently expecting to get a None content for signature type fields
         assert result.documents[0].fields.get("FullSignature").content == None
+
+    @FormRecognizerPreparer()
+    @DocumentModelAdministrationClientPreparer()
+    @recorded_by_proxy
+    def test_custom_document_blank_pdf(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()
+        da_client = client.get_document_analysis_client()
+
+        with open(self.blank_pdf, "rb") as fd:
+            my_file = fd.read()
+
+        build_polling = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+        model = build_polling.result()
+
+        poller = da_client.begin_analyze_document(
+            model.model_id,
+            my_file,
+        )
+        result = poller.result()
+
+        assert result is not None
+        assert len(result.pages) == 1
+        assert len(result.pages[0].lines) == 0

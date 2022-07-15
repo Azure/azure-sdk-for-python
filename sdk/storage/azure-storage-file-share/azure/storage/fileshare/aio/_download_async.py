@@ -333,10 +333,11 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         )
 
     async def readall(self):
+        # type: () -> bytes
         """Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
-        :rtype: bytes or str
+        :rtype: bytes
         """
         stream = BytesIO()
         await self.readinto(stream)
