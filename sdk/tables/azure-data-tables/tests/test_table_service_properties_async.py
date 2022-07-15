@@ -154,15 +154,17 @@ class TestTableServicePropertiesAsync(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy_async
     async def test_client_with_url_ends_with_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
         url = self.account_url(tables_storage_account_name, "table")
-        invalid_url = url+"/"+"tableName"
+        table_name = self.get_resource_name("mytable")
+        invalid_url = url + "/" + table_name
         tsc = TableServiceClient(invalid_url, credential=tables_primary_storage_account_key)
+
         with pytest.raises(ValueError) as exc:
-            await tsc.create_table("tableName")
+            await tsc.create_table(table_name)
         assert ("table specified does not exist") in str(exc.value)
         assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
 
         with pytest.raises(ValueError) as exc:
-            await tsc.create_table_if_not_exists("tableName")
+            await tsc.create_table_if_not_exists(table_name)
         assert ("table specified does not exist") in str(exc.value)
         assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
 
@@ -177,7 +179,7 @@ class TestTableServicePropertiesAsync(AzureRecordedTestCase, TableTestCase):
         assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
 
         valid_tsc = TableServiceClient(url, credential=tables_primary_storage_account_key)
-        await valid_tsc.create_table("tableName")
+        await valid_tsc.create_table(table_name)
         with pytest.raises(ValueError) as exc:
             async for _ in  tsc.query_tables("TableName eq 'tableName'"):
                 pass
@@ -191,10 +193,10 @@ class TestTableServicePropertiesAsync(AzureRecordedTestCase, TableTestCase):
         assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
 
         with pytest.raises(ValueError) as exc:
-            await tsc.delete_table("tableName")
+            await tsc.delete_table(table_name)
         assert ("URI does not match number of key properties for the resource") in str(exc.value)
         assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
-        await valid_tsc.delete_table("tableName")
+        await valid_tsc.delete_table(table_name)
 
 
 class TestTableUnitTest(TableTestCase):

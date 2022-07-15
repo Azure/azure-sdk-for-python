@@ -158,16 +158,17 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_client_with_url_ends_with_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
         url = self.account_url(tables_storage_account_name, "table")
-        invalid_url = url+"/" + "tableName"
+        table_name = self.get_resource_name("mytable")
+        invalid_url = url + "/" + table_name
         tsc = TableServiceClient(invalid_url, credential=tables_primary_storage_account_key)
 
         with pytest.raises(ValueError) as exc:
-            tsc.create_table("tableName")
+            tsc.create_table(table_name)
         assert ("table specified does not exist") in str(exc.value)
         assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
 
         with pytest.raises(ValueError) as exc:
-            tsc.create_table_if_not_exists("tableName")
+            tsc.create_table_if_not_exists(table_name)
         assert ("table specified does not exist") in str(exc.value)
         assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
 
@@ -182,7 +183,7 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
         assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
 
         valid_tsc = TableServiceClient(url, credential=tables_primary_storage_account_key)
-        valid_tsc.create_table("tableName")
+        valid_tsc.create_table(table_name)
         with pytest.raises(ValueError) as exc:
             for _ in  tsc.query_tables("TableName eq 'tableName'"):
                 pass
@@ -195,12 +196,11 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
         assert ("operation is not implemented") in str(exc.value)
         assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
 
-        
         with pytest.raises(ValueError) as exc:
-            tsc.delete_table("tableName")
+            tsc.delete_table(table_name)
         assert ("URI does not match number of key properties for the resource") in str(exc.value)
         assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
-        valid_tsc.delete_table("tableName")
+        valid_tsc.delete_table(table_name)
 
 
 class TestTableUnitTest(TableTestCase):

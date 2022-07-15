@@ -1,27 +1,27 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.table.core.windows.net/tableName/Tables",
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/mytablebe642451/Tables",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata=minimalmetadata",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "26",
+        "Content-Length": "32",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Fri, 15 Jul 2022 00:17:56 GMT",
+        "Date": "Fri, 15 Jul 2022 01:22:53 GMT",
         "User-Agent": "azsdk-python-data-tables/12.4.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Fri, 15 Jul 2022 00:17:56 GMT",
+        "x-ms-date": "Fri, 15 Jul 2022 01:22:53 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": {
-        "TableName": "tableName"
+        "TableName": "mytablebe642451"
       },
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Fri, 15 Jul 2022 00:17:56 GMT",
+        "Date": "Fri, 15 Jul 2022 01:22:53 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -35,33 +35,33 @@
           "code": "TableNotFound",
           "message": {
             "lang": "en-US",
-            "value": "The table specified does not exist.\nRequestId:8fbd187e-4002-00ab-49e0-97e54b000000\nTime:2022-07-15T00:17:57.0948756Z"
+            "value": "The table specified does not exist.\nRequestId:769a8b0d-3002-0008-24e9-97808e000000\nTime:2022-07-15T01:22:53.7174143Z"
           }
         }
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.table.core.windows.net/tableName/Tables",
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/mytablebe642451/Tables",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata=minimalmetadata",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "27",
+        "Content-Length": "33",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Fri, 15 Jul 2022 00:17:57 GMT",
+        "Date": "Fri, 15 Jul 2022 01:22:53 GMT",
         "User-Agent": "azsdk-python-data-tables/12.4.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Fri, 15 Jul 2022 00:17:57 GMT",
+        "x-ms-date": "Fri, 15 Jul 2022 01:22:53 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": {
-        "TableName": "tableName2"
+        "TableName": "mytable2be642451"
       },
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Fri, 15 Jul 2022 00:17:56 GMT",
+        "Date": "Fri, 15 Jul 2022 01:22:53 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -75,7 +75,7 @@
           "code": "TableNotFound",
           "message": {
             "lang": "en-US",
-            "value": "The table specified does not exist.\nRequestId:8fbd1886-4002-00ab-4fe0-97e54b000000\nTime:2022-07-15T00:17:57.1718316Z"
+            "value": "The table specified does not exist.\nRequestId:769a8b10-3002-0008-25e9-97808e000000\nTime:2022-07-15T01:22:53.7783790Z"
           }
         }
       }
@@ -87,23 +87,23 @@
         "Accept": "application/json;odata=minimalmetadata",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "26",
+        "Content-Length": "32",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Fri, 15 Jul 2022 00:17:57 GMT",
+        "Date": "Fri, 15 Jul 2022 01:22:53 GMT",
         "User-Agent": "azsdk-python-data-tables/12.4.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Fri, 15 Jul 2022 00:17:57 GMT",
+        "x-ms-date": "Fri, 15 Jul 2022 01:22:53 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": {
-        "TableName": "tableName"
+        "TableName": "mytablebe642451"
       },
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Fri, 15 Jul 2022 00:17:56 GMT",
-        "Location": "https://fakeendpoint.table.core.windows.net/Tables(\u0027tableName\u0027)",
+        "Date": "Fri, 15 Jul 2022 01:22:53 GMT",
+        "Location": "https://fakeendpoint.table.core.windows.net/Tables(\u0027mytablebe642451\u0027)",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -114,32 +114,32 @@
       },
       "ResponseBody": {
         "odata.metadata": "https://fakeendpoint.table.core.windows.net/$metadata#Tables/@Element",
-        "TableName": "tableName"
+        "TableName": "mytablebe642451"
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.table.core.windows.net/tableName/Tables",
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/mytablebe642451/Tables",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata=minimalmetadata",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "26",
+        "Content-Length": "32",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Fri, 15 Jul 2022 00:17:57 GMT",
+        "Date": "Fri, 15 Jul 2022 01:22:53 GMT",
         "User-Agent": "azsdk-python-data-tables/12.4.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Fri, 15 Jul 2022 00:17:57 GMT",
+        "x-ms-date": "Fri, 15 Jul 2022 01:22:53 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": {
-        "TableName": "tableName"
+        "TableName": "mytablebe642451"
       },
       "StatusCode": 400,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Fri, 15 Jul 2022 00:17:56 GMT",
+        "Date": "Fri, 15 Jul 2022 01:22:53 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -153,29 +153,29 @@
           "code": "PropertiesNeedValue",
           "message": {
             "lang": "en-US",
-            "value": "The values are not specified for all properties in the entity.\nRequestId:8fbd1893-4002-00ab-5ae0-97e54b000000\nTime:2022-07-15T00:17:57.2997572Z"
+            "value": "The values are not specified for all properties in the entity.\nRequestId:769a8b14-3002-0008-27e9-97808e000000\nTime:2022-07-15T01:22:53.8633305Z"
           }
         }
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.table.core.windows.net/tableName/Tables(\u0027tableName\u0027)",
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/mytablebe642451/Tables(\u0027mytablebe642451\u0027)",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Fri, 15 Jul 2022 00:17:57 GMT",
+        "Date": "Fri, 15 Jul 2022 01:22:53 GMT",
         "User-Agent": "azsdk-python-data-tables/12.4.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Fri, 15 Jul 2022 00:17:57 GMT",
+        "x-ms-date": "Fri, 15 Jul 2022 01:22:53 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Fri, 15 Jul 2022 00:17:56 GMT",
+        "Date": "Fri, 15 Jul 2022 01:22:53 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -189,22 +189,22 @@
           "code": "InvalidInput",
           "message": {
             "lang": "en-US",
-            "value": "The number of keys specified in the URI does not match number of key properties for the resource \u0027faketableaccount.tableName\u0027.\nRequestId:8fbd1895-4002-00ab-5ce0-97e54b000000\nTime:2022-07-15T00:17:57.3207454Z"
+            "value": "The number of keys specified in the URI does not match number of key properties for the resource \u0027faketableaccount.mytablebe642451\u0027.\nRequestId:769a8b16-3002-0008-29e9-97808e000000\nTime:2022-07-15T01:22:53.8843181Z"
           }
         }
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.table.core.windows.net/Tables(\u0027tableName\u0027)",
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/Tables(\u0027mytablebe642451\u0027)",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Fri, 15 Jul 2022 00:17:57 GMT",
+        "Date": "Fri, 15 Jul 2022 01:22:53 GMT",
         "User-Agent": "azsdk-python-data-tables/12.4.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Fri, 15 Jul 2022 00:17:57 GMT",
+        "x-ms-date": "Fri, 15 Jul 2022 01:22:53 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
@@ -212,7 +212,7 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Fri, 15 Jul 2022 00:17:56 GMT",
+        "Date": "Fri, 15 Jul 2022 01:22:53 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
