@@ -282,11 +282,9 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator_with_wraps
     def test_batch_single_op_if_doesnt_match(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        # set_custom_default_matcher(
-        #     compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        # )
-
-        # Above section is intentionally commented to trigger a playback error, to show how error raising is handled
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # variable_recorder directly returns the dictionary containing recorded variables. In live mode, this is an
         # empty dictionary; in playback mode, this is populated with any variables that were recorded previously.
