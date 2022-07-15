@@ -8,6 +8,7 @@ DEPENDENCIES = [
     # Packaging
     "packaging",
     "wheel",
+    "black==22.6.0",
     "Jinja2",
     "MarkupSafe==2.0.1",
     "pytoml",
@@ -24,7 +25,6 @@ DEPENDENCIES = [
     "azure-mgmt-storage",
     "azure-mgmt-keyvault",
     "python-dotenv",
-    # "black==22.6.0"
 ]
 
 setup(
