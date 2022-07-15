@@ -40,6 +40,7 @@ jobs:
 
     - script: |
         pip install -r eng/ci_tools.txt
+        pip install -r eng/ml_sample_tools.txt
       displayName: 'Prep Environment'
 
     - task: PythonScript@0
@@ -54,9 +55,6 @@ jobs:
       displayName: Output Staging Directory
       continueOnError: true
 
-    # foreach package, upload to a blob storage location, store that URI as an alongside the artifact under
-    # <full_whl_or_sdist_name>.bloblocation
-
     # clone the samples repo
     - pwsh: |
         git clone --depth 1 ${{ parameters.SamplesRepo }} $(Agent.BuildDirectory)/ml
@@ -69,9 +67,12 @@ jobs:
       displayName: Output Staging Directory
       continueOnError: true
 
+    # this package should 
     - task: PythonScript@0
       displayName: 'Generate Samples Repo Changes'
       continueOnError: true
+      env:
+        BLOB_ACCESS_KEY: $(azure-sdk-artifacts-cs)
       inputs:
         scriptPath: 'scripts/devops_tasks/generate_ml_sample_update.py'
         arguments: >-
