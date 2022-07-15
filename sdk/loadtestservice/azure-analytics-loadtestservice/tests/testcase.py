@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 import functools
 from devtools_testutils import AzureTestCase, PowerShellPreparer
-from azure.analytics.loadtestservice import LoadTestClient
+from azure.developer.loadtestservice import LoadTestClient
 
 LoadtestservicePowerShellPreparer = functools.partial(
     PowerShellPreparer,
