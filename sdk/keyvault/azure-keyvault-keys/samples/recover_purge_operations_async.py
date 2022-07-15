@@ -40,8 +40,8 @@ async def run_sample():
     client = KeyClient(vault_url=VAULT_URL, credential=credential)
 
     print("\n.. Create keys")
-    rsa_key = await client.create_rsa_key("rsaKeyName")
-    ec_key = await client.create_ec_key("ecKeyName")
+    rsa_key = await client.create_rsa_key("rsaKeyNameAsync")
+    ec_key = await client.create_ec_key("ecKeyNameAsync")
     print("Created key '{0}' of type '{1}'.".format(rsa_key.name, rsa_key.key_type))
     print("Created key '{0}' of type '{1}'.".format(ec_key.name, ec_key.key_type))
 

@@ -1,5 +1,12 @@
 # Release History
 
+## 12.14.0b1 (Unreleased)
+
+### Features Added
+
+### Bugs Fixed
+- Adjusted type hints for `upload_blob` and `StorageStreamDownloader.readall`.
+
 ## 12.13.0 (2022-07-07)
 
 ### Bugs Fixed
