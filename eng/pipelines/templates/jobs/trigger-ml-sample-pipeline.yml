@@ -10,7 +10,7 @@ parameters:
       skipVerifyChangeLog: true
   - name: SamplesRepo
     type: string
-    default: 'https://github.com/scbedd/azureml-examples.git'
+    default: 'https://github.com/scbedd/azureml-examples'
 
 jobs:
   - job: 'Build_Upload_PR'
