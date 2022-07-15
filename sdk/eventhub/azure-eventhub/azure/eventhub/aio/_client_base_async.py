@@ -255,7 +255,7 @@ class ClientBaseAsync(ClientBase):
             mgmt_client = AMQPClientAsync(
                 hostname,
                 auth=mgmt_auth,
-                debug=self._config.network_tracing,
+                network_trace=self._config.network_tracing,
                 transport_type=self._config.transport_type,
                 http_proxy=self._config.http_proxy,
                 custom_endpoint_address=custom_endpoint_address,
