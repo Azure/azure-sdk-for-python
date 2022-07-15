@@ -92,6 +92,10 @@ class TestPyodideTransportClass:
         assert response.headers == response_headers
         assert response.reason == response_text
 
+        assert not response._is_closed
+        response.close()
+        assert response._is_closed
+
         # Check that the call had the correct arguments.
         mock_pyfetch.assert_called_once()
         args = mock_pyfetch.call_args.args
@@ -137,3 +141,8 @@ class TestPyodideTransportClass:
         assert len(await generator.__anext__()) == response_mock.block_size 
         # 5 because there is a leftover byte from the previous `__anext__` call.
         assert response_mock.reader.read.call_count == 5
+
+        response_mock.reader.read.return_value = ReaderReturn(value=None, done=True)
+        await generator.__anext__()
+        with pytest.raises(StopAsyncIteration):
+            await generator.__anext__()

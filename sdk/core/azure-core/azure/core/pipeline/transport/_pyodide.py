@@ -29,8 +29,8 @@ from io import BytesIO
 
 from pyodide import JsException  # pylint: disable=import-error
 from pyodide.http import pyfetch  # pylint: disable=import-error
-from requests.structures import CaseInsensitiveDict  # FIXME
 
+from azure.core.utils import CaseInsensitiveDict
 from azure.core.exceptions import HttpResponseError
 from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
 from ._requests_asyncio import AsyncioRequestsTransport
