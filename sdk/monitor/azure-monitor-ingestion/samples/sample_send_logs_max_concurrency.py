@@ -9,7 +9,7 @@ from azure.identity import DefaultAzureCredential
 endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
 credential = DefaultAzureCredential()
 
-client = LogsIngestionClient(endpoint=endpoint, credential=credential, logging_enable=True)
+client = LogsIngestionClient(endpoint=endpoint, credential=credential)
 
 rule_id = os.environ['LOGS_DCR_RULE_ID']
 body = []
