@@ -10,7 +10,8 @@ from ci_tools.variables import discover_repo_root, get_artifact_directory
 from ci_tools.versioning.version_shared import set_version_py, set_dev_classifier
 from ci_tools.versioning.version_set_dev import get_dev_version, format_build_id
 
-def build(repo_root_arg=None) -> None:
+
+def build() -> None:
     parser = argparse.ArgumentParser(
         description="""This is the primary entrypoint for the "build" action. This command is used to build any package within the azure-sdk-for-python repository.""",
     )
@@ -98,12 +99,15 @@ def build(repo_root_arg=None) -> None:
 
     targeted_packages = discover_targeted_packages(args.glob_string, target_dir, args.package_filter_string)
     artifact_directory = get_artifact_directory(args.distribution_directory)
-    
-    
+
     build_id = format_build_id(args.build_id or DEFAULT_BUILD_ID)
 
     build_packages(
-        targeted_packages, artifact_directory, str_to_bool(args.is_dev_build), str_to_bool(args.apiview_closure), build_id
+        targeted_packages,
+        artifact_directory,
+        str_to_bool(args.is_dev_build),
+        str_to_bool(args.apiview_closure),
+        build_id,
     )
 
 
@@ -115,7 +119,7 @@ def build_packages(
     distribution_directory: str = None,
     is_dev_build: bool = False,
     build_apiview_artifact: bool = False,
-    build_id: str = ""
+    build_id: str = "",
 ):
     logging.info("Generating Package Using Python {}".format(sys.version))
 

@@ -13,6 +13,7 @@ from os import path
 import sys
 
 from ci_tools.versioning.version_shared import get_packages, get_version_py
+from ci_tools.variables import discover_repo_root
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="")
@@ -30,11 +31,22 @@ if __name__ == "__main__":
             'Examples: All = "azure-*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"'
         ),
     )
+
+    parser.add_argument(
+        "--repo",
+        default=None,
+        dest="repo",
+        help=(
+            "Where is the start directory that we are building against? If not provided, the current working directory will be used. Please ensure you are within the azure-sdk-for-python repository."
+        ),
+    )
+
     args = parser.parse_args()
+    root_dir = args.repo or discover_repo_root()
 
     always_succeed = args.always_succeed
 
-    packages = get_packages(args)
+    packages = get_packages(args, root_dir=root_dir)
 
     invalid_packages = []
     for package in packages:

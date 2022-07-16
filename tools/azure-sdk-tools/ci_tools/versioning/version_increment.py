@@ -18,6 +18,7 @@ from ci_tools.versioning.version_shared import (
     set_dev_classifier,
     update_change_log,
 )
+from ci_tools.variables import discover_repo_root
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -55,11 +56,21 @@ if __name__ == "__main__":
         required=True,
         help="name of the service for which to set the dev build id (e.g. keyvault)",
     )
+    parser.add_argument(
+        "--repo",
+        default=None,
+        dest="repo",
+        help=(
+            "Where is the start directory that we are building against? If not provided, the current working directory will be used. Please ensure you are within the azure-sdk-for-python repository."
+        ),
+    )
+
     args = parser.parse_args()
+    root_dir = args.repo or discover_repo_root()
 
     package_name = args.package_name.replace("_", "-")
 
-    packages = get_packages(args, package_name, additional_excludes=["mgmt", "-nspkg"])
+    packages = get_packages(args, package_name, additional_excludes=["mgmt", "-nspkg"], root_dir=root_dir)
 
     package_map = {pkg[1][0]: pkg for pkg in packages}
 
@@ -73,4 +84,4 @@ if __name__ == "__main__":
 
     set_version_py(target_package[0], new_version)
     set_dev_classifier(target_package[0], new_version)
-    update_change_log(target_package[0], new_version, args.service, args.package_name, True, False)
+    update_change_log(target_package[0], new_version, args.service, args.package_name, True, False, root_dir=root_dir)

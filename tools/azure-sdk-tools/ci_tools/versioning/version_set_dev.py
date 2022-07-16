@@ -18,6 +18,8 @@ from ci_tools.versioning.version_shared import (
     set_dev_classifier,
 )
 
+from ci_tools.variables import discover_repo_root
+
 MAX_R_DIGITS = 3
 
 
@@ -66,9 +68,19 @@ if __name__ == "__main__":
         help="id of the build (generally of the form YYYYMMDD.r) dot characters(.) will be removed",
     )
 
-    args = parser.parse_args()
+    parser.add_argument(
+        "--repo",
+        default=None,
+        dest="repo",
+        help=(
+            "Where is the start directory that we are building against? If not provided, the current working directory will be used. Please ensure you are within the azure-sdk-for-python repository."
+        ),
+    )
 
-    target_packages = get_packages(args)
+    args = parser.parse_args()
+    root_dir = args.repo or discover_repo_root()
+
+    target_packages = get_packages(args, root_dir=root_dir)
     build_id = format_build_id(args.build_id)
 
     if not target_packages:

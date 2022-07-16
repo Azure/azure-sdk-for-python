@@ -16,9 +16,11 @@ import logging
 from packaging.version import parse
 
 from datetime import date
-from ci_tools.versioning.setup_parser import parse_setup
-
 from ci_tools.functions import discover_targeted_packages
+from ci_tools.parsing import ParsedSetup
+from ci_tools.variables import discover_repo_root
+
+from subprocess import run
 
 VERSION_PY = "_version.py"
 # Auto generated code has version maintained in version.py.
@@ -45,12 +47,14 @@ def is_metapackage(package_path):
 
 
 def get_setup_py_paths(glob_string, base_path, additional_excludes):
-    setup_paths = process_glob_string(glob_string, base_path)
+    setup_paths = discover_targeted_packages(glob_string, base_path)
     filtered_paths = [path.join(p, "setup.py") for p in setup_paths if not path_excluded(p, additional_excludes)]
     return filtered_paths
 
 
-def get_packages(args, package_name="", additional_excludes=[]):
+def get_packages(args, package_name="", additional_excludes=[], root_dir: str = None):
+    if root_dir is None:
+        root_dir = discover_repo_root()
     # This function returns list of path to setup.py and setup info like install requires, version for all packages discovered using glob
     # Followiong are the list of arguements expected and parsed by this method
     # service, glob_string
@@ -69,7 +73,7 @@ def get_packages(args, package_name="", additional_excludes=[]):
     packages = []
     for setup_path in paths:
         try:
-            setup_info = parse_setup(setup_path)
+            setup_info = ParsedSetup.from_path(setup_path)
             setup_entry = (setup_path, setup_info)
             packages.append(setup_entry)
         except:
@@ -141,7 +145,11 @@ def update_change_log(
     is_unreleased,
     replace_latest_entry_title,
     release_date=None,
+    root_dir=None,
 ):
+    if root_dir is None:
+        root_dir = discover_repo_root()
+
     script = os.path.join(root_dir, "eng", "common", "scripts", "Update-ChangeLog.ps1")
     pkg_root = os.path.abspath(os.path.join(setup_py_location, ".."))
     changelog_path = os.path.join(pkg_root, "CHANGELOG.md")
@@ -162,4 +170,4 @@ def update_change_log(
         commands.append("--ReleaseDate:{}".format(release_date))
 
     # Run script to update change log
-    run_check_call(commands, pkg_root)
+    run(commands, cwd=pkg_root)

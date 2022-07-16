@@ -1,6 +1,7 @@
 import os
 import argparse
 import logging
+from ci_tools.variables import discover_repo_root
 
 from ci_tools.versioning.version_shared import (
     get_packages,
@@ -38,13 +39,22 @@ if __name__ == "__main__":
             'Examples: All = "azure-*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"'
         ),
     )
+    parser.add_argument(
+        "--repo",
+        default=None,
+        dest="repo",
+        help=(
+            "Where is the start directory that we are building against? If not provided, the current working directory will be used. Please ensure you are within the azure-sdk-for-python repository."
+        ),
+    )
 
     args = parser.parse_args()
+    root_dir = args.repo or discover_repo_root()
 
     package_name = args.package_name.replace("_", "-")
     new_version = args.new_version
 
-    packages = get_packages(args, package_name)
+    packages = get_packages(args, package_name, root_dir=root_dir)
 
     package_map = {pkg[1][0]: pkg for pkg in packages}
 
@@ -65,4 +75,5 @@ if __name__ == "__main__":
         False,
         args.replace_latest_entry_title,
         args.release_date,
+        root_dir=root_dir,
     )

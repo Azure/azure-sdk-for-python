@@ -9,18 +9,26 @@ While this is happening:
 
 Goals for the refactor:
 
-- [ ] Refactor `build` of packages (including conda packages) into command `sdk_build` accessible from `azure-sdk-tools`
-- [ ] Move necessary functions to support versioning (both requirement and package version updates) and build into `azure-sdk-tools`. Where a function has been moved out of `sanitize_setup.py` or `common_tasks.py`, call sites on _existing_ checks should be updated in place. So this means the current update takes care of updating versions and requirements + build. That's it. 
-  - [ ] We will leave the current implementation of set_dev_version which simply updates package versions to daily alpha. That will be named sdk_build_version
-- [ ] Make `versioning` commands available in commands `sdk_version_X`
-- [ ] All functions should use CWD to establish where the root of the repository is or accept `--repo` as an argument which overrides that default.
-- [ ] Introduce --buildURL cli command that will _reproduce_ an error or build or scenario from a devops build URL.
+- [x] Refactor `build` of packages (including conda packages) into command `sdk_build` accessible from `azure-sdk-tools`
+- [x] Move necessary functions to support versioning (both requirement and package version updates) and build into `azure-sdk-tools`. Where a function has been moved out of `sanitize_setup.py` or `common_tasks.py`, call sites on _existing_ checks should be updated in place. So this means the current update takes care of updating versions and requirements + build. That's it.
+  - [x] We will leave the current implementation of set_dev_version which simply updates package versions to daily alpha. That will be named sdk_build_version
+- [x] Make `versioning` commands available in commands `sdk_version_X`
+- [x] All functions should use CWD to establish where the root of the repository is or accept `--repo` as an argument which overrides that default.
+- [x] Introduce --buildURL cli command that will _reproduce_ an error or build or scenario from a devops build URL.
+- [x] We are _not_ updating logging with this first pr.
 
 Minutae
-- [ ] Move `sanitize_setup` functions into `functions.py`
+- [x] Move `sanitize_setup` functions into `functions.py`
 - [ ] Make a pass over all moved entry scripts. Ensure standardized arguments are present and working.
 - [ ] Document new environment variables
 - [ ] Update the usings in tox_harness. Ton of dependencies that need to be cleaned up.
+- [ ] Update existing call sites to enable CI to continue working post refactor start.
+
+## Refactoring our logging
+
+We have a lot of noise in our builds right now. We can stand to eliminate _some_ of the noise like output from `python setup.py bdist_wheel`. The issue is we don't want to come up with some hacked up workaround.
+
+We want the logging to help you, and NOT BE IN YOUR WAY when you're trying to repro the issue. The first stage including build and versioning will not adjust any of our logging.
 
 ## Refactoring how we install required packages for `regression`, `min/latestdependency` and any of our test scenarios
 
