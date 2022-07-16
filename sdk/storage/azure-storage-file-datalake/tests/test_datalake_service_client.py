@@ -354,7 +354,9 @@ class DatalakeServiceTest(StorageTestCase):
         assert not client.secondary_hostname
 
     @DataLakePreparer()
-    def test_create_file_system_encryption_scope(self, datalake_storage_account_name, datalake_storage_account_key):
+    def test_file_system_encryption_scope_from_service_client(self,
+                                                              datalake_storage_account_name,
+                                                              datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system_name = "testfs"

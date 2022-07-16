@@ -11,9 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.8.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 13 Jul 2022 22:55:07 GMT
+      - Sat, 16 Jul 2022 04:38:11 GMT
       x-ms-default-encryption-scope:
       - hnstestscope1
       x-ms-deny-encryption-scope-override:
@@ -29,11 +29,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 13 Jul 2022 22:55:06 GMT
+      - Sat, 16 Jul 2022 04:38:11 GMT
       etag:
-      - '"0x8DA6522BB5EA9DE"'
+      - '"0x8DA66E4FDEA4F2B"'
       last-modified:
-      - Wed, 13 Jul 2022 22:55:07 GMT
+      - Sat, 16 Jul 2022 04:38:12 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,9 +51,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-dfs/12.8.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 13 Jul 2022 22:55:08 GMT
+      - Sat, 16 Jul 2022 04:38:12 GMT
       x-ms-version:
       - '2021-08-06'
     method: GET
@@ -65,11 +65,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 13 Jul 2022 22:55:06 GMT
+      - Sat, 16 Jul 2022 04:38:11 GMT
       etag:
-      - '"0x8DA6522BB5EA9DE"'
+      - '"0x8DA66E4FDEA4F2B"'
       last-modified:
-      - Wed, 13 Jul 2022 22:55:07 GMT
+      - Sat, 16 Jul 2022 04:38:12 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-default-encryption-scope:
@@ -103,9 +103,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.8.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 13 Jul 2022 22:55:08 GMT
+      - Sat, 16 Jul 2022 04:38:12 GMT
       x-ms-version:
       - '2021-08-06'
     method: DELETE
@@ -117,7 +117,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 13 Jul 2022 22:55:06 GMT
+      - Sat, 16 Jul 2022 04:38:11 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:

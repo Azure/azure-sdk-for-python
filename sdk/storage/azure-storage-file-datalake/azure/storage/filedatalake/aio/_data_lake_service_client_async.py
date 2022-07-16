@@ -199,13 +199,13 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         :param public_access:
             Possible values include: file system, file.
         :type public_access: ~azure.storage.filedatalake.PublicAccess
-        :keyword service_client_encryption_scope:
+        :keyword file_system_encryption_scope:
             Specifies the default encryption scope to set on the file system and use for
             all future writes.
 
             .. versionadded:: 12.9.0
 
-        :paramtype service_client_encryption_scope: dict or ~azure.storage.filedatalake.ServiceClientEncryptionScope
+        :paramtype file_system_encryption_scope: dict or ~azure.storage.filedatalake.FileSystemEncryptionScope
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
@@ -219,11 +219,11 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
                 :dedent: 8
                 :caption: Creating a file system in the datalake service.
         """
-        service_client_encryption_scope = kwargs.pop('service_client_encryption_scope', None)
+        file_system_encryption_scope = kwargs.pop('file_system_encryption_scope', None)
         file_system_client = self.get_file_system_client(file_system)
         await file_system_client.create_file_system(metadata=metadata,
                                                     public_access=public_access,
-                                                    file_system_encryption_scope=service_client_encryption_scope,
+                                                    file_system_encryption_scope=file_system_encryption_scope,
                                                     **kwargs)
         return file_system_client
 

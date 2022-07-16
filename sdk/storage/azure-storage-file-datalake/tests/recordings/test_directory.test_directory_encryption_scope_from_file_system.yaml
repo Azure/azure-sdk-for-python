@@ -11,9 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.8.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 13 Jul 2022 22:27:14 GMT
+      - Sat, 16 Jul 2022 00:21:44 GMT
       x-ms-default-encryption-scope:
       - hnstestscope1
       x-ms-deny-encryption-scope-override:
@@ -21,27 +21,26 @@ interactions:
       x-ms-version:
       - '2021-08-06'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/filesystemc23c133a?restype=container
+    uri: https://storagename.blob.core.windows.net/filesystem48171a50?restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
-        specified container already exists.\nRequestId:212e7be6-101e-0078-5207-97ee58000000\nTime:2022-07-13T22:27:13.8615583Z</Message></Error>"
+      string: ''
     headers:
       content-length:
-      - '230'
-      content-type:
-      - application/xml
+      - '0'
       date:
-      - Wed, 13 Jul 2022 22:27:13 GMT
+      - Sat, 16 Jul 2022 00:21:44 GMT
+      etag:
+      - '"0x8DA66C12A2FCE05"'
+      last-modified:
+      - Sat, 16 Jul 2022 00:21:44 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - ContainerAlreadyExists
       x-ms-version:
       - '2021-08-06'
     status:
-      code: 409
-      message: The specified container already exists.
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
@@ -54,13 +53,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.8.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 13 Jul 2022 22:27:14 GMT
+      - Sat, 16 Jul 2022 00:21:44 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
-    uri: https://storagename.dfs.core.windows.net/filesystemc23c133a/testdir?resource=directory
+    uri: https://storagename.dfs.core.windows.net/filesystem48171a50/testdir?resource=directory
   response:
     body:
       string: ''
@@ -68,11 +67,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 13 Jul 2022 22:27:14 GMT
+      - Sat, 16 Jul 2022 00:21:44 GMT
       etag:
-      - '"0x8DA651ED6967E11"'
+      - '"0x8DA66C12A9BBF52"'
       last-modified:
-      - Wed, 13 Jul 2022 22:27:14 GMT
+      - Sat, 16 Jul 2022 00:21:45 GMT
       server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-encryption-scope:
@@ -94,13 +93,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-dfs/12.8.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 13 Jul 2022 22:27:15 GMT
+      - Sat, 16 Jul 2022 00:21:45 GMT
       x-ms-version:
       - '2021-08-06'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/filesystemc23c133a/testdir
+    uri: https://storagename.blob.core.windows.net/filesystem48171a50/testdir
   response:
     body:
       string: ''
@@ -112,11 +111,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Wed, 13 Jul 2022 22:27:14 GMT
+      - Sat, 16 Jul 2022 00:21:45 GMT
       etag:
-      - '"0x8DA651ED6967E11"'
+      - '"0x8DA66C12A9BBF52"'
       last-modified:
-      - Wed, 13 Jul 2022 22:27:14 GMT
+      - Sat, 16 Jul 2022 00:21:45 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-access-tier:
@@ -126,7 +125,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Wed, 13 Jul 2022 22:27:14 GMT
+      - Sat, 16 Jul 2022 00:21:45 GMT
       x-ms-encryption-scope:
       - hnstestscope1
       x-ms-group:
@@ -162,13 +161,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.8.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 13 Jul 2022 22:27:15 GMT
+      - Sat, 16 Jul 2022 00:21:45 GMT
       x-ms-version:
       - '2021-08-06'
     method: DELETE
-    uri: https://storagename.blob.core.windows.net/filesystemc23c133a?restype=container
+    uri: https://storagename.blob.core.windows.net/filesystem48171a50?restype=container
   response:
     body:
       string: ''
@@ -176,7 +175,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 13 Jul 2022 22:27:15 GMT
+      - Sat, 16 Jul 2022 00:21:45 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -194,9 +193,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.13.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 13 Jul 2022 22:27:16 GMT
+      - Sat, 16 Jul 2022 00:21:45 GMT
       x-ms-version:
       - '2021-08-06'
     method: GET
@@ -210,7 +209,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Wed, 13 Jul 2022 22:27:15 GMT
+      - Sat, 16 Jul 2022 00:21:45 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

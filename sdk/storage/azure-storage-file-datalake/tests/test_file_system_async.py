@@ -34,8 +34,6 @@ from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
-TEST_FILE_SYSTEM_ENCRYPTION_KEY_SCOPE = FileSystemEncryptionScope(
-    default_encryption_scope="hnstestscope1")
 # ------------------------------------------------------------------------------
 
 class AiohttpTestTransport(AioHttpTransport):
@@ -113,22 +111,21 @@ class FileSystemTest(StorageTestCase):
         self.assertTrue(created)
 
     @DataLakePreparer()
-    async def test_create_file_system_encryption_scope(self,
-                                                       datalake_storage_account_name, datalake_storage_account_key):
+    async def test_create_file_system_encryption_scope(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system_name = self._get_file_system_reference()
+        encryption_scope = FileSystemEncryptionScope(default_encryption_scope="hnstestscope1")
 
         # Act
         file_system_client = self.dsc.get_file_system_client(file_system_name)
-        await file_system_client.create_file_system(file_system_encryption_scope=TEST_FILE_SYSTEM_ENCRYPTION_KEY_SCOPE)
+        await file_system_client.create_file_system(file_system_encryption_scope=encryption_scope)
         props = await file_system_client.get_file_system_properties()
 
         # Assert
         self.assertTrue(props)
         self.assertIsNotNone(props['encryption_scope'])
-        self.assertEqual(props['encryption_scope'].default_encryption_scope,
-                         TEST_FILE_SYSTEM_ENCRYPTION_KEY_SCOPE.default_encryption_scope)
+        self.assertEqual(props['encryption_scope'].default_encryption_scope, encryption_scope.default_encryption_scope)
 
     @DataLakePreparer()
     async def test_file_system_exists(self, datalake_storage_account_name, datalake_storage_account_key):

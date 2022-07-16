@@ -36,7 +36,6 @@
         "premiumAccountName": "[concat('prem', parameters('baseName'))]",
         "versionedAccountName": "[concat('ver', parameters('baseName'))]",
         "dataLakeAccountName": "[concat('dtlk', parameters('baseName'))]",
-        "dataLakeEncryptionScopeName": "[concat(parameters('baseName'), 'dtlk', '/encryptionScope')]",
         "dataLakeSoftDeleteAccountName": "[concat('dtlksd', parameters('baseName'))]",
         "premiumFileAccountName": "[concat('premf', parameters('baseName'))]",
         "keyvaultName": "[concat(parameters('baseName'), 'kvlt')]",

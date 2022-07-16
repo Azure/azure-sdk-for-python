@@ -14,10 +14,10 @@ from azure.core import MatchConditions
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
-    ResourceModifiedError, ServiceRequestError, AzureError
-from azure.storage.filedatalake import ContentSettings, DirectorySasPermissions, generate_file_system_sas, \
-    FileSystemSasPermissions
+from azure.core.exceptions import (HttpResponseError, ResourceExistsError, ResourceNotFoundError,
+                                   ResourceModifiedError, ServiceRequestError, AzureError)
+from azure.storage.filedatalake import (ContentSettings, DirectorySasPermissions,
+                                        generate_file_system_sas, FileSystemSasPermissions)
 from azure.storage.filedatalake import generate_directory_sas
 from azure.storage.filedatalake._models import FileSystemEncryptionScope
 from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient
@@ -31,8 +31,6 @@ TEST_DIRECTORY_PREFIX = 'directory'
 REMOVE_ACL = "mask," + "default:user,default:group," + \
              "user:ec3595d6-2c17-4696-8caa-7e139758d24a,group:ec3595d6-2c17-4696-8caa-7e139758d24a," + \
              "default:user:ec3595d6-2c17-4696-8caa-7e139758d24a,default:group:ec3595d6-2c17-4696-8caa-7e139758d24a"
-TEST_FILE_SYSTEM_ENCRYPTION_KEY_SCOPE = FileSystemEncryptionScope(
-    default_encryption_scope="hnstestscope1")
 
 
 # ------------------------------------------------------------------------------
@@ -1097,7 +1095,8 @@ class DirectoryTest(StorageTestCase):
         self.assertEqual(properties.metadata['hello'], metadata['hello'])
 
     @DataLakePreparer()
-    async def test_directory_encryption_scope_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_directory_encryption_scope_from_file_system_async(self, datalake_storage_account_name,
+                                                                     datalake_storage_account_key):
         # Arrange
         url = self.account_url(datalake_storage_account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key, logging_enable=True)
@@ -1105,19 +1104,18 @@ class DirectoryTest(StorageTestCase):
         self.file_system_name = self.get_resource_name('filesystem')
         dir_name = 'testdir'
         file_system = self.dsc.get_file_system_client(self.file_system_name)
-        try:
-            await file_system.create_file_system(file_system_encryption_scope=TEST_FILE_SYSTEM_ENCRYPTION_KEY_SCOPE)
-        except ResourceExistsError:
-            pass
+        encryption_scope = FileSystemEncryptionScope(default_encryption_scope="hnstestscope1")
 
+        await file_system.create_file_system(file_system_encryption_scope=encryption_scope)
         await file_system.create_directory(dir_name)
+
         directory_client = file_system.get_directory_client(dir_name)
         props = await directory_client.get_directory_properties()
 
         # Assert
         self.assertTrue(props)
         self.assertIsNotNone(props['encryption_scope'])
-        self.assertEqual(props['encryption_scope'], TEST_FILE_SYSTEM_ENCRYPTION_KEY_SCOPE.default_encryption_scope)
+        self.assertEqual(props['encryption_scope'], encryption_scope.default_encryption_scope)
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
