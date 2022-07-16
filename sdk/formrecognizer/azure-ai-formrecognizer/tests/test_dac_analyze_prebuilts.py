@@ -540,9 +540,16 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
         initial_poller = client.begin_analyze_document("prebuilt-receipt", receipt)
         cont_token = initial_poller.continuation_token()
-        poller = client.begin_analyze_document("prebuilt-receipt", None, continuation_token=cont_token)
+        # poller = client.begin_analyze_document("prebuilt-receipt", None, continuation_token=cont_token)
+        # result = poller.result()
+        # assert result is not None
+        # initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+        
+        poller = client.begin_analyze_document_from_token(cont_token)
         result = poller.result()
         assert result is not None
+        assert result.documents[0].fields.get("MerchantAddress").value, '123 Main Street Redmond ==  WA 98052'
+        
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @FormRecognizerPreparer()

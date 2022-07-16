@@ -93,7 +93,6 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
             `pages="1-3, 5-6"`. Separate each page number or range with a comma.
         :keyword str locale: Locale hint of the input document.
             See supported locales here: https://aka.ms/azsdk/formrecognizer/supportedlocales.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.AnalyzeResult]
@@ -148,7 +147,6 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
             `pages="1-3, 5-6"`. Separate each page number or range with a comma.
         :keyword str locale: Locale hint of the input document.
             See supported locales here: https://aka.ms/azsdk/formrecognizer/supportedlocales.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.AnalyzeResult]
@@ -179,6 +177,36 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
             **kwargs
         )
 
+    @distributed_trace
+    def begin_analyze_document_from_token(self, continuation_token: str, **kwargs) -> LROPoller[AnalyzeResult]:
+        """Continue an analysis of a given document using a continuation token.
+        The input must be the continuation token retreived from a previous analysis operation poller.
+
+        :param str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.AnalyzeResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/v3.2-beta/sample_analyze_receipts_from_continuation_token.py
+                :start-after: [START sample_analyze_receipts_from_continuation_token]
+                :end-before: [END sample_analyze_receipts_from_continuation_token]
+                :language: python
+                :dedent: 4
+                :caption: Analyze a receipt from a continuation token. For more samples see the `samples` folder.
+        """
+
+        cls = kwargs.pop("cls", self._analyze_document_callback)
+        return self._client.begin_analyze_document(  # type: ignore
+            model_id=None,
+            string_index_type="unicodeCodePoint",
+            continuation_token=continuation_token,
+            cls=cls,
+            **kwargs
+        )
+    
     def close(self) -> None:
         """Close the :class:`~azure.ai.formrecognizer.DocumentAnalysisClient` session."""
         return self._client.close()
