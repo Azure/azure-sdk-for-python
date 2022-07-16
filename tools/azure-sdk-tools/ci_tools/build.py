@@ -1,16 +1,16 @@
-import argparse, sys, os, glob, logging
+import argparse, sys, os, logging, pdb
 
 from subprocess import run
 
 from typing import List
 from ci_tools.functions import discover_targeted_packages, str_to_bool, process_requires
 from ci_tools.parsing import ParsedSetup
+from ci_tools.variables import DEFAULT_BUILD_ID
 from ci_tools.variables import discover_repo_root, get_artifact_directory
-from ci_tools.versioning.version_set_dev import se
 from ci_tools.versioning.version_shared import set_version_py, set_dev_classifier
 from ci_tools.versioning.version_set_dev import get_dev_version, format_build_id
 
-def build(args, repo_root_arg=None) -> None:
+def build(repo_root_arg=None) -> None:
     parser = argparse.ArgumentParser(
         description="""This is the primary entrypoint for the "build" action. This command is used to build any package within the azure-sdk-for-python repository.""",
     )
@@ -98,7 +98,9 @@ def build(args, repo_root_arg=None) -> None:
 
     targeted_packages = discover_targeted_packages(args.glob_string, target_dir, args.package_filter_string)
     artifact_directory = get_artifact_directory(args.distribution_directory)
-    build_id = format_build_id(args.build_id)
+    
+    
+    build_id = format_build_id(args.build_id or DEFAULT_BUILD_ID)
 
     build_packages(
         targeted_packages, artifact_directory, str_to_bool(args.is_dev_build), str_to_bool(args.apiview_closure), build_id
@@ -115,7 +117,6 @@ def build_packages(
     build_apiview_artifact: bool = False,
     build_id: str = ""
 ):
-    # TODO: function updates requirements
     logging.info("Generating Package Using Python {}".format(sys.version))
 
     for package_root in targeted_packages:
@@ -123,6 +124,7 @@ def build_packages(
 
         package_name_in_artifacts = os.path.join(os.path.basename(package_root))
         dist_dir = os.path.join(distribution_directory, package_name_in_artifacts)
+
         if is_dev_build:
             # TODO: shouldn't we just make this _always_ make things alpha version during daily build?
             # update the requirements to alpha version if the required version is not on pypi
@@ -130,10 +132,10 @@ def build_packages(
 
             new_version = get_dev_version(setup_parsed.version, build_id)
 
-            # print("{0}: {1} -> {2}".format(setup_parsed.name, setup_parsed.version, new_version))
+            print("{0}: {1} -> {2}".format(setup_parsed.name, setup_parsed.version, new_version))
 
-            set_version_py(version.setup_filename, new_version)
-            set_dev_classifier(version.setup_filename, new_version)
+            set_version_py(setup_parsed.setup_filename, new_version)
+            set_dev_classifier(setup_parsed.setup_filename, new_version)
 
         create_package(package_root, dist_dir)
 
@@ -145,6 +147,7 @@ def create_package(setup_directory_or_file: str, dest_folder: str = None):
     """
 
     dist = get_artifact_directory(dest_folder)
+    pdb.set_trace()
 
     if not os.path.isdir(setup_directory_or_file):
         setup_directory_or_file = os.path.dirname(setup_directory_or_file)
