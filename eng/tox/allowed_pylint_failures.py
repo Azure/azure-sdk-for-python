@@ -60,5 +60,5 @@ PYLINT_ACCEPTABLE_FAILURES = [
     "azure-agrifood-farming",
     "azure-ai-language-questionanswering",
     "azure-ai-language-conversations",
-    "azure-analytics-loadtestservice"
+    "azure-developer-loadtestservice"
 ]

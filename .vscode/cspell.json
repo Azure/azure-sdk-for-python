@@ -462,7 +462,7 @@
       ]
     },
     {
-      "filename": "sdk/loadtestservice/azure-analytics-loadtestservice/azure/analytics/loadtestservice/**",
+      "filename": "sdk/loadtestservice/azure-developer-loadtestservice/azure/developer/loadtestservice/**",
       "words":[
         "vusers"
       ]

@@ -1,7 +1,0 @@
-include *.md
-include azure/__init__.py
-include azure/analytics/__init__.py
-include LICENSE
-recursive-include tests *.py
-recursive-include samples *.py *.md
-include azure/analytics/loadtestservice/py.typed

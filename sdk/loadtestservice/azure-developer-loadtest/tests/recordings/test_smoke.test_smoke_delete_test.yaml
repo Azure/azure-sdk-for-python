@@ -1,0 +1,36 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-developer-loadtestservice/1.0.0b1 Python/3.9.8 (Windows-10-10.0.19044)
+    method: DELETE
+    uri: https://fake.loadtesting.azure.com/loadtests/000001?api-version=2022-06-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions:
+      - 2021-07-01-preview, 2022-04-15-preview, 2022-06-01-preview
+      connection:
+      - keep-alive
+      date:
+      - Tue, 21 Jun 2022 13:45:51 GMT
+      mise-correlation-id:
+      - ade1e246-f549-49eb-8d1a-99432e706c74
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 204
+      message: No Content
+version: 1
