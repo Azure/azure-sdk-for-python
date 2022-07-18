@@ -12,5 +12,4 @@ jobs:
       - name: add labels
         uses: actions/labeler@v3
         with:
-          github_token: ${{ secrets.GH_AZURE_SDK_PROJECT_PAT }}
-          labels: needs-triage
+          repo-token: ${{ secrets.GH_AZURE_SDK_PROJECT_PAT }}
