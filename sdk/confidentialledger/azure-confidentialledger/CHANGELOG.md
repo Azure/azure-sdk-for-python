@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (Unreleased)
+## 1.0.0 (2022-07-19)
 
 GA Data Plane Python SDK for Confidential Ledger.
 
