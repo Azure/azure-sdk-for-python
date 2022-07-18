@@ -10,7 +10,6 @@ from typing import (
     Any,
     Union,
     List,
-    Dict,
 )
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.tracing.decorator import distributed_trace
@@ -310,7 +309,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         target resource's output from calling the :func:`~get_copy_authorization()` method.
 
         :param str model_id: Model identifier of the model to copy to target resource.
-        :param Dict[str, str] target:
+        :param TargetAuthorization target:
             The copy authorization generated from the target resource's call to
             :func:`~get_copy_authorization()`.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
