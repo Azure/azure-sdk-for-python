@@ -203,7 +203,7 @@ Several Azure Maps Search Python SDK samples are available to you in the SDK's G
 ```bash
 set AZURE_SUBSCRIPTION_KEY="<RealSubscriptionKey>"
 
-pip install azure-maps-search
+pip install azure-maps-search --pre
 
 python samples/sample_authentication.py
 python sample/sample_fuzzy_search.py
@@ -215,6 +215,8 @@ python samples/sample_search_point_of_interest_category.py
 python samples/sample_search_point_of_interest.py
 python samples/sample_search_structured_address.py
 ```
+
+> Notes: `--pre` flag can be optionally added, it is to include pre-release and development versions for `pip install`. By default, `pip` only finds stable versions.
 
 Further detail please refer to [Samples Introduction](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-search/samples/README.md)
 
