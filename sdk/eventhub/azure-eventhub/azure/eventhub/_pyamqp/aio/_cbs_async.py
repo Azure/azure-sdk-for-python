@@ -175,6 +175,8 @@ class CBSAuthenticator(object):
     async def update_token(self):
         self.auth_state = CbsAuthState.IN_PROGRESS
         access_token = await self._auth.get_token()
+        if not access_token.token:
+            _LOGGER.debug("update_token received an empty token")
         self._expires_on = access_token.expires_on
         expires_in = self._expires_on - int(utc_now().timestamp())
         self._refresh_window = int(float(expires_in) * 0.1)

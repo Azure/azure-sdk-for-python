@@ -10,7 +10,7 @@ import time
 import functools
 import collections
 from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
-from datetime import timedelta
+from datetime import timedelta, datetime
 from urllib.parse import urlparse
 import six
 
@@ -386,13 +386,24 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 mgmt_client.open()
                 while not mgmt_client.client_ready():
                     time.sleep(0.05)
-                mgmt_msg.application_properties["security_token"] = mgmt_auth.get_token()
+                access_token = mgmt_auth.get_token()
+                mgmt_msg.application_properties["security_token"] = access_token.token
+                if not access_token.token:
+                    _LOGGER.info("Management client received an empty token")
+
+                else:
+                    _LOGGER.info(f"Management client token expires on: {datetime.fromtimestamp(access_token.expires_on)}")
+                
                 response = mgmt_client.mgmt_request(
                     mgmt_msg,
                     operation=READ_OPERATION.decode(),
                     operation_type=op_type.decode(),
                     status_code_field=MGMT_STATUS_CODE,
                     description_fields=MGMT_STATUS_DESC,
+                )
+                _LOGGER.info(
+                    'Management client token expiry: %r',
+                    datetime.fromtimestamp(access_token.expires_on)
                 )
                 status_code = int(response.application_properties[MGMT_STATUS_CODE])
                 description = response.application_properties.get(
