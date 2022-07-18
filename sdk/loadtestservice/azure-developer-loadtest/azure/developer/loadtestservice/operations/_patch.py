@@ -116,9 +116,9 @@ class TestOperations(TestOperationsGenerated):
 
 class AppComponentOperations(AppComponentOperationsGenerated):
 
-    __excludes__ = ["get_by_name"]
+    __excludes__ = ["get_by_name", "get_app_component"]
 
-    def get_app_component(
+    def get_app_components(
         self,
         *,
         test_run_id: Optional[str] = None,

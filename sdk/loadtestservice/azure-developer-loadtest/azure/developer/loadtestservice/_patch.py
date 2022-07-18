@@ -17,6 +17,24 @@ from ._serialization import Deserializer, Serializer
 from .operations import AppComponentOperations, ServerMetricsOperations, TestOperations, TestRunOperations
 
 
+class LoadTestAdministration:
+    """
+    class to hold LoadTestAdministration
+    """
+
+    def __init__(self, client, config, serializer, deserializer):
+        self._client = client
+        self._config = config
+        self._serializer = serializer
+        self._deserializer = deserializer
+
+        self.app_component = AppComponentOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.server_metrics = ServerMetricsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.test = TestOperations(  # type: ignore  # pylint: disable=abstract-class-instantiated
+            self._client, self._config, self._serialize, self._deserialize
+        )
+
+
 class LoadTestClient(LoadTestClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
     """These APIs allow end users to create, view and run load tests using Azure Load Test Service.
 
@@ -44,12 +62,9 @@ class LoadTestClient(LoadTestClientGenerated):  # pylint: disable=client-accepts
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.app_component = AppComponentOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.server_metrics = ServerMetricsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.test = TestOperations(  # type: ignore  # pylint: disable=abstract-class-instantiated
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.test_run = TestRunOperations(self._client, self._config, self._serialize, self._deserialize)
+
+        self.runs = TestRunOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.administration = LoadTestAdministration(self._client, self._config, self._serialize, self._deserialize)
 
 
 __all__: List[str] = ["LoadTestClient"]  # Add all objects you want publicly available to users at this package level
