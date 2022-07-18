@@ -71,7 +71,13 @@ def analyze_read():
         )
 
         for line_idx, line in enumerate(page.lines):
-            words = line.get_words()
+            # The `words` property on DocumentLine searches for words
+            # in the spans of the page(s) that coincide with the spans
+            # of the line it is called on. If using the `words` on a
+            # DocumentLine multiple times it is better to assign the
+            # resulting words to a variable once instead of calling
+            # the `words` property multiple times.
+            words = line.words
             print(
                 "...Line # {} has {} words and text '{}' within bounding polygon '{}'".format(
                     line_idx,
