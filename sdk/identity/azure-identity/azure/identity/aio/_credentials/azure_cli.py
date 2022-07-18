@@ -59,7 +59,7 @@ class AzureCliCredential(AsyncContextManager):
 
         resource = _scopes_to_resource(*scopes)
         command = COMMAND_LINE.format(resource)
-        tenant = resolve_tenant(default_tenant= "", **kwargs) if self.tenant_id is None else resolve_tenant(default_tenant= "", tenant_id= self.tenant_id, **kwargs)
+        tenant = resolve_tenant(default_tenant= "", tenant_id= self.tenant_id, **kwargs)
         
         if tenant:
             command += " --tenant " + tenant
