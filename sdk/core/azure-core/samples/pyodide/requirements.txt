@@ -1,0 +1,6 @@
+python-dotenv
+# todo: delete the following line
+https://tsjinxuanstorage2.blob.core.windows.net/pyodide/azure_core-1.24.3-py3-none-any.whl
+azure-ai-textanalytics
+azure-storage-blob
+azure-ai-formrecognizer
