@@ -4,7 +4,7 @@ from azure.confidentialledger.certificate import (
     ConfidentialLedgerCertificateClient,
 )
 
-from .testcase import ConfidentialLedgerPreparer
+from _shared.testcase import ConfidentialLedgerPreparer
 
 
 class ConfidentialLedgerCertificateClientTest(AzureTestCase):

@@ -38,8 +38,6 @@ class ConfidentialLedgerClient(GeneratedClient):
     """The ConfidentialLedgerClient writes and retrieves ledger entries against the Confidential
     Ledger service.
 
-    :ivar confidential_ledger: ConfidentialLedgerOperations operations
-    :vartype confidential_ledger: azure.confidentialledger.operations.ConfidentialLedgerOperations
     :param endpoint: The Confidential Ledger URL, for example
      https://contoso.confidentialledger.azure.com.
     :type endpoint: str
@@ -47,10 +45,10 @@ class ConfidentialLedgerClient(GeneratedClient):
     :type credential: Union[
         ~azure.confidentialledger.ConfidentialLedgerCertificateCredential,
         ~azure.core.credentials_async.AsyncTokenCredential]
-    :param ledger_certificate_path: The path to the Confidential Ledger's TLS certificate. If this
+    :keyword ledger_certificate_path: The path to the Confidential Ledger's TLS certificate. If this
         file does not exist yet, the Confidential Ledger's TLS certificate will be fetched and saved
         to this file.
-    :type ledger_certificate_path: Union[bytes, str, os.PathLike]
+    :paramtype ledger_certificate_path: Union[bytes, str, os.PathLike]
     :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str

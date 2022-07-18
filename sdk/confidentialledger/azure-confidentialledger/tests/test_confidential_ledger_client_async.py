@@ -5,8 +5,8 @@ import os
 from azure.confidentialledger.aio import ConfidentialLedgerClient
 from azure.confidentialledger import ConfidentialLedgerCertificateCredential
 
-from .constants import USER_CERTIFICATE_THUMBPRINT
-from .testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestCase
+from _shared.constants import USER_CERTIFICATE_THUMBPRINT
+from _shared.testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestCase
 
 
 class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):

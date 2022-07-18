@@ -7,8 +7,8 @@ from azure.confidentialledger import (
     ConfidentialLedgerClient,
 )
 
-from .constants import USER_CERTIFICATE_THUMBPRINT
-from .testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestCase
+from _shared.constants import USER_CERTIFICATE_THUMBPRINT
+from _shared.testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestCase
 
 
 class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
