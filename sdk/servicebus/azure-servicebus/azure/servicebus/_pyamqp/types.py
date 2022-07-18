@@ -5,35 +5,13 @@
 #--------------------------------------------------------------------------
 
 from enum import Enum
-from uuid import uuid
-from datetime import datetime
-from typing import (
-    NamedTuple,
-    Generic,
-    Literal,
-    TypeVar,
-    Union,
-    Dict,
-    List,
-    Optional,
-    Tuple
-)
-from typing_extensions import TypedDict
-
 
 
 TYPE = 'TYPE'
 VALUE = 'VALUE'
 
-AMQP_PRIMATIVE_TYPES = Union[int, str, bytes, None, bool, float, uuid, datetime]
-AMQP_STRUCTURED_TYPES = Union[
-    AMQP_PRIMATIVE_TYPES,
-    Dict[AMQP_PRIMATIVE_TYPES, AMQP_PRIMATIVE_TYPES],
-    List[AMQP_PRIMATIVE_TYPES]
-]
 
-
-class AMQPTypes(Enum):
+class AMQPTypes(object):  # pylint: disable=no-init
     null = 'NULL'
     boolean = 'BOOL'
     ubyte = 'UBYTE'
@@ -73,37 +51,40 @@ class ObjDefinition(Enum):
     error = "error"
 
 
-class FIELD(NamedTuple):
-    type: Union[AMQPTypes, FieldDefinition, ObjDefinition]
-    multiple: bool
-
-
-class Performative(NamedTuple):
-    """Base for performatives."""
-    _code: int = 0x00000000
-    _definition: List[Optional[FIELD]] = []
-
-
-T = TypeVar('T', AMQPTypes)
-V = TypeVar('V', AMQP_STRUCTURED_TYPES)
-
-
-class AMQPDefinedType(TypedDict, Generic[T, V]):
-    """A wrapper for data that is going to be passed into the AMQP encoder."""
-    TYPE: Optional[T]
-    VALUE: Optional[V]
-
-
-class AMQPFieldType(TypedDict, Generic[V]):
-    """A wrapper for data that will be encoded as AMQP fields."""
-    TYPE: Literal[AMQPTypes.map]
-    VALUE: List[Tuple[AMQPDefinedType[Literal[AMQPTypes.symbol], bytes], V]]
-
-
-class AMQPAnnotationsType(TypedDict, Generic[V]):
-    """A wrapper for data that will be encoded as AMQP annotations."""
-    TYPE: Literal[AMQPTypes.map]
-    VALUE: List[Tuple[AMQPDefinedType[Union[Literal[AMQPTypes.symbol], Literal[AMQPTypes.ulong]], Union[int, bytes]], V]]
-
-
-NullDefinedType = AMQPDefinedType[Literal[AMQPTypes.null], None]
+class ConstructorBytes(object):  # pylint: disable=no-init
+    null = b'\x40'
+    bool = b'\x56'
+    bool_true = b'\x41'
+    bool_false = b'\x42'
+    ubyte = b'\x50'
+    byte = b'\x51'
+    ushort = b'\x60'
+    short = b'\x61'
+    uint_0 = b'\x43'
+    uint_small = b'\x52'
+    int_small = b'\x54'
+    uint_large = b'\x70'
+    int_large = b'\x71'
+    ulong_0 = b'\x44'
+    ulong_small = b'\x53'
+    long_small = b'\x55'
+    ulong_large = b'\x80'
+    long_large = b'\x81'
+    float = b'\x72'
+    double = b'\x82'
+    timestamp = b'\x83'
+    uuid = b'\x98'
+    binary_small = b'\xA0'
+    binary_large = b'\xB0'
+    string_small = b'\xA1'
+    string_large = b'\xB1'
+    symbol_small = b'\xA3'
+    symbol_large = b'\xB3'
+    list_0 = b'\x45'
+    list_small = b'\xC0'
+    list_large = b'\xD0'
+    map_small = b'\xC1'
+    map_large = b'\xD1'
+    array_small = b'\xE0'
+    array_large = b'\xF0'
+    descriptor = b'\x00'

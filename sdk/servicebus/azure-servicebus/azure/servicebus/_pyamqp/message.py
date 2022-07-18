@@ -4,18 +4,33 @@
 # license information.
 #--------------------------------------------------------------------------
 
-from uuid import UUID
-from datetime import datetime
-from typing import AnyStr, Dict, List, NamedTuple, Optional, Union
+from collections import namedtuple
 
-from .types import AMQPTypes, FieldDefinition, AMQP_STRUCTURED_TYPES, AMQP_PRIMATIVE_TYPES
+from .types import AMQPTypes, FieldDefinition
 from .constants import FIELD, MessageDeliveryState
 from .performatives import _CAN_ADD_DOCSTRING
-from .error import AMQPError
 
 
-class Header(NamedTuple):
-    """Transport headers for a Message.
+Header = namedtuple(
+    'header',
+    [
+        'durable',
+        'priority',
+        'ttl',
+        'first_acquirer',
+        'delivery_count'
+    ])
+Header._code = 0x00000070
+Header.__new__.__defaults__ = (None,) * len(Header._fields)
+Header._definition = (
+    FIELD("durable", AMQPTypes.boolean, False, None, False),
+    FIELD("priority", AMQPTypes.ubyte, False, None, False),
+    FIELD("ttl", AMQPTypes.uint, False, None, False),
+    FIELD("first_acquirer", AMQPTypes.boolean, False, None, False),
+    FIELD("delivery_count", AMQPTypes.uint, False, None, False))
+if _CAN_ADD_DOCSTRING:
+    Header.__doc__ = """
+    Transport headers for a Message.
 
     The header section carries standard delivery details about the transfer of a Message through the AMQP
     network. If the header section is omitted the receiver MUST assume the appropriate default values for
@@ -57,23 +72,44 @@ class Header(NamedTuple):
         be taken as an indication that the delivery may be a duplicate. On first delivery, the value is zero.
         It is incremented upon an outcome being settled at the sender, according to rules defined for each outcome.
     """
-    _code: int = 0x00000070
-    _definition: List[Optional[FIELD]] = [
-        FIELD(AMQPTypes.boolean, False),
-        FIELD(AMQPTypes.ubyte, False),
-        FIELD(AMQPTypes.uint, False),
-        FIELD(AMQPTypes.boolean, False),
-        FIELD(AMQPTypes.uint, False)
-    ]
-    durable: Optional[bool] = None
-    priority: Optional[int] = None
-    ttl: Optional[int] = None
-    first_acquirer: Optional[bool] = None
-    delivery_count: Optional[int] = None
 
 
-class Properties(NamedTuple):
-    """Immutable properties of the Message.
+Properties = namedtuple(
+    'properties',
+    [
+        'message_id',
+        'user_id',
+        'to',
+        'subject',
+        'reply_to',
+        'correlation_id',
+        'content_type',
+        'content_encoding',
+        'absolute_expiry_time',
+        'creation_time',
+        'group_id',
+        'group_sequence',
+        'reply_to_group_id'
+    ])
+Properties._code = 0x00000073
+Properties.__new__.__defaults__ = (None,) * len(Properties._fields)
+Properties._definition = (
+    FIELD("message_id", FieldDefinition.message_id, False, None, False),
+    FIELD("user_id", AMQPTypes.binary, False, None, False),
+    FIELD("to", AMQPTypes.string, False, None, False),
+    FIELD("subject", AMQPTypes.string, False, None, False),
+    FIELD("reply_to", AMQPTypes.string, False, None, False),
+    FIELD("correlation_id", FieldDefinition.message_id, False, None, False),
+    FIELD("content_type", AMQPTypes.symbol, False, None, False),
+    FIELD("content_encoding", AMQPTypes.symbol, False, None, False),
+    FIELD("absolute_expiry_time", AMQPTypes.timestamp, False, None, False),
+    FIELD("creation_time", AMQPTypes.timestamp, False, None, False),
+    FIELD("group_id", AMQPTypes.string, False, None, False),
+    FIELD("group_sequence", AMQPTypes.uint, False, None, False),
+    FIELD("reply_to_group_id", AMQPTypes.string, False, None, False))
+if _CAN_ADD_DOCSTRING:
+    Properties.__doc__ = """
+    Immutable properties of the Message.
 
     The properties section is used for a defined set of standard properties of the message. The properties
     section is part of the bare message and thus must, if retransmitted by an intermediary, remain completely
@@ -84,20 +120,18 @@ class Properties(NamedTuple):
         The Message producer is usually responsible for setting the message-id in such a way that it is assured
         to be globally unique. A broker MAY discard a Message as a duplicate if the value of the message-id
         matches that of a previously received Message sent to the same Node.
-    :paramtype message_id: str or bytes or int or ~uuid.UUID
     :param bytes user_id: Creating user id.
         The identity of the user responsible for producing the Message. The client sets this value, and it MAY
         be authenticated by intermediaries.
-    :param str to: The address of the Node the Message is destined for.
+    :param to: The address of the Node the Message is destined for.
         The to field identifies the Node that is the intended destination of the Message. On any given transfer
         this may not be the Node at the receiving end of the Link.
     :param str subject: The subject of the message.
         A common field for summary information about the Message content and purpose.
-    :param str reply_to: The Node to send replies to.
+    :param reply_to: The Node to send replies to.
         The address of the Node to send replies to.
     :param correlation_id: Application correlation identifier.
         This is a client-specific id that may be used to mark or identify Messages between clients.
-    :paramtype correlation_id: str or bytes or int or ~uuid.UUID
     :param bytes content_type: MIME content type.
         The RFC-2046 MIME type for the Message's application-data section (body). As per RFC-2046 this may contain
         a charset parameter defining the character encoding used: e.g. 'text/plain; charset="utf-8"'.
@@ -117,9 +151,9 @@ class Properties(NamedTuple):
         encoding, except as to remain compatible with messages originally sent with other protocols,
         e.g. HTTP or SMTP. Implementations SHOULD NOT specify multiple content encoding values except as to be
         compatible with messages originally sent with other protocols, e.g. HTTP or SMTP.
-    :param ~datetime.datetime absolute_expiry_time: The time when this message is considered expired.
+    :param datetime absolute_expiry_time: The time when this message is considered expired.
         An absolute time when this message is considered to be expired.
-    :param ~datetime.datetime creation_time: The time when this message was created.
+    :param datetime creation_time: The time when this message was created.
         An absolute time when this message was created.
     :param str group_id: The group this message belongs to.
         Identifies the group the message belongs to.
@@ -128,42 +162,38 @@ class Properties(NamedTuple):
     :param str reply_to_group_id: The group the reply message belongs to.
         This is a client-specific id that is used so that client can send replies to this message to a specific group.
     """
-    _code: int = 0x00000073
-    _definition: List[Optional[FIELD]] = [
-        FIELD(FieldDefinition.message_id, False),
-        FIELD(AMQPTypes.binary, False),
-        FIELD(AMQPTypes.string, False),
-        FIELD(AMQPTypes.string, False),
-        FIELD(AMQPTypes.string, False),
-        FIELD(FieldDefinition.message_id, False),
-        FIELD(AMQPTypes.symbol, False),
-        FIELD(AMQPTypes.symbol, False),
-        FIELD(AMQPTypes.timestamp, False),
-        FIELD(AMQPTypes.timestamp, False),
-        FIELD(AMQPTypes.string, False),
-        FIELD(AMQPTypes.uint, False),
-        FIELD(AMQPTypes.string, False)
-    ]
-    message_id: Optional[Union[str, bytes, int, UUID]] = None
-    user_id: Optional[bytes] = None
-    to: Optional[str] = None
-    subject: Optional[str] = None
-    reply_to: Optional[str] = None
-    correlation_id: Optional[Union[str, bytes, int, UUID]] = None
-    content_type: Optional[bytes] = None
-    content_encoding: Optional[bytes] = None
-    absolute_expiry_time: Optional[datetime] = None
-    creation_time: Optional[datetime] = None
-    group_id: Optional[str] = None
-    group_sequence: Optional[int] = None
-    reply_to_group_id: Optional[str] = None
 
-
-class Message(NamedTuple):
-    """An annotated message.
-
-    Consists of the bare message plus sections for annotation at the head and tail
+# TODO: should be a class, namedtuple or dataclass, immutability vs performance, need to collect performance data
+Message = namedtuple(
+    'message',
+    [
+        'header',
+        'delivery_annotations',
+        'message_annotations',
+        'properties',
+        'application_properties',
+        'data',
+        'sequence',
+        'value',
+        'footer',
+    ])
+Message.__new__.__defaults__ = (None,) * len(Message._fields)
+Message._code = 0
+Message._definition = (
+    (0x00000070, FIELD("header", Header, False, None, False)),
+    (0x00000071, FIELD("delivery_annotations", FieldDefinition.annotations, False, None, False)),
+    (0x00000072, FIELD("message_annotations", FieldDefinition.annotations, False, None, False)),
+    (0x00000073, FIELD("properties", Properties, False, None, False)),
+    (0x00000074, FIELD("application_properties", AMQPTypes.map, False, None, False)),
+    (0x00000075, FIELD("data", AMQPTypes.binary, False, None, True)),
+    (0x00000076, FIELD("sequence", AMQPTypes.list, False, None, False)),
+    (0x00000077, FIELD("value", None, False, None, False)),
+    (0x00000078, FIELD("footer", FieldDefinition.annotations, False, None, False)))
+if _CAN_ADD_DOCSTRING:
+    Message.__doc__ = """
+    An annotated message consists of the bare message plus sections for annotation at the head and tail
     of the bare message.
+
     There are two classes of annotations: annotations that travel with the message indefinitely, and
     annotations that are consumed by the next node.
     The exact structure of a message, together with its encoding, is defined by the message format. This document
@@ -179,7 +209,7 @@ class Message(NamedTuple):
           or a single amqp-value section.
         - Zero or one footer.
 
-    :param ~pyamqp.Header header: Transport headers for a Message.
+    :param ~uamqp.message.Header header: Transport headers for a Message.
         The header section carries standard delivery details about the transfer of a Message through the AMQP
         network. If the header section is omitted the receiver MUST assume the appropriate default values for
         the fields within the header unless other target or node specific defaults have otherwise been set.
@@ -203,7 +233,7 @@ class Message(NamedTuple):
         filtered on. A registry of defined annotations and their meanings can be found here:
         http://www.amqp.org/specification/1.0/message-annotations. If the message-annotations section is omitted,
         it is equivalent to a message-annotations section containing an empty map of annotations.
-    :param ~pyamqp.Properties: Immutable properties of the Message.
+    :param ~uamqp.message.Properties: Immutable properties of the Message.
         The properties section is used for a defined set of standard properties of the message. The properties
         section is part of the bare message and thus must, if retransmitted by an intermediary, remain completely
         unaltered.
@@ -212,7 +242,7 @@ class Message(NamedTuple):
         of filtering or routing. The keys of this map are restricted to be of type string (which excludes the
         possibility of a null key) and the values are restricted to be of simple types only (that is excluding
         map, list, and array types).
-    :param List[bytes] data_body: A data section contains opaque binary data.
+    :param list(bytes) data_body: A data section contains opaque binary data.
     :param list sequence_body: A sequence section contains an arbitrary number of structured data elements.
     :param value_body: An amqp-value section contains a single AMQP value.
     :param dict footer: Transport footers for a Message.
@@ -221,33 +251,17 @@ class Message(NamedTuple):
         signatures and encryption details). A registry of defined footers and their meanings can be found
         here: http://www.amqp.org/specification/1.0/footer.
     """
-    # TODO: should be a class, namedtuple or dataclass, immutability vs performance, need to collect performance data
-    _code: int = 0
-    header: Optional[Header] = None
-    delivery_annotations: Optional[Dict[Union[int, AnyStr], AMQP_STRUCTURED_TYPES]] = None
-    message_annotations: Optional[Dict[Union[int, AnyStr], AMQP_STRUCTURED_TYPES]] = None
-    properties: Optional[Properties] = None
-    application_properties: Optional[Dict[Union[str, bytes], AMQP_PRIMATIVE_TYPES]] = None
-    data: Optional[List[bytes]] = None
-    sequence: Optional[List[AMQP_STRUCTURED_TYPES]] = None
-    value: Optional[AMQP_STRUCTURED_TYPES] = None
-    footer: Optional[Dict[Union[int, AnyStr], AMQP_STRUCTURED_TYPES]] = None
 
 
 class BatchMessage(Message):
-    _code: int = 0x80013700
+    _code = 0x80013700
 
 
 class _MessageDelivery:
-    def __init__(
-            self,
-            message: Message,
-            state: MessageDeliveryState = MessageDeliveryState.WaitingToBeSent,
-            expiry: Optional[datetime] = None
-    ):
+    def __init__(self, message, state=MessageDeliveryState.WaitingToBeSent, expiry=None):
         self.message = message
         self.state = state
         self.expiry = expiry
-        self.reason: Optional[bytes] = None
-        self.delivery: Optional[bool] = None
-        self.error: Optional[AMQPError] = None
+        self.reason = None
+        self.delivery = None
+        self.error = None

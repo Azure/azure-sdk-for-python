@@ -5,10 +5,10 @@
 #--------------------------------------------------------------------------
 
 from enum import Enum
-from typing import AnyStr, Dict, List, Optional
+from collections import namedtuple
 
 from .constants import SECURE_PORT, FIELD
-from .types import AMQP_STRUCTURED_TYPES, AMQPTypes, FieldDefinition, Performative
+from .types import AMQPTypes, FieldDefinition
 
 
 class ErrorCondition(bytes, Enum):
@@ -181,16 +181,14 @@ class RetryPolicy:
         return min(settings['max_backoff'], backoff_value)
 
 
-class AMQPError(Performative):
-    _code: int = 0x0000001d
-    _definition: List[FIELD] = [
-        FIELD(AMQPTypes.symbol, False),
-        FIELD(AMQPTypes.string, False),
-        FIELD(FieldDefinition.fields, False),
-    ]
-    condition: AnyStr
-    description: Optional[AnyStr] = None
-    into: Optional[Dict[AnyStr, AMQP_STRUCTURED_TYPES]] = None
+AMQPError = namedtuple('error', ['condition', 'description', 'info'])
+AMQPError.__new__.__defaults__ = (None,) * len(AMQPError._fields)
+AMQPError._code = 0x0000001d
+AMQPError._definition = (
+    FIELD('condition', AMQPTypes.symbol, True, None, False),
+    FIELD('description', AMQPTypes.string, False, None, False),
+    FIELD('info', FieldDefinition.fields, False, None, False),
+)
 
 
 class AMQPException(Exception):
