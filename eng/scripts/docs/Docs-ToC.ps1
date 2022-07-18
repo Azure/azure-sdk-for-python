@@ -1,3 +1,32 @@
+function Get-python-OnboardedDocsMsPackagesForMoniker($DocRepoLocation, $moniker) {
+  $packageOnboardingFile = ""
+  if ("latest" -eq $moniker) {
+    $packageOnboardingFile = "$DocRepoLocation/ci-configs/packages-latest.json"
+  }
+  if ("preview" -eq $moniker) {
+    $packageOnboardingFile = "$DocRepoLocation/ci-configs/packages-preview.json"
+  }
+
+  $onboardedPackages = @{}
+  $onboardingSpec = ConvertFrom-Json (Get-Content $packageOnboardingFile -Raw)
+  foreach ($spec in $onboardingSpec.packages) {
+    if (!($spec.package_info.PSObject.Members.Name -contains "name")) {
+      continue
+    }
+    $packageName = $spec.package_info.name
+    
+    $jsonFile = "$DocRepoLocation/metadata/$moniker/$packageName.json"
+    if (Test-Path $jsonFile) {
+      $onboardedPackages[$packageName] = ConvertFrom-Json (Get-Content $jsonFile -Raw)
+    }
+    else{
+      $onboardedPackages[$packageName] = $null
+    }
+  }
+
+  return $onboardedPackages
+}
+
 function Get-python-OnboardedDocsMsPackages($DocRepoLocation) {
   $packageOnboardingFiles = @(
     "$DocRepoLocation/ci-configs/packages-latest.json",
@@ -19,7 +48,7 @@ function Get-python-OnboardedDocsMsPackages($DocRepoLocation) {
   return $onboardedPackages
 }
 
-function Get-python-DocsMsTocData($packageMetadata, $docRepoLocation) {
+function GetPackageLevelReadme($packageMetadata) {  
   # Fallback for package name
   $packageLevelReadmeName = $packageMetadata.Package
   if ($packageLevelReadmeName.StartsWith('azure-')) {
@@ -32,7 +61,15 @@ function Get-python-DocsMsTocData($packageMetadata, $docRepoLocation) {
     $readmeMetadata = &$GetDocsMsMetadataForPackageFn -PackageInfo $packageMetadata.FileMetadata
     $packageLevelReadmeName = $readmeMetadata.DocsMsReadMeName
   }
+  return $packageLevelReadmeName
+}
+ 
+function Get-python-PackageLevelReadme($packageMetadata) {  
+  return GetPackageLevelReadme -packageMetadata $packageMetadata
+}
 
+function Get-python-DocsMsTocData($packageMetadata, $docRepoLocation) {
+  $packageLevelReadmeName = GetPackageLevelReadme -packageMetadata $packageMetadata
 
   $packageTocHeader = $packageMetadata.Package
   if ($packageMetadata.DisplayName) {
@@ -68,6 +105,9 @@ function addManagementPackage($serviceEntry, $packageName) {
   return $serviceEntry
 }
 
+function Get-python-RepositoryLink($packageInfo) {
+  return "$RepositoryUri/$($packageInfo.Package)"
+}
 function Get-python-UpdatedDocsMsToc($toc) {
   $services = $toc[0].items
   for ($i = 0; $i -lt $services.Count; $i++) {
