@@ -33,7 +33,7 @@ class TestOperations(TestOperationsGenerated):
     def __init__(self, *args, **kwargs):
         super(TestOperations, self).__init__(*args, **kwargs)
 
-    async def upload_test_file(self, test_id, file_id, file_content, **kwargs) -> JSON:
+    async def upload_test_file(self, test_id: str, file_id: str, file_content, **kwargs) -> JSON:
         """
         Uploading a test file
         """
