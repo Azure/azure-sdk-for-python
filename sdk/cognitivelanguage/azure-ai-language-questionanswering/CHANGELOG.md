@@ -1,12 +1,9 @@
 # Release History
 
-## 1.1.0b2 (Unreleased)
+## 1.1.0b2 (2022-07-19)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+* Added Azure Active Directory (AAD) authentication support
 
 ### Other Changes
 * Python 2.7 is no longer supported. Please use Python version 3.6 or later.
