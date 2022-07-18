@@ -12,7 +12,7 @@ from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
-    TextAnalyticsLROPoller
+    TextAnalysisLROPoller
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -60,7 +60,7 @@ class TestCustomText(TextAnalyticsTest):
         )
         poller.result()
 
-        assert isinstance(poller, TextAnalyticsLROPoller)
+        assert isinstance(poller, TextAnalysisLROPoller)
         assert isinstance(poller.details["created_on"], datetime.datetime)
         assert isinstance(poller.details["expires_on"], datetime.datetime)
         assert isinstance(poller.details["last_modified_on"], datetime.datetime)
@@ -93,7 +93,7 @@ class TestCustomText(TextAnalyticsTest):
             polling_interval=self._interval(),
         )
 
-        assert isinstance(poller, TextAnalyticsLROPoller)
+        assert isinstance(poller, TextAnalysisLROPoller)
         document_results = list(poller.result())
 
         for result in document_results:
@@ -139,7 +139,7 @@ class TestCustomText(TextAnalyticsTest):
             None, None, None, continuation_token=continuation_token
         )
 
-        assert isinstance(poller, TextAnalyticsLROPoller)
+        assert isinstance(poller, TextAnalysisLROPoller)
         document_results = list(poller.result())
 
         for result in document_results:
@@ -220,7 +220,7 @@ class TestCustomText(TextAnalyticsTest):
             None, None, None, continuation_token=continuation_token
         )
 
-        assert isinstance(poller, TextAnalyticsLROPoller)
+        assert isinstance(poller, TextAnalysisLROPoller)
         document_results = list(poller.result())
 
         for result in document_results:

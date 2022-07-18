@@ -12,7 +12,7 @@ from testcase import TextAnalyticsTest, TextAnalyticsPreparer, is_public_cloud
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
-from azure.ai.textanalytics.aio import TextAnalyticsClient, AsyncTextAnalyticsLROPoller
+from azure.ai.textanalytics.aio import TextAnalyticsClient, AsyncTextAnalysisLROPoller
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
@@ -60,7 +60,7 @@ class TestCustomTextAsync(TextAnalyticsTest):
             )
             await poller.result()
 
-        assert isinstance(poller, AsyncTextAnalyticsLROPoller)
+        assert isinstance(poller, AsyncTextAnalysisLROPoller)
         assert isinstance(poller.details["created_on"], datetime.datetime)
         assert isinstance(poller.details["expires_on"], datetime.datetime)
         assert isinstance(poller.details["last_modified_on"], datetime.datetime)
@@ -93,7 +93,7 @@ class TestCustomTextAsync(TextAnalyticsTest):
                 polling_interval=self._interval(),
             )
 
-            assert isinstance(poller, AsyncTextAnalyticsLROPoller)
+            assert isinstance(poller, AsyncTextAnalysisLROPoller)
             document_results = await poller.result()
 
             async for result in document_results:
@@ -139,7 +139,7 @@ class TestCustomTextAsync(TextAnalyticsTest):
                 None, None, None, continuation_token=continuation_token
             )
 
-            assert isinstance(poller, AsyncTextAnalyticsLROPoller)
+            assert isinstance(poller, AsyncTextAnalysisLROPoller)
             document_results = await poller.result()
 
             async for result in document_results:
@@ -220,7 +220,7 @@ class TestCustomTextAsync(TextAnalyticsTest):
                 None, None, None, continuation_token=continuation_token
             )
 
-            assert isinstance(poller, AsyncTextAnalyticsLROPoller)
+            assert isinstance(poller, AsyncTextAnalysisLROPoller)
             document_results = await poller.result()
 
             async for result in document_results:
