@@ -26,6 +26,7 @@ from .proxy_startup import test_proxy
 
 if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Optional, Tuple
+    from pytest import FixtureRequest
     from azure.core.pipeline.transport import HttpRequest
 
 # To learn about how to migrate SDK tests to the test proxy, please refer to the migration guide at
@@ -213,14 +214,16 @@ def start_proxy_session() -> "Optional[Tuple[str, str, Dict[str, str]]]":
 
 
 @pytest.fixture
-async def recorded_test(test_proxy: None, request: pytest.FixtureRequest) -> "Dict[str, Any]":
+async def recorded_test(test_proxy: None, request: "FixtureRequest") -> "Dict[str, Any]":
     """Fixture that redirects network requests to target the azure-sdk-tools test proxy.
 
     Use with recorded tests. For more details and usage examples, refer to
     https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md.
 
-    :param function test_proxy: The fixture responsible for starting up the test proxy server.
-    :param function request: The built-in `request` fixture.
+    :param test_proxy: The fixture responsible for starting up the test proxy server.
+    :type test_proxy: None
+    :param request: The built-in `request` fixture.
+    :type request: ~pytest.FixtureRequest
 
     :yields: A dictionary containing information relevant to the currently executing test.
     """
@@ -314,7 +317,7 @@ def redirect_traffic(recording_id: str) -> "Callable":
     return original_transport_func
 
 
-def restore_async_traffic(original_transport_func: "Callable", request: pytest.FixtureRequest) -> None:
+def restore_async_traffic(original_transport_func: "Callable", request: "FixtureRequest") -> None:
     """Resets asynchronous network traffic to no longer target the test proxy.
 
     :param original_transport_func: The original transport function used by the currently executing test.
@@ -340,7 +343,7 @@ def restore_async_traffic(original_transport_func: "Callable", request: pytest.F
             logger.error(f"\n\n-----Test proxy playback error:-----\n\n{message}")
 
 
-def restore_traffic(original_transport_func: "Callable", request: pytest.FixtureRequest) -> None:
+def restore_traffic(original_transport_func: "Callable", request: "FixtureRequest") -> None:
     """Resets network traffic to no longer target the test proxy.
 
     :param original_transport_func: The original transport function used by the currently executing test.
@@ -368,9 +371,10 @@ def restore_traffic(original_transport_func: "Callable", request: pytest.Fixture
 def variable_recorder(recorded_test: "Dict[str, Any]") -> "Dict[str, str]":
     """Fixture that invokes the `recorded_test` fixture and returns a dictionary of recorded test variables.
 
-    :param function recorded_test: The fixture responsible for redirecting network traffic to target the test proxy.
+    :param recorded_test: The fixture responsible for redirecting network traffic to target the test proxy.
         This should return a dictionary containing information about the current test -- in particular, the variables
         that were recorded with the test.
+    :type recorded_test: Dict[str, Any]
 
     :returns: A dictionary that maps test variables to string values. If no variable dictionary was stored when the test
         was recorded, this returns an empty dictionary.
