@@ -18,9 +18,8 @@ from azure.ai.ml.entities._job.pipeline._io import (
     OutputsAttrDict,
     InputsAttrDict,
 )
-from azure.ai.ml.entities._builders import Sweep, Command, BaseNode
+from azure.ai.ml.entities._builders import Command, BaseNode
 from azure.ai.ml._utils.utils import (
-    snake_to_camel,
     camel_to_snake,
     transform_dict_keys,
     is_data_binding_expression,
@@ -28,13 +27,12 @@ from azure.ai.ml._utils.utils import (
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     JobBaseData,
-    JobOutput as RestJobOutput,
     PipelineJob as RestPipelineJob,
     ManagedIdentity,
     UserIdentity,
     AmlToken,
 )
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, ComponentSource, NodeType, AZUREML_PRIVATE_FEATURES_ENV_VAR
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, ComponentSource, AZUREML_PRIVATE_FEATURES_ENV_VAR
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from azure.ai.ml.entities._job.job import Job
@@ -48,7 +46,6 @@ from azure.ai.ml.entities._job._input_output_helpers import (
 )
 from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
-from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._schedule.schedule import CronSchedule, RecurrenceSchedule, Schedule
 
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
@@ -150,8 +147,9 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         for _, job_instance in self.jobs.items():
             if isinstance(job_instance, BaseNode):
                 job_instance._set_base_path(self.base_path)
+                job_instance._set_source_path(self._source_path)
 
-            if isinstance(job_instance, (Command, Sweep, Parallel)):
+            if isinstance(job_instance, BaseNode):
                 job_instance._validate_inputs()
                 binding_inputs = job_instance._build_inputs()
                 if isinstance(job_instance.component, Component):
@@ -249,11 +247,33 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         # jobs validations are done in _customized_validate()
         return ["jobs"]
 
+    def _validate_compute_is_set(self):
+        validation_result = self._create_empty_validation_result()
+        if self.compute is not None:
+            return validation_result
+        if self.settings is not None and self.settings.default_compute is not None:
+            return validation_result
+
+        no_compute_nodes = []
+        for node_name, node in self.jobs.items():
+            if hasattr(node, "compute") and node.compute is None:
+                no_compute_nodes.append(node_name)
+        for node_name in no_compute_nodes:
+            validation_result.append_error(
+                yaml_path=f"jobs.{node_name}.compute",
+                message="Compute not set",
+            )
+        return validation_result
+
     def _customized_validate(self) -> ValidationResult:
         """Validate that all provided inputs and parameters are valid for current pipeline and components in it."""
-        validation_result = self._create_empty_validation_result()
+        validation_result = super(PipelineJob, self)._customized_validate()
+
+        # Validate compute
+        validation_result.merge_with(self._validate_compute_is_set())
+
         for node_name, node in self.jobs.items():
-            if isinstance(node, (Command, Sweep, Parallel)):
+            if isinstance(node, BaseNode):
                 validation_result.merge_with(node._validate(), "jobs.{}".format(node_name))
             elif isinstance(node, AutoMLJob):
                 pass
@@ -262,6 +282,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                     yaml_path="jobs.{}".format(node_name),
                     message=f"Not supported pipeline job type: {type(node)}",
                 )
+
         return validation_result
 
     def _remove_pipeline_input(self):
@@ -284,7 +305,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                 # todo: refine get pipeline_input_name from binding
                 pipeline_input_name = component_binding_input[3:-2].split(".")[-1]
                 if pipeline_input_name in self._inputs and self._inputs[pipeline_input_name]._data is None:
-                    if component_definition_inputs[component_input_name]._optional:
+                    if component_definition_inputs[component_input_name].optional:
                         # todo: not remove component input in client side, backend need remove component job
                         #  optional input which is binding to a None pipeline input
                         pass
@@ -389,28 +410,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         if properties.jobs:
             sub_nodes = {}
             for node_name, node in properties.jobs.items():
-                if "type" in node and node["type"] == NodeType.SWEEP:
-                    sub_nodes[node_name] = Sweep._from_rest_object(node)
-                elif "type" in node and node["type"] == NodeType.AUTOML:
-                    # rest dict outputs -> Output objects
-                    outputs = AutoMLJob._from_rest_outputs(node.get("outputs"))
-                    # Output objects -> yaml dict outputs
-                    parsed_outputs = {}
-                    for key, val in outputs.items():
-                        if isinstance(val, Output):
-                            val = val._to_dict()
-                        parsed_outputs[key] = val
-                    node["outputs"] = parsed_outputs
-                    sub_nodes[node_name] = AutoMLJob._load_from_dict(
-                        node,
-                        context={BASE_PATH_CONTEXT_KEY: "./"},
-                        additional_message="Failed to load automl task from backend.",
-                        inside_pipeline=True,
-                    )
-                elif "type" in node and node["type"] == NodeType.PARALLEL:
-                    sub_nodes[node_name] = Parallel._from_rest_object(node)
-                else:
-                    sub_nodes[node_name] = Command._from_rest_object(node)
+                sub_nodes[node_name] = BaseNode._from_rest_object(node)
         else:
             sub_nodes = None
         # backend may still store Camel settings, eg: DefaultDatastore, translate them to snake when load back
@@ -468,7 +468,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             else:
                 path_first_occurrence[component_path] = node_name
 
-        loaded_schema = load_from_dict(PipelineJobSchema, data, context, additional_message, **kwargs)
+        # use this instead of azure.ai.ml.entities._util.load_from_dict to avoid parsing
+        loaded_schema = cls._create_schema_for_validation(context=context).load(data, **kwargs)
 
         # replace repeat component with first occurrence to reduce arm id resolution
         # current load yaml file logic is in azure.ai.ml._schema.core.schema.YamlFileSchema.load_from_file
