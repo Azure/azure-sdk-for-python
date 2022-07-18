@@ -119,7 +119,12 @@ class AppComponentOperations(AppComponentOperationsGenerated):
     __excludes__ = ["get_by_name"]
 
     def get_app_component(
-        self, *, test_run_id: Optional[str] = None, test_id: Optional[str] = None, name: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        test_run_id: Optional[str] = None,
+        test_id: Optional[str] = None,
+        name: Optional[str] = None,
+        **kwargs: Any,
     ) -> JSON:
         """Get App Components for a test or a test run by its name.
 
@@ -167,11 +172,12 @@ class AppComponentOperations(AppComponentOperationsGenerated):
                 }
         """
 
-        if (name is not None):
+        if name is not None:
             return super().get_by_name(name=name, **kwargs)
 
         else:
             return super().get_app_component(test_run_id=test_run_id, test_id=test_id, **kwargs)
+
 
 __all__: List[str] = ["TestOperations", "AppComponentOperations"]
 # Add all objects you want publicly available to users at this package level
