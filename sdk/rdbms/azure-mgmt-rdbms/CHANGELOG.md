@@ -1,5 +1,12 @@
 # Release History
 
+## 10.2.0b1 (2022-07-13)
+
+**Features**
+
+  - Added operation BackupsOperations.put
+  - Model ConfigurationListForBatchUpdate has a new parameter reset_all_to_default
+
 ## 10.1.0 (2022-03-07)
 
 **Features**

@@ -1,0 +1,20 @@
+name: Add needs-triage label to new issue
+
+on:
+  issues:
+    types: [opened]
+
+env:
+  BASE_BRANCH: ${{ github.base_ref }}
+
+jobs:
+  needs-triage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: add labels
+        uses: actions/labeler@v3
+        if: env.BASE_BRANCH == 'main'
+        with:
+          github_token: ${{ secrets.GH_AZURE_SDK_PROJECT_PAT }}
+          labels: needs-triage

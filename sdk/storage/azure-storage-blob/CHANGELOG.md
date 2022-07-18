@@ -1,13 +1,17 @@
 # Release History
 
-## 12.13.0 (Unreleased)
+## 12.14.0b1 (Unreleased)
 
 ### Features Added
 
 ### Bugs Fixed
+- Adjusted type hints for `upload_blob` and `StorageStreamDownloader.readall`.
+
+## 12.13.0 (2022-07-07)
+
+### Bugs Fixed
 - Stable release of features from 12.13.0b1.
 - Added support for deleting versions in `delete_blobs` by supplying `version_id`.
-- Removed forced `aiohttp` import from storage async download. (#24965)
 
 ## 12.13.0b1 (2022-06-15)
 

@@ -7,7 +7,7 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Any, AnyStr, AsyncIterator, Dict, List, IO, Iterable, Optional, Union,
+    Any, AnyStr, AsyncIterator, Dict, List, IO, Iterable, Optional, overload, Union,
     TYPE_CHECKING
 )
 
@@ -30,6 +30,7 @@ from .._generated.aio import AzureBlobStorage
 from .._generated.models import SignedIdentifier
 from .._container_client import ContainerClient as ContainerClientBase, _get_blob_name
 from .._deserialize import deserialize_container_properties
+from ._download_async import StorageStreamDownloader
 from .._encryption import StorageEncryptionMixin
 from .._models import ContainerProperties, BlobType, BlobProperties, FilteredBlob
 from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
@@ -40,7 +41,6 @@ from ._models import FilteredBlobPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from ._download_async import StorageStreamDownloader
     from .._models import ( # pylint: disable=unused-import
         AccessPolicy,
         StandardBlobTier,
@@ -121,7 +121,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
-        self.configure_encryption(kwargs)
+        self._configure_encryption(kwargs)
 
     @distributed_trace_async
     async def create_container(self, metadata=None, public_access=None, **kwargs):
@@ -928,9 +928,34 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             timeout=timeout,
             **kwargs)
 
+    @overload
+    async def download_blob(
+            self, blob: Union[str, BlobProperties],
+            offset: int = None,
+            length: int = None,
+            *,
+            encoding: str,
+            **kwargs) -> StorageStreamDownloader[str]:
+        ...
+
+    @overload
+    async def download_blob(
+            self, blob: Union[str, BlobProperties],
+            offset: int = None,
+            length: int = None,
+            *,
+            encoding: None = None,
+            **kwargs) -> StorageStreamDownloader[bytes]:
+        ...
+
     @distributed_trace_async
-    async def download_blob(self, blob, offset=None, length=None, **kwargs):
-        # type: (Union[str, BlobProperties], Optional[int], Optional[int], Any) -> StorageStreamDownloader
+    async def download_blob(
+            self, blob: Union[str, BlobProperties],
+            offset: int = None,
+            length: int = None,
+            *,
+            encoding: Optional[str] = None,
+            **kwargs) -> StorageStreamDownloader:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
@@ -1014,6 +1039,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         return await blob_client.download_blob(
             offset=offset,
             length=length,
+            encoding=encoding,
             **kwargs)
 
     @distributed_trace_async

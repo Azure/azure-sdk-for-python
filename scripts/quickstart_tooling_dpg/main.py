@@ -13,7 +13,7 @@ _TEMPLATE = Path(__file__).resolve().parent / "template"
 _TEMPLATE_TESTS = Path(__file__).resolve().parent / "template_tests"
 _TEMPLATE_SAMPLES = Path(__file__).resolve().parent / "template_samples"
 _TEMPLATE_CI = Path(__file__).resolve().parent / "template_ci"
-_CONFIG_FILE = Path(__file__).resolve() / "../../../swagger_to_sdk_config_dpg.json"
+_CONFIG_FILE = Path(__file__).resolve().parent / "../../swagger_to_sdk_config_dpg.json"
 
 
 def check_parameters(

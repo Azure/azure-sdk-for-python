@@ -5,10 +5,16 @@
 ### Features Added
 
 ### Breaking Changes
+- Renamed `begin_create_composed_model()` on `DocumentModelAdministrationClient` to `begin_compose_model()`.
+- Renamed `get_account_info()` on `DocumentModelAdministrationClient` to `get_resource_info()`.
+- Renamed `AccountInfo` model to `ResourceInfo`.
+- Renamed `DocumentModelInfo` model to `DocumentModelSummary`.
+- Renamed `DocumentModel` to `DocumentModelInfo`.
 
 ### Bugs Fixed
 
 ### Other Changes
+- Python 3.6 is no longer supported in this release. Please use Python 3.7 or later.
 
 ## 3.2.0b5 (2022-06-07)
 
