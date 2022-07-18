@@ -303,7 +303,7 @@ class TestCustomTextAsync(TextAnalyticsTest):
                 None, None, None, continuation_token=continuation_token
             )
 
-            assert isinstance(poller, AsyncTextAnalyticsLROPoller)
+            assert isinstance(poller, AsyncTextAnalysisLROPoller)
             document_results = await poller.result()
 
             async for result in document_results:

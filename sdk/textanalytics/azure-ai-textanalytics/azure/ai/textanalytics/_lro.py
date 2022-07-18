@@ -46,10 +46,10 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType]):
     def status(self) -> str:  # pylint: disable=no-self-use
         ...
 
-    def result(self, timeout: Optional[int] = None) -> PollingReturnType:  # pylint: disable=no-self-use
+    def result(self, timeout: Optional[int] = None) -> PollingReturnType: # pylint: disable=no-self-use, unused-argument
         ...
 
-    def wait(self, timeout: Optional[float] = None) -> None:  # pylint: disable=no-self-use
+    def wait(self, timeout: Optional[float] = None) -> None:  # pylint: disable=no-self-use, unused-argument
         ...
 
     def done(self) -> bool:  # pylint: disable=no-self-use

@@ -302,7 +302,7 @@ class TestCustomText(TextAnalyticsTest):
             None, None, None, continuation_token=continuation_token
         )
 
-        assert isinstance(poller, TextAnalyticsLROPoller)
+        assert isinstance(poller, TextAnalysisLROPoller)
         document_results = list(poller.result())
 
         for result in document_results:
