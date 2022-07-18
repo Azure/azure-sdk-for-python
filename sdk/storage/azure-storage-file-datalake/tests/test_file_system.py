@@ -16,6 +16,7 @@ from azure.storage.filedatalake import(
     AccessPolicy,
     AccountSasPermissions,
     DataLakeServiceClient,
+    FileSystemClient,
     FileSystemSasPermissions,
     PublicAccess,
     ResourceTypes,
@@ -104,6 +105,28 @@ class FileSystemTest(StorageTestCase):
         self.assertTrue(props)
         self.assertIsNotNone(props['encryption_scope'])
         self.assertEqual(props['encryption_scope'].default_encryption_scope, encryption_scope.default_encryption_scope)
+
+    @pytest.mark.live_test_only
+    @DataLakePreparer()
+    def test_create_file_system_encryption_scope_account_sas(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        # Arrange
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        token = generate_account_sas(
+            self.dsc.account_name,
+            self.dsc.credential.account_key,
+            ResourceTypes(file_system=True),
+            AccountSasPermissions(write=True, read=True, create=True, delete=True),
+            datetime.utcnow() + timedelta(hours=5),
+            encryption_scope="hnstestscope1")
+        file_system_name = self._get_file_system_reference()
+
+        # Act
+        file_system_client = FileSystemClient(account_url=url, file_system_name=file_system_name, credential=token)
+        file_system_client.create_file_system()
+        props = file_system_client.get_file_system_properties()
+        print(props)
 
     @DataLakePreparer()
     def test_file_system_exists(self, datalake_storage_account_name, datalake_storage_account_key):

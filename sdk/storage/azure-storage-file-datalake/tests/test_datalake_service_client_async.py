@@ -21,13 +21,11 @@ from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCa
 from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
-from azure.storage.filedatalake._models import AnalyticsLogging, Metrics, RetentionPolicy, \
-    StaticWebsite, CorsRule, ServiceClientEncryptionScope
+from azure.storage.filedatalake._models import (AnalyticsLogging, Metrics, RetentionPolicy,
+                                                StaticWebsite, CorsRule, FileSystemEncryptionScope)
 
 # ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
-TEST_SERVICE_CLIENT_ENCRYPTION_KEY_SCOPE = ServiceClientEncryptionScope(
-    default_encryption_scope="hnstestscope1")
 # ------------------------------------------------------------------------------
 
 
@@ -354,15 +352,16 @@ class DatalakeServiceTest(StorageTestCase):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system_name = "testfs"
+        encryption_scope = FileSystemEncryptionScope(default_encryption_scope="hnstestscope1")
 
         # Act
         file_system_client = await self.dsc.create_file_system(
             file_system=file_system_name,
-            service_client_encryption_scope=TEST_SERVICE_CLIENT_ENCRYPTION_KEY_SCOPE)
+            file_system_encryption_scope=encryption_scope)
         props = await file_system_client.get_file_system_properties()
 
         # Assert
         self.assertTrue(props)
         self.assertIsNotNone(props['encryption_scope'])
         self.assertEqual(props['encryption_scope'].default_encryption_scope,
-                         TEST_SERVICE_CLIENT_ENCRYPTION_KEY_SCOPE.default_encryption_scope)
+                         encryption_scope.default_encryption_scope)

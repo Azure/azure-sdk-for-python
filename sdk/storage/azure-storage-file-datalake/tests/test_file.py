@@ -933,20 +933,6 @@ class FileTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    def test_account_sas_encryption_scope_token(self, datalake_storage_account_name, datalake_storage_account_key):
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        token = generate_account_sas(
-            self.dsc.account_name,
-            self.dsc.credential.account_key,
-            ResourceTypes(object=True),
-            AccountSasPermissions(write=True, read=True, create=True, delete=True),
-            datetime.utcnow() + timedelta(hours=5),
-            encryption_scope="hnstestscope1",
-        )
-        self.assertTrue("hnstestscope1" in token)
-
-    @pytest.mark.live_test_only
-    @DataLakePreparer()
     def test_rename_file_with_file_system_sas(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # sas token is calculated from storage key, so live only

@@ -890,21 +890,6 @@ class FileTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_account_sas_encryption_scope_token_async(self, datalake_storage_account_name,
-                                                            datalake_storage_account_key):
-        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        token = generate_account_sas(
-            self.dsc.account_name,
-            self.dsc.credential.account_key,
-            ResourceTypes(object=True),
-            AccountSasPermissions(write=True, read=True, create=True, delete=True),
-            datetime.utcnow() + timedelta(hours=5),
-            encryption_scope="hnstestscope1",
-        )
-        self.assertTrue("hnstestscope1" in token)
-
-    @pytest.mark.live_test_only
-    @DataLakePreparer()
     async def test_rename_file_with_file_sas_async(self, datalake_storage_account_name, datalake_storage_account_key):
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # SAS URL is calculated from storage key, so this test runs live only
