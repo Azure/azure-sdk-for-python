@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=https://azuremlsdk2.blob.core.windows.net/latest/onlineDeployment.schema.json
+name: green
+type: online
+endpoint_name: my-new-endpoint
+model:
+  name: model-2
+  version: 1
+  path: ../model-2/model/sklearn_regression_model.pkl
+code_configuration:
+  code: ../model-2/onlinescoring/
+  scoring_script: score.py
+environment:
+  name: env-model2
+  version: 1
+  path: .
+  conda_file: file:../model-2/environment/conda.yml
+  docker:
+    image: mcr.microsoft.com/azureml/intelmpi2018.3-ubuntu16.04:20210301.v1
+instance_type: Standard_F2s_v2
+scale_settings:
+  scale_type: manual
+  instance_count: 2
+  min_instances: 1
+  max_instances: 2

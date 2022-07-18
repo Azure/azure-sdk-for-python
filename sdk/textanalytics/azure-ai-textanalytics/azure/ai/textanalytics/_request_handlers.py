@@ -9,7 +9,6 @@ from ._models import (
     TextDocumentInput,
     _AnalyzeActionsType,
 )
-from ._check import is_language_api
 
 
 def _validate_input(documents, hint, whole_input_hint):
@@ -90,34 +89,12 @@ def _determine_action_type(action):  # pylint: disable=too-many-return-statement
         return _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
     if action.__class__.__name__ in ["SentimentAnalysisTask", "SentimentAnalysisLROTask"]:
         return _AnalyzeActionsType.ANALYZE_SENTIMENT
-    if action.__class__.__name__ == "ExtractiveSummarizationLROTask":
-        return _AnalyzeActionsType.EXTRACT_SUMMARY
     if action.__class__.__name__ == "CustomEntitiesLROTask":
         return _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES
     if action.__class__.__name__ == "CustomSingleLabelClassificationLROTask":
-        return _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY
+        return _AnalyzeActionsType.SINGLE_LABEL_CLASSIFY
     if action.__class__.__name__ == "CustomMultiLabelClassificationLROTask":
         return _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
+    if action.__class__.__name__ == "HealthcareLROTask":
+        return _AnalyzeActionsType.ANALYZE_HEALTHCARE_ENTITIES
     return _AnalyzeActionsType.EXTRACT_KEY_PHRASES
-
-
-def _check_string_index_type_arg(
-    string_index_type_arg, api_version, string_index_type_default="UnicodeCodePoint"
-):
-    string_index_type = None
-
-    if api_version == "v3.0":
-        if string_index_type_arg is not None:
-            raise ValueError(
-                "'string_index_type' is only available for API version V3_1 and up"
-            )
-    elif is_language_api(api_version) and string_index_type_arg == "TextElement_v8":
-        return "TextElements_v8"
-    else:
-        if string_index_type_arg is None:
-            string_index_type = string_index_type_default
-
-        else:
-            string_index_type = string_index_type_arg
-
-    return string_index_type

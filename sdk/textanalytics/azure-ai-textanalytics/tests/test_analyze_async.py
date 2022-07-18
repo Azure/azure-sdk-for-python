@@ -6,11 +6,9 @@ from collections import defaultdict
 import datetime
 import os
 import pytest
-import platform
 import functools
 import itertools
 import json
-import time
 import sys
 import asyncio
 from unittest import mock
@@ -22,6 +20,7 @@ from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from testcase import TextAnalyticsTest
+from azure.ai.textanalytics.aio._lro_async import AsyncAnalyzeActionsLROPoller
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     TextDocumentInput,
@@ -37,14 +36,12 @@ from azure.ai.textanalytics import (
     AnalyzeSentimentResult,
     ExtractKeyPhrasesResult,
     PiiEntityCategory,
-    ExtractSummaryAction,
-    ExtractSummaryResult,
-    SingleCategoryClassifyAction,
+    SingleLabelClassifyAction,
     MultiCategoryClassifyAction,
     RecognizeCustomEntitiesAction,
-    SingleCategoryClassifyResult,
-    MultiCategoryClassifyResult,
-    RecognizeCustomEntitiesResult
+    ClassifyDocumentResult,
+    RecognizeCustomEntitiesResult,
+    AnalyzeHealthcareEntitiesAction
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -54,8 +51,8 @@ TextAnalyticsCustomPreparer = functools.partial(
     TextAnalyticsPreparer,
     textanalytics_custom_text_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
     textanalytics_custom_text_key="fakeZmFrZV9hY29jdW50X2tleQ==",
-    textanalytics_single_category_classify_project_name="single_category_classify_project_name",
-    textanalytics_single_category_classify_deployment_name="single_category_classify_deployment_name",
+    textanalytics_single_label_classify_project_name="single_label_classify_project_name",
+    textanalytics_single_label_classify_deployment_name="single_label_classify_deployment_name",
     textanalytics_multi_category_classify_project_name="multi_category_classify_project_name",
     textanalytics_multi_category_classify_deployment_name="multi_category_classify_deployment_name",
     textanalytics_custom_entities_project_name="custom_entities_project_name",
@@ -104,8 +101,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
-    @recorded_by_proxy_async
-    async def test_no_single_input(self, client):
+    async def test_no_single_input(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(TypeError):
             response = await client.begin_analyze_actions("hello world", actions=[], polling_interval=self._interval())
 
@@ -175,12 +172,12 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             elif idx == 1:
                 assert document_result.sentiment == "negative"
                 assert len(document_result.sentences) == 2
-                assert document_result.sentences[0].text == "I did not like the hotel we stayed at."
+                assert document_result.sentences[0].text == "I did not like the hotel we stayed at. "  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14208842
                 assert document_result.sentences[1].text == "It was too expensive."
             else:
                 assert document_result.sentiment == "positive"
                 assert len(document_result.sentences) == 2
-                assert document_result.sentences[0].text == "The restaurant had really good food."
+                assert document_result.sentences[0].text == "The restaurant had really good food. "  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14208842
                 assert document_result.sentences[1].text == "I recommend you try it."
 
     @TextAnalyticsPreparer()
@@ -228,13 +225,13 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         assert 9 == sleek_opinion.offset
                         assert not sleek_opinion.is_negated
 
-                        premium_opinion = mined_opinion.assessments[1]
-                        assert 'premium' == premium_opinion.text
-                        assert 'positive' == premium_opinion.sentiment
-                        assert 0.0 == premium_opinion.confidence_scores.neutral
-                        self.validateConfidenceScores(premium_opinion.confidence_scores)
-                        assert 15 == premium_opinion.offset
-                        assert not premium_opinion.is_negated
+                        beautiful_opinion = mined_opinion.assessments[1]
+                        assert 'beautiful' == beautiful_opinion.text
+                        assert 'positive' == beautiful_opinion.sentiment
+                        assert 0.0 == beautiful_opinion.confidence_scores.neutral
+                        self.validateConfidenceScores(beautiful_opinion.confidence_scores)
+                        assert 53 == beautiful_opinion.offset
+                        assert not beautiful_opinion.is_negated
                 else:
                     food_target = sentence.mined_opinions[0].target
                     service_target = sentence.mined_opinions[1].target
@@ -242,7 +239,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     assert 4 == food_target.offset
 
                     assert 'service' == service_target.text
-                    assert 'negative' == service_target.sentiment
+                    assert 'positive' == service_target.sentiment
                     assert 0.0 == service_target.confidence_scores.neutral
                     self.validateConfidenceScores(service_target.confidence_scores)
                     assert 13 == service_target.offset
@@ -370,7 +367,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         RecognizePiiEntitiesAction(),
                         RecognizeLinkedEntitiesAction(),
                         AnalyzeSentimentAction(),
-                        ExtractSummaryAction()
                     ],
                     polling_interval=self._interval()
                 )).result()
@@ -391,7 +387,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         RecognizePiiEntitiesAction(),
                         RecognizeLinkedEntitiesAction(),
                         AnalyzeSentimentAction(),
-                        ExtractSummaryAction()
                     ],
                     polling_interval=self._interval()
                 )).result()
@@ -414,7 +409,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     RecognizePiiEntitiesAction(),
                     RecognizeLinkedEntitiesAction(),
                     AnalyzeSentimentAction(),
-                    ExtractSummaryAction()
                 ],
                 polling_interval=self._interval()
             )).result()
@@ -431,10 +425,9 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
                 _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES,
                 _AnalyzeActionsType.ANALYZE_SENTIMENT,
-                _AnalyzeActionsType.EXTRACT_SUMMARY
             ]
             for doc_idx, document_results in enumerate(results):
-                assert len(document_results) == 6
+                assert len(document_results) == 5
                 for action_idx, document_result in enumerate(document_results):
                     assert document_result.id == document_order[doc_idx]
                     assert self.document_result_to_action_type(document_result) == action_order[action_idx]
@@ -502,7 +495,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     assert document_result.statistics.character_count
                     assert document_result.statistics.transaction_count
 
-    @pytest.mark.skip("service expects modelVersion in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -511,10 +503,10 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         def callback(resp):
             assert resp.raw_response
             tasks = resp.raw_response['tasks']
-            assert tasks['completed'] == 6
+            assert tasks['completed'] == 5
             assert tasks['inProgress'] == 0
             assert tasks['failed'] == 0
-            assert tasks['total'] == 6
+            assert tasks['total'] == 5
             num_tasks = 0
             for task in tasks["items"]:
                 num_tasks += 1
@@ -523,7 +515,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 assert task_stats['validDocumentsCount'] == 4
                 assert task_stats['erroneousDocumentsCount'] == 0
                 assert task_stats['transactionsCount'] == 4
-            assert num_tasks == 6
+            assert num_tasks == 5
 
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
@@ -539,7 +531,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     RecognizePiiEntitiesAction(model_version="latest"),
                     RecognizeLinkedEntitiesAction(model_version="latest"),
                     AnalyzeSentimentAction(model_version="latest"),
-                    ExtractSummaryAction(model_version="latest")
                 ],
                 show_stats=True,
                 polling_interval=self._interval(),
@@ -558,7 +549,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
                 _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES,
                 _AnalyzeActionsType.ANALYZE_SENTIMENT,
-                _AnalyzeActionsType.EXTRACT_SUMMARY
             ]
             for document_results in pages:
                 assert len(document_results) == len(action_order)
@@ -585,6 +575,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
 
             response = await poller.result()
 
+            assert isinstance(poller, AsyncAnalyzeActionsLROPoller)
             assert isinstance(poller.created_on, datetime.datetime)
             assert not poller.display_name
             assert isinstance(poller.expires_on, datetime.datetime)
@@ -595,7 +586,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             assert poller.total_actions_count == 1
             assert poller.id
 
-    @pytest.mark.skip("service expects modelVersion in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -613,12 +603,10 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         RecognizePiiEntitiesAction(model_version="bad"),
                         RecognizeLinkedEntitiesAction(model_version="bad"),
                         AnalyzeSentimentAction(model_version="bad"),
-                        ExtractSummaryAction(model_version="bad")
                     ],
                     polling_interval=self._interval()
                 )).result()
 
-    @pytest.mark.skip("service expects modelVersion in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -635,15 +623,14 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         RecognizePiiEntitiesAction(model_version="bad"),
                         RecognizeLinkedEntitiesAction(model_version="bad"),
                         AnalyzeSentimentAction(model_version="bad"),
-                        ExtractSummaryAction(model_version="bad")
                     ],
                     polling_interval=self._interval()
                 )).result()
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
-    @recorded_by_proxy_async
-    async def test_missing_input_records_error(self, client):
+    async def test_missing_input_records_error(self, **kwargs):
+        client = kwargs.pop("client")
         docs = []
         with pytest.raises(ValueError) as excinfo:
             async with client:
@@ -655,7 +642,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         RecognizePiiEntitiesAction(),
                         RecognizeLinkedEntitiesAction(),
                         AnalyzeSentimentAction(),
-                        ExtractSummaryAction()
                     ],
                     polling_interval=self._interval()
                 )).result()
@@ -663,8 +649,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
-    @recorded_by_proxy_async
-    async def test_passing_none_docs(self, client):
+    async def test_passing_none_docs(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError) as excinfo:
             async with client:
                 await client.begin_analyze_actions(None, None, polling_interval=self._interval())
@@ -705,7 +691,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     RecognizePiiEntitiesAction(),
                     RecognizeLinkedEntitiesAction(),
                     AnalyzeSentimentAction(),
-                    ExtractSummaryAction()
                 ],
                 show_stats=True,
                 polling_interval=self._interval()
@@ -722,7 +707,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
             _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES,
             _AnalyzeActionsType.ANALYZE_SENTIMENT,
-            _AnalyzeActionsType.EXTRACT_SUMMARY
         ]
         action_type_to_document_results = defaultdict(list)
 
@@ -753,7 +737,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         RecognizePiiEntitiesAction(),
                         RecognizeLinkedEntitiesAction(),
                         AnalyzeSentimentAction(),
-                        ExtractSummaryAction()
                     ],
                     polling_interval=self._interval()
                 )).result()
@@ -766,8 +749,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             self,
             textanalytics_custom_text_endpoint,
             textanalytics_custom_text_key,
-            textanalytics_single_category_classify_project_name,
-            textanalytics_single_category_classify_deployment_name,
+            textanalytics_single_label_classify_project_name,
+            textanalytics_single_label_classify_deployment_name,
             textanalytics_multi_category_classify_project_name,
             textanalytics_multi_category_classify_deployment_name,
             textanalytics_custom_entities_project_name,
@@ -781,10 +764,9 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             RecognizePiiEntitiesAction(disable_service_logs=True),
             RecognizeLinkedEntitiesAction(disable_service_logs=True),
             AnalyzeSentimentAction(disable_service_logs=True),
-            ExtractSummaryAction(disable_service_logs=True),
-            SingleCategoryClassifyAction(
-                project_name=textanalytics_single_category_classify_project_name,
-                deployment_name=textanalytics_single_category_classify_deployment_name,
+            SingleLabelClassifyAction(
+                project_name=textanalytics_single_label_classify_project_name,
+                deployment_name=textanalytics_single_label_classify_deployment_name,
                 disable_service_logs=True
             ),
             MultiCategoryClassifyAction(
@@ -796,7 +778,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 project_name=textanalytics_custom_entities_project_name,
                 deployment_name=textanalytics_custom_entities_deployment_name,
                 disable_service_logs=True
-            )
+            ),
+            AnalyzeHealthcareEntitiesAction(disable_service_logs=True)
         ]
 
         for action in actions:
@@ -896,13 +879,11 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             RecognizePiiEntitiesAction(),
             RecognizeEntitiesAction(),
             RecognizeLinkedEntitiesAction(),
-            ExtractSummaryAction(order_by="Rank"),
             RecognizePiiEntitiesAction(categories_filter=[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]),
             ExtractKeyPhrasesAction(),
             RecognizeEntitiesAction(),
             AnalyzeSentimentAction(show_opinion_mining=True),
             RecognizeLinkedEntitiesAction(),
-            ExtractSummaryAction(max_sentence_count=1),
             ExtractKeyPhrasesAction(),
         ]
         async with client:
@@ -941,38 +922,28 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             assert isinstance(action_result[3], RecognizeLinkedEntitiesResult)
             assert action_result[3].id == doc_id
 
-            assert isinstance(action_result[4], ExtractSummaryResult)
-            previous_score = 1.0
-            for sentence in action_result[4].sentences:
-                assert sentence.rank_score <= previous_score
-                previous_score = sentence.rank_score
+            assert isinstance(action_result[4], RecognizePiiEntitiesResult)
             assert action_result[4].id == doc_id
-
-            assert isinstance(action_result[5], RecognizePiiEntitiesResult)
-            assert action_result[5].id == doc_id
             if doc_id == "28":
-                assert action_result[5].entities
+                assert action_result[4].entities
             else:
-                assert not action_result[5].entities
+                assert not action_result[4].entities
 
-            assert isinstance(action_result[6], ExtractKeyPhrasesResult)
+            assert isinstance(action_result[5], ExtractKeyPhrasesResult)
+            assert action_result[5].id == doc_id
+
+            assert isinstance(action_result[6], RecognizeEntitiesResult)
             assert action_result[6].id == doc_id
 
-            assert isinstance(action_result[7], RecognizeEntitiesResult)
+            assert isinstance(action_result[7], AnalyzeSentimentResult)
+            assert [sentence.mined_opinions for sentence in action_result[0].sentences]
             assert action_result[7].id == doc_id
 
-            assert isinstance(action_result[8], AnalyzeSentimentResult)
-            assert [sentence.mined_opinions for sentence in action_result[0].sentences]
+            assert isinstance(action_result[8], RecognizeLinkedEntitiesResult)
             assert action_result[8].id == doc_id
 
-            assert isinstance(action_result[9], RecognizeLinkedEntitiesResult)
+            assert isinstance(action_result[9], ExtractKeyPhrasesResult)
             assert action_result[9].id == doc_id
-
-            assert isinstance(action_result[10], ExtractSummaryResult)
-            assert len(action_result[10].sentences) == 1
-
-            assert isinstance(action_result[11], ExtractKeyPhrasesResult)
-            assert action_result[11].id == doc_id
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -982,9 +953,9 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 {"id": "2", "text": ""}]
 
         actions = [
-            ExtractSummaryAction(max_sentence_count=3),
+            RecognizeEntitiesAction(),
             RecognizePiiEntitiesAction(),
-            ExtractSummaryAction(max_sentence_count=5)
+            RecognizeEntitiesAction(disable_service_logs=True),
         ]
 
         async with client:
@@ -1003,11 +974,11 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         assert len(action_results[1]) == len(actions)
 
         # first doc
-        assert isinstance(action_results[0][0], ExtractSummaryResult)
+        assert isinstance(action_results[0][0], RecognizeEntitiesResult)
         assert action_results[0][0].id == "5"
         assert isinstance(action_results[0][1], RecognizePiiEntitiesResult)
         assert action_results[0][1].id == "5"
-        assert isinstance(action_results[0][2], ExtractSummaryResult)
+        assert isinstance(action_results[0][2], RecognizeEntitiesResult)
         assert action_results[0][2].id == "5"
 
         # second doc
@@ -1015,136 +986,15 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         assert action_results[1][1].is_error
         assert action_results[1][2].is_error
 
-    @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
-    @recorded_by_proxy_async
-    async def test_all_successful_passing_dict_extract_summary_action(self, client):
-        docs = [{"id": "1", "language": "en", "text":
-            "The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
-            " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
-            "Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of "
-            "Brexit negotiations, David Davis. Their decision to leave the government came three days after May "
-            "appeared to have agreed a deal with her fractured Cabinet on the UK's post Brexit relationship with "
-            "the EU. That plan is now in tatters and her political future appears uncertain. May appeared in Parliament"
-            " on Monday afternoon to defend her plan, minutes after Downing Street confirmed the departure of Johnson. "
-            "May acknowledged the splits in her statement to MPs, saying of the ministers who quit: We do not agree "
-            "about the best way of delivering our shared commitment to honoring the result of the referendum. The "
-            "Prime Minister's latest political drama began late on Sunday night when Davis quit, declaring he could "
-            "not support May's Brexit plan. He said it involved too close a relationship with the EU and gave only "
-            "an illusion of control being returned to the UK after it left the EU. It seems to me we're giving too "
-            "much away, too easily, and that's a dangerous strategy at this time, Davis said in a BBC radio "
-            "interview Monday morning. Johnson's resignation came Monday afternoon local time, just before the "
-            "Prime Minister was due to make a scheduled statement in Parliament. This afternoon, the Prime Minister "
-            "accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said."},
-            {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
-
-        async with client:
-            response = await (await client.begin_analyze_actions(
-                docs,
-                actions=[ExtractSummaryAction()],
-                show_stats=True,
-                polling_interval=self._interval(),
-            )).result()
-
-            document_results = []
-            async for doc in response:
-                document_results.append(doc)
-
-            assert len(document_results) == 2
-            for document_result in document_results:
-                assert len(document_result) == 1
-                for result in document_result:
-                    assert isinstance(result, ExtractSummaryResult)
-                    assert result.statistics
-                    assert len(result.sentences) == 3 if result.id == 0 else 1
-                    for sentence in result.sentences:
-                        assert sentence.text
-                        assert sentence.rank_score is not None
-                        assert sentence.offset is not None
-                        assert sentence.length is not None
-                    assert result.id is not None
-
-    @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
-    @recorded_by_proxy_async
-    async def test_extract_summary_action_with_options(self, client):
-        docs = ["The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
-            " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
-            "Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of "
-            "Brexit negotiations, David Davis. Their decision to leave the government came three days after May "
-            "appeared to have agreed a deal with her fractured Cabinet on the UK's post Brexit relationship with "
-            "the EU. That plan is now in tatters and her political future appears uncertain. May appeared in Parliament"
-            " on Monday afternoon to defend her plan, minutes after Downing Street confirmed the departure of Johnson. "
-            "May acknowledged the splits in her statement to MPs, saying of the ministers who quit: We do not agree "
-            "about the best way of delivering our shared commitment to honoring the result of the referendum. The "
-            "Prime Minister's latest political drama began late on Sunday night when Davis quit, declaring he could "
-            "not support May's Brexit plan. He said it involved too close a relationship with the EU and gave only "
-            "an illusion of control being returned to the UK after it left the EU. It seems to me we're giving too "
-            "much away, too easily, and that's a dangerous strategy at this time, Davis said in a BBC radio "
-            "interview Monday morning. Johnson's resignation came Monday afternoon local time, just before the "
-            "Prime Minister was due to make a scheduled statement in Parliament. This afternoon, the Prime Minister "
-            "accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said."]
-
-        async with client:
-            response = await (await client.begin_analyze_actions(
-                docs,
-                actions=[ExtractSummaryAction(max_sentence_count=5, order_by="Rank")],
-                show_stats=True,
-                polling_interval=self._interval(),
-            )).result()
-
-            document_results = []
-            async for doc in response:
-                document_results.append(doc)
-
-            assert len(document_results) == 1
-            for document_result in document_results:
-                assert len(document_result) == 1
-                for result in document_result:
-                    assert isinstance(result, ExtractSummaryResult)
-                    assert result.statistics
-                    assert len(result.sentences) == 5
-                    previous_score = 1.0
-                    for sentence in result.sentences:
-                        assert sentence.rank_score <= previous_score
-                        previous_score = sentence.rank_score
-                        assert sentence.text
-                        assert sentence.offset is not None
-                        assert sentence.length is not None
-                    assert result.id is not None
-
-    @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
-    @recorded_by_proxy_async
-    async def test_extract_summary_partial_results(self, client):
-        docs = [{"id": "1", "language": "en", "text": ""}, {"id": "2", "language": "en", "text": "hello world"}]
-
-        async with client:
-            response = await (await client.begin_analyze_actions(
-                docs,
-                actions=[ExtractSummaryAction()],
-                show_stats=True,
-                polling_interval=self._interval(),
-            )).result()
-
-            document_results = []
-            async for doc in response:
-                document_results.append(doc)
-            assert document_results[0][0].is_error
-            assert document_results[0][0].error.code == "InvalidDocument"
-
-            assert not document_results[1][0].is_error
-            assert isinstance(document_results[1][0], ExtractSummaryResult)
-
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy_async
-    async def test_single_category_classify(
+    async def test_single_label_classify(
             self,
             textanalytics_custom_text_endpoint,
             textanalytics_custom_text_key,
-            textanalytics_single_category_classify_project_name,
-            textanalytics_single_category_classify_deployment_name
+            textanalytics_single_label_classify_project_name,
+            textanalytics_single_label_classify_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
@@ -1158,9 +1008,9 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             response = await (await client.begin_analyze_actions(
                 docs,
                 actions=[
-                    SingleCategoryClassifyAction(
-                        project_name=textanalytics_single_category_classify_project_name,
-                        deployment_name=textanalytics_single_category_classify_deployment_name
+                    SingleLabelClassifyAction(
+                        project_name=textanalytics_single_label_classify_project_name,
+                        deployment_name=textanalytics_single_label_classify_deployment_name
                     ),
                 ],
                 show_stats=True,
@@ -1176,8 +1026,9 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 assert not result.is_error
                 assert not result.warnings
                 assert result.statistics
-                assert result.classification.category
-                assert result.classification.confidence_score
+                for classification in result.classifications:
+                    assert classification.category
+                    assert classification.confidence_score
 
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
@@ -1279,8 +1130,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             self,
             textanalytics_custom_text_endpoint,
             textanalytics_custom_text_key,
-            textanalytics_single_category_classify_project_name,
-            textanalytics_single_category_classify_deployment_name,
+            textanalytics_single_label_classify_project_name,
+            textanalytics_single_label_classify_deployment_name,
             textanalytics_multi_category_classify_project_name,
             textanalytics_multi_category_classify_deployment_name,
             textanalytics_custom_entities_project_name,
@@ -1296,9 +1147,9 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             response = await (await client.begin_analyze_actions(
                 docs,
                 actions=[
-                    SingleCategoryClassifyAction(
-                        project_name=textanalytics_single_category_classify_project_name,
-                        deployment_name=textanalytics_single_category_classify_deployment_name
+                    SingleLabelClassifyAction(
+                        project_name=textanalytics_single_label_classify_project_name,
+                        deployment_name=textanalytics_single_label_classify_deployment_name
                     ),
                     MultiCategoryClassifyAction(
                         project_name=textanalytics_multi_category_classify_project_name,
@@ -1318,8 +1169,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 document_results.append(doc)
 
         assert len(document_results) == 2
-        assert isinstance(document_results[0][0], SingleCategoryClassifyResult)
-        assert isinstance(document_results[0][1], MultiCategoryClassifyResult)
+        assert isinstance(document_results[0][0], ClassifyDocumentResult)
+        assert isinstance(document_results[0][1], ClassifyDocumentResult)
         assert isinstance(document_results[0][2], RecognizeCustomEntitiesResult)
         assert document_results[1][0].is_error
         assert document_results[1][1].is_error
@@ -1359,7 +1210,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 polling_interval=self._interval(),
             )
             response = await poller.result()
-
+            assert isinstance(poller, AsyncAnalyzeActionsLROPoller)
             action_results = []
             async for action_result in response:
                 action_results.append(action_result)
@@ -1479,12 +1330,10 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                  (_AnalyzeActionsType.RECOGNIZE_PII_ENTITIES, '2'),
                  (_AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES, '3'),
                  (_AnalyzeActionsType.ANALYZE_SENTIMENT, '4'),
-                 (_AnalyzeActionsType.EXTRACT_SUMMARY, '5')
                 ],
                 client._client.analyze_text_job_status,
                 response,
                 deserialized,
-                headers,
                 show_stats=True,
             )
 
@@ -1498,7 +1347,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         RecognizePiiEntitiesAction(),
                         RecognizeLinkedEntitiesAction(),
                         AnalyzeSentimentAction(),
-                        ExtractSummaryAction()
                     ],
                     show_stats=True,
                     polling_interval=self._interval(),
@@ -1508,7 +1356,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 results = []
                 async for resp in response:
                     results.append(resp)
-            assert e.value.message == "(InternalServerError) 1 out of 6 job tasks failed. Failed job tasks : keyphrasescomposite."
+            assert e.value.message == "(InternalServerError) 1 out of 5 job tasks failed. Failed job tasks : keyphrasescomposite."
 
     @TextAnalyticsPreparer()
     async def test_action_errors_with_targets_v3_1(
@@ -1637,7 +1485,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 client._client.analyze_text_job_status,
                 response,
                 deserialized,
-                headers,
                 show_stats=True,
             )
 
@@ -1781,7 +1628,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 client._client.analyze_text_job_status,
                 response,
                 deserialized,
-                headers,
                 show_stats=True,
             )
         async with client:
@@ -1842,3 +1688,105 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     assert document_result.id == document_order[doc_idx]
                     assert not document_result.is_error
                     assert self.document_result_to_action_type(document_result) == action_order[action_idx]
+
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.0"})
+    async def test_analyze_multiapi_validate_v3_0(self, **kwargs):
+        client = kwargs.pop("client")
+        docs = [{"id": "56", "text": ":)"},
+                {"id": "0", "text": ":("},
+                {"id": "19", "text": ":P"},
+                {"id": "1", "text": ":D"}]
+
+        with pytest.raises(ValueError) as e:
+            response = await (await client.begin_analyze_actions(
+                docs,
+                actions=[
+                    RecognizeEntitiesAction(),
+                    ExtractKeyPhrasesAction(),
+                    RecognizePiiEntitiesAction(),
+                    RecognizeLinkedEntitiesAction(),
+                    AnalyzeSentimentAction()
+                ],
+                polling_interval=self._interval(),
+            )).result()
+        assert str(e.value) == "'begin_analyze_actions' is only available for API version v3.1 and up."
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsCustomPreparer()
+    async def test_analyze_multiapi_validate_v3_1(self, **kwargs):
+        textanalytics_custom_text_endpoint = kwargs.pop("textanalytics_custom_text_endpoint")
+        textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
+        textanalytics_single_label_classify_project_name = kwargs.pop("textanalytics_single_label_classify_project_name")
+        textanalytics_single_label_classify_deployment_name = kwargs.pop("textanalytics_single_label_classify_deployment_name")
+        textanalytics_multi_category_classify_project_name = kwargs.pop("textanalytics_multi_category_classify_project_name")
+        textanalytics_multi_category_classify_deployment_name = kwargs.pop("textanalytics_multi_category_classify_deployment_name")
+        textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
+        textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
+
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), api_version="v3.1")
+
+        docs = [{"id": "56", "text": ":)"},
+                {"id": "0", "text": ":("},
+                {"id": "19", "text": ":P"},
+                {"id": "1", "text": ":D"}]
+        version_supported = "2022-05-01"
+        with pytest.raises(ValueError) as e:
+            response = await (await client.begin_analyze_actions(
+                docs,
+                actions=[
+                    SingleLabelClassifyAction(
+                        project_name=textanalytics_single_label_classify_project_name,
+                        deployment_name=textanalytics_single_label_classify_deployment_name
+                    ),
+                    MultiCategoryClassifyAction(
+                        project_name=textanalytics_multi_category_classify_project_name,
+                        deployment_name=textanalytics_multi_category_classify_deployment_name
+                    ),
+                    RecognizeCustomEntitiesAction(
+                        project_name=textanalytics_custom_entities_project_name,
+                        deployment_name=textanalytics_custom_entities_deployment_name
+                    ),
+                    AnalyzeHealthcareEntitiesAction()
+                ],
+                polling_interval=self._interval(),
+            )).result()
+        assert str(e.value) == f"'RecognizeCustomEntitiesAction' is only available for API version " \
+                               f"{version_supported} and up.\n'SingleLabelClassifyAction' is only available " \
+                               f"for API version {version_supported} and up.\n'MultiCategoryClassifyAction' is " \
+                               f"only available for API version {version_supported} and up.\n'AnalyzeHealthcareEntitiesAction' is " \
+                               f"only available for API version {version_supported} and up.\n"
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
+    async def test_healthcare_action(self, client):
+        docs = [
+            "Patient does not suffer from high blood pressure.",
+            "Prescribed 100mg ibuprofen, taken twice daily.",
+            ""
+        ]
+        async with client:
+            result = await (await client.begin_analyze_actions(
+                docs,
+                actions=[
+                    AnalyzeHealthcareEntitiesAction(
+                        model_version="latest",
+                    )
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+            )).result()
+            response = []
+            async for r in result:
+                response.append(r)
+
+            for idx, result in enumerate(response):
+                for res in result:
+                    if idx == 2:
+                        assert res.is_error
+                        assert res.error.code == "InvalidDocument"
+                    else:
+                        assert res.entities
+                        assert res.statistics

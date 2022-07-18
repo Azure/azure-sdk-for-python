@@ -1,0 +1,58 @@
+{
+   "id":"/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/jobs/test_773798882091",
+   "name":"test_773798882091",
+   "type":"Microsoft.MachineLearningServices/workspaces/jobs",
+   "properties":{
+      "job_type":"Command",
+      "provisioning_state":"Succeeded",
+      "services":{
+         "Tracking":{
+            "type":"Tracking",
+            "endpoint":"azureml://master.api.azureml-test.ms/mlflow/v1.0/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS?"
+         },
+         "Studio":{
+            "type":"Studio",
+            "endpoint":"https://ml.azure.com/experiments/mfe-test1/runs/test_773798882091?wsid=/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourcegroups/RLTesting/workspaces/AnkitWS"
+         }
+      },
+      "tags":{
+
+      },
+      "properties":{
+         "_azureml.ComputeTargetType":"amlcompute",
+         "azureml.datastoreId":"/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/datastores/ankitws8854091092_azureml",
+         "mlflow.source.git.repoURL":"https://msdata.visualstudio.com/DefaultCollection/Vienna/_git/sdk-cli-v2",
+         "mlflow.source.git.branch":"users/anksing/ContractChange",
+         "mlflow.source.git.commit":"42452ba3e14e1f00d63d5c8497c9813410581b43",
+         "azureml.git.dirty":"True"
+      },
+      "experiment_name":"mfe-test1",
+      "computeId": "/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/computes/test-sai-i",
+      "output":{
+         "datastore_id":"/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/datastores/ankitws8854091092_azureml",
+         "path":"ExperimentRun/dcid.test_773798882091"
+      },
+      "status":"Preparing",
+      "code_id":"/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/codes//versions/",
+      "command":"echo $AZURE_ML_INPUT0",
+      "environment_id":"/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/environments/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu/versions/1",
+      "inputs":{
+         "test1":{
+            "uri":"/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/data/fakeData/versions/1",
+            "jobInputType": "Dataset",
+            "mode":"ReadWriteMount"
+         }
+      },
+      "environment_variables":{
+
+      },
+      "parameters":{
+
+      }
+   },
+   "system_data":{
+      "created_at":"2021-03-18T19:28:47.64094Z",
+      "created_by":"Ankit Singhal",
+      "created_by_type":"User"
+   }
+}

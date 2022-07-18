@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING, Union, cast
 
 from ._utils import get_http_request_kwargs
 from ._common._constants import SchemaFormat, DEFAULT_VERSION
@@ -32,7 +32,7 @@ from ._common._response_handlers import (
     _parse_response_schema,
     _parse_response_schema_properties,
 )
-from ._generated._azure_schema_registry import AzureSchemaRegistry
+from ._generated._client import AzureSchemaRegistry
 from ._generated.rest import schema as schema_rest
 
 
@@ -122,6 +122,7 @@ class SchemaRegistryClient(object):
 
         """
         try:
+            format = cast(SchemaFormat, format)
             format = format.value
         except AttributeError:
             pass
@@ -202,6 +203,7 @@ class SchemaRegistryClient(object):
 
         """
         try:
+            format = cast(SchemaFormat, format)
             format = format.value
         except AttributeError:
             pass

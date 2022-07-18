@@ -1,5 +1,6 @@
 trigger: none
-
+variables:
+  - template: /eng/pipelines/templates/variables/globals.yml
 jobs:
   - template: /eng/common/pipelines/templates/jobs/docindex.yml
 
@@ -36,6 +37,7 @@ jobs:
             - ci-configs/
             - metadata/
             - docs-ref-mapping/
+            - docs-ref-services/
           Repositories:
             - Name: $(DocRepoOwner)/$(DocRepoName)
               WorkingDirectory: $(DocRepoLocation)
@@ -92,7 +94,16 @@ jobs:
             -DocRepoLocation $(DocRepoLocation)
             -PackageSourceOverride "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
         displayName: Update Docs Onboarding for Daily branch
-
+      - task: Powershell@2
+        inputs:
+          pwsh: true
+          filePath: eng/common/scripts/Service-Level-Readme-Automation.ps1
+          arguments: >-
+            -DocRepoLocation $(DocRepoLocation)
+            -TenantId '$(opensource-aad-tenant-id)' 
+            -ClientId '$(opensource-aad-app-id)' 
+            -ClientSecret '$(opensource-aad-secret)'
+        displayName: Generate Service Level Readme
       - task: Powershell@2
         inputs:
           pwsh: true

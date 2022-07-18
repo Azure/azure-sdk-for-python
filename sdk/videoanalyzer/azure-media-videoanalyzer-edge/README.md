@@ -23,7 +23,7 @@ pip install azure-media-videoanalyzer-edge
 
 ### Prerequisites
 
-- Python 2.7, or 3.6 or later is required to use this package.
+- 3.6 or later is required to use this package.
 - You need an active [Azure subscription][azure_sub], and a IoT device connection string to use this package.
 - To interact with Azure IoT Hub you will need to run `pip install azure-iot-hub`
 - You will need to use the version of the SDK that corresponds to the version of the Video Analyzer Edge module you are using.

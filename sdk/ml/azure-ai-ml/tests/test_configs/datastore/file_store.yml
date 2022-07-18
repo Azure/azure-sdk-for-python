@@ -1,0 +1,6 @@
+type: azure_file
+name: azure_file_datastore
+account_name: sdkvnextclidcdnrc7zb7xyy
+credentials:
+  account_key: <BASE 64 ENCODED SECRET>
+file_share_name: testfileshare

@@ -5,29 +5,26 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 import base64
-import unittest
+import pytest
 import uuid
 from os import path, remove, sys, urandom
 from math import ceil
+from io import BytesIO
+from os import path, remove
 from azure.core.exceptions import HttpResponseError
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 from azure.storage.blob import (
     BlobServiceClient,
-    ContainerClient,
-    BlobClient,
     StorageErrorCode,
     BlobProperties
 )
-from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
+from settings.testcase import BlobPreparer
+from test_helpers import ProgressTracker
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
-
-
 # ------------------------------------------------------------------------------
 
 class StorageGetBlobTest(StorageTestCase):
@@ -930,6 +927,124 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertIsNone(content.properties.content_settings.content_md5)
 
     @BlobPreparer()
+    def test_get_blob_read_progress(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        def progress_hook(current, total):
+            print(f'Progress: {current / total}')
+
+        # Act / Assert
+        chunk_size = 1024
+        total = stream.size
+        current = 0
+        while True:
+            data = stream.read(chunk_size)
+            read_size = len(data)
+            current += read_size
+            progress_hook(current, total)
+
+            if current == total:
+                break
+
+    def test_get_blob_progress_single_get(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'a' * 512
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data, overwrite=True)
+
+        progress = ProgressTracker(len(data), len(data))
+
+        # Act
+        blob.download_blob(progress_hook=progress.assert_progress).readall()
+
+        # Assert
+        progress.assert_complete()
+
+    @BlobPreparer()
+    def test_get_blob_progress_chunked(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'a' * 5120
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data, overwrite=True)
+
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        blob.download_blob(max_concurrency=1, progress_hook=progress.assert_progress).readall()
+
+        # Assert
+        progress.assert_complete()
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_progress_chunked_parallel(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        self._setup(storage_account_name, storage_account_key)
+        data = b'a' * 5120
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data, overwrite=True)
+
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        blob.download_blob(max_concurrency=3, progress_hook=progress.assert_progress).readall()
+
+        # Assert
+        progress.assert_complete()
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_progress_range(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        self._setup(storage_account_name, storage_account_key)
+        data = b'a' * 5120
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data, overwrite=True)
+
+        length = 4096
+        progress = ProgressTracker(length, 1024)
+
+        # Act
+        blob.download_blob(
+            offset=512,
+            length=length,
+            max_concurrency=3,
+            progress_hook=progress.assert_progress
+        ).readall()
+
+        # Assert
+        progress.assert_complete()
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_progress_readinto(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        self._setup(storage_account_name, storage_account_key)
+        data = b'a' * 5120
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data, overwrite=True)
+
+        progress = ProgressTracker(len(data), 1024)
+        result = BytesIO()
+
+        # Act
+        stream = blob.download_blob(max_concurrency=3, progress_hook=progress.assert_progress)
+        read = stream.readinto(result)
+
+        # Assert
+        progress.assert_complete()
+        self.assertEqual(len(data), read)
+
+    @BlobPreparer()
     def test_get_blob_read_empty(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         data = b''
@@ -990,29 +1105,5 @@ class StorageGetBlobTest(StorageTestCase):
             start = i * chunk_size
             end = start + chunk_size
             self.assertEqual(data[start:end], content)
-
-    @BlobPreparer()
-    def test_get_blob_read_progress(self, storage_account_name, storage_account_key):
-        self._setup(storage_account_name, storage_account_key)
-        data = b'12345' * 205 * 5  # 5125 bytes
-        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        blob.upload_blob(data, overwrite=True)
-        stream = blob.download_blob()
-
-        def progress_hook(current, total):
-            print(f'Progress: {current / total}')
-
-        # Act / Assert
-        chunk_size = 1024
-        total = stream.size
-        current = 0
-        while True:
-            data = stream.read(chunk_size)
-            read_size = len(data)
-            current += read_size
-            progress_hook(current, total)
-
-            if current == total:
-                break
 
 # ------------------------------------------------------------------------------

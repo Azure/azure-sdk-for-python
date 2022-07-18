@@ -43,7 +43,7 @@ _LOGGER = logging.getLogger(__name__)
 PoliciesType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
 
 
-class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseType]):
+class _SansIOHTTPPolicyRunner(HTTPPolicy):
     """Sync implementation of the SansIO policy.
 
     Modifies the request and sends to the next policy in the chain.

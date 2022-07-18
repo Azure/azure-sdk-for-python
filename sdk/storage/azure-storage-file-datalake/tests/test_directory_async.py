@@ -113,6 +113,64 @@ class DirectoryTest(StorageTestCase):
         self.assertTrue(created)
 
     @DataLakePreparer()
+    async def test_create_directory_owner_group_acl_async(self, datalake_storage_account_name,
+                                                          datalake_storage_account_key):
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
+        test_string_acl = 'user::rwx,group::r-x,other::rwx'
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        # Create a directory
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory(owner=test_string, group=test_string, acl=test_string_acl)
+
+        # Assert
+        acl_properties = await directory_client.get_access_control()
+        self.assertIsNotNone(acl_properties)
+        self.assertEqual(acl_properties['owner'], test_string)
+        self.assertEqual(acl_properties['group'], test_string)
+        self.assertEqual(acl_properties['acl'], test_string_acl)
+
+    @DataLakePreparer()
+    async def test_create_directory_proposed_lease_id_async(self, datalake_storage_account_name,
+                                                            datalake_storage_account_key):
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
+        test_duration = 15
+        # Arrange
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory(lease_id=test_string, lease_duration=test_duration)
+
+        # Assert
+        properties = await directory_client.get_directory_properties()
+        self.assertIsNotNone(properties)
+        self.assertEqual(properties.lease['status'], 'locked')
+        self.assertEqual(properties.lease['state'], 'leased')
+        self.assertEqual(properties.lease['duration'], 'fixed')
+
+    @DataLakePreparer()
+    async def test_create_sub_directory_proposed_lease_id_async(self, datalake_storage_account_name,
+                                                                datalake_storage_account_key):
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
+        test_duration = 15
+        # Arrange
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client = await directory_client.create_sub_directory(sub_directory='sub1',
+                                                                       lease_id=test_string,
+                                                                       lease_duration=test_duration)
+
+        # Assert
+        properties = await directory_client.get_directory_properties()
+        self.assertIsNotNone(properties)
+        self.assertEqual(properties.lease['status'], 'locked')
+        self.assertEqual(properties.lease['state'], 'leased')
+        self.assertEqual(properties.lease['duration'], 'fixed')
+
+    @DataLakePreparer()
     async def test_directory_exists(self, datalake_storage_account_name, datalake_storage_account_key):
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
@@ -804,11 +862,10 @@ class DirectoryTest(StorageTestCase):
         self.assertIsNotNone(properties)
         self.assertIsNone(properties.get('content_settings'))
 
+    @pytest.mark.skip(reason="Investigate why renaming from shorter path to longer path does not work")
     @DataLakePreparer()
     async def test_rename_from_a_shorter_directory_to_longer_directory_async(self, datalake_storage_account_name, datalake_storage_account_key):
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        # TODO: investigate why rename shorter path to a longer one does not work
-        pytest.skip("")
         directory_name = self._get_directory_reference()
         await self._create_directory_and_get_directory_client(directory_name="old")
 
@@ -957,11 +1014,10 @@ class DirectoryTest(StorageTestCase):
 
         self.assertEqual(non_existing_dir_name, res.path_name)
 
+    @pytest.mark.skip(reason="Investigate why renaming non-empty directory doesn't work")
     @DataLakePreparer()
     async def test_rename_directory_to_non_empty_directory_async(self, datalake_storage_account_name, datalake_storage_account_key):
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        # TODO: investigate why rename non empty dir doesn't work
-        pytest.skip("")
         dir1 = await self._create_directory_and_get_directory_client("dir1")
         await dir1.create_sub_directory("subdir")
 

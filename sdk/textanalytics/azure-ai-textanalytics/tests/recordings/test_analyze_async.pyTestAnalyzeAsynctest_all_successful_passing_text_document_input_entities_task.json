@@ -1,14 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "494",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -42,40 +42,40 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "505ec428-014e-417b-a653-23aecc3ab7f8",
+        "apim-request-id": "ad28eb89-a06d-4138-9159-8e913478f7af",
         "Content-Length": "0",
-        "Date": "Wed, 20 Apr 2022 23:52:21 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/82b85c4a-7c97-4c32-b55e-cd21d0be4c15?api-version=2022-03-01-preview",
+        "Date": "Thu, 09 Jun 2022 17:41:14 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/471e0739-f10e-4e68-8d9b-a810d03cd422?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "139"
+        "x-envoy-upstream-service-time": "143"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/82b85c4a-7c97-4c32-b55e-cd21d0be4c15?api-version=2022-03-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/471e0739-f10e-4e68-8d9b-a810d03cd422?api-version=2022-05-01\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "f30a1f93-5734-4918-bcc5-d84bc825b1a0",
-        "Content-Length": "2018",
+        "apim-request-id": "efd6f557-e0d5-41e7-a9a9-2223717c111f",
+        "Content-Length": "2019",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Apr 2022 23:52:26 GMT",
+        "Date": "Thu, 09 Jun 2022 17:41:21 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "99"
+        "x-envoy-upstream-service-time": "2056"
       },
       "ResponseBody": {
-        "jobId": "82b85c4a-7c97-4c32-b55e-cd21d0be4c15",
-        "lastUpdateDateTime": "2022-04-20T23:52:26Z",
-        "createdDateTime": "2022-04-20T23:52:22Z",
-        "expirationDateTime": "2022-04-21T23:52:22Z",
+        "jobId": "471e0739-f10e-4e68-8d9b-a810d03cd422",
+        "lastUpdatedDateTime": "2022-06-09T17:41:17Z",
+        "createdDateTime": "2022-06-09T17:41:14Z",
+        "expirationDateTime": "2022-06-10T17:41:14Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -87,7 +87,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-04-20T23:52:26.0318501Z",
+              "lastUpdateDateTime": "2022-06-09T17:41:17.3130514Z",
               "status": "succeeded",
               "results": {
                 "statistics": {

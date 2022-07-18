@@ -1,22 +1,22 @@
-# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method
+# pylint: disable=too-many-lines, invalid-overridden-method
+
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, AnyStr, Dict, List, IO, AsyncIterator,
+    Any, AnyStr, AsyncIterator, Dict, List, IO, Iterable, Optional, overload, Union,
     TYPE_CHECKING
 )
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.core.tracing.decorator import distributed_trace
-from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
@@ -24,29 +24,31 @@ from .._shared.request_handlers import add_metadata_headers, serialize_iso
 from .._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
-    return_headers_and_deserialized)
+    return_headers_and_deserialized
+)
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import SignedIdentifier
-from .._deserialize import deserialize_container_properties
-from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 from .._container_client import ContainerClient as ContainerClientBase, _get_blob_name
-from .._models import ContainerProperties, BlobType, BlobProperties, FilteredBlob  # pylint: disable=unused-import
-from ._list_blobs_helper import BlobPropertiesPaged, BlobPrefix
-from ._lease_async import BlobLeaseClient
+from .._deserialize import deserialize_container_properties
+from ._download_async import StorageStreamDownloader
+from .._encryption import StorageEncryptionMixin
+from .._models import ContainerProperties, BlobType, BlobProperties, FilteredBlob
+from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 from ._blob_client_async import BlobClient
+from ._lease_async import BlobLeaseClient
+from ._list_blobs_helper import BlobPropertiesPaged, BlobPrefix
 from ._models import FilteredBlobPaged
 
 if TYPE_CHECKING:
-    from .._models import PublicAccess
-    from ._download_async import StorageStreamDownloader
     from datetime import datetime
     from .._models import ( # pylint: disable=unused-import
         AccessPolicy,
         StandardBlobTier,
-        PremiumPageBlobTier)
+        PremiumPageBlobTier,
+        PublicAccess)
 
 
-class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
+class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, StorageEncryptionMixin):
     """A client to interact with a specific container, although that container
     may not yet exist.
 
@@ -119,6 +121,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._configure_encryption(kwargs)
 
     @distributed_trace_async
     async def create_container(self, metadata=None, public_access=None, **kwargs):
@@ -188,7 +191,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         """
         lease = kwargs.pop('lease', None)
         try:
-            kwargs['source_lease_id'] = lease.id  # type: str
+            kwargs['source_lease_id'] = lease.id
         except AttributeError:
             kwargs['source_lease_id'] = lease
         try:
@@ -196,8 +199,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 "{}://{}".format(self.scheme, self.primary_hostname), container_name=new_name,
                 credential=self.credential, api_version=self.api_version, _configuration=self._config,
                 _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-                require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-                key_resolver_function=self.key_resolver_function)
+                require_encryption=self.require_encryption, encryption_version=self.encryption_version,
+                key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
             await renamed_container._client.container.rename(self.container_name, **kwargs)   # pylint: disable = protected-access
             return renamed_container
         except HttpResponseError as error:
@@ -474,8 +477,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             "{}://{}".format(self.scheme, self.primary_hostname),
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
             _location_mode=self._location_mode, _hosts=self._hosts, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function,
-            _pipeline=_pipeline)
+            encryption_version=self.encryption_version, key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function, _pipeline=_pipeline)
 
 
     @distributed_trace_async
@@ -925,9 +928,34 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             timeout=timeout,
             **kwargs)
 
+    @overload
+    async def download_blob(
+            self, blob: Union[str, BlobProperties],
+            offset: int = None,
+            length: int = None,
+            *,
+            encoding: str,
+            **kwargs) -> StorageStreamDownloader[str]:
+        ...
+
+    @overload
+    async def download_blob(
+            self, blob: Union[str, BlobProperties],
+            offset: int = None,
+            length: int = None,
+            *,
+            encoding: None = None,
+            **kwargs) -> StorageStreamDownloader[bytes]:
+        ...
+
     @distributed_trace_async
-    async def download_blob(self, blob, offset=None, length=None, **kwargs):
-        # type: (Union[str, BlobProperties], Optional[int], Optional[int], Any) -> StorageStreamDownloader
+    async def download_blob(
+            self, blob: Union[str, BlobProperties],
+            offset: int = None,
+            length: int = None,
+            *,
+            encoding: Optional[str] = None,
+            **kwargs) -> StorageStreamDownloader:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
@@ -994,6 +1022,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             The number of parallel connections with which to download.
         :keyword str encoding:
             Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
+        :keyword progress_hook:
+            An async callback to track the progress of a long running download. The signature is
+            function(current: int, total: int) where current is the number of bytes transfered
+            so far, and total is the total size of the download.
+        :paramtype progress_hook: Callable[[int, int], Awaitable[None]]
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -1006,6 +1039,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         return await blob_client.download_blob(
             offset=offset,
             length=length,
+            encoding=encoding,
             **kwargs)
 
     @distributed_trace_async
@@ -1257,5 +1291,5 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            require_encryption=self.require_encryption, encryption_version=self.encryption_version,
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)

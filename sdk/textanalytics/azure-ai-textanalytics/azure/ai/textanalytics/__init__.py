@@ -49,19 +49,16 @@ from ._models import (
     EntityCertainty,
     EntityAssociation,
     HealthcareEntityCategory,
-    ExtractSummaryAction,
-    ExtractSummaryResult,
-    SummarySentence,
     RecognizeCustomEntitiesAction,
     RecognizeCustomEntitiesResult,
-    SingleCategoryClassifyAction,
-    SingleCategoryClassifyResult,
+    SingleLabelClassifyAction,
     MultiCategoryClassifyAction,
-    MultiCategoryClassifyResult,
+    ClassifyDocumentResult,
     ClassificationCategory,
+    AnalyzeHealthcareEntitiesAction,
 )
 
-from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller
+from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller, TextAnalyticsLROPoller
 
 __all__ = [
     "TextAnalyticsApiVersion",
@@ -110,16 +107,14 @@ __all__ = [
     "AnalyzeHealthcareEntitiesLROPoller",
     "AnalyzeActionsLROPoller",
     "HealthcareEntityCategory",
-    "ExtractSummaryAction",
-    "ExtractSummaryResult",
-    "SummarySentence",
     "RecognizeCustomEntitiesAction",
     "RecognizeCustomEntitiesResult",
-    "SingleCategoryClassifyAction",
-    "SingleCategoryClassifyResult",
+    "SingleLabelClassifyAction",
     "MultiCategoryClassifyAction",
-    "MultiCategoryClassifyResult",
+    "ClassifyDocumentResult",
     "ClassificationCategory",
+    "AnalyzeHealthcareEntitiesAction",
+    "TextAnalyticsLROPoller",
 ]
 
 __version__ = VERSION

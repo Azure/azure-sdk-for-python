@@ -15,9 +15,9 @@ autorest ./SWAGGER.md
 
 ### Settings
 ``` yaml
-tag: package-preview-2021-10
+tag: package-2022-06
 require:
-    -  https://raw.githubusercontent.com/Azure/azure-rest-api-specs/6f40b65610a4fad7a03f3fe8c57e8c0a9c3b77d0/specification/communication/data-plane/Identity/readme.md
+    -  https://raw.githubusercontent.com/Azure/azure-rest-api-specs/5b0818f55339dbff370a967e3f068e180c6ad5a1/specification/communication/data-plane/Identity/readme.md
 output-folder: ../azure/communication/identity/_generated/
 namespace: azure.communication.identity
 license-header: MICROSOFT_MIT_NO_VERSION

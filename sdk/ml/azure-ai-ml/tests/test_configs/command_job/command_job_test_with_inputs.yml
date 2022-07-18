@@ -1,0 +1,14 @@
+command: pip freeze && echo 1
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+name: "test1"
+display_name: "test_display_name"
+compute: "azureml:cpu-cluster"
+experiment_name: mfe-test1
+identity:
+  type: AMLToken
+inputs:
+  # examples of inputs that take values such as int, string, etc.
+  job_in_number: 10
+outputs:
+  job_out_path_1:
+    mode: mount

@@ -1,14 +1,33 @@
 # Release History
 
-## 5.2.0b4 (Unreleased)
+## 5.2.0b5 (Unreleased)
 
 ### Features Added
 
+- Added `begin_recognize_custom_entities` client method to recognize custom named entities in documents.
+- Added `begin_single_label_classify` client method to perform custom single label classification on documents.
+
 ### Breaking Changes
+
+- Removed the Extractive Text Summarization feature and related models: `ExtractSummaryAction`, `ExtractSummaryResult`, and `SummarySentence`. To access this beta feature, install the `5.2.0b4` version of the client library.
+- `SingleCategoryClassifyResult` and `MultiCategoryClassifyResult` models have been merged into one model: `ClassifyDocumentResult`.
+- Removed the `FHIR` feature and related keyword argument and property: `fhir_version` and `fhir_bundle`. To access this beta feature, install the `5.2.0b4` version of the client library.
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 5.2.0b4 (2022-05-18)
+
+Note that this is the first version of the client library that targets the Azure Cognitive Service for Language APIs which includes the existing text analysis and natural language processing features found in the Text Analytics client library.
+In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-04-01-preview`. Support for `v3.2-preview.2` is removed, however, all functionalities are included in the latest version.
+
+### Features Added
+
+- Added support for Healthcare Entities Analysis through the `begin_analyze_actions` API with the `AnalyzeHealthcareEntitiesAction` type.
+- Added keyword argument `fhir_version` to `begin_analyze_healthcare_entities` and `AnalyzeHealthcareEntitiesAction`. Use the keyword to indicate the version for the `fhir_bundle` contained on the `AnalyzeHealthcareEntitiesResult`.
+- Added property `fhir_bundle` to `AnalyzeHealthcareEntitiesResult`.
+- Added keyword argument `display_name` to `begin_analyze_healthcare_entities`.
 
 ## 5.2.0b3 (2022-03-08)
 
