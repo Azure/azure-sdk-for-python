@@ -125,7 +125,7 @@ class AMQPClient(object):
     def __init__(self, remote_address, auth=None, client_name=None, debug=False, retry_policy=None, 
     keep_alive_interval=None, **kwargs):
         self._remote_address = remote_address
-        self._auth = auth if auth else SASLAnonymousCredential()
+        self._auth = auth
         self._name = client_name if client_name else str(uuid.uuid4())
 
         self._shutdown = False
