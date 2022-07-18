@@ -93,7 +93,7 @@ class TestPyodideTransportClass:
         assert response.reason == response_text
 
         assert not response._is_closed
-        response.close()
+        await response.close()
         assert response._is_closed
 
         # Check that the call had the correct arguments.
