@@ -7,16 +7,24 @@
 from json import load
 from testcase import LoadtestserviceTest, LoadtestservicePowerShellPreparer
 
-class LoadtestserviceSmokeTest(LoadtestserviceTest):
 
+class LoadtestserviceSmokeTest(LoadtestserviceTest):
     @LoadtestservicePowerShellPreparer()
     def test_smoke_create_or_update_test(self, loadtestservice_endpoint):
         client = self.create_client(loadtestservice_endpoint)
-        test_id="000001" 
-        body_test={"resourceId":"/subscriptions/123456/resourceGroups/fake/providers/Microsoft.LoadTestService/loadtests/fake",
-                "testId":"000001","description":"","displayName":"test",
-                "loadTestConfig":{"engineSize":"m","engineInstances":1,"splitAllCSVs":False},"secrets":{},"environmentVariables":{},
-                "passFailCriteria":{"passFailMetrics":{}},"keyvaultReferenceIdentityType":"SystemAssigned","keyvaultReferenceIdentityId":None}
+        test_id = "000001"
+        body_test = {
+            "resourceId": "/subscriptions/123456/resourceGroups/fake/providers/Microsoft.LoadTestService/loadtests/fake",
+            "testId": "000001",
+            "description": "",
+            "displayName": "test",
+            "loadTestConfig": {"engineSize": "m", "engineInstances": 1, "splitAllCSVs": False},
+            "secrets": {},
+            "environmentVariables": {},
+            "passFailCriteria": {"passFailMetrics": {}},
+            "keyvaultReferenceIdentityType": "SystemAssigned",
+            "keyvaultReferenceIdentityId": None,
+        }
         result = client.test.create_or_update_test(test_id, body_test)
         assert result is not None
 
@@ -29,6 +37,6 @@ class LoadtestserviceSmokeTest(LoadtestserviceTest):
     @LoadtestservicePowerShellPreparer()
     def test_smoke_delete_test(self, loadtestservice_endpoint):
         client = self.create_client(loadtestservice_endpoint)
-        test_id="000001"
+        test_id = "000001"
         result = client.test.delete_load_test(test_id)
         assert result is None

@@ -46,11 +46,8 @@ load_dotenv()
 try:
     endpoint = os.environ["LOADTESTSERVICE_ENDPOINT"]
 except KeyError:
-    LOG.error(
-        "Missing environment variable 'LOADTESTSERVICE_ENDPOINT' - please set if before running the example"
-    )
+    LOG.error("Missing environment variable 'LOADTESTSERVICE_ENDPOINT' - please set if before running the example")
     exit()
-
 # Build a client through AAD
 client = LoadTestClient(credential=DefaultAzureCredential(), endpoint=endpoint)
 
@@ -84,22 +81,16 @@ try:
     print(result)
 except HttpResponseError as e:
     print("Failed to process the request: {}".format(e.response.json()))
-
-
 # uploading .jmx file to a test
 try:
-# opening .jmx file
+    # opening .jmx file
     body = {}
     body["file"] = open("sample.jmx", "rb")
 
-    result=client.test.upload_test_file(
-        TEST_ID,
-        FILE_ID,
-        body)
+    result = client.test.upload_test_file(TEST_ID, FILE_ID, body)
     print(result)
 except HttpResponseError as e:
-    print('Failed to send JSON message: {}'.format(e.response.json()))
-
+    print("Failed to send JSON message: {}".format(e.response.json()))
 # creating app component
 try:
     result = client.app_component.create_or_update_app_components(
@@ -120,8 +111,6 @@ try:
     print(result)
 except HttpResponseError as e:
     print("Failed to send JSON message: {}".format(e.response.json()))
-
-
 # Creating the test run
 try:
     result = client.test_run.create_and_update_test(
@@ -138,21 +127,19 @@ try:
     print(result)
 except HttpResponseError as e:
     print("Failed to send JSON message: {}".format(e.response.json()))
-
-
-#Checking the test run status and printing metrics
-try: 
-    start_time=time.time()
+# Checking the test run status and printing metrics
+try:
+    start_time = time.time()
 
     TIMEOUT = 6000
     REFRESH_RATE = 10
-    
+
     while time.time() - start_time < TIMEOUT:
-        result=client.test_run.get_test_run(TEST_RUN_ID)
-        if result['status'] == "DONE" or result['status'] == "CANCELLED" or result['status'] == "FAILED":
+        result = client.test_run.get_test_run(TEST_RUN_ID)
+        if result["status"] == "DONE" or result["status"] == "CANCELLED" or result["status"] == "FAILED":
             break
         else:
             time.sleep(REFRESH_RATE)
     print(result)
 except HttpResponseError as e:
-    print('Failed to send JSON message: {}'.format(e.response.json()))
+    print("Failed to send JSON message: {}".format(e.response.json()))
