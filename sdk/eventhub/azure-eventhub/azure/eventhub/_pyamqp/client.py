@@ -18,7 +18,7 @@ from .message import _MessageDelivery
 from .session import Session
 from .sender import SenderLink
 from .receiver import ReceiverLink
-from .sasl import SASLTransport
+from .sasl import SASLAnonymousCredential, SASLTransport
 from .endpoints import Source, Target
 from .error import (
     AMQPConnectionError,
@@ -60,13 +60,13 @@ class AMQPClient(object):
     :param remote_address: The AMQP endpoint to connect to. This could be a send target
      or a receive source.
     :type remote_address: str, bytes or ~uamqp.address.Address
-    :param auth: Authentication for the connection. This should be one of the subclasses of
-     uamqp.authentication.AMQPAuth. Currently this includes:
-        - uamqp.authentication.SASLAnonymous
-        - uamqp.authentication.SASLPlain
-        - uamqp.authentication.SASTokenAuth
+    :param auth: Authentication for the connection. This should be one of the following:
+        - pyamqp.authentication.SASLAnonymous
+        - pyamqp.authentication.SASLPlain
+        - pyamqp.authentication.SASTokenAuth
+        - pyamqp.authentication.JWTTokenAuth
      If no authentication is supplied, SASLAnnoymous will be used by default.
-    :type auth: ~uamqp.authentication.common.AMQPAuth
+    :type auth: ~pyamqp.authentication
     :param client_name: The name for the client, also known as the Container ID.
      If no name is provided, a random GUID will be used.
     :type client_name: str or bytes
@@ -75,7 +75,7 @@ class AMQPClient(object):
     :type debug: bool
     :param retry_policy: A policy for parsing errors on link, connection and message
      disposition to determine whether the error should be retryable.
-    :type retry_policy: ~uamqp.errors.RetryPolicy
+    :type retry_policy: ~pyamqp.errors.RetryPolicy
     :param keep_alive_interval: If set, a thread will be started to keep the connection
      alive during periods of user inactivity. The value will determine how long the
      thread will sleep (in seconds) between pinging the connection. If 0 or None, no
@@ -105,7 +105,7 @@ class AMQPClient(object):
     :type handle_max: int
     :param on_attach: A callback function to be run on receipt of an ATTACH frame.
      The function must take 4 arguments: source, target, properties and error.
-    :type on_attach: func[~uamqp.address.Source, ~uamqp.address.Target, dict, ~uamqp.errors.AMQPConnectionError]
+    :type on_attach: func[~uamqp.address.Source, ~uamqp.address.Target, dict, ~pyamqp.error.AMQPConnectionError]
     :param send_settle_mode: The mode by which to settle message send
      operations. If set to `Unsettled`, the client will wait for a confirmation
      from the service that the message was successfully sent. If set to 'Settled',
@@ -116,16 +116,17 @@ class AMQPClient(object):
      the client accepts or rejects the message. If set to `ReceiveAndDelete`, the service
      will assume successful receipt of the message and clear it from the queue. The
      default is `PeekLock`.
-    :type receive_settle_mode: ~uamqp.constants.ReceiverSettleMode
+    :type receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
     :param encoding: The encoding to use for parameters supplied as strings.
      Default is 'UTF-8'
     :type encoding: str
     """
 
-    def __init__(self, hostname, auth=None, **kwargs):
-        self._hostname = hostname
-        self._auth = auth
-        self._name = kwargs.pop("client_name", str(uuid.uuid4()))
+    def __init__(self, remote_address, auth=None, client_name=None, debug=False, retry_policy=None, 
+    keep_alive_interval=None, **kwargs):
+        self._remote_address = remote_address
+        self._auth = auth if auth else SASLAnonymousCredential()
+        self._name = client_name if client_name else str(uuid.uuid4())
 
         self._shutdown = False
         self._connection = None
@@ -136,14 +137,15 @@ class AMQPClient(object):
         self._cbs_authenticator = None
         self._auth_timeout = kwargs.pop("auth_timeout", DEFAULT_AUTH_TIMEOUT)
         self._mgmt_links = {}
-        self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
+        self._retry_policy = retry_policy if retry_policy else RetryPolicy()
+        self._keep_alive_interval = int(keep_alive_interval) if keep_alive_interval else 0
 
         # Connection settings
         self._max_frame_size = kwargs.pop('max_frame_size', None) or MAX_FRAME_SIZE_BYTES
         self._channel_max = kwargs.pop('channel_max', None) or 65535
         self._idle_timeout = kwargs.pop('idle_timeout', None)
         self._properties = kwargs.pop('properties', None)
-        self._network_trace = kwargs.pop("network_trace", False)
+        self._network_trace = debug
 
         # Session settings
         self._outgoing_window = kwargs.pop('outgoing_window', None) or OUTGOING_WIDNOW
@@ -242,7 +244,7 @@ class AMQPClient(object):
         _logger.debug("Opening client connection.")
         if not self._connection:
             self._connection = Connection(
-                "amqps://" + self._hostname,
+                "amqps://" + self._remote_address,
                 sasl_credential=self._auth.sasl,
                 ssl={'ca_certs':self._connection_verify or certifi.where()},
                 container_id=self._name,
@@ -385,13 +387,13 @@ class AMQPClient(object):
 
 
 class SendClient(AMQPClient):
-    def __init__(self, hostname, target, auth=None, **kwargs):
+    def __init__(self, target, auth=None, **kwargs):
         self.target = target
         # Sender and Link settings
         self._max_message_size = kwargs.pop('max_message_size', None) or MAX_FRAME_SIZE_BYTES
         self._link_properties = kwargs.pop('link_properties', None)
         self._link_credit = kwargs.pop('link_credit', None)
-        super(SendClient, self).__init__(hostname, auth=auth, **kwargs)
+        super(SendClient, self).__init__(target, auth=auth, **kwargs)
 
     def _client_ready(self):
         """Determine whether the client is ready to start receiving messages.
@@ -611,7 +613,7 @@ class ReceiveClient(AMQPClient):
     :type encoding: str
     """
 
-    def __init__(self, hostname, source, auth=None, **kwargs):
+    def __init__(self, target, source, auth=None, **kwargs):
         self.source = source
         self._streaming_receive = kwargs.pop("streaming_receive", False)  # TODO: whether public?
         self._received_messages = queue.Queue()
@@ -621,7 +623,7 @@ class ReceiveClient(AMQPClient):
         self._max_message_size = kwargs.pop('max_message_size', None) or MAX_FRAME_SIZE_BYTES
         self._link_properties = kwargs.pop('link_properties', None)
         self._link_credit = kwargs.pop('link_credit', 300)
-        super(ReceiveClient, self).__init__(hostname, auth=auth, **kwargs)
+        super(ReceiveClient, self).__init__(target, auth=auth, **kwargs)
 
     def _client_ready(self):
         """Determine whether the client is ready to start receiving messages.
