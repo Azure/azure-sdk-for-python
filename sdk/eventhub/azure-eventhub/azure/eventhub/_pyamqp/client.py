@@ -75,7 +75,7 @@ class AMQPClient(object):
     :type debug: bool
     :param retry_policy: A policy for parsing errors on link, connection and message
      disposition to determine whether the error should be retryable.
-    :type retry_policy: ~pyamqp.errors.RetryPolicy
+    :type retry_policy: ~pyamqp.error.RetryPolicy
     :param keep_alive_interval: If set, a thread will be started to keep the connection
      alive during periods of user inactivity. The value will determine how long the
      thread will sleep (in seconds) between pinging the connection. If 0 or None, no
