@@ -84,11 +84,11 @@ class RoomModel(_serialization.Model):
             **kwargs  # type: Any
     ):
         # type: (...) -> RoomModel
-        """Create CommunicationRoom from a RoomModel.
+        """Create RoomModel from the internal RoomModel.
         :param RoomModel get_room_response:
             Response from get_room API.
-        :returns: Instance of CommunicationRoom.
-        :rtype: ~azure.communication.CommunicationRoom
+        :returns: Instance of RoomModel.
+        :rtype: ~azure.communication.rooms.RoomModel
         """
 
         return cls(
@@ -109,9 +109,9 @@ class RoomParticipant(_serialization.Model):
     participant is, for example, an Azure communication user. This model must be interpreted as a
     union: Apart from rawId, at most one further property may be set. Required.
     :vartype communication_identifier:
-    ~azure.communication.rooms.models.CommunicationIdentifierModel
+    ~azure.communication.rooms._shared.models.CommunicationIdentifier
     :ivar role: Role Name.
-    :vartype role: str
+    :vartype role: str or ~azure.communication.rooms.RoleType
     """
 
     _validation = {
@@ -119,19 +119,19 @@ class RoomParticipant(_serialization.Model):
     }
 
     _attribute_map = {
-        "communication_identifier": {"key": "communicationIdentifier", "type": "any"},
-        "role": {"key": "role", "type": "str"},
+        "communication_identifier": {"key": "communicationIdentifier", "type": "CommunicationIdentifier"},
+        "role": {"key": "role", "type": "Union[str, RoleType]"},
     }
 
     def __init__(
-        self, communication_identifier, role: Optional[Union[str, RoleType]] = None, **kwargs
+        self, communication_identifier: CommunicationIdentifier, role: Optional[Union[str, RoleType]] = None, **kwargs
     ):
         """
         :keyword communication_identifier: Identifies a participant in Azure Communication services. A
          participant is, for example, an Azure communication user. This model must be interpreted as a
          union: Apart from rawId, at most one further property may be set. Required.
         :paramtype communication_identifier:
-         ~azure.communication.rooms.models.CommunicationIdentifierModel
+         ~azure.communication.rooms._shared.models.CommunicationIdentifier
         :keyword role: The Role of a room participant. Known values are: "Presenter", "Attendee", and
          "Consumer".
         :paramtype role: str or ~azure.communication.rooms.RoleType
@@ -170,7 +170,8 @@ class _CommunicationIdentifierConverter():
                 raw_id=communication_identifier.raw_id
             )
 
-        raise TypeError()
+        raise TypeError('The type of communication identifier "{}" is not supported'
+            .format(communication_identifier.kind))
 
     @staticmethod
     def to_communication_identifier(communication_identifier_model: CommunicationIdentifierModel):
@@ -194,7 +195,7 @@ class ParticipantsCollection(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar participants: Room Participants. Required.
-    :vartype participants: list[~azure.communication.RoomParticipant]
+    :vartype participants: list[~azure.communication.rooms.RoomParticipant]
     """
 
     _validation = {

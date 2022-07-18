@@ -214,7 +214,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :param participants: Required. Collection of identities invited to the room.
         :paramtype participants: List[RoomParticipant]
         :return: ParticipantsCollection
-        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
+        :rtype: ~azure.communication.rooms.ParticipantsCollection
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         add_participants_request = AddParticipantsRequest(
@@ -238,7 +238,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :param participants: Required. Collection of identities invited to the room.
         :paramtype participants: List[RoomParticipant]
         :return: ParticipantsCollection
-        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
+        :rtype: ~azure.communication.rooms.ParticipantsCollection
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         update_participants_request = UpdateParticipantsRequest(
@@ -262,7 +262,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :param participants: Required. Collection of identities invited to the room.
         :paramtype participants: List[RoomParticipant]
         :return: ParticipantsCollection
-        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
+        :rtype: ~azure.communication.rooms.ParticipantsCollection
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         participants = [
