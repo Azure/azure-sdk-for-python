@@ -36,6 +36,10 @@ class AzureCliCredential(object):
 
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
     """
+    def __init__(self, tenant_id: str = None):
+        object.__init__(self)
+
+        self.tenant_id = tenant_id
 
     def __enter__(self):
         return self
@@ -67,7 +71,8 @@ class AzureCliCredential(object):
 
         resource = _scopes_to_resource(*scopes)
         command = COMMAND_LINE.format(resource)
-        tenant = resolve_tenant("", **kwargs)
+        tenant = resolve_tenant(default_tenant= "", **kwargs) if self.tenant_id is None else resolve_tenant(default_tenant= "", tenant_id= self.tenant_id, **kwargs)
+        
         if tenant:
             command += " --tenant " + tenant
         output = _run_command(command)
