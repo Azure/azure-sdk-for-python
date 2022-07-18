@@ -112,7 +112,7 @@ class PyodideStreamDownloadGenerator(AsyncIterator):
     a request.
     """
 
-    def __init__(self, response: PyodideTransportResponse, **__) -> None:
+    def __init__(self, response: PyodideTransportResponse, *_, **__) -> None:
         self.block_size = response.block_size
         self.response = response
         # use this to efficiently store bytes.
