@@ -1166,6 +1166,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     continuation_token,
                     AsyncAnalyzeActionsLROPoller,
                     AsyncAnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
                         timeout=polling_interval,
                         **kwargs
                     ),
@@ -1216,6 +1217,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         ),
                         cls=response_cls,
                         polling=AsyncAnalyzeActionsLROPollingMethod(
+                            text_analytics_client=self._client,
                             timeout=polling_interval,
                             show_stats=show_stats,
                             doc_id_order=doc_id_order,
@@ -1264,6 +1266,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     body=analyze_body,
                     cls=response_cls,
                     polling=AsyncAnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
                         timeout=polling_interval,
                         show_stats=show_stats,
                         doc_id_order=doc_id_order,
@@ -1367,6 +1370,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     continuation_token,
                     AsyncAnalyzeActionsLROPoller,
                     AsyncAnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
                         timeout=polling_interval,
                         **kwargs
                     ),
@@ -1479,6 +1483,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     continuation_token,
                     AsyncAnalyzeActionsLROPoller,
                     AsyncAnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
                         timeout=polling_interval,
                         **kwargs
                     ),
@@ -1590,6 +1595,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     continuation_token,
                     AsyncAnalyzeActionsLROPoller,
                     AsyncAnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
                         timeout=polling_interval,
                         **kwargs
                     ),

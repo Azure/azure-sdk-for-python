@@ -7,7 +7,7 @@ import base64
 import functools
 import json
 from urllib.parse import urlencode
-from typing import Any, Mapping, Optional, Callable, TypeVar
+from typing import Any, Mapping, Optional, Callable, TypeVar, cast
 from typing_extensions import Protocol, runtime_checkable
 from azure.core.polling import PollingMethod
 from azure.core.exceptions import HttpResponseError
@@ -59,6 +59,9 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType]):
         ...
 
     def remove_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
+        ...
+
+    def cancel(self) -> None:  # pylint: disable=no-self-use
         ...
 
 
@@ -187,9 +190,14 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def id(self):
-        if not self._current_body:
-            return None
-        return self._current_body.job_id
+        if self._current_body:
+            return self._current_body.job_id
+        return self._get_id_from_headers()
+
+    def _get_id_from_headers(self) -> str:
+        return self._initial_response.http_response.headers[
+            "Operation-Location"
+        ].split("/jobs/")[1].split("?")[0]
 
     @property
     def display_name(self):
@@ -281,9 +289,6 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType]):
             # Join the thread so we no longer have to wait for a result from it.
             getattr(self, "_thread").join(timeout=0)
 
-            # Get a final status update.
-            getattr(self._polling_method, "update_status")()
-
             client = getattr(
                 self._polling_method, "_text_analytics_client"
             )
@@ -306,6 +311,7 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
         self._doc_id_order = kwargs.pop("doc_id_order", None)
         self._task_id_order = kwargs.pop("task_id_order", None)
         self._show_stats = kwargs.pop("show_stats", None)
+        self._text_analytics_client = kwargs.pop("text_analytics_client", None)
         super().__init__(*args, **kwargs)
 
     @property
@@ -362,9 +368,14 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def id(self):
-        if not self._current_body:
-            return None
-        return self._current_body.job_id
+        if self._current_body:
+            return self._current_body.job_id
+        return self._get_id_from_headers()
+
+    def _get_id_from_headers(self) -> str:
+        return self._initial_response.http_response.headers[
+            "Operation-Location"
+        ].split("/jobs/")[1].split("?")[0]
 
     def get_continuation_token(self):
         # type: () -> str
@@ -434,3 +445,26 @@ class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
             functools.partial(deserialization_callback, initial_response),
             polling_method
         )
+
+    def cancel(self) -> None:
+        """Cancel the operation currently being polled.
+
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
+        """
+
+        # Join the thread so we no longer have to wait for a result from it.
+        if self._thread:
+            self._thread.join(timeout=0)
+
+        cast(AnalyzeActionsLROPollingMethod, self.polling_method)
+        client = self.polling_method()._text_analytics_client  # pylint: disable=protected-access
+
+        try:
+            client.begin_analyze_text_cancel_job(self.id, polling=False)
+        except ValueError:
+            raise ValueError("Cancellation not supported by API versions v3.0, v3.1.")
+        except HttpResponseError as error:
+            from ._response_handlers import process_http_response_error
+            process_http_response_error(error)
