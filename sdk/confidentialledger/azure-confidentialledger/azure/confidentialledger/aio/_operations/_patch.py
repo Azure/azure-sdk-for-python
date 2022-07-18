@@ -10,6 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import asyncio
 from typing import Any, Callable, IO, Coroutine, List, Optional, Union, cast
 
+from azure.core.exceptions import ResourceNotFoundError
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 
 from azure.confidentialledger.aio._operations._operations import (
@@ -42,14 +43,23 @@ class AsyncStatePollingMethod(BaseStatePollingMethod, AsyncPollingMethod):
         operation: Callable[[], Coroutine[Any, Any, JSON]],
         desired_state: str,
         polling_interval_s: float,
+        retry_not_found: bool,
     ):
-        super().__init__(operation, desired_state, polling_interval_s)
+        super().__init__(operation, desired_state, polling_interval_s, retry_not_found)
 
     async def run(self) -> None:
         try:
             while not self.finished():
-                response = await self._operation()
-                self._evaluate_response(response)
+                try:
+                    response = await self._operation()
+                    self._evaluate_response(response)
+                except ResourceNotFoundError:
+                    # We'll allow one instance of resource not found to account for replication
+                    # delay.
+                    if not self._retry_not_found or self._received_not_found_exception:
+                        raise
+
+                    self._received_not_found_exception = True
 
                 if not self.finished():
                     await asyncio.sleep(self._polling_interval_s)
@@ -86,7 +96,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         initial_response = await operation()
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncStatePollingMethod(operation, "Ready", lro_delay))
+            polling_method = cast(AsyncPollingMethod, AsyncStatePollingMethod(operation, "Ready", lro_delay, False))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -115,7 +125,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         initial_response = await operation()
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncStatePollingMethod(operation, "Ready", lro_delay))
+            polling_method = cast(AsyncPollingMethod, AsyncStatePollingMethod(operation, "Ready", lro_delay, False))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -215,7 +225,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         if polling is True:
             polling_method = cast(
                 AsyncPollingMethod,
-                AsyncStatePollingMethod(operation, "Committed", lro_delay),
+                AsyncStatePollingMethod(operation, "Committed", lro_delay, True),
             )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())

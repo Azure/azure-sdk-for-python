@@ -10,6 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import time
 from typing import Any, IO, Callable, List, Optional, Union, cast
 
+from azure.core.exceptions import ResourceNotFoundError
 from azure.core.polling import PollingMethod, LROPoller, NoPolling
 
 from azure.confidentialledger._operations._operations import (
@@ -41,6 +42,7 @@ class BaseStatePollingMethod:
         operation: Callable[[], Any],
         desired_state: str,
         polling_interval_s: float,
+        retry_not_found: bool,
     ):
         self._operation = operation
         self._desired_state = desired_state
@@ -49,6 +51,9 @@ class BaseStatePollingMethod:
         self._deserialization_callback = None
         self._status = "constructed"
         self._latest_response = {}
+
+        self._retry_not_found = retry_not_found
+        self._received_not_found_exception = False
 
     def initialize(self, client, initial_response, deserialization_callback):  # pylint: disable=unused-argument
         self._evaluate_response(initial_response)
@@ -81,14 +86,23 @@ class StatePollingMethod(BaseStatePollingMethod, PollingMethod):
         operation: Callable[[], JSON],
         desired_state: str,
         polling_interval_s: float,
+        retry_not_found: bool,
     ):
-        super().__init__(operation, desired_state, polling_interval_s)
+        super().__init__(operation, desired_state, polling_interval_s, retry_not_found)
 
     def run(self) -> None:
         try:
             while not self.finished():
-                response = self._operation()
-                self._evaluate_response(response)
+                try:
+                    response = self._operation()
+                    self._evaluate_response(response)
+                except ResourceNotFoundError:
+                    # We'll allow one instance of resource not found to account for replication
+                    # delay.
+                    if not self._retry_not_found or self._received_not_found_exception:
+                        raise
+
+                    self._received_not_found_exception = True
 
                 if not self.finished():
                     time.sleep(self._polling_interval_s)
@@ -125,7 +139,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         initial_response = operation()
 
         if polling is True:
-            polling_method = cast(PollingMethod, StatePollingMethod(operation, "Ready", lro_delay))
+            polling_method = cast(PollingMethod, StatePollingMethod(operation, "Ready", lro_delay, False))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -154,7 +168,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         initial_response = operation()
 
         if polling is True:
-            polling_method = cast(PollingMethod, StatePollingMethod(operation, "Ready", lro_delay))
+            polling_method = cast(PollingMethod, StatePollingMethod(operation, "Ready", lro_delay, False))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -252,7 +266,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         initial_response = operation()
 
         if polling is True:
-            polling_method = cast(PollingMethod, StatePollingMethod(operation, "Committed", lro_delay))
+            polling_method = cast(PollingMethod, StatePollingMethod(operation, "Committed", lro_delay, True))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
