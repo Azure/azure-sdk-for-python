@@ -37,28 +37,28 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType]):
     def details(self) -> Mapping[str, Any]:
         ...
 
-    def polling_method(self) -> PollingMethod[PollingReturnType]:
+    def polling_method(self) -> PollingMethod[PollingReturnType]:  # pylint: disable=no-self-use
         ...
 
-    def continuation_token(self) -> str:
+    def continuation_token(self) -> str:  # pylint: disable=no-self-use
         ...
 
-    def status(self) -> str:
+    def status(self) -> str:  # pylint: disable=no-self-use
         ...
 
-    def result(self, timeout: Optional[int] = None) -> PollingReturnType:
+    def result(self, timeout: Optional[int] = None) -> PollingReturnType:  # pylint: disable=no-self-use
         ...
 
-    def wait(self, timeout: Optional[float] = None) -> None:
+    def wait(self, timeout: Optional[float] = None) -> None:  # pylint: disable=no-self-use
         ...
 
-    def done(self) -> bool:
+    def done(self) -> bool:  # pylint: disable=no-self-use
         ...
 
-    def add_done_callback(self, func: Callable) -> None:
+    def add_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
         ...
 
-    def remove_done_callback(self, func: Callable) -> None:
+    def remove_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
         ...
 
 

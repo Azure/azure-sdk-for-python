@@ -32,13 +32,13 @@ class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType], Awaitable):
     def details(self) -> Mapping[str, Any]:
         ...
 
-    def polling_method(self) -> AsyncPollingMethod[PollingReturnType]:
+    def polling_method(self) -> AsyncPollingMethod[PollingReturnType]:  # pylint: disable=no-self-use
         ...
 
-    def continuation_token(self) -> str:
+    def continuation_token(self) -> str:  # pylint: disable=no-self-use
         ...
 
-    def status(self) -> str:
+    def status(self) -> str:  # pylint: disable=no-self-use
         ...
 
     async def result(self) -> PollingReturnType:
@@ -47,7 +47,7 @@ class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType], Awaitable):
     async def wait(self) -> None:
         ...
 
-    def done(self) -> bool:
+    def done(self) -> bool:  # pylint: disable=no-self-use
         ...
 
     def __await__(self) -> Generator[Any, None, PollingReturnType]:
