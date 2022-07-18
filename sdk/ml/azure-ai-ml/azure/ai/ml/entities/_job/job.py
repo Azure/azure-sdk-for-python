@@ -15,6 +15,7 @@ from azure.ai.ml.constants import (
     JobType,
     PARAMS_OVERRIDE_KEY,
     JobServices,
+    SOURCE_PATH_CONTEXT_KEY,
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin
 from azure.ai.ml.entities._resource import Resource
@@ -42,7 +43,7 @@ def _is_pipeline_child_job(job: JobBaseData) -> bool:
     return job.properties is None
 
 
-class Job(Resource, RestTranslatableMixin, ComponentTranslatableMixin, TelemetryMixin):
+class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     """Base class for job, can't be instantiated directly.
 
     :param name: Name of the resource.
@@ -202,22 +203,23 @@ class Job(Resource, RestTranslatableMixin, ComponentTranslatableMixin, Telemetry
         data = data or {}
         params_override = params_override or []
         context = {
+            SOURCE_PATH_CONTEXT_KEY: Path(yaml_path) if yaml_path else None,
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
 
         from azure.ai.ml.entities import (
-            CommandJob,
             PipelineJob,
         )
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
         from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
+        from azure.ai.ml.entities._builders.command import Command
 
         job_type: Optional[Type["Job"]] = None
         type_in_override = find_type_in_override(params_override)
         type = type_in_override or data.get(CommonYamlFields.TYPE, JobType.COMMAND)  # override takes the priority
         if type == JobType.COMMAND:
-            job_type = CommandJob
+            job_type = Command
         elif type == JobType.SWEEP:
             job_type = SweepJob
         elif type == JobType.AUTOML:
@@ -241,10 +243,11 @@ class Job(Resource, RestTranslatableMixin, ComponentTranslatableMixin, Telemetry
 
     @classmethod
     def _from_rest_object(cls, job_rest_object: Union[JobBaseData, Run]) -> "Job":
-        from azure.ai.ml.entities import CommandJob, PipelineJob
+        from azure.ai.ml.entities import PipelineJob
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
         from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
         from azure.ai.ml.entities._job.base_job import _BaseJob
+        from azure.ai.ml.entities._builders.command import Command
 
         try:
             if isinstance(job_rest_object, Run):
@@ -253,7 +256,7 @@ class Job(Resource, RestTranslatableMixin, ComponentTranslatableMixin, Telemetry
             elif _is_pipeline_child_job(job_rest_object):
                 raise PipelineChildJobError(job_id=job_rest_object.id)
             elif job_rest_object.properties.job_type == RestJobType.COMMAND:
-                return CommandJob._load_from_rest(job_rest_object)
+                return Command._load_from_rest_job(job_rest_object)
             elif job_rest_object.properties.job_type == RestJobType.SWEEP:
                 return SweepJob._load_from_rest(job_rest_object)
             elif job_rest_object.properties.job_type == RestJobType.AUTO_ML:

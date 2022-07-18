@@ -69,6 +69,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         sas_uri = None
 
+        if not environment.version and self._registry_name:
+            raise Exception("Environment version is required for registry")
+
         if self._registry_name:
             sas_uri = get_sas_uri_for_registry_asset(
                 service_client=self._service_client,
