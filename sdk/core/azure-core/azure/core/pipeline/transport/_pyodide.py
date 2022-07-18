@@ -55,7 +55,7 @@ class PyodideTransportResponse(AsyncHttpResponseImpl):
         """Load the body of the response."""
         if self._content is None:
             self._content = await self._internal_response.bytes()
-    
+
     def body(self) -> bytes:
         """The body is just the content."""
         return self.content
@@ -148,4 +148,3 @@ class PyodideTransport(AsyncioRequestsTransport):
             await transport_response.load_body()
 
         return transport_response
-
