@@ -2716,7 +2716,7 @@ class DocumentLine:
         )
 
     @property
-    def words(self) -> Iterable["DocumentWord"]:  # pylint: disable=unused-argument
+    def words(self) -> Iterable["DocumentWord"]:
         """The words found in the spans of this DocumentLine.
 
         :return: iterable[DocumentWord]

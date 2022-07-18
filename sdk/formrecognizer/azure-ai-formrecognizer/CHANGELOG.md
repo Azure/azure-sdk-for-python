@@ -10,6 +10,7 @@
 - Renamed `AccountInfo` model to `ResourceInfo`.
 - Renamed `DocumentModelInfo` model to `DocumentModelSummary`.
 - Renamed `DocumentModel` to `DocumentModelInfo`.
+- Updated `get_words()` method on `DocumentLine` to `words` property.
 
 ### Bugs Fixed
 
