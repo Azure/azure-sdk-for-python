@@ -13,9 +13,9 @@ def get_dynamic_input_parameter(inputs: Mapping):
     return [
         KwParameter(
             name=name,
-            annotation=input.get_python_builtin_type_str(),
+            annotation=input._get_python_builtin_type_str(),
             default=None,
-            _type=input.get_python_builtin_type_str(),
+            _type=input._get_python_builtin_type_str(),
         )
         for name, input in inputs.items()
     ]

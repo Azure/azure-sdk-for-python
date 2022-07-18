@@ -18,9 +18,9 @@ class _PipelineComponent(Component):
     :param components: Id to components dict inside pipeline definition.
     :type components: OrderedDict[str, Component]
     :param inputs: Inputs of the component.
-    :type inputs: ComponentInputs
+    :type inputs: Component inputs
     :param outputs: Outputs of the component.
-    :type outputs: ComponentOutputs
+    :type outputs: Component outputs
     """
 
     def __init__(self, components: Dict[str, BaseNode], **kwargs):

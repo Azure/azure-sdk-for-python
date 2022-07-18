@@ -20,22 +20,40 @@ outputs:
 
 jobs:
   hello_world:
-    type: command
+    type: sweep
+    search_space:
+      component_in_number:
+        type: choice
+        values: [1, 2]
+    compute: azureml:gpu-cluster
 
-    command: pip freeze && echo Hello World
-    code: ./
-
-    experiment_name: test-iris-example-1
-    description: Train a model on the Iris dataset-1.
-    compute: "azureml:cpu-cluster"
+    limits:
+      max_total_trials: 3
+    sampling_algorithm: random
+    objective:
+      goal: maximize
+      primary_metric: accuracy
     inputs:
-      "test1": ${{parent.inputs.job_data_path}}
-      "test2": ${{parent.inputs.job_data_path}}
-      "literal_input": 2
-    outputs:
-      job_output: ${{parent.outputs.job_out_path_1}}
-    environment_variables:
-      FOO: "bar"
+      test1: ${{parent.inputs.job_data_path}}
+
+    trial:
+      command: >-
+        echo Hello World &
+        echo ${{inputs.component_in_number}}&
+        echo ${{inputs.test1}}
+      environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+      code: "./"
+      inputs:
+        test1:
+          type: uri_file
+        component_in_number:
+          description: Am integer
+          type: integer
+          default: 10
+          optional: false
+      outputs:
+        job_output:
+          type: uri_folder
 
   hello_world_inline_commandjob_2:
     type: command

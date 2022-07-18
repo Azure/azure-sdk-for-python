@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 
+import os
 from abc import ABC, abstractmethod
 from os import PathLike
 from typing import Dict, Optional, Union
@@ -47,7 +48,10 @@ class Resource(ABC):
 
         # Hide read only properties in kwargs
         self._id = kwargs.pop("id", None)
-        self._base_path = kwargs.pop("base_path", "./")
+        # source path is added to display file location for validation error messages
+        # usually, base_path = Path(source_path).parent if source_path else os.getcwd()
+        self._source_path: Optional[str] = kwargs.pop("source_path", None)
+        self._base_path = kwargs.pop("base_path", os.getcwd())
         self._creation_context = kwargs.pop("creation_context", None)
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -139,6 +143,9 @@ class Resource(ABC):
         resource = self._get_arm_resource(**kwargs)
         param = self._to_arm_resource_param(**kwargs)
         return [(resource, param)]
+
+    def _set_source_path(self, value):
+        self._source_path = value
 
     def __repr__(self) -> str:
         var_dict = {k.strip("_"): v for (k, v) in vars(self).items()}
