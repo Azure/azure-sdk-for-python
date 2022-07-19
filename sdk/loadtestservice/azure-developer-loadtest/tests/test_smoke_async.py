@@ -5,10 +5,13 @@
 # license information.
 # -------------------------------------------------------------------------
 from testcase import LoadtestservicePowerShellPreparer
+import pytest
 from testcase_async import LoadtestserviceAsyncTest
 
 
 class LoadtestserviceSmokeAsyncTest(LoadtestserviceAsyncTest):
+
+    @pytest.mark.asyncio
     @LoadtestservicePowerShellPreparer()
     async def test_smoke_create_or_update_test(self, loadtestservice_endpoint):
         client = self.create_client(loadtestservice_endpoint)
@@ -28,6 +31,7 @@ class LoadtestserviceSmokeAsyncTest(LoadtestserviceAsyncTest):
         result = await client.administration.test.create_or_update_test(test_id, body_test)
         assert result is not None
 
+    @pytest.mark.asyncio
     @LoadtestservicePowerShellPreparer()
     async def test_smoke_list_search(self, loadtestservice_endpoint):
         client = self.create_client(loadtestservice_endpoint)

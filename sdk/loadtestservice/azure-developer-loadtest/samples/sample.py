@@ -60,7 +60,7 @@ DISPLAY_NAME = "example_application"  # display name
 
 # creating load test
 try:
-    result = client.test.create_or_update_test(
+    result = client.administration.test.create_or_update_test(
         TEST_ID,
         {
             "resourceId": "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
@@ -87,13 +87,13 @@ try:
     body = {}
     body["file"] = open("sample.jmx", "rb")
 
-    result = client.test.upload_test_file(TEST_ID, FILE_ID, body)
+    result = client.administration.test.upload_test_file(TEST_ID, FILE_ID, body)
     print(result)
 except HttpResponseError as e:
     print("Failed to send JSON message: {}".format(e.response.json()))
 # creating app component
 try:
-    result = client.app_component.create_or_update_app_components(
+    result = client.administration.app_component.create_or_update(
         APP_COMPONENT,
         {
             "name": "app_component",
@@ -113,7 +113,7 @@ except HttpResponseError as e:
     print("Failed to send JSON message: {}".format(e.response.json()))
 # Creating the test run
 try:
-    result = client.test_run.create_and_update_test(
+    result = client.runs.create_and_update_test(
         TEST_RUN_ID,
         {
             "testId": TEST_ID,
@@ -135,7 +135,7 @@ try:
     REFRESH_RATE = 10
 
     while time.time() - start_time < TIMEOUT:
-        result = client.test_run.get_test_run(TEST_RUN_ID)
+        result = client.runs.get_test_run(TEST_RUN_ID)
         if result["status"] == "DONE" or result["status"] == "CANCELLED" or result["status"] == "FAILED":
             break
         else:
