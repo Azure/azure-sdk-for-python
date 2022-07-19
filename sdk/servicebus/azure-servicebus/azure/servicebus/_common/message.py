@@ -571,7 +571,6 @@ class ServiceBusMessage(
 
     @reply_to_session_id.setter
     def reply_to_session_id(self, value: str) -> None:
-        # type: (str) -> None
         if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
             raise ValueError(
                 "reply_to_session_id cannot be longer than {} characters.".format(

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from uamqp import constants
+from _pyamqp import constants
 
 from ._version import VERSION
 

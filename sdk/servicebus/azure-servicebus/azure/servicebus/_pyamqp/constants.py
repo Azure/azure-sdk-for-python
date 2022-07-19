@@ -326,3 +326,9 @@ class TransportType(Enum):
     """
     Amqp = 1
     AmqpOverWebsocket = 2
+
+    def __eq__(self, __o: object) -> bool:
+        try:
+            return self.value == __o.value
+        except AttributeError:
+            return super().__eq__(__o)
