@@ -4,38 +4,40 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime
-from tkinter import N
 from typing import TYPE_CHECKING
 import uuid
 
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.communication.rooms._models import CommunicationRoom
-from .._generated.aio._azure_communication_rooms_service import AzureCommunicationRoomsService
+from azure.communication.rooms._models import RoomModel, RoomParticipant, ParticipantsCollection
+from .._generated.aio._client import AzureCommunicationRoomsService
 from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
 from .._generated.models import (
     CreateRoomRequest,
-    UpdateRoomRequest
+    UpdateRoomRequest,
+    RemoveParticipantsRequest,
+    AddParticipantsRequest,
+    UpdateParticipantsRequest
 )
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Dict
+    from typing import Any
 
-class RoomsClient(object):
+class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Rooms gateway.
 
     This client provides operations to manage rooms.
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param AsyncTokenCredential credential:
-        The AsyncTokenCredential we use to authenticate against the service.
+    :param str credential:
+        The access key we use to authenticate against the service.
     """
     def __init__(
             self, endpoint, # type: str
-            credential, # type: AsyncTokenCredential
+            credential, # type: str
             **kwargs # type: Any
     ):
         # type: (...) -> None
@@ -48,6 +50,11 @@ class RoomsClient(object):
         if not credential:
             raise ValueError(
                 "invalid credential from connection string.")
+
+        # TokenCredential not supported at the moment
+        if hasattr(credential, "get_token"):
+            raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
+                    "or a token credential from azure.identity".format(type(credential)))
 
         self._endpoint = endpoint
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
@@ -92,7 +99,7 @@ class RoomsClient(object):
         participants=None, # type: Optional[List[RoomParticipant]]
         **kwargs
     ):
-        # type: (...) -> CommunicationRoom
+        # type: (...) -> RoomModel
         """Create a new room.
 
         :param valid_from: The timestamp from when the room is open for joining. The timestamp is in
@@ -104,25 +111,24 @@ class RoomsClient(object):
         :keyword participants: (Optional) Collection of identities invited to the room.
         :paramtype participants: (Optional)List[RoomParticipant]
         :returns: Created room.
-        :rtype: ~azure.communication.rooms.CommunicationRoom
+        :rtype: ~azure.communication.rooms.RoomModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if participants is None:
-            participantsDict = participants
-        else:
-            participantsDict = {participant.identifier: participant.to_room_participant_internal() for participant in participants}
         create_room_request = CreateRoomRequest(
             valid_from=valid_from,
             valid_until=valid_until,
-            participants=participantsDict
+            participants=[p.to_room_participant_internal() for p in participants] if participants else None
         )
 
-        repeatability_request_id = uuid.uuid1();
-        repeatability_first_sent = datetime.utcnow();
+        repeatability_request_id = uuid.uuid1()
+        repeatability_first_sent = datetime.utcnow()
 
         create_room_response = await self._rooms_service_client.rooms.create_room(
-            create_room_request=create_room_request, repeatability_request_id=repeatability_request_id, repeatability_first_sent=repeatability_first_sent, **kwargs)
-        return CommunicationRoom.from_room_response(create_room_response)
+            create_room_request=create_room_request,
+            repeatability_request_id=repeatability_request_id,
+            repeatability_first_sent=repeatability_first_sent,
+            **kwargs)
+        return RoomModel.from_room_response(create_room_response)
 
     @distributed_trace_async
     async def delete_room(
@@ -148,9 +154,11 @@ class RoomsClient(object):
         room_id,
         valid_from=None, # type: Optional[datetime]
         valid_until=None, # type: Optional[datetime]
+        room_open=None, # type: Optional[bool]
+        participants=None, #type: Optional[List[RoomParticipant]]
         **kwargs
     ):
-        # type: (...) -> CommunicationRoom
+        # type: (...) -> RoomModel
         """Update a valid room's attributes
 
         :param room_id: Required. Id of room to be updated
@@ -161,18 +169,22 @@ class RoomsClient(object):
         :param valid_until: The timestamp from when the room can no longer be joined. The timestamp
          is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :type valid_until: ~datetime
+        :param participants: (Optional) Collection of identities invited to the room.
+        :type participants: (Optional)list[RoomParticipant]
         :returns: Updated room.
-        :rtype: ~azure.communication.rooms.CommunicationRoom
+        :rtype: ~azure.communication.rooms.RoomModel
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         """
         update_room_request = UpdateRoomRequest(
             valid_from=valid_from,
-            valid_until=valid_until
+            valid_until=valid_until,
+            room_open=room_open,
+            participants=[p.to_room_participant_internal() for p in participants] if participants else None
         )
         update_room_response = await self._rooms_service_client.rooms.update_room(
             room_id=room_id, patch_room_request=update_room_request, **kwargs)
-        return CommunicationRoom.from_room_response(update_room_response)
+        return RoomModel.from_room_response(update_room_response)
 
     @distributed_trace_async
     async def get_room(
@@ -180,18 +192,18 @@ class RoomsClient(object):
         room_id, # type: str
         **kwargs
     ):
-        # type: (...) -> CommunicationRoom
+        # type: (...) -> RoomModel
         """Get a valid room
 
         :param room_id: Required. Id of room to be fetched
         :type room_id: str
         :returns: Room with current attributes.
-        :rtype: ~azure.communication.rooms.CommunicationRoom
+        :rtype: ~azure.communication.rooms.RoomModel
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
         get_room_response = await self._rooms_service_client.rooms.get_room(room_id=room_id, **kwargs)
-        return CommunicationRoom.from_room_response(get_room_response)
+        return RoomModel.from_room_response(get_room_response)
 
     @distributed_trace_async
     async def add_participants(
@@ -200,26 +212,22 @@ class RoomsClient(object):
         participants, # type: List[RoomParticipant]
         **kwargs
     ):
-        # type: (...) -> CommunicationRoom
+        # type: (...) -> ParticipantsCollection
         """Add participants to a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
         :param participants: Required. Collection of identities invited to the room.
         :paramtype participants: List[RoomParticipant]
-        :returns: Updated room.
-        :rtype: ~azure.communication.rooms.CommunicationRoom
+        :return: ParticipantsCollection
+        :rtype: ~azure.communication.rooms.ParticipantsCollection
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
-        if participants is None:
-            participantsDict = participants
-        else:
-            participantsDict = {participant.identifier: participant.to_room_participant_internal() for participant in participants}
-        update_room_request = UpdateRoomRequest(
-            participants=participantsDict
+        add_participants_request = AddParticipantsRequest(
+            participants=[p.to_room_participant_internal() for p in participants]
         )
-        update_room_response = await self._rooms_service_client.rooms.update_room(
-            room_id=room_id, patch_room_request=update_room_request, **kwargs)
-        return CommunicationRoom.from_room_response(update_room_response)
+        add_participants_response = await self._rooms_service_client.rooms.add_participants(
+            room_id=room_id, add_participants_request=add_participants_request, **kwargs)
+        return ParticipantsCollection(participants=add_participants_response.participants)
 
     @distributed_trace_async
     async def update_participants(
@@ -228,55 +236,50 @@ class RoomsClient(object):
         participants, # type: List[RoomParticipant]
         **kwargs
     ):
-        # type: (...) -> CommunicationRoom
+        # type: (...) -> ParticipantsCollection
         """Update participants to a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
         :param participants: Required. Collection of identities invited to the room.
         :paramtype participants: List[RoomParticipant]
-        :returns: Updated room.
-        :rtype: ~azure.communication.rooms.CommunicationRoom
+        :return: ParticipantsCollection
+        :rtype: ~azure.communication.rooms.ParticipantsCollection
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
-        if participants is None:
-            participantsDict = participants
-        else:
-            participantsDict = {participant.identifier: participant.to_room_participant_internal() for participant in participants}
-
-        update_room_request = UpdateRoomRequest(
-            participants=participantsDict
+        update_participants_request = UpdateParticipantsRequest(
+            participants=[p.to_room_participant_internal() for p in participants]
         )
-        update_room_response = await self._rooms_service_client.rooms.update_room(
-            room_id=room_id, patch_room_request=update_room_request, **kwargs)
-        return CommunicationRoom.from_room_response(update_room_response)
+        update_participants_response = await self._rooms_service_client.rooms.update_participants(
+            room_id=room_id, update_participants_request=update_participants_request, **kwargs)
+        return ParticipantsCollection(participants=update_participants_response.participants)
 
     @distributed_trace_async
     async def remove_participants(
         self,
         room_id, # type: str
-        participants, # type: List[RoomParticipant]
+        communication_identifiers, # type: List[CommunicationIdentifier]
         **kwargs
     ):
-        # type: (...) -> CommunicationRoom
+        # type: (...) -> ParticipantsCollection
         """Remove participants from a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
         :param participants: Required. Collection of identities invited to the room.
         :paramtype participants: List[RoomParticipant]
-        :returns: Updated room.
-        :rtype: ~azure.communication.rooms.CommunicationRoom
+        :return: ParticipantsCollection
+        :rtype: ~azure.communication.rooms.ParticipantsCollection
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
-        participantDict = {}
-        # set participants object to None
-        for participant in participants:
-            participantDict[participant.identifier] = None
-        update_room_request = UpdateRoomRequest(
-            participants=participantDict
+        participants = [
+            RoomParticipant(communication_identifier=id).to_room_participant_internal()
+            for id in communication_identifiers
+        ]
+        remove_participants_request = RemoveParticipantsRequest(
+            participants=participants
         )
-        update_room_response = await self._rooms_service_client.rooms.update_room(
-            room_id=room_id, patch_room_request=update_room_request, **kwargs)
-        return CommunicationRoom.from_room_response(update_room_response)
+        remove_participants_response = await self._rooms_service_client.rooms.remove_participants(
+            room_id=room_id, remove_participants_request=remove_participants_request, **kwargs)
+        return ParticipantsCollection(participants=remove_participants_response.participants)
 
     @distributed_trace_async
     async def remove_all_participants(
@@ -284,20 +287,38 @@ class RoomsClient(object):
         room_id, # type: str
         **kwargs
     ):
-        # type: (...) -> CommunicationRoom
+        # type: (...) -> RoomModel
         """Remove all participants from a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
         :returns: Updated room.
-        :rtype: ~azure.communication.rooms.CommunicationRoom
+        :rtype: ~azure.communication.rooms.RoomModel
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         update_room_request = UpdateRoomRequest(
-            participants={}
+            participants=[]
         )
         update_room_response = await self._rooms_service_client.rooms.update_room(
             room_id=room_id, patch_room_request=update_room_request, **kwargs)
-        return CommunicationRoom.from_room_response(update_room_response)
+        return RoomModel.from_room_response(update_room_response)
+
+    @distributed_trace_async
+    async def get_participants(
+        self,
+        room_id, # type: str
+        **kwargs
+    ):
+        # type: (...) -> ParticipantsCollection
+        """Get participants of a room
+        :param room_id: Required. Id of room to be updated
+        :type room_id: str
+        :returns: ParticipantsCollection containing all participants in the room.
+        :rtype: ~azure.communication.rooms.ParticipantsCollection
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        get_participants_response = await self._rooms_service_client.rooms.get_participants(
+            room_id=room_id, **kwargs)
+        return ParticipantsCollection(participants=get_participants_response.participants)
 
     async def __aenter__(self) -> "RoomsClient":
         await self._rooms_service_client.__aenter__()

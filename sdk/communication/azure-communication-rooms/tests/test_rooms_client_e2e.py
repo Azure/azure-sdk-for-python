@@ -4,31 +4,26 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from functools import partial
-import os
-from turtle import update
 import pytest
-from datetime import datetime, timezone, tzinfo
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
 from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.rooms import RoomsClient
-from _shared.testcase import (
-    CommunicationTestCase,
-    BodyReplacerProcessor,
-    ResponseReplacerProcessor
-)
-
 from azure.communication.rooms import (
     RoomsClient,
-    RoomParticipant
+    RoomParticipant,
+    RoleType
 )
-
-from _shared.utils import get_http_logging_policy
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier
 
+from _shared.utils import get_http_logging_policy
+from _shared.testcase import (
+    CommunicationTestCase,
+    ResponseReplacerProcessor
+)
+from helper import URIIdentityReplacer, RequestBodyIdentityReplacer
 
 class FakeTokenCredential(object):
     def __init__(self):
@@ -45,14 +40,32 @@ class RoomsClientTest(CommunicationTestCase):
         super(RoomsClientTest, self).setUp()
         if not self.is_playback():
             self.recording_processors.extend([
-                ResponseReplacerProcessor(keys=[self._resource_name])])
+                ResponseReplacerProcessor(keys=[self._resource_name, "8:acs:[A-Za-z0-9-_]+"]),
+                URIIdentityReplacer(),
+                RequestBodyIdentityReplacer()])
         # create multiple users users
         self.identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str)
+
         self.users = {
-            "john" : RoomParticipant(identifier=self.identity_client.create_user().properties["id"], role_name='Presenter'),
-            "fred" : RoomParticipant(identifier=self.identity_client.create_user().properties["id"], role_name='Organizer'),
-            "chris" : RoomParticipant(identifier=self.identity_client.create_user().properties["id"], role_name='Attendee')
+            "john" : RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(
+                    self.identity_client.create_user().properties["id"]
+                ),
+                role=RoleType.PRESENTER
+            ),
+            "fred" : RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(
+                    self.identity_client.create_user().properties["id"]
+                ),
+                role=RoleType.CONSUMER
+            ),
+            "chris" : RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(
+                    self.identity_client.create_user().properties["id"]
+                ),
+                role=RoleType.ATTENDEE
+            )
         }
         self.rooms_client = RoomsClient.from_connection_string(
             self.connection_str,
@@ -65,7 +78,7 @@ class RoomsClientTest(CommunicationTestCase):
         # delete created users and chat threads
         if not self.is_playback():
             for user in self.users.values():
-                self.identity_client.delete_user(CommunicationUserIdentifier(id=user.identifier))
+                self.identity_client.delete_user(user.communication_identifier)
 
     def test_create_room_no_attributes(self):
         response = self.rooms_client.create_room()
@@ -141,7 +154,9 @@ class RoomsClientTest(CommunicationTestCase):
     def test_create_room_incorretMri(self):
         # room attributes
         participants = [
-            RoomParticipant(identifier="wrong_mir", role_name='Attendee'),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier("wrong_mri"),
+                role='Attendee'),
             self.users["john"]
         ]
 
@@ -304,7 +319,7 @@ class RoomsClientTest(CommunicationTestCase):
             response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
 
     @pytest.mark.live_test_only
-    def test_update_room_add_participant(self):
+    def test_add_participants(self):
         # room with no attributes
         create_response = self.rooms_client.create_room()
 
@@ -316,15 +331,10 @@ class RoomsClientTest(CommunicationTestCase):
 
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
-        self.verify_successful_room_response(
-            response=update_response,
-            valid_from=create_response.valid_from,
-            valid_until=create_response.valid_until,
-            room_id=create_response.id,
-            participants=participants)
+        self.assertListEqual(participants, update_response.participants)
 
     @pytest.mark.live_test_only
-    def test_update_room_update_participant(self):
+    def test_update_participants(self):
         # add john and chris to room
         create_participants = [
             self.users["john"],
@@ -333,8 +343,8 @@ class RoomsClientTest(CommunicationTestCase):
         create_response = self.rooms_client.create_room(participants=create_participants)
 
         # participants to be updated
-        self.users["john"].role_name = "Consumer"
-        self.users["chris"].role_name = "Consumer"
+        self.users["john"].role = RoleType.CONSUMER
+        self.users["chris"].role = RoleType.CONSUMER
 
         update_participants = [
             self.users["john"],
@@ -345,15 +355,10 @@ class RoomsClientTest(CommunicationTestCase):
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
 
-        self.verify_successful_room_response(
-            response=update_response,
-            valid_from=create_response.valid_from,
-            valid_until=create_response.valid_until,
-            room_id=create_response.id,
-            participants=update_participants)
+        self.assertListEqual(update_participants, update_response.participants)
 
     @pytest.mark.live_test_only
-    def test_update_room_remove_participant(self):
+    def test_remove_participants(self):
         # add john and chris to room
         create_participants = [
             self.users["john"],
@@ -363,29 +368,26 @@ class RoomsClientTest(CommunicationTestCase):
 
         # participants to be removed
         removed_participants = [
-            self.users["john"],
+            self.users["john"].communication_identifier
         ]
 
-        update_response = self.rooms_client.remove_participants(room_id=create_response.id, participants=removed_participants)
+        update_response = self.rooms_client.remove_participants(room_id=create_response.id, communication_identifiers=removed_participants)
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
         participants = [
             self.users["chris"]
         ]
 
-        self.verify_successful_room_response(
-            response=update_response,
-            valid_from=create_response.valid_from,
-            valid_until=create_response.valid_until,
-            room_id=create_response.id,
-            participants=participants)
+        self.assertListEqual(participants, update_response.participants)
 
-    def test_update_room_incorretMri(self):
+    def test_add_participants_incorretMri(self):
         # room with no attributes
         create_response = self.rooms_client.create_room()
 
         participants = [
-            RoomParticipant(identifier="wrong_mir", role_name='Attendee'),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier("wrong_mri"),
+                role=RoleType.ATTENDEE),
             self.users["john"]
         ]
 
@@ -401,7 +403,9 @@ class RoomsClientTest(CommunicationTestCase):
         create_response = self.rooms_client.create_room()
 
         participants = [
-            RoomParticipant(identifier=self.users["john"].identifier, role_name='Kafka'),
+            RoomParticipant(
+                communication_identifier=self.users["john"].communication_identifier,
+                role='Kafka'),
         ]
 
         # update room attributes
@@ -412,7 +416,7 @@ class RoomsClientTest(CommunicationTestCase):
         assert ex.value.message is not None
 
     @pytest.mark.live_test_only
-    def test_update_room_clear_participant_dict(self):
+    def test_remove_all_participants(self):
         # add john and chris to the room
         participants = [
             self.users["john"],

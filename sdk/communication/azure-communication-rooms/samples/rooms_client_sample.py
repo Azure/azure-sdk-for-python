@@ -32,7 +32,8 @@ from dateutil.relativedelta import relativedelta
 from azure.core.exceptions import HttpResponseError
 from azure.communication.rooms import (
     RoomsClient,
-    RoomParticipant
+    RoomParticipant,
+    RoleType
 )
 from azure.communication.rooms._shared.models import(
     CommunicationUserIdentifier
@@ -41,23 +42,23 @@ from azure.communication.rooms._shared.models import(
 sys.path.append("..")
 
 class RoomsSample(object):
-    
+
     def setUp(self):
         self.connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
-    
+
         self.rooms_client = RoomsClient.from_connection_string(self.connection_string)
         self.rooms = []
-  
+
     def tearDown(self):
         self.delete_room_all_rooms()
-    
+
     def create_single_room(self):
-        
+
         valid_from =  datetime.now()
         valid_until = valid_from + relativedelta(months=+4)
         participants = []
 
-        participants.append(RoomParticipant("<PARTICIPANT_MRI>"))
+        participants.append(RoomParticipant(CommunicationUserIdentifier("<PARTICIPANT_MRI>")))
 
         try:
             create_room_response = self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participants)
@@ -68,7 +69,7 @@ class RoomsSample(object):
 
         except HttpResponseError as ex:
             print(ex)
-    
+
     def create_single_room_with_default_attributes(self):
         rooms_client = RoomsClient.from_connection_string(self.connection_string)
 
@@ -80,12 +81,12 @@ class RoomsSample(object):
 
         except HttpResponseError as ex:
             print(ex)
-    
+
     def update_single_room(self, room_id):
         # set attributes you want to change
         valid_from =  datetime.now()
         valid_until = valid_from + relativedelta(months=+1,days=+20)
-        
+
         try:
             update_room_response = self.rooms_client.update_room(room_id=room_id, valid_from=valid_from, valid_until=valid_until)
             self.printRoom(response=update_room_response)
@@ -93,11 +94,36 @@ class RoomsSample(object):
             print(ex)
 
     def add_participants(self, room_id):
-        participants = [RoomParticipant("<PARTICIPANT_MRI>")]
+        participants = [RoomParticipant(CommunicationUserIdentifier("<PARTICIPANT_MRI>"))]
 
         try:
-            update_room_response = self.rooms_client.add_participants(room_id=room_id, participants=participants)
-            self.printRoom(response=update_room_response)
+            add_participants_response = self.rooms_client.add_participants(room_id=room_id, participants=participants)
+            self.printRoom(response=add_participants_response)
+        except HttpResponseError as ex:
+            print(ex)
+
+    def update_participants(self, room_id):
+        participants = [RoomParticipant(CommunicationUserIdentifier("<PARTICIPANT_MRI>"), RoleType.PRESENTER)]
+
+        try:
+            update_participants_response = self.rooms_client.update_participants(room_id=room_id, participants=participants)
+            self.printRoom(response=update_participants_response)
+        except HttpResponseError as ex:
+            print(ex)
+
+    def get_participants(self, room_id):
+        try:
+            get_participants_response = self.rooms_client.get_participants(room_id=room_id)
+            print("participants: ", get_participants_response.participants)
+        except HttpResponseError as ex:
+            print(ex)
+
+    def remove_participants(self, room_id):
+        participants = [CommunicationUserIdentifier("<PARTICIPANT_MRI>")]
+
+        try:
+            remove_participants_response = self.rooms_client.remove_participants(room_id=room_id, communication_identifiers=participants)
+            self.printRoom(response=remove_participants_response)
         except HttpResponseError as ex:
             print(ex)
 
@@ -112,16 +138,16 @@ class RoomsSample(object):
         for room in self.rooms:
             print("deleting: ", room)
             self.rooms_client.delete_room(room_id=room)
-    
+
     def get_room(self, room_id):
-        
+
         try:
             get_room_response = self.rooms_client.get_room(room_id=room_id)
             self.printRoom(response=get_room_response)
 
         except HttpResponseError as ex:
             print(ex)
-    
+
     def printRoom(self, response):
         print("room_id: ", response.id)
         print("created_date_time: ", response.created_date_time)
@@ -138,6 +164,9 @@ if __name__ == '__main__':
         sample.get_room(room_id=sample.rooms[0] )
         sample.update_single_room(room_id=sample.rooms[0])
         sample.add_participants(room_id=sample.rooms[0])
+        sample.update_participants(room_id=sample.rooms[0])
+        sample.get_participants(room_id=sample.rooms[0])
+        sample.remove_participants(room_id=sample.rooms[0])
         sample.clear_all_participants(room_id=sample.rooms[0])
-        sample.get_room(room_id=sample.rooms[0] )
+        sample.get_room(room_id=sample.rooms[0])
     sample.tearDown()
