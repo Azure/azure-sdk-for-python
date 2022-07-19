@@ -1,4 +1,5 @@
 from contextlib import suppress
+import glob
 import json
 import logging
 import os
@@ -140,21 +141,16 @@ def format_samples(sdk_code_path) -> None:
     if not os.path.exists(generate_sample_path):
         _LOGGER.info(f'not find generate_sample')
         return
+    files = glob.glob(f'{generate_sample_path}/*.py')
+    for path in files:
+        with open(path, 'r') as fr:
+            file_content = fr.read()
 
-    for root, ds, files in os.walk(generate_sample_path):
-        for file in files:
-            if file.suffix != '.py':
-                continue
-            sample = Path(root+file)
+        with suppress(black.NothingChanged):
+            file_content = read_file(path)
+            file_content = black.format_file_contents(file_content, fast=True, mode=_BLACK_MODE)
 
-            with open(path, 'r') as fr:
-                file_content = fr.read()
-
-            with suppress(black.NothingChanged):
-                file_content = read_file(path)
-                file_content = black.format_file_contents(file_content, fast=True, mode=_BLACK_MODE)
-
-            with open(path, 'w') as fw:
-                fw.write(file_content)
+        with open(path, 'w') as fw:
+            fw.write(file_content)
 
     _LOGGER.info(f'format generate_sample successfully')
