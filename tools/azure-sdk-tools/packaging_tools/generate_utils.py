@@ -12,17 +12,9 @@ from typing import List
 
 from .swaggertosdk.autorest_tools import build_autorest_options
 
-try:
-    import black
-except Exception as e:
-    check_call('pip install black', shell=True)
-    import black
-
 
 _LOGGER = logging.getLogger(__name__)
 _SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
-_BLACK_MODE = black.Mode()
-_BLACK_MODE.line_length = 120
 
 DEFAULT_DEST_FOLDER = "./dist"
 
@@ -144,7 +136,16 @@ def format_samples(sdk_code_path) -> None:
     if not os.path.exists(generate_sample_path):
         _LOGGER.info(f'not find generate_sample')
         return
-    files = glob.glob(f'{generate_sample_path}/**/*.py')
+
+    try:
+        import black
+    except Exception as e:
+        check_call('pip install black', shell=True)
+        import black
+
+    _BLACK_MODE = black.Mode()
+    _BLACK_MODE.line_length = 120
+    files = generate_sample_path.glob('/**/*.py')
     for path in files:
         with open(path, 'r') as fr:
             file_content = fr.read()
