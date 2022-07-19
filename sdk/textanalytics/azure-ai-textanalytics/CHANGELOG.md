@@ -9,6 +9,7 @@
 - Added `begin_multi_label_classify` client method to perform custom multi label classification on documents.
 - Added property `details` on returned poller objects which contain long-running operation metadata.
 - Added `TextAnalysisLROPoller` and `AsyncTextAnalysisLROPoller` protocols to describe the return types from long-running operations.
+- Added `cancel` method on the poller objects. Call it to cancel a long-running operation that's in progress. 
 
 ### Breaking Changes
 
