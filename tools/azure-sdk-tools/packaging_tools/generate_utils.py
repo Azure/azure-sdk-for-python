@@ -148,7 +148,7 @@ def format_samples(sdk_code_path) -> None:
 
     _BLACK_MODE = black.Mode()
     _BLACK_MODE.line_length = 120
-    files = generate_sample_path.glob('/**/*.py')
+    files = generate_sample_path.glob('**/*.py')
     for path in files:
         with open(path, 'r') as fr:
             file_content = fr.read()
