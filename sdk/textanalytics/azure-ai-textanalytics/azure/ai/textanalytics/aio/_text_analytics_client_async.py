@@ -4,11 +4,12 @@
 # ------------------------------------
 # pylint: disable=too-many-lines
 
-from typing import Union, Any, List, Dict, TYPE_CHECKING, cast
+from typing import Union, Any, List, Dict, cast
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from ._base_client_async import AsyncTextAnalyticsClientBase
 from .._request_handlers import (
     _validate_input,
@@ -61,9 +62,6 @@ from ._lro_async import (
     AsyncTextAnalyticsLROPoller,
 )
 
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 AsyncAnalyzeActionsResponse = AsyncAnalyzeActionsLROPoller[
     AsyncItemPaged[
@@ -127,7 +125,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any
     ) -> None:
         super().__init__(
