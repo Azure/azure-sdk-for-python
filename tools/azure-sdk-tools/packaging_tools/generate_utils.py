@@ -16,6 +16,7 @@ try:
     import black
 except Exception as e:
     check_call('pip install black', shell=True)
+    import black
 
 
 _LOGGER = logging.getLogger(__name__)
