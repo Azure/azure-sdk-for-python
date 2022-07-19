@@ -5,9 +5,6 @@
 import logging
 import re
 from typing import Any, Optional, Tuple, Union
-
-from marshmallow import ValidationError
-
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.constants import (
     ARM_ID_PREFIX,
@@ -22,7 +19,6 @@ from azure.ai.ml.constants import (
     PROVIDER_RESOURCE_ID_WITH_VERSION,
     LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT,
     REGISTRY_VERSION_PATTERN,
-    AzureMLResourceType,
 )
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 

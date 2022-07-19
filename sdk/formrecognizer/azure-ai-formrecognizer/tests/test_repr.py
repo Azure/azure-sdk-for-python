@@ -621,3 +621,15 @@ class TestRepr():
             "$",
         )
         assert repr(model) == model_repr
+
+    def test_currency_value_str(self):
+        model = _models.CurrencyValue(
+            amount=10.5,
+            symbol="$",
+        )
+        assert str(model) == "$10.5"
+
+        model = _models.CurrencyValue(
+            amount=10.5,
+        )
+        assert str(model) == "10.5"

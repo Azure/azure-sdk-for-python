@@ -4,7 +4,7 @@
 import logging
 
 from azure.ai.ml.constants import AzureMLResourceType
-from azure.ai.ml._schema import NestedField, PathAwareSchema
+from azure.ai.ml._schema import NestedField
 from azure.ai.ml._schema.job.identity import ManagedIdentitySchema, AMLTokenIdentitySchema, UserIdentitySchema
 from marshmallow import fields
 
@@ -12,11 +12,12 @@ from ..core.fields import ArmStr, ComputeField, UnionField
 from .creation_context import CreationContextSchema
 from .job_output import JobOutputSchema
 from .services import JobServiceSchema
+from ..core.resource import ResourceSchema
 
 module_logger = logging.getLogger(__name__)
 
 
-class BaseJobSchema(PathAwareSchema):
+class BaseJobSchema(ResourceSchema):
     creation_context = NestedField(CreationContextSchema, dump_only=True)
     services = fields.Dict(keys=fields.Str(), values=NestedField(JobServiceSchema))
     name = fields.Str()

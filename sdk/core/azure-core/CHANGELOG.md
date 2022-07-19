@@ -6,6 +6,8 @@ Azure-core is supported on Python 3.7 or later. For more details, please read ou
 
 ### Features Added
 
+- Added `CaseInsensitiveDict` implementation in `azure.core.utils` removing dependency on `requests` and `aiohttp`
+
 ### Breaking Changes
 
 ### Bugs Fixed
