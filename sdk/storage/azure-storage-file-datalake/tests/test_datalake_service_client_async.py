@@ -8,21 +8,22 @@
 import asyncio
 import unittest
 
+import pytest
 from azure.core.exceptions import HttpResponseError
+from datetime import datetime, timedelta
 
-
-from azure.storage.filedatalake.aio import (
-    DataLakeServiceClient,
-    FileSystemClient,
-    DataLakeFileClient,
-    DataLakeDirectoryClient
+from azure.storage.filedatalake import (
+    generate_account_sas, generate_file_system_sas,
+    generate_directory_sas, generate_file_sas
 )
+from azure.storage.filedatalake.aio import DataLakeServiceClient, FileSystemClient, DataLakeFileClient, DataLakeDirectoryClient
 from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
 from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake._models import (AnalyticsLogging, Metrics, RetentionPolicy,
-                                                StaticWebsite, CorsRule, FileSystemEncryptionScope)
+                                                StaticWebsite, CorsRule, FileSystemEncryptionScope, ResourceTypes,
+                                                AccountSasPermissions, FileSystemSasPermissions, FileSasPermissions)
 
 # ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
@@ -363,5 +364,130 @@ class DatalakeServiceTest(StorageTestCase):
         # Assert
         self.assertTrue(props)
         self.assertIsNotNone(props['encryption_scope'])
-        self.assertEqual(props['encryption_scope'].default_encryption_scope,
-                         encryption_scope.default_encryption_scope)
+        self.assertEqual(props['encryption_scope'].default_encryption_scope, encryption_scope.default_encryption_scope)
+
+    @pytest.mark.live_test_only
+    @DataLakePreparer()
+    async def test_create_file_system_encryption_scope_account_sas_async(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        token = generate_account_sas(
+            self.dsc.account_name,
+            self.dsc.credential.account_key,
+            ResourceTypes(service=True, file_system=True, object=True),
+            permission=AccountSasPermissions(write=True, read=True, create=True, delete=True),
+            expiry=datetime.utcnow() + timedelta(hours=5),
+            encryption_scope="hnstestscope1")
+        file_system_name = "testfs1"
+        encryption_scope = FileSystemEncryptionScope(default_encryption_scope="hnstestscope1")
+
+        # Act
+        await self.dsc.create_file_system(file_system=file_system_name, file_system_encryption_scope=encryption_scope)
+
+        fsc_sas = FileSystemClient(url, file_system_name, token)
+        await fsc_sas.create_file('file1')
+        await fsc_sas.create_directory('dir1')
+        dir_props = await fsc_sas.get_directory_client('dir1').get_directory_properties()
+        file_props = await fsc_sas.get_file_client('file1').get_file_properties()
+
+        # Assert
+        self.assertTrue(dir_props)
+        self.assertIsNotNone(dir_props.encryption_scope)
+        self.assertEqual(dir_props.encryption_scope, encryption_scope.default_encryption_scope)
+        self.assertTrue(file_props)
+        self.assertIsNotNone(file_props.encryption_scope)
+        self.assertEqual(file_props.encryption_scope, encryption_scope.default_encryption_scope)
+
+    @pytest.mark.live_test_only
+    @DataLakePreparer()
+    async def test_create_file_system_encryption_scope_file_system_sas(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        file_system_name = "testfs2"
+        token = generate_file_system_sas(
+            self.dsc.account_name,
+            file_system_name,
+            self.dsc.credential.account_key,
+            permission=FileSystemSasPermissions(write=True, read=True, delete=True),
+            expiry=datetime.utcnow() + timedelta(hours=5),
+            encryption_scope="hnstestscope1")
+        encryption_scope = FileSystemEncryptionScope(default_encryption_scope="hnstestscope1")
+
+        # Act
+        await self.dsc.create_file_system(file_system=file_system_name, file_system_encryption_scope=encryption_scope)
+
+        fsc_sas = FileSystemClient(url, file_system_name, token)
+        await fsc_sas.create_file('file1')
+        await fsc_sas.create_directory('dir1')
+        dir_props = await fsc_sas.get_directory_client('dir1').get_directory_properties()
+        file_props = await fsc_sas.get_file_client('file1').get_file_properties()
+
+        # Assert
+        self.assertTrue(dir_props)
+        self.assertIsNotNone(dir_props.encryption_scope)
+        self.assertEqual(dir_props.encryption_scope, encryption_scope.default_encryption_scope)
+        self.assertTrue(file_props)
+        self.assertIsNotNone(file_props.encryption_scope)
+        self.assertEqual(file_props.encryption_scope, encryption_scope.default_encryption_scope)
+
+    @pytest.mark.live_test_only
+    @DataLakePreparer()
+    async def test_create_file_system_encryption_scope_directory_sas(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        file_system_name = "testfs3"
+        token = generate_directory_sas(
+            self.dsc.account_name,
+            file_system_name,
+            'dir1',
+            self.dsc.credential.account_key,
+            permission=FileSasPermissions(write=True, read=True, delete=True),
+            expiry=datetime.utcnow() + timedelta(hours=5),
+            encryption_scope="hnstestscope1")
+        encryption_scope = FileSystemEncryptionScope(default_encryption_scope="hnstestscope1")
+
+        # Act
+        await self.dsc.create_file_system(file_system=file_system_name, file_system_encryption_scope=encryption_scope)
+
+        fsc_sas = FileSystemClient(url, file_system_name, token)
+        await fsc_sas.create_directory('dir1')
+        dir_props = await fsc_sas.get_directory_client('dir1').get_directory_properties()
+
+        # Assert
+        self.assertTrue(dir_props)
+        self.assertIsNotNone(dir_props.encryption_scope)
+        self.assertEqual(dir_props.encryption_scope, encryption_scope.default_encryption_scope)
+
+    @pytest.mark.live_test_only
+    @DataLakePreparer()
+    async def test_create_file_system_encryption_scope_file_sas(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        file_system_name = "testfs4"
+        token = generate_file_sas(
+            self.dsc.account_name,
+            file_system_name,
+            'dir1',
+            'file1',
+            self.dsc.credential.account_key,
+            permission=FileSasPermissions(write=True, read=True, delete=True),
+            expiry=datetime.utcnow() + timedelta(hours=5),
+            encryption_scope="hnstestscope1")
+        encryption_scope = FileSystemEncryptionScope(default_encryption_scope="hnstestscope1")
+
+        # Act
+        fsc = await self.dsc.create_file_system(file_system=file_system_name, file_system_encryption_scope=encryption_scope)
+        await fsc.create_directory('dir1')
+
+        fsc_sas = FileSystemClient(url, file_system_name, token)
+        await fsc_sas.create_file('dir1/file1')
+        file_props = await fsc_sas.get_file_client('dir1/file1').get_file_properties()
+
+        # Assert
+        self.assertTrue(file_props)
+        self.assertIsNotNone(file_props.encryption_scope)
+        self.assertEqual(file_props.encryption_scope, encryption_scope.default_encryption_scope)

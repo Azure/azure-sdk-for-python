@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 19 Jul 2022 19:18:13 GMT
+      x-ms-default-encryption-scope:
+      - hnstestscope1
+      x-ms-deny-encryption-scope-override:
+      - 'false'
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/testfs?restype=container
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:a676d0ce-301e-009b-29a4-9b8ca5000000\nTime:2022-07-19T19:18:14.4427196Z</Message></Error>"
+    headers:
+      content-length: '230'
+      content-type: application/xml
+      date: Tue, 19 Jul 2022 19:18:13 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ContainerAlreadyExists
+      x-ms-version: '2021-08-06'
+    status:
+      code: 409
+      message: The specified container already exists.
+    url: https://vincenttranhnscanary.blob.core.windows.net/testfs?restype=container
+version: 1

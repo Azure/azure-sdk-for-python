@@ -191,7 +191,7 @@ class _SharedAccessHelper(object):
     def add_account(self, services, resource_types):
         self._add_query(QueryStringConstants.SIGNED_SERVICES, services)
         self._add_query(QueryStringConstants.SIGNED_RESOURCE_TYPES, resource_types)
-    
+
     def add_encryption_scope(self, **kwargs):
         self._add_query(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE, kwargs.pop('encryption_scope', None))
 
@@ -220,7 +220,7 @@ class _SharedAccessHelper(object):
              get_value_to_append(QueryStringConstants.SIGNED_EXPIRY) +
              get_value_to_append(QueryStringConstants.SIGNED_IP) +
              get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL) +
-             get_value_to_append(QueryStringConstants.SIGNED_VERSION) + 
+             get_value_to_append(QueryStringConstants.SIGNED_VERSION) +
              get_value_to_append(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE))
 
         self._add_query(QueryStringConstants.SIGNED_SIGNATURE,

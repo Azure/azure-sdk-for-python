@@ -166,6 +166,8 @@ def generate_file_system_sas(
     :keyword str correlation_id:
         The correlation id to correlate the storage audit logs with the audit logs used by the principal
         generating and distributing the SAS.
+    :keyword str encryption_scope:
+        Specifies the encryption scope for a request made so that all write operations will be service encrypted.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -268,6 +270,8 @@ def generate_directory_sas(
     :keyword str correlation_id:
         The correlation id to correlate the storage audit logs with the audit logs used by the principal
         generating and distributing the SAS.
+    :keyword str encryption_scope:
+        Specifies the encryption scope for a request made so that all write operations will be service encrypted.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -377,6 +381,8 @@ def generate_file_sas(
     :keyword str correlation_id:
         The correlation id to correlate the storage audit logs with the audit logs used by the principal
         generating and distributing the SAS. This can only be used when to generate sas with delegation key.
+    :keyword str encryption_scope:
+        Specifies the encryption scope for a request made so that all write operations will be service encrypted.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
