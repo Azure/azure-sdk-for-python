@@ -4,11 +4,12 @@
 
 ### Bugs Fixed
 
-- Bug fixes that would prevent token refresh at regular intervals
-- Pass in the proper kwarg, so that debug levels will be output when requested
+- Fixed bug that prevented token refresh at regular intervals.
+- Fixed bug that was improperly passing the debug keyword argument, so that network trace debug logs are output when requested.
+
 ### Other Changes
 
-- Specific logging added in to track error scenarios
+- Added logging added in to track proper token refreshes & fetches, output exception reason for producer init failure.
 
 ## 5.8.0a4 (2022-06-07)
 
