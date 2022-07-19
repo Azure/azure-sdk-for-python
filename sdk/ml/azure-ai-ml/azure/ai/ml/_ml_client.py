@@ -8,13 +8,18 @@ from itertools import product
 from os import PathLike
 from pathlib import Path
 from typing import Optional, Tuple, Union
-from azure.ai.ml._azure_environments import ENDPOINT_URLS, _get_cloud_details, _get_default_cloud_name, _set_cloud
+from azure.ai.ml._azure_environments import (
+    _get_default_cloud_name,
+    _set_cloud,
+    _get_cloud_information_from_metadata,
+    _get_base_url_from_metadata,
+)
 
 from azure.identity import ChainedTokenCredential
 from azure.core.polling import LROPoller
 from azure.ai.ml.entities._builders.base_node import BaseNode
 
-from azure.ai.ml.constants import AzureMLResourceType
+from azure.ai.ml.constants import AzureMLResourceType, REGISTRY_DISCOVERY_BASE_URI
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml.operations import (
     BatchDeploymentOperations,
@@ -95,18 +100,60 @@ class MLClient(object):
         :type resource_group_name: str
         :param workspace_name: Workspace to use in the client, optional for non workspace dependent operations., defaults to None
         :type workspace_name: str, optional
+        :param kwargs: A dictionary of additional configuration parameters. For e.g. kwargs = {"cloud": "AzureUSGovernment"}
+        :type kwargs: dict
+
+        .. note::
+
+                The cloud parameter in kwargs in this class is what gets
+                the MLClient to work for non-standard Azure Clouds,
+                e.g. AzureUSGovernment, AzureChinaCloud
+
+                The following pseudo-code shows how to get a list of workspaces using MLClient.
+        .. code-block:: python
+
+                    from azure.identity import DefaultAzureCredential, AzureAuthorityHosts
+                    from azure.ai.ml import MLClient
+                    from azure.ai.ml.entities import Workspace
+
+                    # Enter details of your subscription
+                    subscription_id = "AZURE_SUBSCRIPTION_ID"
+                    resource_group = "RESOURCE_GROUP_NAME"
+
+                    # When using sovereign domains (that is, any cloud other than AZURE_PUBLIC_CLOUD),
+                    # you must use an authority with DefaultAzureCredential. Default authority value : AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
+                    # Expected values for authority for sovereign clouds: AzureAuthorityHosts.AZURE_CHINA or AzureAuthorityHosts.AZURE_GOVERNMENT
+                    credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_CHINA)
+
+                    # When using sovereign domains (that is, any cloud other than AZURE_PUBLIC_CLOUD),
+                    # you must pass in the cloud name in kwargs. Default cloud is AzureCloud
+                    kwargs = {"cloud": "AzureChinaCloud"}
+                    # get a handle to the subscription
+                    ml_client = MLClient(credential, subscription_id, resource_group, **kwargs)
+
+                    # Get a list of workspaces in a resource group
+                    for ws in ml_client.workspaces.list():
+                        print(ws.name, ":", ws.location, ":", ws.description)
+
         """
-        cloud_name = kwargs.get("cloud_name", _get_default_cloud_name())
-        module_logger.debug("Cloud configured in MLClient: '%s'.", cloud_name)
+        if credential is None:
+            raise ValueError("credential can not be None")
+
+        self._credential = credential
+        cloud_name = kwargs.get("cloud", _get_default_cloud_name())
+        self._cloud = cloud_name
         _set_cloud(cloud_name)
+        if "cloud" not in kwargs:
+            module_logger.debug("Cloud input is missing. Using default Cloud setting in MLClient: '%s'.", cloud_name)
+        module_logger.debug("Cloud configured in MLClient: '%s'.", cloud_name)
         self._registry_name = kwargs.pop("registry_name", None)
         self._operation_scope = OperationScope(
             subscription_id, resource_group_name, workspace_name, self._registry_name
         )
 
-        self._add_user_agent(kwargs)
         # Cannot send multiple base_url as azure-cli sets the base_url automatically.
         kwargs.pop("base_url", None)
+        self._add_user_agent(kwargs)
 
         user_agent = None
         properties = {"subscription_id": subscription_id, "resource_group_name": resource_group_name}
@@ -117,10 +164,10 @@ class MLClient(object):
         app_insights_handler = get_appinsights_log_handler(user_agent, **{"properties": properties})
         app_insights_handler_kwargs = {"app_insights_handler": app_insights_handler}
 
-        self._credential = credential
-
-        cloud_details = _get_cloud_details(cloud_name)
-        base_url = cloud_details.get(ENDPOINT_URLS.RESOURCE_MANAGER_ENDPOINT).strip("/")
+        base_url = _get_base_url_from_metadata(cloud_name=cloud_name, is_local_mfe=True)
+        self._base_url = base_url
+        kwargs.update(_get_cloud_information_from_metadata(cloud_name))
+        self._kwargs = kwargs
 
         self._operation_container = OperationsContainer()
 
@@ -168,12 +215,11 @@ class MLClient(object):
             self._rp_service_client,
             self._operation_container,
             self._credential,
-            base_url=base_url,
             **app_insights_handler_kwargs,
         )
 
         if self._registry_name:
-            base_url = _get_mfe_base_url_from_registry_discovery_service(self._workspaces, workspace_name)
+            base_url = REGISTRY_DISCOVERY_BASE_URI  # This will come back later _get_mfe_base_url_from_registry_discovery_service(self._workspaces, workspace_name)
             kwargs_registry = {**kwargs}
             kwargs_registry.pop("base_url", None)
             self._service_client_registry_discovery_client = ServiceClientRegistryDiscovery(
@@ -282,6 +328,7 @@ class MLClient(object):
             self._service_client_02_2022_preview,
             self._operation_container,
             self._credential,
+            _service_client_kwargs=kwargs,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)
@@ -305,7 +352,7 @@ class MLClient(object):
         :type path: str
         :param _file_name: Allows overriding the config file name to search for when path is a directory path.
         :type _file_name: str
-        :param kwargs: A dictionary of additional configuration parameters.
+        :param kwargs: A dictionary of additional configuration parameters. For e.g. kwargs = {"cloud": "AzureUSGovernment"}
         :type kwargs: dict
 
         :return: The workspace object for an existing Azure ML Workspace.
@@ -364,7 +411,7 @@ class MLClient(object):
         )
 
     """
-    This method provides a way to create MLClient object for cli to levarage cli context for authentication.
+    This method provides a way to create MLClient object for cli to leverage cli context for authentication.
     With this we do not have to use AzureCliCredentials from azure-identity package (not meant for heavy usage).
     The credentials are passed by cli get_mgmt_service_client when it created a object of this class.
     """
@@ -509,7 +556,7 @@ class MLClient(object):
         """
         return self._operation_scope.workspace_name
 
-    def _get_new_client(self, workspace_name: str) -> "MLClient":
+    def _get_new_client(self, workspace_name: str, **kwargs) -> "MLClient":
         """Returns a new MLClient object with the specified arguments
 
         :param str workspace_name: AzureML workspace of the new MLClient
@@ -520,6 +567,7 @@ class MLClient(object):
             subscription_id=self._operation_scope.subscription_id,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=workspace_name,
+            **kwargs,
         )
 
     @classmethod
@@ -605,12 +653,6 @@ def _create_or_update(entity, operations, **kwargs):
 def _(entity: Job, operations, **kwargs):
     module_logger.debug("Creating or updating job")
     return operations[AzureMLResourceType.JOB].create_or_update(entity, **kwargs)
-
-
-@_create_or_update.register(BaseNode)
-def _(entity: Job, operations):
-    module_logger.debug("Creating or updating job")
-    return operations[AzureMLResourceType.JOB].create_or_update(entity)
 
 
 @_create_or_update.register(Model)

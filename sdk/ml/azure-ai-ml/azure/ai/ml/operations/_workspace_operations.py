@@ -56,7 +56,6 @@ class WorkspaceOperations:
     ):
         if "app_insights_handler" in kwargs:
             logger.addHandler(kwargs.pop("app_insights_handler"))
-        kwargs.pop("base_url", None)
 
         self._subscription_id = operation_scope.subscription_id
         self._resource_group_name = operation_scope.resource_group_name
