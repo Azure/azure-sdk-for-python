@@ -9,7 +9,7 @@ import threading
 import time
 import warnings
 from io import BytesIO
-from typing import Generic, Iterator, TypeVar, Union
+from typing import Generic, Iterator, Optional, TypeVar
 
 import requests
 from azure.core.exceptions import HttpResponseError, ServiceResponseError
@@ -335,7 +335,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._non_empty_ranges = None
         self._response = None
         self._encryption_data = None
-        self.offset = 0
+        self._offset = 0
 
         # The cls is passed in via download_cls to avoid conflicting arg name with Generic.__new__
         # but needs to be changed to cls in the request options.
@@ -553,7 +553,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             downloader=iter_downloader,
             chunk_size=self._config.max_chunk_get_size)
 
-    def read(self, size: Optional[int] = -1) -> Union[bytes, str]:
+    def read(self, size: Optional[int] = -1) -> T:
         """
         Read up to size bytes from the object and return them. If size
         is specified as -1, all bytes will be read.
@@ -570,37 +570,46 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         remaining_size = size
 
         # Start by reading from current_content if there is data left
-        if self.offset < len(self._current_content):
-            start = self.offset
-            end = min(remaining_size, len(self._current_content) - self.offset)
+        if self._offset < len(self._current_content):
+            start = self._offset
+            end = min(remaining_size, len(self._current_content) - self._offset)
             read = stream.write(self._current_content[start:end])
 
             remaining_size -= read
-            self.offset += read
+            self._offset += read
 
         if remaining_size > 0:
-            end_range = min(self.offset + remaining_size, self.size)
+            end_range = min(self._offset + remaining_size, self.size)
+            parallel = self._max_concurrency > 1
             downloader = _ChunkDownloader(
                 client=self._clients.blob,
                 non_empty_ranges=self._non_empty_ranges,
                 total_size=remaining_size,
                 chunk_size=self._config.max_chunk_get_size,
-                current_progress=0,
-                start_range=self.offset,
+                current_progress=self._offset,
+                start_range=self._offset,
                 end_range=end_range,
                 stream=stream,
-                parallel=False,
-                validate_content=False,
+                parallel=parallel,
+                validate_content=self._validate_content,
                 encryption_options=self._encryption_options,
+                encryption_data=self._encryption_data,
                 use_location=self._location_mode,
                 **self._request_options
             )
 
-            chunks = downloader.get_chunk_offsets()
-            for chunk in chunks:
-                downloader.process_chunk(chunk)
+            if parallel:
+                import concurrent.futures
+                with concurrent.futures.ThreadPoolExecutor(self._max_concurrency) as executor:
+                    list(executor.map(
+                            with_current_context(downloader.process_chunk),
+                            downloader.get_chunk_offsets()
+                        ))
+            else:
+                for chunk in downloader.get_chunk_offsets():
+                    downloader.process_chunk(chunk)
 
-            self.offset += remaining_size
+            self._offset += remaining_size
 
         data = stream.getvalue()
         if self._encoding:

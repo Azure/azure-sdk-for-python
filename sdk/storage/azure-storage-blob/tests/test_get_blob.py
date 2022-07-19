@@ -7,8 +7,9 @@
 # --------------------------------------------------------------------------
 import base64
 import pytest
+import random
 import uuid
-from os import path, remove, sys, urandom
+from os import path, remove
 from math import ceil
 from io import BytesIO
 from os import path, remove
@@ -926,30 +927,6 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertIsNotNone(content.properties.content_settings.content_type)
         self.assertIsNone(content.properties.content_settings.content_md5)
 
-    @BlobPreparer()
-    def test_get_blob_read_progress(self, storage_account_name, storage_account_key):
-        self._setup(storage_account_name, storage_account_key)
-        data = b'12345' * 205 * 5  # 5125 bytes
-        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        blob.upload_blob(data, overwrite=True)
-        stream = blob.download_blob()
-
-        def progress_hook(current, total):
-            print(f'Progress: {current / total}')
-
-        # Act / Assert
-        chunk_size = 1024
-        total = stream.size
-        current = 0
-        while True:
-            data = stream.read(chunk_size)
-            read_size = len(data)
-            current += read_size
-            progress_hook(current, total)
-
-            if current == total:
-                break
-
     def test_get_blob_progress_single_get(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         data = b'a' * 512
@@ -1056,8 +1033,8 @@ class StorageGetBlobTest(StorageTestCase):
         content2 = blob.download_blob().read(512)
 
         # Assert
-        self.assertEqual(data, content)
-        self.assertEqual(data, content2)
+        assert data == content
+        assert data == content2
 
     @BlobPreparer()
     def test_get_blob_read_all(self, storage_account_name, storage_account_key):
@@ -1070,7 +1047,7 @@ class StorageGetBlobTest(StorageTestCase):
         content = blob.download_blob().read()
 
         # Assert
-        self.assertEqual(data, content)
+        assert data == content
 
     @BlobPreparer()
     def test_get_blob_read_small_chunks(self, storage_account_name, storage_account_key):
@@ -1080,14 +1057,19 @@ class StorageGetBlobTest(StorageTestCase):
         blob.upload_blob(data, overwrite=True)
         stream = blob.download_blob()
 
-        # Act / Assert
-        chunk_size = 512
-        num_chunks = int(ceil(len(data) / chunk_size))
+        # Act
+        result = bytearray()
+        read_size = 512
+        num_chunks = int(ceil(len(data) / read_size))
         for i in range(num_chunks):
-            content = stream.read(chunk_size)
-            start = i * chunk_size
-            end = start + chunk_size
-            self.assertEqual(data[start:end], content)
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
 
     @BlobPreparer()
     def test_get_blob_read_large_chunks(self, storage_account_name, storage_account_key):
@@ -1097,13 +1079,86 @@ class StorageGetBlobTest(StorageTestCase):
         blob.upload_blob(data, overwrite=True)
         stream = blob.download_blob()
 
-        # Act / Assert
-        chunk_size = 1536
-        num_chunks = int(ceil(len(data) / chunk_size))
+        # Act
+        result = bytearray()
+        read_size = 1536
+        num_chunks = int(ceil(len(data) / read_size))
         for i in range(num_chunks):
-            content = stream.read(chunk_size)
-            start = i * chunk_size
-            end = start + chunk_size
-            self.assertEqual(data[start:end], content)
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
+
+    @BlobPreparer()
+    def test_get_blob_read_chunk_equal_download_chunk(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        # Act
+        result = bytearray()
+        read_size = 1024
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_read_random_chunks(self, storage_account_name, storage_account_key):
+        # Random chunk sizes, can only run live
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 15  # 15375 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        # Act
+        result = bytearray()
+        total = 0
+        while total < len(data):
+            read_size = random.randint(500, 2500)
+            content = stream.read(read_size)
+            result.extend(content)
+            total += len(content)
+
+        # Assert
+        assert result == data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_read_parallel(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 15  # 15375 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob(max_concurrency=3)
+
+        # Act
+        result = bytearray()
+        read_size = 4096
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
 
 # ------------------------------------------------------------------------------

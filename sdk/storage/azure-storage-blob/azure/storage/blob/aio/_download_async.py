@@ -9,7 +9,7 @@ import sys
 import warnings
 from io import BytesIO
 from itertools import islice
-from typing import AsyncIterator, Generic, TypeVar
+from typing import AsyncIterator, Generic, Optional, TypeVar
 
 import asyncio
 from aiohttp import ClientPayloadError
@@ -243,6 +243,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._non_empty_ranges = None
         self._response = None
         self._encryption_data = None
+        self._offset = 0
 
         self._initial_range = None
         self._initial_offset = None
@@ -455,6 +456,88 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             content=self._current_content,
             downloader=iter_downloader,
             chunk_size=self._config.max_chunk_get_size)
+
+    async def read(self, size: Optional[int] = -1) -> T:
+        """
+        Read up to size bytes from the object and return them. If size
+        is specified as -1, all bytes will be read.
+        """
+        if size == -1:
+            return await self.readall()
+        if size == 0 or self.size == 0:
+            data = b''
+            if self._encoding:
+                return data.decode(self._encoding)
+            return data
+
+        stream = BytesIO()
+        remaining_size = size
+
+        # Start by reading from current_content if there is data left
+        if self._offset < len(self._current_content):
+            start = self._offset
+            end = min(remaining_size, len(self._current_content) - self._offset)
+            read = stream.write(self._current_content[start:end])
+
+            remaining_size -= read
+            self._offset += read
+
+        if remaining_size > 0:
+            end_range = min(self._offset + remaining_size, self.size)
+            parallel = self._max_concurrency > 1
+            downloader = _AsyncChunkDownloader(
+                client=self._clients.blob,
+                non_empty_ranges=self._non_empty_ranges,
+                total_size=remaining_size,
+                chunk_size=self._config.max_chunk_get_size,
+                current_progress=self._offset,
+                start_range=self._offset,
+                end_range=end_range,
+                stream=stream,
+                parallel=parallel,
+                validate_content=self._validate_content,
+                encryption_options=self._encryption_options,
+                encryption_data=self._encryption_data,
+                use_location=self._location_mode,
+                **self._request_options
+            )
+
+            dl_tasks = downloader.get_chunk_offsets()
+            running_futures = [
+                asyncio.ensure_future(downloader.process_chunk(d))
+                for d in islice(dl_tasks, 0, self._max_concurrency)
+            ]
+            while running_futures:
+                # Wait for some download to finish before adding a new one
+                done, running_futures = await asyncio.wait(
+                    running_futures, return_when=asyncio.FIRST_COMPLETED)
+                try:
+                    for task in done:
+                        task.result()
+                except HttpResponseError as error:
+                    process_storage_error(error)
+                try:
+                    next_chunk = next(dl_tasks)
+                except StopIteration:
+                    break
+                else:
+                    running_futures.add(asyncio.ensure_future(downloader.process_chunk(next_chunk)))
+
+            if running_futures:
+                # Wait for the remaining downloads to finish
+                done, _running_futures = await asyncio.wait(running_futures)
+                try:
+                    for task in done:
+                        task.result()
+                except HttpResponseError as error:
+                    process_storage_error(error)
+
+            self._offset += remaining_size
+
+        data = stream.getvalue()
+        if self._encoding:
+            return data.decode(self._encoding)
+        return data
 
     async def readall(self):
         # type: () -> T
