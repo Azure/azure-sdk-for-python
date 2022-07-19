@@ -52,81 +52,86 @@ except KeyError:
 client = LoadTestClient(credential=DefaultAzureCredential(), endpoint=endpoint)
 
 
-TEST_ID = "a011890b-0201-004d-010d-1200d888bb11"  # ID to be assigned to a test
-FILE_ID = "a012b234-1230-ab00-0040-ab12c4501111"  # ID to be assigned to file uploaded
-TEST_RUN_ID = "08673e89-3285-46a1-9c6b-7e5ecba39111"  # ID to be assigned to a test run
-APP_COMPONENT = "01730263-6671-4216-b283-8b28ed953111"  # ID of the APP Component
-DISPLAY_NAME = "example_application"  # display name
+TEST_ID = "a011890b-0201-004d-010d-nivedit"  # ID to be assigned to a test
+FILE_ID = "a012b234-1230-ab00-0040-nivedit"  # ID to be assigned to file uploaded
+TEST_RUN_ID = "08673e89-3285-46a1-9c6b-nivedit"  # ID to be assigned to a test run
+APP_COMPONENT = "01730263-6671-4216-b283-nivedit"  # ID of the APP Component
+DISPLAY_NAME = "new_namespace"  # display name
 
 # creating load test
-try:
-    result = client.administration.test.create_or_update_test(
-        TEST_ID,
-        {
-            "resourceId": "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
-            "description": "",
-            "displayName": DISPLAY_NAME,
-            "loadTestConfig": {
-                "engineSize": "m",
-                "engineInstances": 1,
-                "splitAllCSVs": False,
-            },
-            "secrets": {},
-            "environmentVariables": {},
-            "passFailCriteria": {"passFailMetrics": {}},
-            "keyvaultReferenceIdentityType": "SystemAssigned",
-            "keyvaultReferenceIdentityId": None,
-        },
-    )
-    print(result)
-except HttpResponseError as e:
-    print("Failed to process the request: {}".format(e.response.json()))
-# uploading .jmx file to a test
-try:
-    # opening .jmx file
-    body = {}
-    body["file"] = open("sample.jmx", "rb")
+# try:
+#     result = client.administration.create_or_update_test(
+#         TEST_ID,
+#         {
+#             "resourceId": "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
+#             "description": "",
+#             "displayName": DISPLAY_NAME,
+#             "loadTestConfig": {
+#                 "engineSize": "m",
+#                 "engineInstances": 1,
+#                 "splitAllCSVs": False,
+#             },
+#             "secrets": {},
+#             "environmentVariables": {},
+#             "passFailCriteria": {"passFailMetrics": {}},
+#             "keyvaultReferenceIdentityType": "SystemAssigned",
+#             "keyvaultReferenceIdentityId": None,
+#         },
+#     )
+#     print(result)
+# except HttpResponseError as e:
+#     print("Failed to process the request: {}".format(e.response.json()))
 
-    result = client.administration.test.upload_test_file(TEST_ID, FILE_ID, body)
-    print(result)
-except HttpResponseError as e:
-    print("Failed to send JSON message: {}".format(e.response.json()))
+
+# uploading .jmx file to a test
+# try:
+    # opening .jmx file
+#     body = {}
+#     body["file"] = open("sample.jmx", "rb")
+
+#     result = client.administration.upload_test_file(TEST_ID, FILE_ID, body)
+#     print(result)
+# except HttpResponseError as e:
+#     print("Failed to send JSON message: {}".format(e.response.json()))
+
 # creating app component
-try:
-    result = client.administration.app_component.create_or_update(
-        APP_COMPONENT,
-        {
-            "name": "app_component",
-            "testId": TEST_ID,
-            "value": {
-                "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo": {
-                    "resourceId": "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo",
-                    "resourceName": "App-Service-Sample-Demo",
-                    "resourceType": "Microsoft.Web/sites",
-                    "subscriptionId": "7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a",
-                }
-            },
-        },
-    )
-    print(result)
-except HttpResponseError as e:
-    print("Failed to send JSON message: {}".format(e.response.json()))
+# try:
+#     result = client.administration.create_or_update_app_components(
+#         APP_COMPONENT,
+#         {
+#             "name": "app_component",
+#             "testId": TEST_ID,
+#             "value": {
+#                 "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo": {
+#                     "resourceId": "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo",
+#                     "resourceName": "App-Service-Sample-Demo",
+#                     "resourceType": "Microsoft.Web/sites",
+#                     "subscriptionId": "7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a",
+#                 }
+#             },
+#         },
+#     )
+#     print(result)
+# except HttpResponseError as e:
+#     print("Failed to send JSON message: {}".format(e.response.json()))
+
 # Creating the test run
-try:
-    result = client.runs.create_and_update_test(
-        TEST_RUN_ID,
-        {
-            "testId": TEST_ID,
-            "displayName": DISPLAY_NAME,
-            "requestSamplers": [],
-            "errors": [],
-            "percentiles": ["90"],
-            "groupByInterval": "5s",
-        },
-    )
-    print(result)
-except HttpResponseError as e:
-    print("Failed to send JSON message: {}".format(e.response.json()))
+# try:
+#     result = client.test_run.create_and_update_test(
+#         TEST_RUN_ID,
+#         {
+#             "testId": TEST_ID,
+#             "displayName": DISPLAY_NAME,
+#             "requestSamplers": [],
+#             "errors": [],
+#             "percentiles": ["90"],
+#             "groupByInterval": "5s",
+#         },
+#     )
+#     print(result)
+# except HttpResponseError as e:
+#     print("Failed to send JSON message: {}".format(e.response.json()))
+
 # Checking the test run status and printing metrics
 try:
     start_time = time.time()
@@ -135,7 +140,7 @@ try:
     REFRESH_RATE = 10
 
     while time.time() - start_time < TIMEOUT:
-        result = client.runs.get_test_run(TEST_RUN_ID)
+        result = client.test_run.get_test_run(TEST_RUN_ID)
         if result["status"] == "DONE" or result["status"] == "CANCELLED" or result["status"] == "FAILED":
             break
         else:
