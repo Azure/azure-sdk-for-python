@@ -706,7 +706,8 @@ class ReceiveClient(AMQPClient):
             if timeout and time.time() > timeout:
                 break
 
-            receiving = self.do_work(batch=to_receive_size)
+            #removed to_receive_size 
+            receiving = self.do_work()
             cur_queue_size = self._received_messages.qsize()
             # after do_work, check how many new messages have been received since previous iteration
             received = cur_queue_size - before_queue_size
