@@ -148,7 +148,6 @@ def format_samples(sdk_code_path) -> None:
             file_content = fr.read()
 
         with suppress(black.NothingChanged):
-            file_content = read_file(path)
             file_content = black.format_file_contents(file_content, fast=True, mode=_BLACK_MODE)
 
         with open(path, 'w') as fw:
