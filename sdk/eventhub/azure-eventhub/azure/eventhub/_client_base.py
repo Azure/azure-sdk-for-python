@@ -387,12 +387,17 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 while not mgmt_client.client_ready():
                     time.sleep(0.05)
                 access_token = mgmt_auth.get_token()
-                mgmt_msg.application_properties["security_token"] = access_token.token
-                if not access_token.token:
+
+                if not access_token:
+                    _LOGGER.info("Management client received an access token object")
+
+                elif not access_token.token:
                     _LOGGER.info("Management client received an empty token")
 
                 else:
                     _LOGGER.info(f"Management client token expires on: {datetime.fromtimestamp(access_token.expires_on)}")
+                    
+                mgmt_msg.application_properties["security_token"] = access_token.token
                 
                 response = mgmt_client.mgmt_request(
                     mgmt_msg,
@@ -400,10 +405,6 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     operation_type=op_type.decode(),
                     status_code_field=MGMT_STATUS_CODE,
                     description_fields=MGMT_STATUS_DESC,
-                )
-                _LOGGER.info(
-                    'Management client token expiry: %r',
-                    datetime.fromtimestamp(access_token.expires_on)
                 )
                 status_code = int(response.application_properties[MGMT_STATUS_CODE])
                 description = response.application_properties.get(
