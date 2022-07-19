@@ -177,13 +177,13 @@ def start_test_proxy():
             proc = subprocess.Popen(shlex.split("docker container start " + CONTAINER_NAME))
             proc.communicate()
 
-        # Wait for the proxy server to become available
-        check_proxy_availability()
-        # remove headers from recordings if we don't need them, and ignore them if present
-        # Authorization, for example, can contain sensitive info and can cause matching failures during challenge auth
-        headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id"
-        add_remove_header_sanitizer(headers=headers_to_ignore)
-        set_custom_default_matcher(excluded_headers=headers_to_ignore)
+    # Wait for the proxy server to become available
+    check_proxy_availability()
+    # remove headers from recordings if we don't need them, and ignore them if present
+    # Authorization, for example, can contain sensitive info and can cause matching failures during challenge auth
+    headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id"
+    add_remove_header_sanitizer(headers=headers_to_ignore)
+    set_custom_default_matcher(excluded_headers=headers_to_ignore)
 
 
 def stop_test_proxy():
