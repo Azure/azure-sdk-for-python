@@ -25,7 +25,7 @@ steps:
         -Language ${{ parameters.Language }}
       pwsh: true
       workingDirectory: $(Pipeline.Workspace)
-    displayName: Create API Review for ${{ artifact.name}}
+    displayName: Create Automatic API Review
     condition: >-
       and(
         succeededOrFailed(),
