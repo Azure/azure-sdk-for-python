@@ -144,7 +144,7 @@ def format_samples(sdk_code_path) -> None:
     if not os.path.exists(generate_sample_path):
         _LOGGER.info(f'not find generate_sample')
         return
-    files = glob.glob(f'{generate_sample_path}/*.py')
+    files = glob.glob(f'{generate_sample_path}/**/*.py')
     for path in files:
         with open(path, 'r') as fr:
             file_content = fr.read()
