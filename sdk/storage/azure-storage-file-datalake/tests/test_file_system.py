@@ -13,8 +13,19 @@ from azure.core import MatchConditions
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 from azure.storage.filedatalake import (
-    AccessPolicy, AccountSasPermissions, DataLakeServiceClient, FileSystemClient, FileSystemSasPermissions,
-    PublicAccess, ResourceTypes, generate_account_sas, generate_file_system_sas, generate_directory_sas, generate_file_sas
+    AccessPolicy,
+    AccountSasPermissions,
+    DataLakeDirectoryClient,
+    DataLakeFileClient,
+    DataLakeServiceClient,
+    FileSystemClient,
+    FileSystemSasPermissions,
+    PublicAccess,
+    ResourceTypes,
+    generate_account_sas,
+    generate_file_system_sas,
+    generate_directory_sas,
+    generate_file_sas,
 )
 from azure.storage.filedatalake._models import FileSystemEncryptionScope, FileSasPermissions
 
@@ -190,9 +201,9 @@ class FileSystemTest(StorageTestCase):
         file_system_client = self.dsc.get_file_system_client(file_system_name)
         file_system_client.create_file_system(file_system_encryption_scope=encryption_scope)
 
-        fsc_sas = FileSystemClient(url, file_system_name, token)
-        fsc_sas.create_directory('dir1')
-        dir_props = fsc_sas.get_directory_client('dir1').get_directory_properties()
+        dir_client = DataLakeDirectoryClient(url, file_system_name, 'dir1', credential=token)
+        dir_client.create_directory()
+        dir_props = dir_client.get_directory_properties()
 
         # Assert
         self.assertTrue(dir_props)
@@ -222,9 +233,9 @@ class FileSystemTest(StorageTestCase):
         file_system_client.create_file_system(file_system_encryption_scope=encryption_scope)
         file_system_client.create_directory('dir1')
 
-        fsc_sas = FileSystemClient(url, file_system_name, token)
-        fsc_sas.create_file('dir1/file1')
-        file_props = fsc_sas.get_file_client('dir1/file1').get_file_properties()
+        file_client = DataLakeFileClient(url, file_system_name, 'dir1/file1', token)
+        file_client.create_file()
+        file_props = file_client.get_file_properties()
 
         # Assert
         self.assertTrue(file_props)

@@ -16,10 +16,18 @@ from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 
 from azure.storage.filedatalake._models import FileSystemEncryptionScope, FileSasPermissions
-from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient, FileSystemClient
+from azure.storage.filedatalake.aio import DataLakeDirectoryClient, DataLakeFileClient, DataLakeServiceClient, FileSystemClient
 from azure.storage.filedatalake import (
-    AccessPolicy, AccountSasPermissions, DirectorySasPermissions, FileSystemSasPermissions,
-    PublicAccess, ResourceTypes, generate_account_sas, generate_file_system_sas, generate_directory_sas, generate_file_sas
+    AccessPolicy,
+    AccountSasPermissions,
+    DirectorySasPermissions,
+    FileSystemSasPermissions,
+    PublicAccess,
+    ResourceTypes,
+    generate_account_sas,
+    generate_file_system_sas,
+    generate_directory_sas,
+    generate_file_sas
 )
 from multidict import CIMultiDict, CIMultiDictProxy
 
@@ -211,9 +219,9 @@ class FileSystemTest(StorageTestCase):
         file_system_client = self.dsc.get_file_system_client(file_system_name)
         await file_system_client.create_file_system(file_system_encryption_scope=encryption_scope)
 
-        fsc_sas = FileSystemClient(url, file_system_name, token)
-        await fsc_sas.create_directory('dir1')
-        dir_props = await fsc_sas.get_directory_client('dir1').get_directory_properties()
+        dir_client = DataLakeDirectoryClient(url, file_system_name, 'dir1', credential=token)
+        await dir_client.create_directory()
+        dir_props = await dir_client.get_directory_properties()
 
         # Assert
         self.assertTrue(dir_props)
@@ -222,7 +230,7 @@ class FileSystemTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_create_file_system_encryption_scope_file_sas_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_create_file_system_encryption_scope_file_sas(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         url = self.account_url(datalake_storage_account_name, 'dfs')
@@ -243,9 +251,9 @@ class FileSystemTest(StorageTestCase):
         await file_system_client.create_file_system(file_system_encryption_scope=encryption_scope)
         await file_system_client.create_directory('dir1')
 
-        fsc_sas = FileSystemClient(url, file_system_name, token)
-        await fsc_sas.create_file('dir1/file1')
-        file_props = await fsc_sas.get_file_client('dir1/file1').get_file_properties()
+        file_client = DataLakeFileClient(url, file_system_name, 'dir1/file1', token)
+        await file_client.create_file()
+        file_props = await file_client.get_file_properties()
 
         # Assert
         self.assertTrue(file_props)

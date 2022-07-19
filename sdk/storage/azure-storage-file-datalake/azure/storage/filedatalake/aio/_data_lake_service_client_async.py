@@ -219,12 +219,8 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
                 :dedent: 8
                 :caption: Creating a file system in the datalake service.
         """
-        file_system_encryption_scope = kwargs.pop('file_system_encryption_scope', None)
         file_system_client = self.get_file_system_client(file_system)
-        await file_system_client.create_file_system(metadata=metadata,
-                                                    public_access=public_access,
-                                                    file_system_encryption_scope=file_system_encryption_scope,
-                                                    **kwargs)
+        await file_system_client.create_file_system(metadata=metadata, public_access=public_access, **kwargs)
         return file_system_client
 
     async def _rename_file_system(self, name, new_name, **kwargs):
