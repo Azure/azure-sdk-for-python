@@ -348,17 +348,14 @@ class DatalakeServiceTest(StorageTestCase):
         assert not client.secondary_hostname
 
     @DataLakePreparer()
-    async def test_create_file_system_encryption_scope(self, datalake_storage_account_name,
-                                                       datalake_storage_account_key):
+    async def test_file_system_encryption_scope_from_service_client_async(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system_name = "testfs"
         encryption_scope = FileSystemEncryptionScope(default_encryption_scope="hnstestscope1")
 
         # Act
-        file_system_client = await self.dsc.create_file_system(
-            file_system=file_system_name,
-            file_system_encryption_scope=encryption_scope)
+        file_system_client = await self.dsc.create_file_system(file_system=file_system_name, file_system_encryption_scope=encryption_scope)
         props = await file_system_client.get_file_system_properties()
 
         # Assert

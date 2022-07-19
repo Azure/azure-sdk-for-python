@@ -7,7 +7,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Mon, 18 Jul 2022 21:48:39 GMT
+      - Tue, 19 Jul 2022 22:19:23 GMT
       x-ms-default-encryption-scope:
       - hnstestscope1
       x-ms-deny-encryption-scope-override:
@@ -21,9 +21,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 18 Jul 2022 21:48:40 GMT
-      etag: '"0x8DA690746D7E012"'
-      last-modified: Mon, 18 Jul 2022 21:48:40 GMT
+      date: Tue, 19 Jul 2022 22:19:22 GMT
+      etag: '"0x8DA69D4BBD2F2BD"'
+      last-modified: Tue, 19 Jul 2022 22:19:23 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2021-08-06'
     status:
@@ -38,7 +38,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Mon, 18 Jul 2022 21:48:41 GMT
+      - Tue, 19 Jul 2022 22:19:23 GMT
       x-ms-version:
       - '2021-08-06'
     method: GET
@@ -48,9 +48,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 18 Jul 2022 21:48:41 GMT
-      etag: '"0x8DA690746D7E012"'
-      last-modified: Mon, 18 Jul 2022 21:48:40 GMT
+      date: Tue, 19 Jul 2022 22:19:22 GMT
+      etag: '"0x8DA69D4BBD2F2BD"'
+      last-modified: Tue, 19 Jul 2022 22:19:23 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-default-encryption-scope: hnstestscope1
       x-ms-deny-encryption-scope-override: 'false'
