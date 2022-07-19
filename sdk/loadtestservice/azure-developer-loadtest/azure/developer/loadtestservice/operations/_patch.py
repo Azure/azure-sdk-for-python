@@ -22,6 +22,8 @@ from .._vendor import _format_url_section
 from ._operations import TestOperations as TestOperationsGenerated, JSON, ClsType
 from ._operations import AppComponentOperations as AppComponentsOperationsGenerated
 
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
 def build_upload_test_file_request(
     test_id: str,
