@@ -728,7 +728,7 @@ def encode_payload(output, payload):
             TYPE: AMQPTypes.described,
             VALUE: (
                 {TYPE: AMQPTypes.ulong, VALUE: 0x00000074},
-                {TYPE: AMQPTypes.map, VALUE: payload[4]}
+                encode_application_properties(payload[4])
             )
         })
 
