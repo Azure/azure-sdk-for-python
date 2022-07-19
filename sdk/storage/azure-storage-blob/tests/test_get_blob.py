@@ -927,6 +927,7 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertIsNotNone(content.properties.content_settings.content_type)
         self.assertIsNone(content.properties.content_settings.content_md5)
 
+    @BlobPreparer()
     def test_get_blob_progress_single_get(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         data = b'a' * 512
