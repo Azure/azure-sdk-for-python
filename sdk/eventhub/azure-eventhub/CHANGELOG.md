@@ -2,14 +2,12 @@
 
 ## 5.8.0b5 (2022-07-19)
 
-### Features Added
-
-### Breaking Changes
-
 ### Bugs Fixed
+
 - Bug fixes that would prevent token refresh at regular intervals
 - Pass in the proper kwarg, so that debug levels will be output when requested
 ### Other Changes
+
 - Specific logging added in to track error scenarios
 
 ## 5.8.0a4 (2022-06-07)
