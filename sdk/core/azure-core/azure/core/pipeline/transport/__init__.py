@@ -49,68 +49,45 @@ try:
             'AsyncHttpResponse',
             'AsyncioRequestsTransport',
             'AsyncioRequestsTransportResponse'
+            'TrioRequestsTransport',
+            'TrioRequestsTransportResponse',
+            'AioHttpTransport',
+            'AioHttpTransportResponse',
         ])
 
-        if sys.version_info >= (3, 7):
-            __all__.extend([
-                'TrioRequestsTransport',
-                'TrioRequestsTransportResponse',
-                'AioHttpTransport',
-                'AioHttpTransportResponse',
-            ])
+        
+        def __dir__():
+            return __all__
 
-            def __dir__():
-                return __all__
+        def __getattr__(name):
+            if name == 'AioHttpTransport':
+                try:
+                    from ._aiohttp import AioHttpTransport
+                    return AioHttpTransport
+                except ImportError:
+                    raise ImportError("aiohttp package is not installed")
+            if name == 'AioHttpTransportResponse':
+                try:
+                    from ._aiohttp import AioHttpTransportResponse
+                    return AioHttpTransportResponse
+                except ImportError:
+                    raise ImportError("aiohttp package is not installed")
+            if name == 'TrioRequestsTransport':
+                try:
+                    from ._requests_trio import TrioRequestsTransport
+                    return TrioRequestsTransport
+                except ImportError:
+                    raise ImportError("trio package is not installed")
+            if name == 'TrioRequestsTransportResponse':
+                try:
+                    from ._requests_trio import TrioRequestsTransportResponse
+                    return TrioRequestsTransportResponse
+                except ImportError:
+                    raise ImportError("trio package is not installed")
+            if name == '__bases__':
+                raise AttributeError("module 'azure.core.pipeline.transport' has no attribute '__bases__'")
+            return name
 
-            def __getattr__(name):
-                if name == 'AioHttpTransport':
-                    try:
-                        from ._aiohttp import AioHttpTransport
-                        return AioHttpTransport
-                    except ImportError:
-                        raise ImportError("aiohttp package is not installed")
-                if name == 'AioHttpTransportResponse':
-                    try:
-                        from ._aiohttp import AioHttpTransportResponse
-                        return AioHttpTransportResponse
-                    except ImportError:
-                        raise ImportError("aiohttp package is not installed")
-                if name == 'TrioRequestsTransport':
-                    try:
-                        from ._requests_trio import TrioRequestsTransport
-                        return TrioRequestsTransport
-                    except ImportError:
-                        raise ImportError("trio package is not installed")
-                if name == 'TrioRequestsTransportResponse':
-                    try:
-                        from ._requests_trio import TrioRequestsTransportResponse
-                        return TrioRequestsTransportResponse
-                    except ImportError:
-                        raise ImportError("trio package is not installed")
-                if name == '__bases__':
-                    raise AttributeError("module 'azure.core.pipeline.transport' has no attribute '__bases__'")
-                return name
-
-        else:
-            try:
-                from ._requests_trio import TrioRequestsTransport, TrioRequestsTransportResponse
-
-                __all__.extend([
-                    'TrioRequestsTransport',
-                    'TrioRequestsTransportResponse'
-                ])
-            except ImportError:
-                pass  # Trio not installed
-
-            try:
-                from ._aiohttp import AioHttpTransport, AioHttpTransportResponse
-
-                __all__.extend([
-                    'AioHttpTransport',
-                    'AioHttpTransportResponse',
-                ])
-            except ImportError:
-                pass  # Aiohttp not installed
     except (ImportError, SyntaxError):
         # requests library is installed but asynchronous pipelines not supported.
         pass
@@ -121,40 +98,24 @@ except (ImportError, SyntaxError):
         __all__.extend([
             'AsyncHttpTransport',
             'AsyncHttpResponse',
+            'AioHttpTransport',
+            'AioHttpTransportResponse',
         ])
-
-        if sys.version_info >= (3, 7):
-            __all__.extend([
-                'AioHttpTransport',
-                'AioHttpTransportResponse',
-            ])
-
-            def __dir__():
-                return __all__
-
-            def __getattr__(name):
-                if name == 'AioHttpTransport':
-                    try:
-                        from ._aiohttp import AioHttpTransport
-                        return AioHttpTransport
-                    except ImportError:
-                        raise ImportError("aiohttp package is not installed")
-                if name == 'AioHttpTransportResponse':
-                    try:
-                        from ._aiohttp import AioHttpTransportResponse
-                        return AioHttpTransportResponse
-                    except ImportError:
-                        raise ImportError("aiohttp package is not installed")
-                return name
-
-        else:
-            try:
-                from ._aiohttp import AioHttpTransport, AioHttpTransportResponse
-                __all__.extend([
-                    'AioHttpTransport',
-                    'AioHttpTransportResponse',
-                ])
-            except ImportError:
-                pass  # Aiohttp not installed
+        def __dir__():
+            return __all__
+        def __getattr__(name):
+            if name == 'AioHttpTransport':
+                try:
+                    from ._aiohttp import AioHttpTransport
+                    return AioHttpTransport
+                except ImportError:
+                    raise ImportError("aiohttp package is not installed")
+            if name == 'AioHttpTransportResponse':
+                try:
+                    from ._aiohttp import AioHttpTransportResponse
+                    return AioHttpTransportResponse
+                except ImportError:
+                    raise ImportError("aiohttp package is not installed")
+            return name
     except (ImportError, SyntaxError):
         pass  # Asynchronous pipelines not supported.
