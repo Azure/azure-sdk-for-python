@@ -25,7 +25,6 @@ def send_event_data_batch(producer):
     # Without specifying partition_id or partition_key
     # the events will be distributed to available partitions via round-robin.
     event_data_batch = producer.create_batch()
-    producer.close()
     event_data_batch.add(EventData('Single message'))
     producer.send_batch(event_data_batch)
 
