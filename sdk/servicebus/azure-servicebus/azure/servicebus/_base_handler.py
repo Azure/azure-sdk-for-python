@@ -491,14 +491,15 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             application_properties=application_properties,
         )
         try:
-            return self._handler.mgmt_request(
+            status, description, response = self._handler.mgmt_request(
                 mgmt_msg,
-                mgmt_operation,
-                op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
+                operation=mgmt_operation,
+                operation_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
                 node=self._mgmt_target.encode(self._config.encoding),
-                timeout=timeout * 1000 if timeout else None,
-                callback=callback,
+                timeout=timeout,  # TODO: check if this should be seconds * 1000 if timeout else None,
             )
+            callback(status, response, description)
+            return response
         except Exception as exp:  # pylint: disable=broad-except
             if isinstance(exp, compat.TimeoutException):
                 raise OperationTimeoutError(error=exp)

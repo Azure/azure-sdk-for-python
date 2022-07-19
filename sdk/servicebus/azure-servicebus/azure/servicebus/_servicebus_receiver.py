@@ -711,9 +711,9 @@ class ServiceBusReceiver(
         self._open()
         uamqp_receive_mode = ServiceBusToAMQPReceiveModeMap[self._receive_mode]
         try:
-            receive_mode = uamqp_receive_mode.value.value
+            receive_mode = uamqp_receive_mode.value
         except AttributeError:
-            receive_mode = int(uamqp_receive_mode.value)
+            receive_mode = int(uamqp_receive_mode)
         message = {
             MGMT_REQUEST_SEQUENCE_NUMBERS: utils.amqp_array_value(
                 [utils.amqp_long_value(s) for s in sequence_numbers]

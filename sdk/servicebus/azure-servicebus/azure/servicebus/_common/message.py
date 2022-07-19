@@ -627,6 +627,7 @@ class ServiceBusMessageBatch(object):
     def __init__(self, max_size_in_bytes: Optional[int] = None) -> None:
         self._max_size_in_bytes = max_size_in_bytes or MAX_MESSAGE_LENGTH_BYTES
         self._message = [None] * 9
+        self._message[5] = []
         self._size = get_message_encoded_size(BatchMessage(*self._message))
         self._count = 0
         self._messages: List[ServiceBusMessage] = []

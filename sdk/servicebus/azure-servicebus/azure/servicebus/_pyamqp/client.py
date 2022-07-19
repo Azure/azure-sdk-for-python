@@ -394,7 +394,7 @@ class AMQPClient(object):
             operation_type=operation_type,
             timeout=timeout
         )
-        return response
+        return status, description, response
 
 
 class SendClient(AMQPClient):
