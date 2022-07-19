@@ -21,6 +21,8 @@ except Exception as e:
 
 _LOGGER = logging.getLogger(__name__)
 _SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
+_BLACK_MODE = black.Mode()
+_BLACK_MODE.line_length = 120
 
 DEFAULT_DEST_FOLDER = "./dist"
 
