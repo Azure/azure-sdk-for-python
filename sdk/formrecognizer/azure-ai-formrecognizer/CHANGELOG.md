@@ -10,6 +10,7 @@
 - Renamed `AccountInfo` model to `ResourceInfo`.
 - Renamed `DocumentModelInfo` model to `DocumentModelSummary`.
 - Renamed `DocumentModel` to `DocumentModelInfo`.
+- Removed `continuation_token` keyword from `begin_analyze_document()` and `begin_analyze_document_from_url()` on `DocumentAnalysisClient` and from `begin_build_model()`, `begin_compose_model()` and `begin_copy_model_to()` on `DocumentModelAdministrationClient`.
 
 ### Bugs Fixed
 
