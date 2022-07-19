@@ -5,7 +5,7 @@
 
 # pylint: disable=protected-access, too-many-lines
 
-from typing import Any, Iterable, List
+from typing import Any, Dict, Iterable, List, NewType
 from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
@@ -18,6 +18,8 @@ from ._helpers import (
     _get_deserialize,
 )
 
+
+TargetAuthorization = NewType('TargetAuthorization', Dict[str, str])
 
 def prepare_document_spans(spans):
     return [DocumentSpan._from_generated(span) for span in spans] if spans else []
