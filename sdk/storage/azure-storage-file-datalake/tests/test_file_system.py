@@ -116,15 +116,23 @@ class FileSystemTest(StorageTestCase):
         token = generate_account_sas(
             self.dsc.account_name,
             self.dsc.credential.account_key,
-            ResourceTypes(file_system=True),
+            ResourceTypes(file_system=True, object=True),
             AccountSasPermissions(write=True, read=True, create=True, delete=True),
             datetime.utcnow() + timedelta(hours=5),
             encryption_scope="hnstestscope1")
         file_system_name = self._get_file_system_reference()
+        encryption_scope = FileSystemEncryptionScope(default_encryption_scope="hnstestscope1")
 
         # Act
-        file_system_client = FileSystemClient(account_url=url, file_system_name=file_system_name, credential=token)
-        file_system_client.create_file_system()
+        file_system_client = self.dsc.get_file_system_client(file_system_name)
+        file_system_client.create_file_system(file_system_encryption_scope=encryption_scope)
+
+        fsc_sas = FileSystemClient(file_system_name, token)
+        fsc_sas.create_file('file1')
+        fsc_sas.create_directory('dir1')
+        dir_props = fsc_sas.get_directory_client('dir1').get_directory_properties()
+        file_props = fsc_sas.get_file_client('file1').get_file_properties()
+
         props = file_system_client.get_file_system_properties()
         print(props)
 
