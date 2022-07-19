@@ -160,7 +160,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
 
     @property
     def id(self):
-        if self._current_body:
+        if self._current_body and self._current_body.job_id is not None:
             return self._current_body.job_id
         return self._get_id_from_headers()
 
@@ -335,7 +335,7 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
 
     @property
     def id(self):
-        if self._current_body:
+        if self._current_body and self._current_body.job_id is not None:
             return self._current_body.job_id
         return self._get_id_from_headers()
 
