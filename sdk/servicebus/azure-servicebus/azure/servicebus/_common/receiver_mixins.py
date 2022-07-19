@@ -98,7 +98,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
 
     def _build_message(self, received, message_type=ServiceBusReceivedMessage):
         message = message_type(
-            message=received, receive_mode=self._receive_mode, receiver=self
+            message=received[1], receive_mode=self._receive_mode, receiver=self, frame=received[0]
         )
         self._last_received_sequenced_number = message.sequence_number
         return message

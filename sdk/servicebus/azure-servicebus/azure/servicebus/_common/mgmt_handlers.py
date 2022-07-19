@@ -66,7 +66,7 @@ def peek_op(  # pylint: disable=inconsistent-return-statements
     if status_code == 200:
         parsed = []
         for m in message.value[b"messages"]:
-            wrapped = decode_payload(bytearray(m[b"message"]))
+            wrapped = decode_payload(memoryview(m[b"message"]))
             parsed.append(
                 ServiceBusReceivedMessage(
                     wrapped, is_peeked_message=True, receiver=receiver
@@ -114,7 +114,7 @@ def deferred_message_op(  # pylint: disable=inconsistent-return-statements
     if status_code == 200:
         parsed = []
         for m in message.value[b"messages"]:
-            wrapped = decode_payload(bytearray(m[b"message"]))
+            wrapped = decode_payload(memoryview(m[b"message"]))
             parsed.append(
                 message_type(
                     wrapped, receive_mode, is_deferred_message=True, receiver=receiver

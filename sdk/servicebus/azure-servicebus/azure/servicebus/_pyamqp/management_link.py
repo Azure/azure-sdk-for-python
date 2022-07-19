@@ -41,12 +41,14 @@ class ManagementLink(object):
         self._session = session
         self._request_link: SenderLink = session.create_sender_link(
             endpoint,
+            source_address=endpoint,
             on_link_state_change=self._on_sender_state_change,
             send_settle_mode=SenderSettleMode.Unsettled,
             rcv_settle_mode=ReceiverSettleMode.First
         )
         self._response_link: ReceiverLink = session.create_receiver_link(
             endpoint,
+            target_address=endpoint,
             on_link_state_change=self._on_receiver_state_change,
             on_transfer=self._on_message_received,
             send_settle_mode=SenderSettleMode.Unsettled,

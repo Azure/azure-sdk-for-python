@@ -744,15 +744,15 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
 
     def __init__(
             self,
-            message: Tuple[TransferFrame, Message],
+            message: Message,
             receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
+            frame: Optional[TransferFrame] = None,
             **kwargs
     ) -> None:
-        frame, message = message
         super(ServiceBusReceivedMessage, self).__init__(None, message=message)  # type: ignore
         self._settled = receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
-        self._delivery_tag = frame[2]
-        self.delivery_id = frame[1]
+        self._delivery_tag = frame[2] if frame else None
+        self.delivery_id = frame[1] if frame else None
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self._is_peeked_message = kwargs.get("is_peeked_message", False)
