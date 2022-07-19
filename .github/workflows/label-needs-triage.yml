@@ -1,20 +1,21 @@
-name: Add needs-triage label to new issue
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
 
+name: Add needs-triage label for new issues
 on:
   issues:
-    types: [opened]
-
-env:
-  BASE_BRANCH: ${{ github.base_ref }}
-
+    types:
+      - opened
 jobs:
-  needs-triage:
+  label_issues:
     runs-on: ubuntu-latest
-
+    permissions:
+      issues: write
     steps:
-      - name: add labels
-        uses: actions/labeler@v3
-        if: env.BASE_BRANCH == 'main'
+      - name: Label issues
+        uses: andymckay/labeler@e6c4322d0397f3240f0e7e30a33b5c5df2d39e90
         with:
-          github_token: ${{ secrets.GH_AZURE_SDK_PROJECT_PAT }}
-          labels: needs-triage
+          add-labels: "needs-triage"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}

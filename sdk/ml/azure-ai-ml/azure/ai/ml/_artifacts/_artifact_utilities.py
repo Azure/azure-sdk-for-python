@@ -8,7 +8,7 @@ from typing import Optional, Dict, TypeVar, Union, Tuple
 from pathlib import Path
 from datetime import datetime, timedelta
 import uuid
-from azure.ai.ml._azure_environments import ENDPOINT_URLS, _get_cloud_details
+from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
 
 from azure.storage.blob import generate_blob_sas, BlobSasPermissions
 from azure.storage.filedatalake import generate_file_sas, FileSasPermissions
@@ -68,8 +68,7 @@ def get_datastore_info(operations: DatastoreOperations, name: str) -> Dict[str, 
     else:
         datastore = operations.get_default(include_secrets=True)
 
-    cloud_details = _get_cloud_details()
-    storage_endpoint = cloud_details.get(ENDPOINT_URLS.STORAGE_ENDPOINT)
+    storage_endpoint = _get_storage_endpoint_from_metadata()
     credentials = datastore.credentials
     datastore_info["storage_type"] = datastore.type
     datastore_info["storage_account"] = datastore.account_name

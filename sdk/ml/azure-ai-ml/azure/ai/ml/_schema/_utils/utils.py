@@ -6,7 +6,7 @@ import logging
 import re
 
 from marshmallow.exceptions import ValidationError
-from typing import Any
+from typing import Any, Dict
 from collections import OrderedDict
 
 module_logger = logging.getLogger(__name__)
@@ -38,3 +38,24 @@ def replace_key_in_odict(odict: OrderedDict, old_key: Any, new_key: Any):
     if not odict or old_key not in odict:
         return odict
     return OrderedDict([(new_key, v) if k == old_key else (k, v) for k, v in odict.items()])
+
+
+# This is temporary until deployments(batch/K8S) support registry references
+def exit_if_registry_assets(data: Dict, caller: str) -> None:
+    startswith = "azureml://registries/"
+    if (
+        "environment" in data
+        and data["environment"]
+        and isinstance(data["environment"], str)
+        and data["environment"].startswith(startswith)
+    ):
+        raise ValidationError(f"Registry reference for environments is not supported for {caller}")
+    if "model" in data and data["model"] and isinstance(data["model"], str) and data["model"].startswith(startswith):
+        raise ValidationError(f"Registry reference for models is not supported for {caller}")
+    if (
+        "code_configuration" in data
+        and data["code_configuration"].code
+        and isinstance(data["code_configuration"].code, str)
+        and data["code_configuration"].code.startswith(startswith)
+    ):
+        raise ValidationError(f"Registry reference for code_configuration.code is not supported for {caller}")

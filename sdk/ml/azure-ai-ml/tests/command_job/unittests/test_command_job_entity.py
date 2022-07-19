@@ -14,6 +14,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken
 from azure.ai.ml import Input
 from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml import MpiDistribution
+from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
 from collections import OrderedDict
 
 
@@ -42,17 +43,17 @@ class TestCommandJobEntity:
             resource = json.load(f)
         rest_job = JobBaseData.deserialize(resource)
         print(type(rest_job.properties))
-        job = CommandJob._from_rest_object(rest_job)
+        job = Job._from_rest_object(rest_job)
         assert job.command == "echo ${{inputs.filePath}} && ls ${{inputs.dirPath}}"
 
     def test_missing_input_raises(self):
         with open("./tests/test_configs/command_job/rest_command_job_env_var_command.json", "r") as f:
             resource = json.load(f)
         rest_job = JobBaseData.deserialize(resource)
-        job = CommandJob._from_rest_object(rest_job)
+        job = Job._from_rest_object(rest_job)
         job.command = "echo ${{inputs.missing_input}}"
         with pytest.raises(ValidationException):
-            job._to_rest_object()
+            to_rest_job_object(job)
 
     def test_calling_command_job_constructor_with_promoted_properties(self):
         basic_job = CommandJob(

@@ -9,5 +9,9 @@ stages:
         - TestSamples=.*/true
       MaxParallel: 1
       EnvVars:
+        AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)
+        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         TEST_MODE: "RunLiveNoRecord" # use when allowing preparers to create the rgs for you
         AZURE_TEST_RUN_LIVE: "true" # use when utilizing the New-TestResources Script

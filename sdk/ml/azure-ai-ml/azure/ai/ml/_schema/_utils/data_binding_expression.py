@@ -6,18 +6,22 @@ from marshmallow import fields, Schema
 from azure.ai.ml._schema import NestedField, PathAwareSchema
 from azure.ai.ml._schema.core.fields import DataBindingStr, UnionField
 
+DATA_BINDING_SUPPORTED_KEY = "_data_binding_supported"
+
 
 def _is_literal(field):
     return not isinstance(field, (NestedField, fields.List, fields.Dict, UnionField))
 
 
 def _add_data_binding_to_field(field, attrs_to_skip, schema_stack):
+    if hasattr(field, DATA_BINDING_SUPPORTED_KEY) and getattr(field, DATA_BINDING_SUPPORTED_KEY):
+        return field
     data_binding_field = DataBindingStr()
     if isinstance(field, UnionField):
         for field_obj in field.union_fields:
             if not _is_literal(field_obj):
                 _add_data_binding_to_field(field_obj, attrs_to_skip, schema_stack=schema_stack)
-        field.union_fields.insert(0, data_binding_field)
+        field.insert_union_field(data_binding_field)
     elif isinstance(field, fields.Dict):
         # handle dict, dict value can be None
         if field.value_field is not None:
@@ -37,6 +41,8 @@ def _add_data_binding_to_field(field, attrs_to_skip, schema_stack):
             dump_only=field.dump_only,
             required=field.required,
         )
+
+    setattr(field, DATA_BINDING_SUPPORTED_KEY, True)
     return field
 
 
@@ -46,10 +52,10 @@ def support_data_binding_expression_for_fields(
     """Update fields inside schema to support data binding string.
     Only first layer of recursive schema is supported now.
     """
-    if hasattr(schema, "_data_binding_supported") and schema._data_binding_supported:
+    if hasattr(schema, DATA_BINDING_SUPPORTED_KEY) and getattr(schema, DATA_BINDING_SUPPORTED_KEY):
         return
     else:
-        schema._data_binding_supported = True
+        setattr(schema, DATA_BINDING_SUPPORTED_KEY, True)
 
     if attrs_to_skip is None:
         attrs_to_skip = []
