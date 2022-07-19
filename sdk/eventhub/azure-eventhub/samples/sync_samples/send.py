@@ -8,15 +8,10 @@
 """
 Examples to show sending events with different options to an Event Hub partition.
 """
-
-import logging
-import sys
 import time
 import os
-from tkinter.tix import Tree
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.eventhub.exceptions import EventHubError
-from azure.identity import DefaultAzureCredential
 
 CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
