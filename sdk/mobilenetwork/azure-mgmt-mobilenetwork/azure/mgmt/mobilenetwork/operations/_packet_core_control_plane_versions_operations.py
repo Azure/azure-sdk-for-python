@@ -20,14 +20,15 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
-from .._vendor import _convert_request
+from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def build_list_request(
+def build_get_request(
+    version_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -37,7 +38,12 @@ def build_list_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/providers/Microsoft.MobileNetwork/operations")
+    _url = kwargs.pop("template_url", "/providers/Microsoft.MobileNetwork/packetCoreControlPlaneVersions/{versionName}")
+    path_format_arguments = {
+        "versionName": _SERIALIZER.url("version_name", version_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
@@ -53,14 +59,41 @@ def build_list_request(
         **kwargs
     )
 
-class Operations:
+
+def build_list_by_resource_group_request(
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "/providers/Microsoft.MobileNetwork/packetCoreControlPlaneVersions")
+
+    # Construct parameters
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
+
+class PacketCoreControlPlaneVersionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.mobilenetwork.MobileNetworkManagementClient`'s
-        :attr:`operations` attribute.
+        :attr:`packet_core_control_plane_versions` attribute.
     """
 
     models = _models
@@ -74,22 +107,83 @@ class Operations:
 
 
     @distributed_trace
-    def list(
+    def get(
+        self,
+        version_name: str,
+        **kwargs: Any
+    ) -> _models.PacketCoreControlPlaneVersion:
+        """Gets information about the specified packet core control plane version.
+
+        :param version_name: The name of the packet core control plane version.
+        :type version_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: PacketCoreControlPlaneVersion, or the result of cls(response)
+        :rtype: ~azure.mgmt.mobilenetwork.models.PacketCoreControlPlaneVersion
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PacketCoreControlPlaneVersion]
+
+        
+        request = build_get_request(
+            version_name=version_name,
+            api_version=api_version,
+            template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('PacketCoreControlPlaneVersion', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get.metadata = {'url': "/providers/Microsoft.MobileNetwork/packetCoreControlPlaneVersions/{versionName}"}  # type: ignore
+
+
+    @distributed_trace
+    def list_by_resource_group(
         self,
         **kwargs: Any
-    ) -> Iterable[_models.OperationList]:
-        """Gets a list of the operations.
+    ) -> Iterable[_models.PacketCoreControlPlaneVersionListResult]:
+        """Lists all supported packet core control planes versions.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OperationList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mobilenetwork.models.OperationList]
+        :return: An iterator like instance of either PacketCoreControlPlaneVersionListResult or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.mobilenetwork.models.PacketCoreControlPlaneVersionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.OperationList]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PacketCoreControlPlaneVersionListResult]
 
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -98,9 +192,9 @@ class Operations:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_request(
+                request = build_list_by_resource_group_request(
                     api_version=api_version,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list_by_resource_group.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
@@ -109,7 +203,7 @@ class Operations:
 
             else:
                 
-                request = build_list_request(
+                request = build_list_by_resource_group_request(
                     api_version=api_version,
                     template_url=next_link,
                     headers=_headers,
@@ -121,7 +215,7 @@ class Operations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("OperationList", pipeline_response)
+            deserialized = self._deserialize("PacketCoreControlPlaneVersionListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -148,4 +242,4 @@ class Operations:
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': "/providers/Microsoft.MobileNetwork/operations"}  # type: ignore
+    list_by_resource_group.metadata = {'url': "/providers/Microsoft.MobileNetwork/packetCoreControlPlaneVersions"}  # type: ignore
