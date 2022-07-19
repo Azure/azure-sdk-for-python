@@ -11,7 +11,7 @@ steps:
 
   - task: Powershell@2
     inputs:
-      filePath: $(Build.SourcesDirectory)/eng/common/scripts/Create-APIReview.ps1
+      filePath: $(Build.SourcesDirectory)/eng/scripts/Create-ApiReview.ps1
       arguments: >
         -ArtifactList ('${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json | Select-Object Name)
         -ArtifactPath ${{ parameters.ArtifactPath }}
