@@ -42,7 +42,7 @@ class ImageClassificationSchema(ImageClassificationBaseSchema):
 
         data.pop("task_type")
         loaded_data = data
-        search_space_val = data.pop("search_space")
+        search_space_val = data.pop("search_space", None)
         search_space = ImageClassificationJob._get_search_space_from_str(search_space_val)
         data_settings = {
             "training_data": loaded_data.pop("training_data"),
@@ -74,7 +74,7 @@ class ImageClassificationMultilabelSchema(ImageClassificationBaseSchema):
 
         data.pop("task_type")
         loaded_data = data
-        search_space_val = data.pop("search_space")
+        search_space_val = data.pop("search_space", None)
         search_space = ImageClassificationMultilabelJob._get_search_space_from_str(search_space_val)
         data_settings = {
             "training_data": loaded_data.pop("training_data"),

@@ -12,7 +12,7 @@ from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 from azure.ai.ml._restclient.v2021_10_01.models import (
     DatastoreType,
 )
-from azure.ai.ml._azure_environments import ENDPOINT_URLS, _get_cloud_details
+from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
 from azure.ai.ml.constants import (
     FILE_PREFIX,
     FOLDER_PREFIX,
@@ -134,8 +134,7 @@ def get_storage_client(
         f"types for artifact upload include: {*SUPPORTED_STORAGE_TYPES,}"
         raise ValidationException(message=msg, no_personal_data_message=msg, target=ErrorTarget.DATASTORE)
 
-    cloud_details = _get_cloud_details()
-    storage_endpoint = cloud_details.get(ENDPOINT_URLS.STORAGE_ENDPOINT)
+    storage_endpoint = _get_storage_endpoint_from_metadata()
     if not account_url and storage_endpoint:
         account_url = STORAGE_ACCOUNT_URLS[storage_type].format(storage_account, storage_endpoint)
 
