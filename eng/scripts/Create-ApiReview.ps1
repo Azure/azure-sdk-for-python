@@ -61,7 +61,7 @@ function ProcessPackage($PackageName)
     Write-Host "Source branch: $($SourceBranch)"
     Write-Host "Config File directory: $($ConfigFileDir)"
 
-    $reviewFileName = "$PackageName_$Language.json"
+    $reviewFileName = "$($PackageName)_$($Language).json"
 
     $packages = @{}
     if ($FindArtifactForApiReviewFn -and (Test-Path "Function:$FindArtifactForApiReviewFn"))
