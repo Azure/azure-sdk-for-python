@@ -25,18 +25,18 @@ class LoadtestserviceSmokeTest(LoadtestserviceTest):
             "keyvaultReferenceIdentityType": "SystemAssigned",
             "keyvaultReferenceIdentityId": None,
         }
-        result = client.test.create_or_update_test(test_id, body_test)
+        result = client.administration.test.create_or_update_test(test_id, body_test)
         assert result is not None
 
     @LoadtestservicePowerShellPreparer()
     def test_smoke_list_search(self, loadtestservice_endpoint):
         client = self.create_client(loadtestservice_endpoint)
-        result = client.test.list_load_test_search()
+        result = client.administration.test.list_load_test_search()
         assert result is not None
 
     @LoadtestservicePowerShellPreparer()
     def test_smoke_delete_test(self, loadtestservice_endpoint):
         client = self.create_client(loadtestservice_endpoint)
         test_id = "000001"
-        result = client.test.delete_load_test(test_id)
+        result = client.administration.test.delete_load_test(test_id)
         assert result is None

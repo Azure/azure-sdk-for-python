@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import List, cast
+from typing import List, cast, Optional, Any
 from .._serialization import Serializer
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -20,7 +20,7 @@ from azure.core.rest import HttpRequest
 from azure.core.utils import case_insensitive_dict
 from .._vendor import _format_url_section
 from ._operations import TestOperations as TestOperationsGenerated, JSON, ClsType
-from ._operations import AppComponentOperations as AppComponentsOperationsGenerated
+from ._operations import AppComponentOperations as AppComponentOperationsGenerated
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False

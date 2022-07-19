@@ -25,8 +25,10 @@ class LoadTestAdministration:
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
         self._config = config
-        self._serializer = serializer
-        self._deserializer = deserializer
+        
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
+        self._serialize.client_side_validation = False
 
         self.app_component = AppComponentOperations(self._client, self._config, self._serialize, self._deserialize)
         self.server_metrics = ServerMetricsOperations(self._client, self._config, self._serialize, self._deserialize)
