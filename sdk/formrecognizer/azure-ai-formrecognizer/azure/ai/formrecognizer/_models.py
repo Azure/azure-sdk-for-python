@@ -5,7 +5,7 @@
 
 # pylint: disable=protected-access, too-many-lines
 
-from typing import Any, Iterable, List
+from typing import Iterable, List
 from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
