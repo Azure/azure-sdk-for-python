@@ -13,30 +13,12 @@ package-pprint-name: Azure Developer LoadTestService
 security: AADToken
 security-scopes: https://loadtest.azure-dev.com/.default
 directive:
-    - from: swagger-document
-      where: $["paths"]["/appcomponents/{name}"].patch
-      transform: $["operationId"] = "AppComponent_CreateOrUpdate"
-    - from: swagger-document
-      where: $["paths"]["/appcomponents/{name}"].delete
-      transform: $["operationId"] = "AppComponent_Delete"
-    - from: swagger-document
-      where: $["paths"]["/appcomponents/{name}"].get
-      transform: $["operationId"] = "AppComponent_GetByName"
     - from: swagger-document 
       where: $["paths"]["/serverMetricsConfig/supportedResourceTypes"].get
       transfrom: $["operationId"] = "ServerMetrics_ListSupportedResourceTypes"
     - from: swagger-document
       where: $["paths"]["/testruns/sortAndFilter"].get
       transfrom: $["operationId"] = "TestRun_ListTestRuns"
-    - from: swagger-document
-      where: $["paths"]["/serverMetricsConfig/{name}"].patch
-      transfrom: $["operationId"] = "ServerMetrics_CreateOrUpdateConfig"
-    - from: swagger-document
-      where: $["paths"]["/serverMetricsConfig/{name}"].get
-      transfrom: $["operationId"] = "ServerMetrics_GetByName"
-    - from: swagger-document
-      where: $["paths"]["/serverMetricsConfig/{name}"].delete
-      transfrom: $["operationId"] = "ServerMetrics_Delete"
     - from: swagger-document
       where: $["paths"]["/serverMetricsConfig"].get
       transfrom: $["operationId"] = "ServerMetrics_ListGetServerMetrics"

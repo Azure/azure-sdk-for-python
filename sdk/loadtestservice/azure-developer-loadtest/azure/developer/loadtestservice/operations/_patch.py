@@ -25,6 +25,7 @@ from ._operations import AppComponentOperations as AppComponentOperationsGenerat
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
+
 def build_upload_test_file_request(
     test_id: str,
     file_id: str,
@@ -173,7 +174,6 @@ class AppComponentOperations(AppComponentOperationsGenerated):
 
         if name is not None:
             return super().get_by_name(name=name, **kwargs)
-
         else:
             return super().get_app_component(test_run_id=test_run_id, test_id=test_id, **kwargs)
 

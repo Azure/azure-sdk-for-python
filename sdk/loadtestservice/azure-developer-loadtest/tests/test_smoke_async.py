@@ -10,7 +10,6 @@ from testcase_async import LoadtestserviceAsyncTest
 
 
 class LoadtestserviceSmokeAsyncTest(LoadtestserviceAsyncTest):
-
     @pytest.mark.asyncio
     @LoadtestservicePowerShellPreparer()
     async def test_smoke_create_or_update_test(self, loadtestservice_endpoint):

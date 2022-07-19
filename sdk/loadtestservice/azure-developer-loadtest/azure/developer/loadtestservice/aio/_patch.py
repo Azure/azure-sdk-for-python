@@ -25,7 +25,7 @@ class LoadTestAdministration:
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
         self._config = config
-        
+
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False

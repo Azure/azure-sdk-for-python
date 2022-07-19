@@ -24,10 +24,10 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ...operations._operations import (
-    build_app_component_create_or_update_request,
-    build_app_component_delete_request,
+    build_app_component_create_or_update_app_components_request,
+    build_app_component_delete_app_component_request,
+    build_app_component_get_app_component_by_name_request,
     build_app_component_get_app_component_request,
-    build_app_component_get_by_name_request,
     build_server_metrics_create_or_update_server_metrics_config_request,
     build_server_metrics_delete_server_metrics_request,
     build_server_metrics_get_server_default_metrics_request,
@@ -79,7 +79,7 @@ class AppComponentOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    async def create_or_update(
+    async def create_or_update_app_components(
         self, name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Associate an App Component (Azure resource) to a test or test run.
@@ -155,7 +155,7 @@ class AppComponentOperations:
         """
 
     @overload
-    async def create_or_update(
+    async def create_or_update_app_components(
         self, name: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Associate an App Component (Azure resource) to a test or test run.
@@ -205,7 +205,7 @@ class AppComponentOperations:
         """
 
     @distributed_trace_async
-    async def create_or_update(self, name: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    async def create_or_update_app_components(self, name: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Associate an App Component (Azure resource) to a test or test run.
 
         Associate an App Component (Azure resource) to a test or test run.
@@ -268,7 +268,7 @@ class AppComponentOperations:
         else:
             _json = body
 
-        request = build_app_component_create_or_update_request(
+        request = build_app_component_create_or_update_app_components_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -310,7 +310,9 @@ class AppComponentOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace_async
-    async def delete(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    async def delete_app_component(  # pylint: disable=inconsistent-return-statements
+        self, name: str, **kwargs: Any
+    ) -> None:
         """Delete an App Component.
 
         Delete an App Component.
@@ -330,7 +332,7 @@ class AppComponentOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_app_component_delete_request(
+        request = build_app_component_delete_app_component_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -355,7 +357,7 @@ class AppComponentOperations:
             return cls(pipeline_response, None, {})
 
     @distributed_trace_async
-    async def get_by_name(self, name: str, **kwargs: Any) -> JSON:
+    async def get_app_component_by_name(self, name: str, **kwargs: Any) -> JSON:
         """Get App Component details by App Component name.
 
         Get App Component details by App Component name.
@@ -404,7 +406,7 @@ class AppComponentOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_app_component_get_by_name_request(
+        request = build_app_component_get_app_component_by_name_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
