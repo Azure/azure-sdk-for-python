@@ -632,7 +632,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
 
             try:
                 await asyncio.wait_for(
-                    self.do_work_async(batch=to_receive_size),
+                    self.do_work_async(),
                     timeout=timeout_time - now_time if timeout else None
                 )
             except asyncio.TimeoutError:
