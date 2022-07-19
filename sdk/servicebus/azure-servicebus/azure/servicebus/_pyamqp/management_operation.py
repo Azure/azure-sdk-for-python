@@ -99,7 +99,7 @@ class ManagementOperation(object):
         )
 
         while not self._responses[operation_id] and not self._mgmt_error:
-            if timeout > 0:
+            if timeout and timeout > 0:
                 now = time.time()
                 if (now - start_time) >= timeout:
                     raise TimeoutError("Failed to receive mgmt response in {}ms".format(timeout))
