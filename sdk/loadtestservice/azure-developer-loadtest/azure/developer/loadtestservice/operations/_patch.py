@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import List, cast
-from msrest import Serializer
+from .._serialization import Serializer
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -21,9 +21,6 @@ from azure.core.utils import case_insensitive_dict
 from .._vendor import _format_url_section
 from ._operations import TestOperations as TestOperationsGenerated, JSON, ClsType
 from ._operations import AppComponentOperations as AppComponentsOperationsGenerated
-
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
 
 
 def build_upload_test_file_request(
