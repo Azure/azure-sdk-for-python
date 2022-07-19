@@ -6,6 +6,7 @@
 
 from io import StringIO, BytesIO
 from json import loads
+from math import ceil
 from os import (
     urandom,
     path,
@@ -749,6 +750,32 @@ class StorageBlobEncryptionTestAsync(AsyncStorageTestCase):
         self.assertEqual(self.bytes, bytes_blob)
         self.assertEqual(self.bytes, stream_blob.read())
         self.assertEqual(self.bytes.decode(), text_blob)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_get_blob_read(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        self.bsc.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+
+        data = b'12345' * 205 * 25  # 25625 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference(BlobType.BLOCKBLOB))
+        await blob.upload_blob(data, overwrite=True)
+        stream = await blob.download_blob(max_concurrency=3)
+
+        # Act
+        result = bytearray()
+        read_size = 3000
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = await stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
 
 
 # ------------------------------------------------------------------------------

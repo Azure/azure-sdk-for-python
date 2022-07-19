@@ -7,6 +7,7 @@
 import base64
 import os
 from json import dumps, loads
+from math import ceil
 
 import pytest
 from azure.core import MatchConditions
@@ -755,6 +756,40 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
 
         # Assert
         self.assertEqual(len(content), total)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_using_read(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_get_size=4 * MiB,
+            max_chunk_get_size=4 * MiB,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        data = b'abcde' * 4 * MiB  # 20 MiB
+        blob.upload_blob(data, overwrite=True)
+
+        # Act
+        stream = blob.download_blob(max_concurrency=2)
+
+        result = bytearray()
+        read_size = 5 * MiB
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
 
     @pytest.mark.skip(reason="Intended for manual testing due to blob size.")
     @pytest.mark.live_test_only
