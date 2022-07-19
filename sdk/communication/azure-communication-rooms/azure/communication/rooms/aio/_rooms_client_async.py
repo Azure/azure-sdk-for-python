@@ -32,12 +32,12 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param AsyncTokenCredential credential:
-        The AsyncTokenCredential we use to authenticate against the service.
+    :param str credential:
+        The access key we use to authenticate against the service.
     """
     def __init__(
             self, endpoint, # type: str
-            credential, # type: AsyncTokenCredential
+            credential, # type: str
             **kwargs # type: Any
     ):
         # type: (...) -> None
@@ -50,6 +50,11 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         if not credential:
             raise ValueError(
                 "invalid credential from connection string.")
+
+        # TokenCredential not supported at the moment
+        if hasattr(credential, "get_token"):
+            raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
+                    "or a token credential from azure.identity".format(type(credential)))
 
         self._endpoint = endpoint
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
