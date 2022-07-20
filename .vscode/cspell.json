@@ -537,6 +537,12 @@
         "startf",
         "dpkg"
       ]
+    },
+    {
+      "filename": "sdk/confidentialledger/test-resources.bicep",
+      "words": [
+        "pysdkci"
+      ]
     }
   ],
   "allowCompoundWords": true
