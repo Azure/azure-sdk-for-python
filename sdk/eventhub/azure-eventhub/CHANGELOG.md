@@ -1,5 +1,15 @@
 # Release History
 
+## 5.8.0b6 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 5.8.0a5 (2022-07-19)
 
 ### Bugs Fixed
