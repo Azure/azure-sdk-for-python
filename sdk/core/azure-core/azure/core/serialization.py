@@ -136,12 +136,19 @@ def _serialize_datetime(o):
     # Next try datetime.date or datetime.time
     return o.isoformat()
 
+def _is_readonly(p):
+    try:
+        return p._readonly
+    except AttributeError:
+        return False
+
 class AzureJSONEncoder(JSONEncoder):
     """A JSON encoder that's capable of serializing datetime objects and bytes."""
 
     def default(self, o):  # pylint: disable=too-many-return-statements
         if _is_model(o):
-            return dict(o)
+            readonly_props = [p._rest_name for p in o._attr_to_rest_field.values() if _is_readonly(p)]
+            return {k: v for k, v in o.items() if k not in readonly_props}
         if isinstance(o, (bytes, bytearray)):
             return base64.b64encode(o).decode()
         try:

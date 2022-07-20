@@ -1819,18 +1819,28 @@ class ModelWithReadonly(Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-# def test_readonly():
-#     # we pass the dict to json, so readonly shouldn't show up in the JSON version
-#     model = ModelWithReadonly(normal_property="normal_property")
-#     model.readonly_property = "set"
-#     assert model.readonly_property == "set"
-#     assert model["readonlyProperty"] is None
+def test_readonly():
+    # we pass the dict to json, so readonly shouldn't show up in the JSON version
+    model = ModelWithReadonly({"normalProperty": "normal", "readonlyProperty": "readonly"})
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {"normalProperty": "normal"}
+    assert model == {"normalProperty": "normal", "readonlyProperty": "readonly"}
+    assert model["readonlyProperty"] == model.readonly_property == "readonly"
 
-# def test_readonly_roundtrip():
-#     # this is the model we get back from the service, we want to send it without readonly
-#     received_model = ModelWithReadonly({"normalProperty": "foo", "readonlyProperty": "bar"})
-#     assert received_model.normal_property == received_model["normalProperty"] == "foo"
-#     assert received_model.readonly_property == received_model["readonlyProperty"] == "bar"
+def test_readonly_set():
+    model = ModelWithReadonly({"normalProperty": "normal", "readonlyProperty": "readonly"})
+    model.normal_property = "set"
+    model.readonly_property = "set"
+    assert model.normal_property == model["normalProperty"] == "set"
+    assert model.readonly_property == model["readonlyProperty"] == "set"
+
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {"normalProperty": "set"}
+
+    model["normalProperty"] = "setWithDict"
+    model["readonlyProperty"] = "setWithDict"
+
+    assert model.normal_property == model["normalProperty"] == "setWithDict"
+    assert model.readonly_property == model["readonlyProperty"] == "setWithDict"
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {"normalProperty": "setWithDict"}
 
 def test_incorrect_initialization():
     class MyModel(Model):
