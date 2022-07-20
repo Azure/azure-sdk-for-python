@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 
 PACKAGE_NAME = "azure-developer-loadtesting"
-PACKAGE_PPRINT_NAME = "Azure Developer LoadTestService"
+PACKAGE_PPRINT_NAME = "Azure Developer Loadtesting"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
