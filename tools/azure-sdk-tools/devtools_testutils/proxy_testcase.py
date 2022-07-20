@@ -19,7 +19,6 @@ from azure.core.pipeline.transport import RequestsTransport
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from .config import PROXY_URL
 from .helpers import get_test_id, is_live, is_live_and_not_recording, set_recording_id
-from .proxy_startup import test_proxy
 
 if TYPE_CHECKING:
     from typing import Callable, Dict, Tuple
