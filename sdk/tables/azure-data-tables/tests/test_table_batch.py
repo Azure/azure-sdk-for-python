@@ -37,7 +37,7 @@ from azure.data.tables import (
 )
 
 from _shared.testcase import TableTestCase
-from preparers import tables_decorator, tables_decorator_with_wraps
+from preparers import tables_decorator
 
 #------------------------------------------------------------------------------
 TEST_TABLE_PREFIX = 'table'
@@ -279,22 +279,13 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @tables_decorator_with_wraps
-    def test_batch_single_op_if_doesnt_match(self, variable_recorder, tables_storage_account_name=None, tables_primary_storage_account_key=None):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_batch_single_op_if_doesnt_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
         )
-
-        # variable_recorder directly returns the dictionary containing recorded variables. In live mode, this is an
-        # empty dictionary; in playback mode, this is populated with any variables that were recorded previously.
-        # Because the variable_recorder fixture is a function, we unfortunately don't get any autocomplete with the
-        # parameter whether it's a dictionary or custom type.
-
-        # A custom type could allow for future APIs, but the `setdefault` method is thoroughly sufficient for now.
-        # Using `setdefault` will either fetch the recorded value for the variable, or record a new value in live mode,
-        # without having to check the live status of the test or contents of `variable_recorder`.
-        variable_value = variable_recorder.setdefault("variable_name", "live_generated_value")
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -832,7 +823,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @pytest.mark.live_test_only
     @tables_decorator
-    @recorded_by_proxy
     def test_batch_sas_auth(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
@@ -888,7 +878,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @pytest.mark.live_test_only  # Request bodies are very large
     @tables_decorator
-    @recorded_by_proxy
     def test_batch_request_too_large(self, tables_storage_account_name, tables_primary_storage_account_key):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(

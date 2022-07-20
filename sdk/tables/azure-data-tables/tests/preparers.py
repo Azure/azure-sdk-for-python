@@ -53,25 +53,6 @@ def tables_decorator(func, **kwargs):
     return wrapper
 
 
-def tables_decorator_with_wraps(func, **kwargs):
-    @TablesPreparer()
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        key = kwargs.pop("tables_primary_storage_account_key")
-        name = kwargs.pop("tables_storage_account_name")
-        key = AzureNamedKeyCredential(key=key, name=name)
-
-        kwargs["tables_primary_storage_account_key"] = key
-        kwargs["tables_storage_account_name"] = name
-
-        trimmed_kwargs = {k: v for k, v in kwargs.items()}
-        trim_kwargs_from_test_function(func, trimmed_kwargs)
-
-        func(*args, **trimmed_kwargs)
-
-    return wrapper
-
-
 def cosmos_decorator(func, **kwargs):
     @CosmosPreparer()
     def wrapper(*args, **kwargs):
