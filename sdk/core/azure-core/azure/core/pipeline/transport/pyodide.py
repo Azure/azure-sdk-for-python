@@ -44,8 +44,8 @@ class PyodideTransportResponse(AsyncHttpResponseImpl):
     """Async response object for the `PyodideTransport`."""
 
     def __init__(self, **kwargs):
-        super(PyodideTransportResponse, self).__init__(**kwargs)
-        # clone to avoid reading from the same `FetchResponse` a second time in `load_body`.
+        super().__init__(**kwargs)
+        # clone to avoid reading from the same `FetchResponse` a second time in `read`.
         self._js_stream = self.internal_response.clone().js_response.body
         self._js_reader = None
 
@@ -54,11 +54,6 @@ class PyodideTransportResponse(AsyncHttpResponseImpl):
         to close.
         """
         self._is_closed = True
-
-    async def load_body(self) -> None:
-        """Load the body of the response."""
-        if self._content is None:
-            self._content = await self._internal_response.bytes()
 
     def body(self) -> bytes:
         """The body is just the content."""
@@ -81,9 +76,9 @@ class PyodideStreamDownloadGenerator(AsyncIterator):
         self._stream = BytesIO()
 
         self._closed = False
-        # We cannot control how many bytes we get from `response.reader`. `self.buffer_left`
+        # We cannot control how many bytes we get from `response.reader`. `self._buffer_left`
         # indicates how many unread bytes there are in `self.stream`
-        self.buffer_left = 0
+        self._buffer_left = 0
         self.done = False
 
     async def __anext__(self) -> bytes:
@@ -96,16 +91,16 @@ class PyodideStreamDownloadGenerator(AsyncIterator):
         # move stream position to the end
         self._stream.read()
         # read from reader until there is no more data or we have `self._block_size` unread bytes.
-        while self.buffer_left < self._block_size:
+        while self._buffer_left < self._block_size:
             read = await self._js_reader.read()
             if read.done:
                 self._closed = True
                 break
-            self.buffer_left += self._stream.write(bytes(read.value))
+            self._buffer_left += self._stream.write(bytes(read.value))
 
         # move the stream position back to where we started
         self._stream.seek(start_pos)
-        self.buffer_left -= self._block_size
+        self._buffer_left -= self._block_size
         return self._stream.read(self._block_size)
 
 class PyodideTransport(AsyncioRequestsTransport):
@@ -155,6 +150,6 @@ class PyodideTransport(AsyncioRequestsTransport):
             stream_download_generator=PyodideStreamDownloadGenerator,
         )
         if not stream_response:
-            await transport_response.load_body()
+            await transport_response.read()
 
         return transport_response
