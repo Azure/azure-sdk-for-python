@@ -118,7 +118,6 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
             `prefix` should end in '/' to avoid cases where filenames share the same prefix.
         :keyword tags: List of user defined key-value tag attributes associated with the model.
         :paramtype tags: dict[str, str]
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an DocumentModelAdministrationLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.DocumentModelInfo`.
         :rtype: ~azure.ai.formrecognizer.DocumentModelAdministrationLROPoller[DocumentModelInfo]
@@ -195,7 +194,6 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         :keyword str description: An optional description to add to the model.
         :keyword tags: List of user defined key-value tag attributes associated with the model.
         :paramtype tags: dict[str, str]
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an DocumentModelAdministrationLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.DocumentModelInfo`.
         :rtype: ~azure.ai.formrecognizer.DocumentModelAdministrationLROPoller[DocumentModelInfo]
@@ -312,7 +310,6 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         :param TargetAuthorization target:
             The copy authorization generated from the target resource's call to
             :func:`~get_copy_authorization()`.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of a DocumentModelAdministrationLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.DocumentModelInfo`.
         :rtype: ~azure.ai.formrecognizer.DocumentModelAdministrationLROPoller[DocumentModelInfo]
