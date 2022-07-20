@@ -1162,4 +1162,23 @@ class StorageGetBlobTest(StorageTestCase):
         # Assert
         assert result == data
 
+    @BlobPreparer()
+    def test_get_blob_into_upload(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        self.bsc._config.max_single_put_size = 1024
+        self.bsc._config.max_block_size = 1024
+
+        data = b'12345' * 205 * 15  # 15375 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        # Act
+        blob2 = self.bsc.get_blob_client(self.container_name, self._get_blob_reference() + '-copy')
+        blob2.upload_blob(stream, overwrite=True)
+        result = blob2.download_blob().readall()
+
+        # Assert
+        assert result == data
+
 # ------------------------------------------------------------------------------
