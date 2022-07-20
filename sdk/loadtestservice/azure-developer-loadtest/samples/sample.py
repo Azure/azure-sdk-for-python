@@ -43,11 +43,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-try:
-    endpoint = os.environ["LOADTESTSERVICE_ENDPOINT"]
-except KeyError:
-    LOG.error("Missing environment variable 'LOADTESTSERVICE_ENDPOINT' - please set if before running the example")
-    exit()
+endpoint = os.environ["LOADTESTSERVICE_ENDPOINT"]
+
 # Build a client through AAD
 client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=endpoint)
 

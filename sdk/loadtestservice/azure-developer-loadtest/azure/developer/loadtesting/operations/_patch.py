@@ -67,8 +67,19 @@ class TestOperations(TestOperationsGenerated):
         super(TestOperations, self).__init__(*args, **kwargs)
 
     def upload_test_file(self, test_id: str, file_id: str, file_content: JSON, **kwargs) -> JSON:
-        """
-        Uploading a test file
+        """Upload test file and link it to a test.
+
+        Upload a test file to an existing test.
+
+        :param test_id: Unique id for the test 
+        :type test_id: str
+        :param file_id: Unique id for the file
+        :type file_id: str
+        :param file_content: dictionary containing file contet
+        :type file_id: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
