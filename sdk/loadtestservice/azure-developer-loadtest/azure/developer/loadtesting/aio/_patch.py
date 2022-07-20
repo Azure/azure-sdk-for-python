@@ -63,8 +63,8 @@ class LoadTestingClient(LoadTestingClientGenerated):  # pylint: disable=client-a
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-        self.test_run = TestRunOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.administration = LoadTestingAdministration(self._client, self._config, self._serialize, self._deserialize)
+        self.load_test_runs = TestRunOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.load_test_administration = LoadTestingAdministration(self._client, self._config, self._serialize, self._deserialize)
 
 
 __all__: List[str] = ["LoadTestingClient"]  # Add all objects you want publicly available to users at this package level
