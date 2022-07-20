@@ -255,6 +255,13 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         :param public_access:
             Possible values include: file system, file.
         :type public_access: ~azure.storage.filedatalake.PublicAccess
+        :keyword file_system_encryption_scope:
+            Specifies the default encryption scope to set on the file system and use for
+            all future writes.
+
+            .. versionadded:: 12.9.0
+
+        :paramtype file_system_encryption_scope: dict or ~azure.storage.filedatalake.FileSystemEncryptionScope
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.filedatalake.FileSystemClient

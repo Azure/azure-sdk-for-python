@@ -195,6 +195,13 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         :param public_access:
             To specify whether data in the file system may be accessed publicly and the level of access.
         :type public_access: ~azure.storage.filedatalake.PublicAccess
+        :keyword file_system_encryption_scope:
+            Specifies the default encryption scope to set on the file system and use for
+            all future writes.
+
+            .. versionadded:: 12.9.0
+
+        :paramtype file_system_encryption_scope: dict or ~azure.storage.filedatalake.FileSystemEncryptionScope
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A dictionary of response headers.
@@ -209,8 +216,10 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :dedent: 16
                 :caption: Creating a file system in the datalake service.
         """
+        file_system_encryption_scope = kwargs.pop('file_system_encryption_scope', None)
         return await self._container_client.create_container(metadata=metadata,
                                                              public_access=public_access,
+                                                             container_encryption_scope=file_system_encryption_scope,
                                                              **kwargs)
 
     @distributed_trace_async

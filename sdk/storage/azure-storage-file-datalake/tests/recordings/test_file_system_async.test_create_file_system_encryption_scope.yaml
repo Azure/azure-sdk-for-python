@@ -1,0 +1,92 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Sat, 16 Jul 2022 04:38:56 GMT
+      x-ms-default-encryption-scope:
+      - hnstestscope1
+      x-ms-deny-encryption-scope-override:
+      - 'false'
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/filesystem43071a28?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Sat, 16 Jul 2022 04:38:56 GMT
+      etag: '"0x8DA66E518543D37"'
+      last-modified: Sat, 16 Jul 2022 04:38:56 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttranhnscanary.blob.core.windows.net/filesystem43071a28?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Sat, 16 Jul 2022 04:38:56 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/filesystem43071a28?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Sat, 16 Jul 2022 04:38:56 GMT
+      etag: '"0x8DA66E518543D37"'
+      last-modified: Sat, 16 Jul 2022 04:38:56 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-default-encryption-scope: hnstestscope1
+      x-ms-deny-encryption-scope-override: 'false'
+      x-ms-has-immutability-policy: 'false'
+      x-ms-has-legal-hold: 'false'
+      x-ms-immutable-storage-with-versioning-enabled: 'false'
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-version: '2021-08-06'
+    status:
+      code: 200
+      message: OK
+    url: https://vincenttranhnscanary.blob.core.windows.net/filesystem43071a28?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Sat, 16 Jul 2022 04:38:56 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/filesystem43071a28?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Sat, 16 Jul 2022 04:38:56 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-08-06'
+    status:
+      code: 202
+      message: Accepted
+    url: https://vincenttranhnscanary.blob.core.windows.net/filesystem43071a28?restype=container
+version: 1
