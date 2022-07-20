@@ -12,7 +12,7 @@ from typing import Any, TYPE_CHECKING
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import LoadTestClientConfiguration
+from ._configuration import LoadTestingClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import AppComponentOperations, ServerMetricsOperations, TestOperations, TestRunOperations
 
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class LoadTestClient:  # pylint: disable=client-accepts-api-version-keyword
+class LoadTestingClient:  # pylint: disable=client-accepts-api-version-keyword
     """These APIs allow end users to create, view and run load tests using Azure Load Test Service.
 
     :ivar app_component: AppComponentOperations operations
@@ -45,7 +45,7 @@ class LoadTestClient:  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         _endpoint = "https://{Endpoint}"
-        self._config = LoadTestClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = LoadTestingClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -89,7 +89,7 @@ class LoadTestClient:  # pylint: disable=client-accepts-api-version-keyword
         self._client.close()
 
     def __enter__(self):
-        # type: () -> LoadTestClient
+        # type: () -> LoadTestingClient
         self._client.__enter__()
         return self
 

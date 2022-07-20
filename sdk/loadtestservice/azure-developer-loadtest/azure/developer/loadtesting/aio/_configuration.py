@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class LoadTestClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-    """Configuration for LoadTestClient.
+class LoadTestingClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for LoadTestingClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -34,7 +34,7 @@ class LoadTestClientConfiguration(Configuration):  # pylint: disable=too-many-in
     """
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        super(LoadTestClientConfiguration, self).__init__(**kwargs)
+        super(LoadTestingClientConfiguration, self).__init__(**kwargs)
         api_version = kwargs.pop("api_version", "2022-06-01-preview")  # type: str
 
         if endpoint is None:

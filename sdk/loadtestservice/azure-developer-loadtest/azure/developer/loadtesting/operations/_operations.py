@@ -731,7 +731,7 @@ class AppComponentOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.developer.loadtesting.LoadTestClient`'s
+        :class:`~azure.developer.loadtesting.LoadTestingClient`'s
         :attr:`app_component` attribute.
     """
 
@@ -1192,7 +1192,7 @@ class ServerMetricsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.developer.loadtesting.LoadTestClient`'s
+        :class:`~azure.developer.loadtesting.LoadTestingClient`'s
         :attr:`server_metrics` attribute.
     """
 
@@ -1791,7 +1791,7 @@ class TestOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.developer.loadtesting.LoadTestClient`'s
+        :class:`~azure.developer.loadtesting.LoadTestingClient`'s
         :attr:`test` attribute.
     """
 
@@ -3185,7 +3185,7 @@ class TestRunOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.developer.loadtesting.LoadTestClient`'s
+        :class:`~azure.developer.loadtesting.LoadTestingClient`'s
         :attr:`test_run` attribute.
     """
 

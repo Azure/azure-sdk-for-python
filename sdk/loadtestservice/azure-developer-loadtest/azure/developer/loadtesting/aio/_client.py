@@ -13,7 +13,7 @@ from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
-from ._configuration import LoadTestClientConfiguration
+from ._configuration import LoadTestingClientConfiguration
 from .operations import AppComponentOperations, ServerMetricsOperations, TestOperations, TestRunOperations
 
 if TYPE_CHECKING:
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class LoadTestClient:  # pylint: disable=client-accepts-api-version-keyword
+class LoadTestingClient:  # pylint: disable=client-accepts-api-version-keyword
     """These APIs allow end users to create, view and run load tests using Azure Load Test Service.
 
     :ivar app_component: AppComponentOperations operations
@@ -45,7 +45,7 @@ class LoadTestClient:  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "https://{Endpoint}"
-        self._config = LoadTestClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = LoadTestingClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -87,7 +87,7 @@ class LoadTestClient:  # pylint: disable=client-accepts-api-version-keyword
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "LoadTestClient":
+    async def __aenter__(self) -> "LoadTestingClient":
         await self._client.__aenter__()
         return self
 

@@ -7,17 +7,17 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List, Any
-from ._client import LoadTestClient as LoadTestClientGenerated
+from ._client import LoadTestingClient as LoadTestingClientGenerated
 
 
 from azure.core import PipelineClient
 
-from ._configuration import LoadTestClientConfiguration
+from ._configuration import LoadTestingClientConfiguration
 from .._serialization import Deserializer, Serializer
 from .operations import AppComponentOperations, ServerMetricsOperations, TestOperations, TestRunOperations
 
 
-class LoadTestAdministration(AppComponentOperations, ServerMetricsOperations, TestOperations):
+class LoadTestingAdministration(AppComponentOperations, ServerMetricsOperations, TestOperations):
     """
     class to hold LoadTestAdministration
     """
@@ -35,7 +35,7 @@ class LoadTestAdministration(AppComponentOperations, ServerMetricsOperations, Te
         TestOperations.__init__(self, self._client, self._config, self._serialize, self._deserialize)
 
 
-class LoadTestClient(LoadTestClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
+class LoadTestingClient(LoadTestingClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
     """These APIs allow end users to create, view and run load tests using Azure Load Test Service.
 
     :ivar app_component: AppComponentOperations operations
@@ -56,7 +56,7 @@ class LoadTestClient(LoadTestClientGenerated):  # pylint: disable=client-accepts
     """
 
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        self._config = LoadTestClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = LoadTestingClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = PipelineClient(base_url=endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -64,9 +64,10 @@ class LoadTestClient(LoadTestClientGenerated):  # pylint: disable=client-accepts
         self._serialize.client_side_validation = False
 
         self.test_run = TestRunOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.administration = LoadTestAdministration(self._client, self._config, self._serialize, self._deserialize)
+        self.administration = LoadTestingAdministration(self._client, self._config, self._serialize, self._deserialize)
 
-__all__: List[str] = ["LoadTestClient"]  # Add all objects you want publicly available to users at this package level
+
+__all__: List[str] = ["LoadTestingClient"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

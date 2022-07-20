@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import List, cast
+from typing import List, cast, Optional, Any
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -19,6 +19,7 @@ from azure.core.rest import HttpRequest
 from azure.core.utils import case_insensitive_dict
 from ._operations import TestOperations as TestOperationsGenerated, JSON, ClsType
 from ...operations._patch import build_upload_test_file_request
+from ._operations import AppComponentOperations as AppComponentOperationsGenerated
 
 
 class TestOperations(TestOperationsGenerated):
@@ -75,6 +76,7 @@ class TestOperations(TestOperationsGenerated):
         if cls:
             return cls(pipeline_response, cast(JSON, deserialized), {})
         return cast(JSON, deserialized)
+
 
 class AppComponentOperations(AppComponentOperationsGenerated):
 
@@ -138,6 +140,7 @@ class AppComponentOperations(AppComponentOperationsGenerated):
             return super().get_by_name(name=name, **kwargs)
         else:
             return super().get_app_component(test_run_id=test_run_id, test_id=test_id, **kwargs)
+
 
 __all__: List[str] = ["TestOperations", "AppComponentOperations"]
 # Add all objects you want publicly available to users at this package level

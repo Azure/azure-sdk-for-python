@@ -27,7 +27,7 @@
 import logging
 import os
 
-from azure.developer.loadtesting import LoadTestClient
+from azure.developer.loadtesting import LoadTestingClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 import time
@@ -49,7 +49,7 @@ except KeyError:
     LOG.error("Missing environment variable 'LOADTESTSERVICE_ENDPOINT' - please set if before running the example")
     exit()
 # Build a client through AAD
-client = LoadTestClient(credential=DefaultAzureCredential(), endpoint=endpoint)
+client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=endpoint)
 
 
 TEST_ID = "a011890b-0201-004d-010d-nivedit-new-namespace"  # ID to be assigned to a test

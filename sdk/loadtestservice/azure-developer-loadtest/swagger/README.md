@@ -6,7 +6,7 @@ output-folder: ../
 namespace: azure.developer.loadtesting
 package-name: azure-developer-loadtesting
 license-header: MICROSOFT_MIT_NO_VERSION
-title: LoadTestClient
+title: LoadTestingClient
 package-version: 1.0.0b1
 package-mode: dataplane
 package-pprint-name: Azure Developer LoadTestService
