@@ -1,6 +1,6 @@
 include *.md
 include LICENSE
-include azure/developer/loadtestservice/py.typed
+include azure/developer/loadtesting/py.typed
 recursive-include tests *.py
 recursive-include samples *.py *.md
 include azure/__init__.py

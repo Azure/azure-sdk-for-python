@@ -27,12 +27,12 @@ class LoadtestserviceSmokeAsyncTest(LoadtestserviceAsyncTest):
             "keyvaultReferenceIdentityType": "SystemAssigned",
             "keyvaultReferenceIdentityId": None,
         }
-        result = await client.administration.test.create_or_update_test(test_id, body_test)
+        result = await client.administration.create_or_update_test(test_id, body_test)
         assert result is not None
 
     @pytest.mark.asyncio
     @LoadtestservicePowerShellPreparer()
     async def test_smoke_list_search(self, loadtestservice_endpoint):
         client = self.create_client(loadtestservice_endpoint)
-        result = await client.administration.test.list_load_test_search()
+        result = await client.administration.list_load_test_search()
         assert result is not None

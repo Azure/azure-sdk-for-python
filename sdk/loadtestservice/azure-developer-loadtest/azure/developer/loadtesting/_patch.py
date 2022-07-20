@@ -30,12 +30,6 @@ class LoadTestAdministration(AppComponentOperations, ServerMetricsOperations, Te
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-        # self.app_component = AppComponentOperations(self._client, self._config, self._serialize, self._deserialize)
-        # self.server_metrics = ServerMetricsOperations(self._client, self._config, self._serialize, self._deserialize)
-        # self.test = TestOperations(  # type: ignore  # pylint: disable=abstract-class-instantiated
-        #     self._client, self._config, self._serialize, self._deserialize
-        # )
-
         AppComponentOperations.__init__(self, self._client, self._config, self._serialize, self._deserialize)
         ServerMetricsOperations.__init__(self, self._client, self._config, self._serialize, self._deserialize)
         TestOperations.__init__(self, self._client, self._config, self._serialize, self._deserialize)

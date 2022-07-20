@@ -1,5 +1,5 @@
 
-# Azure Developer LoadTestService client library for Python
+# Azure Developer LoadTesting client library for Python
 <!-- write necessary description of service -->
 
 ## Getting started
@@ -7,14 +7,14 @@
 ### Installating the package
 
 ```bash
-python -m pip install azure-developer-loadtestservice
+python -m pip install azure-developer-loadtesting
 ```
 
 #### Prequisites
 
 - Python 3.6 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
-- An existing Azure Developer LoadTestService instance.
+- An existing Azure Developer LoadTesting instance.
 #### Create with an Azure Active Directory Credential
 To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
 provide an instance of the desired credential type obtained from the
@@ -31,7 +31,7 @@ Set the values of the client ID, tenant ID, and client secret of the AAD applica
 Use the returned token credential to authenticate the client:
 
 ```python
->>> from azure.developer.loadtestservice import LoadTestClient
+>>> from azure.developer.loadtesting import LoadTestClient
 >>> from azure.identity import DefaultAzureCredential
 >>> client = LoadTestClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
@@ -39,7 +39,7 @@ Use the returned token credential to authenticate the client:
 ## Examples
 
 ```python
->>> from azure.developer.loadtestservice import LoadTestClient
+>>> from azure.developer.loadtesting import LoadTestClient
 >>> from azure.identity import DefaultAzureCredential
 >>> from azure.core.exceptions import HttpResponseError
 
@@ -50,7 +50,6 @@ Use the returned token credential to authenticate the client:
         print('service responds error: {}'.format(e.response.json()))
 
 ```
-
 ## Key concepts
 The following components make up the Azure Load Testing Service. The Azure Load Test client library for Python allows you to interact with each of these components through the use of a dedicated client object.
 

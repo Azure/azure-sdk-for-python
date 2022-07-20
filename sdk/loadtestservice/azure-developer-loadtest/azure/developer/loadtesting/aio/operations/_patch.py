@@ -76,8 +76,70 @@ class TestOperations(TestOperationsGenerated):
             return cls(pipeline_response, cast(JSON, deserialized), {})
         return cast(JSON, deserialized)
 
+class AppComponentOperations(AppComponentOperationsGenerated):
 
-__all__: List[str] = ["TestOperations"]
+    __excludes__ = ["get_by_name", "get_app_component"]
+
+    def get_app_components(
+        self,
+        *,
+        test_run_id: Optional[str] = None,
+        test_id: Optional[str] = None,
+        name: Optional[str] = None,
+        **kwargs: Any,
+    ) -> JSON:
+        """Get App Components for a test or a test run by its name.
+
+        Get App Components for a test or a test run by its name.
+
+        :keyword test_run_id: [Required, if testId is not provided] Test run Id. Default value is None.
+        :paramtype test_run_id: st
+        :keyword test_id: Unique name for load test, must be a valid URL character ^[a-z0-9_-]*$.
+         Default value is None.
+        :paramtype test_id: str
+        :keyword name: Unique name of the App Component, must be a valid URL character ^[a-z0-9_-]*$.
+         Default value is None.
+        :paramtype name: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "name": "str",  # Optional. AppComponent name.
+                    "resourceId": "str",  # Optional. Azure Load Testing resource Id.
+                    "testId": "str",  # Optional. [Required, if testRunId is not given] Load test
+                      unique identifier.
+                    "testRunId": "str",  # Optional. [Required if testId is not given] Load test
+                      run unique identifier.
+                    "value": {
+                        "str": {
+                            "displayName": "str",  # Optional. Azure resource display
+                              name.
+                            "kind": "str",  # Optional. Kind of Azure resource type.
+                            "resourceGroup": "str",  # Optional. Resource group name of
+                              the Azure resource.
+                            "resourceId": "str",  # Fully qualified resource Id e.g
+                              subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}.
+                              Required.
+                            "resourceName": "str",  # Azure resource name. Required.
+                            "resourceType": "str",  # Azure resource type. Required.
+                            "subscriptionId": "str"  # Optional. Subscription Id of the
+                              Azure resource.
+                        }
+                    }
+                }
+        """
+
+        if name is not None:
+            return super().get_by_name(name=name, **kwargs)
+        else:
+            return super().get_app_component(test_run_id=test_run_id, test_id=test_id, **kwargs)
+
+__all__: List[str] = ["TestOperations", "AppComponentOperations"]
 # Add all objects you want publicly available to users at this package level
 
 

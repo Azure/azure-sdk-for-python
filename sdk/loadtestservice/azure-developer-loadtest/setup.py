@@ -12,7 +12,7 @@ import re
 from setuptools import setup, find_packages
 
 
-PACKAGE_NAME = "azure-developer-loadtestservice"
+PACKAGE_NAME = "azure-developer-loadtesting"
 PACKAGE_PPRINT_NAME = "Azure Developer LoadTestService"
 
 # a-b-c => a/b/c

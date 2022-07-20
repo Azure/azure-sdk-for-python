@@ -27,13 +27,13 @@ class LoadTestClient:  # pylint: disable=client-accepts-api-version-keyword
     """These APIs allow end users to create, view and run load tests using Azure Load Test Service.
 
     :ivar app_component: AppComponentOperations operations
-    :vartype app_component: azure.developer.loadtestservice.operations.AppComponentOperations
+    :vartype app_component: azure.developer.loadtesting.operations.AppComponentOperations
     :ivar server_metrics: ServerMetricsOperations operations
-    :vartype server_metrics: azure.developer.loadtestservice.operations.ServerMetricsOperations
+    :vartype server_metrics: azure.developer.loadtesting.operations.ServerMetricsOperations
     :ivar test: TestOperations operations
-    :vartype test: azure.developer.loadtestservice.operations.TestOperations
+    :vartype test: azure.developer.loadtesting.operations.TestOperations
     :ivar test_run: TestRunOperations operations
-    :vartype test_run: azure.developer.loadtestservice.operations.TestRunOperations
+    :vartype test_run: azure.developer.loadtesting.operations.TestRunOperations
     :param endpoint: URL to perform data plane API operations on the resource. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.

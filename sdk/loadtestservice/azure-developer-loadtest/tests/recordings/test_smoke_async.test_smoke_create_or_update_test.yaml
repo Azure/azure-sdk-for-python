@@ -14,7 +14,7 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       User-Agent:
-      - azsdk-python-developer-loadtestservice/1.0.0b1 Python/3.9.8 (Windows-10-10.0.19044)
+      - azsdk-python-developer-loadtest/1.0.0b1 Python/3.9.8 (Windows-10-10.0.19044)
     method: PATCH
     uri: https://fake.loadtesting.azure.com/loadtests/000002?api-version=2022-06-01-preview
   response:

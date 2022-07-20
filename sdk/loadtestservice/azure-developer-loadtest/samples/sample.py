@@ -27,7 +27,7 @@
 import logging
 import os
 
-from azure.developer.loadtestservice import LoadTestClient
+from azure.developer.loadtesting import LoadTestClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 import time
@@ -52,85 +52,85 @@ except KeyError:
 client = LoadTestClient(credential=DefaultAzureCredential(), endpoint=endpoint)
 
 
-TEST_ID = "a011890b-0201-004d-010d-nivedit"  # ID to be assigned to a test
-FILE_ID = "a012b234-1230-ab00-0040-nivedit"  # ID to be assigned to file uploaded
-TEST_RUN_ID = "08673e89-3285-46a1-9c6b-nivedit"  # ID to be assigned to a test run
-APP_COMPONENT = "01730263-6671-4216-b283-nivedit"  # ID of the APP Component
-DISPLAY_NAME = "new_namespace"  # display name
+TEST_ID = "a011890b-0201-004d-010d-nivedit-new-namespace"  # ID to be assigned to a test
+FILE_ID = "a012b234-1230-ab00-0040-nivedit-new-namespace"  # ID to be assigned to file uploaded
+TEST_RUN_ID = "08673e89-3285-46a1-9c6b-nivedit-new-namespace"  # ID to be assigned to a test run
+APP_COMPONENT = "01730263-6671-4216-b283-nivedit-new-namespace"  # ID of the APP Component
+DISPLAY_NAME = "new_namespace-new-namespace"  # display name
 
 # creating load test
-# try:
-#     result = client.administration.create_or_update_test(
-#         TEST_ID,
-#         {
-#             "resourceId": "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
-#             "description": "",
-#             "displayName": DISPLAY_NAME,
-#             "loadTestConfig": {
-#                 "engineSize": "m",
-#                 "engineInstances": 1,
-#                 "splitAllCSVs": False,
-#             },
-#             "secrets": {},
-#             "environmentVariables": {},
-#             "passFailCriteria": {"passFailMetrics": {}},
-#             "keyvaultReferenceIdentityType": "SystemAssigned",
-#             "keyvaultReferenceIdentityId": None,
-#         },
-#     )
-#     print(result)
-# except HttpResponseError as e:
-#     print("Failed to process the request: {}".format(e.response.json()))
+try:
+    result = client.administration.create_or_update_test(
+        TEST_ID,
+        {
+            "resourceId": "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
+            "description": "",
+            "displayName": DISPLAY_NAME,
+            "loadTestConfig": {
+                "engineSize": "m",
+                "engineInstances": 1,
+                "splitAllCSVs": False,
+            },
+            "secrets": {},
+            "environmentVariables": {},
+            "passFailCriteria": {"passFailMetrics": {}},
+            "keyvaultReferenceIdentityType": "SystemAssigned",
+            "keyvaultReferenceIdentityId": None,
+        },
+    )
+    print(result)
+except HttpResponseError as e:
+    print("Failed to process the request: {}".format(e.response.json()))
 
 
 # uploading .jmx file to a test
-# try:
+try:
     # opening .jmx file
-#     body = {}
-#     body["file"] = open("sample.jmx", "rb")
+    body = {}
+    body["file"] = open("sample.jmx", "rb")
 
-#     result = client.administration.upload_test_file(TEST_ID, FILE_ID, body)
-#     print(result)
-# except HttpResponseError as e:
-#     print("Failed to send JSON message: {}".format(e.response.json()))
+    result = client.administration.upload_test_file(TEST_ID, FILE_ID, body)
+    print(result)
+except HttpResponseError as e:
+    print("Failed to send JSON message: {}".format(e.response.json()))
 
 # creating app component
-# try:
-#     result = client.administration.create_or_update_app_components(
-#         APP_COMPONENT,
-#         {
-#             "name": "app_component",
-#             "testId": TEST_ID,
-#             "value": {
-#                 "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo": {
-#                     "resourceId": "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo",
-#                     "resourceName": "App-Service-Sample-Demo",
-#                     "resourceType": "Microsoft.Web/sites",
-#                     "subscriptionId": "7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a",
-#                 }
-#             },
-#         },
-#     )
-#     print(result)
-# except HttpResponseError as e:
-#     print("Failed to send JSON message: {}".format(e.response.json()))
+try:
+    result = client.administration.create_or_update_app_components(
+        APP_COMPONENT,
+        {
+            "name": "app_component",
+            "testId": TEST_ID,
+            "value": {
+                "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo": {
+                    "resourceId": "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo",
+                    "resourceName": "App-Service-Sample-Demo",
+                    "resourceType": "Microsoft.Web/sites",
+                    "subscriptionId": "7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a",
+                }
+            },
+        },
+    )
+    print(result)
+except HttpResponseError as e:
+    print("Failed to send JSON message: {}".format(e.response.json()))
 
 # Creating the test run
-# try:
-#     result = client.test_run.create_and_update_test(
-#         TEST_RUN_ID,
-#         {
-#             "testId": TEST_ID,
-#             "displayName": DISPLAY_NAME,
-#             "requestSamplers": [],
-#             "errors": [],
-#             "percentiles": ["90"],
-#             "groupByInterval": "5s",
-#         },
-#     )
-#     print(result)
-# except HttpResponseError as e:
-#     print("Failed to send JSON message: {}".format(e.response.json()))
+try:
+    result = client.test_run.create_and_update_test(
+        TEST_RUN_ID,
+        {
+            "testId": TEST_ID,
+            "displayName": DISPLAY_NAME,
+            "requestSamplers": [],
+            "errors": [],
+            "percentiles": ["90"],
+            "groupByInterval": "5s",
+        },
+    )
+    print(result)
+except HttpResponseError as e:
+    print("Failed to send JSON message: {}".format(e.response.json()))
 
 # Checking the test run status and printing metrics
 try:

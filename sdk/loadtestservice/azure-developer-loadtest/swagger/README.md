@@ -3,8 +3,8 @@
 ```yaml
 input-file: https://github.com/Azure/azure-rest-api-specs/blob/main/specification/loadtestservice/data-plane/Microsoft.LoadTestService/preview/2022-06-01-preview/loadtestservice.json
 output-folder: ../
-namespace: azure.developer.loadtestservice
-package-name: azure-developer-loadtestservice
+namespace: azure.developer.loadtesting
+package-name: azure-developer-loadtesting
 license-header: MICROSOFT_MIT_NO_VERSION
 title: LoadTestClient
 package-version: 1.0.0b1

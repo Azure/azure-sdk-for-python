@@ -6,11 +6,11 @@
 # --------------------------------------------------------------------------
 import functools
 from devtools_testutils import AzureTestCase, PowerShellPreparer
-from azure.developer.loadtestservice import LoadTestClient
+from azure.developer.loadtesting import LoadTestClient
 
 
 LoadtestservicePowerShellPreparer = functools.partial(
-    PowerShellPreparer, "loadtestservice", loadtestservice_endpoint="https://fake.loadtesting.azure.com"
+    PowerShellPreparer, "loadtesting", loadtestservice_endpoint="https://fake.loadtesting.azure.com"
 )
 
 
