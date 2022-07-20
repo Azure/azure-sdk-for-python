@@ -1,0 +1,13 @@
+name: Remove needs-triage label if it is assigned
+
+on:
+  issues:
+    types: [assigned]
+
+jobs:
+  remove_label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions-ecosystem/action-remove-labels@v1
+        with:
+          labels: needs-triage

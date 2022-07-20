@@ -10,7 +10,6 @@ from typing import (
     Any,
     Union,
     List,
-    Dict,
 )
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -32,6 +31,7 @@ from .._models import (
     ModelOperation,
     ModelOperationInfo,
     ResourceInfo,
+    TargetAuthorization,
 )
 
 
@@ -123,7 +123,6 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
             `prefix` should end in '/' to avoid cases where filenames share the same prefix.
         :keyword tags: List of user defined key-value tag attributes associated with the model.
         :paramtype tags: dict[str, str]
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AsyncDocumentModelAdministrationLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.DocumentModelInfo`.
         :rtype: ~azure.ai.formrecognizer.aio.AsyncDocumentModelAdministrationLROPoller[DocumentModelInfo]
@@ -200,7 +199,6 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         :keyword str description: An optional description to add to the model.
         :keyword tags: List of user defined key-value tag attributes associated with the model.
         :paramtype tags: dict[str, str]
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AsyncDocumentModelAdministrationLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.DocumentModelInfo`.
         :rtype: ~azure.ai.formrecognizer.aio.AsyncDocumentModelAdministrationLROPoller[DocumentModelInfo]
@@ -264,7 +262,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         )
 
     @distributed_trace_async
-    async def get_copy_authorization(self, **kwargs: Any) -> Dict[str, str]:
+    async def get_copy_authorization(self, **kwargs: Any) -> TargetAuthorization:
         """Generate authorization for copying a custom model into the target Form Recognizer resource.
 
         This should be called by the target resource (where the model will be copied to)
@@ -276,7 +274,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         :keyword tags: List of user defined key-value tag attributes associated with the model.
         :paramtype tags: dict[str, str]
         :return: A dictionary with values necessary for the copy authorization.
-        :rtype: Dict[str, str]
+        :rtype: TargetAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2022-01-30-preview
@@ -301,7 +299,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
     @distributed_trace_async
     async def begin_copy_model_to(
-        self, model_id: str, target: Dict[str, str], **kwargs: Any
+        self, model_id: str, target: TargetAuthorization, **kwargs: Any
     ) -> AsyncDocumentModelAdministrationLROPoller[DocumentModelInfo]:
         """Copy a model stored in this resource (the source) to the user specified
         target Form Recognizer resource.
@@ -311,10 +309,9 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         target resource's output from calling the :func:`~get_copy_authorization()` method.
 
         :param str model_id: Model identifier of the model to copy to target resource.
-        :param Dict[str, str] target:
+        :param TargetAuthorization target:
             The copy authorization generated from the target resource's call to
             :func:`~get_copy_authorization()`.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of a AsyncDocumentModelAdministrationLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.DocumentModelInfo`.
         :rtype: ~azure.ai.formrecognizer.aio.AsyncDocumentModelAdministrationLROPoller[DocumentModelInfo]

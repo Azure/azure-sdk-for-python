@@ -23,7 +23,7 @@ from .utils import show_debug_info, initialize_logger_info
 
 from azure.ai.ml.constants import AzureMLResourceType, LROConfigurations
 from azure.ai.ml.entities import BatchDeployment
-from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
+from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml.entities._assets._artifacts.code import Code
 
 from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
@@ -47,28 +47,27 @@ def polling_wait(
     :param (bool, optional) is_local: If poller is for a local endpoint, so the timeout is removed.
     :param (int, optional) timeout: New value to overwrite the default timeout.
     """
-    module_logger.info(f"{message}")
-
+    module_logger.warning(f"{message}")
     if is_local:
         """We removed timeout on local endpoints in case
         it takes a long time to pull image or install conda env.
         We want user to be able to see that.
         """
         while not poller.done():
-            module_logger.info(".")
+            module_logger.warning(".")
             time.sleep(LROConfigurations.SLEEP_TIME)
     else:
         poller.result(timeout=timeout)
 
     if poller.done():
-        module_logger.info("Done ")
+        module_logger.warning("Done ")
     else:
         module_logger.warning("Timeout waiting for long running operation")
 
     if start_time:
         end_time = time.time()
         duration = divmod(int(round(end_time - start_time)), 60)
-        module_logger.info(f"({duration[0]}m {duration[1]}s)\n")
+        module_logger.warning(f"({duration[0]}m {duration[1]}s)\n")
 
 
 def local_endpoint_polling_wrapper(func: Callable, message: str, **kwargs) -> Any:
@@ -131,23 +130,28 @@ def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestr
     module_logger.debug(f"Uploading the dependencies for deployment {deployment.name}")
 
     # Create a code asset if code is not already an ARM ID
-    if deployment.code_configuration and not is_ARM_id_for_resource(
-        deployment.code_configuration.code, AzureMLResourceType.CODE
+    if (
+        deployment.code_configuration
+        and not is_ARM_id_for_resource(deployment.code_configuration.code, AzureMLResourceType.CODE)
+        and not is_registry_id_for_resource(deployment.code_configuration.code)
     ):
         deployment.code_configuration.code = orchestrators.get_asset_arm_id(
             Code(base_path=deployment._base_path, path=deployment.code_configuration.code),
             azureml_type=AzureMLResourceType.CODE,
         )
-    deployment.environment = (
-        orchestrators.get_asset_arm_id(deployment.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
-        if deployment.environment
-        else None
-    )
-    deployment.model = (
-        orchestrators.get_asset_arm_id(deployment.model, azureml_type=AzureMLResourceType.MODEL)
-        if deployment.model
-        else None
-    )
+
+    if not is_registry_id_for_resource(deployment.environment):
+        deployment.environment = (
+            orchestrators.get_asset_arm_id(deployment.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
+            if deployment.environment
+            else None
+        )
+    if not is_registry_id_for_resource(deployment.model):
+        deployment.model = (
+            orchestrators.get_asset_arm_id(deployment.model, azureml_type=AzureMLResourceType.MODEL)
+            if deployment.model
+            else None
+        )
     if isinstance(deployment, BatchDeployment) and deployment.compute:
         deployment.compute = orchestrators.get_asset_arm_id(
             deployment.compute, azureml_type=AzureMLResourceType.COMPUTE

@@ -17,6 +17,7 @@ from .liveness_probe import LivenessProbeSchema
 from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
 from azure.ai.ml._schema import ExperimentalField
 from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PublicNetworkAccess
+from azure.ai.ml._schema._utils.utils import exit_if_registry_assets
 
 module_logger = logging.getLogger(__name__)
 
@@ -47,6 +48,7 @@ class KubernetesOnlineDeploymentSchema(OnlineDeploymentSchema):
     def make(self, data: Any, **kwargs: Any) -> Any:
         from azure.ai.ml.entities import KubernetesOnlineDeployment
 
+        exit_if_registry_assets(data=data, caller="K8SDeployment")
         return KubernetesOnlineDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
 
 

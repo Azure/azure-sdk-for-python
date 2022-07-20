@@ -136,6 +136,8 @@ def try_get_non_arbitrary_attr_for_potential_attr_dict(obj, attr):
     """
     if isinstance(obj, _AttrDict):
         has_attr = not obj._is_arbitrary_attr(attr)
+    elif isinstance(obj, dict):
+        return obj[attr] if attr in obj else None
     else:
         has_attr = hasattr(obj, attr)
     if has_attr:

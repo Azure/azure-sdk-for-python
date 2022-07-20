@@ -52,13 +52,13 @@ from ._models import (
     RecognizeCustomEntitiesAction,
     RecognizeCustomEntitiesResult,
     SingleLabelClassifyAction,
-    MultiCategoryClassifyAction,
+    MultiLabelClassifyAction,
     ClassifyDocumentResult,
     ClassificationCategory,
     AnalyzeHealthcareEntitiesAction,
 )
 
-from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller, TextAnalyticsLROPoller
+from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller, TextAnalysisLROPoller
 
 __all__ = [
     "TextAnalyticsApiVersion",
@@ -110,11 +110,11 @@ __all__ = [
     "RecognizeCustomEntitiesAction",
     "RecognizeCustomEntitiesResult",
     "SingleLabelClassifyAction",
-    "MultiCategoryClassifyAction",
+    "MultiLabelClassifyAction",
     "ClassifyDocumentResult",
     "ClassificationCategory",
     "AnalyzeHealthcareEntitiesAction",
-    "TextAnalyticsLROPoller",
+    "TextAnalysisLROPoller",
 ]
 
 __version__ = VERSION
