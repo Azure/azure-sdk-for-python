@@ -39,6 +39,7 @@ client = LoadTestClient(endpoint='<endpoint>', credential=DefaultAzureCredential
 
 ## Examples
 
+### Creating a load test 
 ```python
 from azure.developer.loadtesting import LoadTestClient
 from azure.identity import DefaultAzureCredential
@@ -46,10 +47,60 @@ from azure.core.exceptions import HttpResponseError
 
 client = LoadTestClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 try:
-        <!-- write test code here -->
+    result = client.load_test_administration.create_or_update_test(
+        TEST_ID,
+        {
+            "resourceId": f"/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
+            "description": "",
+            "displayName": DISPLAY_NAME,
+            "loadTestConfig": {
+                "engineSize": "m",
+                "engineInstances": 1,
+                "splitAllCSVs": False,
+            },
+            "secrets": {},
+            "environmentVariables": {},
+            "passFailCriteria": {"passFailMetrics": {}},
+            "keyvaultReferenceIdentityType": "SystemAssigned",
+            "keyvaultReferenceIdentityId": None,
+        },
+    )
+    print(result)
 except HttpResponseError as e:
      print('service responds error: {}'.format(e.response.json()))
 
+```
+
+### Uploading .jmx file to a Test
+```python
+try:
+    # opening .jmx file
+    body = {}
+    body["file"] = open("sample.jmx", "rb")
+
+    result = client.load_test_administration.upload_test_file(TEST_ID, FILE_ID, body)
+    print(result)
+except HttpResponseError as e:
+    print("Failed to send JSON message: {}".format(e.response.json()))
+```
+
+### Running a Test
+```python
+try:
+    result = client.load_test_runs.create_and_update_test(
+        TEST_RUN_ID,
+        {
+            "testId": TEST_ID,
+            "displayName": DISPLAY_NAME,
+            "requestSamplers": [],
+            "errors": [],
+            "percentiles": ["90"],
+            "groupByInterval": "5s",
+        },
+    )
+    print(result)
+except HttpResponseError as e:
+    print("Failed to send JSON message: {}".format(e.response.json()))
 ```
 ## Key concepts
 The following components make up the Azure Load Testing Service. The Azure Load Test client library for Python allows you to interact with each of these components through the use of a dedicated client object.
