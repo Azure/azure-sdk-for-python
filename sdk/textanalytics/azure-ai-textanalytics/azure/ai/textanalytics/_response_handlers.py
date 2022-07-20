@@ -355,6 +355,15 @@ def resolve_action_pointer(pointer):
     )
 
 
+def pad_result(tasks_obj, doc_id_order):
+    return [
+        DocumentError(
+            id=doc_id,
+            error=TextAnalyticsError(message=f"No result for document. Action returned status '{tasks_obj.status}'.")
+        ) for doc_id in doc_id_order
+    ]
+
+
 def get_ordered_errors(tasks_obj, task_name, doc_id_order):
     # throw exception if error missing a target
     missing_target = any([error for error in tasks_obj.errors if error.target is None])
@@ -400,6 +409,9 @@ def _get_doc_results(task, doc_id_order, returned_tasks_object):
     # if no results present, check for action errors
     if response_task_to_deserialize.results is None:
         return get_ordered_errors(returned_tasks_object, task_name, doc_id_order)
+    # if results obj present, but no document results (likely a canceled scenario)
+    if not response_task_to_deserialize.results.documents:
+        return pad_result(returned_tasks_object, doc_id_order)
     return deserialization_callback(
         doc_id_order, response_task_to_deserialize.results, {}, lro=True
     )
