@@ -29,13 +29,15 @@ from io import BytesIO
 
 from pyodide import JsException  # pylint: disable=import-error
 from pyodide.http import pyfetch  # pylint: disable=import-error
+import js
 
-from azure.core.utils import CaseInsensitiveDict
 from azure.core.exceptions import HttpResponseError
-from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
+from azure.core.utils import CaseInsensitiveDict
 
-from ._requests_asyncio import AsyncioRequestsTransport
+from ...rest._http_response_impl_async import AsyncHttpResponseImpl
 from . import HttpRequest
+from ._requests_asyncio import AsyncioRequestsTransport
+
 
 class PyodideTransportResponse(AsyncHttpResponseImpl):
     """Async response object for the `PyodideTransport`."""
@@ -43,7 +45,7 @@ class PyodideTransportResponse(AsyncHttpResponseImpl):
     def __init__(self, **kwargs):
         super(PyodideTransportResponse, self).__init__(**kwargs)
         # clone to avoid reading from the same `FetchResponse` a second time in `load_body`.
-        self.reader = self.internal_response.clone().js_response.body.getReader()
+        self._reader = self.internal_response.clone().js_response.body.getReader()
 
     async def close(self) -> None:
         """We don't actually have control over closing connections in the browser, so we just pretend
@@ -60,17 +62,22 @@ class PyodideTransportResponse(AsyncHttpResponseImpl):
         """The body is just the content."""
         return self.content
 
-class PyodideStreamDownloadGenerator(AsyncIterator[bytes]):
+class PyodideStreamDownloadGenerator(AsyncIterator):
     """Simple stream download generator that returns the contents of
     a request.
     """
 
-    def __init__(self, response: PyodideTransportResponse, *_, **__):
+    def __init__(self, response: PyodideTransportResponse, *_, **kwargs):
         self.block_size = response.block_size
         self.response = response
         # use this to efficiently store bytes.
-        self.stream = BytesIO()
-        self.closed = False
+        if kwargs.pop("decompress", False):
+            self._reader = response._reader.pipeThrough(js.DecompressStream.new("gzip"))
+        else:
+            self._reader = response._reader
+        self._stream = BytesIO()
+
+        self._closed = False
         # We cannot control how many bytes we get from `response.reader`. `self.buffer_left`
         # indicates how many unread bytes there are in `self.stream`
         self.buffer_left = 0
@@ -78,25 +85,25 @@ class PyodideStreamDownloadGenerator(AsyncIterator[bytes]):
 
     async def __anext__(self) -> bytes:
         """Get the next block of bytes."""
-        if self.closed:
+        if self._closed:
             raise StopAsyncIteration()
 
         # remember the initial stream position
-        start_pos = self.stream.tell()
+        start_pos = self._stream.tell()
         # move stream position to the end
-        self.stream.read()
+        self._stream.read()
         # read from reader until there is no more data or we have `self.block_size` unread bytes.
         while self.buffer_left < self.block_size:
-            read = await self.response.reader.read()
+            read = await self._reader.read()
             if read.done:
-                self.closed = True
+                self._closed = True
                 break
-            self.buffer_left += self.stream.write(bytes(read.value))
+            self.buffer_left += self._stream.write(bytes(read.value))
 
         # move the stream position back to where we started
-        self.stream.seek(start_pos)
+        self._stream.seek(start_pos)
         self.buffer_left -= self.block_size
-        return self.stream.read(self.block_size)
+        return self._stream.read(self.block_size)
 
 class PyodideTransport(AsyncioRequestsTransport):
     """Implements a basic HTTP sender using the Pyodide Javascript Fetch API.
