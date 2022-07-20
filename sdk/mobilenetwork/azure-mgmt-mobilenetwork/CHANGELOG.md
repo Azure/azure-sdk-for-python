@@ -1,5 +1,32 @@
 # Release History
 
+## 1.0.0b3 (2022-07-20)
+
+**Features**
+
+  - Added operation SimsOperations.list_by_sim_group
+  - Added operation group PacketCoreControlPlaneVersionsOperations
+  - Added operation group SimGroupsOperations
+  - Model AttachedDataNetwork has a new parameter dns_addresses
+  - Model PacketCoreControlPlane has a new parameter identity
+  - Model PacketCoreControlPlane has a new parameter interop_settings
+  - Model PacketCoreControlPlane has a new parameter local_diagnostics_access
+  - Model PacketCoreControlPlane has a new parameter platform
+
+**Breaking changes**
+
+  - Model PacketCoreControlPlane has a new required parameter sku
+  - Model PacketCoreControlPlane no longer has parameter custom_location
+  - Model Sim no longer has parameter location
+  - Model Sim no longer has parameter mobile_network
+  - Model Sim no longer has parameter tags
+  - Operation SimsOperations.begin_create_or_update has a new parameter sim_group_name
+  - Operation SimsOperations.begin_delete has a new parameter sim_group_name
+  - Operation SimsOperations.get has a new parameter sim_group_name
+  - Removed operation SimsOperations.list_by_resource_group
+  - Removed operation SimsOperations.list_by_subscription
+  - Removed operation SimsOperations.update_tags
+
 ## 1.0.0b2 (2022-04-02)
 
 **Features**
