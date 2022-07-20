@@ -45,7 +45,8 @@ class PyodideTransportResponse(AsyncHttpResponseImpl):
     def __init__(self, **kwargs):
         super(PyodideTransportResponse, self).__init__(**kwargs)
         # clone to avoid reading from the same `FetchResponse` a second time in `load_body`.
-        self._reader = self.internal_response.clone().js_response.body.getReader()
+        self._js_stream = self.internal_response.clone().js_response.body
+        self._js_reader = None
 
     async def close(self) -> None:
         """We don't actually have control over closing connections in the browser, so we just pretend
@@ -72,9 +73,9 @@ class PyodideStreamDownloadGenerator(AsyncIterator):
         self.response = response
         # use this to efficiently store bytes.
         if kwargs.pop("decompress", False):
-            self._reader = response._reader.pipeThrough(js.DecompressStream.new("gzip"))
+            self._js_reader = response._js_stream.pipeThrough(js.DecompressStream.new("gzip")).getReader()
         else:
-            self._reader = response._reader
+            self._js_reader = response._js_stream.getReader()
         self._stream = BytesIO()
 
         self._closed = False
@@ -94,7 +95,7 @@ class PyodideStreamDownloadGenerator(AsyncIterator):
         self._stream.read()
         # read from reader until there is no more data or we have `self.block_size` unread bytes.
         while self.buffer_left < self.block_size:
-            read = await self._reader.read()
+            read = await self._js_reader.read()
             if read.done:
                 self._closed = True
                 break
