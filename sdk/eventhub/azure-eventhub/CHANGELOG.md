@@ -1,14 +1,15 @@
 # Release History
 
-## 5.8.0b5 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 5.8.0a5 (2022-07-19)
 
 ### Bugs Fixed
 
+- Fixed bug that prevented token refresh at regular intervals.
+- Fixed bug that was improperly passing the debug keyword argument, so that network trace debug logs are output when requested.
+
 ### Other Changes
+
+- Added logging added in to track proper token refreshes & fetches, output exception reason for producer init failure.
 
 ## 5.8.0a4 (2022-06-07)
 

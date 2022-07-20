@@ -265,7 +265,12 @@ class ClientBaseAsync(ClientBase):
                 await mgmt_client.open_async()
                 while not (await mgmt_client.client_ready_async()):
                     await asyncio.sleep(0.05)
-                mgmt_msg.application_properties["security_token"] = await mgmt_auth.get_token()
+                access_token = await mgmt_auth.get_token()
+                mgmt_msg.application_properties["security_token"] = access_token.token
+                
+                if not access_token.token:
+                    _LOGGER.info("update_token received an empty token")
+                
                 response = await mgmt_client.mgmt_request_async(
                     mgmt_msg,
                     operation=READ_OPERATION.decode(),
