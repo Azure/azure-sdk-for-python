@@ -164,18 +164,18 @@ class TestPyodideTransportClass:
             done: bool
 
         response_mock = mock.Mock()
-        response_mock.block_size = 5
+        response_mock._block_size = 5
         response_mock._js_reader.read = mock.Mock()
         read_promise = asyncio.Future()
         read_promise.set_result(ReaderReturn(value=b"01", done=False))
         reader = mock.Mock()
         reader.read.return_value = read_promise
         response_mock._js_stream.getReader.return_value = reader
-        generator = transport.PyodideStreamDownloadGenerator(response=response_mock)
+        generator = transport.PyodideStreamDownloadGenerator(pipeline=None, response=response_mock)
 
-        assert len(await generator.__anext__()) == response_mock.block_size
+        assert len(await generator.__anext__()) == response_mock._block_size
         assert reader.read.call_count == 3
-        assert len(await generator.__anext__()) == response_mock.block_size 
+        assert len(await generator.__anext__()) == response_mock._block_size 
         # 5 because there is a leftover byte from the previous `__anext__` call.
         assert reader.read.call_count == 5
 
@@ -189,6 +189,6 @@ class TestPyodideTransportClass:
     @pytest.mark.asyncio
     async def test_download_generator_compress(self, transport, mock_js_module):
         """Test that we are attempting to decompress data when passing the `decompress`."""
-        transport.PyodideStreamDownloadGenerator(response=mock.Mock(), decompress=True)
+        transport.PyodideStreamDownloadGenerator(pipeline=None, response=mock.Mock(), decompress=True)
         mock_js_module.DecompressionStream.new.assert_called_once_with("gzip")
  
