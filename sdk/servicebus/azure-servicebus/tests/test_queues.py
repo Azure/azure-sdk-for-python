@@ -1904,7 +1904,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
         my_frame = [0,0,0]
         amqp_received_message = Message(
-            data=b'data',
+            data=[b'data'],
             message_annotations={
                 _X_OPT_PARTITION_KEY: b'r_key',
                 _X_OPT_VIA_PARTITION_KEY: b'r_via_key',

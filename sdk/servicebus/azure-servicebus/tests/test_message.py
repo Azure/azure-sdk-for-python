@@ -56,7 +56,7 @@ def test_servicebus_message_repr_with_props():
 def test_servicebus_received_message_repr():
     my_frame = [0,0,0]
     received_message = Message(
-        data=b'data',
+        data=[b'data'],
         message_annotations={
             _X_OPT_PARTITION_KEY: b'r_key',
             _X_OPT_VIA_PARTITION_KEY: b'r_via_key',
@@ -73,7 +73,7 @@ def test_servicebus_received_message_repr():
 def test_servicebus_received_state():
     my_frame = [0,0,0]
     amqp_received_message = Message(
-        data=b'data',
+        data=[b'data'],
         message_annotations={
             b"x-opt-message-state": 3
         },
@@ -82,7 +82,7 @@ def test_servicebus_received_state():
     assert received_message.state == 3
 
     amqp_received_message = Message(
-        data=b'data',
+        data=[b'data'],
         message_annotations={
             b"x-opt-message-state": 1
         },
@@ -92,7 +92,7 @@ def test_servicebus_received_state():
     assert received_message.state == ServiceBusMessageState.DEFERRED
 
     amqp_received_message = Message(
-        data=b'data',
+        data=[b'data'],
         message_annotations={
         },
         properties={}
@@ -101,14 +101,14 @@ def test_servicebus_received_state():
     assert received_message.state == ServiceBusMessageState.ACTIVE
 
     amqp_received_message = Message(
-        data=b'data',
+        data=[b'data'],
         properties={}
     )
     received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
     assert received_message.state == ServiceBusMessageState.ACTIVE
 
     amqp_received_message = Message(
-        data=b'data',
+        data=[b'data'],
         message_annotations={
             b"x-opt-message-state": 0
         },
@@ -120,7 +120,7 @@ def test_servicebus_received_state():
 def test_servicebus_received_message_repr_with_props():
     my_frame = [0,0,0]
     amqp_received_message = Message(
-        data=b'data',
+        data=[b'data'],
         message_annotations={
             _X_OPT_PARTITION_KEY: b'r_key',
             _X_OPT_VIA_PARTITION_KEY: b'r_via_key',
