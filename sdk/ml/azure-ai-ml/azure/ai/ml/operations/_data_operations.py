@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Union
 from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
 from azure.core.paging import ItemPaged
 
-from azure.ai.ml.constants import AssetTypes, MLTABLE_SCHEMA_URL_FALLBACK
+from azure.ai.ml.constants import AssetTypes, MLTABLE_METADATA_SCHEMA_URL_FALLBACK
 from azure.ai.ml.operations import DatastoreOperations
 from azure.ai.ml._restclient.v2022_05_01 import (
     AzureMachineLearningWorkspaces as ServiceClient052022,
@@ -31,7 +31,7 @@ from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
 )
 from azure.ai.ml._utils._data_utils import (
-    download_mltable_schema,
+    download_mltable_metadata_schema,
     read_local_mltable_metadata_contents,
     read_remote_mltable_metadata_contents,
     validate_mltable_metadata,
@@ -243,13 +243,15 @@ class DataOperations(_ScopeDependentOperations):
                 self._assert_local_path_matches_asset_type(abs_path, asset_type)
 
     def _try_get_mltable_metadata_jsonschema(
-        self, mltable_schema_url: str = MLTABLE_SCHEMA_URL_FALLBACK
+        self, mltable_schema_url: str = MLTABLE_METADATA_SCHEMA_URL_FALLBACK
     ) -> Union[Dict, None]:
         try:
-            return download_mltable_schema(mltable_schema_url)
+            return download_mltable_metadata_schema(mltable_schema_url)
         except Exception:
             logger.info(
-                'Failed to download MLTable jsonschema from "%s", skipping validation', mltable_schema_url, exc_info=1
+                'Failed to download MLTable metadata jsonschema from "%s", skipping validation',
+                mltable_schema_url,
+                exc_info=1,
             )
             return None
 

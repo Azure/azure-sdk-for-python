@@ -1,10 +1,13 @@
 # Release History
 
-## 1.24.3 (Unreleased)
+## 1.25.0 (Unreleased)
+
+Azure-core is supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 
 ### Features Added
 
 - Added Pyodide-compatible transport.
+- Added `CaseInsensitiveDict` implementation in `azure.core.utils` removing dependency on `requests` and `aiohttp`
 
 ### Breaking Changes
 

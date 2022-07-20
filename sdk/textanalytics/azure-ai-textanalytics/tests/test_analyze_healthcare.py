@@ -356,7 +356,6 @@ class TestHealth(TextAnalyticsTest):
         ).result()
         assert res == "cls result"
 
-    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14303656/")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
@@ -414,7 +413,6 @@ class TestHealth(TextAnalyticsTest):
         assert actual_string_index_type == "TextElement_v8"
         poller.result()
 
-    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14243209/")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
@@ -525,7 +523,7 @@ class TestHealth(TextAnalyticsTest):
             polling_interval=self._interval(),
         )
         response = poller.result()
-
+        assert isinstance(poller, AnalyzeHealthcareEntitiesLROPoller)
         results = list(response)
         document_order = ["1", "2", "3", "4"]
         for doc_idx, result in enumerate(results):

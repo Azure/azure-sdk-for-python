@@ -5,7 +5,13 @@
 from marshmallow import fields, pre_dump, post_load, validate, ValidationError, post_dump
 from azure.ai.ml.constants import TimeZone
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
-from azure.ai.ml._schema.core.fields import StringTransformedEnum, NestedField, UnionField, DumpableIntegerField
+from azure.ai.ml._schema.core.fields import (
+    StringTransformedEnum,
+    NestedField,
+    UnionField,
+    DumpableIntegerField,
+    DateTimeStr,
+)
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     ScheduleStatus,
     ScheduleType,
@@ -16,7 +22,8 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
 
 class ScheduleSchema(metaclass=PatchedSchemaMeta):
     status = StringTransformedEnum(allowed_values=[o.value for o in ScheduleStatus])
-    start_time = fields.DateTime()
+    start_time = UnionField([fields.DateTime(), DateTimeStr()])
+    end_time = UnionField([fields.DateTime(), DateTimeStr()])
     time_zone = fields.Str(validate=validate.OneOf([o.value for o in TimeZone]))
 
     @post_dump(pass_original=True)

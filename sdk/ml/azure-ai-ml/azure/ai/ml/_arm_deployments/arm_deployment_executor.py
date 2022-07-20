@@ -3,7 +3,12 @@
 # ---------------------------------------------------------
 
 from typing import Dict, Any, Optional
-from azure.ai.ml._azure_environments import ENDPOINT_URLS, _get_cloud_details, resource_to_scopes
+from azure.ai.ml._azure_environments import (
+    _get_cloud_details,
+    _get_base_url_from_metadata,
+    _resource_to_scopes,
+    _get_azure_portal_id_from_metadata,
+)
 from azure.core.polling import LROPoller
 from azure.ai.ml._arm_deployments.arm_helper import deployment_message_mapping
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
@@ -39,8 +44,8 @@ class ArmDeploymentExecutor(object):
         self._resource_group_name = resource_group_name
         self._deployment_name = deployment_name
         self._cloud = _get_cloud_details()
-        management_hostname = self._cloud.get(ENDPOINT_URLS.RESOURCE_MANAGER_ENDPOINT).strip("/")
-        credential_scopes = resource_to_scopes(management_hostname)
+        management_hostname = _get_base_url_from_metadata()
+        credential_scopes = _resource_to_scopes(management_hostname)
         kwargs.pop("base_url", None)
         if credential_scopes is not None:
             kwargs["credential_scopes"] = credential_scopes
@@ -82,7 +87,7 @@ class ArmDeploymentExecutor(object):
             )
             module_logger.info(
                 ENDPOINT_DEPLOYMENT_START_MSG.format(
-                    self._cloud.get(ENDPOINT_URLS.AZURE_PORTAL_ENDPOINT),
+                    _get_azure_portal_id_from_metadata(),
                     self._subscription_id,
                     self._resource_group_name,
                     self._deployment_name,
