@@ -659,7 +659,7 @@ class ReceiveClient(AMQPClient):
         :rtype: bool
         """
         try:
-            self._connection.listen(wait=self._socket_timeout, batch=self._link_credit, **kwargs)
+            self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
             _logger.info("Timeout reached, closing receiver.")
             self._shutdown = True
