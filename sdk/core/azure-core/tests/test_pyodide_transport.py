@@ -193,5 +193,5 @@ class TestPyodideTransportClass:
     async def test_download_generator_compress(self, transport, mock_js_module):
         """Test that we are attempting to decompress data when passing the `decompress`."""
         transport.PyodideStreamDownloadGenerator(response=mock.Mock(), decompress=True)
-        mock_js_module.DecompressStream.new.assert_called_once_with("gzip")
+        mock_js_module.DecompressionStream.new.assert_called_once_with("gzip")
  
