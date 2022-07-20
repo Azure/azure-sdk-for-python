@@ -5,6 +5,7 @@
 ### Features Added
 
 ### Bugs Fixed
+- Adjusted type hints for `upload_blob` and `StorageStreamDownloader.readall`.
 
 ## 12.13.0 (2022-07-07)
 
