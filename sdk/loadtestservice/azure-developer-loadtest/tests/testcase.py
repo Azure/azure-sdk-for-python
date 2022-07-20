@@ -9,17 +9,17 @@ from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.developer.loadtesting import LoadTestingClient
 
 
-LoadtestservicePowerShellPreparer = functools.partial(
+LoadtestingPowerShellPreparer = functools.partial(
     PowerShellPreparer, "loadtesting", loadtesting_endpoint="https://fake.loadtesting.azure.com"
 )
 
 
-class LoadtestserviceTest(AzureTestCase):
+class LoadtestingTest(AzureTestCase):
     def __init__(self, method_name, **kwargs):
-        super(LoadtestserviceTest, self).__init__(method_name, **kwargs)
+        super(LoadtestingTest, self).__init__(method_name, **kwargs)
 
     def create_client(self, endpoint):
-        credential = self.get_credential(LoadTestClient)
+        credential = self.get_credential(LoadTestingClient)
         return self.create_client_from_credential(
             LoadTestingClient,
             credential=credential,

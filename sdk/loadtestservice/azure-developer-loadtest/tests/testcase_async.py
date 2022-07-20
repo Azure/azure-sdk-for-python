@@ -8,14 +8,14 @@ from devtools_testutils import AzureTestCase
 from azure.developer.loadtesting.aio import LoadTestingClient
 
 
-class LoadtestserviceAsyncTest(AzureTestCase):
+class LoadtestingAsyncTest(AzureTestCase):
     def __init__(self, method_name, **kwargs):
-        super(LoadtestserviceAsyncTest, self).__init__(method_name, **kwargs)
+        super(LoadtestingAsyncTest, self).__init__(method_name, **kwargs)
 
     def create_client(self, endpoint):
-        credential = self.get_credential(LoadTestClient, is_async=True)
+        credential = self.get_credential(LoadTestingClient, is_async=True)
         return self.create_client_from_credential(
-            LoadTestClient,
+            LoadTestingClient,
             credential=credential,
             endpoint=endpoint,
         )

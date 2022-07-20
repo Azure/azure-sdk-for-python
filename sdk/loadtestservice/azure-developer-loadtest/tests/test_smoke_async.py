@@ -4,14 +4,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from testcase import LoadtestservicePowerShellPreparer
+from testcase import LoadtestingPowerShellPreparer
 import pytest
-from testcase_async import LoadtestserviceAsyncTest
+from testcase_async import LoadtestingAsyncTest
 
 
-class LoadtestserviceSmokeAsyncTest(LoadtestserviceAsyncTest):
+class LoadtestingSmokeAsyncTest(LoadtestingAsyncTest):
     @pytest.mark.asyncio
-    @LoadtestservicePowerShellPreparer()
+    @LoadtestingPowerShellPreparer()
     async def test_smoke_create_or_update_test(self, loadtestservice_endpoint):
         client = self.create_client(loadtestservice_endpoint)
         test_id = "000002"
@@ -31,7 +31,7 @@ class LoadtestserviceSmokeAsyncTest(LoadtestserviceAsyncTest):
         assert result is not None
 
     @pytest.mark.asyncio
-    @LoadtestservicePowerShellPreparer()
+    @LoadtestingPowerShellPreparer()
     async def test_smoke_list_search(self, loadtestservice_endpoint):
         client = self.create_client(loadtestservice_endpoint)
         result = await client.administration.list_load_test_search()

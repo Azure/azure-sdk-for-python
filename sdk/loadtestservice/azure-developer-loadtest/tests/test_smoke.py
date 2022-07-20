@@ -5,11 +5,11 @@
 # license information.
 # -------------------------------------------------------------------------
 from json import load
-from testcase import LoadtestserviceTest, LoadtestservicePowerShellPreparer
+from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
 
 
-class LoadtestserviceSmokeTest(LoadtestserviceTest):
-    @LoadtestservicePowerShellPreparer()
+class LoadtestingSmokeTest(LoadtestingTest):
+    @LoadtestingPowerShellPreparer()
     def test_smoke_create_or_update_test(self, loadtestservice_endpoint):
         client = self.create_client(loadtestservice_endpoint)
         test_id = "000001"
@@ -28,13 +28,13 @@ class LoadtestserviceSmokeTest(LoadtestserviceTest):
         result = client.administration.test.create_or_update_test(test_id, body_test)
         assert result is not None
 
-    @LoadtestservicePowerShellPreparer()
+    @LoadtestingPowerShellPreparer()
     def test_smoke_list_search(self, loadtestservice_endpoint):
         client = self.create_client(loadtestservice_endpoint)
         result = client.administration.test.list_load_test_search()
         assert result is not None
 
-    @LoadtestservicePowerShellPreparer()
+    @LoadtestingPowerShellPreparer()
     def test_smoke_delete_test(self, loadtestservice_endpoint):
         client = self.create_client(loadtestservice_endpoint)
         test_id = "000001"
