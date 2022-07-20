@@ -158,11 +158,3 @@ except (ImportError, SyntaxError):
                 pass  # Aiohttp not installed
     except (ImportError, SyntaxError):
         pass  # Asynchronous pipelines not supported.
-
-# see https://pyodide.org/en/stable/usage/faq.html#how-to-detect-that-code-is-run-with-pyodide
-if "pyodide" in sys.modules:
-    from ._pyodide import PyodideTransport, PyodideTransportResponse
-    __all__.extend([
-        'PyodideTransport',
-        'PyodideTransportResponse',
-    ])

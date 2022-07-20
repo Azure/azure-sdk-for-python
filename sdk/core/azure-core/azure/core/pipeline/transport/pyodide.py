@@ -27,9 +27,9 @@
 from collections.abc import AsyncIterator
 from io import BytesIO
 
+import js # pylint: disable=import-error
 from pyodide import JsException  # pylint: disable=import-error
 from pyodide.http import pyfetch  # pylint: disable=import-error
-import js
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.utils import CaseInsensitiveDict

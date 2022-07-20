@@ -64,12 +64,9 @@ class TestPyodideTransportClass:
             ("js", mock_js_module),
         )
         with mock.patch.dict(sys.modules, patch_dict):
-            # weird stuff is hppenig here, have to do full import.
-            # if I do `from azure.core.pipline.transport import _pyodide`
-            # I end up with `_pyodide = 'pyodide'` ???????
-            import azure.core.pipeline.transport._pyodide
+            import azure.core.pipeline.transport.pyodide
 
-            yield azure.core.pipeline.transport._pyodide
+            yield azure.core.pipeline.transport.pyodide
 
     @pytest.fixture()
     def pipeline(self, transport):
