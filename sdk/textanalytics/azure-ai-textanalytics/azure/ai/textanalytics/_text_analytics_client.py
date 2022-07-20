@@ -1170,6 +1170,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     continuation_token,
                     AnalyzeActionsLROPoller,
                     AnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
                         timeout=polling_interval,
                         **kwargs
                     ),
@@ -1219,6 +1220,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                         ),
                         cls=response_cls,
                         polling=AnalyzeActionsLROPollingMethod(
+                            text_analytics_client=self._client,
                             timeout=polling_interval,
                             show_stats=show_stats,
                             doc_id_order=doc_id_order,
@@ -1267,6 +1269,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     body=analyze_body,
                     cls=response_cls,
                     polling=AnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
                         timeout=polling_interval,
                         show_stats=show_stats,
                         doc_id_order=doc_id_order,
@@ -1370,6 +1373,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     continuation_token,
                     AnalyzeActionsLROPoller,
                     AnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
                         timeout=polling_interval,
                         **kwargs
                     ),
@@ -1482,6 +1486,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     continuation_token,
                     AnalyzeActionsLROPoller,
                     AnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
                         timeout=polling_interval,
                         **kwargs
                     ),
@@ -1593,6 +1598,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     continuation_token,
                     AnalyzeActionsLROPoller,
                     AnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
                         timeout=polling_interval,
                         **kwargs
                     ),
