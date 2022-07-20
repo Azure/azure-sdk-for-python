@@ -248,7 +248,7 @@ class _MyMutableMapping(MutableMapping):
     def __init__(self, data: typing.Dict[str, typing.Any]) -> None:
         self._data = copy.deepcopy(data)
 
-    def __contains__(self, key: str) -> bool:
+    def __contains__(self, key: str) -> bool:  # type: ignore
         return key in self._data
 
     def __getitem__(self, key: str) -> typing.Any:
@@ -284,7 +284,7 @@ class _MyMutableMapping(MutableMapping):
         except KeyError:
             return default
 
-    @typing.overload
+    @typing.overload  # type: ignore
     def pop(self, key: str) -> typing.Any:
         ...
 
@@ -306,7 +306,7 @@ class _MyMutableMapping(MutableMapping):
     def update(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         self._data.update(*args, **kwargs)
 
-    @typing.overload
+    @typing.overload  # type: ignore
     def setdefault(self, key: str) -> typing.Any:
         ...
 
@@ -397,7 +397,7 @@ class Model(_MyMutableMapping):
             for k, v in mro_class.__dict__.items() if k[0] != "_" and hasattr(v, "_type")
         }
         for attr, rest_field in attr_to_rest_field.items():
-            rest_field._module = cls.__module__
+            rest_field._module_input = cls.__module__
             if not rest_field._type:
                 rest_field._type = rest_field._get_deserialize_callable_from_annotation(cls.__annotations__.get(attr, None))
             if not rest_field._rest_name_input:
@@ -427,7 +427,7 @@ class _RestField:
     ):
         self._type = type
         self._rest_name_input = name
-        self._module: typing.Optional[str] = None
+        self._module_input: typing.Optional[str] = None
         self._is_discriminator = is_discriminator
         self._readonly = readonly
         self._is_model = False
@@ -438,6 +438,12 @@ class _RestField:
         if self._rest_name_input is None:
             raise ValueError("Rest name was never set")
         return self._rest_name_input
+
+    @property
+    def _module(self) -> str:
+        if self._module_input is None:
+            raise ValueError("Module was never set")
+        return self._module_input
 
     def __get__(self, obj: Model, type=None):
         # by this point, type and rest_name will have a value bc we default
