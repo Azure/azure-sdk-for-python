@@ -3,6 +3,8 @@
 ## 12.14.0b1 (Unreleased)
 
 ### Features Added
+- Added standard `read` method to `StorageStreamDownloader`.
+- Added support for async streams (classes with an async `read` method) to async `upload_blob`.
 
 ### Bugs Fixed
 - Adjusted type hints for `upload_blob` and `StorageStreamDownloader.readall`.
