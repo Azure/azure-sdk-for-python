@@ -69,6 +69,7 @@ class PyodideStreamDownloadGenerator(AsyncIterator):
     a request.
     """
 
+    # pylint: disable=unused-argument
     def __init__(self, pipeline: Pipeline, response: PyodideTransportResponse, *_, **kwargs):
         self._block_size = response._block_size
         self.response = response
