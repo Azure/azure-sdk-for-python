@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 import uuid
 
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.communication.rooms import RoomJoinPolicy
 from azure.communication.rooms._models import RoomModel, RoomParticipant, ParticipantsCollection
 from .._generated.aio._client import AzureCommunicationRoomsService
 from .._shared.utils import parse_connection_str, get_authentication_policy
@@ -96,6 +97,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         self,
         valid_from=None, # type: Optional[datetime]
         valid_until=None, # type: Optional[datetime]
+        room_join_policy=None, # type: Optional[RoomJoinPolicy]
         participants=None, # type: Optional[List[RoomParticipant]]
         **kwargs
     ):
@@ -108,8 +110,10 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :param valid_until: The timestamp from when the room can no longer be joined. The timestamp
          is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :type valid_until: ~datetime
-        :keyword participants: (Optional) Collection of identities invited to the room.
-        :paramtype participants: (Optional)List[RoomParticipant]
+        :param room_join_policy: (Optional)The join policy of the room.
+        :type room_join_policy: (Optional)RoomJoinPolicy
+        :param participants: (Optional) Collection of identities invited to the room.
+        :type participants: (Optional)List[RoomParticipant]
         :returns: Created room.
         :rtype: ~azure.communication.rooms.RoomModel
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -117,6 +121,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         create_room_request = CreateRoomRequest(
             valid_from=valid_from,
             valid_until=valid_until,
+            room_join_policy=room_join_policy,
             participants=[p.to_room_participant_internal() for p in participants] if participants else None
         )
 
@@ -154,7 +159,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         room_id,
         valid_from=None, # type: Optional[datetime]
         valid_until=None, # type: Optional[datetime]
-        room_open=None, # type: Optional[bool]
+        room_join_policy=None, # type: Optional[RoomJoinPolicy]
         participants=None, #type: Optional[List[RoomParticipant]]
         **kwargs
     ):
@@ -169,6 +174,8 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :param valid_until: The timestamp from when the room can no longer be joined. The timestamp
          is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :type valid_until: ~datetime
+        :param room_join_policy: (Optional)The join policy of the room.
+        :type room_join_policy: (Optional)RoomJoinPolicy
         :param participants: (Optional) Collection of identities invited to the room.
         :type participants: (Optional)list[RoomParticipant]
         :returns: Updated room.
@@ -176,10 +183,11 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         """
+
         update_room_request = UpdateRoomRequest(
             valid_from=valid_from,
             valid_until=valid_until,
-            room_open=room_open,
+            room_join_policy=room_join_policy,
             participants=[p.to_room_participant_internal() for p in participants] if participants else None
         )
         update_room_response = await self._rooms_service_client.rooms.update_room(

@@ -16,6 +16,7 @@ from azure.communication.rooms._shared.models import CommunicationUserIdentifier
 from azure.communication.rooms.aio import RoomsClient
 from azure.communication.rooms import (
     RoomParticipant,
+    RoomJoinPolicy,
     RoleType
 )
 from _shared.asynctestcase import AsyncCommunicationTestCase
@@ -183,6 +184,19 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
 
                 assert str(ex.value.status_code) == "400"
                 assert ex.value.message is not None
+
+    @pytest.mark.live_test_only
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_create_room_open_room(self):
+        # room attributes
+        valid_from =  datetime.now() + relativedelta(days=+3)
+        valid_until = valid_from + relativedelta(months=+4)
+        room_join_policy = RoomJoinPolicy.COMMUNICATION_SERVICE_USERS
+
+        response = await self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, room_join_policy=room_join_policy)
+        self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until, room_join_policy=room_join_policy)
+        # delete created room
+        await self.rooms_client.delete_room(room_id=response.id)
 
     @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
@@ -357,6 +371,42 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             await self.rooms_client.delete_room(room_id=create_response.id)
             self.verify_successful_room_response(
                 response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
+
+    @pytest.mark.live_test_only
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_update_room_change_open_room_in_past(self):
+        # room with no attributes
+        create_response = await self.rooms_client.create_room()
+
+        # room attributes
+        valid_from =  datetime.now() + relativedelta(days=-1)
+        valid_until = valid_from + relativedelta(months=+4)
+        room_join_policy = RoomJoinPolicy.COMMUNICATION_SERVICE_USERS
+
+        with pytest.raises(HttpResponseError) as ex:
+            await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until, room_join_policy=room_join_policy)
+
+        # delete created room
+        await self.rooms_client.delete_room(room_id=create_response.id)
+
+        assert str(ex.value.status_code) == "400"
+        assert ex.value.message is not None
+
+    @pytest.mark.live_test_only
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_update_room_change_open_room_in_future(self):
+        # room with no attributes
+        create_response = await self.rooms_client.create_room()
+
+        # room attributes
+        valid_from =  datetime.now() + relativedelta(days=+3)
+        valid_until = valid_from + relativedelta(months=+4)
+        room_join_policy = RoomJoinPolicy.COMMUNICATION_SERVICE_USERS
+
+        response = await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until, room_join_policy=room_join_policy)
+        self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until, room_join_policy=room_join_policy)
+        # delete created room
+        await self.rooms_client.delete_room(room_id=create_response.id)
 
     @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test

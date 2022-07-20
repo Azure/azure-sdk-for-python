@@ -14,6 +14,7 @@ from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.rooms import (
     RoomsClient,
     RoomParticipant,
+    RoomJoinPolicy,
     RoleType
 )
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier
@@ -167,6 +168,18 @@ class RoomsClientTest(CommunicationTestCase):
         assert ex.value.message is not None
 
     @pytest.mark.live_test_only
+    def test_create_room_open_room(self):
+        # room attributes
+        valid_from =  datetime.now() + relativedelta(days=+3)
+        valid_until = valid_from + relativedelta(months=+4)
+        room_join_policy = RoomJoinPolicy.COMMUNICATION_SERVICE_USERS
+
+        response = self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, room_join_policy=room_join_policy)
+        self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until, room_join_policy=room_join_policy)
+        # delete created room
+        self.rooms_client.delete_room(room_id=response.id)
+
+    @pytest.mark.live_test_only
     def test_create_room_all_attributes(self):
         # room attributes
         valid_from =  datetime.now() + relativedelta(days=+3)
@@ -317,6 +330,40 @@ class RoomsClientTest(CommunicationTestCase):
         self.rooms_client.delete_room(room_id=create_response.id)
         self.verify_successful_room_response(
             response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
+
+    @pytest.mark.live_test_only
+    def test_update_room_change_open_room_in_past(self):
+        # room with no attributes
+        create_response = self.rooms_client.create_room()
+
+        # room attributes
+        valid_from =  datetime.now() + relativedelta(days=-1)
+        valid_until = valid_from + relativedelta(months=+4)
+        room_join_policy = RoomJoinPolicy.COMMUNICATION_SERVICE_USERS
+
+        with pytest.raises(HttpResponseError) as ex:
+            self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until, room_join_policy=room_join_policy)
+
+        # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
+
+        assert str(ex.value.status_code) == "400"
+        assert ex.value.message is not None
+
+    @pytest.mark.live_test_only
+    def test_update_room_change_open_room_in_future(self):
+        # room with no attributes
+        create_response = self.rooms_client.create_room()
+
+        # room attributes
+        valid_from =  datetime.now() + relativedelta(days=+3)
+        valid_until = valid_from + relativedelta(months=+4)
+        room_join_policy = RoomJoinPolicy.COMMUNICATION_SERVICE_USERS
+
+        response = self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until, room_join_policy=room_join_policy)
+        self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until, room_join_policy=room_join_policy)
+        # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
 
     @pytest.mark.live_test_only
     def test_add_participants(self):

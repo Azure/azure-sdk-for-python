@@ -1,0 +1,48 @@
+interactions:
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.1.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Fri, 08 Jul 2022 18:29:16 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2022-06-01
+  response:
+    body:
+      string: '{"error":{"code":"Denied","message":"Denied by the resource provider."}}'
+    headers:
+      connection:
+      - keep-alive
+      content-type:
+      - application/json
+      date:
+      - Fri, 08 Jul 2022 18:29:17 GMT
+      ms-cv:
+      - iZzHmN7ri0CMxo1qAmf75A.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 40ms
+    status:
+      code: 401
+      message: Unauthorized
+version: 1

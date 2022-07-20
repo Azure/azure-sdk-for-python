@@ -10,6 +10,7 @@ from .._generated.models import (
     RoomParticipant as RoomParticipantInternal,
     CommunicationIdentifierModel,
     CommunicationUserIdentifierModel,
+    RoomJoinPolicy,
     RoleType
 )
 from .._generated import _serialization
@@ -35,6 +36,8 @@ class RoomModel(_serialization.Model):
     :ivar valid_until: The timestamp from when the room can no longer be joined. The timestamp is
      in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype valid_until: ~datetime
+    :ivar room_join_policy: The join policy of the room.
+    :vartype room_join_policy: ~azure.communication.rooms.RoomJoinPolicy
     :ivar participants: Collection of room participants.
     :vartype participants: list[~azure.communication.rooms.RoomParticipant]
     """
@@ -54,6 +57,7 @@ class RoomModel(_serialization.Model):
         created_date_time=None, # type: Optional[datetime]
         valid_from=None, # type: Optional[datetime]
         valid_until=None, # type: Optional[datetime]
+        room_join_policy=None, # type: Optional[RoomJoinPolicy]
         participants=None, # type: Optional[List[RoomParticipant]]
         **kwargs
     ):
@@ -69,6 +73,8 @@ class RoomModel(_serialization.Model):
         :keyword valid_until: The timestamp from when the room can no longer be joined. The timestamp
          is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :paramtype valid_until: ~datetime
+        :keyword room_join_policy: The join policy of the room.
+        :paramtype room_join_policy: ~azure.communication.rooms.RoomJoinPolicy
         :keyword participants: Collection of room participants.
         :paramtype participants: list[~azure.communication.rooms.RoomParticipant]
         """
@@ -77,6 +83,7 @@ class RoomModel(_serialization.Model):
         self.created_date_time = created_date_time
         self.valid_from = valid_from
         self.valid_until = valid_until
+        self.room_join_policy = room_join_policy
         self.participants = participants
 
     @classmethod
@@ -96,6 +103,7 @@ class RoomModel(_serialization.Model):
             created_date_time=get_room_response.created_date_time,
             valid_from=get_room_response.valid_from,
             valid_until=get_room_response.valid_until,
+            room_join_policy=get_room_response.room_join_policy,
             participants=[RoomParticipant.from_room_participant_internal(p) for p in get_room_response.participants],
             **kwargs
         )
