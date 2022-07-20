@@ -9,12 +9,12 @@ import asyncio
 
 from azure.core.exceptions import HttpResponseError
 
-from azure.storage.filedatalake.aio import DataLakeServiceClient, FileSystemClient, DataLakeFileClient, DataLakeDirectoryClient
+from azure.storage.filedatalake.aio import DataLakeDirectoryClient, DataLakeFileClient, DataLakeServiceClient, FileSystemClient
 from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
 from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
-from azure.storage.filedatalake._models import AnalyticsLogging, Metrics, RetentionPolicy, StaticWebsite, CorsRule
+from azure.storage.filedatalake._models import AnalyticsLogging, CorsRule, Metrics, RetentionPolicy, StaticWebsite
 
 # ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'

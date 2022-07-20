@@ -12,14 +12,27 @@ import pytest
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
 
-from azure.core.exceptions import (HttpResponseError, ResourceExistsError,
-                                   ResourceNotFoundError, ClientAuthenticationError,
-                                   ResourceModifiedError)
-from azure.storage.filedatalake import (ContentSettings, generate_account_sas, generate_file_sas,
-                                        ResourceTypes, AccountSasPermissions, DataLakeFileClient,
-                                        FileSystemClient, DataLakeDirectoryClient, FileSasPermissions,
-                                        generate_file_system_sas, FileSystemSasPermissions)
-from azure.storage.filedatalake import DataLakeServiceClient
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceModifiedError,
+    ResourceNotFoundError
+)
+from azure.storage.filedatalake import (
+    AccountSasPermissions,
+    ContentSettings,
+    DataLakeDirectoryClient,
+    DataLakeFileClient,
+    DataLakeServiceClient,
+    FileSasPermissions,
+    FileSystemClient,
+    FileSystemSasPermissions,
+    generate_account_sas,
+    generate_file_sas,
+    generate_file_system_sas,
+    ResourceTypes,
+)
 from azure.storage.filedatalake._models import FileSystemEncryptionScope
 from settings.testcase import DataLakePreparer
 from devtools_testutils.storage import StorageTestCase

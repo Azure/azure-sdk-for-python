@@ -10,15 +10,17 @@ from datetime import datetime, timedelta
 import pytest
 
 from azure.core import MatchConditions
-from azure.core.exceptions import (HttpResponseError, ResourceExistsError, ResourceNotFoundError,
-                                   ResourceModifiedError, ServiceRequestError, AzureError)
-from azure.storage.filedatalake import (ContentSettings, DirectorySasPermissions, DataLakeDirectoryClient,
-                                        generate_file_system_sas, FileSystemSasPermissions)
+from azure.core.exceptions import (
+    AzureError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceModifiedError,
+    ResourceNotFoundError,
+    ServiceRequestError
+)
+from azure.storage.filedatalake import ContentSettings, DataLakeDirectoryClient, DirectorySasPermissions, FileSystemSasPermissions, generate_file_system_sas
 from azure.storage.filedatalake import DataLakeServiceClient, generate_directory_sas
-from azure.storage.filedatalake._models import (AccessControlChangeResult,
-                                                AccessControlChangeCounters,
-                                                FileSystemEncryptionScope
-                                                )
+from azure.storage.filedatalake._models import AccessControlChangeCounters, AccessControlChangeResult, FileSystemEncryptionScope
 from azure.storage.filedatalake._serialize import _SUPPORTED_API_VERSIONS
 
 from settings.testcase import DataLakePreparer

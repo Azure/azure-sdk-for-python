@@ -8,13 +8,13 @@
 import unittest
 
 from azure.core.exceptions import HttpResponseError
-from azure.storage.filedatalake import DataLakeServiceClient, FileSystemClient, DataLakeFileClient, DataLakeDirectoryClient
+from azure.storage.filedatalake import DataLakeDirectoryClient, DataLakeFileClient, DataLakeServiceClient, FileSystemClient
 
 from settings.testcase import DataLakePreparer
 from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
-from azure.storage.filedatalake._models import AnalyticsLogging, Metrics, RetentionPolicy,StaticWebsite, CorsRule
+from azure.storage.filedatalake._models import AnalyticsLogging, CorsRule, Metrics, RetentionPolicy, StaticWebsite
 
 # ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'

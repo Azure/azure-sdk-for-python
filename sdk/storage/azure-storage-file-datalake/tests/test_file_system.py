@@ -10,7 +10,7 @@ import unittest
 from datetime import datetime, timedelta
 
 from azure.core import MatchConditions
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 from azure.storage.filedatalake import (
     AccessPolicy,
@@ -20,17 +20,17 @@ from azure.storage.filedatalake import (
     DataLakeServiceClient,
     FileSystemClient,
     FileSystemSasPermissions,
-    PublicAccess,
-    ResourceTypes,
     generate_account_sas,
-    generate_file_system_sas,
     generate_directory_sas,
     generate_file_sas,
+    generate_file_system_sas,
+    PublicAccess,
+    ResourceTypes
 )
-from azure.storage.filedatalake._models import FileSystemEncryptionScope, FileSasPermissions
+from azure.storage.filedatalake._models import FileSasPermissions, FileSystemEncryptionScope
 
-from settings.testcase import DataLakePreparer
 from devtools_testutils.storage import StorageTestCase
+from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
