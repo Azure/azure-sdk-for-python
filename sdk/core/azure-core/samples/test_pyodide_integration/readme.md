@@ -2,13 +2,13 @@
 
 ## Running
 
-Once you have set up your Azure Resources and your `.env` filem, from this directory, run
+Once you have set up your Azure Resources and your `.env` file, from this directory, run
 
 ```python
 python -h http.server 8000
 ```
 
-(You can use any other port). Then, from a Chromium-based browser such as Edge, go to [`http://localhost:8000/test/integration`](http://localhost:8000/test/integration) and the tests will be run in the browser. Dev tip: keep your browser's devtools open.
+(You can use any other port). Then, from a Chromium-based browser such as Edge, go to [`http://localhost:8000/`](http://localhost:8000/) and the tests will be run in the browser. Dev tip: keep your browser's devtools open.
 
 ## Adding tests
 
@@ -17,7 +17,8 @@ Add tests in `browser_test.py`. I couldn't get `pytest` or `unittest` to coopera
 ## Sensitive values
 
 To run the tests, you need a `.env` folder in this directory with your sensitive values.
-see `example-env`. You can then access the values as environment variables using `os.getenv`.
+see `example-env`. You can then access the values as environment variables using `os.getenv`. You will
+need to have your `textanalytics` key and endpoint as well as your Blob Storage key and url.
 
 ## Dependencies
 
@@ -29,7 +30,7 @@ You need your own Text Analytics and Blob Storage accounts to run these tests. B
 
 | Allowed origins | Allowed methods | Allowed headers | Exposed headers | Max age |
 |-----------------|-----------------|-----------------|-----------------|---------|
-| `\*`            | All             | `\*`            | See below       | `3600`  |
+| `*`             | All             | `*`             | See below       | `3600`  |
 
 For exposed headers, put
 
