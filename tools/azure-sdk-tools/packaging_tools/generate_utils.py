@@ -137,9 +137,6 @@ def format_samples(sdk_code_path) -> None:
         _LOGGER.info(f'not find generate_sample')
         return
 
-    print(f"*** os.cwd: {os.getcwd()}")
-    print(f"*** generate_sample_path: {generate_sample_path}")
-
     try:
         import black
     except Exception as e:
