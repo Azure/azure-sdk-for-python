@@ -18,7 +18,7 @@ steps:
         -ArtifactPath ${{ parameters.ArtifactPath }}
         -APIViewUri ${{ parameters.APIViewUri }}
         -APIKey $(azuresdk-apiview-apikey)
-        -SourceBranch 'main'
+        -SourceBranch $(Build.SourceBranchName)
         -DefaultBranch $(DefaultBranch)
         -ConfigFileDir '${{ parameters.ConfigFileDir }}'
         -BuildId $(Build.BuildId)
@@ -31,6 +31,7 @@ steps:
       and(
         succeededOrFailed(),
         ne(variables['Skip.CreateApiReview'], 'true'),
+        ne(variables['Build.Reason'],'PullRequest'),
         eq(variables['System.TeamProject'], 'internal'),
         not(endsWith(variables['Build.Repository.Name'], '-pr'))
       )
