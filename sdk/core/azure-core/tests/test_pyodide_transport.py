@@ -86,8 +86,6 @@ class TestPyodideTransportClass:
     ) -> mock.Mock:
         """Create a mock response object that mimics `pyodide.http.FetchResponse`"""
         mock_response = mock.Mock()
-        if isinstance(body, str):
-            body = bytes(body, encoding="utf-8")
         mock_response.body = body
         mock_response.js_response.headers = headers
         mock_response.status = status
@@ -170,21 +168,23 @@ class TestPyodideTransportClass:
 
         response_mock = mock.Mock()
         response_mock.block_size = 5
-        response_mock._reader.read = mock.Mock()
+        response_mock._js_reader.read = mock.Mock()
         read_promise = asyncio.Future()
         read_promise.set_result(ReaderReturn(value=b"01", done=False))
-        response_mock._reader.read.return_value = read_promise
+        reader = mock.Mock()
+        reader.read.return_value = read_promise
+        response_mock._js_stream.getReader.return_value = reader
         generator = transport.PyodideStreamDownloadGenerator(response=response_mock)
 
         assert len(await generator.__anext__()) == response_mock.block_size
-        assert response_mock._reader.read.call_count == 3
+        assert reader.read.call_count == 3
         assert len(await generator.__anext__()) == response_mock.block_size 
         # 5 because there is a leftover byte from the previous `__anext__` call.
-        assert response_mock._reader.read.call_count == 5
+        assert reader.read.call_count == 5
 
         read_promise = asyncio.Future()
         read_promise.set_result(ReaderReturn(value=None, done=True))
-        response_mock._reader.read.return_value = read_promise
+        reader.read.return_value = read_promise
         await generator.__anext__()
         with pytest.raises(StopAsyncIteration):
             await generator.__anext__()
