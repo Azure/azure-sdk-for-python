@@ -36,7 +36,7 @@ logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger()
 
 # Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-# AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, LOADTESTSERVICE_ENDPOINT
+# AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, LOADTESTSERVICE_ENDPOINT, SUBSCRIPTION_ID
 
 # using python dotenv library to load environment variables from a .env file
 from dotenv import load_dotenv
@@ -57,13 +57,14 @@ FILE_ID = "a012b234-1230-ab00-0040-nivedit-new-namespace"  # ID to be assigned t
 TEST_RUN_ID = "08673e89-3285-46a1-9c6b-nivedit-new-namespace"  # ID to be assigned to a test run
 APP_COMPONENT = "01730263-6671-4216-b283-nivedit-new-namespace"  # ID of the APP Component
 DISPLAY_NAME = "new_namespace-new-namespace"  # display name
+SUBSCRIPTION_ID = os.environ["SUBSCRIPTION_ID"]
 
 # creating load test
 try:
     result = client.load_test_administration.create_or_update_test(
         TEST_ID,
         {
-            "resourceId": "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
+            "resourceId": f"/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
             "description": "",
             "displayName": DISPLAY_NAME,
             "loadTestConfig": {
@@ -102,11 +103,11 @@ try:
             "name": "app_component",
             "testId": TEST_ID,
             "value": {
-                "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo": {
-                    "resourceId": "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo",
+                f"/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo": {
+                    "resourceId": f"/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo",
                     "resourceName": "App-Service-Sample-Demo",
                     "resourceType": "Microsoft.Web/sites",
-                    "subscriptionId": "7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a",
+                    "subscriptionId": SUBSCRIPTION_ID,
                 }
             },
         },
