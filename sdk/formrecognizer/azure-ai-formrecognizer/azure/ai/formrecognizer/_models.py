@@ -21,6 +21,40 @@ from ._helpers import (
 
 TargetAuthorization = NewType('TargetAuthorization', Dict[str, str])
 
+class AzureBlobContentSource:
+
+    def __init__(self, **kwargs):
+        self.source = kwargs.get("source", None)
+        self.prefix = kwargs.get("prefix", None)
+
+
+    def __repr__(self):
+        return f"AzureBlobContentSource(source={self.source}, prefix={self.prefix})"
+
+    def to_dict(self) -> dict:
+        """Returns a dict representation of AzureBlobContentSource.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "source": self.source,
+            "prefix": self.prefix,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "AzureBlobContentSource":
+        """Converts a dict in the shape of a AzureBlobContentSource to the model itself.
+
+        :param dict data: A dictionary in the shape of AzureBlobContentSource.
+        :return: AzureBlobContentSource
+        :rtype: AzureBlobContentSource
+        """
+        return cls(
+            source=data.get("source", None),
+            prefix=data.get("prefix", None),
+        )
+
 def prepare_document_spans(spans):
     return [DocumentSpan._from_generated(span) for span in spans] if spans else []
 

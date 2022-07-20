@@ -10,6 +10,7 @@ from typing import (
     Any,
     Union,
     List,
+    overload,
 )
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.tracing.decorator import distributed_trace
@@ -25,6 +26,7 @@ from ._polling import (
 from ._form_base_client import FormRecognizerClientBase
 from ._document_analysis_client import DocumentAnalysisClient
 from ._models import (
+    AzureBlobContentSource,
     DocumentBuildMode,
     DocumentModelInfo,
     DocumentModelSummary,
@@ -91,6 +93,11 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
             **kwargs
         )
 
+    @overload
+    def begin_build_model(
+        self, source: AzureBlobContentSource, build_mode: Union[str, DocumentBuildMode], **kwargs: Any
+    ) -> DocumentModelAdministrationLROPoller[DocumentModelInfo]: ...
+
     @distributed_trace
     def begin_build_model(
         self, source: str, build_mode: Union[str, DocumentBuildMode], **kwargs: Any
@@ -106,16 +113,15 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         'image/jpeg', 'image/png', 'image/tiff', or 'image/bmp'. Other types of content in the container is ignored.
 
         :param str source: An Azure Storage blob container's SAS URI. A container URI (without SAS)
-            can be used if the container is public or has a managed identity configured. For more information on
+            can be used if the container is public or has a managed identity configured. Please note that
+            you should pass in an instance of class:`~azure.ai.formrecognizer.AzureBlobContentSource` if you
+            want to use a prefix to use only subset of your training data set. For more information on
             setting up a training data set, see: https://aka.ms/azsdk/formrecognizer/buildtrainingset.
         :param build_mode: The custom model build mode. Possible values include: "template", "neural".
             For more information about build modes, see: https://aka.ms/azsdk/formrecognizer/buildmode.
         :type build_mode: str or :class:`~azure.ai.formrecognizer.DocumentBuildMode`
         :keyword str model_id: A unique ID for your model. If not specified, a model ID will be created for you.
         :keyword str description: An optional description to add to the model.
-        :keyword str prefix: A case-sensitive prefix string to filter documents in the source path.
-            For example, when using an Azure storage blob URI, use the prefix to restrict sub folders.
-            `prefix` should end in '/' to avoid cases where filenames share the same prefix.
         :keyword tags: List of user defined key-value tag attributes associated with the model.
         :paramtype tags: dict[str, str]
         :return: An instance of an DocumentModelAdministrationLROPoller. Call `result()` on the poller
@@ -157,6 +163,28 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if model_id is None:
             model_id = str(uuid.uuid4())
 
+        if isinstance(source, AzureBlobContentSource):
+            return self._client.begin_build_document_model(  # type: ignore
+                    build_request=self._generated_models.BuildDocumentModelRequest(
+                        model_id=model_id,
+                        build_mode=build_mode,
+                        description=description,
+                        tags=tags,
+                        azure_blob_source=self._generated_models.AzureBlobContentSource(
+                            container_url=source.source,
+                            prefix=source.prefix,
+                        ),
+                    ),
+                    cls=cls,
+                    continuation_token=continuation_token,
+                    polling=LROBasePolling(
+                        timeout=polling_interval,
+                        lro_algorithms=[DocumentModelAdministrationPolling()],
+                        **kwargs
+                    ),
+                    **kwargs
+                )
+
         return self._client.begin_build_document_model(  # type: ignore
             build_request=self._generated_models.BuildDocumentModelRequest(
                 model_id=model_id,
@@ -165,7 +193,6 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
                 tags=tags,
                 azure_blob_source=self._generated_models.AzureBlobContentSource(
                     container_url=source,
-                    prefix=kwargs.pop("prefix", None),
                 ),
             ),
             cls=cls,

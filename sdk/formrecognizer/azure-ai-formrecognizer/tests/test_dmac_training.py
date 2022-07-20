@@ -11,7 +11,7 @@ from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
-from azure.ai.formrecognizer._models import CustomFormModel, DocumentModelInfo
+from azure.ai.formrecognizer._models import AzureBlobContentSource, DocumentModelInfo
 from azure.ai.formrecognizer import DocumentModelAdministrationClient, _models
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -117,6 +117,25 @@ class TestDMACTraining(FormRecognizerTest):
         set_bodiless_matcher()
 
         poller = client.begin_build_model(formrecognizer_table_variable_rows_container_sas_url, "template")
+        model = poller.result()
+
+        assert model.model_id
+        assert model.description is None
+        assert model.created_on
+        for name, doc_type in model.doc_types.items():
+            assert name
+            for key, field in doc_type.field_schema.items():
+                assert key
+                assert field["type"]
+                assert doc_type.field_confidence[key] is not None
+        
+        
+        poller = client.begin_build_model(
+            AzureBlobContentSource(
+                source=formrecognizer_table_variable_rows_container_sas_url
+            ),
+            "template",
+        )
         model = poller.result()
 
         assert model.model_id
