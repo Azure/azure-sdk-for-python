@@ -13,7 +13,7 @@ python -m pip install azure-developer-loadtesting
 
 #### Prequisites
 
-- Python 3.6 or later is required to use this package.
+- Python 3.7 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Azure Developer LoadTesting instance.
 #### Create with an Azure Active Directory Credential
@@ -32,23 +32,23 @@ Set the values of the client ID, tenant ID, and client secret of the AAD applica
 Use the returned token credential to authenticate the client:
 
 ```python
->>> from azure.developer.loadtesting import LoadTestClient
->>> from azure.identity import DefaultAzureCredential
->>> client = LoadTestClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+from azure.developer.loadtesting import LoadTestClient
+from azure.identity import DefaultAzureCredential
+client = LoadTestClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
 
 ## Examples
 
 ```python
->>> from azure.developer.loadtesting import LoadTestClient
->>> from azure.identity import DefaultAzureCredential
->>> from azure.core.exceptions import HttpResponseError
+from azure.developer.loadtesting import LoadTestClient
+from azure.identity import DefaultAzureCredential
+from azure.core.exceptions import HttpResponseError
 
->>> client = LoadTestClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
->>> try:
+client = LoadTestClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+try:
         <!-- write test code here -->
-    except HttpResponseError as e:
-        print('service responds error: {}'.format(e.response.json()))
+except HttpResponseError as e:
+     print('service responds error: {}'.format(e.response.json()))
 
 ```
 ## Key concepts
