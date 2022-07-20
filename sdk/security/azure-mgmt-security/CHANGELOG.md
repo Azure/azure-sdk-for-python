@@ -1,5 +1,80 @@
 # Release History
 
+## 2.0.0 (2022-07-20)
+
+**Features**
+
+  - Added operation AlertsOperations.begin_simulate
+  - Added operation AlertsOperations.get_resource_group_level
+  - Added operation AlertsOperations.get_subscription_level
+  - Added operation AlertsOperations.list_resource_group_level_by_region
+  - Added operation AlertsOperations.list_subscription_level_by_region
+  - Added operation AlertsOperations.update_resource_group_level_state_to_activate
+  - Added operation AlertsOperations.update_resource_group_level_state_to_dismiss
+  - Added operation AlertsOperations.update_subscription_level_state_to_activate
+  - Added operation AlertsOperations.update_subscription_level_state_to_dismiss
+  - Added operation ServerVulnerabilityAssessmentOperations.begin_delete
+  - Added operation group IngestionSettingsOperations
+  - Added operation group SoftwareInventoriesOperations
+  - Model IoTSecuritySolutionModel has a new parameter additional_workspaces
+  - Model IoTSecuritySolutionModel has a new parameter system_data
+  - Model SecurityAssessmentMetadata has a new parameter categories
+  - Model SecurityAssessmentMetadataProperties has a new parameter categories
+
+**Breaking changes**
+
+  - Client name is changed
+  - Model SecurityAssessmentMetadata no longer has parameter category
+  - Model SecurityAssessmentMetadataProperties no longer has parameter category
+  - Operation AdaptiveApplicationControlsOperations.delete has a new parameter asc_location
+  - Operation AdaptiveApplicationControlsOperations.get has a new parameter asc_location
+  - Operation AdaptiveApplicationControlsOperations.put has a new parameter asc_location
+  - Operation AlertsOperations.update_resource_group_level_state_to_resolve has a new parameter asc_location
+  - Operation AlertsOperations.update_subscription_level_state_to_resolve has a new parameter asc_location
+  - Operation AllowedConnectionsOperations.get has a new parameter asc_location
+  - Operation AllowedConnectionsOperations.list_by_home_region has a new parameter asc_location
+  - Operation DiscoveredSecuritySolutionsOperations.get has a new parameter asc_location
+  - Operation DiscoveredSecuritySolutionsOperations.list_by_home_region has a new parameter asc_location
+  - Operation ExternalSecuritySolutionsOperations.get has a new parameter asc_location
+  - Operation ExternalSecuritySolutionsOperations.list_by_home_region has a new parameter asc_location
+  - Operation JitNetworkAccessPoliciesOperations.create_or_update has a new parameter asc_location
+  - Operation JitNetworkAccessPoliciesOperations.delete has a new parameter asc_location
+  - Operation JitNetworkAccessPoliciesOperations.get has a new parameter asc_location
+  - Operation JitNetworkAccessPoliciesOperations.initiate has a new parameter asc_location
+  - Operation JitNetworkAccessPoliciesOperations.list_by_region has a new parameter asc_location
+  - Operation JitNetworkAccessPoliciesOperations.list_by_resource_group_and_region has a new parameter asc_location
+  - Operation LocationsOperations.get has a new parameter asc_location
+  - Operation SecuritySolutionsOperations.get has a new parameter asc_location
+  - Operation SecuritySolutionsReferenceDataOperations.list_by_home_region has a new parameter asc_location
+  - Operation TasksOperations.get_resource_group_level_task has a new parameter asc_location
+  - Operation TasksOperations.get_subscription_level_task has a new parameter asc_location
+  - Operation TasksOperations.list_by_home_region has a new parameter asc_location
+  - Operation TasksOperations.list_by_resource_group has a new parameter asc_location
+  - Operation TasksOperations.update_resource_group_level_task_state has a new parameter asc_location
+  - Operation TasksOperations.update_subscription_level_task_state has a new parameter asc_location
+  - Operation TopologyOperations.get has a new parameter asc_location
+  - Operation TopologyOperations.list_by_home_region has a new parameter asc_location
+  - Removed operation AlertsOperations.get_resource_group_level_alerts
+  - Removed operation AlertsOperations.get_subscription_level_alert
+  - Removed operation AlertsOperations.list_resource_group_level_alerts_by_region
+  - Removed operation AlertsOperations.list_subscription_level_alerts_by_region
+  - Removed operation AlertsOperations.update_resource_group_level_alert_state_to_dismiss
+  - Removed operation AlertsOperations.update_resource_group_level_alert_state_to_reactivate
+  - Removed operation AlertsOperations.update_subscription_level_alert_state_to_dismiss
+  - Removed operation AlertsOperations.update_subscription_level_alert_state_to_reactivate
+  - Removed operation ServerVulnerabilityAssessmentOperations.delete
+  - Removed operation group DeviceOperations
+  - Removed operation group DevicesForHubOperations
+  - Removed operation group DevicesForSubscriptionOperations
+  - Removed operation group IotAlertTypesOperations
+  - Removed operation group IotAlertsOperations
+  - Removed operation group IotDefenderSettingsOperations
+  - Removed operation group IotRecommendationTypesOperations
+  - Removed operation group IotRecommendationsOperations
+  - Removed operation group IotSensorsOperations
+  - Removed operation group IotSitesOperations
+  - Removed operation group OnPremiseIotSensorsOperations
+
 ## 2.0.0b1 (2021-08-10)
 
 **Features**
