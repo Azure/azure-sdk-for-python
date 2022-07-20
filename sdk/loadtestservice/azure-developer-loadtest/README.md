@@ -1,6 +1,7 @@
 
 # Azure Developer LoadTesting client library for Python
-<!-- write necessary description of service -->
+Azure Analytics LoadTestService provides client library in python to the user by which they can interact natively with Load Test Service.The service is for performing the load test to optimize application performance, scalability or capacity. The user can get the client-side and server-side metrices to see the details reported by the test engine and information about your Azure application components.
+
 
 ## Getting started
 
