@@ -73,7 +73,7 @@ class PyodideStreamDownloadGenerator(AsyncIterator):
         self.response = response
         # use this to efficiently store bytes.
         if kwargs.pop("decompress", False):
-            self._js_reader = response._js_stream.pipeThrough(js.DecompressStream.new("gzip")).getReader()
+            self._js_reader = response._js_stream.pipeThrough(js.DecompressionStream.new("gzip")).getReader()
         else:
             self._js_reader = response._js_stream.getReader()
         self._stream = BytesIO()

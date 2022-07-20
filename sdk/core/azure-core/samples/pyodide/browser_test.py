@@ -3,7 +3,8 @@ from uuid import uuid4
 
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
-from azure.core.pipeline.transport._pyodide import PyodideTransport
+from azure.core.pipeline.transport import PyodideTransport, HttpRequest
+from azure.core.pipeline.transport._pyodide import PyodideStreamDownloadGenerator
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
 
 # pylint: disable=import-error
@@ -31,6 +32,15 @@ class PyodideTransportIntegrationTestSuite(AsyncTestSuite):
         self.blob_service_client = BlobServiceClient(
             blob_service_endpoint, blob_service_key, transport=PyodideTransport()
         )
+
+    async def test_decompress_generator(self):
+        """Test that we can decompress streams properly."""
+        url = "data/hello-world.gz"
+        request = HttpRequest(method="GET", url=url)
+        transport = PyodideTransport()
+        response = await transport.send(request, stream_response=True)
+        data = b"".join([x async for x in response.iter_bytes()])
+        assert data == b"hello world!\n"
 
     async def test_sentiment_analysis(self):
         """Test that sentiment analysis works."""
