@@ -3,8 +3,8 @@ from uuid import uuid4
 
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
-from azure.core.pipeline.transport import PyodideTransport, HttpRequest
-from azure.core.pipeline.transport._pyodide import PyodideStreamDownloadGenerator
+from azure.core.pipeline.transport import HttpRequest
+from azure.core.pipeline.transport.pyodide import PyodideTransport
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
 
 # pylint: disable=import-error
@@ -40,7 +40,12 @@ class PyodideTransportIntegrationTestSuite(AsyncTestSuite):
         transport = PyodideTransport()
         response = await transport.send(request, stream_response=True)
         data = b"".join([x async for x in response.iter_bytes()])
-        assert data == b"hello world!\n"
+        assert data == b"hello world\n"
+
+        response = await transport.send(request, stream_response=True)
+        data = b"".join([x async for x in response.iter_raw()])
+        assert data != b"hello world\n"
+
 
     async def test_sentiment_analysis(self):
         """Test that sentiment analysis works."""

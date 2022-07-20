@@ -32,6 +32,7 @@ from pyodide import JsException  # pylint: disable=import-error
 from pyodide.http import pyfetch  # pylint: disable=import-error
 
 from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline import Pipeline
 from azure.core.utils import CaseInsensitiveDict
 
 from ...rest._http_response_impl_async import AsyncHttpResponseImpl
@@ -68,8 +69,8 @@ class PyodideStreamDownloadGenerator(AsyncIterator):
     a request.
     """
 
-    def __init__(self, response: PyodideTransportResponse, *_, **kwargs):
-        self.block_size = response.block_size
+    def __init__(self, pipeline: Pipeline, response: PyodideTransportResponse, *_, **kwargs):
+        self._block_size = response._block_size
         self.response = response
         # use this to efficiently store bytes.
         if kwargs.pop("decompress", False):
@@ -93,8 +94,8 @@ class PyodideStreamDownloadGenerator(AsyncIterator):
         start_pos = self._stream.tell()
         # move stream position to the end
         self._stream.read()
-        # read from reader until there is no more data or we have `self.block_size` unread bytes.
-        while self.buffer_left < self.block_size:
+        # read from reader until there is no more data or we have `self._block_size` unread bytes.
+        while self.buffer_left < self._block_size:
             read = await self._js_reader.read()
             if read.done:
                 self._closed = True
@@ -103,8 +104,8 @@ class PyodideStreamDownloadGenerator(AsyncIterator):
 
         # move the stream position back to where we started
         self._stream.seek(start_pos)
-        self.buffer_left -= self.block_size
-        return self._stream.read(self.block_size)
+        self.buffer_left -= self._block_size
+        return self._stream.read(self._block_size)
 
 class PyodideTransport(AsyncioRequestsTransport):
     """Implements a basic HTTP sender using the Pyodide Javascript Fetch API.
