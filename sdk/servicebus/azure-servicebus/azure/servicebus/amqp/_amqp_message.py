@@ -180,7 +180,7 @@ class AmqpAnnotatedMessage(object):
 
     def __str__(self) -> str:
         if self.body_type == AmqpMessageBodyType.DATA:
-            return str(self._data_body)
+            return "".join(d.decode(self._encoding) for d in self._data_body)
         elif self.body_type == AmqpMessageBodyType.SEQUENCE:
             return str(self._sequence_body)
         elif self.body_type == AmqpMessageBodyType.VALUE:

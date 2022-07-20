@@ -182,6 +182,8 @@ def encode_long(output, value, with_constructor=True, use_smallest=True):
     <encoding name="smalllong" code="0x55" category="fixed" width="1" label="8-bit two's-complement integer"/>
     <encoding code="0x81" category="fixed" width="8" label="64-bit two's-complement integer in network byte order"/>
     """
+    if isinstance(value, datetime):
+        value = (calendar.timegm(value.utctimetuple()) * 1000) + (value.microsecond/1000)
     try:
         value = long(value)
     except NameError:
@@ -399,10 +401,10 @@ def _check_element_type(item, element_type):
 def encode_array(output, value, with_constructor=True, use_smallest=True):
     # type: (bytearray, Iterable[Any], bool, bool) -> None
     """
-    <encoding name="map8" code="0xE0" category="compound" width="1"
-        label="up to 2^8 - 1 octets of encoded map data"/>
-    <encoding name="map32" code="0xF0" category="compound" width="4"
-        label="up to 2^32 - 1 octets of encoded map data"/>
+    <encoding name="array8" code="0xe0" category="array" width="1"
+        label="up to 2^8 - 1 array elements with total size less than 2^8 octets"/>
+    <encoding name="array32" code="0xf0" category="array" width="4"
+        label="up to 2^32 - 1 array elements with total size less than 2^32 octets"/>
     """
     count = len(value)
     encoded_size = 0
