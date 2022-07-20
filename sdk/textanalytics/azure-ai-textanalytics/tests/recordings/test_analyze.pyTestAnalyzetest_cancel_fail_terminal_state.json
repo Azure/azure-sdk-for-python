@@ -154,18 +154,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "89420b30-9839-477c-a187-bf1c9cf7516a",
+        "apim-request-id": "72d5a4c0-8603-44a6-b6cd-3915bc27bbde",
         "Content-Length": "0",
-        "Date": "Mon, 18 Jul 2022 23:47:45 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3377452b-8329-4246-aa41-f2e5e28a44fa?api-version=2022-05-01",
+        "Date": "Wed, 20 Jul 2022 16:34:26 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/b6516a87-b450-418f-ae5b-61baeb1c626b?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "619"
+        "x-envoy-upstream-service-time": "1138"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3377452b-8329-4246-aa41-f2e5e28a44fa?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/b6516a87-b450-418f-ae5b-61baeb1c626b?api-version=2022-05-01\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -176,31 +176,31 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "59466006-a8e0-483c-a385-cd2bc384828e",
-        "Content-Length": "66293",
+        "apim-request-id": "7765a34f-ae29-4a27-9b25-ceecdc68f4bc",
+        "Content-Length": "12773",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 18 Jul 2022 23:47:51 GMT",
+        "Date": "Wed, 20 Jul 2022 16:34:31 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "714"
+        "x-envoy-upstream-service-time": "202"
       },
       "ResponseBody": {
-        "jobId": "3377452b-8329-4246-aa41-f2e5e28a44fa",
-        "lastUpdatedDateTime": "2022-07-18T23:47:51Z",
-        "createdDateTime": "2022-07-18T23:47:45Z",
-        "expirationDateTime": "2022-07-19T23:47:45Z",
+        "jobId": "b6516a87-b450-418f-ae5b-61baeb1c626b",
+        "lastUpdatedDateTime": "2022-07-20T16:34:31Z",
+        "createdDateTime": "2022-07-20T16:34:25Z",
+        "expirationDateTime": "2022-07-21T16:34:25Z",
         "status": "running",
         "errors": [],
         "tasks": {
-          "completed": 4,
+          "completed": 1,
           "failed": 0,
-          "inProgress": 1,
+          "inProgress": 4,
           "total": 5,
           "items": [
             {
-              "kind": "EntityRecognitionLROResults",
-              "taskName": "0",
-              "lastUpdateDateTime": "2022-07-18T23:47:51.226399Z",
+              "kind": "SentimentAnalysisLROResults",
+              "taskName": "4",
+              "lastUpdateDateTime": "2022-07-20T16:34:31.0166528Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -212,1653 +212,590 @@
                 "documents": [
                   {
                     "id": "0",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   },
                   {
                     "id": "1",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   },
                   {
                     "id": "2",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   },
                   {
                     "id": "3",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   },
                   {
                     "id": "4",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   },
                   {
                     "id": "5",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   },
                   {
                     "id": "6",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   },
                   {
                     "id": "7",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   },
                   {
                     "id": "8",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   },
                   {
                     "id": "9",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   },
                   {
                     "id": "10",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   },
                   {
                     "id": "11",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   },
                   {
                     "id": "12",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   },
                   {
                     "id": "13",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   },
                   {
                     "id": "14",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   },
                   {
                     "id": "15",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   },
                   {
                     "id": "16",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   },
                   {
                     "id": "17",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   },
                   {
                     "id": "18",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   },
                   {
                     "id": "19",
+                    "sentiment": "negative",
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
                     },
-                    "entities": [
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.01,
+                      "negative": 0.98
+                    },
+                    "sentences": [
                       {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.01,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
                       }
                     ],
                     "warnings": []
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2021-06-01"
+                "modelVersion": "2022-06-01"
               }
-            },
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/b6516a87-b450-418f-ae5b-61baeb1c626b?api-version=2022-05-01\u0026showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "310d1ca4-a4c5-4d58-af3a-19673d371526",
+        "Content-Length": "44740",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 20 Jul 2022 16:34:36 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "605"
+      },
+      "ResponseBody": {
+        "jobId": "b6516a87-b450-418f-ae5b-61baeb1c626b",
+        "lastUpdatedDateTime": "2022-07-20T16:34:36Z",
+        "createdDateTime": "2022-07-20T16:34:25Z",
+        "expirationDateTime": "2022-07-21T16:34:25Z",
+        "status": "running",
+        "errors": [],
+        "tasks": {
+          "completed": 3,
+          "failed": 0,
+          "inProgress": 2,
+          "total": 5,
+          "items": [
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-07-18T23:47:50.7205516Z",
+              "lastUpdateDateTime": "2022-07-20T16:34:33.6508829Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -2676,7 +1613,7 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-07-18T23:47:51.3471201Z",
+              "lastUpdateDateTime": "2022-07-20T16:34:33.9101257Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -3534,7 +2471,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-07-18T23:47:50.1387177Z",
+              "lastUpdateDateTime": "2022-07-20T16:34:31.0166528Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -4094,7 +3031,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3377452b-8329-4246-aa41-f2e5e28a44fa?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/b6516a87-b450-418f-ae5b-61baeb1c626b?api-version=2022-05-01\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -4105,19 +3042,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "b91a5762-3627-4e49-8976-05698dcc7779",
-        "Content-Length": "72751",
+        "apim-request-id": "741848a2-f916-439f-9f52-3cbb3777b851",
+        "Content-Length": "72752",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 18 Jul 2022 23:47:57 GMT",
+        "Date": "Wed, 20 Jul 2022 16:34:43 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1096"
+        "x-envoy-upstream-service-time": "996"
       },
       "ResponseBody": {
-        "jobId": "3377452b-8329-4246-aa41-f2e5e28a44fa",
-        "lastUpdatedDateTime": "2022-07-18T23:47:56Z",
-        "createdDateTime": "2022-07-18T23:47:45Z",
-        "expirationDateTime": "2022-07-19T23:47:45Z",
+        "jobId": "b6516a87-b450-418f-ae5b-61baeb1c626b",
+        "lastUpdatedDateTime": "2022-07-20T16:34:37Z",
+        "createdDateTime": "2022-07-20T16:34:25Z",
+        "expirationDateTime": "2022-07-21T16:34:25Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -4129,7 +3066,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-07-18T23:47:51.226399Z",
+              "lastUpdateDateTime": "2022-07-20T16:34:37.0219091Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -5787,7 +4724,7 @@
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-07-18T23:47:56.6595569Z",
+              "lastUpdateDateTime": "2022-07-20T16:34:36.7379446Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -6245,7 +5182,7 @@
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-07-18T23:47:50.7205516Z",
+              "lastUpdateDateTime": "2022-07-20T16:34:33.6508829Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -7063,7 +6000,7 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-07-18T23:47:51.3471201Z",
+              "lastUpdateDateTime": "2022-07-20T16:34:33.9101257Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -7921,7 +6858,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-07-18T23:47:50.1387177Z",
+              "lastUpdateDateTime": "2022-07-20T16:34:31.0166528Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -8481,7 +7418,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3377452b-8329-4246-aa41-f2e5e28a44fa:cancel?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/b6516a87-b450-418f-ae5b-61baeb1c626b:cancel?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -8493,18 +7430,18 @@
       "RequestBody": null,
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "5733ee89-b8a0-4cfc-bd67-d136200ec584",
+        "apim-request-id": "3c13a102-4b00-48e1-821c-049d46a11705",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 18 Jul 2022 23:47:57 GMT",
+        "Date": "Wed, 20 Jul 2022 16:34:43 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "11"
+        "x-envoy-upstream-service-time": "26"
       },
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "Failed to cancel job with job id 3377452b-8329-4246-aa41-f2e5e28a44fa as its already completed."
+          "message": "Failed to cancel job with job id b6516a87-b450-418f-ae5b-61baeb1c626b as its already completed."
         }
       }
     }

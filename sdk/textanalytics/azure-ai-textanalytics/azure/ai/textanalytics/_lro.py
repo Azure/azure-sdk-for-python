@@ -454,10 +454,6 @@ class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
         :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
         """
 
-        # Join the thread so we no longer have to wait for a result from it.
-        if self._thread:
-            self._thread.join(timeout=0)
-
         cast(AnalyzeActionsLROPollingMethod, self.polling_method)
         client = self.polling_method()._text_analytics_client  # pylint: disable=protected-access
 

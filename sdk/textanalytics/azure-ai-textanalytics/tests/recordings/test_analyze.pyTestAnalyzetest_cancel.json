@@ -154,18 +154,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "ec6504a4-94f0-44a5-a907-e4ebcf41ec65",
+        "apim-request-id": "226c0a73-7655-4f5b-a15c-37189e426c34",
         "Content-Length": "0",
-        "Date": "Mon, 18 Jul 2022 23:47:33 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/0d370648-bb14-4c94-aa61-0caafa2a5941?api-version=2022-05-01",
+        "Date": "Wed, 20 Jul 2022 16:34:18 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/d574b727-cefa-4e67-be56-c9a41948c7fd?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "778"
+        "x-envoy-upstream-service-time": "705"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/0d370648-bb14-4c94-aa61-0caafa2a5941:cancel?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/d574b727-cefa-4e67-be56-c9a41948c7fd:cancel?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -177,13 +177,13 @@
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "9e4848b3-7060-4b96-af99-613ab00a3341",
+        "apim-request-id": "fe843ed2-af14-41b6-9765-2f98481190cf",
         "Content-Length": "0",
-        "Date": "Mon, 18 Jul 2022 23:47:33 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/0d370648-bb14-4c94-aa61-0caafa2a5941?api-version=2022-05-01",
+        "Date": "Wed, 20 Jul 2022 16:34:18 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/d574b727-cefa-4e67-be56-c9a41948c7fd?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "40"
+        "x-envoy-upstream-service-time": "30"
       },
       "ResponseBody": null
     }

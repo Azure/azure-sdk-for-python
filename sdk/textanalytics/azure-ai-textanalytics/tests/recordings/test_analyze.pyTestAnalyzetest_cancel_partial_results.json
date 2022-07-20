@@ -79,18 +79,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "7e049c7c-0da6-406a-a64b-8d1bf9754939",
+        "apim-request-id": "4e4d2e51-cce8-42e2-a91a-d50f9c4a5785",
         "Content-Length": "0",
-        "Date": "Mon, 18 Jul 2022 23:47:34 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/5017f96e-8395-4c85-b728-023d227139af?api-version=2022-05-01",
+        "Date": "Wed, 20 Jul 2022 16:34:19 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/4403b1df-89ea-4fdd-805f-4067743729d6?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "337"
+        "x-envoy-upstream-service-time": "432"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/5017f96e-8395-4c85-b728-023d227139af:cancel?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/4403b1df-89ea-4fdd-805f-4067743729d6:cancel?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -102,18 +102,18 @@
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "db1bae3b-8942-43ec-97ba-73c8e2f6c6f8",
+        "apim-request-id": "52a87aec-dc0c-4f8b-a613-d28bc82f9f6b",
         "Content-Length": "0",
-        "Date": "Mon, 18 Jul 2022 23:47:34 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/5017f96e-8395-4c85-b728-023d227139af?api-version=2022-05-01",
+        "Date": "Wed, 20 Jul 2022 16:34:19 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/4403b1df-89ea-4fdd-805f-4067743729d6?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "24"
+        "x-envoy-upstream-service-time": "19"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/0d370648-bb14-4c94-aa61-0caafa2a5941?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/d574b727-cefa-4e67-be56-c9a41948c7fd?api-version=2022-05-01\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -124,23 +124,23 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "03d1ca24-08d6-4e4d-9edf-de26fa164753",
-        "Content-Length": "13533",
+        "apim-request-id": "30869e55-15dd-4c97-8079-50f1df74e2da",
+        "Content-Length": "1229",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 18 Jul 2022 23:47:38 GMT",
+        "Date": "Wed, 20 Jul 2022 16:34:23 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "179"
+        "x-envoy-upstream-service-time": "10"
       },
       "ResponseBody": {
-        "jobId": "0d370648-bb14-4c94-aa61-0caafa2a5941",
-        "lastUpdatedDateTime": "2022-07-18T23:47:36Z",
-        "createdDateTime": "2022-07-18T23:47:33Z",
-        "expirationDateTime": "2022-07-19T23:47:33Z",
+        "jobId": "d574b727-cefa-4e67-be56-c9a41948c7fd",
+        "lastUpdatedDateTime": "2022-07-20T16:34:19Z",
+        "createdDateTime": "2022-07-20T16:34:18Z",
+        "expirationDateTime": "2022-07-21T16:34:18Z",
         "status": "cancelled",
         "errors": [],
         "tasks": {
-          "completed": 1,
+          "completed": 0,
           "failed": 0,
           "inProgress": 0,
           "total": 5,
@@ -148,7 +148,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-07-18T23:47:33.7719597Z",
+              "lastUpdateDateTime": "2022-07-20T16:34:18.7094849Z",
               "status": "cancelled",
               "results": {
                 "documents": [],
@@ -159,7 +159,7 @@
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-07-18T23:47:33.7852642Z",
+              "lastUpdateDateTime": "2022-07-20T16:34:18.7202944Z",
               "status": "cancelled",
               "results": {
                 "documents": [],
@@ -170,7 +170,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-07-18T23:47:33.7993542Z",
+              "lastUpdateDateTime": "2022-07-20T16:34:18.7311834Z",
               "status": "cancelled",
               "results": {
                 "documents": [],
@@ -181,7 +181,7 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-07-18T23:47:33.8116699Z",
+              "lastUpdateDateTime": "2022-07-20T16:34:18.7446182Z",
               "status": "cancelled",
               "results": {
                 "documents": [],
@@ -192,559 +192,12 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-07-18T23:47:36.6719038Z",
-              "status": "succeeded",
+              "lastUpdateDateTime": "2022-07-20T16:34:18.7568908Z",
+              "status": "cancelled",
               "results": {
-                "statistics": {
-                  "documentsCount": 20,
-                  "validDocumentsCount": 20,
-                  "erroneousDocumentsCount": 0,
-                  "transactionsCount": 20
-                },
-                "documents": [
-                  {
-                    "id": "0",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "1",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "2",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "4",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "5",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "6",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "7",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "8",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "9",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "10",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "11",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "12",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "13",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "14",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "15",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "16",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "17",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "18",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "19",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
+                "documents": [],
                 "errors": [],
-                "modelVersion": "2022-06-01"
+                "modelVersion": "latest"
               }
             }
           ]
@@ -752,7 +205,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/5017f96e-8395-4c85-b728-023d227139af?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/4403b1df-89ea-4fdd-805f-4067743729d6?api-version=2022-05-01\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -763,104 +216,23 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "3852a05e-10d0-4727-a851-a3bb67a4383a",
-        "Content-Length": "1037",
+        "apim-request-id": "b05370a8-defd-4acb-9a87-69c5ffb576e9",
+        "Content-Length": "1228",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 18 Jul 2022 23:47:40 GMT",
+        "Date": "Wed, 20 Jul 2022 16:34:24 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
         "x-envoy-upstream-service-time": "9"
       },
       "ResponseBody": {
-        "jobId": "5017f96e-8395-4c85-b728-023d227139af",
-        "lastUpdatedDateTime": "2022-07-18T23:47:35Z",
-        "createdDateTime": "2022-07-18T23:47:34Z",
-        "expirationDateTime": "2022-07-19T23:47:34Z",
-        "status": "running",
-        "errors": [],
-        "tasks": {
-          "completed": 0,
-          "failed": 0,
-          "inProgress": 1,
-          "total": 5,
-          "items": [
-            {
-              "kind": "EntityRecognitionLROResults",
-              "taskName": "0",
-              "lastUpdateDateTime": "2022-07-18T23:47:34.8260075Z",
-              "status": "cancelled",
-              "results": {
-                "documents": [],
-                "errors": [],
-                "modelVersion": "latest"
-              }
-            },
-            {
-              "kind": "KeyPhraseExtractionLROResults",
-              "taskName": "1",
-              "lastUpdateDateTime": "2022-07-18T23:47:34.8415511Z",
-              "status": "cancelled",
-              "results": {
-                "documents": [],
-                "errors": [],
-                "modelVersion": "latest"
-              }
-            },
-            {
-              "kind": "EntityRecognitionLROResults",
-              "taskName": "2",
-              "lastUpdateDateTime": "2022-07-18T23:47:34.8652689Z",
-              "status": "cancelled",
-              "results": {
-                "documents": [],
-                "errors": [],
-                "modelVersion": "latest"
-              }
-            },
-            {
-              "kind": "EntityLinkingLROResults",
-              "taskName": "3",
-              "lastUpdateDateTime": "2022-07-18T23:47:34.8775884Z",
-              "status": "cancelled",
-              "results": {
-                "documents": [],
-                "errors": [],
-                "modelVersion": "latest"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/5017f96e-8395-4c85-b728-023d227139af?api-version=2022-05-01\u0026showStats=True",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "52b88fa5-9d92-46f1-9d14-2b310a4938fd",
-        "Content-Length": "4385",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 18 Jul 2022 23:47:45 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "297"
-      },
-      "ResponseBody": {
-        "jobId": "5017f96e-8395-4c85-b728-023d227139af",
-        "lastUpdatedDateTime": "2022-07-18T23:47:42Z",
-        "createdDateTime": "2022-07-18T23:47:34Z",
-        "expirationDateTime": "2022-07-19T23:47:34Z",
+        "jobId": "4403b1df-89ea-4fdd-805f-4067743729d6",
+        "lastUpdatedDateTime": "2022-07-20T16:34:19Z",
+        "createdDateTime": "2022-07-20T16:34:19Z",
+        "expirationDateTime": "2022-07-21T16:34:19Z",
         "status": "cancelled",
         "errors": [],
         "tasks": {
-          "completed": 1,
+          "completed": 0,
           "failed": 0,
           "inProgress": 0,
           "total": 5,
@@ -868,7 +240,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-07-18T23:47:34.8260075Z",
+              "lastUpdateDateTime": "2022-07-20T16:34:19.6500399Z",
               "status": "cancelled",
               "results": {
                 "documents": [],
@@ -879,7 +251,7 @@
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-07-18T23:47:34.8415511Z",
+              "lastUpdateDateTime": "2022-07-20T16:34:19.6608422Z",
               "status": "cancelled",
               "results": {
                 "documents": [],
@@ -890,7 +262,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-07-18T23:47:34.8652689Z",
+              "lastUpdateDateTime": "2022-07-20T16:34:19.672851Z",
               "status": "cancelled",
               "results": {
                 "documents": [],
@@ -901,7 +273,7 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-07-18T23:47:34.8775884Z",
+              "lastUpdateDateTime": "2022-07-20T16:34:19.6935732Z",
               "status": "cancelled",
               "results": {
                 "documents": [],
@@ -912,154 +284,12 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-07-18T23:47:42.8379383Z",
-              "status": "succeeded",
+              "lastUpdateDateTime": "2022-07-20T16:34:19.7841591Z",
+              "status": "cancelled",
               "results": {
-                "statistics": {
-                  "documentsCount": 5,
-                  "validDocumentsCount": 5,
-                  "erroneousDocumentsCount": 0,
-                  "transactionsCount": 5
-                },
-                "documents": [
-                  {
-                    "id": "0",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "1",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "2",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "4",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.01,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.01,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
+                "documents": [],
                 "errors": [],
-                "modelVersion": "2022-06-01"
+                "modelVersion": "latest"
               }
             }
           ]
