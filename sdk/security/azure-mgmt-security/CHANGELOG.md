@@ -23,7 +23,6 @@
 
 **Breaking changes**
 
-  - Client name is changed
   - Model SecurityAssessmentMetadata no longer has parameter category
   - Model SecurityAssessmentMetadataProperties no longer has parameter category
   - Operation AdaptiveApplicationControlsOperations.delete has a new parameter asc_location
@@ -74,6 +73,10 @@
   - Removed operation group IotSensorsOperations
   - Removed operation group IotSitesOperations
   - Removed operation group OnPremiseIotSensorsOperations
+
+**Other changes**
+
+  - Change from `single-api` to `multi-api`. Please see [here](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/multiapi.md) for usage.
 
 ## 2.0.0b1 (2021-08-10)
 
