@@ -105,6 +105,7 @@
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
     "sdk/ml/azure-ai-ml/tests/**",
+    "sdk/loadtestservice/azure-developer-loadtest/**",
     "sdk/monitor/azure-monitor-ingestion/**",
     "eng/**/*.json",
     "eng/*.txt",
@@ -459,12 +460,6 @@
       "filename": "sdk/schemaregistry/azure-schemaregistry-avroencoder/doc/*.rst",
       "words": [
         "undoc"
-      ]
-    },
-    {
-      "filename": "sdk/loadtestservice/azure-developer-loadtest/azure/developer/loadtesting/**",
-      "words":[
-        "vusers"
       ]
     },
     {
