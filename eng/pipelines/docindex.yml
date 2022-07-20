@@ -60,6 +60,7 @@ jobs:
             -ClientId '$(opensource-aad-app-id)' 
             -ClientSecret '$(opensource-aad-secret)'
         displayName: Generate Service Level Readme
+
       - task: Powershell@2
         inputs:
           pwsh: true
