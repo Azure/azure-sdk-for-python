@@ -3,7 +3,7 @@ parameters:
   Artifacts: []
   ConfigFileDir: $(Build.ArtifactStagingDirectory)/PackageInfo
   Language: 'Python'
-  APIViewUri: 'https://apiviewstaging.azurewebsites.net/AutoReview/CreateApiReview'
+  APIViewUri: 'https://apiview.dev/AutoReview/CreateApiReview'
 
 steps:
   # ideally this should be done as initial step of a job in caller template
