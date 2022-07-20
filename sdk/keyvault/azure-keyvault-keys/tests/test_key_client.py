@@ -639,10 +639,10 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_key_rotation(self, client, **kwargs):
-        set_bodiless_matcher()
         if (not is_public_cloud() and self.is_live):
             pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
 
+        set_bodiless_matcher()
         key_name = self.get_resource_name("rotation-key")
         key = self._create_rsa_key(client, key_name)
         rotated_key = client.rotate_key(key_name)
@@ -656,10 +656,10 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_key_rotation_policy(self, client, **kwargs):
-        set_bodiless_matcher()
         if (not is_public_cloud() and self.is_live):
             pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
 
+        set_bodiless_matcher()
         key_name = self.get_resource_name("rotation-key")
         self._create_rsa_key(client, key_name)
 
