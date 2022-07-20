@@ -55,7 +55,7 @@ def test_servicebus_message_repr_with_props():
 
 def test_servicebus_received_message_repr():
     my_frame = [0,0,0]
-    received_message = (my_frame, Message(
+    received_message = Message(
         data=b'data',
         message_annotations={
             _X_OPT_PARTITION_KEY: b'r_key',
@@ -63,8 +63,8 @@ def test_servicebus_received_message_repr():
             _X_OPT_SCHEDULED_ENQUEUE_TIME: 123424566,
         },
         properties={}
-    ))
-    received_message = ServiceBusReceivedMessage(received_message, receiver=None)
+    )
+    received_message = ServiceBusReceivedMessage(received_message, receiver=None, frame=my_frame)
     repr_str = received_message.__repr__()
     assert "application_properties=None, session_id=None" in repr_str
     assert "content_type=None, correlation_id=None, to=None, reply_to=None, reply_to_session_id=None, subject=None," in repr_str
@@ -72,54 +72,54 @@ def test_servicebus_received_message_repr():
 
 def test_servicebus_received_state():
     my_frame = [0,0,0]
-    amqp_received_message = (my_frame, Message(
+    amqp_received_message = Message(
         data=b'data',
         message_annotations={
             b"x-opt-message-state": 3
         },
-    ))
-    received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
+    )
+    received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None, frame=my_frame)
     assert received_message.state == 3
 
-    amqp_received_message = (my_frame, Message(
+    amqp_received_message = Message(
         data=b'data',
         message_annotations={
             b"x-opt-message-state": 1
         },
         properties={}
-    ))
+    )
     received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
     assert received_message.state == ServiceBusMessageState.DEFERRED
 
-    amqp_received_message = (my_frame, Message(
+    amqp_received_message = Message(
         data=b'data',
         message_annotations={
         },
         properties={}
-    ))
+    )
     received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
     assert received_message.state == ServiceBusMessageState.ACTIVE
 
-    amqp_received_message = (my_frame, Message(
+    amqp_received_message = Message(
         data=b'data',
         properties={}
-    ))
+    )
     received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
     assert received_message.state == ServiceBusMessageState.ACTIVE
 
-    amqp_received_message = (my_frame, Message(
+    amqp_received_message = Message(
         data=b'data',
         message_annotations={
             b"x-opt-message-state": 0
         },
         properties={}
-    ))
+    )
     received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
     assert received_message.state == ServiceBusMessageState.ACTIVE
 
 def test_servicebus_received_message_repr_with_props():
     my_frame = [0,0,0]
-    amqp_received_message = (my_frame, Message(
+    amqp_received_message = Message(
         data=b'data',
         message_annotations={
             _X_OPT_PARTITION_KEY: b'r_key',
@@ -136,10 +136,11 @@ def test_servicebus_received_message_repr_with_props():
             reply_to="reply to",
             reply_to_group_id="reply to group"
         )
-    ))
+    )
     received_message = ServiceBusReceivedMessage(
         message=amqp_received_message,
         receiver=None,
+        frame=my_frame
         )
     assert "application_properties=None, session_id=id_session" in received_message.__repr__()
     assert "content_type=content type, correlation_id=correlation, to=None, reply_to=reply to, reply_to_session_id=reply to group, subject=github" in received_message.__repr__()

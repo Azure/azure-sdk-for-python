@@ -1903,7 +1903,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             timestamp = calendar.timegm(new_scheduled_time.timetuple()) * 1000
 
         my_frame = [0,0,0]
-        amqp_received_message = (my_frame, Message(
+        amqp_received_message = Message(
             data=b'data',
             message_annotations={
                 _X_OPT_PARTITION_KEY: b'r_key',
@@ -1911,8 +1911,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 _X_OPT_SCHEDULED_ENQUEUE_TIME: timestamp,
             },
             properties={}
-        ))
-        received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
+        )
+        received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None, frame=my_frame)
         assert received_message.scheduled_enqueue_time_utc == new_scheduled_time
 
         new_scheduled_time = utc_now() + timedelta(hours=1, minutes=49, seconds=32)
