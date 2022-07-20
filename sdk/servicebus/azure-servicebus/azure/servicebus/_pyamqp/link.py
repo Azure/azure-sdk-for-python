@@ -210,6 +210,10 @@ class Link(object):
             self._set_state(LinkState.ATTACHED)
         if self._on_attach:
             try:
+                if frame[5]:
+                    frame[5] = Source(*frame[5])
+                if frame[6]:
+                    frame[6] = Target(*frame[6])
                 self._on_attach(AttachFrame(*frame))
             except Exception as e:
                 _LOGGER.warning("Callback for link attach raised error: {}".format(e))

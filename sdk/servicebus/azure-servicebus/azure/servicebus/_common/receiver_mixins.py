@@ -107,7 +107,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         # pylint: disable=protected-access
         if self._session:
             session_filter = None if self._session_id == NEXT_AVAILABLE_SESSION else self._session_id
-            filter_map = {SESSION_FILTER: (None, session_filter)}
+            filter_map = {SESSION_FILTER: session_filter}
             source = Source(
                 address=self._entity_uri,
                 filters=filter_map
@@ -184,7 +184,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
 
     def _on_attach(self, attach_frame):
         # pylint: disable=protected-access, unused-argument
-        if self._session and str(attach_frame.source.address) == self._entity_uri:
+        if self._session and attach_frame.source.address.decode(self._config.encoding) == self._entity_uri:
             # This has to live on the session object so that autorenew has access to it.
             self._session._session_start = utc_now()
             expiry_in_seconds = attach_frame.properties.get(SESSION_LOCKED_UNTIL)
@@ -207,4 +207,4 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         if self._receive_context.is_set():
             self._handler._received_messages.put((frame, message))
         else:
-            message.release()
+            self._handler.settle_messages(frame[1], 'released')
