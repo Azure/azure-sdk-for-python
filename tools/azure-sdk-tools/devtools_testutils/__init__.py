@@ -19,7 +19,7 @@ from .keyvault_preparer import KeyVaultPreparer
 from .envvariable_loader import EnvironmentVariableLoader
 PowerShellPreparer = EnvironmentVariableLoader  # Backward compat
 from .proxy_startup import start_test_proxy, stop_test_proxy, test_proxy
-from .proxy_testcase import recorded_by_proxy, recorded_test, variable_recorder
+from .proxy_testcase import recorded_by_proxy, recorded_test
 from .sanitizers import (
     add_body_key_sanitizer,
     add_body_regex_sanitizer,
@@ -34,6 +34,7 @@ from .sanitizers import (
     set_custom_default_matcher,
     set_default_settings,
 )
+from .variable_recorder import variable_recorder
 from .helpers import ResponseCallback, RetryCounter
 from .fake_credentials import FakeTokenCredential
 

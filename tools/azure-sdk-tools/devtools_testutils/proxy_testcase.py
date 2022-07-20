@@ -365,18 +365,3 @@ def restore_traffic(original_transport_func: "Callable", request: "FixtureReques
             message = error_body.get("message") or error_body.get("Message")
             logger = logging.getLogger()
             logger.error(f"\n\n-----Test proxy playback error:-----\n\n{message}")
-
-
-@pytest.fixture
-def variable_recorder(recorded_test: "Dict[str, Any]") -> "Dict[str, str]":
-    """Fixture that invokes the `recorded_test` fixture and returns a dictionary of recorded test variables.
-
-    :param recorded_test: The fixture responsible for redirecting network traffic to target the test proxy.
-        This should return a dictionary containing information about the current test -- in particular, the variables
-        that were recorded with the test.
-    :type recorded_test: Dict[str, Any]
-
-    :returns: A dictionary that maps test variables to string values. If no variable dictionary was stored when the test
-        was recorded, this returns an empty dictionary.
-    """
-    return recorded_test["variables"]
