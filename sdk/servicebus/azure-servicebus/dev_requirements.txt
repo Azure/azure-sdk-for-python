@@ -4,4 +4,4 @@
 -e ../../../tools/azure-sdk-tools
 azure-mgmt-servicebus~=1.0.0
 aiohttp>=3.0
-websocket
+websocket-client

@@ -22,7 +22,7 @@ def default(  # pylint: disable=inconsistent-return-statements
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
     if status_code == 200:
-        return message.get_data()
+        return message.value
 
     _handle_amqp_mgmt_error(
         _LOGGER, "Service request failed.", condition, description, status_code
@@ -36,7 +36,7 @@ def session_lock_renew_op(  # pylint: disable=inconsistent-return-statements
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
     if status_code == 200:
-        return message.get_data()
+        return message.value
 
     _handle_amqp_mgmt_error(
         _LOGGER, "Session lock renew failed.", condition, description, status_code
@@ -50,7 +50,7 @@ def message_lock_renew_op(  # pylint: disable=inconsistent-return-statements
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
     if status_code == 200:
-        return message.get_data()
+        return message.value
 
     _handle_amqp_mgmt_error(
         _LOGGER, "Message lock renew failed.", condition, description, status_code
@@ -89,7 +89,7 @@ def list_sessions_op(  # pylint: disable=inconsistent-return-statements
     )
     if status_code == 200:
         parsed = []
-        for m in message.get_data()[b"sessions-ids"]:
+        for m in message.value[b"sessions-ids"]:
             parsed.append(m.decode("UTF-8"))
         return parsed
     if status_code in [202, 204]:
@@ -140,7 +140,7 @@ def schedule_op(  # pylint: disable=inconsistent-return-statements
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
     if status_code == 200:
-        return message.get_data()[b"sequence-numbers"]
+        return message.value[b"sequence-numbers"]
 
     _handle_amqp_mgmt_error(
         _LOGGER, "Scheduling messages failed.", condition, description, status_code

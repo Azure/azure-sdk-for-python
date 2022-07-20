@@ -498,8 +498,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 node=self._mgmt_target.encode(self._config.encoding),
                 timeout=timeout,  # TODO: check if this should be seconds * 1000 if timeout else None,
             )
-            callback(status, response, description)
-            return response
+            return callback(status, response, description)
         except Exception as exp:  # pylint: disable=broad-except
             if isinstance(exp, compat.TimeoutException):
                 raise OperationTimeoutError(error=exp)
