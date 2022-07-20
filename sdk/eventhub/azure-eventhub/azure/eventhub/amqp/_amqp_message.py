@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 
 from typing import Optional, Any, cast, Mapping, Dict
+from types import GeneratorType
 
 from ._amqp_utils import normalized_data_body, normalized_sequence_body
 from ._constants import AmqpMessageBodyType
@@ -236,14 +237,31 @@ class AmqpAnnotatedMessage(object):
         self._application_properties = message.application_properties if message.application_properties else {}
         if message.data:
             # TODO: body used to return generator object in uamqp. But returns a list rn. Ask Anna.
-            self._body = list(message.data)
+            self._body = message.data
             self._body_type = AmqpMessageBodyType.DATA
         elif message.sequence:
-            self._body = list(message.sequence)
+            self._body = message.sequence
             self._body_type = AmqpMessageBodyType.SEQUENCE
         else:
             self._body = message.value
             self._body_type = AmqpMessageBodyType.VALUE
+        #if message.data:
+        #    # TODO: body used to return generator object in uamqp. But returns a list rn. Ask Anna.
+        #    # below is def a hack. need to fix
+        #    if isinstance(message.data, GeneratorType):
+        #        self._body = list(message.data)
+        #    else:
+        #        self._body = message.data
+        #    self._body_type = AmqpMessageBodyType.DATA
+        #elif message.sequence:
+        #    if isinstance(message.data, GeneratorType):
+        #        self._body = list(message.sequence)
+        #    else:
+        #        self._body = message.data
+        #    self._body_type = AmqpMessageBodyType.SEQUENCE
+        #else:
+        #    self._body = message.value
+        #    self._body_type = AmqpMessageBodyType.VALUE
 
 
     @property

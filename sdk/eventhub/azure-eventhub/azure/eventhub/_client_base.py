@@ -285,7 +285,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: CredentialTypes,
+        credential: "CredentialTypes",
         **kwargs: Any,
     ) -> None:
         self._uamqp_transport = kwargs.pop("uamqp_transport", False)

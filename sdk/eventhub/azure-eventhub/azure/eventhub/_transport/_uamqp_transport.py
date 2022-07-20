@@ -337,12 +337,12 @@ class UamqpTransport(AmqpTransport):
     #    return batch_message._body_gen  # pylint:disable=protected-access
 
     def set_message_partition_key(self, message, partition_key, **kwargs):  # pylint:disable=unused-argument
-        # type: (Message, Optional[Union[bytes, str]], Any) -> None
+        # type: (Message, Optional[Union[bytes, str]], Any) -> Message
         """Set the partition key as an annotation on a uamqp message.
 
         :param ~uamqp.Message message: The message to update.
         :param str partition_key: The partition key value.
-        :rtype: None
+        :rtype: Message
         """
         if partition_key:
             annotations = message.annotations
@@ -355,6 +355,7 @@ class UamqpTransport(AmqpTransport):
             header.durable = True
             message.annotations = annotations
             message.header = header
+        return message
 
     def add_batch(self, batch_message, outgoing_event_data, event_data):
         """
@@ -379,7 +380,7 @@ class UamqpTransport(AmqpTransport):
         """
         source = Source(source)
         if offset is not None:
-            source.set_filter(filter)
+            source.set_filter(selector)
         return source
 
     def create_receive_client(self, *, config, **kwargs):

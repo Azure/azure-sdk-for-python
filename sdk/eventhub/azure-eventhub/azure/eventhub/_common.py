@@ -516,15 +516,21 @@ class EventDataBatch(object):
         self._partition_id = partition_id
         self._partition_key = partition_key
 
-        self._amqp_transport.set_message_partition_key(
+        self.message = self._amqp_transport.set_message_partition_key(
             self.message, self._partition_key
         )
         self._size = self._amqp_transport.get_batch_message_encoded_size(self.message)
         self._count = 0
+        self._internal_events: List[
+            Union[EventData, AmqpAnnotatedMessage]
+        ] = []  # TODO: only used by uamqp
 
     def __repr__(self):
         # type: () -> str
-        batch_repr = f"max_size_in_bytes={self.max_size_in_bytes}, partition_id={self._partition_id}, partition_key={self._partition_key!r}, event_count={self._count}"
+        batch_repr = (
+            f"max_size_in_bytes={self.max_size_in_bytes}, partition_id={self._partition_id}, "
+            f"partition_key={self._partition_key!r}, event_count={self._count}"
+        )
         return f"EventDataBatch({batch_repr})"
 
     def __len__(self):

@@ -7,7 +7,6 @@ import time
 import logging
 from datetime import timedelta
 from typing import TYPE_CHECKING, Optional, Union, Any
-from urllib.parse import quote_plus
 from azure.core.credentials import AccessToken
 
 from .._pyamqp import (
@@ -17,7 +16,6 @@ from .._pyamqp import (
     constants,
     AMQPClient,
     ReceiveClient,
-    types
 )
 from .._pyamqp.message import Message, BatchMessage, Header, Properties
 from .._pyamqp.authentication import JWTTokenAuth
@@ -37,7 +35,6 @@ from .._constants import (
 
 from ..exceptions import (
     ConnectError,
-    EventDataError,
     EventDataSendError,
     OperationTimeoutError,
     EventHubError,
@@ -312,7 +309,7 @@ class PyamqpTransport(AmqpTransport):
         """Set the partition key as an annotation on a uamqp message.
         :param Message message: The message to update.
         :param str partition_key: The partition key value.
-        :rtype: None
+        :rtype: Message
         """
         encoding = kwargs.pop("encoding", 'utf-8')
         if partition_key:
@@ -327,7 +324,8 @@ class PyamqpTransport(AmqpTransport):
                 PROP_PARTITION_KEY
             ] = partition_key  # pylint:disable=protected-access
             header = Header(durable=True)
-            message._replace(message_annotations=annotations, header=header)
+            return message._replace(message_annotations=annotations, header=header)
+        return message
 
     def add_batch(self, batch_message, outgoing_event_data, event_data):    # pylint: disable=unused-argument
         """
@@ -337,7 +335,7 @@ class PyamqpTransport(AmqpTransport):
         :param event_data: EventData to add to internal batch events. uamqp use only.
         :rtype: None
         """
-        utils.add_batch(batch_message.message, outgoing_event_data)
+        utils.add_batch(batch_message.message, outgoing_event_data.message)
 
     def create_source(self, source, offset, selector):
         """
@@ -451,7 +449,7 @@ class PyamqpTransport(AmqpTransport):
         return AMQPClient(
             config.hostname,
             auth=mgmt_auth,
-            debug=config.network_tracing,
+            network_trace=config.network_tracing,
             transport_type=config.transport_type,
             http_proxy=config.http_proxy,
             custom_endpoint_address=config.custom_endpoint_address,
@@ -478,7 +476,7 @@ class PyamqpTransport(AmqpTransport):
         operation_type = kwargs.pop("operation_type")
         operation = kwargs.pop("operation")
         return mgmt_client.mgmt_request(
-            mgmt_msg, operation=operation.decode(), operation_type_type=operation_type.decode(), **kwargs
+            mgmt_msg, operation=operation.decode(), operation_type=operation_type.decode(), **kwargs
         )
 
     def get_error(self, error, message, *, condition=None):

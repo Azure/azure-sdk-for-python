@@ -118,7 +118,7 @@ class EventHubProducer(
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
         self._retry_policy = self._amqp_transport.create_retry_policy(
-            retry_total=self._client._config.max_retries
+            config=self._client._config
         )
         self._reconnect_backoff = 1
         self._name = f"EHProducer-{uuid.uuid4()}"
