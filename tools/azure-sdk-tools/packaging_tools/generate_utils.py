@@ -1,5 +1,4 @@
 from contextlib import suppress
-import glob
 import json
 import logging
 import os
@@ -11,7 +10,6 @@ from subprocess import check_call
 from typing import List
 
 from .swaggertosdk.autorest_tools import build_autorest_options
-
 
 _LOGGER = logging.getLogger(__name__)
 _SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
