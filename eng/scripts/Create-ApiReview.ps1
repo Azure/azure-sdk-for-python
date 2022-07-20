@@ -26,7 +26,7 @@ Param (
 function Submit-APIReview($packageArtifactname, $apiLabel, $releaseStatus, $reviewFileName)
 {
     $params = "buildId=$buildId&artifactName=packages&originalFilePath=$packageArtifactname&reviewFilePath=$reviewFileName"
-    $params += "&label=$apiLabel&repoName=$repoName&packageName=$PackageName"
+    $params += "&label=$apiLabel&repoName=$repoName&packageName=$PackageName&project=internal"
     $uri = "$($APIViewUri)?$params"
     
     Write-Host $uri
