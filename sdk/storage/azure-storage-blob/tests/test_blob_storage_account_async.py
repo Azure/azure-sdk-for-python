@@ -6,35 +6,20 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
-
-from azure.storage.blob.aio import (
-    BlobServiceClient
-)
-from azure.storage.blob import (
-    StandardBlobTier
-)
+from azure.storage.blob import StandardBlobTier
+from azure.storage.blob.aio import BlobServiceClient
 from azure.storage.blob._generated.models import RehydratePriority
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
-from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
 # ------------------------------------------------------------------------------
 
 
-class AiohttpTestTransport(AioHttpTransport):
-    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
-    """
-    async def send(self, request, **config):
-        response = await super(AiohttpTestTransport, self).send(request, **config)
-        if not isinstance(response.headers, CIMultiDictProxy):
-            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
-            response.content_type = response.headers.get("content-type")
-        return response
-
-
-class BlobStorageAccountTestAsync(AsyncStorageTestCase):
+class TestBlobStorageAccountAsync(AsyncStorageRecordedTestCase):
     # --Helpers-----------------------------------------------------------------
     async def _setup(self, bsc):
         self.container_name = self.get_resource_name('utcontainer')
@@ -56,13 +41,16 @@ class BlobStorageAccountTestAsync(AsyncStorageTestCase):
     async def assertBlobEqual(self, container_name, blob_name, expected_data, bsc):
         blob = bsc.get_blob_client(container_name, blob_name)
         actual_data = await blob.download_blob().readall()
-        self.assertEqual(actual_data, expected_data)
+        assert actual_data == expected_data
     # --------------------------------------------------------------------------
 
     @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_standard_blob_tier_set_tier_api(self, storage_account_name, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
+    @recorded_by_proxy_async
+    async def test_standard_blob_tier_set_tier_api(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
 
         await self._setup(bsc)
         tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
@@ -73,26 +61,29 @@ class BlobStorageAccountTestAsync(AsyncStorageTestCase):
             await blob.upload_blob(b'hello world')
 
             blob_ref = await blob.get_blob_properties()
-            self.assertIsNotNone(blob_ref.blob_tier)
-            self.assertTrue(blob_ref.blob_tier_inferred)
-            self.assertIsNone(blob_ref.blob_tier_change_time)
+            assert blob_ref.blob_tier is not None
+            assert blob_ref.blob_tier_inferred
+            assert blob_ref.blob_tier_change_time is None
 
             # Act
             await blob.set_standard_blob_tier(tier)
 
             # Assert
             blob_ref2 = await blob.get_blob_properties()
-            self.assertEqual(tier, blob_ref2.blob_tier)
-            self.assertFalse(blob_ref2.blob_tier_inferred)
-            self.assertIsNotNone(blob_ref2.blob_tier_change_time)
+            assert tier == blob_ref2.blob_tier
+            assert not blob_ref2.blob_tier_inferred
+            assert blob_ref2.blob_tier_change_time is not None
 
             await blob.delete_blob()
 
     @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_set_std_blob_tier_w_rehydrate_priority(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_set_std_blob_tier_w_rehydrate_priority(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
         await self._setup(bsc)
         blob_client = await self._create_blob(bsc)
         blob_tier = StandardBlobTier.Archive
@@ -106,12 +97,15 @@ class BlobStorageAccountTestAsync(AsyncStorageTestCase):
         blob_props = await blob_client.get_blob_properties()
 
         # Assert
-        self.assertEqual('rehydrate-pending-to-cool', blob_props.archive_status)
+        assert 'rehydrate-pending-to-cool' == blob_props.archive_status
 
     @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_rehydration_status(self, storage_account_name, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
+    @recorded_by_proxy_async
+    async def test_rehydration_status(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
         await self._setup(bsc)
         blob_name = 'rehydration_test_blob_1'
         blob_name2 = 'rehydration_test_blob_2'
@@ -123,9 +117,9 @@ class BlobStorageAccountTestAsync(AsyncStorageTestCase):
         await blob.set_standard_blob_tier(StandardBlobTier.Cool)
 
         blob_ref = await blob.get_blob_properties()
-        self.assertEqual(StandardBlobTier.Archive, blob_ref.blob_tier)
-        self.assertEqual("rehydrate-pending-to-cool", blob_ref.archive_status)
-        self.assertFalse(blob_ref.blob_tier_inferred)
+        assert StandardBlobTier.Archive == blob_ref.blob_tier
+        assert "rehydrate-pending-to-cool" == blob_ref.archive_status
+        assert not blob_ref.blob_tier_inferred
 
         blobs = []
         async for b in container.list_blobs():
@@ -134,32 +128,32 @@ class BlobStorageAccountTestAsync(AsyncStorageTestCase):
         await blob.delete_blob()
 
         # Assert
-        self.assertIsNotNone(blobs)
-        self.assertGreaterEqual(len(blobs), 1)
-        self.assertIsNotNone(blobs[0])
+        assert blobs is not None
+        assert len(blobs) >= 1
+        assert blobs[0] is not None
         self.assertNamedItemInContainer(blobs, blob.blob_name)
-        self.assertEqual(StandardBlobTier.Archive, blobs[0].blob_tier)
-        self.assertEqual("rehydrate-pending-to-cool", blobs[0].archive_status)
-        self.assertFalse(blobs[0].blob_tier_inferred)
+        assert StandardBlobTier.Archive == blobs[0].blob_tier
+        assert "rehydrate-pending-to-cool" == blobs[0].archive_status
+        assert not blobs[0].blob_tier_inferred
 
         blob2 = await container.upload_blob(blob_name2, data)
         await blob2.set_standard_blob_tier(StandardBlobTier.Archive)
         await blob2.set_standard_blob_tier(StandardBlobTier.Hot)
 
         blob_ref2 = await blob2.get_blob_properties()
-        self.assertEqual(StandardBlobTier.Archive, blob_ref2.blob_tier)
-        self.assertEqual("rehydrate-pending-to-hot", blob_ref2.archive_status)
-        self.assertFalse(blob_ref2.blob_tier_inferred)
+        assert StandardBlobTier.Archive == blob_ref2.blob_tier
+        assert "rehydrate-pending-to-hot" == blob_ref2.archive_status
+        assert not blob_ref2.blob_tier_inferred
 
         blobs = []
         async for b in container.list_blobs():
             blobs.append(b)
 
         # Assert
-        self.assertIsNotNone(blobs)
-        self.assertGreaterEqual(len(blobs), 1)
-        self.assertIsNotNone(blobs[0])
+        assert blobs is not None
+        assert len(blobs) >= 1
+        assert blobs[0] is not None
         self.assertNamedItemInContainer(blobs, blob2.blob_name)
-        self.assertEqual(StandardBlobTier.Archive, blobs[0].blob_tier)
-        self.assertEqual("rehydrate-pending-to-hot", blobs[0].archive_status)
-        self.assertFalse(blobs[0].blob_tier_inferred)
+        assert StandardBlobTier.Archive == blobs[0].blob_tier
+        assert "rehydrate-pending-to-hot" == blobs[0].archive_status
+        assert not blobs[0].blob_tier_inferred
