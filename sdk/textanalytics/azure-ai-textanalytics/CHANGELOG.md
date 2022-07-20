@@ -4,7 +4,19 @@
 
 ### Features Added
 
+- Added `begin_recognize_custom_entities` client method to recognize custom named entities in documents.
+- Added `begin_single_label_classify` client method to perform custom single label classification on documents.
+- Added `begin_multi_label_classify` client method to perform custom multi label classification on documents.
+- Added property `details` on returned poller objects which contain long-running operation metadata.
+- Added `TextAnalysisLROPoller` and `AsyncTextAnalysisLROPoller` protocols to describe the return types from long-running operations.
+
 ### Breaking Changes
+
+- Removed the Extractive Text Summarization feature and related models: `ExtractSummaryAction`, `ExtractSummaryResult`, and `SummarySentence`. To access this beta feature, install the `5.2.0b4` version of the client library.
+- `SingleCategoryClassifyResult` and `MultiCategoryClassifyResult` models have been merged into one model: `ClassifyDocumentResult`.
+- Removed the `FHIR` feature and related keyword argument and property: `fhir_version` and `fhir_bundle`. To access this beta feature, install the `5.2.0b4` version of the client library.
+- Renamed `SingleCategoryClassifyAction` to `SingleLabelClassifyAction`
+- Renamed `MultiCategoryClassifyAction` to `MultiLabelClassifyAction`.
 
 ### Bugs Fixed
 

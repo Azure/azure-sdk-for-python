@@ -209,7 +209,6 @@ class FileSystemSamples(object):
 
         file_system_client.delete_file_system()
 
-
 if __name__ == '__main__':
     sample = FileSystemSamples()
     sample.file_system_sample()

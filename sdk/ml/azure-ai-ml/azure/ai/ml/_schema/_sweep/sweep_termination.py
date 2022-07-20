@@ -31,6 +31,7 @@ class BanditPolicySchema(EarlyTerminationPolicySchema):
     def make(self, data, **kwargs):
         from azure.ai.ml.sweep import BanditPolicy
 
+        data.pop("type", None)
         return BanditPolicy(**data)
 
 
@@ -43,6 +44,7 @@ class MedianStoppingPolicySchema(EarlyTerminationPolicySchema):
     def make(self, data, **kwargs):
         from azure.ai.ml.sweep import MedianStoppingPolicy
 
+        data.pop("type", None)
         return MedianStoppingPolicy(**data)
 
 
@@ -56,4 +58,5 @@ class TruncationSelectionPolicySchema(EarlyTerminationPolicySchema):
     def make(self, data, **kwargs):
         from azure.ai.ml.sweep import TruncationSelectionPolicy
 
+        data.pop("type", None)
         return TruncationSelectionPolicy(**data)

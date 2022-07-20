@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b3 Python/3.10.5 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://foo.api.adu.microsoft.com/deviceUpdate/bar/management/devices?api-version=2022-07-01-preview
+  response:
+    body:
+      string: '{"value":[{"deviceId":"adu-sdk-test-device-1","deviceClassId":"0919e3ae422a2bfa8c84ff905813e60351e456d1","groupId":"testgroup","onLatestUpdate":false,"deploymentStatus":"Succeeded","lastInstallResult":{"resultCode":700,"extendedResultCode":0,"resultDetails":""}},{"deviceId":"joseph-edgevm2","deviceClassId":"0919e3ae422a2bfa8c84ff905813e60351e456d1","groupId":"joegroup","installedUpdate":{"updateId":{"provider":"foo","name":"bar","version":"2022.128.1751.30"}},"onLatestUpdate":false,"lastAttemptedUpdate":{"updateId":{"provider":"foo","name":"bar","version":"2022.128.1751.30"}},"deploymentStatus":"Succeeded","lastDeploymentId":"joegroup-2022-128-1751-30-0129015341","lastInstallResult":{"resultCode":700,"extendedResultCode":0,"resultDetails":""}},{"deviceId":"foo","deviceClassId":"0919e3ae422a2bfa8c84ff905813e60351e456d1","groupId":"foo","onLatestUpdate":false,"lastAttemptedUpdate":{"updateId":{"provider":"foo","name":"bar","version":"2022.608.554.1"}},"deploymentStatus":"Failed","lastDeploymentId":"test0609070108","lastInstallResult":{"resultCode":0,"extendedResultCode":805306371,"resultDetails":""}}]}'
+    headers:
+      content-length:
+      - '1161'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Jul 2022 22:02:56 GMT
+      mise-correlation-id:
+      - 7d5ef599-d2e8-431a-8490-0ec856ee7d3a
+      traceparent:
+      - 00-d740f969db9dbc459098acc4c4744a54-979283d4f30c0e49-00
+    status:
+      code: 200
+      message: OK
+version: 1

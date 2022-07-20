@@ -14,7 +14,8 @@ from testcase import (
 )
 from azure.ai.language.conversations import ConversationAnalysisClient
 
-class ConversationalSummarizationTests(ConversationTest):
+
+class TestConversationalSummarizationTests(ConversationTest):
 
     @GlobalConversationAccountPreparer()
     def test_conversational_summarization(self, endpoint, key):
@@ -64,12 +65,12 @@ class ConversationalSummarizationTests(ConversationTest):
                     ]
                 }
             )
-        
+
             # assert - main object
             result = poller.result()
             assert not result is None
             assert result["status"] == "succeeded"
-            
+
             # assert - task result
             task_result = result["tasks"]["items"][0]
             assert task_result["status"] == "succeeded"

@@ -116,15 +116,6 @@ class Deployment(Resource, RestTranslatableMixin):
 
         self.code_configuration.scoring_script = value
 
-    @classmethod
-    @abstractmethod
-    def load(
-        cls,
-        path: Union[PathLike, str],
-        params_override: list = None,
-    ) -> "Deployment":
-        pass
-
     def dump(self, path: Union[PathLike, str]) -> None:
         """Dump the deployment content into a file in yaml format.
 

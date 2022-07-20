@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -43,10 +42,8 @@ from ._models import (
     AddressValue,
     CurrencyValue,
     DocumentBuildMode,
-    DocumentCaption,
     DocumentContentElement,
     DocumentField,
-    DocumentFootnote,
     DocumentKeyValuePair,
     DocumentKeyValueElement,
     DocumentLanguage,
@@ -60,12 +57,13 @@ from ._models import (
     DocumentWord,
     ModelOperationInfo,
     ModelOperation,
-    DocumentModel,
     DocumentModelInfo,
+    DocumentModelSummary,
     DocTypeInfo,
-    AccountInfo,
+    ResourceInfo,
     DocumentAnalysisError,
     DocumentAnalysisInnerError,
+    TargetAuthorization,
 )
 from ._api_versions import FormRecognizerApiVersion, DocumentAnalysisApiVersion
 
@@ -108,10 +106,8 @@ __all__ = [
     "AddressValue",
     "CurrencyValue",
     "DocumentBuildMode",
-    "DocumentCaption",
     "DocumentContentElement",
     "DocumentField",
-    "DocumentFootnote",
     "DocumentKeyValueElement",
     "DocumentKeyValuePair",
     "DocumentLanguage",
@@ -127,12 +123,13 @@ __all__ = [
     "ModelOperationInfo",
     "ModelOperation",
     "DocumentAnalysisApiVersion",
-    "DocumentModel",
     "DocumentModelInfo",
+    "DocumentModelSummary",
     "DocTypeInfo",
-    "AccountInfo",
+    "ResourceInfo",
     "DocumentAnalysisError",
     "DocumentAnalysisInnerError",
+    "TargetAuthorization",
 ]
 
 __VERSION__ = VERSION

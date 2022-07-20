@@ -736,38 +736,6 @@ class TestToDict(FormRecognizerTest):
                     ],
                 ),
             ],
-            caption=_models.DocumentCaption(
-                content="my content",
-                bounding_regions=[
-                    _models.BoundingRegion(
-                        polygon=[_models.Point(1, 2), _models.Point(3, 4)],
-                        page_number=1,
-                    ),
-                ],
-                spans=[
-                    _models.DocumentSpan(
-                        offset=5,
-                        length=2,
-                    ),
-                ],
-            ),
-            footnotes=[
-                _models.DocumentFootnote(
-                    content="my content",
-                    bounding_regions=[
-                        _models.BoundingRegion(
-                            polygon=[_models.Point(1, 2), _models.Point(3, 4)],
-                            page_number=1,
-                        ),
-                    ],
-                    spans=[
-                        _models.DocumentSpan(
-                            offset=5,
-                            length=2,
-                        ),
-                    ],
-                )
-            ],
             bounding_regions=[
                 _models.BoundingRegion(
                     polygon=[_models.Point(1, 2), _models.Point(3, 4)],
@@ -814,50 +782,6 @@ class TestToDict(FormRecognizerTest):
                         },
                     ],
                 },
-            ],
-            "caption": {
-                "content": "my content",
-                "bounding_regions": [
-                    {
-                        "page_number": 1,
-                        "polygon": [
-                            {"x": 1, "y": 2},
-                            {
-                                "x": 3,
-                                "y": 4,
-                            },
-                        ],
-                    },
-                ],
-                "spans": [
-                    {
-                        "offset": 5,
-                        "length": 2,
-                    },
-                ],
-            },
-            "footnotes": [
-                {
-                    "content": "my content",
-                    "bounding_regions": [
-                        {
-                            "page_number": 1,
-                            "polygon": [
-                                {"x": 1, "y": 2},
-                                {
-                                    "x": 3,
-                                    "y": 4,
-                                },
-                            ],
-                        },
-                    ],
-                    "spans": [
-                        {
-                            "offset": 5,
-                            "length": 2,
-                        },
-                    ],
-                }
             ],
             "bounding_regions": [
                 {
@@ -1157,38 +1081,6 @@ class TestToDict(FormRecognizerTest):
                             spans=[_models.DocumentSpan(offset=5, length=2)],
                         ),
                     ],
-                    caption=_models.DocumentCaption(
-                        content="my content",
-                        bounding_regions=[
-                            _models.BoundingRegion(
-                                polygon=[_models.Point(1, 2), _models.Point(3, 4)],
-                                page_number=1,
-                            ),
-                        ],
-                        spans=[
-                            _models.DocumentSpan(
-                                offset=5,
-                                length=2,
-                            ),
-                        ],
-                    ),
-                    footnotes=[
-                        _models.DocumentFootnote(
-                            content="my content",
-                            bounding_regions=[
-                                _models.BoundingRegion(
-                                    polygon=[_models.Point(1, 2), _models.Point(3, 4)],
-                                    page_number=1,
-                                ),
-                            ],
-                            spans=[
-                                _models.DocumentSpan(
-                                    offset=5,
-                                    length=2,
-                                ),
-                            ],
-                        )
-                    ],
                     bounding_regions=[
                         _models.BoundingRegion(
                             polygon=[_models.Point(1, 2), _models.Point(3, 4)],
@@ -1449,50 +1341,6 @@ class TestToDict(FormRecognizerTest):
                             ],
                         },
                     ],
-                    "caption": {
-                        "content": "my content",
-                        "bounding_regions": [
-                            {
-                                "page_number": 1,
-                                "polygon": [
-                                    {"x": 1, "y": 2},
-                                    {
-                                        "x": 3,
-                                        "y": 4,
-                                    },
-                                ],
-                            },
-                        ],
-                        "spans": [
-                            {
-                                "offset": 5,
-                                "length": 2,
-                            },
-                        ],
-                    },
-                    "footnotes": [
-                        {
-                            "content": "my content",
-                            "bounding_regions": [
-                                {
-                                    "page_number": 1,
-                                    "polygon": [
-                                        {"x": 1, "y": 2},
-                                        {
-                                            "x": 3,
-                                            "y": 4,
-                                        },
-                                    ],
-                                },
-                            ],
-                            "spans": [
-                                {
-                                    "offset": 5,
-                                    "length": 2,
-                                },
-                            ],
-                        }
-                    ],
                     "bounding_regions": [
                         {
                             "page_number": 1,
@@ -1665,7 +1513,7 @@ class TestToDict(FormRecognizerTest):
             last_updated_on="1994-11-05T13:20:30Z",
             kind="documentModelBuild",
             resource_location="https://contoso.com/resource",
-            result=_models.DocumentModel(
+            result=_models.DocumentModelInfo(
                 api_version="2022-06-30-preview",
                 tags={},
                 description="my description",
@@ -1954,7 +1802,7 @@ class TestToDict(FormRecognizerTest):
         assert d == final
 
     def test_document_model_to_dict(self):
-        model = _models.DocumentModel(
+        model = _models.DocumentModelInfo(
             description="my description",
             created_on="1994-11-05T13:15:30Z",
             model_id="prebuilt-invoice",
@@ -2081,7 +1929,7 @@ class TestToDict(FormRecognizerTest):
         assert d == final
 
     def test_document_model_info_to_dict(self):
-        model = _models.DocumentModelInfo(
+        model = _models.DocumentModelSummary(
             description="my description",
             created_on="1994-11-05T13:15:30Z",
             model_id="prebuilt-invoice",
@@ -2102,7 +1950,7 @@ class TestToDict(FormRecognizerTest):
         assert d == final
 
     def test_account_info_to_dict(self):
-        model = _models.AccountInfo(document_model_limit=5000, document_model_count=10)
+        model = _models.ResourceInfo(document_model_limit=5000, document_model_count=10)
 
         d = model.to_dict()
 

@@ -1,32 +1,33 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import typing
+from abc import abstractmethod
 from os import PathLike
 from pathlib import Path
 from typing import Dict, Union
-from abc import abstractmethod
+
 from marshmallow import Schema
-from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml.entities import Asset
-from azure.ai.ml.entities._component.utils import build_validate_input, build_validate_output
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, SystemData
+from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, SystemData, ComponentVersionDetails
 from azure.ai.ml.constants import (
-    CommonYamlFields,
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
     ComponentSource,
+    ANONYMOUS_COMPONENT_NAME,
+    SOURCE_PATH_CONTEXT_KEY,
 )
-from azure.ai.ml.constants import NodeType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, YamlTranslatableMixin, TelemetryMixin
-from azure.ai.ml._utils.utils import load_yaml, dump_yaml_to_file
+from azure.ai.ml._utils.utils import dump_yaml_to_file, hash_dict, is_private_preview_enabled
 from azure.ai.ml.entities._util import find_type_in_override
-from azure.ai.ml._ml_exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml.entities._validation import ValidationResult
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.entities._validation import ValidationResult, SchemaValidatableMixin
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 
 
-class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin):
+class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin, SchemaValidatableMixin):
     """Base class for component version, used to define a component. Can't be instantiated directly.
 
     :param name: Name of the resource.
@@ -91,8 +92,12 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
             creation_context=creation_context,
             is_anonymous=kwargs.pop("is_anonymous", False),
             base_path=kwargs.pop("base_path", None),
+            source_path=kwargs.pop("source_path", None),
         )
-        # TODO: check why do we dropped kwargs
+        # update component name to ANONYMOUS_COMPONENT_NAME if it is anonymous
+        if hasattr(self, "_is_anonymous"):
+            self._set_is_anonymous(self._is_anonymous)
+        # TODO: check why do we dropped kwargs, seems because _source is not a valid parameter for a super.__init__
 
         inputs = inputs if inputs else {}
         outputs = outputs if outputs else {}
@@ -101,15 +106,33 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         self._type = type
         self._display_name = display_name
         self._is_deterministic = is_deterministic
-        self._inputs = build_validate_input(inputs)
-        self._outputs = build_validate_output(outputs)
-        self._source = kwargs.pop("_source", ComponentSource.OTHER)
+        self._inputs = self.build_validate_io(inputs, is_input=True)
+        self._outputs = self.build_validate_io(outputs, is_input=False)
+        self._source = kwargs.pop("_source", ComponentSource.SDK)
         # Store original yaml
         self._yaml_str = yaml_str
         self._other_parameter = kwargs
         from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
 
         self._func = _generate_component_function(self)
+
+    @classmethod
+    def build_validate_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
+        component_io = {}
+        for name, port in io_dict.items():
+            if not name.isidentifier():
+                msg = "{!r} is not a valid parameter name"
+                raise ValidationException(
+                    message=msg.format(name),
+                    no_personal_data_message=msg.format("[name]"),
+                    target=ErrorTarget.COMPONENT,
+                )
+            else:
+                if is_input:
+                    component_io[name] = port if isinstance(port, Input) else Input(**port)
+                else:
+                    component_io[name] = port if isinstance(port, Output) else Output(**port)
+        return component_io
 
     @property
     def type(self) -> str:
@@ -119,6 +142,32 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         :rtype: str
         """
         return self._type
+
+    def _set_is_anonymous(self, is_anonymous: bool):
+        """Mark this component as anonymous and overwrite component name to ANONYMOUS_COMPONENT_NAME."""
+        if is_anonymous is True:
+            self._is_anonymous = True
+            self.name = ANONYMOUS_COMPONENT_NAME
+        else:
+            self._is_anonymous = False
+
+    def _update_anonymous_hash(self):
+        """For anonymous component, we use code hash + yaml hash as component version
+        so the same anonymous component(same interface and same code) won't be created again.
+        Should be called before _to_rest_object.
+        """
+        if self._is_anonymous:
+            self.version = self._get_anonymous_hash()
+
+    def _get_anonymous_hash(self) -> str:
+        """Return the name of anonymous component.
+
+        same anonymous component(same code and interface) will have same name.
+        """
+        component_interface_dict = self._to_dict()
+        # omit version since anonymous component's version is random guid
+        # omit name since name doesn't impact component's uniqueness
+        return hash_dict(component_interface_dict, keys_to_omit=["name", "id", "version"])
 
     @property
     def display_name(self) -> str:
@@ -190,70 +239,30 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         dump_yaml_to_file(path, yaml_serialized, default_flow_style=False)
 
     @classmethod
-    def _get_schema(cls) -> Union[Schema, PathAwareSchema]:
-        from azure.ai.ml._schema.component import BaseComponentSchema
-
-        return BaseComponentSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
-
-    def _validate(self, raise_error=False) -> ValidationResult:
-        """Validate the component.
-
-        :raises: ValidationException
-        """
-        origin_name = self.name
-        if hasattr(self, "_is_anonymous") and getattr(self, "_is_anonymous"):
-            # The name of an anonymous component is an uuid generated based on its hash.
-            # Can't change naming logic to avoid breaking previous component reuse, so hack here.
-            self.name = "dummy_" + self.name.replace("-", "_")
-        result = ValidationResult._from_validation_messages(self._get_schema().validate(self._to_dict()))
-        self.name = origin_name
-        if raise_error and not result.passed:
-            raise ValidationException(
-                message=result._single_message,
-                target=ErrorTarget.COMPONENT,
-                no_personal_data_message="Component is not valid.",
-                error_category=ErrorCategory.USER_ERROR,
-            )
-        return result
+    @abstractmethod
+    def _create_schema_for_validation(cls, context) -> typing.Union[PathAwareSchema, Schema]:
+        pass
 
     @classmethod
-    def load(
-        cls,
-        path: Union[PathLike, str],
-        params_override: list = None,
-        **kwargs,
-    ) -> "Component":
-        """Construct a component object from a yaml file.
+    def _get_validation_error_target(cls) -> ErrorTarget:
+        return ErrorTarget.COMPONENT
 
-        :param path: Path to a local file as the source.
-        :type path: str
-        :param params_override: Fields to overwrite on top of the yaml file. Format is [{"field1": "value1"}, {"field2": "value2"}]
-        :type params_override: list
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
-
-        :return: Loaded component object.
-        :rtype: Component
-        """
-        params_override = params_override or []
-        yaml_dict = load_yaml(path)
-        if yaml_dict is None:
-            msg = "Target yaml file is empty: {}"
-            raise ValidationException(
-                message=msg.format(path),
-                target=ErrorTarget.COMPONENT,
-                no_personal_data_message=msg.format(path),
-                error_category=ErrorCategory.USER_ERROR,
+    def _customized_validate(self) -> ValidationResult:
+        validation_result = super(Component, self)._customized_validate()
+        # If private features are enable and component has code value of type str we need to check
+        # that it is a valid git path case. Otherwise we should throw a ValidationError
+        # saying that the code value is not valid
+        if (
+            hasattr(self, "code")
+            and self.code is not None
+            and isinstance(self.code, str)
+            and self.code.startswith("git+")
+            and not is_private_preview_enabled()
+        ):
+            validation_result.append_error(
+                message="Not a valid code value: git paths are not supported.", yaml_path="code"
             )
-        elif not isinstance(yaml_dict, dict):
-            msg = "Expect dict but get {} after parsing yaml file: {}"
-            raise ValidationException(
-                message=msg.format(type(yaml_dict), path),
-                target=ErrorTarget.COMPONENT,
-                no_personal_data_message=msg.format(type(yaml_dict), ""),
-                error_category=ErrorCategory.USER_ERROR,
-            )
-        return cls._load(data=yaml_dict, yaml_path=path, params_override=params_override, **kwargs)
+        return validation_result
 
     @classmethod
     def _load(
@@ -267,60 +276,48 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         params_override = params_override or []
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
+            SOURCE_PATH_CONTEXT_KEY: Path(yaml_path) if yaml_path else None,
             PARAMS_OVERRIDE_KEY: params_override,
         }
 
-        from azure.ai.ml.entities import CommandComponent, ParallelComponent
-
-        component_type = None
         type_in_override = find_type_in_override(params_override)
-        # override takes the priority
-        customized_component_type = type_in_override or data.get(CommonYamlFields.TYPE, NodeType.COMMAND)
-        if customized_component_type == NodeType.COMMAND:
-            component_type = CommandComponent
-        elif customized_component_type == NodeType.PARALLEL:
-            component_type = ParallelComponent
-        else:
-            msg = f"Unsupported component type: {customized_component_type}."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.COMPONENT,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
-        # Load yaml content
-        if yaml_path and Path(yaml_path).is_file():
-            with open(yaml_path, "r") as f:
-                kwargs["yaml_str"] = f.read()
+        from azure.ai.ml.entities._component.component_factory import component_factory
 
-        return component_type._load_from_dict(data=data, context=context, **kwargs)
+        return component_factory.load_from_dict(_type=type_in_override, data=data, context=context, **kwargs)
 
     @classmethod
     def _from_rest_object(cls, component_rest_object: ComponentVersionData) -> "Component":
-        from azure.ai.ml.entities import CommandComponent, ParallelComponent
+        from azure.ai.ml.entities._component.component_factory import component_factory
 
-        # TODO: should be RestComponentType.CommandComponent, but it did not get generated
-        component_type = component_rest_object.properties.component_spec["type"]
-        if component_type == NodeType.COMMAND:
-            return CommandComponent._load_from_rest(component_rest_object)
-        elif component_type == NodeType.PARALLEL:
-            return ParallelComponent._load_from_rest(component_rest_object)
-        else:
-            msg = f"Unsupported component type {component_type}."
-            raise ComponentException(
-                message=msg,
-                target=ErrorTarget.COMPONENT,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.SYSTEM_ERROR,
-            )
+        return component_factory.load_from_rest(obj=component_rest_object)
 
-    @classmethod
-    @abstractmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "Component":
-        pass
+    def _to_rest_object(self) -> ComponentVersionData:
+        component = self._to_dict()
+
+        properties = ComponentVersionDetails(
+            component_spec=component,
+            description=self.description,
+            is_anonymous=self._is_anonymous,
+            properties=self.properties,
+            tags=self.tags,
+        )
+        result = ComponentVersionData(properties=properties)
+        result.name = self.name
+        return result
+
+    def _to_dict(self) -> Dict:
+        """Dump the command component content into a dictionary."""
+
+        # Distribution inherits from autorest generated class, use as_dist() to dump to json
+        # Replace the name of $schema to schema.
+        component_schema_dict = self._dump_for_validation()
+        component_schema_dict.pop("base_path", None)
+
+        # TODO: handle other_parameters and remove override from subclass
+        return component_schema_dict
 
     def _get_telemetry_values(self):
-        return {"type": self.type, "source": self._source.value, "is_anonymous": self._is_anonymous}
+        return {"type": self.type, "source": self._source, "is_anonymous": self._is_anonymous}
 
     def __call__(self, *args, **kwargs) -> [..., Union["Command", "Parallel"]]:
         """Call ComponentVersion as a function and get a Component object."""

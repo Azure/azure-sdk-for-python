@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -6,16 +5,14 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, IO, Union, TYPE_CHECKING
+from typing import Any, IO, Union
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import AsyncLROPoller
 from .._api_versions import DocumentAnalysisApiVersion
 from ._form_base_client_async import FormRecognizerClientBaseAsync
 from .._models import AnalyzeResult
-
-if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
@@ -64,13 +61,13 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
     def __init__(
         self,
         endpoint: str,
-        credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any
     ) -> None:
         api_version = kwargs.pop(
             "api_version", DocumentAnalysisApiVersion.V2022_06_30_PREVIEW
         )
-        super(DocumentAnalysisClient, self).__init__(
+        super().__init__(
             endpoint=endpoint,
             credential=credential,
             api_version=api_version,
@@ -102,7 +99,6 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
             `pages="1-3, 5-6"`. Separate each page number or range with a comma.
         :keyword str locale: Locale hint of the input document.
             See supported locales here: https://aka.ms/azsdk/formrecognizer/supportedlocales.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AsyncLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.formrecognizer.AnalyzeResult]
@@ -159,7 +155,6 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
             `pages="1-3, 5-6"`. Separate each page number or range with a comma.
         :keyword str locale: Locale hint of the input document.
             See supported locales here: https://aka.ms/azsdk/formrecognizer/supportedlocales.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AsyncLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.formrecognizer.AnalyzeResult]

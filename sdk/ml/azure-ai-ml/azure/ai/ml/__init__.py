@@ -2,7 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from ._version import VERSION
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
+
 from .entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
 
 from ._ml_client import MLClient
@@ -33,7 +34,6 @@ from .entities._load_functions import (
 module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="\n")
 
-__version__ = VERSION
 __all__ = [
     "MLClient",
     "command",

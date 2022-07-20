@@ -32,11 +32,9 @@ from ._models import (
     RecognizePiiEntitiesResult,
     PiiEntity,
     AnalyzeHealthcareEntitiesResult,
-    ExtractSummaryResult,
     _AnalyzeActionsType,
     RecognizeCustomEntitiesResult,
-    SingleCategoryClassifyResult,
-    MultiCategoryClassifyResult,
+    ClassifyDocumentResult,
     ActionPointerKind,
 )
 
@@ -98,8 +96,8 @@ def order_lro_results(doc_id_order, combined):
 def prepare_result(func):
     def choose_wrapper(*args, **kwargs):
         def wrapper(
-            response, obj, response_headers, ordering_function
-        ):  # pylint: disable=unused-argument
+            response, obj, _, ordering_function
+        ):
             if hasattr(obj, "results"):
                 obj = obj.results  # language API compat
 
@@ -264,15 +262,6 @@ def healthcare_result(
 
 
 @prepare_result
-def summary_result(
-    summary, results, *args, **kwargs
-):  # pylint: disable=unused-argument
-    return ExtractSummaryResult._from_generated(  # pylint: disable=protected-access
-        summary
-    )
-
-
-@prepare_result
 def custom_entities_result(
     custom_entities, results, *args, **kwargs
 ):  # pylint: disable=unused-argument
@@ -282,24 +271,16 @@ def custom_entities_result(
 
 
 @prepare_result
-def single_category_classify_result(
-    custom_category, results, *args, **kwargs
-):  # pylint: disable=unused-argument
-    return SingleCategoryClassifyResult._from_generated(  # pylint: disable=protected-access
-        custom_category
-    )
-
-@prepare_result
-def multi_category_classify_result(
+def classify_document_result(
     custom_categories, results, *args, **kwargs
 ):  # pylint: disable=unused-argument
-    return MultiCategoryClassifyResult._from_generated(  # pylint: disable=protected-access
+    return ClassifyDocumentResult._from_generated(  # pylint: disable=protected-access
         custom_categories
     )
 
 
 def healthcare_extract_page_data(
-    doc_id_order, obj, response_headers, health_job_state
+    doc_id_order, obj, health_job_state
 ):  # pylint: disable=unused-argument
     return (
         health_job_state.next_link,
@@ -308,7 +289,7 @@ def healthcare_extract_page_data(
             health_job_state.results
             if hasattr(health_job_state, "results")
             else health_job_state.tasks.items[0].results,
-            response_headers,
+            {},
             lro=True
         ),
     )
@@ -323,14 +304,12 @@ def _get_deserialization_callback_from_task_type(task_type):  # pylint: disable=
         return linked_entities_result
     if task_type == _AnalyzeActionsType.ANALYZE_SENTIMENT:
         return sentiment_result
-    if task_type == _AnalyzeActionsType.EXTRACT_SUMMARY:
-        return summary_result
     if task_type == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES:
         return custom_entities_result
-    if task_type == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY:
-        return single_category_classify_result
-    if task_type == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY:
-        return multi_category_classify_result
+    if task_type == _AnalyzeActionsType.SINGLE_LABEL_CLASSIFY:
+        return classify_document_result
+    if task_type == _AnalyzeActionsType.MULTI_LABEL_CLASSIFY:
+        return classify_document_result
     if task_type == _AnalyzeActionsType.ANALYZE_HEALTHCARE_ENTITIES:
         return healthcare_result
     return key_phrases_result
@@ -403,7 +382,7 @@ def get_ordered_errors(tasks_obj, task_name, doc_id_order):
     raise ValueError("Unexpected response from service - no errors for missing action results.")
 
 
-def _get_doc_results(task, doc_id_order, response_headers, returned_tasks_object):
+def _get_doc_results(task, doc_id_order, returned_tasks_object):
     returned_tasks = returned_tasks_object.tasks
     current_task_type, task_name = task
     deserialization_callback = _get_deserialization_callback_from_task_type(
@@ -422,18 +401,25 @@ def _get_doc_results(task, doc_id_order, response_headers, returned_tasks_object
     if response_task_to_deserialize.results is None:
         return get_ordered_errors(returned_tasks_object, task_name, doc_id_order)
     return deserialization_callback(
-        doc_id_order, response_task_to_deserialize.results, response_headers, lro=True
+        doc_id_order, response_task_to_deserialize.results, {}, lro=True
     )
 
 
-def get_iter_items(doc_id_order, task_order, response_headers, analyze_job_state):
+def get_iter_items(doc_id_order, task_order, bespoke, analyze_job_state):
     iter_items = defaultdict(list)  # map doc id to action results
     returned_tasks_object = analyze_job_state
+
+    if bespoke:
+        return _get_doc_results(
+            task_order[0],
+            doc_id_order,
+            returned_tasks_object,
+        )
+
     for task in task_order:
         results = _get_doc_results(
             task,
             doc_id_order,
-            response_headers,
             returned_tasks_object,
         )
         for result in results:
@@ -443,11 +429,11 @@ def get_iter_items(doc_id_order, task_order, response_headers, analyze_job_state
 
 
 def analyze_extract_page_data(
-    doc_id_order, task_order, response_headers, analyze_job_state
+    doc_id_order, task_order, bespoke, analyze_job_state
 ):
     # return next link, list of
     iter_items = get_iter_items(
-        doc_id_order, task_order, response_headers, analyze_job_state
+        doc_id_order, task_order, bespoke, analyze_job_state
     )
     return analyze_job_state.next_link, iter_items
 
@@ -477,14 +463,14 @@ def lro_get_next_page(
 
 
 def healthcare_paged_result(
-    doc_id_order, health_status_callback, _, obj, response_headers, show_stats=False
-):  # pylint: disable=unused-argument
+    doc_id_order, health_status_callback, _, obj, show_stats=False
+):
     return ItemPaged(
         functools.partial(
             lro_get_next_page, health_status_callback, obj, show_stats=show_stats
         ),
         functools.partial(
-            healthcare_extract_page_data, doc_id_order, obj, response_headers
+            healthcare_extract_page_data, doc_id_order, obj
         ),
     )
 
@@ -495,14 +481,38 @@ def analyze_paged_result(
     analyze_status_callback,
     _,
     obj,
-    response_headers,
     show_stats=False,
-):  # pylint: disable=unused-argument
+    bespoke=False
+):
     return ItemPaged(
         functools.partial(
             lro_get_next_page, analyze_status_callback, obj, show_stats=show_stats
         ),
         functools.partial(
-            analyze_extract_page_data, doc_id_order, task_order, response_headers
+            analyze_extract_page_data, doc_id_order, task_order, bespoke
         ),
     )
+
+
+def _get_result_from_continuation_token(
+    client, continuation_token, poller_type, polling_method, callback, bespoke=False
+):
+    def result_callback(initial_response, pipeline_response):
+        doc_id_order = initial_response.context.options["doc_id_order"]
+        show_stats = initial_response.context.options["show_stats"]
+        task_id_order = initial_response.context.options.get("task_id_order")
+        return callback(
+            pipeline_response,
+            None,
+            doc_id_order,
+            task_id_order=task_id_order,
+            show_stats=show_stats,
+            bespoke=bespoke
+        )
+
+    return poller_type.from_continuation_token(
+            polling_method=polling_method,
+            client=client,
+            deserialization_callback=result_callback,
+            continuation_token=continuation_token
+        )

@@ -1,14 +1,21 @@
 # Release History
 
-## 12.8.1 (Unreleased)
+## 12.10.0b1 (Unreleased)
 
 ### Features Added
 
-### Breaking Changes
-
 ### Bugs Fixed
 
-### Other Changes
+## 12.9.0 (2022-07-07)
+
+### Features Added
+- Stable release of features from 12.9.0b1.
+- Added support for progress tracking to `upload_file()` and `download_file()` via a new optional callback, `progress_hook`.
+
+## 12.9.0b1 (2022-06-15)
+
+### Features Added
+- Added support for `file_change_time` to `start_copy_from_url` API
 
 ## 12.8.0 (2022-05-09)
 

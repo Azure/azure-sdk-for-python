@@ -12,7 +12,6 @@ from azure.ai.ml.entities import (
     CommandComponent,
 )
 from azure.ai.ml.entities._job.distribution import MpiDistribution, TensorFlowDistribution, PyTorchDistribution
-from azure.ai.ml.entities._component.input_output import ComponentInput, ComponentOutput
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ManagedIdentity, AmlToken, UserIdentity
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -32,26 +31,23 @@ SUPPORTED_INPUTS = [
 def _parse_input(input_value):
     component_input, job_input = None, None
     if isinstance(input_value, Input):
-        component_input = input_value._to_component_input()
+        component_input = Input(**input_value._to_dict())
         input_type = input_value.type
         if input_type in SUPPORTED_INPUTS:
             job_input = Input(**input_value._to_dict())
-    elif isinstance(input_value, ComponentInput):
-        # if user provided component input, job input will be None
-        component_input = input_value
     elif isinstance(input_value, dict):
-        # if user provided dict, we try to parse it to ComponentInput and JobInput separately.
-        # only parse to JobInput for path type
+        # if user provided dict, we try to parse it to Input.
+        # for job input, only parse for path type
         input_type = input_value.get("type", None)
         if input_type in SUPPORTED_INPUTS:
             job_input = Input(**input_value)
-        component_input = ComponentInput(input_value)
+        component_input = Input(**input_value)
     elif isinstance(input_value, (SweepDistribution, str, bool, int, float)):
         # Input bindings are not supported
         component_input = ComponentTranslatableMixin._to_component_input_builder_function(input_value)
         job_input = input_value
     else:
-        msg = f"Unsupported input type: {type(input_value)}, only Input, ComponentInput, dict, str, bool, int and float are supported."
+        msg = f"Unsupported input type: {type(input_value)}, only Input, dict, str, bool, int and float are supported."
         raise ValidationException(message=msg, no_personal_data_message=msg, target=ErrorTarget.JOB)
     return component_input, job_input
 
@@ -59,10 +55,8 @@ def _parse_input(input_value):
 def _parse_output(output_value):
     component_output, job_output = None, None
     if isinstance(output_value, Output):
-        component_output = output_value._to_component_output()
+        component_output = Output(**output_value._to_dict())
         job_output = Output(**output_value._to_dict())
-    elif isinstance(output_value, ComponentOutput):
-        component_output = output_value
     elif not output_value:
         # output value can be None or empty dictionary
         # None output value will be packed into a JobOutput object with mode = ReadWriteMount & type = UriFolder
@@ -70,11 +64,11 @@ def _parse_output(output_value):
         job_output = output_value
     elif isinstance(output_value, dict):  # When output value is a non-empty dictionary
         job_output = Output(**output_value)
-        component_output = ComponentOutput(output_value)
+        component_output = Output(**output_value)
     elif isinstance(output_value, str):  # When output is passed in from pipeline job yaml
         job_output = output_value
     else:
-        msg = f"Unsupported output type: {type(output_value)}, only Output, ComponentOutput, JobOutput, and dict are supported."
+        msg = f"Unsupported output type: {type(output_value)}, only Output and dict are supported."
         raise ValidationException(message=msg, no_personal_data_message=msg, target=ErrorTarget.JOB)
     return component_output, job_output
 
@@ -163,7 +157,6 @@ def command(
 
     if component is None:
         component = CommandComponent(
-            base_path=os.getcwd(),  # base path should be current folder
             name=name,
             tags=tags,
             code=code,

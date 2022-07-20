@@ -13,6 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
@@ -22,26 +23,24 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class VirtualMachineImagesOperations:
-    """VirtualMachineImagesOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.compute.v2016_04_30_preview.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.compute.v2016_04_30_preview.aio.ComputeManagementClient`'s
+        :attr:`virtual_machine_images` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def get(
@@ -52,7 +51,7 @@ class VirtualMachineImagesOperations:
         skus: str,
         version: str,
         **kwargs: Any
-    ) -> "_models.VirtualMachineImage":
+    ) -> _models.VirtualMachineImage:
         """Gets a virtual machine image.
 
         :param location: The name of a supported Azure region.
@@ -70,13 +69,16 @@ class VirtualMachineImagesOperations:
         :rtype: ~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineImage
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineImage"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2016-04-30-preview")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.VirtualMachineImage]
 
         
         request = build_get_request(
@@ -88,11 +90,13 @@ class VirtualMachineImagesOperations:
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -124,7 +128,7 @@ class VirtualMachineImagesOperations:
         top: Optional[int] = None,
         orderby: Optional[str] = None,
         **kwargs: Any
-    ) -> List["_models.VirtualMachineImageResource"]:
+    ) -> List[_models.VirtualMachineImageResource]:
         """Gets a list of all virtual machine image versions for the specified location, publisher, offer,
         and SKU.
 
@@ -147,13 +151,16 @@ class VirtualMachineImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineImageResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.VirtualMachineImageResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2016-04-30-preview")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[List[_models.VirtualMachineImageResource]]
 
         
         request = build_list_request(
@@ -167,11 +174,13 @@ class VirtualMachineImagesOperations:
             top=top,
             orderby=orderby,
             template_url=self.list.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -198,7 +207,7 @@ class VirtualMachineImagesOperations:
         location: str,
         publisher_name: str,
         **kwargs: Any
-    ) -> List["_models.VirtualMachineImageResource"]:
+    ) -> List[_models.VirtualMachineImageResource]:
         """Gets a list of virtual machine image offers for the specified location and publisher.
 
         :param location: The name of a supported Azure region.
@@ -210,13 +219,16 @@ class VirtualMachineImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineImageResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.VirtualMachineImageResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2016-04-30-preview")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[List[_models.VirtualMachineImageResource]]
 
         
         request = build_list_offers_request(
@@ -225,11 +237,13 @@ class VirtualMachineImagesOperations:
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.list_offers.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -255,7 +269,7 @@ class VirtualMachineImagesOperations:
         self,
         location: str,
         **kwargs: Any
-    ) -> List["_models.VirtualMachineImageResource"]:
+    ) -> List[_models.VirtualMachineImageResource]:
         """Gets a list of virtual machine image publishers for the specified Azure location.
 
         :param location: The name of a supported Azure region.
@@ -265,13 +279,16 @@ class VirtualMachineImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineImageResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.VirtualMachineImageResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2016-04-30-preview")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[List[_models.VirtualMachineImageResource]]
 
         
         request = build_list_publishers_request(
@@ -279,11 +296,13 @@ class VirtualMachineImagesOperations:
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.list_publishers.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -311,7 +330,7 @@ class VirtualMachineImagesOperations:
         publisher_name: str,
         offer: str,
         **kwargs: Any
-    ) -> List["_models.VirtualMachineImageResource"]:
+    ) -> List[_models.VirtualMachineImageResource]:
         """Gets a list of virtual machine image SKUs for the specified location, publisher, and offer.
 
         :param location: The name of a supported Azure region.
@@ -325,13 +344,16 @@ class VirtualMachineImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineImageResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.VirtualMachineImageResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2016-04-30-preview")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[List[_models.VirtualMachineImageResource]]
 
         
         request = build_list_skus_request(
@@ -341,11 +363,13 @@ class VirtualMachineImagesOperations:
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.list_skus.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs

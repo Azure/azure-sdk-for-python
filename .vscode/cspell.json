@@ -105,6 +105,7 @@
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
     "sdk/ml/azure-ai-ml/tests/**",
+    "sdk/monitor/azure-monitor-ingestion/**",
     "eng/**/*.json",
     "eng/*.txt",
     "eng/tox/tox.ini",
@@ -147,6 +148,7 @@
     "contoso",
     "contosodataset",
     "centralus",
+    "centraluseuap",
     "creds",
     "ctoring",
     "ctypes",
@@ -156,6 +158,7 @@
     "delenv",
     "dependened",
     "deserialization",
+    "disablecov",
     "docfx",
     "dotenv",
     "dpkg",
@@ -392,13 +395,21 @@
         "FNNHHJT",
         "Zwiz",
         "nypg",
-        "PBOF"
+        "PBOF",
+        "tzutc",
+        "gettz"
       ]
     },
     {
       "filename": "sdk/containerregistry/azure-containerregistry/**",
       "words": [
         "udpated"
+      ]
+    },
+    {
+      "filename": "sdk/eventhub/test-resources.json",
+      "words": [
+        "mmspecial"
       ]
     },
     {
@@ -414,6 +425,19 @@
         "dmac",
         "ierr",
         "mymodel"
+      ]
+    },
+    {
+      "filename": "sdk/monitor/test-resources.json",
+      "words": [
+        "azconfig",
+        "azmonitordce",
+        "euap",
+        "azmonitordcr",
+        "azmonitorlogsws",
+        "authr",
+        "dcrrole",
+        "pergb"
       ]
     },
     {
@@ -506,6 +530,12 @@
         "dcid",
         "startf",
         "dpkg"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/test-resources.bicep",
+      "words": [
+        "pysdkci"
       ]
     }
   ],

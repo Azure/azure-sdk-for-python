@@ -333,28 +333,6 @@ def document_style(document_span):
     return model, model_repr
 
 @pytest.fixture
-def document_caption(bounding_region, document_span):
-    model = _models.DocumentCaption(content="my content", bounding_regions=[bounding_region[0]], spans=[document_span[0]])
-    model_repr = "DocumentCaption(content={}, bounding_regions=[{}], spans=[{}])".format(
-                "my content",
-                bounding_region[1],
-                document_span[1],
-            )
-    assert repr(model) == model_repr
-    return model, model_repr
-
-@pytest.fixture
-def document_footnote(bounding_region, document_span):
-    model = _models.DocumentFootnote(content="my content", bounding_regions=[bounding_region[0]], spans=[document_span[0]])
-    model_repr = "DocumentFootnote(content={}, bounding_regions=[{}], spans=[{}])".format(
-                "my content",
-                bounding_region[1],
-                document_span[1],
-            )
-    assert repr(model) == model_repr
-    return model, model_repr
-
-@pytest.fixture
 def document_table_cell(bounding_region, document_span):
     model = _models.DocumentTableCell(kind="rowHeader", row_index=1, column_index=2, row_span=2, column_span=3, content="header", bounding_regions=[bounding_region[0]], spans=[document_span[0]])
     model_repr = "DocumentTableCell(kind={}, row_index={}, column_index={}, row_span={}, column_span={}, content={}, bounding_regions=[{}], spans=[{}])".format(
@@ -371,14 +349,12 @@ def document_table_cell(bounding_region, document_span):
     return model, model_repr
 
 @pytest.fixture
-def document_table(bounding_region, document_span, document_table_cell, document_caption, document_footnote):
-    model = _models.DocumentTable(row_count=3, column_count=4, cells=[document_table_cell[0]], caption=document_caption[0], footnotes=[document_footnote[0]], bounding_regions=[bounding_region[0]], spans=[document_span[0]])
-    model_repr = "DocumentTable(row_count={}, column_count={}, cells=[{}], caption={}, footnotes=[{}], bounding_regions=[{}], spans=[{}])".format(
+def document_table(bounding_region, document_span, document_table_cell):
+    model = _models.DocumentTable(row_count=3, column_count=4, cells=[document_table_cell[0]], bounding_regions=[bounding_region[0]], spans=[document_span[0]])
+    model_repr = "DocumentTable(row_count={}, column_count={}, cells=[{}], bounding_regions=[{}], spans=[{}])".format(
                 3,
                 4,
                 document_table_cell[1],
-                document_caption[1],
-                document_footnote[1],
                 bounding_region[1],
                 document_span[1],
             )
@@ -404,7 +380,7 @@ def doc_type_info():
 
 @pytest.fixture
 def document_model(doc_type_info):
-    model = _models.DocumentModel(
+    model = _models.DocumentModelInfo(
             api_version="2022-06-30-preview",
             tags={"awesome": "tag"},
             description="my description",
@@ -412,7 +388,7 @@ def document_model(doc_type_info):
             model_id="prebuilt-invoice",
             doc_types={"prebuilt-invoice": doc_type_info[0]}
     )
-    model_repr = "DocumentModel(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}})".format(
+    model_repr = "DocumentModelInfo(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}})".format(
                 "prebuilt-invoice",
                 "my description",
                 datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
@@ -589,7 +565,7 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_document_model(self, doc_type_info):
-        model = _models.DocumentModel(
+        model = _models.DocumentModelInfo(
             description="my description",
             created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
             model_id="prebuilt-invoice",
@@ -599,7 +575,7 @@ class TestRepr():
                 "prebuilt-invoice": doc_type_info[0],
             }
         )
-        model_repr = "DocumentModel(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}})".format(
+        model_repr = "DocumentModelInfo(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}})".format(
             "prebuilt-invoice",
             "my description",
             datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
@@ -610,14 +586,14 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_document_model_info(self):
-        model = _models.DocumentModelInfo(
+        model = _models.DocumentModelSummary(
             description="my description",
             created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
             model_id="prebuilt-invoice",
             api_version="2022-06-30-preview",
             tags={"test": "value"},
         )
-        model_repr = "DocumentModelInfo(model_id={}, description={}, created_on={}, api_version={}, tags={})".format(
+        model_repr = "DocumentModelSummary(model_id={}, description={}, created_on={}, api_version={}, tags={})".format(
             "prebuilt-invoice",
             "my description",
             datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
@@ -627,10 +603,10 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_account_info(self):
-        model = _models.AccountInfo(
+        model = _models.ResourceInfo(
             document_model_limit=5000, document_model_count=10
         )
-        model_repr = "AccountInfo(document_model_count={}, document_model_limit={})".format(
+        model_repr = "ResourceInfo(document_model_count={}, document_model_limit={})".format(
             10, 5000
         )
         assert repr(model) == model_repr
@@ -645,3 +621,15 @@ class TestRepr():
             "$",
         )
         assert repr(model) == model_repr
+
+    def test_currency_value_str(self):
+        model = _models.CurrencyValue(
+            amount=10.5,
+            symbol="$",
+        )
+        assert str(model) == "$10.5"
+
+        model = _models.CurrencyValue(
+            amount=10.5,
+        )
+        assert str(model) == "10.5"

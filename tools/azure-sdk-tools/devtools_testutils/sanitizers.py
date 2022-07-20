@@ -3,18 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import requests
 from typing import TYPE_CHECKING
+import requests
 
 from .config import PROXY_URL
 from .helpers import get_recording_id, is_live, is_live_and_not_recording
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional
+    from typing import Any, Optional
 
 
-def set_bodiless_matcher():
-    # type: () -> None
+def set_bodiless_matcher() -> None:
     """Adjusts the "match" operation to EXCLUDE the body when matching a request to a recording's entries.
 
     This method must be called during test case execution, rather than at a session, module, or class level.
@@ -24,8 +23,7 @@ def set_bodiless_matcher():
     _send_matcher_request("BodilessMatcher", {"x-recording-id": x_recording_id})
 
 
-def set_custom_default_matcher(**kwargs):
-    # type: (**Any) -> None
+def set_custom_default_matcher(**kwargs: "Any") -> None:
     """Exposes the default matcher in a customizable way.
 
     All optional settings are safely defaulted. This means that providing zero additional configuration will produce a
@@ -50,8 +48,19 @@ def set_custom_default_matcher(**kwargs):
     _send_matcher_request("CustomDefaultMatcher", {"x-recording-id": x_recording_id}, request_args)
 
 
-def add_body_key_sanitizer(**kwargs):
-    # type: (**Any) -> None
+def set_default_settings() -> None:
+    """Resets all active sanitizers, matchers, and transforms for the test proxy to their default settings.
+
+    This will reset any setting customizations for a single test if it is called during test case execution, rather than
+    at a session, module, or class level. Otherwise, it will reset setting customizations at the session level (i.e. for
+    all tests).
+    """
+
+    x_recording_id = get_recording_id()
+    _send_reset_request({"x-recording-id": x_recording_id})
+
+
+def add_body_key_sanitizer(**kwargs: "Any") -> None:
     """Registers a sanitizer that offers regex update of a specific JTokenPath within a returned body.
 
     For example, "TableName" within a json response body having its value replaced by whatever substitution is offered.
@@ -69,10 +78,9 @@ def add_body_key_sanitizer(**kwargs):
     _send_sanitizer_request("BodyKeySanitizer", request_args)
 
 
-def add_body_regex_sanitizer(**kwargs):
-    # type: (**Any) -> None
+def add_body_regex_sanitizer(**kwargs: "Any") -> None:
     """Registers a sanitizer that offers regex replace within a returned body.
-    
+
     Specifically, this means regex applying to the raw JSON. If you are attempting to simply replace a specific key, the
     BodyKeySanitizer is probably the way to go.
 
@@ -87,8 +95,7 @@ def add_body_regex_sanitizer(**kwargs):
     _send_sanitizer_request("BodyRegexSanitizer", request_args)
 
 
-def add_continuation_sanitizer(**kwargs):
-    # type: (**Any) -> None
+def add_continuation_sanitizer(**kwargs: "Any") -> None:
     """Registers a sanitizer that's used to anonymize private keys in response/request pairs.
 
     For instance, a request hands back a "sessionId" that needs to be present in the next request. Supports "all further
@@ -106,8 +113,7 @@ def add_continuation_sanitizer(**kwargs):
     _send_sanitizer_request("ContinuationSanitizer", request_args)
 
 
-def add_general_regex_sanitizer(**kwargs):
-    # type: (**Any) -> None
+def add_general_regex_sanitizer(**kwargs: "Any") -> None:
     """Registers a sanitizer that offers a general regex replace across request/response Body, Headers, and URI.
 
     For the body, this means regex applying to the raw JSON.
@@ -123,8 +129,7 @@ def add_general_regex_sanitizer(**kwargs):
     _send_sanitizer_request("GeneralRegexSanitizer", request_args)
 
 
-def add_header_regex_sanitizer(**kwargs):
-    # type: (**Any) -> None
+def add_header_regex_sanitizer(**kwargs: "Any") -> None:
     """Registers a sanitizer that offers regex replace on returned headers.
 
     Can be used for multiple purposes: 1) To replace a key with a specific value, do not set "regex" value. 2) To do a
@@ -143,15 +148,13 @@ def add_header_regex_sanitizer(**kwargs):
     _send_sanitizer_request("HeaderRegexSanitizer", request_args)
 
 
-def add_oauth_response_sanitizer():
-    # type: () -> None
+def add_oauth_response_sanitizer() -> None:
     """Registers a sanitizer that cleans out all request/response pairs that match an oauth regex in their URI."""
 
     _send_sanitizer_request("OAuthResponseSanitizer", {})
 
 
-def add_remove_header_sanitizer(**kwargs):
-    # type: (**Any) -> None
+def add_remove_header_sanitizer(**kwargs: "Any") -> None:
     """Registers a sanitizer that removes specified headers before saving a recording.
 
     :keyword str headers: A comma separated list. Should look like "Location, Transfer-Encoding" or something along
@@ -162,8 +165,7 @@ def add_remove_header_sanitizer(**kwargs):
     _send_sanitizer_request("RemoveHeaderSanitizer", request_args)
 
 
-def add_request_subscription_id_sanitizer(**kwargs):
-    # type: (**Any) -> None
+def add_request_subscription_id_sanitizer(**kwargs: "Any") -> None:
     """Registers a sanitizer that replaces subscription IDs in requests.
 
     Subscription IDs are replaced with "00000000-0000-0000-0000-000000000000" by default.
@@ -175,8 +177,7 @@ def add_request_subscription_id_sanitizer(**kwargs):
     _send_sanitizer_request("ReplaceRequestSubscriptionId", request_args)
 
 
-def add_uri_regex_sanitizer(**kwargs):
-    # type: (**Any) -> None
+def add_uri_regex_sanitizer(**kwargs: "Any") -> None:
     """Registers a sanitizer for cleaning URIs via regex.
 
     :keyword str value: The substitution value.
@@ -190,8 +191,7 @@ def add_uri_regex_sanitizer(**kwargs):
     _send_sanitizer_request("UriRegexSanitizer", request_args)
 
 
-def _get_request_args(**kwargs):
-    # type: (**Any) -> Dict
+def _get_request_args(**kwargs: "Any") -> dict:
     """Returns a dictionary of sanitizer constructor headers"""
 
     request_args = {}
@@ -224,12 +224,10 @@ def _get_request_args(**kwargs):
     return request_args
 
 
-def _send_matcher_request(matcher, headers, parameters=None):
-    # type: (str, Dict, Optional[Dict]) -> None
+def _send_matcher_request(matcher: str, headers: dict, parameters: "Optional[dict]" = None) -> None:
     """Sends a POST request to the test proxy endpoint to register the specified matcher.
 
-    If live tests are being run with recording turned off via the AZURE_SKIP_LIVE_RECORDING environment variable, no
-    request will be sent.
+    If live tests are being run, no request will be sent.
 
     :param str matcher: The name of the matcher to set.
     :param dict headers: Any matcher headers, as a dictionary.
@@ -241,15 +239,33 @@ def _send_matcher_request(matcher, headers, parameters=None):
     headers_to_send = {"x-abstraction-identifier": matcher}
     headers_to_send.update(headers)
     response = requests.post(
-        "{}/Admin/SetMatcher".format(PROXY_URL),
+        f"{PROXY_URL}/Admin/SetMatcher",
         headers=headers_to_send,
         json=parameters
     )
     response.raise_for_status()
 
 
-def _send_sanitizer_request(sanitizer, parameters):
-    # type: (str, Dict) -> None
+def _send_reset_request(headers: dict) -> None:
+    """Sends a POST request to the test proxy endpoint to reset setting customizations.
+
+    If live tests are being run with recording turned off via the AZURE_SKIP_LIVE_RECORDING environment variable, no
+    request will be sent.
+
+    :param dict headers: Any reset request headers, as a dictionary.
+    """
+
+    if is_live_and_not_recording():
+        return
+
+    response = requests.post(
+        f"{PROXY_URL}/Admin/Reset",
+        headers=headers
+    )
+    response.raise_for_status()
+
+
+def _send_sanitizer_request(sanitizer: str, parameters: dict) -> None:
     """Sends a POST request to the test proxy endpoint to register the specified sanitizer.
 
     If live tests are being run with recording turned off via the AZURE_SKIP_LIVE_RECORDING environment variable, no
@@ -263,7 +279,7 @@ def _send_sanitizer_request(sanitizer, parameters):
         return
 
     response = requests.post(
-        "{}/Admin/AddSanitizer".format(PROXY_URL),
+        f"{PROXY_URL}/Admin/AddSanitizer",
         headers={"x-abstraction-identifier": sanitizer, "Content-Type": "application/json"},
         json=parameters
     )

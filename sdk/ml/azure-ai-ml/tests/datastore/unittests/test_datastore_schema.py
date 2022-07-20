@@ -27,6 +27,7 @@ from azure.ai.ml.entities import (
     Datastore,
 )
 from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
+from azure.ai.ml import load_datastore
 
 kerberos_pw_yml = "hdfs_kerberos_pw.yml"
 kerberos_keytab_yml = "hdfs_kerberos_keytab.yml"
@@ -52,7 +53,7 @@ class TestHdfsDatastore:
     def test_kerberos_schema(self, path, cred_type, is_key_tab):
         test_path = f"./tests/test_configs/datastore/{path}"
         cfg = load_yaml(test_path)
-        internal_ds = Datastore.load(test_path)
+        internal_ds = load_datastore(test_path)
         assert isinstance(internal_ds, HdfsDatastore)
         assert cfg["hdfs_server_certificate"] == internal_ds.hdfs_server_certificate
         assert cfg["name_node_address"] == internal_ds.name_node_address
@@ -83,19 +84,19 @@ class TestHdfsDatastore:
     def test_kerberos_password_schema(self):
         test_path = f"./tests/test_configs/datastore/{kerberos_pw_yml}"
         cfg = load_yaml(test_path)
-        internal_ds = Datastore.load(test_path)
+        internal_ds = load_datastore(test_path)
         assert cfg["credentials"]["kerberos_password"] == internal_ds.credentials.kerberos_password
 
     def test_kerberos_keytab_schema(self):
         test_path = f"./tests/test_configs/datastore/{kerberos_keytab_yml}"
         cfg = load_yaml(test_path)
-        internal_ds = Datastore.load(test_path)
+        internal_ds = load_datastore(test_path)
         assert cfg["credentials"]["kerberos_keytab"] == internal_ds.credentials.kerberos_keytab
 
     def test_minimum_schema(self):
         test_path = "./tests/test_configs/datastore/hdfs_kerberos_minimal.yml"
         cfg = load_yaml(test_path)
-        internal_ds = Datastore.load(test_path)
+        internal_ds = load_datastore(test_path)
         assert isinstance(internal_ds, HdfsDatastore)
         assert internal_ds.hdfs_server_certificate is None
         assert "hdfs_server_certificate" not in cfg
@@ -128,7 +129,7 @@ class TestDatastore:
     def test_file_share_schema(self):
         test_path = "./tests/test_configs/datastore/file_store.yml"
         cfg = load_yaml(test_path)
-        internal_ds = Datastore.load(test_path)
+        internal_ds = load_datastore(test_path)
         assert isinstance(internal_ds, AzureFileDatastore)
         assert cfg["account_name"] == internal_ds.account_name
         assert isinstance(internal_ds.credentials, AccountKeyCredentials)
@@ -151,7 +152,7 @@ class TestDatastore:
     def test_blob_store_schema(self):
         test_path = "./tests/test_configs/datastore/blob_store.yml"
         cfg = load_yaml(test_path)
-        internal_ds = Datastore.load(test_path)
+        internal_ds = load_datastore(test_path)
         assert isinstance(internal_ds, AzureBlobDatastore)
         assert cfg["account_name"] == internal_ds.account_name
         assert isinstance(internal_ds.credentials, AccountKeyCredentials)
@@ -174,7 +175,7 @@ class TestDatastore:
     def test_credential_less_blob_store_schema(self):
         test_path = "./tests/test_configs/datastore/credential_less_blob_store.yml"
         cfg = load_yaml(test_path)
-        internal_ds = Datastore.load(test_path)
+        internal_ds = load_datastore(test_path)
         assert isinstance(internal_ds, AzureBlobDatastore)
         assert cfg["account_name"] == internal_ds.account_name
         assert isinstance(internal_ds.credentials, NoneCredentials)
@@ -197,7 +198,7 @@ class TestDatastore:
     def test_adls_gen1_schema(self):
         test_path = "./tests/test_configs/datastore/adls_gen1.yml"
         cfg = load_yaml(test_path)
-        internal_ds = Datastore.load(test_path)
+        internal_ds = load_datastore(test_path)
         assert isinstance(internal_ds, AzureDataLakeGen1Datastore)
         assert cfg["store_name"] == internal_ds.store_name
         cfg_credential = cfg["credentials"]
@@ -221,7 +222,7 @@ class TestDatastore:
     def test_adls_gen2_schema(self):
         test_path = "./tests/test_configs/datastore/adls_gen2.yml"
         cfg = load_yaml(test_path)
-        internal_ds = Datastore.load(test_path)
+        internal_ds = load_datastore(test_path)
         assert isinstance(internal_ds, AzureDataLakeGen2Datastore)
         assert cfg["account_name"] == internal_ds.account_name
         cfg_credential = cfg["credentials"]

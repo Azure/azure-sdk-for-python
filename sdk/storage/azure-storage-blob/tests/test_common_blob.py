@@ -148,7 +148,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # wait until the policy has gone into effect
         if self.is_live:
             self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
-            time.sleep(35)
+            time.sleep(40)
 
     def _disable_soft_delete(self):
         delete_retention_policy = RetentionPolicy(enabled=False)
@@ -363,6 +363,19 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertIsNotNone(resp.get('etag'))
         md = blob.get_blob_properties().metadata
         self.assertDictEqual(md, metadata)
+
+    @BlobPreparer()
+    def test_upload_blob_with_dictionary(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        blob_name = 'test_blob'
+        blob_data = {'hello': 'world'}
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Assert
+        with self.assertRaises(TypeError):
+            blob.upload_blob(blob_data)
 
     @BlobPreparer()
     def test_upload_blob_from_generator(self, storage_account_name, storage_account_key):
@@ -1517,7 +1530,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         lease = blob.acquire_lease(lease_duration=15)
         resp = blob.upload_blob(b'hello 2', length=7, lease=lease)
-        self.sleep(15)
+        self.sleep(17)
 
         # Assert
         with self.assertRaises(HttpResponseError):

@@ -94,12 +94,14 @@ IGNORED_SAMPLES = {
     ],
     "azure-eventhub-checkpointstoretable": ["receive_events_using_checkpoint_store.py"],
     "azure-servicebus": [
+        "connection_to_custom_endpoint_address.py",
         "mgmt_queue.py",
         "mgmt_rule.py",
         "mgmt_subscription.py",
         "mgmt_topic.py",
         "proxy.py",
         "receive_deferred_message_queue.py",
+        "connection_to_custom_endpoint_address_async.py",
         "mgmt_queue_async.py",
         "mgmt_rule_async.py",
         "mgmt_subscription_async.py",
@@ -129,22 +131,10 @@ IGNORED_SAMPLES = {
         "sample_begin_translation_with_filters.py",
         "sample_begin_translation_with_filters_async.py"
     ],
-    "azure-ai-formrecognizer": [
-        "sample_manage_custom_models.py",
-        "sample_manage_custom_models_async.py",
-        "sample_copy_model.py",
-        "sample_copy_model_async.py",
-    ],
     "azure-ai-language-questionanswering": ["sample_chat.py"],
     "azure-ai-textanalytics": [
         "sample_analyze_healthcare_entities_with_cancellation.py",
         "sample_analyze_healthcare_entities_with_cancellation_async.py",
-        "sample_single_category_classify.py",
-        "sample_multi_category_classify.py",
-        "sample_recognize_custom_entities.py",
-        "sample_multi_category_classify_async.py",
-        "sample_recognize_custom_entities_async.py",
-        "sample_single_category_classify_async.py",
     ]
 }
 

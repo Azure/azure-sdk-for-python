@@ -55,7 +55,7 @@ The following section provides several code snippets covering some of the most c
 - [Creating a user and a token in a single request](#creating-a-user-and-a-token-in-a-single-request)
 - [Revoking a user's access tokens](#revoking-a-users-access-tokens)
 - [Deleting a user](#deleting-a-user)
-- [Exchanging AAD access token of a Teams User for a Communication Identity access token](#exchanging-aad-access-token-of-a-teams-user-for-a-communication-identity-access-token)
+- [Exchanging Azure AD access token of a Teams User for a Communication Identity access token](#exchanging-aad-access-token-of-a-teams-user-for-a-communication-identity-access-token)
 
 ### Creating a new user
 
@@ -99,11 +99,11 @@ Use the `delete_user` method to delete a user. Pass in the user object as a para
 identity_client.delete_user(user)
 ```
 
-### Exchanging AAD access token of a Teams User for a Communication Identity access token
+### Exchanging Azure AD access token of a Teams User for a Communication Identity access token
 
-Use the `get_token_for_teams_user` method to exchange an AAD access token of a Teams User for a new Communication Identity access token.
+Use the `get_token_for_teams_user` method to exchange an Azure AD access token of a Teams User for a new Communication Identity access token.
 ```python
-identity_client.get_token_for_teams_user(aad_token)
+identity_client.get_token_for_teams_user(aad_token, client_id, user_object_id)
 ```
 
 # Troubleshooting
