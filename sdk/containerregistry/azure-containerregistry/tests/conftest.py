@@ -47,5 +47,5 @@ def add_sanitizers(test_proxy):
 
     client_id = os.environ.get("CONTAINERREGISTRY_CLIENT_ID", "client-id")
     add_general_regex_sanitizer(regex=client_id, value="client-id")
-    client_secret = os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET")
+    client_secret = os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET", "client-secret")
     add_general_regex_sanitizer(regex=client_secret, value="client-secret")
