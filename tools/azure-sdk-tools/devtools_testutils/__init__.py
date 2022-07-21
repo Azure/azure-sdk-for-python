@@ -18,6 +18,7 @@ from .keyvault_preparer import KeyVaultPreparer
 # cSpell:disable
 from .envvariable_loader import EnvironmentVariableLoader
 PowerShellPreparer = EnvironmentVariableLoader  # Backward compat
+from .proxy_fixtures import recorded_test, variable_recorder
 from .proxy_startup import start_test_proxy, stop_test_proxy, test_proxy
 from .proxy_testcase import recorded_by_proxy
 from .sanitizers import (
@@ -66,12 +67,14 @@ __all__ = [
     "PowerShellPreparer",
     "EnvironmentVariableLoader",
     "recorded_by_proxy",
+    "recorded_test",
     "test_proxy",
     "set_bodiless_matcher",
     "set_custom_default_matcher",
     "set_default_settings",
     "start_test_proxy",
     "stop_test_proxy",
+    "variable_recorder",
     "ResponseCallback",
     "RetryCounter",
     "FakeTokenCredential",
