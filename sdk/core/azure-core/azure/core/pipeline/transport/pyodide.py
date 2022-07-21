@@ -108,11 +108,11 @@ class PyodideStreamDownloadGenerator(AsyncIterator):
         return self._stream.read(self._block_size)
 
 class PyodideTransport(AsyncioRequestsTransport):
-    """Implements a basic HTTP sender using the Pyodide Javascript Fetch API.
+    """**This object is experimental**, meaning it may be changed in a future release
+    or might break with a future Pyodide release. This transport was built with Pyodide
+    version 0.20.0.
 
-    WARNING: Pyodide is still an alpha technology. As such, this transport
-    is highly experimental and subject to breaking changes. This transport was
-    built around Pyodide version 0.20.0.
+    Implements a basic HTTP sender using the Pyodide Javascript Fetch API.
     """
 
     async def send(self, request: HttpRequest, **kwargs) -> PyodideTransportResponse:

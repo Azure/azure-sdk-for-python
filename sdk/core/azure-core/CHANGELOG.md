@@ -6,7 +6,7 @@ Azure-core is supported on Python 3.7 or later. For more details, please read ou
 
 ### Features Added
 
-- Added Pyodide-compatible transport.
+- Added **experimental** Pyodide-compatible transport.
 - Added `CaseInsensitiveDict` implementation in `azure.core.utils` removing dependency on `requests` and `aiohttp`
 
 ### Breaking Changes
