@@ -30,9 +30,9 @@ _LOGGER = logging.getLogger(__name__)
 PendingManagementOperation = namedtuple('PendingManagementOperation', ['message', 'on_execute_operation_complete'])
 
 
-class ManagementLink(object):
+class ManagementLink(object): # pylint:disable=too-many-instance-attributes
     """
-
+       # TODO: Fill in docstring
     """
     def __init__(self, session, endpoint, **kwargs):
         self.next_message_id = 0

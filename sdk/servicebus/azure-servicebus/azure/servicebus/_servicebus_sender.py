@@ -274,10 +274,10 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._open()
         try:
             if isinstance(message, ServiceBusMessageBatch):
-                for batch_message in message._messages:
-                    self._handler.send_message(batch_message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout)
+                for batch_message in message._messages: # pylint:disable=protected-access
+                    self._handler.send_message(batch_message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout) # pylint:disable=line-to-long, protected-access
             else:
-                self._handler.send_message(message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout)
+                self._handler.send_message(message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout) # pylint:disable=protected-access
         except TimeoutError:
             raise OperationTimeoutError(message="Send operation timed out")
         except MessageException as e:

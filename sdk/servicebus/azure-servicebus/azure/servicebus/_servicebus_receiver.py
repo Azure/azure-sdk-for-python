@@ -213,8 +213,9 @@ class ServiceBusReceiver(
             # This is not threadsafe, but gives us a way to handle if someone passes
             # different max_wait_times to different iterators and uses them in concert.
             if max_wait_time:
-                original_timeout = self._handler._timeout
-                self._handler._timeout = max_wait_time * 1000
+                # _timeout to _idle_timeout
+                original_timeout = self._handler._idle_timeout
+                self._handler._idle_timeout = max_wait_time * 1000
             try:
                 message = self._inner_next()
                 links = get_receive_links(message)
@@ -256,8 +257,9 @@ class ServiceBusReceiver(
         try:
             self._receive_context.set()
             self._open()
-            if not self._message_iter:
-                self._message_iter = self._handler.receive_messages_iter()
+            # TODO: Add in Recieve Message Iterator
+            # if not self._message_iter:
+            #     self._message_iter = self._handler.receive_messages_iter()
             uamqp_message = next(self._message_iter)
             message = self._build_message(uamqp_message)
             if (

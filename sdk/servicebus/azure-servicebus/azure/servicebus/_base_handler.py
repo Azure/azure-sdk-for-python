@@ -8,23 +8,16 @@ import time
 import threading
 from datetime import timedelta
 from typing import cast, Optional, Tuple, TYPE_CHECKING, Dict, Any, Callable, Union
+from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
+from azure.core.pipeline.policies import RetryMode
 
 try:
     from urllib.parse import quote_plus, urlparse
 except ImportError:
-    from urllib import quote_plus  # type: ignore
     from urlparse import urlparse  # type: ignore
 
-from ._pyamqp import error as errors, utils
+from ._pyamqp import error as utils
 from ._pyamqp.message import Message, Properties
-from ._pyamqp.authentication import JWTTokenAuth
-
-
-from uamqp import compat
-
-
-from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
-from azure.core.pipeline.policies import RetryMode
 
 from ._common._configuration import Configuration
 from .exceptions import (

@@ -361,7 +361,7 @@ TransferFrame._definition = (  # pylint:disable=protected-access
     FIELD("state", ObjDefinition.delivery_state, False, None, False),
     FIELD("resume", AMQPTypes.boolean, False, False, False),
     FIELD("aborted", AMQPTypes.boolean, False, False, False),
-    FIELD("batchable", AMQPTypes.boolean, False, False, False),  
+    FIELD("batchable", AMQPTypes.boolean, False, False, False),
     None)
 if _CAN_ADD_DOCSTRING:
     TransferFrame.__doc__ = """

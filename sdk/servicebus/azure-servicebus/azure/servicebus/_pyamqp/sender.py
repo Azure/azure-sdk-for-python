@@ -9,10 +9,8 @@ import logging
 import time
 
 from ._encode import encode_payload
-from .endpoints import Source
 from .link import Link
 from .constants import (
-    SessionState,
     SessionTransferState,
     LinkDeliverySettleReason,
     LinkState,
@@ -20,11 +18,7 @@ from .constants import (
     SenderSettleMode
 )
 from .performatives import (
-    AttachFrame,
-    DetachFrame,
     TransferFrame,
-    DispositionFrame,
-    FlowFrame,
 )
 from .error import AMQPLinkError, ErrorCondition
 
@@ -43,12 +37,12 @@ class PendingDelivery(object):
         self.transfer_state = None
         self.timeout = kwargs.get('timeout')
         self.settled = kwargs.get('settled', False)
-    
+
     def on_settled(self, reason, state):
         if self.on_delivery_settled and not self.settled:
             try:
                 self.on_delivery_settled(reason, state)
-            except Exception as e:
+            except Exception as e: # pylint:disable=broad-except
                 # TODO: this swallows every error in on_delivery_settled, which mean we
                 #  1. only handle errors we care about in the callback
                 #  2. ignore errors we don't care
@@ -93,7 +87,7 @@ class SenderLink(Link):
         delivery.frame = {
             'handle': self.handle,
             'delivery_tag': struct.pack('>I', abs(delivery_count)),
-            'message_format': delivery.message._code,
+            'message_format': delivery.message._code, # pylint:disable=protected-access
             'settled': delivery.settled,
             'more': False,
             'rcv_settle_mode': None,
@@ -105,8 +99,8 @@ class SenderLink(Link):
         }
         if self.network_trace:
             # TODO: whether we should move frame tracing into centralized place e.g. connection.py
-            _LOGGER.info("-> %r", TransferFrame(delivery_id='<pending>', **delivery.frame), extra=self.network_trace_params)
-        self._session._outgoing_transfer(delivery)
+            _LOGGER.info("-> %r", TransferFrame(delivery_id='<pending>', **delivery.frame), extra=self.network_trace_params) # pylint:disable=line-to-long
+        self._session._outgoing_transfer(delivery) # pylint:disable=protected-access
         if delivery.transfer_state == SessionTransferState.OKAY:
             self.delivery_count = delivery_count
             self.current_link_credit -= 1

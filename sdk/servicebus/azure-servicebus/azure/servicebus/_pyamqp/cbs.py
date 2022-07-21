@@ -46,7 +46,7 @@ def check_put_timeout_status(auth_timeout, token_put_time):
         return False
 
 
-class CBSAuthenticator(object):
+class CBSAuthenticator(object): # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
         session,
@@ -108,12 +108,12 @@ class CBSAuthenticator(object):
             self.state = CbsState.ERROR
             _LOGGER.info(
                 "Unexpected AMQP management open complete in OPEN, CBS error occurred on connection %r.",
-                self._connection._container_id
+                self._connection._container_id # pylint:disable=protected-access
             )
         elif self.state == CbsState.OPENING:
             self.state = CbsState.OPEN if management_open_result == ManagementOpenResult.OK else CbsState.CLOSED
             _LOGGER.info("CBS for connection %r completed opening with status: %r",
-                         self._connection._container_id, management_open_result)
+                         self._connection._container_id, management_open_result) # pylint:disable=protected-access
 
     def _on_amqp_management_error(self):
         if self.state == CbsState.CLOSED:
@@ -122,10 +122,10 @@ class CBSAuthenticator(object):
             self.state = CbsState.ERROR
             self._mgmt_link.close()
             _LOGGER.info("CBS for connection %r failed to open with status: %r",
-                         self._connection._container_id, ManagementOpenResult.ERROR)
+                         self._connection._container_id, ManagementOpenResult.ERROR) # pylint:disable=protected-access
         elif self.state == CbsState.OPEN:
             self.state = CbsState.ERROR
-            _LOGGER.info("CBS error occurred on connection %r.", self._connection._container_id)
+            _LOGGER.info("CBS error occurred on connection %r.", self._connection._container_id) # pylint:disable=protected-access
 
     def _on_execute_operation_complete(
             self,
@@ -134,7 +134,7 @@ class CBSAuthenticator(object):
             status_description,
             message,
             error_condition=None
-    ):
+    ): # TODO: message and error_condition never used 
         _LOGGER.info("CBS Put token result (%r), status code: %s, status_description: %s.",
                      execute_operation_result, status_code, status_description)
         self._token_status_code = status_code
@@ -152,7 +152,7 @@ class CBSAuthenticator(object):
 
     def _update_status(self):
         if self.auth_state == CbsAuthState.OK or self.auth_state == CbsAuthState.REFRESH_REQUIRED:
-            is_expired, is_refresh_required = check_expiration_and_refresh_status(self._expires_on, self._refresh_window)
+            is_expired, is_refresh_required = check_expiration_and_refresh_status(self._expires_on, self._refresh_window) # pylint:disable=line-too-long
             if is_expired:
                 self.auth_state = CbsAuthState.EXPIRED
             elif is_refresh_required:
@@ -209,7 +209,7 @@ class CBSAuthenticator(object):
             return True
         elif self.auth_state == CbsAuthState.REFRESH_REQUIRED:
             _LOGGER.info("Token on connection %r will expire soon - attempting to refresh.",
-                         self._connection._container_id)
+                         self._connection._container_id) # pylint:disable=protected-access
             self.update_token()
             return False
         elif self.auth_state == CbsAuthState.FAILURE:

@@ -3,14 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-
-import six
 import datetime
 from base64 import b64encode
 from hashlib import sha256
 from hmac import HMAC
 from urllib.parse import urlencode, quote_plus
 import time
+import six
 
 from .types import TYPE, VALUE, AMQPTypes
 from ._encode import encode_payload

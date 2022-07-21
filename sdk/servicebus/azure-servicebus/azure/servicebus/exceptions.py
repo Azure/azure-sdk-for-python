@@ -8,13 +8,14 @@ from typing import Any
 
 #from uamqp import errors as AMQPErrors, constants
 #from uamqp.constants import ErrorCodes as AMQPErrorCodes
+from azure.core.exceptions import AzureError
+
 from ._pyamqp.error import (
     ErrorCondition,
     AMQPException,
     RetryPolicy,
-    AMQPConnectionError
+    AMQPConnectionError, 
 )
-from azure.core.exceptions import AzureError
 
 from ._common.constants import (
     ERROR_CODE_SESSION_LOCK_LOST,
@@ -78,15 +79,16 @@ def _handle_amqp_exception_without_condition(logger, exception):
     if isinstance(exception, AMQPConnectionError):
         logger.info("AMQP Connection error occurred: (%r).", exception)
         error_cls = ServiceBusConnectionError
-    elif isinstance(exception, AMQPErrors.AuthenticationException):
-        logger.info("AMQP Connection authentication error occurred: (%r).", exception)
-        error_cls = ServiceBusAuthenticationError
-    elif isinstance(exception, AMQPErrors.MessageException):
-        logger.info("AMQP Message error occurred: (%r).", exception)
-        if isinstance(exception, AMQPErrors.MessageAlreadySettled):
-            error_cls = MessageAlreadySettled
-        elif isinstance(exception, AMQPErrors.MessageContentTooLarge):
-            error_cls = MessageSizeExceededError
+    # TODO: AMQPError fix
+    # elif isinstance(exception, AMQPErrors.AuthenticationException):
+    #     logger.info("AMQP Connection authentication error occurred: (%r).", exception)
+    #     error_cls = ServiceBusAuthenticationError
+    # elif isinstance(exception, AMQPErrors.MessageException):
+    #     logger.info("AMQP Message error occurred: (%r).", exception)
+    #     if isinstance(exception, AMQPErrors.MessageAlreadySettled):
+    #         error_cls = MessageAlreadySettled
+    #     elif isinstance(exception, AMQPErrors.MessageContentTooLarge):
+    #         error_cls = MessageSizeExceededError
     else:
         logger.info(
             "Unexpected AMQP error occurred (%r). Handler shutting down.", exception
