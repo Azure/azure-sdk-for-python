@@ -10,7 +10,8 @@ import datetime
 import sys
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, \
+    ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -19,11 +20,12 @@ from azure.core.utils import case_insensitive_dict
 
 from .._serialization import Serializer
 from .._vendor import _format_url_section, raise_if_not_implemented
+
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -32,8 +34,8 @@ _SERIALIZER.client_side_validation = False
 
 
 def build_app_component_create_or_update_app_components_request(
-    name: str,
-    **kwargs: Any
+        name: str,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -68,8 +70,8 @@ def build_app_component_create_or_update_app_components_request(
 
 
 def build_app_component_delete_app_components_request(
-    name: str,
-    **kwargs: Any
+        name: str,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -101,8 +103,8 @@ def build_app_component_delete_app_components_request(
 
 
 def build_app_component_get_app_component_by_name_request(
-    name: str,
-    **kwargs: Any
+        name: str,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -134,10 +136,10 @@ def build_app_component_get_app_component_by_name_request(
 
 
 def build_app_component_get_app_component_request(
-    *,
-    test_run_id: Optional[str] = None,
-    test_id: Optional[str] = None,
-    **kwargs: Any
+        *,
+        test_run_id: Optional[str] = None,
+        test_id: Optional[str] = None,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -150,10 +152,12 @@ def build_app_component_get_app_component_request(
 
     # Construct parameters
     if test_run_id is not None:
-        _params['testRunId'] = _SERIALIZER.query("test_run_id", test_run_id, 'str', max_length=50, min_length=2, pattern=r'^[a-z0-9_-]*$')
+        _params['testRunId'] = _SERIALIZER.query("test_run_id", test_run_id, 'str', max_length=50, min_length=2,
+                                                 pattern=r'^[a-z0-9_-]*$')
     _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
     if test_id is not None:
-        _params['testId'] = _SERIALIZER.query("test_id", test_id, 'str', max_length=50, min_length=2, pattern=r'^[a-z0-9_-]*$')
+        _params['testId'] = _SERIALIZER.query("test_id", test_id, 'str', max_length=50, min_length=2,
+                                              pattern=r'^[a-z0-9_-]*$')
 
     # Construct headers
     _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
@@ -168,8 +172,8 @@ def build_app_component_get_app_component_request(
 
 
 def build_server_metrics_create_or_update_server_metrics_config_request(
-    name: str,
-    **kwargs: Any
+        name: str,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -204,8 +208,8 @@ def build_server_metrics_create_or_update_server_metrics_config_request(
 
 
 def build_server_metrics_get_server_metrics_config_by_name_request(
-    name: str,
-    **kwargs: Any
+        name: str,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -237,8 +241,8 @@ def build_server_metrics_get_server_metrics_config_by_name_request(
 
 
 def build_server_metrics_delete_server_metrics_config_request(
-    name: str,
-    **kwargs: Any
+        name: str,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -270,10 +274,10 @@ def build_server_metrics_delete_server_metrics_config_request(
 
 
 def build_server_metrics_get_server_metrics_config_request(
-    *,
-    test_run_id: Optional[str] = None,
-    test_id: Optional[str] = None,
-    **kwargs: Any
+        *,
+        test_run_id: Optional[str] = None,
+        test_id: Optional[str] = None,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -286,10 +290,12 @@ def build_server_metrics_get_server_metrics_config_request(
 
     # Construct parameters
     if test_run_id is not None:
-        _params['testRunId'] = _SERIALIZER.query("test_run_id", test_run_id, 'str', max_length=50, min_length=2, pattern=r'^[a-z0-9_-]*$')
+        _params['testRunId'] = _SERIALIZER.query("test_run_id", test_run_id, 'str', max_length=50, min_length=2,
+                                                 pattern=r'^[a-z0-9_-]*$')
     _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
     if test_id is not None:
-        _params['testId'] = _SERIALIZER.query("test_id", test_id, 'str', max_length=50, min_length=2, pattern=r'^[a-z0-9_-]*$')
+        _params['testId'] = _SERIALIZER.query("test_id", test_id, 'str', max_length=50, min_length=2,
+                                              pattern=r'^[a-z0-9_-]*$')
 
     # Construct headers
     _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
@@ -304,7 +310,7 @@ def build_server_metrics_get_server_metrics_config_request(
 
 
 def build_server_metrics_get_server_default_metrics_config_request(
-    **kwargs: Any
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -331,7 +337,7 @@ def build_server_metrics_get_server_default_metrics_config_request(
 
 
 def build_server_metrics_list_supported_resource_types_request(
-    **kwargs: Any
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -358,8 +364,8 @@ def build_server_metrics_list_supported_resource_types_request(
 
 
 def build_test_create_or_update_test_request(
-    test_id: str,
-    **kwargs: Any
+        test_id: str,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -394,8 +400,8 @@ def build_test_create_or_update_test_request(
 
 
 def build_test_delete_load_test_request(
-    test_id: str,
-    **kwargs: Any
+        test_id: str,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -427,8 +433,8 @@ def build_test_delete_load_test_request(
 
 
 def build_test_get_load_test_request(
-    test_id: str,
-    **kwargs: Any
+        test_id: str,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -460,14 +466,14 @@ def build_test_get_load_test_request(
 
 
 def build_test_list_load_test_search_request(
-    *,
-    order_by: Optional[str] = None,
-    search: Optional[str] = None,
-    last_updated_start_time: Optional[datetime.datetime] = None,
-    last_updated_end_time: Optional[datetime.datetime] = None,
-    continuation_token_parameter: Optional[str] = None,
-    max_page_size: int = 50,
-    **kwargs: Any
+        *,
+        order_by: Optional[str] = None,
+        search: Optional[str] = None,
+        last_updated_start_time: Optional[datetime.datetime] = None,
+        last_updated_end_time: Optional[datetime.datetime] = None,
+        continuation_token_parameter: Optional[str] = None,
+        max_page_size: int = 50,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -484,11 +490,13 @@ def build_test_list_load_test_search_request(
     if search is not None:
         _params['search'] = _SERIALIZER.query("search", search, 'str')
     if last_updated_start_time is not None:
-        _params['lastUpdatedStartTime'] = _SERIALIZER.query("last_updated_start_time", last_updated_start_time, 'iso-8601')
+        _params['lastUpdatedStartTime'] = _SERIALIZER.query("last_updated_start_time", last_updated_start_time,
+                                                            'iso-8601')
     if last_updated_end_time is not None:
         _params['lastUpdatedEndTime'] = _SERIALIZER.query("last_updated_end_time", last_updated_end_time, 'iso-8601')
     if continuation_token_parameter is not None:
-        _params['continuationToken'] = _SERIALIZER.query("continuation_token_parameter", continuation_token_parameter, 'str')
+        _params['continuationToken'] = _SERIALIZER.query("continuation_token_parameter", continuation_token_parameter,
+                                                         'str')
     if max_page_size is not None:
         _params['maxPageSize'] = _SERIALIZER.query("max_page_size", max_page_size, 'int')
     _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
@@ -506,9 +514,9 @@ def build_test_list_load_test_search_request(
 
 
 def build_test_get_test_file_request(
-    test_id: str,
-    file_id: str,
-    **kwargs: Any
+        test_id: str,
+        file_id: str,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -541,9 +549,9 @@ def build_test_get_test_file_request(
 
 
 def build_test_delete_test_file_request(
-    test_id: str,
-    file_id: str,
-    **kwargs: Any
+        test_id: str,
+        file_id: str,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -576,10 +584,10 @@ def build_test_delete_test_file_request(
 
 
 def build_test_list_test_files_request(
-    test_id: str,
-    *,
-    continuation_token_parameter: Optional[str] = None,
-    **kwargs: Any
+        test_id: str,
+        *,
+        continuation_token_parameter: Optional[str] = None,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -598,7 +606,8 @@ def build_test_list_test_files_request(
     # Construct parameters
     _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
     if continuation_token_parameter is not None:
-        _params['continuationToken'] = _SERIALIZER.query("continuation_token_parameter", continuation_token_parameter, 'str')
+        _params['continuationToken'] = _SERIALIZER.query("continuation_token_parameter", continuation_token_parameter,
+                                                         'str')
 
     # Construct headers
     _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
@@ -613,8 +622,8 @@ def build_test_list_test_files_request(
 
 
 def build_test_run_delete_test_run_request(
-    test_run_id: str,
-    **kwargs: Any
+        test_run_id: str,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -625,7 +634,8 @@ def build_test_run_delete_test_run_request(
     # Construct URL
     _url = "/testruns/{testRunId}"
     path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str', max_length=50, min_length=2, pattern=r'^[a-z0-9_-]*$'),
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str', max_length=50, min_length=2,
+                                     pattern=r'^[a-z0-9_-]*$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -646,8 +656,8 @@ def build_test_run_delete_test_run_request(
 
 
 def build_test_run_create_or_update_test_request(
-    test_run_id: str,
-    **kwargs: Any
+        test_run_id: str,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -660,7 +670,8 @@ def build_test_run_create_or_update_test_request(
     # Construct URL
     _url = "/testruns/{testRunId}"
     path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str', max_length=50, min_length=2, pattern=r'^[a-z0-9_-]*$'),
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str', max_length=50, min_length=2,
+                                     pattern=r'^[a-z0-9_-]*$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -685,8 +696,8 @@ def build_test_run_create_or_update_test_request(
 
 
 def build_test_run_get_test_run_request(
-    test_run_id: str,
-    **kwargs: Any
+        test_run_id: str,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -697,7 +708,8 @@ def build_test_run_get_test_run_request(
     # Construct URL
     _url = "/testruns/{testRunId}"
     path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str', max_length=50, min_length=2, pattern=r'^[a-z0-9_-]*$'),
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str', max_length=50, min_length=2,
+                                     pattern=r'^[a-z0-9_-]*$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -718,9 +730,9 @@ def build_test_run_get_test_run_request(
 
 
 def build_test_run_get_test_run_file_request(
-    test_run_id: str,
-    file_id: str,
-    **kwargs: Any
+        test_run_id: str,
+        file_id: str,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -731,7 +743,8 @@ def build_test_run_get_test_run_file_request(
     # Construct URL
     _url = "/testruns/{testRunId}/files/{fileId}"
     path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str', max_length=50, min_length=2, pattern=r'^[a-z0-9_-]*$'),
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str', max_length=50, min_length=2,
+                                     pattern=r'^[a-z0-9_-]*$'),
         "fileId": _SERIALIZER.url("file_id", file_id, 'str', max_length=50, min_length=2, pattern=r'^[a-z0-9_-]*$'),
     }
 
@@ -753,16 +766,16 @@ def build_test_run_get_test_run_file_request(
 
 
 def build_test_run_list_test_runs_request(
-    *,
-    order_by: Optional[str] = None,
-    continuation_token_parameter: Optional[str] = None,
-    search: Optional[str] = None,
-    execution_from: Optional[datetime.datetime] = None,
-    execution_to: Optional[datetime.datetime] = None,
-    status: Optional[str] = None,
-    max_page_size: int = 50,
-    test_id: Optional[str] = None,
-    **kwargs: Any
+        *,
+        order_by: Optional[str] = None,
+        continuation_token_parameter: Optional[str] = None,
+        search: Optional[str] = None,
+        execution_from: Optional[datetime.datetime] = None,
+        execution_to: Optional[datetime.datetime] = None,
+        status: Optional[str] = None,
+        max_page_size: int = 50,
+        test_id: Optional[str] = None,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -777,7 +790,8 @@ def build_test_run_list_test_runs_request(
     if order_by is not None:
         _params['orderBy'] = _SERIALIZER.query("order_by", order_by, 'str')
     if continuation_token_parameter is not None:
-        _params['continuationToken'] = _SERIALIZER.query("continuation_token_parameter", continuation_token_parameter, 'str')
+        _params['continuationToken'] = _SERIALIZER.query("continuation_token_parameter", continuation_token_parameter,
+                                                         'str')
     if search is not None:
         _params['search'] = _SERIALIZER.query("search", search, 'str')
     if execution_from is not None:
@@ -790,7 +804,8 @@ def build_test_run_list_test_runs_request(
         _params['maxPageSize'] = _SERIALIZER.query("max_page_size", max_page_size, 'int')
     _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
     if test_id is not None:
-        _params['testId'] = _SERIALIZER.query("test_id", test_id, 'str', max_length=50, min_length=2, pattern=r'^[a-z0-9_-]*$')
+        _params['testId'] = _SERIALIZER.query("test_id", test_id, 'str', max_length=50, min_length=2,
+                                              pattern=r'^[a-z0-9_-]*$')
 
     # Construct headers
     _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
@@ -805,8 +820,8 @@ def build_test_run_list_test_runs_request(
 
 
 def build_test_run_stop_test_run_request(
-    test_run_id: str,
-    **kwargs: Any
+        test_run_id: str,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -817,7 +832,8 @@ def build_test_run_stop_test_run_request(
     # Construct URL
     _url = "/testruns/{testRunId}:stop"
     path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str', max_length=50, min_length=2, pattern=r'^[a-z0-9_-]*$'),
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str', max_length=50, min_length=2,
+                                     pattern=r'^[a-z0-9_-]*$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -838,8 +854,8 @@ def build_test_run_stop_test_run_request(
 
 
 def build_test_run_get_test_run_client_metrics_request(
-    test_run_id: str,
-    **kwargs: Any
+        test_run_id: str,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -851,7 +867,8 @@ def build_test_run_get_test_run_client_metrics_request(
     # Construct URL
     _url = "/testruns/{testRunId}/clientMetrics"
     path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str', max_length=50, min_length=2, pattern=r'^[a-z0-9_-]*$'),
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str', max_length=50, min_length=2,
+                                     pattern=r'^[a-z0-9_-]*$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -874,8 +891,8 @@ def build_test_run_get_test_run_client_metrics_request(
 
 
 def build_test_run_get_test_run_client_metrics_filters_request(
-    test_run_id: str,
-    **kwargs: Any
+        test_run_id: str,
+        **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -886,7 +903,8 @@ def build_test_run_get_test_run_client_metrics_filters_request(
     # Construct URL
     _url = "/testruns/{testRunId}/clientMetricsFilters"
     path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str', max_length=50, min_length=2, pattern=r'^[a-z0-9_-]*$'),
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str', max_length=50, min_length=2,
+                                     pattern=r'^[a-z0-9_-]*$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -905,6 +923,7 @@ def build_test_run_get_test_run_client_metrics_filters_request(
         **kwargs
     )
 
+
 class AppComponentOperations:
     """
     .. warning::
@@ -922,15 +941,14 @@ class AppComponentOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @overload
     def create_or_update_app_components(
-        self,
-        name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+            self,
+            name: str,
+            body: JSON,
+            *,
+            content_type: str = "application/merge-patch+json",
+            **kwargs: Any
     ) -> JSON:
         """Associate an App Component (Azure resource) to a test or test run.
 
@@ -1006,12 +1024,12 @@ class AppComponentOperations:
 
     @overload
     def create_or_update_app_components(
-        self,
-        name: str,
-        body: IO,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+            self,
+            name: str,
+            body: IO,
+            *,
+            content_type: str = "application/merge-patch+json",
+            **kwargs: Any
     ) -> JSON:
         """Associate an App Component (Azure resource) to a test or test run.
 
@@ -1059,13 +1077,12 @@ class AppComponentOperations:
                 }
         """
 
-
     @distributed_trace
     def create_or_update_app_components(
-        self,
-        name: str,
-        body: Union[JSON, IO],
-        **kwargs: Any
+            self,
+            name: str,
+            body: Union[JSON, IO],
+            **kwargs: Any
     ) -> JSON:
         """Associate an App Component (Azure resource) to a test or test run.
 
@@ -1174,13 +1191,11 @@ class AppComponentOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def delete_app_components(  # pylint: disable=inconsistent-return-statements
-        self,
-        name: str,
-        **kwargs: Any
+            self,
+            name: str,
+            **kwargs: Any
     ) -> None:
         """Delete an App Component.
 
@@ -1203,7 +1218,6 @@ class AppComponentOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
         request = build_app_component_delete_app_components_request(
             name=name,
             api_version=self._config.api_version,
@@ -1230,13 +1244,11 @@ class AppComponentOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace
     def get_app_component_by_name(
-        self,
-        name: str,
-        **kwargs: Any
+            self,
+            name: str,
+            **kwargs: Any
     ) -> JSON:
         """Get App Component details by App Component name.
 
@@ -1288,7 +1300,6 @@ class AppComponentOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        
         request = build_app_component_get_app_component_by_name_request(
             name=name,
             api_version=self._config.api_version,
@@ -1322,15 +1333,13 @@ class AppComponentOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def get_app_component(
-        self,
-        *,
-        test_run_id: Optional[str] = None,
-        test_id: Optional[str] = None,
-        **kwargs: Any
+            self,
+            *,
+            test_run_id: Optional[str] = None,
+            test_id: Optional[str] = None,
+            **kwargs: Any
     ) -> JSON:
         """Get App Components for a test or a test run by its name.
 
@@ -1384,7 +1393,6 @@ class AppComponentOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        
         request = build_app_component_get_app_component_request(
             test_run_id=test_run_id,
             test_id=test_id,
@@ -1437,15 +1445,14 @@ class ServerMetricsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @overload
     def create_or_update_server_metrics_config(
-        self,
-        name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+            self,
+            name: str,
+            body: JSON,
+            *,
+            content_type: str = "application/merge-patch+json",
+            **kwargs: Any
     ) -> JSON:
         """Configure server metrics for a test or test run.
 
@@ -1519,12 +1526,12 @@ class ServerMetricsOperations:
 
     @overload
     def create_or_update_server_metrics_config(
-        self,
-        name: str,
-        body: IO,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+            self,
+            name: str,
+            body: IO,
+            *,
+            content_type: str = "application/merge-patch+json",
+            **kwargs: Any
     ) -> JSON:
         """Configure server metrics for a test or test run.
 
@@ -1571,13 +1578,12 @@ class ServerMetricsOperations:
                 }
         """
 
-
     @distributed_trace
     def create_or_update_server_metrics_config(
-        self,
-        name: str,
-        body: Union[JSON, IO],
-        **kwargs: Any
+            self,
+            name: str,
+            body: Union[JSON, IO],
+            **kwargs: Any
     ) -> JSON:
         """Configure server metrics for a test or test run.
 
@@ -1685,13 +1691,11 @@ class ServerMetricsOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def get_server_metrics_config_by_name(
-        self,
-        name: str,
-        **kwargs: Any
+            self,
+            name: str,
+            **kwargs: Any
     ) -> JSON:
         """Get server metrics configuration by its name.
 
@@ -1742,7 +1746,6 @@ class ServerMetricsOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        
         request = build_server_metrics_get_server_metrics_config_by_name_request(
             name=name,
             api_version=self._config.api_version,
@@ -1776,13 +1779,11 @@ class ServerMetricsOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def delete_server_metrics_config(  # pylint: disable=inconsistent-return-statements
-        self,
-        name: str,
-        **kwargs: Any
+            self,
+            name: str,
+            **kwargs: Any
     ) -> None:
         """Delete server metrics configuration by its name.
 
@@ -1805,7 +1806,6 @@ class ServerMetricsOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
         request = build_server_metrics_delete_server_metrics_config_request(
             name=name,
             api_version=self._config.api_version,
@@ -1832,15 +1832,13 @@ class ServerMetricsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace
     def get_server_metrics_config(
-        self,
-        *,
-        test_run_id: Optional[str] = None,
-        test_id: Optional[str] = None,
-        **kwargs: Any
+            self,
+            *,
+            test_run_id: Optional[str] = None,
+            test_id: Optional[str] = None,
+            **kwargs: Any
     ) -> JSON:
         """Get server metrics configuration for a test or test run by its name.
 
@@ -1893,7 +1891,6 @@ class ServerMetricsOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        
         request = build_server_metrics_get_server_metrics_config_request(
             test_run_id=test_run_id,
             test_id=test_id,
@@ -1928,12 +1925,10 @@ class ServerMetricsOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def get_server_default_metrics_config(
-        self,
-        **kwargs: Any
+            self,
+            **kwargs: Any
     ) -> JSON:
         """Get all default server metrics configuration for supported resource types.
 
@@ -1991,7 +1986,6 @@ class ServerMetricsOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        
         request = build_server_metrics_get_server_default_metrics_config_request(
             api_version=self._config.api_version,
             headers=_headers,
@@ -2024,12 +2018,10 @@ class ServerMetricsOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def list_supported_resource_types(
-        self,
-        **kwargs: Any
+            self,
+            **kwargs: Any
     ) -> JSON:
         """Get all supported resource types for App Components(Azure resource types).
 
@@ -2059,7 +2051,6 @@ class ServerMetricsOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        
         request = build_server_metrics_list_supported_resource_types_request(
             api_version=self._config.api_version,
             headers=_headers,
@@ -2113,15 +2104,14 @@ class TestOperations:
             'upload_test_file',
         ])
 
-
     @overload
     def create_or_update_test(
-        self,
-        test_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+            self,
+            test_id: str,
+            body: JSON,
+            *,
+            content_type: str = "application/merge-patch+json",
+            **kwargs: Any
     ) -> JSON:
         """Create a new test or Update an existing test.
 
@@ -2421,12 +2411,12 @@ class TestOperations:
 
     @overload
     def create_or_update_test(
-        self,
-        test_id: str,
-        body: IO,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+            self,
+            test_id: str,
+            body: IO,
+            *,
+            content_type: str = "application/merge-patch+json",
+            **kwargs: Any
     ) -> JSON:
         """Create a new test or Update an existing test.
 
@@ -2586,13 +2576,12 @@ class TestOperations:
                 }
         """
 
-
     @distributed_trace
     def create_or_update_test(
-        self,
-        test_id: str,
-        body: Union[JSON, IO],
-        **kwargs: Any
+            self,
+            test_id: str,
+            body: Union[JSON, IO],
+            **kwargs: Any
     ) -> JSON:
         """Create a new test or Update an existing test.
 
@@ -2813,13 +2802,11 @@ class TestOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def delete_load_test(  # pylint: disable=inconsistent-return-statements
-        self,
-        test_id: str,
-        **kwargs: Any
+            self,
+            test_id: str,
+            **kwargs: Any
     ) -> None:
         """Delete a test by its name.
 
@@ -2842,7 +2829,6 @@ class TestOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
         request = build_test_delete_load_test_request(
             test_id=test_id,
             api_version=self._config.api_version,
@@ -2869,13 +2855,11 @@ class TestOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace
     def get_load_test(
-        self,
-        test_id: str,
-        **kwargs: Any
+            self,
+            test_id: str,
+            **kwargs: Any
     ) -> JSON:
         """Get load test details by test name.
 
@@ -3039,7 +3023,6 @@ class TestOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        
         request = build_test_get_load_test_request(
             test_id=test_id,
             api_version=self._config.api_version,
@@ -3073,19 +3056,17 @@ class TestOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def list_load_test_search(
-        self,
-        *,
-        order_by: Optional[str] = None,
-        search: Optional[str] = None,
-        last_updated_start_time: Optional[datetime.datetime] = None,
-        last_updated_end_time: Optional[datetime.datetime] = None,
-        continuation_token_parameter: Optional[str] = None,
-        max_page_size: int = 50,
-        **kwargs: Any
+            self,
+            *,
+            order_by: Optional[str] = None,
+            search: Optional[str] = None,
+            last_updated_start_time: Optional[datetime.datetime] = None,
+            last_updated_end_time: Optional[datetime.datetime] = None,
+            continuation_token_parameter: Optional[str] = None,
+            max_page_size: int = 50,
+            **kwargs: Any
     ) -> JSON:
         """Get all load tests by the fully qualified resource Id e.g
         subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}.
@@ -3291,7 +3272,6 @@ class TestOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        
         request = build_test_list_load_test_search_request(
             order_by=order_by,
             search=search,
@@ -3330,14 +3310,12 @@ class TestOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def get_test_file(
-        self,
-        test_id: str,
-        file_id: str,
-        **kwargs: Any
+            self,
+            test_id: str,
+            file_id: str,
+            **kwargs: Any
     ) -> JSON:
         """Get test file by the file name.
 
@@ -3378,7 +3356,6 @@ class TestOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        
         request = build_test_get_test_file_request(
             test_id=test_id,
             file_id=file_id,
@@ -3413,14 +3390,12 @@ class TestOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def delete_test_file(  # pylint: disable=inconsistent-return-statements
-        self,
-        test_id: str,
-        file_id: str,
-        **kwargs: Any
+            self,
+            test_id: str,
+            file_id: str,
+            **kwargs: Any
     ) -> None:
         """Delete file by the file name for a test.
 
@@ -3446,7 +3421,6 @@ class TestOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
         request = build_test_delete_test_file_request(
             test_id=test_id,
             file_id=file_id,
@@ -3474,15 +3448,13 @@ class TestOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace
     def list_test_files(
-        self,
-        test_id: str,
-        *,
-        continuation_token_parameter: Optional[str] = None,
-        **kwargs: Any
+            self,
+            test_id: str,
+            *,
+            continuation_token_parameter: Optional[str] = None,
+            **kwargs: Any
     ) -> JSON:
         """Get all test files.
 
@@ -3531,7 +3503,6 @@ class TestOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        
         request = build_test_list_test_files_request(
             test_id=test_id,
             continuation_token_parameter=continuation_token_parameter,
@@ -3584,12 +3555,11 @@ class TestRunOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def delete_test_run(  # pylint: disable=inconsistent-return-statements
-        self,
-        test_run_id: str,
-        **kwargs: Any
+            self,
+            test_run_id: str,
+            **kwargs: Any
     ) -> None:
         """Delete a test run by its name.
 
@@ -3612,7 +3582,6 @@ class TestRunOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
         request = build_test_run_delete_test_run_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -3639,17 +3608,15 @@ class TestRunOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @overload
     def create_or_update_test(
-        self,
-        test_run_id: str,
-        body: JSON,
-        *,
-        old_test_run_id: Optional[str] = None,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+            self,
+            test_run_id: str,
+            body: JSON,
+            *,
+            old_test_run_id: Optional[str] = None,
+            content_type: str = "application/merge-patch+json",
+            **kwargs: Any
     ) -> JSON:
         """Create and start a new test run with the given name.
 
@@ -4069,13 +4036,13 @@ class TestRunOperations:
 
     @overload
     def create_or_update_test(
-        self,
-        test_run_id: str,
-        body: IO,
-        *,
-        old_test_run_id: Optional[str] = None,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+            self,
+            test_run_id: str,
+            body: IO,
+            *,
+            old_test_run_id: Optional[str] = None,
+            content_type: str = "application/merge-patch+json",
+            **kwargs: Any
     ) -> JSON:
         """Create and start a new test run with the given name.
 
@@ -4296,15 +4263,14 @@ class TestRunOperations:
                 }
         """
 
-
     @distributed_trace
     def create_or_update_test(
-        self,
-        test_run_id: str,
-        body: Union[JSON, IO],
-        *,
-        old_test_run_id: Optional[str] = None,
-        **kwargs: Any
+            self,
+            test_run_id: str,
+            body: Union[JSON, IO],
+            *,
+            old_test_run_id: Optional[str] = None,
+            **kwargs: Any
     ) -> JSON:
         """Create and start a new test run with the given name.
 
@@ -4580,13 +4546,11 @@ class TestRunOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def get_test_run(
-        self,
-        test_run_id: str,
-        **kwargs: Any
+            self,
+            test_run_id: str,
+            **kwargs: Any
     ) -> JSON:
         """Get test run details by name.
 
@@ -4809,7 +4773,6 @@ class TestRunOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        
         request = build_test_run_get_test_run_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -4843,14 +4806,12 @@ class TestRunOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def get_test_run_file(
-        self,
-        test_run_id: str,
-        file_id: str,
-        **kwargs: Any
+            self,
+            test_run_id: str,
+            file_id: str,
+            **kwargs: Any
     ) -> JSON:
         """Get test run file by file name.
 
@@ -4891,7 +4852,6 @@ class TestRunOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        
         request = build_test_run_get_test_run_file_request(
             test_run_id=test_run_id,
             file_id=file_id,
@@ -4926,21 +4886,19 @@ class TestRunOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def list_test_runs(
-        self,
-        *,
-        order_by: Optional[str] = None,
-        continuation_token_parameter: Optional[str] = None,
-        search: Optional[str] = None,
-        execution_from: Optional[datetime.datetime] = None,
-        execution_to: Optional[datetime.datetime] = None,
-        status: Optional[str] = None,
-        max_page_size: int = 50,
-        test_id: Optional[str] = None,
-        **kwargs: Any
+            self,
+            *,
+            order_by: Optional[str] = None,
+            continuation_token_parameter: Optional[str] = None,
+            search: Optional[str] = None,
+            execution_from: Optional[datetime.datetime] = None,
+            execution_to: Optional[datetime.datetime] = None,
+            status: Optional[str] = None,
+            max_page_size: int = 50,
+            test_id: Optional[str] = None,
+            **kwargs: Any
     ) -> JSON:
         """Get all test runs with given filters.
 
@@ -5229,7 +5187,6 @@ class TestRunOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        
         request = build_test_run_list_test_runs_request(
             order_by=order_by,
             continuation_token_parameter=continuation_token_parameter,
@@ -5270,13 +5227,11 @@ class TestRunOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def stop_test_run(
-        self,
-        test_run_id: str,
-        **kwargs: Any
+            self,
+            test_run_id: str,
+            **kwargs: Any
     ) -> JSON:
         """Stop test run by name.
 
@@ -5499,7 +5454,6 @@ class TestRunOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        
         request = build_test_run_stop_test_run_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -5533,16 +5487,14 @@ class TestRunOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @overload
     def get_test_run_client_metrics(
-        self,
-        test_run_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+            self,
+            test_run_id: str,
+            body: JSON,
+            *,
+            content_type: str = "application/json",
+            **kwargs: Any
     ) -> JSON:
         """Get all client metrics for a load test run.
 
@@ -5634,12 +5586,12 @@ class TestRunOperations:
 
     @overload
     def get_test_run_client_metrics(
-        self,
-        test_run_id: str,
-        body: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+            self,
+            test_run_id: str,
+            body: IO,
+            *,
+            content_type: str = "application/json",
+            **kwargs: Any
     ) -> JSON:
         """Get all client metrics for a load test run.
 
@@ -5705,13 +5657,12 @@ class TestRunOperations:
                 }
         """
 
-
     @distributed_trace
     def get_test_run_client_metrics(
-        self,
-        test_run_id: str,
-        body: Union[JSON, IO],
-        **kwargs: Any
+            self,
+            test_run_id: str,
+            body: Union[JSON, IO],
+            **kwargs: Any
     ) -> JSON:
         """Get all client metrics for a load test run.
 
@@ -5831,13 +5782,11 @@ class TestRunOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace
     def get_test_run_client_metrics_filters(
-        self,
-        test_run_id: str,
-        **kwargs: Any
+            self,
+            test_run_id: str,
+            **kwargs: Any
     ) -> JSON:
         """Get all filters that are supported for client metrics for a given load test run.
 
@@ -5885,7 +5834,6 @@ class TestRunOperations:
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        
         request = build_test_run_get_test_run_client_metrics_filters_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -5918,5 +5866,3 @@ class TestRunOperations:
             return cls(pipeline_response, cast(JSON, deserialized), {})
 
         return cast(JSON, deserialized)
-
-

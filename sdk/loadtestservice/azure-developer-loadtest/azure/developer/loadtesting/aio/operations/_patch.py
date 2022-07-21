@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import List, cast, Optional, Any
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload, List
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -15,7 +15,7 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     map_error,
 )
-from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from ._operations import TestOperations as TestOperationsGenerated, JSON, ClsType
 from ...operations._patch import build_upload_test_file_request
@@ -78,9 +78,10 @@ class TestOperations(TestOperationsGenerated):
         return cast(JSON, deserialized)
 
 
-class AppComponentOperations(AppComponentOperationsGenerated):
+class AppComponentOperations:
 
-    __excludes__ = ["get_by_name", "get_app_component"]
+    def __init__(self, *args, **kwargs):
+        self.__app_component_operations_generated = AppComponentOperationsGenerated(*args, **kwargs)
 
     def get_app_components(
         self,
@@ -137,9 +138,218 @@ class AppComponentOperations(AppComponentOperationsGenerated):
         """
 
         if name is not None:
-            return super().get_by_name(name=name, **kwargs)
+            return self.__app_component_operations_generated.get_app_component_by_name(name=name, **kwargs)
         else:
-            return super().get_app_component(test_run_id=test_run_id, test_id=test_id, **kwargs)
+            return self.__app_component_operations_generated.get_app_component(test_run_id=test_run_id, test_id=test_id, **kwargs)
+
+    @overload
+    def create_or_update_app_components(
+            self,
+            name: str,
+            body: JSON,
+            *,
+            content_type: str = "application/merge-patch+json",
+            **kwargs: Any
+    ) -> JSON:
+        """Associate an App Component (Azure resource) to a test or test run.
+
+        Associate an App Component (Azure resource) to a test or test run.
+
+        :param name: Unique name of the App Component, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
+        :type name: str
+        :param body: App Component model. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "name": "str",  # Optional. AppComponent name.
+                    "resourceId": "str",  # Optional. Azure Load Testing resource Id.
+                    "testId": "str",  # Optional. [Required, if testRunId is not given] Load test
+                      unique identifier.
+                    "testRunId": "str",  # Optional. [Required if testId is not given] Load test
+                      run unique identifier.
+                    "value": {
+                        "str": {
+                            "displayName": "str",  # Optional. Azure resource display
+                              name.
+                            "kind": "str",  # Optional. Kind of Azure resource type.
+                            "resourceGroup": "str",  # Optional. Resource group name of
+                              the Azure resource.
+                            "resourceId": "str",  # Fully qualified resource Id e.g
+                              subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}.
+                              Required.
+                            "resourceName": "str",  # Azure resource name. Required.
+                            "resourceType": "str",  # Azure resource type. Required.
+                            "subscriptionId": "str"  # Optional. Subscription Id of the
+                              Azure resource.
+                        }
+                    }
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "name": "str",  # Optional. AppComponent name.
+                    "resourceId": "str",  # Optional. Azure Load Testing resource Id.
+                    "testId": "str",  # Optional. [Required, if testRunId is not given] Load test
+                      unique identifier.
+                    "testRunId": "str",  # Optional. [Required if testId is not given] Load test
+                      run unique identifier.
+                    "value": {
+                        "str": {
+                            "displayName": "str",  # Optional. Azure resource display
+                              name.
+                            "kind": "str",  # Optional. Kind of Azure resource type.
+                            "resourceGroup": "str",  # Optional. Resource group name of
+                              the Azure resource.
+                            "resourceId": "str",  # Fully qualified resource Id e.g
+                              subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}.
+                              Required.
+                            "resourceName": "str",  # Azure resource name. Required.
+                            "resourceType": "str",  # Azure resource type. Required.
+                            "subscriptionId": "str"  # Optional. Subscription Id of the
+                              Azure resource.
+                        }
+                    }
+                }
+        """
+
+    @overload
+    def create_or_update_app_components(
+            self,
+            name: str,
+            body: IO,
+            *,
+            content_type: str = "application/merge-patch+json",
+            **kwargs: Any
+    ) -> JSON:
+        """Associate an App Component (Azure resource) to a test or test run.
+
+        Associate an App Component (Azure resource) to a test or test run.
+
+        :param name: Unique name of the App Component, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
+        :type name: str
+        :param body: App Component model. Required.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "name": "str",  # Optional. AppComponent name.
+                    "resourceId": "str",  # Optional. Azure Load Testing resource Id.
+                    "testId": "str",  # Optional. [Required, if testRunId is not given] Load test
+                      unique identifier.
+                    "testRunId": "str",  # Optional. [Required if testId is not given] Load test
+                      run unique identifier.
+                    "value": {
+                        "str": {
+                            "displayName": "str",  # Optional. Azure resource display
+                              name.
+                            "kind": "str",  # Optional. Kind of Azure resource type.
+                            "resourceGroup": "str",  # Optional. Resource group name of
+                              the Azure resource.
+                            "resourceId": "str",  # Fully qualified resource Id e.g
+                              subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}.
+                              Required.
+                            "resourceName": "str",  # Azure resource name. Required.
+                            "resourceType": "str",  # Azure resource type. Required.
+                            "subscriptionId": "str"  # Optional. Subscription Id of the
+                              Azure resource.
+                        }
+                    }
+                }
+        """
+
+    @distributed_trace
+    def create_or_update_app_components(
+            self,
+            name: str,
+            body: Union[JSON, IO],
+            **kwargs: Any
+    ) -> JSON:
+        """Associate an App Component (Azure resource) to a test or test run.
+
+        Associate an App Component (Azure resource) to a test or test run.
+
+        :param name: Unique name of the App Component, must be a valid URL character ^[a-z0-9_-]*$.
+         Required.
+        :type name: str
+        :param body: App Component model. Is either a model type or a IO type. Required.
+        :type body: JSON or IO
+        :keyword content_type: Body Parameter content-type. Known values are:
+         'application/merge-patch+json'. Default value is None.
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "name": "str",  # Optional. AppComponent name.
+                    "resourceId": "str",  # Optional. Azure Load Testing resource Id.
+                    "testId": "str",  # Optional. [Required, if testRunId is not given] Load test
+                      unique identifier.
+                    "testRunId": "str",  # Optional. [Required if testId is not given] Load test
+                      run unique identifier.
+                    "value": {
+                        "str": {
+                            "displayName": "str",  # Optional. Azure resource display
+                              name.
+                            "kind": "str",  # Optional. Kind of Azure resource type.
+                            "resourceGroup": "str",  # Optional. Resource group name of
+                              the Azure resource.
+                            "resourceId": "str",  # Fully qualified resource Id e.g
+                              subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}.
+                              Required.
+                            "resourceName": "str",  # Azure resource name. Required.
+                            "resourceType": "str",  # Azure resource type. Required.
+                            "subscriptionId": "str"  # Optional. Subscription Id of the
+                              Azure resource.
+                        }
+                    }
+                }
+        """
+        return self.__app_component_operations_generated.create_or_update_app_components(name, body, **kwargs)
+
+        @distributed_trace
+        def delete_app_components(  # pylint: disable=inconsistent-return-statements
+                self,
+                name: str,
+                **kwargs: Any
+        ) -> None:
+            """Delete an App Component.
+
+            Delete an App Component.
+
+            :param name: Unique name of the App Component, must be a valid URL character ^[a-z0-9_-]*$.
+             Required.
+            :type name: str
+            :return: None
+            :rtype: None
+            :raises ~azure.core.exceptions.HttpResponseError:
+            """
+        return self.__app_component_operations_generated.delete_app_components(name, **kwargs)
 
 
 __all__: List[str] = ["TestOperations", "AppComponentOperations"]
