@@ -52,7 +52,7 @@ def __getattr__(name):
     if name == 'AsyncioRequestsTransport':
         try:
             from ._requests_asyncio import AsyncHttpResponse
-            return AsyncHttpTransport
+            return AsyncHttpResponse
         except ImportError:
             pass
     if name == 'AsyncioRequestsTransportResponse':
