@@ -16,13 +16,13 @@ from asynctestcase import (
     QnaAuthoringAsyncHelper
 )
 
-from azure.ai.language.questionanswering.projects.aio import QuestionAnsweringProjectsClient
+from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
 
 class SourcesQnasSynonymsTests(AsyncQuestionAnsweringTest):
 
     @GlobalQuestionAnsweringAccountPreparer()
     async def test_add_source(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+        client = QuestionAnsweringAuthoringClient(qna_account, AzureKeyCredential(qna_key))
 
         # create project
         project_name = "IssacNewton"
@@ -59,7 +59,7 @@ class SourcesQnasSynonymsTests(AsyncQuestionAnsweringTest):
 
     @GlobalQuestionAnsweringAccountPreparer()
     async def test_add_qna(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+        client = QuestionAnsweringAuthoringClient(qna_account, AzureKeyCredential(qna_key))
 
         # create project
         project_name = "IssacNewton"
@@ -95,7 +95,7 @@ class SourcesQnasSynonymsTests(AsyncQuestionAnsweringTest):
 
     @GlobalQuestionAnsweringAccountPreparer()
     async def test_add_synonym(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+        client = QuestionAnsweringAuthoringClient(qna_account, AzureKeyCredential(qna_key))
 
         # create project
         project_name = "IssacNewton"

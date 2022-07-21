@@ -38,7 +38,7 @@ black: true
 
 ```yaml
 batch:
-  - tag: release_runtime_1_1_preview
+#  - tag: release_runtime_1_1_preview
   - tag: release_authoring_1_1_preview
 ```
 
@@ -60,8 +60,8 @@ These settings apply only when `--tag=release_authoring_1_1_preview` is specifie
 
 ```yaml $(tag) == 'release_authoring_1_1_preview'
 input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/Language/stable/2021-10-01/questionanswering-authoring.json
-output-folder: ../azure/ai/language/questionanswering/projects
-title: QuestionAnsweringProjectsClient
+output-folder: ../azure/ai/language/questionanswering/authoring
+title: QuestionAnsweringAuthoringClient
 ```
 
 

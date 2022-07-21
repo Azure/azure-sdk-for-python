@@ -15,15 +15,15 @@ from asynctestcase import (
     AsyncQuestionAnsweringTest,
     QnaAuthoringAsyncHelper
 )
-from azure.ai.language.questionanswering.projects.aio import QuestionAnsweringProjectsClient
+from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
 
 class CreateAndDeployTests(AsyncQuestionAnsweringTest):
 
     @pytest.mark.live_test_only
     @GlobalQuestionAnsweringAccountPreparer()
     async def test_create_project_aad(self, qna_account, qna_key):
-        token = self.get_credential(QuestionAnsweringProjectsClient, is_async=True)
-        client = QuestionAnsweringProjectsClient(qna_account, token)
+        token = self.get_credential(QuestionAnsweringAuthoringClient, is_async=True)
+        client = QuestionAnsweringAuthoringClient(qna_account, token)
 
         # create project
         project_name = "IssacNewton"
@@ -48,7 +48,7 @@ class CreateAndDeployTests(AsyncQuestionAnsweringTest):
 
     @GlobalQuestionAnsweringAccountPreparer()
     async def test_create_project(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+        client = QuestionAnsweringAuthoringClient(qna_account, AzureKeyCredential(qna_key))
 
         # create project
         project_name = "IssacNewton"
@@ -74,7 +74,7 @@ class CreateAndDeployTests(AsyncQuestionAnsweringTest):
 
     @GlobalQuestionAnsweringAccountPreparer()
     async def test_deploy_project(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+        client = QuestionAnsweringAuthoringClient(qna_account, AzureKeyCredential(qna_key))
 
         # create deployable project
         project_name = "IssacNewton"

@@ -1,39 +1,16 @@
-# coding=utf-8
-# --------------------------------------------------------------------------
-#
-# Copyright (c) Microsoft Corporation. All rights reserved.
-#
-# The MIT License (MIT)
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the ""Software""), to
-# deal in the Software without restriction, including without limitation the
-# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-# sell copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-# IN THE SOFTWARE.
-#
-# --------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+"""Customize generated code here.
 
-# This file is used for handwritten extensions to the generated code. Example:
-# https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
-
-import importlib
-from typing import Union, Any
+Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
+"""
+from typing import List, Union, Any
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
-from ._question_answering_projects_client import QuestionAnsweringProjectsClient \
-    as QuestionAnsweringProjectsClientGenerated
+from ._client import QuestionAnsweringAuthoringClient \
+    as QuestionAnsweringAuthoringClientGenerated
 
 
 def _authentication_policy(credential, **kwargs):
@@ -55,7 +32,7 @@ def _authentication_policy(credential, **kwargs):
     return authentication_policy
 
 
-class QuestionAnsweringProjectsClient(QuestionAnsweringProjectsClientGenerated):
+class QuestionAnsweringAuthoringClient(QuestionAnsweringAuthoringClientGenerated):
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
@@ -85,6 +62,13 @@ class QuestionAnsweringProjectsClient(QuestionAnsweringProjectsClientGenerated):
         )
 
 
+__all__: List[str] = ["QuestionAnsweringAuthoringClient"]  # Add all objects you want publicly available to users at this package level
+
+
 def patch_sdk():
-    curr_package = importlib.import_module("azure.ai.language.questionanswering.projects")
-    curr_package.QuestionAnsweringProjectsClient = QuestionAnsweringProjectsClient
+    """Do not remove from this file.
+
+    `patch_sdk` is a last resort escape hatch that allows you to do customizations
+    you can't accomplish using the techniques described in
+    https://aka.ms/azsdk/python/dpcodegen/python/customize
+    """
