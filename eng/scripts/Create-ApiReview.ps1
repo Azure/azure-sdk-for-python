@@ -22,6 +22,9 @@ Param (
   [string] $Language
 )
 
+Set-StrictMode -Version 3
+. (Join-Path $PSScriptRoot ".." common scripts common.ps1)
+
 # Submit API review request and return status whether current revision is approved or pending or failed to create review
 function Submit-APIReview($packageArtifactname, $apiLabel, $releaseStatus, $reviewFileName)
 {
@@ -74,12 +77,6 @@ function ProcessPackage($PackageName)
         Make sure it is present in eng/scripts/Language-Settings.ps1 and referenced in eng/common/scripts/common.ps1.`
         See https://github.com/Azure/azure-sdk-tools/blob/main/doc/common/common_engsys.md#code-structure"
         return 1
-    }
-
-    # Check if package config file is present. This file has package version, SDK type etc info.
-    if (-not $ConfigFileDir)
-    {
-        $ConfigFileDir = Join-Path -Path $ArtifactPath "PackageInfo"
     }
 
     if ($packages)
@@ -163,9 +160,12 @@ function ProcessPackage($PackageName)
     return 0
 }
 
-. (Join-Path $PSScriptRoot ".." common scripts common.ps1)
-
 $responses = @{}
+# Check if package config file is present. This file has package version, SDK type etc info.
+if (-not $ConfigFileDir)
+{
+    $ConfigFileDir = Join-Path -Path $ArtifactPath "PackageInfo"
+}
 foreach ($artifact in $ArtifactList)
 {
     Write-Host "Processing $($artifact.name)"
@@ -173,13 +173,13 @@ foreach ($artifact in $ArtifactList)
     $responses[$artifact.name] = $result 
 }
 
+$exitCode = 0
 foreach($pkg in $responses.keys)
-{
-    $exitCode = 0
+{    
     if ($responses[$pkg] -eq 1)
     {
         Write-Host "API changes are not approved for $($pkg)"
         $exitCode = 1
     }
-    exit $exitCode
 }
+exit $exitCode
