@@ -236,7 +236,6 @@ class AmqpAnnotatedMessage(object):
         self._delivery_annotations = message.delivery_annotations if message.delivery_annotations else {}
         self._application_properties = message.application_properties if message.application_properties else {}
         if message.data:
-            # TODO: body used to return generator object in uamqp. But returns a list rn. Ask Anna.
             self._body = message.data
             self._body_type = AmqpMessageBodyType.DATA
         elif message.sequence:
@@ -245,23 +244,6 @@ class AmqpAnnotatedMessage(object):
         else:
             self._body = message.value
             self._body_type = AmqpMessageBodyType.VALUE
-        #if message.data:
-        #    # TODO: body used to return generator object in uamqp. But returns a list rn. Ask Anna.
-        #    # below is def a hack. need to fix
-        #    if isinstance(message.data, GeneratorType):
-        #        self._body = list(message.data)
-        #    else:
-        #        self._body = message.data
-        #    self._body_type = AmqpMessageBodyType.DATA
-        #elif message.sequence:
-        #    if isinstance(message.data, GeneratorType):
-        #        self._body = list(message.sequence)
-        #    else:
-        #        self._body = message.data
-        #    self._body_type = AmqpMessageBodyType.SEQUENCE
-        #else:
-        #    self._body = message.value
-        #    self._body_type = AmqpMessageBodyType.VALUE
 
 
     @property
