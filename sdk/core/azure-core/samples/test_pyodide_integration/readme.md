@@ -2,13 +2,19 @@
 
 ## Running
 
-Once you have set up your Azure Resources and your `.env` file, from this directory, run
+Once you have set up your Azure Resources and your `.env` file, navigate to the `/sdk/core/azure-core`. Make a wheel of core by running
 
-```python
-python -h http.server 8000
+```bash
+python setup.py bdist-wheel
 ```
 
-(You can use any other port). Then, from a Chromium-based browser such as Edge, go to [`http://localhost:8000/`](http://localhost:8000/) and the tests will be run in the browser. Dev tip: keep your browser's devtools open.
+and run
+
+```python
+python -h http.server
+```
+
+to set up the test server. Then, from a Chromium-based browser such as Edge, go to [`http://localhost:8000/samples/test_pyodide_integration`](http://localhost:8000/samples/test_pyodide_integration) and the tests will be run in the browser. Dev tip: keep your browser's devtools open. If you make a change to the source code, remember to rebuild your wheel. Note that you might have to update `requirements.txt` depending on the version of `azure-core`. Just make sure the url to `azure-core` in `requirements.txt` matches that of the wheel in `../../dist/`.
 
 ## Adding tests
 
@@ -34,4 +40,4 @@ You need your own Text Analytics and Blob Storage accounts to run these tests. B
 
 For exposed headers, put
 
-> Server,Content-Range,ETag,Last-Modified,Accept-Ranges,x-ms-*
+> Server,Content-Range,ETag,Last-Modified,Accept-Ranges,x-ms-*,enc
