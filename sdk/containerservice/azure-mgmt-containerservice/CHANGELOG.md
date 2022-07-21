@@ -4,7 +4,7 @@
 
 **Features**
 
-  - Add new api-version `2022-06-01`
+  - Add a new api-version `2022-06-01`
 
 ## 20.1.0 (2022-07-21)
 
