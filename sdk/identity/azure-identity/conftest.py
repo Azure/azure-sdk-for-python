@@ -5,7 +5,7 @@
 import os
 import sys
 
-import mock
+from unittest import mock
 import pytest
 import six
 from devtools_testutils import test_proxy, add_general_regex_sanitizer, is_live, add_body_key_sanitizer
