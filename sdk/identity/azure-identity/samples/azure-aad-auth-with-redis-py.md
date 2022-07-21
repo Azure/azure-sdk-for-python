@@ -15,7 +15,7 @@ This sample is recommended for users getting started to use Azure AD authenticat
 [Authenticate with Azure AD - Handle Re-Authentication](#authenticate-with-azure-ad-handle-re-authentication)
 This sample is recommended to users looking to build long-running applications that would like to handle re-authenticating with Azure AD upon token expiry.
 
-**Note:** The below sample uses the Azure Identity library's `ClientSecretCredential`. The credential can be replaced with any of the other `TokenCredential` implementations offered by the azure-identity library.
+**Note:** The below sample uses the Azure Identity library's `DefaultAzureCredential`. The credential can be replaced with any of the other `TokenCredential` implementations offered by the azure-identity library.
 
 #### Authenticate with Azure AD: hello world
 
