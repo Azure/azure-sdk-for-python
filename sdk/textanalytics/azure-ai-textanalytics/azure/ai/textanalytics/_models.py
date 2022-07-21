@@ -1750,8 +1750,8 @@ class _AnalyzeActionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     )
     ANALYZE_SENTIMENT = "analyze_sentiment"  #: Sentiment Analysis action.
     RECOGNIZE_CUSTOM_ENTITIES = "recognize_custom_entities"
-    SINGLE_CATEGORY_CLASSIFY = "single_category_classify"
-    MULTI_CATEGORY_CLASSIFY = "multi_category_classify"
+    SINGLE_LABEL_CLASSIFY = "single_label_classify"
+    MULTI_LABEL_CLASSIFY = "multi_label_classify"
     ANALYZE_HEALTHCARE_ENTITIES = "analyze_healthcare_entities"
 
 
@@ -2261,8 +2261,8 @@ class RecognizeCustomEntitiesResult(DictMixin):
         )
 
 
-class MultiCategoryClassifyAction(DictMixin):
-    """MultiCategoryClassifyAction encapsulates the parameters for starting a long-running custom multi category
+class MultiLabelClassifyAction(DictMixin):
+    """MultiLabelClassifyAction encapsulates the parameters for starting a long-running custom multi label
     classification operation. For information on regional support of custom features and how to train a model to
     classify your documents, see https://aka.ms/azsdk/textanalytics/customfunctionalities
 
@@ -2299,7 +2299,7 @@ class MultiCategoryClassifyAction(DictMixin):
         self.disable_service_logs = kwargs.get('disable_service_logs', None)
 
     def __repr__(self):
-        return "MultiCategoryClassifyAction(project_name={}, deployment_name={}, " \
+        return "MultiLabelClassifyAction(project_name={}, deployment_name={}, " \
                "disable_service_logs={})".format(
             self.project_name,
             self.deployment_name,
@@ -2375,8 +2375,8 @@ class ClassifyDocumentResult(DictMixin):
         )
 
 
-class SingleCategoryClassifyAction(DictMixin):
-    """SingleCategoryClassifyAction encapsulates the parameters for starting a long-running custom single category
+class SingleLabelClassifyAction(DictMixin):
+    """SingleLabelClassifyAction encapsulates the parameters for starting a long-running custom single label
     classification operation. For information on regional support of custom features and how to train a model to
     classify your documents, see https://aka.ms/azsdk/textanalytics/customfunctionalities
 
@@ -2413,7 +2413,7 @@ class SingleCategoryClassifyAction(DictMixin):
         self.disable_service_logs = kwargs.get('disable_service_logs', None)
 
     def __repr__(self):
-        return "SingleCategoryClassifyAction(project_name={}, deployment_name={}, " \
+        return "SingleLabelClassifyAction(project_name={}, deployment_name={}, " \
                "disable_service_logs={})".format(
             self.project_name,
             self.deployment_name,

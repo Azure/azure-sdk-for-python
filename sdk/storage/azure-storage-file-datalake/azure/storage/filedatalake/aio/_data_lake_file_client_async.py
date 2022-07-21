@@ -288,7 +288,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         await self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expires_on,
                                                                        **kwargs)  # pylint: disable=protected-access
 
-    async def upload_data(self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+    async def upload_data(self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
                           length=None,  # type: Optional[int]
                           overwrite=False,  # type: Optional[bool]
                           **kwargs):
@@ -363,7 +363,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             **kwargs)
         return await upload_datalake_file(**options)
 
-    async def append_data(self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+    async def append_data(self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
                           offset,  # type: int
                           length=None,  # type: Optional[int]
                           **kwargs):

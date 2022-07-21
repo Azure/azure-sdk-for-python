@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -12,8 +11,10 @@ from typing import (
     Dict,
     Union,
     List,
-    TYPE_CHECKING,
 )
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.pipeline import PipelineResponse
 from azure.core.polling import AsyncLROPoller
 from azure.core.pipeline import AsyncPipeline
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
@@ -26,11 +27,6 @@ from .._api_versions import FormRecognizerApiVersion
 from .._models import CustomFormModelInfo, AccountProperties, CustomFormModel
 from ._form_base_client_async import FormRecognizerClientBaseAsync
 from .._polling import FormTrainingPolling, CopyPolling
-
-if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential
-    from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.pipeline import PipelineResponse
 
 
 class FormTrainingClient(FormRecognizerClientBaseAsync):
@@ -76,11 +72,11 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
     def __init__(
         self,
         endpoint: str,
-        credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any
     ) -> None:
         api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
-        super(FormTrainingClient, self).__init__(
+        super().__init__(
             endpoint=endpoint,
             credential=credential,
             api_version=api_version,
@@ -362,7 +358,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
     @distributed_trace_async
     async def begin_copy_model(
-        self, model_id: str, target: dict, **kwargs: Any
+        self, model_id: str, target: Dict[str, Union[str, int]], **kwargs: Any
     ) -> AsyncLROPoller[CustomFormModelInfo]:
         """Copy a custom model stored in this resource (the source) to the user specified
         target Form Recognizer resource. This should be called with the source Form Recognizer resource
@@ -370,7 +366,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         target resource's output from calling the :func:`~get_copy_authorization()` method.
 
         :param str model_id: Model identifier of the model to copy to target resource.
-        :param dict target:
+        :param Dict[str, Union[str, int]] target:
             The copy authorization generated from the target resource's call to
             :func:`~get_copy_authorization()`.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.

@@ -1,5 +1,13 @@
 # Release History
 
+## 20.1.0 (2022-07-21)
+
+**Features**
+
+  - Added operation group FleetMembersOperations
+  - Added operation group FleetsOperations
+  - Model ManagedClusterSecurityProfile has a new parameter node_restriction
+
 ## 20.0.0 (2022-06-09)
 
 **Features**
