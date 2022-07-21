@@ -17,6 +17,7 @@ _AUTO_ASK_FOR_CHECK = 'auto-ask-check'
 _BRANCH_ATTENTION = 'base-branch-attention'
 _7_DAY_ATTENTION = '7days attention'
 _MultiAPI = 'MultiAPI'
+_ON_TIME = 'on-time'
 # record published issues
 _FILE_OUT = 'published_issues_python.csv'
 
@@ -110,6 +111,10 @@ class IssueProcessPython(IssueProcess):
         if _BRANCH_ATTENTION in self.issue_package.labels_name:
             self.bot_advice.append('new version is 0.0.0, please check base branch!')
 
+    def on_time_policy(self):
+        if _ON_TIME in self.issue_package.labels_name:
+            self.bot_advice.append('on time')
+
     def remind_policy(self):
         if self.delay_time >= 15 and _7_DAY_ATTENTION in self.issue_package.labels_name and self.date_from_target < 0:
             self.comment(
@@ -126,6 +131,7 @@ class IssueProcessPython(IssueProcess):
         super().auto_bot_advice()
         self.multi_api_policy()
         self.attention_policy()
+        self.on_time_policy()
         self.remind_policy()
 
 
