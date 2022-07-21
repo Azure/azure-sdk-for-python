@@ -6,10 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._phone_numbers_client import PhoneNumbersClient
-__all__ = ['PhoneNumbersClient']
+from ._client import PhoneNumbersClient
 
-# `._patch.py` is used for handwritten extensions to the generated code
-# Example: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
-from ._patch import patch_sdk
-patch_sdk()
+try:
+    from ._patch import __all__ as _patch_all
+    from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+except ImportError:
+    _patch_all = []
+from ._patch import patch_sdk as _patch_sdk
+
+__all__ = ["PhoneNumbersClient"]
+__all__.extend([p for p in _patch_all if p not in __all__])
+
+_patch_sdk()

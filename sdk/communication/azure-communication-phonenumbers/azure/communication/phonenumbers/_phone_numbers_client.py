@@ -7,7 +7,7 @@
 from typing import TYPE_CHECKING
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
-from ._generated._phone_numbers_client import PhoneNumbersClient as PhoneNumbersClientGen
+from ._generated._client import PhoneNumbersClient as PhoneNumbersClientGen
 from ._generated.models import PhoneNumberSearchRequest
 from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
-    from ._generated.models import PhoneNumberSearchResult, PurchasedPhoneNumber, PhoneNumberCapabilities
+    from ._generated.models import *
 
 
 class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-keyword
@@ -236,5 +236,170 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
         """
         return self._phone_number_client.phone_numbers.list_phone_numbers(
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_available_countries(
+        self,
+        **kwargs # type: Any
+    ):
+        # type: (...) -> ItemPaged[PhoneNumberCountry]
+        """Gets the list of supported countries.
+
+        Gets the list of supported countries.
+
+        :keyword accept_language: The locale to display in the localized fields in the response.
+         Default value is None.
+        :paramtype accept_language: str
+        :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
+         default value is 0. Default value is 0.
+        :paramtype skip: int
+        :return: An iterator like instance of PhoneNumberCountry
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.PhoneNumberCountry]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return self._phone_number_client.phone_numbers.list_available_countries(
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_available_localities(
+        self,
+        two_letter_iso_country_name, # type: str
+        administrative_division = None, # type: str
+        **kwargs # type: Any
+    ):
+        # type: (...) -> ItemPaged[PhoneNumberLocality]
+        """Gets the list of cities or towns with available phone numbers.
+
+        Gets the list of cities or towns with available phone numbers.
+
+        :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
+        :type country_code: str
+        :keyword accept_language: The locale to display in the localized fields in the response.
+         Default value is None.
+        :paramtype accept_language: str
+        :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
+         default value is 0. Default value is 0.
+        :paramtype skip: int
+        :keyword administrative_division: An optional parameter for the name of the state or province
+         in which to search for the area code. e.g. California. Default value is None.
+        :paramtype administrative_division: str
+        :return: An iterator like instance of PhoneNumberLocality
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.PhoneNumberLocality]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return self._phone_number_client.phone_numbers.list_available_localities(
+            two_letter_iso_country_name,
+            administrative_division=administrative_division,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_available_offerings(
+        self,
+        two_letter_iso_country_name, # type: str
+        phone_number_type = None, # type: PhoneNumberType
+        phone_number_assignment_type = None, # type: PhoneNumberAssignmentType
+        **kwargs
+    ):
+        # type: (...) -> ItemPaged[PhoneNumberOffering]
+        """List available offerings of capabilities with rates for the given country/region.
+
+        List available offerings of capabilities with rates for the given country/region.
+
+        :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
+        :type country_code: str
+        :keyword phone_number_type: Filter by phoneNumberType, e.g. Geographic, TollFree. Known values
+         are: "geographic" and "tollFree". Default value is None.
+        :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
+        :keyword assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
+         "person" and "application". Default value is None.
+        :paramtype assignment_type: str or
+         ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
+        :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
+         default value is 0. Default value is 0.
+        :paramtype skip: int
+        :return: An iterator like instance of PhoneNumberOffering
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.PhoneNumberOffering]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return self._phone_number_client.phone_numbers.list_offerings(
+            two_letter_iso_country_name,
+            phone_number_type=phone_number_type,
+            phone_number_assignment_type=phone_number_assignment_type,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_available_toll_free_area_codes(
+        self,
+        two_letter_iso_country_name, # type: str
+        **kwargs # type: Any
+    ):
+        # type: (...) -> ItemPaged[AreaCodeResult]
+        """Gets the list of available area codes.
+
+        Gets the list of available area codes.
+
+        :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
+        :type country_code: str
+        :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
+         default value is 0. Default value is 0.
+        :paramtype skip: int
+        :return: An iterator like instance of AreaCodeResult
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.AreaCodeResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return self._phone_number_client.phone_numbers.list_area_codes(
+            two_letter_iso_country_name,
+            phone_number_type=PhoneNumberType.GEOGRAPHIC,
+            assignment_type= PhoneNumberAssignmentType.APPLICATION,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_available_geographic_area_codes(
+        self,
+        two_letter_iso_country_name, # type: str
+        phone_number_assignment_type, #type: PhoneNumberAssignmentType
+        locality, # type: str
+        administrative_division = None, # type: str
+        **kwargs # type: Any
+    ):
+        # type: (...) -> ItemPaged[AreaCodeResult]
+        """Gets the list of available area codes.
+
+        Gets the list of available area codes.
+
+        :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
+        :type country_code: str
+        :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
+         default value is 0. Default value is 0.
+        :paramtype skip: int
+        :keyword assignment_type: Filter by assignmentType, e.g. user, application. Known values are:
+         "person" and "application". Default value is None.
+        :paramtype assignment_type: str or
+         ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
+        :keyword locality: The name of locality in which to search for the area code. e.g. Seattle.
+         This is required if the phone number type is Geographic. Default value is None.
+        :paramtype locality: str
+        :keyword administrative_division: The name of the state or province in which to search for the
+         area code. e.g. California. Default value is None.
+        :paramtype administrative_division: str
+        :return: An iterator like instance of AreaCodeResult
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.AreaCodeResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return self._phone_number_client.phone_numbers.list_area_codes(
+            two_letter_iso_country_name,
+            phone_number_type=PhoneNumberType.GEOGRAPHIC,
+            assignment_type= phone_number_assignment_type,
+            locality=locality,
+            administrative_division=administrative_division,
             **kwargs
         )

@@ -6,56 +6,54 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import CommunicationError
-    from ._models_py3 import CommunicationErrorResponse
-    from ._models_py3 import PhoneNumberCapabilities
-    from ._models_py3 import PhoneNumberCapabilitiesRequest
-    from ._models_py3 import PhoneNumberCost
-    from ._models_py3 import PhoneNumberOperation
-    from ._models_py3 import PhoneNumberPurchaseRequest
-    from ._models_py3 import PhoneNumberSearchRequest
-    from ._models_py3 import PhoneNumberSearchResult
-    from ._models_py3 import PurchasedPhoneNumber
-    from ._models_py3 import PurchasedPhoneNumbers
-except (SyntaxError, ImportError):
-    from ._models import CommunicationError  # type: ignore
-    from ._models import CommunicationErrorResponse  # type: ignore
-    from ._models import PhoneNumberCapabilities  # type: ignore
-    from ._models import PhoneNumberCapabilitiesRequest  # type: ignore
-    from ._models import PhoneNumberCost  # type: ignore
-    from ._models import PhoneNumberOperation  # type: ignore
-    from ._models import PhoneNumberPurchaseRequest  # type: ignore
-    from ._models import PhoneNumberSearchRequest  # type: ignore
-    from ._models import PhoneNumberSearchResult  # type: ignore
-    from ._models import PurchasedPhoneNumber  # type: ignore
-    from ._models import PurchasedPhoneNumbers  # type: ignore
+from ._models import AreaCodeResult
+from ._models import CommunicationError
+from ._models import CommunicationErrorResponse
+from ._models import PhoneNumberAdministrativeDivision
+from ._models import PhoneNumberCapabilities
+from ._models import PhoneNumberCapabilitiesRequest
+from ._models import PhoneNumberCost
+from ._models import PhoneNumberCountry
+from ._models import PhoneNumberLocality
+from ._models import PhoneNumberOffering
+from ._models import PhoneNumberOperation
+from ._models import PhoneNumberPurchaseRequest
+from ._models import PhoneNumberSearchRequest
+from ._models import PhoneNumberSearchResult
+from ._models import PurchasedPhoneNumber
 
-from ._phone_numbers_client_enums import (
-    BillingFrequency,
-    PhoneNumberAssignmentType,
-    PhoneNumberCapabilityType,
-    PhoneNumberOperationStatus,
-    PhoneNumberOperationType,
-    PhoneNumberType,
-)
+from ._enums import BillingFrequency
+from ._enums import PhoneNumberAssignmentType
+from ._enums import PhoneNumberCapabilityType
+from ._enums import PhoneNumberOperationStatus
+from ._enums import PhoneNumberOperationType
+from ._enums import PhoneNumberType
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'CommunicationError',
-    'CommunicationErrorResponse',
-    'PhoneNumberCapabilities',
-    'PhoneNumberCapabilitiesRequest',
-    'PhoneNumberCost',
-    'PhoneNumberOperation',
-    'PhoneNumberPurchaseRequest',
-    'PhoneNumberSearchRequest',
-    'PhoneNumberSearchResult',
-    'PurchasedPhoneNumber',
-    'PurchasedPhoneNumbers',
-    'BillingFrequency',
-    'PhoneNumberAssignmentType',
-    'PhoneNumberCapabilityType',
-    'PhoneNumberOperationStatus',
-    'PhoneNumberOperationType',
-    'PhoneNumberType',
+    "AreaCodeResult",
+    "CommunicationError",
+    "CommunicationErrorResponse",
+    "PhoneNumberAdministrativeDivision",
+    "PhoneNumberCapabilities",
+    "PhoneNumberCapabilitiesRequest",
+    "PhoneNumberCost",
+    "PhoneNumberCountry",
+    "PhoneNumberLocality",
+    "PhoneNumberOffering",
+    "PhoneNumberOperation",
+    "PhoneNumberPurchaseRequest",
+    "PhoneNumberSearchRequest",
+    "PhoneNumberSearchResult",
+    "PurchasedPhoneNumber",
+    "BillingFrequency",
+    "PhoneNumberAssignmentType",
+    "PhoneNumberCapabilityType",
+    "PhoneNumberOperationStatus",
+    "PhoneNumberOperationType",
+    "PhoneNumberType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
