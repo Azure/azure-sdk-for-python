@@ -3399,10 +3399,10 @@ class ModelOperation(ModelOperationInfo):
     :ivar error: Encountered error, includes the error code, message, and details for why
         the operation failed.
     :vartype error: Optional[~azure.ai.formrecognizer.DocumentAnalysisError]
-    :ivar result: Operation result upon success. Returns a DocumentModelInfo which contains
+    :ivar result: Operation result upon success. Returns a DocumentModelDetails which contains
         all information about the model including the doc types
         and fields it can analyze from documents.
-    :vartype result: Optional[~azure.ai.formrecognizer.DocumentModelInfo]
+    :vartype result: Optional[~azure.ai.formrecognizer.DocumentModelDetails]
     :ivar api_version: API version used to create this operation.
     :vartype api_version: Optional[str]
     :ivar tags: List of user defined key-value tag attributes associated with the model.
@@ -3462,7 +3462,7 @@ class ModelOperation(ModelOperationInfo):
             last_updated_on=data.get("last_updated_on", None),
             kind=data.get("kind", None),
             resource_location=data.get("resource_location", None),
-            result=DocumentModelInfo.from_dict(data.get("result")) if data.get("result") else None,  # type: ignore
+            result=DocumentModelDetails.from_dict(data.get("result")) if data.get("result") else None,  # type: ignore
             error=DocumentAnalysisError.from_dict(data.get("error")) if data.get("error") else None,  # type: ignore
             api_version=data.get("api_version", None),
             tags=data.get("tags", {}),
@@ -3479,7 +3479,7 @@ class ModelOperation(ModelOperationInfo):
             last_updated_on=op.last_updated_date_time,
             kind=op.kind,
             resource_location=op.resource_location,
-            result=DocumentModelInfo._from_generated(deserialize(ModelInfo, op.result))
+            result=DocumentModelDetails._from_generated(deserialize(ModelInfo, op.result))
             if op.result else None,
             error=DocumentAnalysisError._from_generated(deserialize(Error, op.error))
             if op.error else None,
@@ -3787,7 +3787,7 @@ class DocumentModelSummary:
         )
 
 
-class DocumentModelInfo(DocumentModelSummary):
+class DocumentModelDetails(DocumentModelSummary):
     """Document model information. Includes the doc types that the model can analyze.
 
     :ivar str model_id: Unique model id.
@@ -3814,7 +3814,7 @@ class DocumentModelInfo(DocumentModelSummary):
 
     def __repr__(self):
         return (
-            f"DocumentModelInfo(model_id={self.model_id}, description={self.description}, "
+            f"DocumentModelDetails(model_id={self.model_id}, description={self.description}, "
             f"created_on={self.created_on}, api_version={self.api_version}, tags={self.tags}, "
             f"doc_types={repr(self.doc_types)})"
         )
@@ -3832,7 +3832,7 @@ class DocumentModelInfo(DocumentModelSummary):
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of DocumentModelInfo.
+        """Returns a dict representation of DocumentModelDetails.
 
         :return: dict
         :rtype: dict
@@ -3847,12 +3847,12 @@ class DocumentModelInfo(DocumentModelSummary):
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "DocumentModelInfo":
-        """Converts a dict in the shape of a DocumentModelInfo to the model itself.
+    def from_dict(cls, data: dict) -> "DocumentModelDetails":
+        """Converts a dict in the shape of a DocumentModelDetails to the model itself.
 
-        :param dict data: A dictionary in the shape of DocumentModelInfo.
-        :return: DocumentModelInfo
-        :rtype: DocumentModelInfo
+        :param dict data: A dictionary in the shape of DocumentModelDetails.
+        :return: DocumentModelDetails
+        :rtype: DocumentModelDetails
         """
         return cls(
             model_id=data.get("model_id", None),

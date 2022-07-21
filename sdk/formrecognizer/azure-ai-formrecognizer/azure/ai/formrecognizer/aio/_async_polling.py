@@ -16,7 +16,7 @@ PollingReturnType = TypeVar("PollingReturnType")
 
 class AsyncDocumentModelAdministrationLROPoller(AsyncLROPoller[PollingReturnType]):
     """Custom poller for model build operations. Call `result()` on the poller to return
-    a :class:`~azure.ai.formrecognizer.DocumentModelInfo`.
+    a :class:`~azure.ai.formrecognizer.DocumentModelDetails`.
 
     .. versionadded:: 2021-09-30-preview
         The *AsyncDocumentModelAdministrationLROPoller* poller object

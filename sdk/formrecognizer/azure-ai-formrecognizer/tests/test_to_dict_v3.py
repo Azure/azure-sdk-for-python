@@ -1513,7 +1513,7 @@ class TestToDict(FormRecognizerTest):
             last_updated_on="1994-11-05T13:20:30Z",
             kind="documentModelBuild",
             resource_location="https://contoso.com/resource",
-            result=_models.DocumentModelInfo(
+            result=_models.DocumentModelDetails(
                 api_version="2022-06-30-preview",
                 tags={},
                 description="my description",
@@ -1802,7 +1802,7 @@ class TestToDict(FormRecognizerTest):
         assert d == final
 
     def test_document_model_to_dict(self):
-        model = _models.DocumentModelInfo(
+        model = _models.DocumentModelDetails(
             description="my description",
             created_on="1994-11-05T13:15:30Z",
             model_id="prebuilt-invoice",
