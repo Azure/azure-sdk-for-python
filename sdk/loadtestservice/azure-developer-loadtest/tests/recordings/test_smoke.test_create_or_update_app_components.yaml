@@ -1,0 +1,46 @@
+interactions:
+- request:
+    body: '{"name": "app_component", "testId": "a011890b-0201-004d-010d", "value":
+      {"/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo":
+      {"resourceId": "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo",
+      "resourceName": "App-Service-Sample-Demo", "resourceType": "Microsoft.Web/sites",
+      "subscriptionId": "7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a"}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '531'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.10.2 (Windows-10-10.0.22000-SP0)
+    method: PATCH
+    uri: https://myservice.azure.com/appcomponents/01730263-6671-4216-b283?api-version=2022-06-01-preview
+  response:
+    body:
+      string: '{"resourceId":"/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk","testId":"a011890b-0201-004d-010d","testRunId":null,"name":"01730263-6671-4216-b283","value":{"/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo":{"resourceId":"/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo","resourceName":"App-Service-Sample-Demo","resourceType":"Microsoft.Web/sites","displayName":null,"resourceGroup":"App-Service-Sample-Demo-rg","subscriptionId":"7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a","kind":null}}}'
+    headers:
+      api-supported-versions:
+      - 2021-07-01-preview, 2022-06-01-preview
+      connection:
+      - keep-alive
+      content-length:
+      - '772'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 21 Jul 2022 10:14:48 GMT
+      mise-correlation-id:
+      - abd1a2cd-df51-4423-9c45-6defe722f851
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,0 +1,47 @@
+interactions:
+- request:
+    body: '{"resourceId": "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
+      "description": "", "displayName": "new_namespace-new-namespace", "loadTestConfig":
+      {"engineSize": "m", "engineInstances": 1, "splitAllCSVs": false}, "secrets":
+      {}, "environmentVariables": {}, "passFailCriteria": {"passFailMetrics": {}},
+      "keyvaultReferenceIdentityType": "SystemAssigned", "keyvaultReferenceIdentityId":
+      null}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '478'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.10.2 (Windows-10-10.0.22000-SP0)
+    method: PATCH
+    uri: https://myservice.azure.com/loadtests/a011890b-0201-004d-010d?api-version=2022-06-01-preview
+  response:
+    body:
+      string: '{"testId":"a011890b-0201-004d-010d","description":"","displayName":"new_namespace-new-namespace","resourceId":"/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk","loadTestConfig":{"engineInstances":1,"splitAllCSVs":false},"passFailCriteria":{"passFailMetrics":{}},"createdDateTime":"2022-07-21T09:40:11.215Z","createdBy":null,"lastModifiedDateTime":"2022-07-21T09:40:11.215Z","lastModifiedBy":null,"inputArtifacts":{"configUrl":null,"testScriptUrl":{"url":"https://stcntproddataeus.blob.core.windows.net/0da106d7-b9ec-440d-ac83-73eee9129441/a012b234-1230-ab00-0040?sv=2020-04-08&se=2022-07-21T11%3A14%3A53Z&sr=b&sp=r&sig=LT9QbMeLBh9SNiz3vTtk3b77h%2B%2FhtAHJoLzqLO5o8Lg%3D","fileId":"a012b234-1230-ab00-0040","filename":"sample.jmx","fileType":0,"expireTime":"2022-07-21T10:24:53.0036961+00:00","validationStatus":"VALIDATION_INITIATED"},"userPropUrl":null,"inputArtifactsZipFileurl":null,"additionalUrls":[]},"secrets":null,"environmentVariables":null,"subnetId":null,"keyvaultReferenceIdentityType":"SystemAssigned","keyvaultReferenceIdentityId":null}'
+    headers:
+      api-supported-versions:
+      - 2021-07-01-preview, 2022-06-01-preview
+      connection:
+      - keep-alive
+      content-length:
+      - '1138'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 21 Jul 2022 10:14:53 GMT
+      mise-correlation-id:
+      - 32e93a75-0fdd-4d27-93ea-4d78eb62694a
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1
