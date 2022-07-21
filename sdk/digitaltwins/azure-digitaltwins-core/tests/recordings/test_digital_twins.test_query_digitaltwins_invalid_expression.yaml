@@ -13,21 +13,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/query?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/query?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"SqlQueryError","message":"SQL query parse failed:
         SQL Parser Error, Line=1, Position=0, Message=missing SELECT at ''foo'' See
-        samples in http://aka.ms/adtv2query for the correct syntax."}}'
+        samples in https://aka.ms/adtv2query for the correct syntax."}}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:06:29 GMT
+      - Thu, 26 May 2022 07:27:54 GMT
+      mise-correlation-id:
+      - c3ce0ca5-39de-4470-bcc8-591a12c7dbb2
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-6e9215d959ebac42ba17fc5ce84d983b-a388dda09c2afe42-01
       transfer-encoding:
       - chunked
     status:

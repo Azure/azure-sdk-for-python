@@ -24,7 +24,6 @@ class AzureMLPolling(ARMPolling):
     def update_status(self):
         """Update the current status of the LRO."""
         super(ARMPolling, self).update_status()
-        print(".", end="", flush=True)
 
 
 def polling_wait(

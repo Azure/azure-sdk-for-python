@@ -19,6 +19,33 @@ from azure.ai.language.questionanswering.projects.aio import QuestionAnsweringPr
 
 class CreateAndDeployTests(AsyncQuestionAnsweringTest):
 
+    @pytest.mark.live_test_only
+    @GlobalQuestionAnsweringAccountPreparer()
+    async def test_create_project_aad(self, qna_account, qna_key):
+        token = self.get_credential(QuestionAnsweringProjectsClient, is_async=True)
+        client = QuestionAnsweringProjectsClient(qna_account, token)
+
+        # create project
+        project_name = "IssacNewton"
+        await client.create_project(
+            project_name=project_name,
+            options={
+                "description": "biography of Sir Issac Newton",
+                "language": "en",
+                "multilingualResource": True,
+                "settings": {
+                    "defaultAnswer": "no answer"
+                }
+            })
+
+        # list projects
+        qna_projects = client.list_projects()
+        found = False
+        async for p in qna_projects:
+            if ("projectName" in p) and p["projectName"] == project_name:
+                found = True
+        assert found
+
     @GlobalQuestionAnsweringAccountPreparer()
     async def test_create_project(self, qna_account, qna_key):
         client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))

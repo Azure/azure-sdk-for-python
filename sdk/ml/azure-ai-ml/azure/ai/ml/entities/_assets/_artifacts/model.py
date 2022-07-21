@@ -157,7 +157,7 @@ class Model(Artifact):
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
 
-        # datastore_arm_id is nul for registry scenario, so capture the full_storage_path
+        # datastore_arm_id is null for registry scenario, so capture the full_storage_path
         if not asset_artifact.datastore_arm_id and asset_artifact.full_storage_path:
             self.path = asset_artifact.full_storage_path
         else:

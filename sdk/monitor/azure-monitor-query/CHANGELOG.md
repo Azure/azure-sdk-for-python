@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.3 (2022-07-07)
+
+### Bugs Fixed
+
+- Fixed a bug where `query_resource` in metrics client is throwing an error with unexpected `metric_namespace` argument. 
+
 ## 1.0.2 (2022-05-06)
 
 - This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.

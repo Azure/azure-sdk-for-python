@@ -69,6 +69,8 @@ class ModelOperations(_ScopeDependentOperations):
     @monitor_with_activity(logger, "Model.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, model: Model) -> Model:  # TODO: Are we going to implement job_name?
         name = model.name
+        if not model.version and self._registry_name:
+            raise Exception("Model version is required for registry")
         version = model.version
 
         sas_uri = None
