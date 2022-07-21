@@ -8,17 +8,13 @@
 import time
 import datetime
 import uuid
-import functools
 from typing import Optional, Dict, List, Tuple, Union, Iterable, TYPE_CHECKING, Any, Mapping, cast
-
+from azure.core.tracing import AbstractSpan
 
 from .._pyamqp.message import Message, BatchMessage
 from .._pyamqp.performatives import TransferFrame
 from .._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
 from .._pyamqp.utils import add_batch, get_message_encoded_size
-
-#import uamqp.errors
-#import uamqp.message
 
 from .constants import (
     _BATCH_MESSAGE_OVERHEAD_COST,
@@ -59,7 +55,6 @@ from .utils import (
 #    ServiceBusReceiver as AsyncServiceBusReceiver,
 #)
 #from .._servicebus_receiver import ServiceBusReceiver
-from azure.core.tracing import AbstractSpan
 PrimitiveTypes = Union[
     int,
     float,
@@ -233,7 +228,7 @@ class ServiceBusMessage(
 
     def _to_outgoing_message(self) -> "ServiceBusMessage":
         return self
-        
+
     @property
     def message(self) -> LegacyMessage:
         if not self._uamqp_message:
@@ -894,7 +889,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
     def message(self) -> LegacyMessage:
         if not self._uamqp_message:
             if not self._settled:
-                settler = self._receiver._handler
+                settler = self._receiver._handler # pylint:disable=protected-access
             else:
                 settler = None
             self._uamqp_message = LegacyMessage(

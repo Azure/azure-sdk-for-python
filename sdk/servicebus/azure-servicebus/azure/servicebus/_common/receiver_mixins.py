@@ -4,14 +4,13 @@
 # license information.
 # -------------------------------------------------------------------------
 import uuid
-import functools
 from typing import Optional, Callable
 
 from .._pyamqp.endpoints import Source
 from .._pyamqp.error import AMQPError
 
 from .message import ServiceBusReceivedMessage
-from ..exceptions import _ServiceBusErrorPolicy
+from ..exceptions import _ServiceBusErrorPolicy, MessageAlreadySettled
 from .constants import (
     NEXT_AVAILABLE_SESSION,
     SESSION_FILTER,
@@ -27,7 +26,6 @@ from .constants import (
     MESSAGE_ABANDON,
     MESSAGE_DEFER,
 )
-from ..exceptions import _ServiceBusErrorPolicy, MessageAlreadySettled
 from .utils import utc_from_timestamp, utc_now
 
 

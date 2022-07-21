@@ -4,9 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 from enum import Enum
-
-from .._pyamqp import constants
 from azure.core import CaseInsensitiveEnumMeta
+from .._pyamqp import constants
 
 VENDOR = b"com.microsoft"
 DATETIMEOFFSET_EPOCH = 621355968000000000

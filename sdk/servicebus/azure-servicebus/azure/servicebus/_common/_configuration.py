@@ -4,9 +4,8 @@
 # --------------------------------------------------------------------------------------------
 from typing import Optional, Dict, Any
 from urllib.parse import urlparse
-
-from .._pyamqp.constants import TransportType
 from azure.core.pipeline.policies import RetryMode
+from .._pyamqp.constants import TransportType
 
 
 DEFAULT_AMQPS_PORT = 1571
