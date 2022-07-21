@@ -1,2 +1,2 @@
-api-stub-generator==0.3.1
+api-stub-generator==0.3.2
 pylint-guidelines-checker==0.0.5
