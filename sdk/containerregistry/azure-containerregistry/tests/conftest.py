@@ -45,7 +45,7 @@ def add_sanitizers(test_proxy):
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
     add_body_key_sanitizer(json_path="$..refresh_token", value="refresh_token")
 
-    client_id = os.environ.get("CONTAINERREGISTRY_CLIENT_ID")
+    client_id = os.environ.get("CONTAINERREGISTRY_CLIENT_ID", "client-id")
     add_general_regex_sanitizer(regex=client_id, value="client-id")
     client_secret = os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET")
     add_general_regex_sanitizer(regex=client_secret, value="client-secret")
