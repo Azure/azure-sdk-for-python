@@ -154,7 +154,6 @@ async def test_compress_plain_header(http_request):
         decoded = content.decode('utf-8')
         assert decoded == "test"
 
-@pytest.mark.live_test_only
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_decompress_compressed_header(http_request):
