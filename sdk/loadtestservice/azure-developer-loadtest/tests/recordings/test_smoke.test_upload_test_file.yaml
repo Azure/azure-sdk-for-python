@@ -148,7 +148,7 @@ interactions:
       date:
       - Thu, 21 Jul 2022 10:14:54 GMT
       location:
-      - https://myservice.azure.com/loadtests/a011890b-0201-004d-010d/files/a012b234-1230-ab00-0040?resourceId=%2fsubscriptions%2f7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a%2fresourcegroups%2fyashika-rg%2fproviders%2fmicrosoft.loadtestservice%2floadtests%2floadtestsdk&api-version=2022-06-01-preview
+      - https://myservice.azure.com/loadtests/a011890b-0201-004d-010d/files/a012b234-1230-ab00-0040?resourceId=%2fsubscriptions%2ffake-subs-id%2fresourcegroups%2fyashika-rg%2fproviders%2fmicrosoft.loadtestservice%2floadtests%2floadtestsdk&api-version=2022-06-01-preview
       mise-correlation-id:
       - 3fea8021-c0c4-4910-aa0d-8812fc8bdc2a
       strict-transport-security:
