@@ -38,7 +38,7 @@ black: true
 
 ```yaml
 batch:
-#  - tag: release_runtime_1_1_preview
+  - tag: release_runtime_1_1_preview
   - tag: release_authoring_1_1_preview
 ```
 
