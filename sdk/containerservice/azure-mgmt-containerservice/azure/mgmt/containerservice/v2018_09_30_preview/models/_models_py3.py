@@ -6,11 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._container_service_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class CloudErrorBody(msrest.serialization.Model):
@@ -42,7 +44,7 @@ class CloudErrorBody(msrest.serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["CloudErrorBody"]] = None,
+        details: Optional[List["_models.CloudErrorBody"]] = None,
         **kwargs
     ):
         """
@@ -229,15 +231,15 @@ class OpenShiftManagedCluster(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        plan: Optional["PurchasePlan"] = None,
+        plan: Optional["_models.PurchasePlan"] = None,
         open_shift_version: Optional[str] = None,
         public_hostname: Optional[str] = None,
         fqdn: Optional[str] = None,
-        network_profile: Optional["NetworkProfile"] = None,
-        router_profiles: Optional[List["OpenShiftRouterProfile"]] = None,
-        master_pool_profile: Optional["OpenShiftManagedClusterMasterPoolProfile"] = None,
-        agent_pool_profiles: Optional[List["OpenShiftManagedClusterAgentPoolProfile"]] = None,
-        auth_profile: Optional["OpenShiftManagedClusterAuthProfile"] = None,
+        network_profile: Optional["_models.NetworkProfile"] = None,
+        router_profiles: Optional[List["_models.OpenShiftRouterProfile"]] = None,
+        master_pool_profile: Optional["_models.OpenShiftManagedClusterMasterPoolProfile"] = None,
+        agent_pool_profiles: Optional[List["_models.OpenShiftManagedClusterAgentPoolProfile"]] = None,
+        auth_profile: Optional["_models.OpenShiftManagedClusterAuthProfile"] = None,
         **kwargs
     ):
         """
@@ -382,7 +384,7 @@ class OpenShiftManagedClusterAgentPoolProfile(msrest.serialization.Model):
     :vartype name: str
     :ivar count: Required. Number of agents (VMs) to host docker containers.
     :vartype count: int
-    :ivar vm_size: Required. Size of agent VMs. Possible values include: "Standard_D2s_v3",
+    :ivar vm_size: Required. Size of agent VMs. Known values are: "Standard_D2s_v3",
      "Standard_D4s_v3", "Standard_D8s_v3", "Standard_D16s_v3", "Standard_D32s_v3",
      "Standard_D64s_v3", "Standard_DS4_v2", "Standard_DS5_v2", "Standard_F8s_v2",
      "Standard_F16s_v2", "Standard_F32s_v2", "Standard_F64s_v2", "Standard_F72s_v2", "Standard_F8s",
@@ -395,10 +397,9 @@ class OpenShiftManagedClusterAgentPoolProfile(msrest.serialization.Model):
     :ivar subnet_cidr: Subnet CIDR for the peering.
     :vartype subnet_cidr: str
     :ivar os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default to
-     Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+     Linux. Known values are: "Linux", "Windows". Default value: "Linux".
     :vartype os_type: str or ~azure.mgmt.containerservice.v2018_09_30_preview.models.OSType
-    :ivar role: Define the role of the AgentPoolProfile. Possible values include: "compute",
-     "infra".
+    :ivar role: Define the role of the AgentPoolProfile. Known values are: "compute", "infra".
     :vartype role: str or
      ~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftAgentPoolProfileRole
     """
@@ -423,10 +424,10 @@ class OpenShiftManagedClusterAgentPoolProfile(msrest.serialization.Model):
         *,
         name: str,
         count: int,
-        vm_size: Union[str, "OpenShiftContainerServiceVMSize"],
+        vm_size: Union[str, "_models.OpenShiftContainerServiceVMSize"],
         subnet_cidr: Optional[str] = "10.0.0.0/24",
-        os_type: Optional[Union[str, "OSType"]] = "Linux",
-        role: Optional[Union[str, "OpenShiftAgentPoolProfileRole"]] = None,
+        os_type: Optional[Union[str, "_models.OSType"]] = "Linux",
+        role: Optional[Union[str, "_models.OpenShiftAgentPoolProfileRole"]] = None,
         **kwargs
     ):
         """
@@ -435,7 +436,7 @@ class OpenShiftManagedClusterAgentPoolProfile(msrest.serialization.Model):
         :paramtype name: str
         :keyword count: Required. Number of agents (VMs) to host docker containers.
         :paramtype count: int
-        :keyword vm_size: Required. Size of agent VMs. Possible values include: "Standard_D2s_v3",
+        :keyword vm_size: Required. Size of agent VMs. Known values are: "Standard_D2s_v3",
          "Standard_D4s_v3", "Standard_D8s_v3", "Standard_D16s_v3", "Standard_D32s_v3",
          "Standard_D64s_v3", "Standard_DS4_v2", "Standard_DS5_v2", "Standard_F8s_v2",
          "Standard_F16s_v2", "Standard_F32s_v2", "Standard_F64s_v2", "Standard_F72s_v2", "Standard_F8s",
@@ -448,10 +449,9 @@ class OpenShiftManagedClusterAgentPoolProfile(msrest.serialization.Model):
         :keyword subnet_cidr: Subnet CIDR for the peering.
         :paramtype subnet_cidr: str
         :keyword os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default
-         to Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+         to Linux. Known values are: "Linux", "Windows". Default value: "Linux".
         :paramtype os_type: str or ~azure.mgmt.containerservice.v2018_09_30_preview.models.OSType
-        :keyword role: Define the role of the AgentPoolProfile. Possible values include: "compute",
-         "infra".
+        :keyword role: Define the role of the AgentPoolProfile. Known values are: "compute", "infra".
         :paramtype role: str or
          ~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftAgentPoolProfileRole
         """
@@ -479,7 +479,7 @@ class OpenShiftManagedClusterAuthProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        identity_providers: Optional[List["OpenShiftManagedClusterIdentityProvider"]] = None,
+        identity_providers: Optional[List["_models.OpenShiftManagedClusterIdentityProvider"]] = None,
         **kwargs
     ):
         """
@@ -510,7 +510,7 @@ class OpenShiftManagedClusterIdentityProvider(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        provider: Optional["OpenShiftManagedClusterBaseIdentityProvider"] = None,
+        provider: Optional["_models.OpenShiftManagedClusterBaseIdentityProvider"] = None,
         **kwargs
     ):
         """
@@ -549,7 +549,7 @@ class OpenShiftManagedClusterListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["OpenShiftManagedCluster"]] = None,
+        value: Optional[List["_models.OpenShiftManagedCluster"]] = None,
         **kwargs
     ):
         """
@@ -573,7 +573,7 @@ class OpenShiftManagedClusterMasterPoolProfile(msrest.serialization.Model):
     :ivar count: Required. Number of masters (VMs) to host docker containers. The default value is
      3.
     :vartype count: int
-    :ivar vm_size: Required. Size of agent VMs. Possible values include: "Standard_D2s_v3",
+    :ivar vm_size: Required. Size of agent VMs. Known values are: "Standard_D2s_v3",
      "Standard_D4s_v3", "Standard_D8s_v3", "Standard_D16s_v3", "Standard_D32s_v3",
      "Standard_D64s_v3", "Standard_DS4_v2", "Standard_DS5_v2", "Standard_F8s_v2",
      "Standard_F16s_v2", "Standard_F32s_v2", "Standard_F64s_v2", "Standard_F72s_v2", "Standard_F8s",
@@ -586,7 +586,7 @@ class OpenShiftManagedClusterMasterPoolProfile(msrest.serialization.Model):
     :ivar subnet_cidr: Subnet CIDR for the peering.
     :vartype subnet_cidr: str
     :ivar os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default to
-     Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+     Linux. Known values are: "Linux", "Windows". Default value: "Linux".
     :vartype os_type: str or ~azure.mgmt.containerservice.v2018_09_30_preview.models.OSType
     """
 
@@ -607,10 +607,10 @@ class OpenShiftManagedClusterMasterPoolProfile(msrest.serialization.Model):
         self,
         *,
         count: int,
-        vm_size: Union[str, "OpenShiftContainerServiceVMSize"],
+        vm_size: Union[str, "_models.OpenShiftContainerServiceVMSize"],
         name: Optional[str] = None,
         subnet_cidr: Optional[str] = None,
-        os_type: Optional[Union[str, "OSType"]] = "Linux",
+        os_type: Optional[Union[str, "_models.OSType"]] = "Linux",
         **kwargs
     ):
         """
@@ -620,7 +620,7 @@ class OpenShiftManagedClusterMasterPoolProfile(msrest.serialization.Model):
         :keyword count: Required. Number of masters (VMs) to host docker containers. The default value
          is 3.
         :paramtype count: int
-        :keyword vm_size: Required. Size of agent VMs. Possible values include: "Standard_D2s_v3",
+        :keyword vm_size: Required. Size of agent VMs. Known values are: "Standard_D2s_v3",
          "Standard_D4s_v3", "Standard_D8s_v3", "Standard_D16s_v3", "Standard_D32s_v3",
          "Standard_D64s_v3", "Standard_DS4_v2", "Standard_DS5_v2", "Standard_F8s_v2",
          "Standard_F16s_v2", "Standard_F32s_v2", "Standard_F64s_v2", "Standard_F72s_v2", "Standard_F8s",
@@ -633,7 +633,7 @@ class OpenShiftManagedClusterMasterPoolProfile(msrest.serialization.Model):
         :keyword subnet_cidr: Subnet CIDR for the peering.
         :paramtype subnet_cidr: str
         :keyword os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default
-         to Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+         to Linux. Known values are: "Linux", "Windows". Default value: "Linux".
         :paramtype os_type: str or ~azure.mgmt.containerservice.v2018_09_30_preview.models.OSType
         """
         super(OpenShiftManagedClusterMasterPoolProfile, self).__init__(**kwargs)
