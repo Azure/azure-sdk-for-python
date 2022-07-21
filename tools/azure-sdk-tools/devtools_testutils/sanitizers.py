@@ -218,7 +218,7 @@ def add_general_regex_sanitizer(**kwargs: "Any") -> None:
 
 
 def add_general_string_sanitizer(**kwargs: "Any") -> None:
-    """Registers a santiizer that cleans request and response URIs, headers, and bodies via string replacement.
+    """Registers a sanitizer that cleans request and response URIs, headers, and bodies via string replacement.
 
     This sanitizer offers a value replace across request/response bodies, headers, and URIs. For the body, this means a
     string replacement applied directly to the raw JSON.
