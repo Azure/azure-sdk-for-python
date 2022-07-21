@@ -293,6 +293,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self._handlers.add(handler)
         return handler
 
+    def list_something(self):
+        return None
+
     def get_queue_receiver(
         self,
         queue_name: str,
