@@ -20,25 +20,58 @@ autorest
 ### Settings
 
 ```yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/34a2c0723155d134311419fd997925ce96b85bec/specification/cognitiveservices/data-plane/Language/stable/2021-10-01/questionanswering.json
-output-folder: ../azure/ai/language/questionanswering
 namespace: azure.ai.language.questionanswering
 package-name: azure-ai-language-questionanswering
 license-header: MICROSOFT_MIT_NO_VERSION
 clear-output-folder: true
 no-namespace-folders: true
 python: true
-title: QuestionAnsweringClient
 version-tolerant: true
-models-mode: msrest
-package-version: 1.1.0b1
+package-version: 1.1.0b3
 add-credential: true
 credential-default-policy-type: AzureKeyCredentialPolicy
 credential-key-header-name: Ocp-Apim-Subscription-Key
 black: true
 ```
 
-### Rename "QuestionAnsweringKnowledgeBase_Query" -> "GetAnswers"
+## Batch Execution
+
+```yaml
+batch:
+  - tag: release_runtime_1_1_preview
+  - tag: release_authoring_1_1_preview
+```
+
+
+## Runtime
+
+These settings apply only when `--tag=release_runtime_1_1_preview` is specified on the command line.
+
+```yaml $(tag) == 'release_runtime_1_1_preview'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/34a2c0723155d134311419fd997925ce96b85bec/specification/cognitiveservices/data-plane/Language/stable/2021-10-01/questionanswering.json
+output-folder: ../azure/ai/language/questionanswering
+models-mode: msrest
+title: QuestionAnsweringClient
+```
+
+## Authoring
+
+These settings apply only when `--tag=release_authoring_1_1_preview` is specified on the command line.
+
+```yaml $(tag) == 'release_authoring_1_1_preview'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/Language/stable/2021-10-01/questionanswering-authoring.json
+output-folder: ../azure/ai/language/questionanswering/projects
+title: QuestionAnsweringProjectsClient
+```
+
+
+
+## Customizations
+
+### Runtime
+
+
+#### Rename "QuestionAnsweringKnowledgeBase_Query" -> "GetAnswers"
 
 ```yaml
 directive:
@@ -48,7 +81,7 @@ directive:
         $["operationId"] = "getAnswers";
 ```
 
-### Rename "QuestionAnsweringText_Query" -> "GetAnswersFromText"
+#### Rename "QuestionAnsweringText_Query" -> "GetAnswersFromText"
 
 ```yaml
 directive:
@@ -58,7 +91,7 @@ directive:
         $["operationId"] = "getAnswersFromText";
 ```
 
-### Rename `KnowledgeBasedQueryOptions` -> `Options`
+#### Rename `KnowledgeBasedQueryOptions` -> `Options`
 
 ```yaml
 directive:
@@ -68,7 +101,7 @@ directive:
         $["x-ms-client-name"] = "Options";
 ```
 
-### Rename `TextQueryOptions` -> `Options`
+#### Rename `TextQueryOptions` -> `Options`
 
 ```yaml
 directive:
@@ -78,7 +111,7 @@ directive:
         $["x-ms-client-name"] = "Options";
 ```
 
-### Delete `StringIndexType`
+#### Delete `StringIndexType`
 
 ```yaml
 directive:
@@ -88,7 +121,7 @@ directive:
         delete $.properties["stringIndexType"]
 ```
 
-### Delete `RankerKind` and `LogicalOperationKind` enums
+#### Delete `RankerKind` and `LogicalOperationKind` enums
 
 ```yaml
 directive:
@@ -101,7 +134,7 @@ directive:
         delete $["LogicalOperationKind"]["enum"];
 ```
 
-### Make `MetadataFilter`'s `metadata` property a list of string
+#### Make `MetadataFilter`'s `metadata` property a list of string
 
 ```yaml
 directive:
@@ -111,4 +144,133 @@ directive:
         delete $["MetadataFilter"]["properties"]["metadata"]["items"]["$ref"];
         $["MetadataFilter"]["properties"]["metadata"]["items"]["type"] = "object";
         delete $["MetadataRecord"];
+```
+
+### Authoring
+
+
+#### Remove operation group
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects"]["get"]
+    transform: >
+        $["operationId"] = "listProjects";
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}"]["get"]
+    transform: >
+        $["operationId"] = "getProjectDetails";
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}"]["patch"]
+    transform: >
+        $["operationId"] = "createProject";
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}"]["delete"]
+    transform: >
+        $["operationId"] = "deleteProject";
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/:export"]["post"]
+    transform: >
+        $["operationId"] = "export";
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/:import"]["post"]
+    transform: >
+        $["operationId"] = "importAssets";
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/deployments/{deploymentName}"]["put"]
+    transform: >
+        $["operationId"] = "deployProject";
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/deployments"]["get"]
+    transform: >
+        $["operationId"] = "listDeployments";
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/synonyms"]["get"]
+    transform: >
+        $["operationId"] = "listSynonyms";
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/synonyms"]["put"]
+    transform: >
+        $["operationId"] = "updateSynonyms";
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/sources"]["get"]
+    transform: >
+        $["operationId"] = "listSources";
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/sources"]["patch"]
+    transform: >
+        $["operationId"] = "updateSources";
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/qnas"]["get"]
+    transform: >
+        $["operationId"] = "listQnas";
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/qnas"]["patch"]
+    transform: >
+        $["operationId"] = "updateQnas";
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/feedback"]["post"]
+    transform: >
+        $["operationId"] = "addFeedback";
+```
+
+#### Remove status operations
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/deletion-jobs/{jobId}"]
+    transform: >
+        delete $["get"];
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/export/jobs/{jobId}"]
+    transform: >
+        delete $["get"];
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/import/jobs/{jobId}"]
+    transform: >
+        delete $["get"];
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/deployments/{deploymentName}/jobs/{jobId}"]
+    transform: >
+        delete $["get"];
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/sources/jobs/{jobId}"]
+    transform: >
+        delete $["get"];
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/qnas/jobs/{jobId}"]
+    transform: >
+        delete $["get"];
+```
+
+#### Rename body parameter
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/feedback"]["post"]
+    transform: >
+        $["parameters"][2]["x-ms-client-name"] = "feedback";
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/qnas"]["patch"]
+    transform: >
+        $["parameters"][2]["x-ms-client-name"] = "qnas";
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/sources"]["patch"]
+    transform: >
+        $["parameters"][2]["x-ms-client-name"] = "sources";
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/synonyms"]["put"]
+    transform: >
+        $["parameters"][2]["x-ms-client-name"] = "synonyms";
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}/:import"]["post"]
+    transform: >
+        $["parameters"][2]["x-ms-client-name"] = "options";
+  - from: swagger-document
+    where: $["paths"]["/query-knowledgebases/projects/{projectName}"]["patch"]
+    transform: >
+        $["parameters"][1]["x-ms-client-name"] = "options";
 ```
