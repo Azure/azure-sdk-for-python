@@ -3268,7 +3268,7 @@ class DocumentTableCell:
         )
 
 
-class ModelOperationInfo:
+class ModelOperationSummary:
     """Model operation information, including the kind and status of the operation, when it was
     created, and more.
 
@@ -3314,14 +3314,14 @@ class ModelOperationInfo:
 
     def __repr__(self):
         return (
-            f"ModelOperationInfo(operation_id={self.operation_id}, status={self.status}, "
+            f"ModelOperationSummary(operation_id={self.operation_id}, status={self.status}, "
             f"percent_completed={self.percent_completed}, created_on={self.created_on}, "
             f"last_updated_on={self.last_updated_on}, kind={self.kind}, "
             f"resource_location={self.resource_location}, api_version={self.api_version}, tags={self.tags})"
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of ModelOperationInfo.
+        """Returns a dict representation of ModelOperationSummary.
 
         :return: dict
         :rtype: dict
@@ -3339,12 +3339,12 @@ class ModelOperationInfo:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "ModelOperationInfo":
-        """Converts a dict in the shape of a ModelOperationInfo to the model itself.
+    def from_dict(cls, data: dict) -> "ModelOperationSummary":
+        """Converts a dict in the shape of a ModelOperationSummary to the model itself.
 
-        :param dict data: A dictionary in the shape of ModelOperationInfo.
-        :return: ModelOperationInfo
-        :rtype: ModelOperationInfo
+        :param dict data: A dictionary in the shape of ModelOperationSummary.
+        :return: ModelOperationSummary
+        :rtype: ModelOperationSummary
         """
         return cls(
             operation_id=data.get("operation_id", None),
@@ -3373,8 +3373,8 @@ class ModelOperationInfo:
         )
 
 
-class ModelOperation(ModelOperationInfo):
-    """ModelOperation consists of information about the model operation, including the result or
+class ModelOperationDetails(ModelOperationSummary):
+    """ModelOperationDetails consists of information about the model operation, including the result or
     error of the operation if it has completed.
 
     Note that operation information only persists for 24 hours. If the operation was successful,
@@ -3419,7 +3419,7 @@ class ModelOperation(ModelOperationInfo):
 
     def __repr__(self):
         return (
-            f"ModelOperation(operation_id={self.operation_id}, status={self.status}, "
+            f"ModelOperationDetails(operation_id={self.operation_id}, status={self.status}, "
             f"percent_completed={self.percent_completed}, created_on={self.created_on}, "
             f"last_updated_on={self.last_updated_on}, kind={self.kind}, "
             f"resource_location={self.resource_location}, result={repr(self.result)}, "
@@ -3427,7 +3427,7 @@ class ModelOperation(ModelOperationInfo):
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of ModelOperation.
+        """Returns a dict representation of ModelOperationDetails.
 
         :return: dict
         :rtype: dict
@@ -3447,12 +3447,12 @@ class ModelOperation(ModelOperationInfo):
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "ModelOperation":
-        """Converts a dict in the shape of a ModelOperation to the model itself.
+    def from_dict(cls, data: dict) -> "ModelOperationDetails":
+        """Converts a dict in the shape of a ModelOperationDetails to the model itself.
 
-        :param dict data: A dictionary in the shape of ModelOperation.
-        :return: ModelOperation
-        :rtype: ModelOperation
+        :param dict data: A dictionary in the shape of ModelOperationDetails.
+        :return: ModelOperationDetails
+        :rtype: ModelOperationDetails
         """
         return cls(
             operation_id=data.get("operation_id", None),
@@ -3937,8 +3937,8 @@ class DocTypeInfo:
         )
 
 
-class ResourceInfo:
-    """Info regarding models under the Form Recognizer resource.
+class ResourceDetails:
+    """Details regarding models under the Form Recognizer resource.
 
     :ivar int document_model_count: Number of custom models in the current resource.
     :ivar int document_model_limit: Maximum number of custom models supported in the current resource.
@@ -3953,7 +3953,7 @@ class ResourceInfo:
 
     def __repr__(self):
         return (
-            f"ResourceInfo(document_model_count={self.document_model_count}, "
+            f"ResourceDetails(document_model_count={self.document_model_count}, "
             f"document_model_limit={self.document_model_limit})"
         )
 
@@ -3966,7 +3966,7 @@ class ResourceInfo:
 
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of ResourceInfo.
+        """Returns a dict representation of ResourceDetails.
 
         :return: dict
         :rtype: dict
@@ -3977,12 +3977,12 @@ class ResourceInfo:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "ResourceInfo":
-        """Converts a dict in the shape of a ResourceInfo to the model itself.
+    def from_dict(cls, data: dict) -> "ResourceDetails":
+        """Converts a dict in the shape of a ResourceDetails to the model itself.
 
-        :param dict data: A dictionary in the shape of ResourceInfo.
-        :return: ResourceInfo
-        :rtype: ResourceInfo
+        :param dict data: A dictionary in the shape of ResourceDetails.
+        :return: ResourceDetails
+        :rtype: ResourceDetails
         """
         return cls(
             document_model_count=data.get("document_model_count", None),

@@ -511,7 +511,7 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_model_operation(self, document_analysis_error, document_model):
-        model = _models.ModelOperation(
+        model = _models.ModelOperationDetails(
                 api_version="2022-06-30-preview",
                 tags={"awesome": "tag"},
                 operation_id="id",
@@ -524,7 +524,7 @@ class TestRepr():
                 error=document_analysis_error[0],
                 result=document_model[0],
             )
-        model_repr = "ModelOperation(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, result={}, error={}, api_version={}, tags={})".format(
+        model_repr = "ModelOperationDetails(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, result={}, error={}, api_version={}, tags={})".format(
                     "id",
                     "succeeded",
                     99,
@@ -540,7 +540,7 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_model_operation_info(self):
-        model = _models.ModelOperationInfo(
+        model = _models.ModelOperationSummary(
                 operation_id="id",
                 status="succeeded",
                 percent_completed=100,
@@ -551,7 +551,7 @@ class TestRepr():
                 api_version="2022-06-30-preview",
                 tags={"test": "value"},
             )
-        model_repr = "ModelOperationInfo(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, api_version={}, tags={})".format(
+        model_repr = "ModelOperationSummary(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, api_version={}, tags={})".format(
                     "id",
                     "succeeded",
                     100,
@@ -603,10 +603,10 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_account_info(self):
-        model = _models.ResourceInfo(
+        model = _models.ResourceDetails(
             document_model_limit=5000, document_model_count=10
         )
-        model_repr = "ResourceInfo(document_model_count={}, document_model_limit={})".format(
+        model_repr = "ResourceDetails(document_model_count={}, document_model_limit={})".format(
             10, 5000
         )
         assert repr(model) == model_repr
