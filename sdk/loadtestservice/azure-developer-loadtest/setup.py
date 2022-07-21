@@ -74,10 +74,10 @@ setup(
     
     install_requires=[
         
-        "isodate<1.0.0,>=0.6.1",
+        "isodate<1.0.0,>=0.6.0",
         
         
-        "azure-core<2.0.0,>=1.24.0",
+        "azure-core<2.0.0,>=1.2.2",
         
     ],
     
