@@ -39,12 +39,22 @@ class PyodideTransportIntegrationTestSuite(AsyncTestSuite):
         request = HttpRequest(method="GET", url=url)
         transport = PyodideTransport()
         response = await transport.send(request, stream_response=True)
+        response.headers["enc"] = "deflate"
         data = b"".join([x async for x in response.iter_bytes()])
         assert data == b"hello world\n"
 
         response = await transport.send(request, stream_response=True)
         data = b"".join([x async for x in response.iter_raw()])
         assert data != b"hello world\n"
+
+        response = await transport.send(request, stream_response=True)
+        data = b"".join([x async for x in response.iter_bytes()])
+        assert data != b"hello world\n"
+
+        response = await transport.send(request, stream_response=True)
+        response.headers["enc"] = "deflate"
+        data = b"".join([x async for x in response.iter_bytes()])
+        assert data == b"hello world\n"
 
 
     async def test_sentiment_analysis(self):

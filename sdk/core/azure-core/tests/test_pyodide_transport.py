@@ -91,6 +91,7 @@ class TestPyodideTransportClass:
         bytes_promise.set_result(body)
         mock_response.bytes = mock.Mock()
         mock_response.bytes.return_value = bytes_promise
+        mock_response.clone.return_value = mock_response
 
         response_promise = asyncio.Future()
         response_promise.set_result(mock_response)
@@ -120,6 +121,7 @@ class TestPyodideTransportClass:
         mock_pyodide_module.http.pyfetch.return_value = mock_response
         response = (await pipeline.run(request=request)).http_response
         # Check that the pipeline processed the data correctly.
+        await response.load_body()
         assert response.body() == response_body
         assert response.status_code == response_status
         assert response.headers == response_headers
@@ -143,6 +145,12 @@ class TestPyodideTransportClass:
         assert kwargs["verify"]
         assert kwargs["cert"] is None
         assert not kwargs["files"]
+
+        # check that the js_stream property is cloning
+        num_clones = mock_pyfetch.clone.call_count
+        response.js_stream
+        assert mock_pyfetch.call_count == num_clones + 1
+
 
     @pytest.mark.asyncio
     async def test_unsuccessful_send(self, mock_pyfetch, mock_pyodide_module, pipeline):
@@ -170,7 +178,7 @@ class TestPyodideTransportClass:
         read_promise.set_result(ReaderReturn(value=b"01", done=False))
         reader = mock.Mock()
         reader.read.return_value = read_promise
-        response_mock._js_stream.getReader.return_value = reader
+        response_mock.js_stream.getReader.return_value = reader
         generator = transport.PyodideStreamDownloadGenerator(pipeline=None, response=response_mock)
 
         assert len(await generator.__anext__()) == response_mock._block_size
@@ -189,6 +197,8 @@ class TestPyodideTransportClass:
     @pytest.mark.asyncio
     async def test_download_generator_compress(self, transport, mock_js_module):
         """Test that we are attempting to decompress data when passing the `decompress`."""
-        transport.PyodideStreamDownloadGenerator(pipeline=None, response=mock.Mock(), decompress=True)
+        response = mock.Mock()
+        response.headers = {"enc": "deflate"}
+        transport.PyodideStreamDownloadGenerator(pipeline=None, response=response, decompress=True)
         mock_js_module.DecompressionStream.new.assert_called_once_with("gzip")
  

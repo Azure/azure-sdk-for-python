@@ -43,11 +43,10 @@ from ._requests_asyncio import AsyncioRequestsTransport
 class PyodideTransportResponse(AsyncHttpResponseImpl):
     """Async response object for the `PyodideTransport`."""
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        # clone to avoid reading from the same `FetchResponse` a second time in `read`.
-        self._js_stream = self.internal_response.clone().js_response.body
-        self._js_reader = None
+    @property
+    def js_stream(self):
+        """So we get a fresh stream every time."""
+        return self._internal_response.clone().js_response.body
 
     async def close(self) -> None:
         """We don't actually have control over closing connections in the browser, so we just pretend
@@ -58,6 +57,11 @@ class PyodideTransportResponse(AsyncHttpResponseImpl):
     def body(self) -> bytes:
         """The body is just the content."""
         return self.content
+    
+    async def load_body(self) -> None:
+        """Backcompat"""
+        if self._content is None:
+            self._content = await self._internal_response.clone().bytes()
 
 class PyodideStreamDownloadGenerator(AsyncIterator):
     """Simple stream download generator that returns the contents of
@@ -69,10 +73,10 @@ class PyodideStreamDownloadGenerator(AsyncIterator):
         self._block_size = response._block_size
         self.response = response
         # use this to efficiently store bytes.
-        if kwargs.pop("decompress", False):
-            self._js_reader = response._js_stream.pipeThrough(js.DecompressionStream.new("gzip")).getReader()
+        if kwargs.pop("decompress", False) and self.response.headers.get("enc", None) in ("gzip", "deflate"):
+            self._js_reader = response.js_stream.pipeThrough(js.DecompressionStream.new("gzip")).getReader()
         else:
-            self._js_reader = response._js_stream.getReader()
+            self._js_reader = response.js_stream.getReader()
         self._stream = BytesIO()
 
         self._closed = False
@@ -150,6 +154,6 @@ class PyodideTransport(AsyncioRequestsTransport):
             stream_download_generator=PyodideStreamDownloadGenerator,
         )
         if not stream_response:
-            await transport_response.read()
+            await transport_response.load_body()
 
         return transport_response
