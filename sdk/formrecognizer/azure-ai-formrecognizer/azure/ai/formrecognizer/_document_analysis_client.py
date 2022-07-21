@@ -132,7 +132,9 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_analyze_document_from_url(self, model_id: str, document_url: str, **kwargs: Any) -> LROPoller[AnalyzeResult]:
+    def begin_analyze_document_from_url(
+        self, model_id: str, document_url: str, **kwargs: Any
+    ) -> LROPoller[AnalyzeResult]:
         """Analyze field text and semantic values from a given document.
         The input must be the location (URL) of the document to be analyzed.
 
