@@ -100,7 +100,6 @@ class MapsRenderClient(MapsRenderClientBase):
             z=tile_index_z,
             x=tile_index_x,
             y=tile_index_y,
-            tile_size=kwargs.pop("tile_size", "256")
             **kwargs
         )
 
@@ -153,12 +152,20 @@ class MapsRenderClient(MapsRenderClientBase):
         :param bounds:
             The string that represents the rectangular area of a bounding box. The bounds
             parameter is defined by the 4 bounding box coordinates, with WGS84 longitude and latitude of
-            the southwest corner followed by  WGS84 longitude and latitude of the northeast corner.
+            the southwest corner which is "bottom_left" followed by
+            WGS84 longitude and latitude of the northeast corner which is "top_right".
         :type bounds: BoundingBox
         :return: MapAttribution
         :rtype: ~azure.maps.render.models.MapAttribution
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        bounds=[
+            bounds.bottom_left.lat,
+            bounds.bottom_left.lon,
+            bounds.top_right.lat,
+            bounds.top_right.lon
+        ]
+
         return self._render_client.get_map_attribution(
             tileset_id=tileset_id,
             zoom=zoom,
@@ -230,7 +237,7 @@ class MapsRenderClient(MapsRenderClientBase):
     @distributed_trace
     def get_map_static_image(
         self,
-        _format, # type Union[str, "models.RasterTileFormat"]
+        img_format, # type Union[str, "models.RasterTileFormat"]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterator[bytes]
@@ -243,9 +250,9 @@ class MapsRenderClient(MapsRenderClientBase):
         choice. If you want to support a lot of zooming, panning and changing of the map content, the
         map tile service would be a better choice.
 
-        :param _format:
+        :param img_format:
             Desired format of the response. Possible value: png. "png" Default value is "png".
-        :type _format: str or ~azure.maps.render.models.RasterTileFormat
+        :type img_format: str or ~azure.maps.render.models.RasterTileFormat
         :keyword layer:
             Map layer requested.
         :paramtype layer: str or ~azure.maps.render.models.StaticMapLayer
@@ -287,7 +294,7 @@ class MapsRenderClient(MapsRenderClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._render_client.get_map_static_image(
-            format=_format,
+            format=img_format,
             **kwargs
         )
 
@@ -316,8 +323,8 @@ class MapsRenderClient(MapsRenderClientBase):
         _include_text=kwargs.pop("include_text", True)
 
         return self._render_client.get_copyright_from_bounding_box(
-            south_west=bounding_box.bottom_left,
-            north_east=bounding_box.top_right,
+            south_west=(bounding_box.bottom_left.lat,bounding_box.bottom_left.lon),
+            north_east=(bounding_box.top_right.lat,bounding_box.top_right.lon),
             include_text= "yes" if _include_text else "no",
             **kwargs
         )

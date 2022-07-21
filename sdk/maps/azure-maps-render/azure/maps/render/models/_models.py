@@ -39,10 +39,10 @@ class BoundingBox(object):
 
     def __init__(
         self,
-        top_left: LatLon = None,
-        bottom_right: LatLon = None,
-        top_right: LatLon = None,
-        bottom_left: LatLon = None
+        top_left: LatLon = LatLon(),
+        bottom_right: LatLon = LatLon(),
+        top_right: LatLon = LatLon(),
+        bottom_left: LatLon = LatLon()
     ):
         self.top_left = top_left
         self.bottom_right = bottom_right

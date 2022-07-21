@@ -100,15 +100,72 @@ objects are async context managers and define async `close` methods.
 The following sections provide several code snippets covering some of the most common Azure Maps Render tasks, including:
 
 - [Get Maps Attribution](#get-maps-attribution)
+- [Get Maps Static Image](#get-maps-static-image)
+- [Get Maps Tile](#get-maps-tile)
+- [Get Maps Tileset](#get-maps-tileset)
+- [Get Maps Copyright for World](#get-maps-copyright-for-world)
 
-### Get Maps Attr
+### Get Maps Attribution
 
-Get Maps Attr
+Get Maps Attribution
 
 ```python
 from azure.maps.render import MapsRenderClient
 
-render_result = client.render_address("400 Broad, Seattle");
+result = maps_render_client.get_map_attribution(
+    tileset_id=TilesetID.MICROSOFT_BASE,
+    zoom=6,
+    bounds=BoundingBox(
+        bottom_left=(LatLon(42.982261, 24.980233)),
+        top_right=(LatLon(56.526017, 1.355233))
+    )
+)
+```
+
+### Get Maps Tile
+
+Get Maps Tile
+
+```python
+from azure.maps.render import MapsRenderClient
+
+result = maps_render_client.get_map_tile(
+    tileset_id=TilesetID.MICROSOFT_BASE,
+    tile_index_z=6,
+    tile_index_x=9,
+    tile_index_y=22,
+    tile_size="512"
+)
+```
+
+### Get Maps Tileset
+
+Get Maps Tileset
+
+```python
+from azure.maps.render import MapsRenderClient
+
+result = maps_render_client.get_map_tileset(tileset_id=TilesetID.MICROSOFT_BASE)
+```
+
+### Get Maps Static Image
+
+Get Maps State Image
+
+```python
+from azure.maps.render import MapsRenderClient
+
+result = maps_render_client.get_map_static_image(img_format="png", center=(52.41064,4.84228))
+```
+
+### Get Maps Copyright for World
+
+Get Maps Copyright for world
+
+```python
+from azure.maps.render import MapsRenderClient
+
+result = maps_render_client.get_copyright_for_world()
 ```
 
 ## Troubleshooting
@@ -166,6 +223,14 @@ set AZURE_SUBSCRIPTION_KEY="<RealSubscriptionKey>"
 pip install azure-maps-render --pre
 
 python samples/sample_authentication.py
+python sample/sample_get_copyright_caption.py
+python sample/sample_get_copyright_for_tile.py
+python sample/sample_get_copyright_for_world.py
+python sample/sample_get_copyright_from_bounding_box.py
+python sample/sample_get_map_attribution.py
+python sample/sample_get_map_static_image.py
+python sample/sample_get_map_tile.py
+python sample/sample_get_map_tileset.py
 ```
 
 > Notes: `--pre` flag can be optionally added, it is to include pre-release and development versions for `pip install`. By default, `pip` only finds stable versions.

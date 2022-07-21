@@ -3,12 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-#pylint: disable=C0209
 from typing import Union, TYPE_CHECKING
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
 from ._generated import RenderClient as _MapsRenderClient
-from ._version import VERSION
+from ._version import API_VERSION
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
@@ -38,7 +37,7 @@ class MapsRenderClientBase:
 
         self._maps_client = _MapsRenderClient(
             credential=credential,  # type: ignore
-            api_version=kwargs.pop("api_version", VERSION),
+            api_version=kwargs.pop("api_version", API_VERSION),
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             **kwargs
         )

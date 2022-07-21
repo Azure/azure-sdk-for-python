@@ -4,11 +4,12 @@ import pytest
 
 from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests import RecordingProcessor
+from azure.core.credentials import AzureKeyCredential
 from azure.maps.render import MapsRenderClient
-from azure.maps.render.models import LatLon
+from azure.maps.render.models import LatLon, TilesetID, BoundingBox
 
 
-
+# cSpell:disable
 class HeaderReplacer(RecordingProcessor):
     def __init__(self):
         self.headers = []
@@ -29,19 +30,25 @@ class HeaderReplacer(RecordingProcessor):
 class AzureMapsRenderClientE2ETest(AzureTestCase):
     def __init__(self, *args, **kwargs):
         super(AzureMapsRenderClientE2ETest, self).__init__(*args, **kwargs)
-        header_replacer = HeaderReFplacer()
+        header_replacer = HeaderReplacer()
         header_replacer.register_header("subscription-key", "<RealSubscriptionKey>")
         header_replacer.register_header("x-ms-client-id", "<RealClientId>")
         self.recording_processors.append(header_replacer)
 
     def setUp(self):
         super(AzureMapsRenderClientE2ETest, self).setUp()
-        self.client = self.create_client_from_credential(RenderClient,
-            credential="NotUsed",
-            client_id=self.get_settings_value("CLIENT_ID"),
-            authentication_policy = self.get_credential(RenderClient))
+        self.client = MapsRenderClient(
+            client_id=self.get_settings_value('CLIENT_ID'),
+            credential=AzureKeyCredential(self.get_settings_value('SUBSCRIPTION_KEY')),
+        )
         assert self.client is not None
 
+    @pytest.mark.live_test_only
+    def test_get_map_tile(self):
+        result = self.client.get_map_tile(tileset_id=TilesetID.MICROSOFT_BASE, tile_index_z=6, tile_index_x=9, tile_index_y=22, tile_size="512")
+
+        assert len(result.results) > 0
+        top_answer = result.results[0]
 
 
 

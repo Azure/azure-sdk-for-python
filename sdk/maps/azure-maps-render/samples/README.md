@@ -17,7 +17,21 @@ Authenticate the client with a Azure Maps Render [API Key Credential](https://do
 
 Then for common Azure Maps Render operations:
 
-* Perform fuzzy render: [sample_fuzzy_render.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-render/samples/sample_fuzzy_render.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-render/samples/async_samples/sample_fuzzy_render_async.py))
+* Perform Get Map tile: [sample_get_map_tile.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-render/samples/sample_get_map_tile.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-render/samples/async_samples/sample_get_map_tile_async.py))
+
+* Perform Get Map tileset: [sample_get_map_tileset.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-render/samples/sample_get_map_tileset.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-render/samples/async_samples/sample_get_map_tileset_async.py))
+
+* Perform Get Map static image: [sample_get_map_static_image.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-render/samples/sample_get_map_static_image.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-render/samples/async_samples/sample_get_map_static_image_async.py))
+
+* Perform Get Map Attribution: [sample_get_map_attribution.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-render/samples/sample_get_map_attribution.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-render/samples/async_samples/sample_get_map_attribution_async.py))
+
+* Perform Get Copyright from bounding box: [sample_get_copyright_from_bounding_box.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-render/samples/sample_get_copyright_from_bounding_box.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-render/samples/async_samples/sample_get_copyright_from_bounding_box_async.py))
+
+* Perform Get Copyright fpr world: [sample_get_copyright_for_world.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-render/samples/sample_get_copyright_for_world.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-render/samples/async_samples/sample_get_copyright_for_world_async.py))
+
+* Perform Get Copyright for tile: [sample_get_copyright_for_tile.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-render/samples/sample_get_copyright_for_tile.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-render/samples/async_samples/sample_get_copyright_for_tile_async.py))
+
+* Perform Get Copyright caption: [sample_get_copyright_caption.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-render/samples/sample_get_copyright_caption.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-render/samples/async_samples/sample_get_copyright_caption_async.py))
 
 ## Prerequisites
 
@@ -40,7 +54,7 @@ Then for common Azure Maps Render operations:
 
 1. Open a terminal window and `cd` to the directory that the samples are saved in.
 2. Set the environment variables specified in the sample file you wish to run.
-3. Follow the usage described in the file, e.g. `python sample_fuzzy_render.py`
+3. Follow the usage described in the file, e.g. `python sample_get_map_tile.py`
 
 ## Next steps
 
