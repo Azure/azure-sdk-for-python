@@ -731,7 +731,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         repo = self.get_resource_name("repo")
         client = self.create_registry_client(containerregistry_endpoint)       
         blob = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
-        path = os.path.join(os.getcwd(), "data", "oci_artifact", blob)
+        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", blob)
         
         # Act
         data = open(path, "rb")
