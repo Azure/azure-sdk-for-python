@@ -32,14 +32,14 @@ from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 import time
 
+# using python dotenv library to load environment variables from a .env file
+from dotenv import load_dotenv
+
 logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger()
 
 # Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
 # AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, LOADTESTSERVICE_ENDPOINT, SUBSCRIPTION_ID
-
-# using python dotenv library to load environment variables from a .env file
-from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -47,7 +47,6 @@ endpoint = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
 # Build a client through AAD
 client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=endpoint)
-
 
 TEST_ID = "a011890b-0201-004d-010d"  # ID to be assigned to a test
 FILE_ID = "a012b234-1230-ab00-0040"  # ID to be assigned to file uploaded
@@ -79,7 +78,6 @@ try:
     print(result)
 except HttpResponseError as e:
     print("Failed to process the request: {}".format(e.response.json()))
-
 
 # uploading .jmx file to a test
 try:

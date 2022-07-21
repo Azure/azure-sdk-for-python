@@ -10,56 +10,22 @@ import datetime
 import sys
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    map_error,
-)
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ...operations._operations import (
-    build_app_component_create_or_update_app_components_request,
-    build_app_component_delete_app_component_request,
-    build_app_component_get_app_component_by_name_request,
-    build_app_component_get_app_component_request,
-    build_server_metrics_create_or_update_server_metrics_config_request,
-    build_server_metrics_delete_server_metrics_request,
-    build_server_metrics_get_server_default_metrics_request,
-    build_server_metrics_get_server_metrics_by_name_request,
-    build_server_metrics_get_server_metrics_request,
-    build_server_metrics_list_supported_resource_type_request,
-    build_test_create_or_update_test_request,
-    build_test_delete_load_test_request,
-    build_test_delete_test_file_request,
-    build_test_get_all_test_files_request,
-    build_test_get_load_test_request,
-    build_test_get_test_file_request,
-    build_test_list_load_test_search_request,
-    build_test_run_create_and_update_test_request,
-    build_test_run_delete_test_run_request,
-    build_test_run_get_test_run_client_metrics_filters_request,
-    build_test_run_get_test_run_client_metrics_request,
-    build_test_run_get_test_run_file_request,
-    build_test_run_get_test_run_request,
-    build_test_run_list_test_runs_search_request,
-    build_test_run_stop_test_run_request,
-)
+from ...operations._operations import build_app_component_create_or_update_app_components_request, build_app_component_delete_app_components_request, build_app_component_get_app_component_by_name_request, build_app_component_get_app_component_request, build_server_metrics_create_or_update_server_metrics_config_request, build_server_metrics_delete_server_metrics_config_request, build_server_metrics_get_server_default_metrics_config_request, build_server_metrics_get_server_metrics_config_by_name_request, build_server_metrics_get_server_metrics_config_request, build_server_metrics_list_supported_resource_types_request, build_test_create_or_update_test_request, build_test_delete_load_test_request, build_test_delete_test_file_request, build_test_get_load_test_request, build_test_get_test_file_request, build_test_list_load_test_search_request, build_test_list_test_files_request, build_test_run_create_or_update_test_request, build_test_run_delete_test_run_request, build_test_run_get_test_run_client_metrics_filters_request, build_test_run_get_test_run_client_metrics_request, build_test_run_get_test_run_file_request, build_test_run_get_test_run_request, build_test_run_list_test_runs_request, build_test_run_stop_test_run_request
 from .._vendor import raise_if_not_implemented
-
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
-T = TypeVar("T")
+JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
+T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
-
 
 class AppComponentOperations:
     """
@@ -78,9 +44,15 @@ class AppComponentOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+
     @overload
     async def create_or_update_app_components(
-        self, name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        name: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> JSON:
         """Associate an App Component (Azure resource) to a test or test run.
 
@@ -156,7 +128,12 @@ class AppComponentOperations:
 
     @overload
     async def create_or_update_app_components(
-        self, name: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        name: str,
+        body: IO,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> JSON:
         """Associate an App Component (Azure resource) to a test or test run.
 
@@ -204,8 +181,14 @@ class AppComponentOperations:
                 }
         """
 
+
     @distributed_trace_async
-    async def create_or_update_app_components(self, name: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    async def create_or_update_app_components(
+        self,
+        name: str,
+        body: Union[JSON, IO],
+        **kwargs: Any
+    ) -> JSON:
         """Associate an App Component (Azure resource) to a test or test run.
 
         Associate an App Component (Azure resource) to a test or test run.
@@ -251,14 +234,16 @@ class AppComponentOperations:
                     }
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -278,12 +263,14 @@ class AppComponentOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -309,9 +296,13 @@ class AppComponentOperations:
 
         return cast(JSON, deserialized)
 
+
+
     @distributed_trace_async
-    async def delete_app_component(  # pylint: disable=inconsistent-return-statements
-        self, name: str, **kwargs: Any
+    async def delete_app_components(  # pylint: disable=inconsistent-return-statements
+        self,
+        name: str,
+        **kwargs: Any
     ) -> None:
         """Delete an App Component.
 
@@ -324,27 +315,32 @@ class AppComponentOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        request = build_app_component_delete_app_component_request(
+        
+        request = build_app_component_delete_app_components_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -356,8 +352,14 @@ class AppComponentOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
+
+
     @distributed_trace_async
-    async def get_app_component_by_name(self, name: str, **kwargs: Any) -> JSON:
+    async def get_app_component_by_name(
+        self,
+        name: str,
+        **kwargs: Any
+    ) -> JSON:
         """Get App Component details by App Component name.
 
         Get App Component details by App Component name.
@@ -398,14 +400,17 @@ class AppComponentOperations:
                     }
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
+        
         request = build_app_component_get_app_component_by_name_request(
             name=name,
             api_version=self._config.api_version,
@@ -413,12 +418,14 @@ class AppComponentOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -437,9 +444,15 @@ class AppComponentOperations:
 
         return cast(JSON, deserialized)
 
+
+
     @distributed_trace_async
     async def get_app_component(
-        self, *, test_run_id: Optional[str] = None, test_id: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        test_run_id: Optional[str] = None,
+        test_id: Optional[str] = None,
+        **kwargs: Any
     ) -> JSON:
         """Get App Components for a test or a test run by its name.
 
@@ -483,14 +496,17 @@ class AppComponentOperations:
                     }
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
+        
         request = build_app_component_get_app_component_request(
             test_run_id=test_run_id,
             test_id=test_id,
@@ -499,12 +515,14 @@ class AppComponentOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -541,9 +559,15 @@ class ServerMetricsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+
     @overload
     async def create_or_update_server_metrics_config(
-        self, name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        name: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> JSON:
         """Configure server metrics for a test or test run.
 
@@ -617,7 +641,12 @@ class ServerMetricsOperations:
 
     @overload
     async def create_or_update_server_metrics_config(
-        self, name: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        name: str,
+        body: IO,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> JSON:
         """Configure server metrics for a test or test run.
 
@@ -664,8 +693,14 @@ class ServerMetricsOperations:
                 }
         """
 
+
     @distributed_trace_async
-    async def create_or_update_server_metrics_config(self, name: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    async def create_or_update_server_metrics_config(
+        self,
+        name: str,
+        body: Union[JSON, IO],
+        **kwargs: Any
+    ) -> JSON:
         """Configure server metrics for a test or test run.
 
         Configure server metrics for a test or test run.
@@ -710,14 +745,16 @@ class ServerMetricsOperations:
                       run unique identifier.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -737,12 +774,14 @@ class ServerMetricsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -768,8 +807,14 @@ class ServerMetricsOperations:
 
         return cast(JSON, deserialized)
 
+
+
     @distributed_trace_async
-    async def get_server_metrics_by_name(self, name: str, **kwargs: Any) -> JSON:
+    async def get_server_metrics_config_by_name(
+        self,
+        name: str,
+        **kwargs: Any
+    ) -> JSON:
         """Get server metrics configuration by its name.
 
         Get server metrics configuration by its name.
@@ -809,27 +854,32 @@ class ServerMetricsOperations:
                       run unique identifier.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        request = build_server_metrics_get_server_metrics_by_name_request(
+        
+        request = build_server_metrics_get_server_metrics_config_by_name_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -848,9 +898,13 @@ class ServerMetricsOperations:
 
         return cast(JSON, deserialized)
 
+
+
     @distributed_trace_async
-    async def delete_server_metrics(  # pylint: disable=inconsistent-return-statements
-        self, name: str, **kwargs: Any
+    async def delete_server_metrics_config(  # pylint: disable=inconsistent-return-statements
+        self,
+        name: str,
+        **kwargs: Any
     ) -> None:
         """Delete server metrics configuration by its name.
 
@@ -863,27 +917,32 @@ class ServerMetricsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        request = build_server_metrics_delete_server_metrics_request(
+        
+        request = build_server_metrics_delete_server_metrics_config_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -895,9 +954,15 @@ class ServerMetricsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
+
+
     @distributed_trace_async
-    async def get_server_metrics(
-        self, *, test_run_id: Optional[str] = None, test_id: Optional[str] = None, **kwargs: Any
+    async def get_server_metrics_config(
+        self,
+        *,
+        test_run_id: Optional[str] = None,
+        test_id: Optional[str] = None,
+        **kwargs: Any
     ) -> JSON:
         """Get server metrics configuration for a test or test run by its name.
 
@@ -940,15 +1005,18 @@ class ServerMetricsOperations:
                       run unique identifier.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        request = build_server_metrics_get_server_metrics_request(
+        
+        request = build_server_metrics_get_server_metrics_config_request(
             test_run_id=test_run_id,
             test_id=test_id,
             api_version=self._config.api_version,
@@ -956,12 +1024,14 @@ class ServerMetricsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -980,8 +1050,13 @@ class ServerMetricsOperations:
 
         return cast(JSON, deserialized)
 
+
+
     @distributed_trace_async
-    async def get_server_default_metrics(self, **kwargs: Any) -> JSON:
+    async def get_server_default_metrics_config(
+        self,
+        **kwargs: Any
+    ) -> JSON:
         """Get all default server metrics configuration for supported resource types.
 
         Get all default server metrics configuration for supported resource types.
@@ -1028,26 +1103,31 @@ class ServerMetricsOperations:
                     }
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        request = build_server_metrics_get_server_default_metrics_request(
+        
+        request = build_server_metrics_get_server_default_metrics_config_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1066,8 +1146,13 @@ class ServerMetricsOperations:
 
         return cast(JSON, deserialized)
 
+
+
     @distributed_trace_async
-    async def list_supported_resource_type(self, **kwargs: Any) -> JSON:
+    async def list_supported_resource_types(
+        self,
+        **kwargs: Any
+    ) -> JSON:
         """Get all supported resource types for App Components(Azure resource types).
 
         Get all supported resource types for App Components(Azure resource types).
@@ -1086,26 +1171,31 @@ class ServerMetricsOperations:
                     ]
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        request = build_server_metrics_list_supported_resource_type_request(
+        
+        request = build_server_metrics_list_supported_resource_types_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1141,16 +1231,19 @@ class TestOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-        raise_if_not_implemented(
-            self.__class__,
-            [
-                "upload_test_file",
-            ],
-        )
+        raise_if_not_implemented(self.__class__, [
+            'upload_test_file',
+        ])
+
 
     @overload
     async def create_or_update_test(
-        self, test_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> JSON:
         """Create a new test or Update an existing test.
 
@@ -1450,7 +1543,12 @@ class TestOperations:
 
     @overload
     async def create_or_update_test(
-        self, test_id: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: IO,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> JSON:
         """Create a new test or Update an existing test.
 
@@ -1610,8 +1708,14 @@ class TestOperations:
                 }
         """
 
+
     @distributed_trace_async
-    async def create_or_update_test(self, test_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    async def create_or_update_test(
+        self,
+        test_id: str,
+        body: Union[JSON, IO],
+        **kwargs: Any
+    ) -> JSON:
         """Create a new test or Update an existing test.
 
         Create a new test or Update an existing test.
@@ -1769,14 +1873,16 @@ class TestOperations:
                     "testId": "str"  # Optional. Unique test name as identifier.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -1796,12 +1902,14 @@ class TestOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1827,9 +1935,13 @@ class TestOperations:
 
         return cast(JSON, deserialized)
 
+
+
     @distributed_trace_async
     async def delete_load_test(  # pylint: disable=inconsistent-return-statements
-        self, test_id: str, **kwargs: Any
+        self,
+        test_id: str,
+        **kwargs: Any
     ) -> None:
         """Delete a test by its name.
 
@@ -1842,14 +1954,17 @@ class TestOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
+        
         request = build_test_delete_load_test_request(
             test_id=test_id,
             api_version=self._config.api_version,
@@ -1857,12 +1972,14 @@ class TestOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1874,8 +1991,14 @@ class TestOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
+
+
     @distributed_trace_async
-    async def get_load_test(self, test_id: str, **kwargs: Any) -> JSON:
+    async def get_load_test(
+        self,
+        test_id: str,
+        **kwargs: Any
+    ) -> JSON:
         """Get load test details by test name.
 
         Get load test details by test name.
@@ -2028,14 +2151,17 @@ class TestOperations:
                     "testId": "str"  # Optional. Unique test name as identifier.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
+        
         request = build_test_get_load_test_request(
             test_id=test_id,
             api_version=self._config.api_version,
@@ -2043,12 +2169,14 @@ class TestOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2066,6 +2194,8 @@ class TestOperations:
             return cls(pipeline_response, cast(JSON, deserialized), {})
 
         return cast(JSON, deserialized)
+
+
 
     @distributed_trace_async
     async def list_load_test_search(
@@ -2273,14 +2403,17 @@ class TestOperations:
                     ]
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
+        
         request = build_test_list_load_test_search_request(
             order_by=order_by,
             search=search,
@@ -2293,12 +2426,14 @@ class TestOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2317,8 +2452,15 @@ class TestOperations:
 
         return cast(JSON, deserialized)
 
+
+
     @distributed_trace_async
-    async def get_test_file(self, test_id: str, file_id: str, **kwargs: Any) -> JSON:
+    async def get_test_file(
+        self,
+        test_id: str,
+        file_id: str,
+        **kwargs: Any
+    ) -> JSON:
         """Get test file by the file name.
 
         Get test file by the file name.
@@ -2348,14 +2490,17 @@ class TestOperations:
                     "validationStatus": "str"  # Optional. Validation status of the file.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
+        
         request = build_test_get_test_file_request(
             test_id=test_id,
             file_id=file_id,
@@ -2364,12 +2509,14 @@ class TestOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2388,9 +2535,14 @@ class TestOperations:
 
         return cast(JSON, deserialized)
 
+
+
     @distributed_trace_async
     async def delete_test_file(  # pylint: disable=inconsistent-return-statements
-        self, test_id: str, file_id: str, **kwargs: Any
+        self,
+        test_id: str,
+        file_id: str,
+        **kwargs: Any
     ) -> None:
         """Delete file by the file name for a test.
 
@@ -2406,14 +2558,17 @@ class TestOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
+        
         request = build_test_delete_test_file_request(
             test_id=test_id,
             file_id=file_id,
@@ -2422,12 +2577,14 @@ class TestOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2439,9 +2596,15 @@ class TestOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
+
+
     @distributed_trace_async
-    async def get_all_test_files(
-        self, test_id: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
+    async def list_test_files(
+        self,
+        test_id: str,
+        *,
+        continuation_token_parameter: Optional[str] = None,
+        **kwargs: Any
     ) -> JSON:
         """Get all test files.
 
@@ -2480,15 +2643,18 @@ class TestOperations:
                     ]
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        request = build_test_get_all_test_files_request(
+        
+        request = build_test_list_test_files_request(
             test_id=test_id,
             continuation_token_parameter=continuation_token_parameter,
             api_version=self._config.api_version,
@@ -2496,12 +2662,14 @@ class TestOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2538,9 +2706,12 @@ class TestRunOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+
     @distributed_trace_async
     async def delete_test_run(  # pylint: disable=inconsistent-return-statements
-        self, test_run_id: str, **kwargs: Any
+        self,
+        test_run_id: str,
+        **kwargs: Any
     ) -> None:
         """Delete a test run by its name.
 
@@ -2553,14 +2724,17 @@ class TestRunOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
+        
         request = build_test_run_delete_test_run_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -2568,12 +2742,14 @@ class TestRunOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2585,8 +2761,10 @@ class TestRunOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
+
+
     @overload
-    async def create_and_update_test(
+    async def create_or_update_test(
         self,
         test_run_id: str,
         body: JSON,
@@ -3012,7 +3190,7 @@ class TestRunOperations:
         """
 
     @overload
-    async def create_and_update_test(
+    async def create_or_update_test(
         self,
         test_run_id: str,
         body: IO,
@@ -3240,9 +3418,15 @@ class TestRunOperations:
                 }
         """
 
+
     @distributed_trace_async
-    async def create_and_update_test(
-        self, test_run_id: str, body: Union[JSON, IO], *, old_test_run_id: Optional[str] = None, **kwargs: Any
+    async def create_or_update_test(
+        self,
+        test_run_id: str,
+        body: Union[JSON, IO],
+        *,
+        old_test_run_id: Optional[str] = None,
+        **kwargs: Any
     ) -> JSON:
         """Create and start a new test run with the given name.
 
@@ -3462,14 +3646,16 @@ class TestRunOperations:
                       run.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -3479,7 +3665,7 @@ class TestRunOperations:
         else:
             _json = body
 
-        request = build_test_run_create_and_update_test_request(
+        request = build_test_run_create_or_update_test_request(
             test_run_id=test_run_id,
             old_test_run_id=old_test_run_id,
             content_type=content_type,
@@ -3490,12 +3676,14 @@ class TestRunOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3514,8 +3702,14 @@ class TestRunOperations:
 
         return cast(JSON, deserialized)
 
+
+
     @distributed_trace_async
-    async def get_test_run(self, test_run_id: str, **kwargs: Any) -> JSON:
+    async def get_test_run(
+        self,
+        test_run_id: str,
+        **kwargs: Any
+    ) -> JSON:
         """Get test run details by name.
 
         Get test run details by name.
@@ -3727,14 +3921,17 @@ class TestRunOperations:
                       run.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
+        
         request = build_test_run_get_test_run_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -3742,12 +3939,14 @@ class TestRunOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3766,8 +3965,15 @@ class TestRunOperations:
 
         return cast(JSON, deserialized)
 
+
+
     @distributed_trace_async
-    async def get_test_run_file(self, test_run_id: str, file_id: str, **kwargs: Any) -> JSON:
+    async def get_test_run_file(
+        self,
+        test_run_id: str,
+        file_id: str,
+        **kwargs: Any
+    ) -> JSON:
         """Get test run file by file name.
 
         Get test run file by file name.
@@ -3797,14 +4003,17 @@ class TestRunOperations:
                     "validationStatus": "str"  # Optional. Validation status of the file.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
+        
         request = build_test_run_get_test_run_file_request(
             test_run_id=test_run_id,
             file_id=file_id,
@@ -3813,12 +4022,14 @@ class TestRunOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3837,8 +4048,10 @@ class TestRunOperations:
 
         return cast(JSON, deserialized)
 
+
+
     @distributed_trace_async
-    async def list_test_runs_search(
+    async def list_test_runs(
         self,
         *,
         order_by: Optional[str] = None,
@@ -4128,15 +4341,18 @@ class TestRunOperations:
                     ]
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        request = build_test_run_list_test_runs_search_request(
+        
+        request = build_test_run_list_test_runs_request(
             order_by=order_by,
             continuation_token_parameter=continuation_token_parameter,
             search=search,
@@ -4150,12 +4366,14 @@ class TestRunOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4174,8 +4392,14 @@ class TestRunOperations:
 
         return cast(JSON, deserialized)
 
+
+
     @distributed_trace_async
-    async def stop_test_run(self, test_run_id: str, **kwargs: Any) -> JSON:
+    async def stop_test_run(
+        self,
+        test_run_id: str,
+        **kwargs: Any
+    ) -> JSON:
         """Stop test run by name.
 
         Stop test run by name.
@@ -4387,14 +4611,17 @@ class TestRunOperations:
                       run.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
+        
         request = build_test_run_stop_test_run_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -4402,12 +4629,14 @@ class TestRunOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4426,9 +4655,16 @@ class TestRunOperations:
 
         return cast(JSON, deserialized)
 
+
+
     @overload
     async def get_test_run_client_metrics(
-        self, test_run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        test_run_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> JSON:
         """Get all client metrics for a load test run.
 
@@ -4520,7 +4756,12 @@ class TestRunOperations:
 
     @overload
     async def get_test_run_client_metrics(
-        self, test_run_id: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        test_run_id: str,
+        body: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> JSON:
         """Get all client metrics for a load test run.
 
@@ -4586,8 +4827,14 @@ class TestRunOperations:
                 }
         """
 
+
     @distributed_trace_async
-    async def get_test_run_client_metrics(self, test_run_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    async def get_test_run_client_metrics(
+        self,
+        test_run_id: str,
+        body: Union[JSON, IO],
+        **kwargs: Any
+    ) -> JSON:
         """Get all client metrics for a load test run.
 
         Get all client metrics for a load test run.
@@ -4651,14 +4898,16 @@ class TestRunOperations:
                     }
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/json"
         _json = None
@@ -4678,12 +4927,14 @@ class TestRunOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4702,8 +4953,14 @@ class TestRunOperations:
 
         return cast(JSON, deserialized)
 
+
+
     @distributed_trace_async
-    async def get_test_run_client_metrics_filters(self, test_run_id: str, **kwargs: Any) -> JSON:
+    async def get_test_run_client_metrics_filters(
+        self,
+        test_run_id: str,
+        **kwargs: Any
+    ) -> JSON:
         """Get all filters that are supported for client metrics for a given load test run.
 
         Get all filters that are supported for client metrics for a given load test run.
@@ -4740,14 +4997,17 @@ class TestRunOperations:
                     }
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
+        
         request = build_test_run_get_test_run_client_metrics_filters_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -4755,12 +5015,14 @@ class TestRunOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4778,3 +5040,5 @@ class TestRunOperations:
             return cls(pipeline_response, cast(JSON, deserialized), {})
 
         return cast(JSON, deserialized)
+
+

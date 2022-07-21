@@ -3,3 +3,4 @@
 ../../core/azure-core
 ../../identity/azure-identity
 aiohttp
+python-dotenv
