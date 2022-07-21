@@ -7,7 +7,7 @@
 from typing import Union, Any
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
-from ._question_answering_client import QuestionAnsweringClient as QuestionAnsweringClientGenerated
+from ._client import QuestionAnsweringClient as QuestionAnsweringClientGenerated
 
 
 def _authentication_policy(credential, **kwargs):

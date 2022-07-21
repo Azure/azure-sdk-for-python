@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Human-readable error code."""
 
     INVALID_REQUEST = "InvalidRequest"
@@ -30,7 +29,7 @@ class ErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SERVICE_UNAVAILABLE = "ServiceUnavailable"
 
 
-class InnerErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class InnerErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Human-readable error code."""
 
     INVALID_REQUEST = "InvalidRequest"

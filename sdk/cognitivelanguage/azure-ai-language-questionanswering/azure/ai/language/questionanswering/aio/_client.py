@@ -9,18 +9,19 @@
 from copy import deepcopy
 from typing import Any, Awaitable
 
-from msrest import Deserializer, Serializer
-
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .. import models
+from .._serialization import Deserializer, Serializer
 from ._configuration import QuestionAnsweringClientConfiguration
 from ._operations import QuestionAnsweringClientOperationsMixin
 
 
-class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):
+class QuestionAnsweringClient(
+    QuestionAnsweringClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
@@ -28,9 +29,9 @@ class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):
     href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
-     https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
+     https://:code:`<resource-name>`.api.cognitiveservices.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: Api Version. Default value is "2021-10-01". Note that overriding this
      default value may result in unsupported behavior.
@@ -56,7 +57,7 @@ class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):
         >>> response = await client.send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
