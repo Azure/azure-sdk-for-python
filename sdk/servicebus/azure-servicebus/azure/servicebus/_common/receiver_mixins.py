@@ -8,10 +8,10 @@ import functools
 from typing import Optional, Callable
 
 from .._pyamqp.endpoints import Source
-from .._pyamqp.error import RetryPolicy, AMQPError
+from .._pyamqp.error import AMQPError
 
 from .message import ServiceBusReceivedMessage
-from ..exceptions import _NO_RETRY_CONDITION_ERROR_CODES
+from ..exceptions import _ServiceBusErrorPolicy
 from .constants import (
     NEXT_AVAILABLE_SESSION,
     SESSION_FILTER,
@@ -53,17 +53,14 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         )
 
         self._session_id = kwargs.get("session_id")
-        # self._error_policy = _ServiceBusErrorPolicy(
-        #     max_retries=self._config.retry_total, is_session=bool(self._session_id)
-        # )
-        # TODO: This needs work
-        # self._error_policy = _ServiceBusErrorPolicy(
-        #     max_retries=self._config.retry_total
-        # )
-        self._error_policy = RetryPolicy(
+
+        # TODO: What's the retry overlap between servicebus and pyamqp?
+        self._error_policy = _ServiceBusErrorPolicy(
+            is_session=bool(self._session_id),
             retry_total=self._config.retry_total,
-            no_retry_condition=_NO_RETRY_CONDITION_ERROR_CODES,
-            #custom_condition_backoff=CUSTOM_CONDITION_BACKOFF
+            retry_mode = self._config.retry_mode,
+            retry_backoff_factor = self._config.retry_backoff_factor,
+            retry_backoff_max = self._config.retry_backoff_max
         )
 
         self._name = "SBReceiver-{}".format(uuid.uuid4())

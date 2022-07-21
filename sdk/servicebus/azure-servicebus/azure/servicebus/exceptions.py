@@ -6,8 +6,14 @@
 
 from typing import Any
 
-from uamqp import errors as AMQPErrors, constants
-from uamqp.constants import ErrorCodes as AMQPErrorCodes
+#from uamqp import errors as AMQPErrors, constants
+#from uamqp.constants import ErrorCodes as AMQPErrorCodes
+from ._pyamqp.error import (
+    ErrorCondition,
+    AMQPException,
+    RetryPolicy,
+    AMQPConnectionError
+)
 from azure.core.exceptions import AzureError
 
 from ._common.constants import (
@@ -26,60 +32,6 @@ from ._common.constants import (
 )
 
 
-_NO_RETRY_CONDITION_ERROR_CODES = (
-    constants.ErrorCodes.DecodeError,
-    constants.ErrorCodes.LinkMessageSizeExceeded,
-    constants.ErrorCodes.NotFound,
-    constants.ErrorCodes.NotImplemented,
-    constants.ErrorCodes.LinkRedirect,
-    constants.ErrorCodes.NotAllowed,
-    constants.ErrorCodes.UnauthorizedAccess,
-    constants.ErrorCodes.LinkStolen,
-    constants.ErrorCodes.ResourceLimitExceeded,
-    constants.ErrorCodes.ConnectionRedirect,
-    constants.ErrorCodes.PreconditionFailed,
-    constants.ErrorCodes.InvalidField,
-    constants.ErrorCodes.ResourceDeleted,
-    constants.ErrorCodes.IllegalState,
-    constants.ErrorCodes.FrameSizeTooSmall,
-    constants.ErrorCodes.ConnectionFramingError,
-    constants.ErrorCodes.SessionUnattachedHandle,
-    constants.ErrorCodes.SessionHandleInUse,
-    constants.ErrorCodes.SessionErrantLink,
-    constants.ErrorCodes.SessionWindowViolation,
-    ERROR_CODE_SESSION_LOCK_LOST,
-    ERROR_CODE_MESSAGE_LOCK_LOST,
-    ERROR_CODE_OUT_OF_RANGE,
-    ERROR_CODE_ARGUMENT_ERROR,
-    ERROR_CODE_PRECONDITION_FAILED,
-)
-
-
-def _error_handler(error):
-    """Handle connection and service errors.
-
-    Called internally when an event has failed to send so we
-    can parse the error to determine whether we should attempt
-    to retry sending the event again.
-    Returns the action to take according to error type.
-
-    :param error: The error received in the send attempt.
-    :type error: Exception
-    :rtype: ~uamqp.errors.ErrorAction
-    """
-    if error.condition == b"com.microsoft:server-busy":
-        return AMQPErrors.ErrorAction(retry=True, backoff=4)
-    if error.condition == b"com.microsoft:timeout":
-        return AMQPErrors.ErrorAction(retry=True, backoff=2)
-    if error.condition == b"com.microsoft:operation-cancelled":
-        return AMQPErrors.ErrorAction(retry=True)
-    if error.condition == b"com.microsoft:container-close":
-        return AMQPErrors.ErrorAction(retry=True, backoff=4)
-    if error.condition in _NO_RETRY_CONDITION_ERROR_CODES:
-        return AMQPErrors.ErrorAction(retry=False)
-    return AMQPErrors.ErrorAction(retry=True)
-
-
 def _handle_amqp_exception_with_condition(
     logger, condition, description, exception=None, status_code=None
 ):
@@ -91,17 +43,17 @@ def _handle_amqp_exception_with_condition(
         condition,
         description,
     )
-    if condition == AMQPErrorCodes.NotFound:
+    if condition == ErrorCondition.NotFound:
         # handle NotFound error code
         error_cls = (
             ServiceBusCommunicationError
-            if isinstance(exception, AMQPErrors.AMQPConnectionError)
+            if isinstance(exception, AMQPConnectionError)
             else MessagingEntityNotFoundError
         )
-    elif condition == AMQPErrorCodes.ClientError and "timed out" in str(exception):
+    elif condition == ErrorCondition.ClientError and "timed out" in str(exception):
         # handle send timeout
         error_cls = OperationTimeoutError
-    elif condition == AMQPErrorCodes.UnknownError and isinstance(exception, AMQPErrors.AMQPConnectionError):
+    elif condition == ErrorCondition.UnknownError and isinstance(exception, AMQPConnectionError):
         error_cls = ServiceBusConnectionError
     else:
         # handle other error codes
@@ -113,7 +65,7 @@ def _handle_amqp_exception_with_condition(
         condition=condition,
         status_code=status_code,
     )
-    if condition in _NO_RETRY_CONDITION_ERROR_CODES:
+    if condition in _ServiceBusErrorPolicy.no_retry:
         error._retryable = False  # pylint: disable=protected-access
     else:
         error._retryable = True # pylint: disable=protected-access
@@ -123,7 +75,7 @@ def _handle_amqp_exception_with_condition(
 
 def _handle_amqp_exception_without_condition(logger, exception):
     error_cls = ServiceBusError
-    if isinstance(exception, AMQPErrors.AMQPConnectionError):
+    if isinstance(exception, AMQPConnectionError):
         logger.info("AMQP Connection error occurred: (%r).", exception)
         error_cls = ServiceBusConnectionError
     elif isinstance(exception, AMQPErrors.AuthenticationException):
@@ -160,7 +112,7 @@ def _handle_amqp_mgmt_error(
 
 
 def _create_servicebus_exception(logger, exception):
-    if isinstance(exception, AMQPErrors.AMQPError):
+    if isinstance(exception, AMQPException):
         try:
             # handling AMQP Errors that have the condition field
             condition = exception.condition
@@ -169,6 +121,7 @@ def _create_servicebus_exception(logger, exception):
                 logger, condition, description, exception=exception
             )
         except AttributeError:
+            # TODO: This can no longer happen, pending full error review.
             # handling AMQP Errors that don't have the condition field
             exception = _handle_amqp_exception_without_condition(logger, exception)
     elif not isinstance(exception, ServiceBusError):
@@ -182,27 +135,32 @@ def _create_servicebus_exception(logger, exception):
     return exception
 
 
-class _ServiceBusErrorPolicy(AMQPErrors.ErrorPolicy):
-    def __init__(self, max_retries=3, is_session=False):
+class _ServiceBusErrorPolicy(RetryPolicy):
+
+    no_retry = RetryPolicy.no_retry + [
+                ERROR_CODE_SESSION_LOCK_LOST,
+                ERROR_CODE_MESSAGE_LOCK_LOST,
+                ERROR_CODE_OUT_OF_RANGE,
+                ERROR_CODE_ARGUMENT_ERROR,
+                ERROR_CODE_PRECONDITION_FAILED,
+            ]
+
+    def __init__(self, is_session=False, **kwargs):
         self._is_session = is_session
+        custom_condition_backoff = {
+            b"com.microsoft:server-busy": 4,
+            b"com.microsoft:timeout": 2,
+            b"com.microsoft:container-close": 4
+        }
         super(_ServiceBusErrorPolicy, self).__init__(
-            max_retries=max_retries, on_error=_error_handler
+            custom_condition_backoff=custom_condition_backoff,
+            **kwargs
         )
 
-    def on_unrecognized_error(self, error):
+    def is_retryable(self, error):
         if self._is_session:
-            return AMQPErrors.ErrorAction(retry=False)
-        return super(_ServiceBusErrorPolicy, self).on_unrecognized_error(error)
-
-    def on_link_error(self, error):
-        if self._is_session:
-            return AMQPErrors.ErrorAction(retry=False)
-        return super(_ServiceBusErrorPolicy, self).on_link_error(error)
-
-    def on_connection_error(self, error):
-        if self._is_session:
-            return AMQPErrors.ErrorAction(retry=False)
-        return super(_ServiceBusErrorPolicy, self).on_connection_error(error)
+            return False
+        return super().is_retryable(error)
 
 
 class ServiceBusError(AzureError):
@@ -490,12 +448,12 @@ class AutoLockRenewTimeout(ServiceBusError):
 
 
 _ERROR_CODE_TO_ERROR_MAPPING = {
-    AMQPErrorCodes.LinkMessageSizeExceeded: MessageSizeExceededError,
-    AMQPErrorCodes.ResourceLimitExceeded: ServiceBusQuotaExceededError,
-    AMQPErrorCodes.UnauthorizedAccess: ServiceBusAuthorizationError,
-    AMQPErrorCodes.NotImplemented: ServiceBusError,
-    AMQPErrorCodes.NotAllowed: ServiceBusError,
-    AMQPErrorCodes.LinkDetachForced: ServiceBusConnectionError,
+    ErrorCondition.LinkMessageSizeExceeded: MessageSizeExceededError,
+    ErrorCondition.ResourceLimitExceeded: ServiceBusQuotaExceededError,
+    ErrorCondition.UnauthorizedAccess: ServiceBusAuthorizationError,
+    ErrorCondition.NotImplemented: ServiceBusError,
+    ErrorCondition.NotAllowed: ServiceBusError,
+    ErrorCondition.LinkDetachForced: ServiceBusConnectionError,
     ERROR_CODE_MESSAGE_LOCK_LOST: MessageLockLostError,
     ERROR_CODE_MESSAGE_NOT_FOUND: MessageNotFoundError,
     ERROR_CODE_AUTH_FAILED: ServiceBusAuthorizationError,

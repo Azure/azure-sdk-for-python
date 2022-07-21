@@ -116,6 +116,7 @@ class SenderLink(Link):
             else:
                 self._pending_deliveries[delivery.frame['delivery_id']] = delivery
         elif delivery.transfer_state == SessionTransferState.ERROR:
+            # TODO: This shouldn't raise here - we should call the delivery callback
             raise ValueError("Message failed to send")
         if self.current_link_credit <= 0:
             self.current_link_credit = self.link_credit

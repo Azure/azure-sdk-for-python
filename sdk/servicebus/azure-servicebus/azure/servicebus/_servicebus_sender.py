@@ -12,7 +12,7 @@ from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
 #from uamqp.authentication.common import AMQPAuth
 from ._pyamqp.client import SendClient
 from ._pyamqp.utils import amqp_long_value, amqp_array_value
-from ._pyamqp.error import RetryPolicy, MessageException
+from ._pyamqp.error import MessageException
 
 
 from ._base_handler import BaseHandler
@@ -24,8 +24,8 @@ from ._common.message import (
 from .amqp import AmqpAnnotatedMessage
 from .exceptions import (
     OperationTimeoutError,
-    _NO_RETRY_CONDITION_ERROR_CODES,
     _ServiceBusErrorPolicy,
+    _create_servicebus_exception
 )
 from ._common.utils import (
     create_authentication,
@@ -76,14 +76,12 @@ class SenderMixin(object):
         self._entity_uri = "amqps://{}/{}".format(
             self.fully_qualified_namespace, self._entity_name
         )
-        # TODO: This needs work
-        # self._error_policy = _ServiceBusErrorPolicy(
-        #     max_retries=self._config.retry_total
-        # )
-        self._error_policy = RetryPolicy(
+        # TODO: What's the retry overlap between servicebus and pyamqp?
+        self._error_policy = _ServiceBusErrorPolicy(
             retry_total=self._config.retry_total,
-            no_retry_condition=_NO_RETRY_CONDITION_ERROR_CODES,
-            #custom_condition_backoff=CUSTOM_CONDITION_BACKOFF
+            retry_mode = self._config.retry_mode,
+            retry_backoff_factor = self._config.retry_backoff_factor,
+            retry_backoff_max = self._config.retry_backoff_max
         )
         self._name = "SBSender-{}".format(uuid.uuid4())
         self._max_message_size_on_link = 0
@@ -273,8 +271,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 self._handler.send_message(message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout)
         except TimeoutError:
             raise OperationTimeoutError(message="Send operation timed out")
-        except MessageException:
-            pass # TODO: This should be handled?
+        except MessageException as e:
+            raise _create_servicebus_exception(_LOGGER, e)
 
     def schedule_messages(
         self,
