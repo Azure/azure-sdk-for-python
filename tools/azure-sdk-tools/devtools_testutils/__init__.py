@@ -40,7 +40,8 @@ from .sanitizers import (
     add_uri_subscription_id_sanitizer,
     set_bodiless_matcher,
     set_custom_default_matcher,
-    set_default_settings,
+    set_default_function_settings,
+    set_default_session_settings,
     set_headerless_matcher,
 )
 from .helpers import ResponseCallback, RetryCounter
@@ -86,7 +87,8 @@ __all__ = [
     "test_proxy",
     "set_bodiless_matcher",
     "set_custom_default_matcher",
-    "set_default_settings",
+    "set_default_function_settings",
+    "set_default_session_settings",
     "set_headerless_matcher",
     "start_test_proxy",
     "stop_test_proxy",

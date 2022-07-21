@@ -13,16 +13,31 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
 
-def set_default_settings() -> None:
-    """Resets all active sanitizers, matchers, and transforms for the test proxy to their default settings.
+def set_default_function_settings() -> None:
+    """Resets sanitizers, matchers, and transforms for the test proxy to their default settings, for the current test.
 
-    This will reset any setting customizations for a single test if it is called during test case execution, rather than
-    at a session, module, or class level. Otherwise, it will reset setting customizations at the session level (i.e. for
-    all tests).
+    This will reset any setting customizations for a single test. This must be called during test case execution, rather
+    than at a session, module, or class level. To reset setting customizations for all tests, use
+    `set_default_session_settings` instead.
     """
 
     x_recording_id = get_recording_id()
+    if x_recording_id is None:
+        raise RuntimeError(
+            "This method must be called during test case execution. To reset test proxy settings at a session level, "
+            "use `set_default_session_settings` instead."
+        )
     _send_reset_request({"x-recording-id": x_recording_id})
+
+
+def set_default_session_settings() -> None:
+    """Resets sanitizers, matchers, and transforms for the test proxy to their default settings, for all tests.
+
+    This will reset any setting customizations for an entire test session. To reset setting customizations for a single
+    test -- which is recommended -- use `set_default_session_settings` instead.
+    """
+
+    _send_reset_request({})
 
 
 # ----------MATCHERS----------
@@ -475,7 +490,6 @@ def _send_sanitizer_request(sanitizer: str, parameters: dict) -> None:
         headers={"x-abstraction-identifier": sanitizer, "Content-Type": "application/json"},
         json=parameters
     )
-    breakpoint()
     response.raise_for_status()
 
 
