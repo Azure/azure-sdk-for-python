@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,47 +7,254 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
-import warnings
+
+from msrest import Serializer
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar
-
+    from typing import Any, Callable, Dict, Iterable, List, Optional, TypeVar
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
+# fmt: off
+
+def build_add_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/models")
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_list_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+    dependencies_for = kwargs.pop('dependencies_for', None)  # type: Optional[List[str]]
+    include_model_definition = kwargs.pop('include_model_definition', False)  # type: Optional[bool]
+    max_items_per_page = kwargs.pop('max_items_per_page', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/models")
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if dependencies_for is not None:
+        _query_parameters['dependenciesFor'] = [_SERIALIZER.query("dependencies_for", q, 'str') if q is not None else '' for q in dependencies_for]
+    if include_model_definition is not None:
+        _query_parameters['includeModelDefinition'] = _SERIALIZER.query("include_model_definition", include_model_definition, 'bool')
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    if max_items_per_page is not None:
+        _header_parameters['max-items-per-page'] = _SERIALIZER.header("max_items_per_page", max_items_per_page, 'int')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_get_by_id_request(
+    id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+    include_model_definition = kwargs.pop('include_model_definition', False)  # type: Optional[bool]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/models/{id}")
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if include_model_definition is not None:
+        _query_parameters['includeModelDefinition'] = _SERIALIZER.query("include_model_definition", include_model_definition, 'bool')
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_update_request(
+    id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/models/{id}")
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PATCH",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_delete_request(
+    id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/models/{id}")
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="DELETE",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+# fmt: on
 class DigitalTwinModelsOperations(object):
-    """DigitalTwinModelsOperations operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.digitaltwins.core.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.digitaltwins.core.AzureDigitalTwinsAPI`'s
+        :attr:`digital_twin_models` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
 
+
+    @distributed_trace
     def add(
         self,
-        models=None,  # type: Optional[List[object]]
+        models=None,  # type: Optional[List[Any]]
         digital_twin_models_add_options=None,  # type: Optional["_models.DigitalTwinModelsAddOptions"]
         **kwargs  # type: Any
     ):
@@ -68,10 +276,11 @@ class DigitalTwinModelsOperations(object):
 
           * ModelAlreadyExists - The model provided already exists.
 
-        :param models: An array of models to add.
-        :type models: list[object]
-        :param digital_twin_models_add_options: Parameter group.
-        :type digital_twin_models_add_options: ~azure.digitaltwins.core.models.DigitalTwinModelsAddOptions
+        :param models: An array of models to add. Default value is None.
+        :type models: list[any]
+        :param digital_twin_models_add_options: Parameter group. Default value is None.
+        :type digital_twin_models_add_options:
+         ~azure.digitaltwins.core.models.DigitalTwinModelsAddOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of DigitalTwinsModelData, or the result of cls(response)
         :rtype: list[~azure.digitaltwins.core.models.DigitalTwinsModelData]
@@ -82,45 +291,41 @@ class DigitalTwinModelsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
         _traceparent = None
         _tracestate = None
         if digital_twin_models_add_options is not None:
             _traceparent = digital_twin_models_add_options.traceparent
             _tracestate = digital_twin_models_add_options.tracestate
-        api_version = "2020-10-31"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.add.metadata['url']  # type: ignore
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
         if models is not None:
-            body_content = self._serialize.body(models, '[object]')
+            _json = self._serialize.body(models, '[object]')
         else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            _json = None
+
+        request = build_add_request(
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            template_url=self.add.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('[DigitalTwinsModelData]', pipeline_response)
@@ -129,8 +334,11 @@ class DigitalTwinModelsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    add.metadata = {'url': '/models'}  # type: ignore
 
+    add.metadata = {'url': "/models"}  # type: ignore
+
+
+    @distributed_trace
     def list(
         self,
         dependencies_for=None,  # type: Optional[List[str]]
@@ -155,65 +363,75 @@ class DigitalTwinModelsOperations(object):
           * ModelNotFound - The model was not found.
 
         :param dependencies_for: The set of the models which will have their dependencies retrieved. If
-         omitted, all models are retrieved.
+         omitted, all models are retrieved. Default value is None.
         :type dependencies_for: list[str]
         :param include_model_definition: When true the model definition will be returned as part of the
-         result.
+         result. Default value is False.
         :type include_model_definition: bool
-        :param digital_twin_models_list_options: Parameter group.
-        :type digital_twin_models_list_options: ~azure.digitaltwins.core.models.DigitalTwinModelsListOptions
+        :param digital_twin_models_list_options: Parameter group. Default value is None.
+        :type digital_twin_models_list_options:
+         ~azure.digitaltwins.core.models.DigitalTwinModelsListOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PagedDigitalTwinsModelDataCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.core.models.PagedDigitalTwinsModelDataCollection]
+        :return: An iterator like instance of either PagedDigitalTwinsModelDataCollection or the result
+         of cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.digitaltwins.core.models.PagedDigitalTwinsModelDataCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PagedDigitalTwinsModelDataCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
-        _traceparent = None
-        _tracestate = None
-        _max_items_per_page = None
-        if digital_twin_models_list_options is not None:
-            _traceparent = digital_twin_models_list_options.traceparent
-            _tracestate = digital_twin_models_list_options.tracestate
-            _max_items_per_page = digital_twin_models_list_options.max_items_per_page
-        api_version = "2020-10-31"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            if _traceparent is not None:
-                header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-            if _tracestate is not None:
-                header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-            if _max_items_per_page is not None:
-                header_parameters['max-items-per-page'] = self._serialize.header("max_items_per_page", _max_items_per_page, 'int')
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list.metadata['url']  # type: ignore
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                if dependencies_for is not None:
-                    query_parameters['dependenciesFor'] = [self._serialize.query("dependencies_for", q, 'str') if q is not None else '' for q in dependencies_for]
-                if include_model_definition is not None:
-                    query_parameters['includeModelDefinition'] = self._serialize.query("include_model_definition", include_model_definition, 'bool')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                _traceparent = None
+                _tracestate = None
+                _max_items_per_page = None
+                if digital_twin_models_list_options is not None:
+                    _traceparent = digital_twin_models_list_options.traceparent
+                    _tracestate = digital_twin_models_list_options.tracestate
+                    _max_items_per_page = digital_twin_models_list_options.max_items_per_page
+                
+                request = build_list_request(
+                    api_version=api_version,
+                    traceparent=_traceparent,
+                    tracestate=_tracestate,
+                    dependencies_for=dependencies_for,
+                    include_model_definition=include_model_definition,
+                    max_items_per_page=_max_items_per_page,
+                    template_url=self.list.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                _traceparent = None
+                _tracestate = None
+                _max_items_per_page = None
+                if digital_twin_models_list_options is not None:
+                    _traceparent = digital_twin_models_list_options.traceparent
+                    _tracestate = digital_twin_models_list_options.tracestate
+                    _max_items_per_page = digital_twin_models_list_options.max_items_per_page
+                
+                request = build_list_request(
+                    api_version=api_version,
+                    traceparent=_traceparent,
+                    tracestate=_tracestate,
+                    dependencies_for=dependencies_for,
+                    include_model_definition=include_model_definition,
+                    max_items_per_page=_max_items_per_page,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('PagedDigitalTwinsModelDataCollection', pipeline_response)
+            deserialized = self._deserialize("PagedDigitalTwinsModelDataCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -222,21 +440,27 @@ class DigitalTwinModelsOperations(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/models'}  # type: ignore
+    list.metadata = {'url': "/models"}  # type: ignore
 
+    @distributed_trace
     def get_by_id(
         self,
         id,  # type: str
@@ -262,10 +486,11 @@ class DigitalTwinModelsOperations(object):
         :param id: The id for the model. The id is globally unique and case sensitive.
         :type id: str
         :param include_model_definition: When true the model definition will be returned as part of the
-         result.
+         result. Default value is False.
         :type include_model_definition: bool
-        :param digital_twin_models_get_by_id_options: Parameter group.
-        :type digital_twin_models_get_by_id_options: ~azure.digitaltwins.core.models.DigitalTwinModelsGetByIdOptions
+        :param digital_twin_models_get_by_id_options: Parameter group. Default value is None.
+        :type digital_twin_models_get_by_id_options:
+         ~azure.digitaltwins.core.models.DigitalTwinModelsGetByIdOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DigitalTwinsModelData, or the result of cls(response)
         :rtype: ~azure.digitaltwins.core.models.DigitalTwinsModelData
@@ -276,43 +501,36 @@ class DigitalTwinModelsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+
         _traceparent = None
         _tracestate = None
         if digital_twin_models_get_by_id_options is not None:
             _traceparent = digital_twin_models_get_by_id_options.traceparent
             _tracestate = digital_twin_models_get_by_id_options.tracestate
-        api_version = "2020-10-31"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_by_id.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'id': self._serialize.url("id", id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        request = build_get_by_id_request(
+            id=id,
+            api_version=api_version,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            include_model_definition=include_model_definition,
+            template_url=self.get_by_id.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if include_model_definition is not None:
-            query_parameters['includeModelDefinition'] = self._serialize.query("include_model_definition", include_model_definition, 'bool')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('DigitalTwinsModelData', pipeline_response)
@@ -321,12 +539,15 @@ class DigitalTwinModelsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_by_id.metadata = {'url': '/models/{id}'}  # type: ignore
 
-    def update(
+    get_by_id.metadata = {'url': "/models/{id}"}  # type: ignore
+
+
+    @distributed_trace
+    def update(  # pylint: disable=inconsistent-return-statements
         self,
         id,  # type: str
-        update_model,  # type: List[object]
+        update_model,  # type: List[Any]
         digital_twin_models_update_options=None,  # type: Optional["_models.DigitalTwinModelsUpdateOptions"]
         **kwargs  # type: Any
     ):
@@ -354,9 +575,10 @@ class DigitalTwinModelsOperations(object):
         :type id: str
         :param update_model: An update specification described by JSON Patch. Only the decommissioned
          property can be replaced.
-        :type update_model: list[object]
-        :param digital_twin_models_update_options: Parameter group.
-        :type digital_twin_models_update_options: ~azure.digitaltwins.core.models.DigitalTwinModelsUpdateOptions
+        :type update_model: list[any]
+        :param digital_twin_models_update_options: Parameter group. Default value is None.
+        :type digital_twin_models_update_options:
+         ~azure.digitaltwins.core.models.DigitalTwinModelsUpdateOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -367,54 +589,49 @@ class DigitalTwinModelsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
+
         _traceparent = None
         _tracestate = None
         if digital_twin_models_update_options is not None:
             _traceparent = digital_twin_models_update_options.traceparent
             _tracestate = digital_twin_models_update_options.tracestate
-        api_version = "2020-10-31"
-        content_type = kwargs.pop("content_type", "application/json-patch+json")
-        accept = "application/json"
+        _json = self._serialize.body(update_model, '[object]')
 
-        # Construct URL
-        url = self.update.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'id': self._serialize.url("id", id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        request = build_update_request(
+            id=id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            template_url=self.update.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(update_model, '[object]')
-        body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    update.metadata = {'url': '/models/{id}'}  # type: ignore
+    update.metadata = {'url': "/models/{id}"}  # type: ignore
 
-    def delete(
+
+    @distributed_trace
+    def delete(  # pylint: disable=inconsistent-return-statements
         self,
         id,  # type: str
         digital_twin_models_delete_options=None,  # type: Optional["_models.DigitalTwinModelsDeleteOptions"]
@@ -441,8 +658,9 @@ class DigitalTwinModelsOperations(object):
 
         :param id: The id for the model. The id is globally unique and case sensitive.
         :type id: str
-        :param digital_twin_models_delete_options: Parameter group.
-        :type digital_twin_models_delete_options: ~azure.digitaltwins.core.models.DigitalTwinModelsDeleteOptions
+        :param digital_twin_models_delete_options: Parameter group. Default value is None.
+        :type digital_twin_models_delete_options:
+         ~azure.digitaltwins.core.models.DigitalTwinModelsDeleteOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -453,44 +671,39 @@ class DigitalTwinModelsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+
         _traceparent = None
         _tracestate = None
         if digital_twin_models_delete_options is not None:
             _traceparent = digital_twin_models_delete_options.traceparent
             _tracestate = digital_twin_models_delete_options.tracestate
-        api_version = "2020-10-31"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.delete.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'id': self._serialize.url("id", id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        request = build_delete_request(
+            id=id,
+            api_version=api_version,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            template_url=self.delete.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/models/{id}'}  # type: ignore
+    delete.metadata = {'url': "/models/{id}"}  # type: ignore
+

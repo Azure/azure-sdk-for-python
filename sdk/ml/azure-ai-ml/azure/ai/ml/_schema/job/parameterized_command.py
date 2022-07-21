@@ -10,7 +10,7 @@ from azure.ai.ml._schema.resource_configuration import ResourceConfigurationSche
 
 from ..assets.code_asset import AnonymousCodeAssetSchema
 from ..assets.environment import AnonymousEnvironmentSchema
-from ..core.fields import ArmVersionedStr, UnionField, RegistryStr, LocalPathField, SerializeValidatedUrl
+from ..core.fields import ArmVersionedStr, UnionField, RegistryStr, LocalPathField, SerializeValidatedUrl, GitStr
 from .distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
 
 
@@ -22,7 +22,7 @@ class ParameterizedCommandSchema(PathAwareSchema):
         required=True,
     )
     code = UnionField(
-        [LocalPathField, SerializeValidatedUrl(), ArmVersionedStr(azureml_type=AzureMLResourceType.CODE)],
+        [LocalPathField, SerializeValidatedUrl(), GitStr(), ArmVersionedStr(azureml_type=AzureMLResourceType.CODE)],
         metadata={"description": "A local path or http:, https:, azureml: url pointing to a remote location."},
     )
     environment = UnionField(

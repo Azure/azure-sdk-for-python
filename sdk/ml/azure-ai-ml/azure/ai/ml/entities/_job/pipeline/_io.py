@@ -9,7 +9,6 @@ from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.entities import Data
 from azure.ai.ml.constants import ComponentJobConstants
 from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
-from azure.ai.ml.entities._component.input_output import ComponentInput, ComponentOutput
 from azure.ai.ml.entities._job._input_output_helpers import (
     to_rest_data_outputs,
     to_rest_dataset_literal_inputs,
@@ -57,11 +56,11 @@ def _resolve_builders_2_data_bindings(data: Union[list, dict]) -> Union[list, di
 
 
 class InputOutputBase(ABC):
-    def __init__(self, meta: Union[ComponentInput, ComponentOutput], data, **kwargs):
+    def __init__(self, meta: Union[Input, Output], data, **kwargs):
         """Base class of input & output
 
         :param meta: Metadata of this input/output, eg: type, min, max, etc.
-        :type meta: Union[ComponentInput, ComponentOutput]
+        :type meta: Union[Input, Output]
         :param data: Actual value of input/output, None means un-configured data.
         :type data: Union[None, int, bool, float, str
                           azure.ai.ml.Input,
@@ -169,7 +168,7 @@ class PipelineInputBase(InputOutputBase):
     def __init__(
         self,
         name: str,
-        meta: ComponentInput,
+        meta: Input,
         *,
         data: Union[int, bool, float, str, Output, "PipelineInput", Input] = None,
         owner: Union["BaseComponent", "PipelineJob"] = None,
@@ -180,7 +179,7 @@ class PipelineInputBase(InputOutputBase):
         :param name: The name of the input.
         :type name: str
         :param meta: Metadata of this input, eg: type, min, max, etc.
-        :type meta: ComponentInput
+        :type meta: Input
         :param data: The input data. Valid types include int, bool, float, str,
             Output of another component or pipeline input and Input.
             Note that the output of another component or pipeline input associated should be reachable in the scope
@@ -231,12 +230,12 @@ class PipelineInputBase(InputOutputBase):
                 )
             else:
                 return data
-        elif isinstance(data, Input) or is_data_binding_expression(data):
+        # for data binding case, set is_singular=False for case like "${{parent.inputs.job_in_folder}}/sample1.csv"
+        elif isinstance(data, Input) or is_data_binding_expression(data, is_singular=False):
             return data
-        elif self._meta and self._meta._is_path():
-            # To support passing azure.ai.ml.entities.Data for path input, we will wrap it to Input.
+        elif isinstance(self._meta, Input) and not self._meta._is_primitive_type:
             if isinstance(data, str):
-                return Input(path=data)
+                return Input(type=self._meta.type, path=data)
             else:
                 msg = "only path input is supported now but get {}: {}."
                 raise UserErrorException(
@@ -246,7 +245,7 @@ class PipelineInputBase(InputOutputBase):
             return data
 
     def _to_job_input(self):
-        """convert the input to ComponentInput, this logic will change if backend contract changes"""
+        """convert the input to Input, this logic will change if backend contract changes"""
         if self._data is None:
             # None data means this input is not configured.
             result = None
@@ -297,7 +296,7 @@ class PipelineOutputBase(InputOutputBase):
     def __init__(
         self,
         name: str,
-        meta: ComponentOutput,
+        meta: Output,
         *,
         data: Union[Output, str] = None,
         owner: Union["BaseComponent", "PipelineJob"] = None,
@@ -347,7 +346,7 @@ class PipelineOutputBase(InputOutputBase):
         return data
 
     def _to_job_output(self):
-        """Convert the output to ComponentOutput, this logic will change if backend contract changes"""
+        """Convert the output to Output, this logic will change if backend contract changes"""
         if self._data is None:
             # None data means this output is not configured.
             result = None
@@ -389,7 +388,7 @@ class PipelineOutputBase(InputOutputBase):
 class PipelineInput(PipelineInputBase):
     """Define one input of a Pipeline."""
 
-    def __init__(self, name: str, meta: ComponentInput, **kwargs):
+    def __init__(self, name: str, meta: Input, **kwargs):
         super(PipelineInput, self).__init__(name=name, meta=meta, **kwargs)
 
     def _build_data(self, data):
@@ -494,10 +493,10 @@ class NodeIOMixin:
     def __init__(self, **kwargs):
         super(NodeIOMixin, self).__init__(**kwargs)
 
-    def _build_input(self, name, meta: ComponentInput, data) -> PipelineInputBase:
+    def _build_input(self, name, meta: Input, data) -> PipelineInputBase:
         return PipelineInputBase(name=name, meta=meta, data=data, owner=self)
 
-    def _build_output(self, name, meta: ComponentOutput, data) -> PipelineOutputBase:
+    def _build_output(self, name, meta: Output, data) -> PipelineOutputBase:
         # For un-configured outputs, settings it to None so we won't passing extra fields(eg: default mode)
         return PipelineOutputBase(name=name, meta=meta, data=data, owner=self)
 
@@ -662,10 +661,10 @@ class NodeIOMixin:
 class PipelineIOMixin(NodeIOMixin):
     """Provides ability to warp pipeline inputs/outputs and build data bindings dynamically."""
 
-    def _build_input(self, name, meta: ComponentInput, data) -> "PipelineInput":
+    def _build_input(self, name, meta: Input, data) -> "PipelineInput":
         return PipelineInput(name=name, meta=meta, data=data, owner=self)
 
-    def _build_output(self, name, meta: ComponentOutput, data) -> "PipelineOutput":
+    def _build_output(self, name, meta: Output, data) -> "PipelineOutput":
         # TODO: settings data to None for un-configured outputs so we won't passing extra fields(eg: default mode)
         return PipelineOutput(name=name, meta=meta, data=data, owner=self)
 

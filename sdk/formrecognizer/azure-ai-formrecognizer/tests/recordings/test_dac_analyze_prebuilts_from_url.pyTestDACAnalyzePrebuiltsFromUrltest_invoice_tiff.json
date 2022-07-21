@@ -9,47 +9,73 @@
         "Connection": "keep-alive",
         "Content-Length": "36",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
         "urlSource": "https://blob_sas_url"
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "a3dda035-5cdc-4b50-8ae7-079bd110706a",
+        "apim-request-id": "07872d05-6b21-4386-86cc-7b20a528a3f3",
         "Content-Length": "0",
-        "Date": "Wed, 25 May 2022 21:38:30 GMT",
-        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-invoice/analyzeResults/a3dda035-5cdc-4b50-8ae7-079bd110706a?api-version=2022-06-30-preview",
+        "Date": "Thu, 23 Jun 2022 23:54:55 GMT",
+        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-invoice/analyzeResults/07872d05-6b21-4386-86cc-7b20a528a3f3?api-version=2022-06-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "236"
+        "x-envoy-upstream-service-time": "222"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-invoice/analyzeResults/a3dda035-5cdc-4b50-8ae7-079bd110706a?api-version=2022-06-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-invoice/analyzeResults/07872d05-6b21-4386-86cc-7b20a528a3f3?api-version=2022-06-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "106e8c73-4f5f-4d0c-ad05-8859c47cc55d",
+        "apim-request-id": "1a61fdc5-0fd3-48f5-9609-bee2c82fee63",
+        "Content-Length": "106",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 25 May 2022 21:38:35 GMT",
+        "Date": "Thu, 23 Jun 2022 23:55:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "54"
+        "x-envoy-upstream-service-time": "14"
+      },
+      "ResponseBody": {
+        "status": "running",
+        "createdDateTime": "2022-06-23T23:54:55Z",
+        "lastUpdatedDateTime": "2022-06-23T23:54:59Z"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-invoice/analyzeResults/07872d05-6b21-4386-86cc-7b20a528a3f3?api-version=2022-06-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "e555b3bc-9ef3-455d-b06e-595e7c7ba0a8",
+        "Content-Length": "47297",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 23 Jun 2022 23:55:05 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "40"
       },
       "ResponseBody": {
         "status": "succeeded",
-        "createdDateTime": "2022-05-25T21:38:30Z",
-        "lastUpdatedDateTime": "2022-05-25T21:38:35Z",
+        "createdDateTime": "2022-06-23T23:54:55Z",
+        "lastUpdatedDateTime": "2022-06-23T23:55:02Z",
         "analyzeResult": {
           "apiVersion": "2022-06-30-preview",
           "modelId": "prebuilt-invoice",
@@ -75,7 +101,7 @@
                     106,
                     275
                   ],
-                  "confidence": 0.9966714,
+                  "confidence": 0.996,
                   "span": {
                     "offset": 0,
                     "length": 7
@@ -93,7 +119,7 @@
                     159,
                     325
                   ],
-                  "confidence": 0.9935534,
+                  "confidence": 0.993,
                   "span": {
                     "offset": 8,
                     "length": 8
@@ -111,7 +137,7 @@
                     159,
                     365
                   ],
-                  "confidence": 0.9980585,
+                  "confidence": 0.998,
                   "span": {
                     "offset": 17,
                     "length": 1
@@ -129,7 +155,7 @@
                     177,
                     365
                   ],
-                  "confidence": 0.9965512,
+                  "confidence": 0.996,
                   "span": {
                     "offset": 19,
                     "length": 7
@@ -147,7 +173,7 @@
                     305,
                     367
                   ],
-                  "confidence": 0.9980585,
+                  "confidence": 0.998,
                   "span": {
                     "offset": 27,
                     "length": 3
@@ -165,7 +191,7 @@
                     364,
                     367
                   ],
-                  "confidence": 0.9976061,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 31,
                     "length": 5
@@ -183,7 +209,7 @@
                     157,
                     403
                   ],
-                  "confidence": 0.9975488,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 37,
                     "length": 4
@@ -201,7 +227,7 @@
                     224,
                     403
                   ],
-                  "confidence": 0.9956564,
+                  "confidence": 0.995,
                   "span": {
                     "offset": 42,
                     "length": 8
@@ -219,7 +245,7 @@
                     361,
                     405
                   ],
-                  "confidence": 0.9975912,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 51,
                     "length": 2
@@ -237,7 +263,7 @@
                     159,
                     439
                   ],
-                  "confidence": 0.9937202,
+                  "confidence": 0.993,
                   "span": {
                     "offset": 54,
                     "length": 5
@@ -255,7 +281,7 @@
                     877,
                     327
                   ],
-                  "confidence": 0.9554825,
+                  "confidence": 0.955,
                   "span": {
                     "offset": 60,
                     "length": 7
@@ -273,7 +299,7 @@
                     969,
                     327
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 68,
                     "length": 4
@@ -291,7 +317,7 @@
                     1034,
                     327
                   ],
-                  "confidence": 0.9954556,
+                  "confidence": 0.995,
                   "span": {
                     "offset": 73,
                     "length": 9
@@ -309,7 +335,7 @@
                     1039,
                     369
                   ],
-                  "confidence": 0.9940026,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 83,
                     "length": 4
@@ -327,7 +353,7 @@
                     1103,
                     369
                   ],
-                  "confidence": 0.9948032,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 88,
                     "length": 10
@@ -345,7 +371,7 @@
                     1250,
                     371
                   ],
-                  "confidence": 0.9980407,
+                  "confidence": 0.998,
                   "span": {
                     "offset": 99,
                     "length": 3
@@ -363,7 +389,7 @@
                     1035,
                     407
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 103,
                     "length": 11
@@ -381,7 +407,7 @@
                     1204,
                     408
                   ],
-                  "confidence": 0.9980108,
+                  "confidence": 0.998,
                   "span": {
                     "offset": 115,
                     "length": 2
@@ -399,7 +425,7 @@
                     1251,
                     408
                   ],
-                  "confidence": 0.994067,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 118,
                     "length": 5
@@ -417,7 +443,7 @@
                     106,
                     598
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 124,
                     "length": 7
@@ -435,7 +461,7 @@
                     207,
                     599
                   ],
-                  "confidence": 0.9974179,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 132,
                     "length": 6
@@ -453,7 +479,7 @@
                     387,
                     598
                   ],
-                  "confidence": 0.9550841,
+                  "confidence": 0.955,
                   "span": {
                     "offset": 139,
                     "length": 7
@@ -471,7 +497,7 @@
                     489,
                     598
                   ],
-                  "confidence": 0.9889184,
+                  "confidence": 0.988,
                   "span": {
                     "offset": 147,
                     "length": 4
@@ -489,7 +515,7 @@
                     666,
                     598
                   ],
-                  "confidence": 0.9410877,
+                  "confidence": 0.941,
                   "span": {
                     "offset": 152,
                     "length": 7
@@ -507,7 +533,7 @@
                     767,
                     598
                   ],
-                  "confidence": 0.9980022,
+                  "confidence": 0.998,
                   "span": {
                     "offset": 160,
                     "length": 3
@@ -525,7 +551,7 @@
                     828,
                     599
                   ],
-                  "confidence": 0.9889593,
+                  "confidence": 0.988,
                   "span": {
                     "offset": 164,
                     "length": 4
@@ -543,7 +569,7 @@
                     948,
                     601
                   ],
-                  "confidence": 0.9969338,
+                  "confidence": 0.996,
                   "span": {
                     "offset": 169,
                     "length": 7
@@ -561,7 +587,7 @@
                     1226,
                     597
                   ],
-                  "confidence": 0.9979998,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 177,
                     "length": 3
@@ -579,7 +605,7 @@
                     1288,
                     597
                   ],
-                  "confidence": 0.9974499,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 181,
                     "length": 2
@@ -597,7 +623,7 @@
                     107,
                     705
                   ],
-                  "confidence": 0.9956673,
+                  "confidence": 0.995,
                   "span": {
                     "offset": 184,
                     "length": 8
@@ -615,7 +641,7 @@
                     387,
                     705
                   ],
-                  "confidence": 0.9723536,
+                  "confidence": 0.972,
                   "span": {
                     "offset": 193,
                     "length": 9
@@ -633,7 +659,7 @@
                     668,
                     705
                   ],
-                  "confidence": 0.9845371,
+                  "confidence": 0.984,
                   "span": {
                     "offset": 203,
                     "length": 9
@@ -651,7 +677,7 @@
                     1075,
                     708
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 213,
                     "length": 10
@@ -669,7 +695,7 @@
                     1237,
                     708
                   ],
-                  "confidence": 0.9965499,
+                  "confidence": 0.996,
                   "span": {
                     "offset": 224,
                     "length": 2
@@ -2136,7 +2162,7 @@
                       ]
                     }
                   ],
-                  "confidence": 0.804,
+                  "confidence": 0.805,
                   "spans": [
                     {
                       "offset": 83,

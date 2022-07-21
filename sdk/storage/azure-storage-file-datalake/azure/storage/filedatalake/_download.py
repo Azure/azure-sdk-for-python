@@ -39,10 +39,11 @@ class StorageStreamDownloader(object):
         return self._downloader.chunks()
 
     def readall(self):
+        # type: () -> bytes
         """Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
-        :rtype: bytes or str
+        :rtype: bytes
         """
         return self._downloader.readall()
 

@@ -6,7 +6,7 @@ import logging
 
 from azure.ai.ml._schema import NestedField, PathAwareSchema
 from azure.ai.ml._schema.assets.environment import EnvironmentSchema, AnonymousEnvironmentSchema
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, UnionField
+from azure.ai.ml._schema.core.fields import ArmVersionedStr, UnionField, RegistryStr
 from azure.ai.ml._schema.assets.model import AnonymousModelSchema
 from azure.ai.ml.constants import AzureMLResourceType
 from marshmallow import fields
@@ -25,6 +25,7 @@ class DeploymentSchema(PathAwareSchema):
     properties = fields.Dict()
     model = UnionField(
         [
+            RegistryStr(azureml_type=AzureMLResourceType.MODEL),
             ArmVersionedStr(azureml_type=AzureMLResourceType.MODEL, allow_default_version=True),
             NestedField(AnonymousModelSchema),
         ],
@@ -35,6 +36,7 @@ class DeploymentSchema(PathAwareSchema):
     )
     environment = UnionField(
         [
+            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
             ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
             NestedField(EnvironmentSchema),
             NestedField(AnonymousEnvironmentSchema),
