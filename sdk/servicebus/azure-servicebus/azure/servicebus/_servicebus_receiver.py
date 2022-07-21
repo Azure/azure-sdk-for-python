@@ -333,8 +333,17 @@ class ServiceBusReceiver(
 
     def _create_handler(self, auth):
         # type: (AMQPAuth) -> None
+
+        custom_endpoint_address = self._config.custom_endpoint_address # pylint:disable=protected-access
+        transport_type = self._config.transport_type # pylint:disable=protected-access
+        hostname = self.fully_qualified_namespace
+        if transport_type.name == 'AmqpOverWebsocket':
+            hostname += '/$servicebus/websocket/'
+            if custom_endpoint_address:
+                custom_endpoint_address += '/$servicebus/websocket/'
+
         self._handler = ReceiveClient(
-            self.fully_qualified_namespace,
+            hostname,
             self._get_source(),
             auth=auth,
             network_trace=self._config.logging_enable,
