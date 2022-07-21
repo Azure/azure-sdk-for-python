@@ -48,18 +48,18 @@ class AutoScaleTest(unittest.TestCase):
         cls.created_database = cls.client.create_database(test_config._test_config.TEST_DATABASE_ID)
 
     def test_auto_scale_max_throughput(self):
-        # created_container = self.created_database.create_container(
-        #     id='container_with_auto_scale_settings',
-        #     partition_key=PartitionKey(path="/id"),
-        #     offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
-        #
-        # )
-        # created_container_properties = created_container.get_throughput()
-        # # Testing the input value of the max_throughput
-        # self.assertEqual(
-        #     created_container_properties.properties['content']['offerAutopilotSettings']['maxThroughput'], 5000)
-        #
-        # self.created_database.delete_container(created_container)
+        created_container = self.created_database.create_container(
+            id='container_with_auto_scale_settings',
+            partition_key=PartitionKey(path="/id"),
+            offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
+
+        )
+        created_container_properties = created_container.get_throughput()
+        # Testing the input value of the max_throughput
+        self.assertEqual(
+            created_container_properties.properties['content']['offerAutopilotSettings']['maxThroughput'], 5000)
+
+        self.created_database.delete_container(created_container)
 
         # Testing the incorrect passing of an input value of the max_throughput to verify negative behavior
         try:
