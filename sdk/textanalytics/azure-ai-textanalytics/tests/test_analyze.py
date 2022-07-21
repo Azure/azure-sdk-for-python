@@ -1682,3 +1682,103 @@ class TestAnalyze(TextAnalyticsTest):
                 else:
                     assert res.entities
                     assert res.statistics
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_cancel(self, client):
+        single_doc = "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
+        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 20)))]
+        actions=[
+            RecognizeEntitiesAction(),
+            ExtractKeyPhrasesAction(),
+            RecognizePiiEntitiesAction(),
+            RecognizeLinkedEntitiesAction(),
+            AnalyzeSentimentAction(),
+        ]
+        poller = client.begin_analyze_actions(
+            docs,
+            actions,
+            show_stats=True,
+            polling_interval=self._interval(),
+        )
+        poller.cancel()
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_cancel_partial_results(self, client):
+        single_doc = "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
+        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 5)))]
+        actions=[
+            RecognizeEntitiesAction(),
+            ExtractKeyPhrasesAction(),
+            RecognizePiiEntitiesAction(),
+            RecognizeLinkedEntitiesAction(),
+            AnalyzeSentimentAction(),
+        ]
+        poller = client.begin_analyze_actions(
+            docs,
+            actions,
+            show_stats=True,
+            polling_interval=self._interval(),
+        )
+        poller.cancel()
+        result = list(poller.result())
+        # assert that we pad the result with doc errors for correct ordering
+        # (since some results may have finished and others have cancelled)
+        for idx, doc_result in enumerate(result):
+            assert len(doc_result) == len(actions)
+            for doc in doc_result:
+                assert doc.id == str(idx)
+                if doc.is_error:
+                    assert doc.error.message == "No result for document. Action returned status 'cancelled'."
+        assert poller.status() == "cancelled"
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_cancel_fail_terminal_state(self, client):
+        single_doc = "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
+        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 20)))] # max number of documents is 25
+        actions=[
+            RecognizeEntitiesAction(),
+            ExtractKeyPhrasesAction(),
+            RecognizePiiEntitiesAction(),
+            RecognizeLinkedEntitiesAction(),
+            AnalyzeSentimentAction(),
+        ]
+        poller = client.begin_analyze_actions(
+            docs,
+            actions,
+            show_stats=True,
+            polling_interval=self._interval(),
+        )
+        poller.result()
+        assert poller.status() == "succeeded"
+        with pytest.raises(HttpResponseError):
+            poller.cancel()  # can't cancel when already in terminal state
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer({"api_version": "v3.1"})
+    @recorded_by_proxy
+    def test_cancel_fail_v3_1(self, client):
+        single_doc = "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
+        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 20)))] # max number of documents is 25
+        actions=[
+            RecognizeEntitiesAction(),
+            ExtractKeyPhrasesAction(),
+            RecognizePiiEntitiesAction(),
+            RecognizeLinkedEntitiesAction(),
+            AnalyzeSentimentAction(),
+        ]
+        poller = client.begin_analyze_actions(
+            docs,
+            actions,
+            show_stats=True,
+            polling_interval=self._interval(),
+        )
+
+        with pytest.raises(ValueError) as e:
+            poller.cancel()
+        assert"Cancellation not supported by API versions v3.0, v3.1." in str(e.value)
