@@ -57,7 +57,7 @@ class PyodideTransportResponse(AsyncHttpResponseImpl):
     def body(self) -> bytes:
         """The body is just the content."""
         return self.content
-    
+
     async def load_body(self) -> None:
         """Backcompat"""
         if self._content is None:
