@@ -1,0 +1,42 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+name: default_optional_component
+display_name: Component with default and optional parameters
+description: Component with default and optional parameters
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 1
+
+inputs:
+  required_input:
+    type: uri_folder
+  optional_input:
+    type: uri_folder
+    optional: true
+  required_param:
+    type: string
+  required_param_with_default:
+    type: string
+    default: 'required_param_with_default'
+  optional_param:
+    type: string
+    optional: true
+  optional_param_with_default:
+    type: string
+    default: 'optional_param_with_default'
+    optional: true
+
+
+command: >-
+  echo Hello World &
+  echo required_param ${{inputs.required_param}} &
+  echo required_param_with_default ${{inputs.required_param_with_default}} &
+  [echo optional_param ${{inputs.optional_param}} &]
+  [echo optional_param_with_default ${{inputs.optional_param_with_default}} &]
+  echo required_input ${{inputs.required_input}} &
+  [echo optional_input ${{inputs.optional_input}} &]
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

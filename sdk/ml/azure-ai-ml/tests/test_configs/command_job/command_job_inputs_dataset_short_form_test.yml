@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=https://azuremlsdk2.blob.core.windows.net/latest/commandJob.schema.json
+command: echo ${{inputs.test1}}
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+name: "test1"
+compute: "azureml:testCompute"
+experiment_name: mfe-test1
+properties:
+  test_property: test_value
+inputs:
+  "test1":
+    type: uri_folder
+    mode: ro_mount
+    path: azureml:test1_dataset@latest

@@ -25,17 +25,12 @@ from ._models import LocationMode, DirectoryProperties, AccessControlChangeResul
     AccessControlChangeCounters, AccessControlChangeFailure
 from ._serialize import convert_dfs_url_to_blob_url, get_mod_conditions, \
     get_path_http_headers, add_metadata_headers, get_lease_id, get_source_mod_conditions, get_access_conditions, \
-    get_api_version, get_cpk_info
+    get_api_version, get_cpk_info, convert_datetime_to_rfc1123
 from ._shared.base_client import StorageAccountHostsMixin, parse_query
 from ._shared.response_handlers import return_response_headers, return_headers_and_deserialized
 
 if TYPE_CHECKING:
-    from ._models import ContentSettings
-    from ._models import FileProperties
-
-_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
-    'The require_encryption flag is set, but encryption is not supported'
-    ' for this method.')
+    from ._models import ContentSettings, FileProperties
 
 
 class PathClient(StorageAccountHostsMixin):
@@ -151,9 +146,6 @@ class PathClient(StorageAccountHostsMixin):
                              metadata=None,  # type: Optional[Dict[str, str]]
                              **kwargs):
         # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
 
@@ -163,11 +155,27 @@ class PathClient(StorageAccountHostsMixin):
 
         cpk_info = get_cpk_info(self.scheme, kwargs)
 
+        expires_on = kwargs.pop('expires_on', None)
+        if expires_on:
+            try:
+                expires_on = convert_datetime_to_rfc1123(expires_on)
+                kwargs['expiry_options'] = 'Absolute'
+            except AttributeError:
+                expires_on = str(expires_on)
+                kwargs['expiry_options'] = 'RelativeToNow'
+
         options = {
             'resource': resource_type,
             'properties': add_metadata_headers(metadata),
             'permissions': kwargs.pop('permissions', None),
             'umask': kwargs.pop('umask', None),
+            'owner': kwargs.pop('owner', None),
+            'group': kwargs.pop('group', None),
+            'acl': kwargs.pop('acl', None),
+            'proposed_lease_id': kwargs.pop('lease_id', None),
+            'lease_duration': kwargs.pop('lease_duration', None),
+            'expiry_options': kwargs.pop('expiry_options', None),
+            'expires_on': expires_on,
             'path_http_headers': path_http_headers,
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
@@ -204,6 +212,31 @@ class PathClient(StorageAccountHostsMixin):
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
+        :keyword str owner:
+            The owner of the file or directory.
+        :keyword str group:
+            The owning group of the file or directory.
+        :keyword str acl:
+            Sets POSIX access control rights on files and directories. The value is a
+            comma-separated list of access control entries. Each access control entry (ACE) consists of a
+            scope, a type, a user or group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+        :keyword str lease_id:
+            Proposed lease ID, in a GUID string format. The DataLake service returns
+            400 (Invalid request) if the proposed lease ID is not in the correct format.
+        :keyword int lease_duration:
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change.
+        :keyword expires_on:
+            The time to set the file to expiry.
+            If the type of expires_on is an int, expiration time will be set
+            as the number of milliseconds elapsed from creation time.
+            If the type of expires_on is datetime, expiration time will be set
+            absolute to the time provided. If no time zone info is provided, this
+            will be interpreted as UTC.
+        :paramtype expires_on: datetime or int
         :keyword permissions:
             Optional and only valid if Hierarchical Namespace
             is enabled for the account. Sets POSIX access permissions for the file
@@ -234,8 +267,15 @@ class PathClient(StorageAccountHostsMixin):
             Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: Dict[str, Union[str, datetime]]
+        :return: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
         """
+        lease_id = kwargs.get('lease_id', None)
+        lease_duration = kwargs.get('lease_duration', None)
+        if lease_id and not lease_duration:
+            raise ValueError("Please specify a lease_id and a lease_duration.")
+        if lease_duration and not lease_id:
+            raise ValueError("Please specify a lease_id and a lease_duration.")
         options = self._create_path_options(
             resource_type,
             content_settings=content_settings,
@@ -673,13 +713,12 @@ class PathClient(StorageAccountHostsMixin):
             error.continuation_token = last_continuation_token
             raise error
 
-    def _rename_path_options(self, rename_source,
+    def _rename_path_options(self,  # pylint: disable=no-self-use
+                             rename_source,  # type: str
                              content_settings=None,  # type: Optional[ContentSettings]
                              metadata=None,  # type: Optional[Dict[str, str]]
                              **kwargs):
         # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if metadata or kwargs.pop('permissions', None) or kwargs.pop('umask', None):
             raise ValueError("metadata, permissions, umask is not supported for this operation")
 

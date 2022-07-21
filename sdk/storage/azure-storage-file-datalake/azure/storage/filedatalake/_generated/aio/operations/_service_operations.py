@@ -14,6 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
@@ -34,11 +35,11 @@ class ServiceOperations:
     models = _models
 
     def __init__(self, *args, **kwargs) -> None:
-        args = list(args)
-        self._client = args.pop(0) if args else kwargs.pop("client")
-        self._config = args.pop(0) if args else kwargs.pop("config")
-        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
-        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
 
     @distributed_trace
@@ -50,7 +51,7 @@ class ServiceOperations:
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.FileSystemList"]:
+    ) -> AsyncIterable[_models.FileSystemList]:
         """List FileSystems.
 
         List filesystems and their properties in given account.
@@ -86,13 +87,16 @@ class ServiceOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.storage.filedatalake.models.FileSystemList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        resource = kwargs.pop('resource', "account")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FileSystemList"]
+        resource = kwargs.pop('resource', _params.pop('resource', "account"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.FileSystemList]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -106,9 +110,11 @@ class ServiceOperations:
                     request_id_parameter=request_id_parameter,
                     timeout=timeout,
                     template_url=self.list_file_systems.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -122,9 +128,11 @@ class ServiceOperations:
                     request_id_parameter=request_id_parameter,
                     timeout=timeout,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 

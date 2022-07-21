@@ -6,40 +6,25 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessRights(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccessRights(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     MANAGE = "Manage"
     SEND = "Send"
     LISTEN = "Listen"
 
-class DefaultAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DefaultAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Default Action for Network Rule Set
     """
 
     ALLOW = "Allow"
     DENY = "Deny"
 
-class EncodingCaptureDescription(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EncodingCaptureDescription(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enumerates the possible values for the encoding format of capture description. Note:
     'AvroDeflate' will be deprecated in New API Version
     """
@@ -47,7 +32,7 @@ class EncodingCaptureDescription(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     AVRO = "Avro"
     AVRO_DEFLATE = "AvroDeflate"
 
-class EntityStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EntityStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enumerates the possible values for the status of the Event Hub.
     """
 
@@ -61,20 +46,20 @@ class EntityStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RENAMING = "Renaming"
     UNKNOWN = "Unknown"
 
-class KeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class KeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The access key to regenerate.
     """
 
     PRIMARY_KEY = "PrimaryKey"
     SECONDARY_KEY = "SecondaryKey"
 
-class NetworkRuleIPAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NetworkRuleIPAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The IP Filter Action
     """
 
     ALLOW = "Allow"
 
-class ProvisioningStateDR(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningStateDR(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state of the Alias(Disaster Recovery configuration) - possible values 'Accepted'
     or 'Succeeded' or 'Failed'
     """
@@ -83,7 +68,7 @@ class ProvisioningStateDR(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class RoleDisasterRecovery(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RoleDisasterRecovery(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """role of namespace in GEO DR - possible values 'Primary' or 'PrimaryNotReplicating' or
     'Secondary'
     """
@@ -92,21 +77,21 @@ class RoleDisasterRecovery(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PRIMARY_NOT_REPLICATING = "PrimaryNotReplicating"
     SECONDARY = "Secondary"
 
-class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Name of this SKU.
     """
 
     BASIC = "Basic"
     STANDARD = "Standard"
 
-class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The billing tier of this particular SKU.
     """
 
     BASIC = "Basic"
     STANDARD = "Standard"
 
-class UnavailableReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class UnavailableReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the reason for the unavailability of the service.
     """
 

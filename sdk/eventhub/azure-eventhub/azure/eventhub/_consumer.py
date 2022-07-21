@@ -98,7 +98,8 @@ class EventHubConsumer(
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
         self._retry_policy = errors.ErrorPolicy(
-            max_retries=self._client._config.max_retries, on_error=_error_handler  # pylint:disable=protected-access
+            max_retries=self._client._config.max_retries,
+            on_error=_error_handler,  # pylint:disable=protected-access
         )
         self._reconnect_backoff = 1
         self._link_properties = {}  # type: Dict[types.AMQPType, types.AMQPType]
@@ -113,7 +114,8 @@ class EventHubConsumer(
                 int(owner_level)
             )
         link_property_timeout_ms = (
-            self._client._config.receive_timeout or self._timeout  # pylint:disable=protected-access
+            self._client._config.receive_timeout
+            or self._timeout  # pylint:disable=protected-access
         ) * 1000
         self._link_properties[types.AMQPSymbol(TIMEOUT_SYMBOL)] = types.AMQPLong(
             int(link_property_timeout_ms)
@@ -181,9 +183,7 @@ class EventHubConsumer(
 
     def _open(self):
         # type: () -> bool
-        """Open the EventHubConsumer/EventHubProducer using the supplied connection.
-
-        """
+        """Open the EventHubConsumer/EventHubProducer using the supplied connection."""
         # pylint: disable=protected-access
         if not self.running:
             if self._handler:
@@ -209,7 +209,9 @@ class EventHubConsumer(
             self._client._config.max_retries  # pylint:disable=protected-access
         )
         self._receive_start_time = self._receive_start_time or time.time()
-        deadline = self._receive_start_time + (max_wait_time or 0)  # max_wait_time can be None
+        deadline = self._receive_start_time + (
+            max_wait_time or 0
+        )  # max_wait_time can be None
         if len(self._message_buffer) < max_batch_size:
             while retried_times <= max_retries:
                 try:
@@ -219,7 +221,8 @@ class EventHubConsumer(
                 except Exception as exception:  # pylint: disable=broad-except
                     if (
                         isinstance(exception, uamqp.errors.LinkDetach)
-                        and exception.condition == uamqp.constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
+                        and exception.condition # pylint: disable=no-member
+                        == uamqp.constants.ErrorCodes.LinkStolen
                     ):
                         raise self._handle_exception(exception)
                     if not self.running:  # exit by close
@@ -235,9 +238,11 @@ class EventHubConsumer(
                             last_exception,
                         )
                         raise last_exception
-        if len(self._message_buffer) >= max_batch_size \
-                or (self._message_buffer and not max_wait_time) \
-                or (deadline <= time.time() and max_wait_time):
+        if (
+            len(self._message_buffer) >= max_batch_size
+            or (self._message_buffer and not max_wait_time)
+            or (deadline <= time.time() and max_wait_time)
+        ):
             if batch:
                 events_for_callback = []
                 for _ in range(min(max_batch_size, len(self._message_buffer))):
@@ -246,5 +251,7 @@ class EventHubConsumer(
                     )
                 self._on_event_received(events_for_callback)
             else:
-                self._on_event_received(self._next_message_in_buffer() if self._message_buffer else None)
+                self._on_event_received(
+                    self._next_message_in_buffer() if self._message_buffer else None
+                )
             self._receive_start_time = None

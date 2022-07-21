@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._consumption_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class Amount(msrest.serialization.Model):
@@ -172,8 +174,7 @@ class Balance(Resource):
     :vartype total_usage: float
     :ivar azure_marketplace_service_charges: Total charges for Azure Marketplace.
     :vartype azure_marketplace_service_charges: float
-    :ivar billing_frequency: The billing frequency. Possible values include: "Month", "Quarter",
-     "Year".
+    :ivar billing_frequency: The billing frequency. Known values are: "Month", "Quarter", "Year".
     :vartype billing_frequency: str or ~azure.mgmt.consumption.models.BillingFrequency
     :ivar price_hidden: Price is hidden or not.
     :vartype price_hidden: bool
@@ -233,11 +234,11 @@ class Balance(Resource):
     def __init__(
         self,
         *,
-        billing_frequency: Optional[Union[str, "BillingFrequency"]] = None,
+        billing_frequency: Optional[Union[str, "_models.BillingFrequency"]] = None,
         **kwargs
     ):
         """
-        :keyword billing_frequency: The billing frequency. Possible values include: "Month", "Quarter",
+        :keyword billing_frequency: The billing frequency. Known values are: "Month", "Quarter",
          "Year".
         :paramtype billing_frequency: str or ~azure.mgmt.consumption.models.BillingFrequency
         """
@@ -384,14 +385,14 @@ class Budget(ProxyResource):
     :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
      used to determine whether the user is updating the latest version or not.
     :vartype e_tag: str
-    :ivar category: The category of the budget, whether the budget tracks cost or usage. Possible
-     values include: "Cost".
+    :ivar category: The category of the budget, whether the budget tracks cost or usage. Known
+     values are: "Cost".
     :vartype category: str or ~azure.mgmt.consumption.models.CategoryType
     :ivar amount: The total amount of cost to track with the budget.
     :vartype amount: float
     :ivar time_grain: The time covered by a budget. Tracking of the amount will be reset based on
      the time grain. BillingMonth, BillingQuarter, and BillingAnnual are only supported by WD
-     customers. Possible values include: "Monthly", "Quarterly", "Annually", "BillingMonth",
+     customers. Known values are: "Monthly", "Quarterly", "Annually", "BillingMonth",
      "BillingQuarter", "BillingAnnual".
     :vartype time_grain: str or ~azure.mgmt.consumption.models.TimeGrainType
     :ivar time_period: Has start and end date of the budget. The start date must be first of the
@@ -437,26 +438,26 @@ class Budget(ProxyResource):
         self,
         *,
         e_tag: Optional[str] = None,
-        category: Optional[Union[str, "CategoryType"]] = None,
+        category: Optional[Union[str, "_models.CategoryType"]] = None,
         amount: Optional[float] = None,
-        time_grain: Optional[Union[str, "TimeGrainType"]] = None,
-        time_period: Optional["BudgetTimePeriod"] = None,
-        filter: Optional["BudgetFilter"] = None,
-        notifications: Optional[Dict[str, "Notification"]] = None,
+        time_grain: Optional[Union[str, "_models.TimeGrainType"]] = None,
+        time_period: Optional["_models.BudgetTimePeriod"] = None,
+        filter: Optional["_models.BudgetFilter"] = None,
+        notifications: Optional[Dict[str, "_models.Notification"]] = None,
         **kwargs
     ):
         """
         :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
          used to determine whether the user is updating the latest version or not.
         :paramtype e_tag: str
-        :keyword category: The category of the budget, whether the budget tracks cost or usage.
-         Possible values include: "Cost".
+        :keyword category: The category of the budget, whether the budget tracks cost or usage. Known
+         values are: "Cost".
         :paramtype category: str or ~azure.mgmt.consumption.models.CategoryType
         :keyword amount: The total amount of cost to track with the budget.
         :paramtype amount: float
         :keyword time_grain: The time covered by a budget. Tracking of the amount will be reset based
          on the time grain. BillingMonth, BillingQuarter, and BillingAnnual are only supported by WD
-         customers. Possible values include: "Monthly", "Quarterly", "Annually", "BillingMonth",
+         customers. Known values are: "Monthly", "Quarterly", "Annually", "BillingMonth",
          "BillingQuarter", "BillingAnnual".
         :paramtype time_grain: str or ~azure.mgmt.consumption.models.TimeGrainType
         :keyword time_period: Has start and end date of the budget. The start date must be first of the
@@ -488,7 +489,7 @@ class BudgetComparisonExpression(msrest.serialization.Model):
 
     :ivar name: Required. The name of the column to use in comparison.
     :vartype name: str
-    :ivar operator: Required. The operator to use for comparison. Possible values include: "In".
+    :ivar operator: Required. The operator to use for comparison. Known values are: "In".
     :vartype operator: str or ~azure.mgmt.consumption.models.BudgetOperatorType
     :ivar values: Required. Array of values to use for comparison.
     :vartype values: list[str]
@@ -510,14 +511,14 @@ class BudgetComparisonExpression(msrest.serialization.Model):
         self,
         *,
         name: str,
-        operator: Union[str, "BudgetOperatorType"],
+        operator: Union[str, "_models.BudgetOperatorType"],
         values: List[str],
         **kwargs
     ):
         """
         :keyword name: Required. The name of the column to use in comparison.
         :paramtype name: str
-        :keyword operator: Required. The operator to use for comparison. Possible values include: "In".
+        :keyword operator: Required. The operator to use for comparison. Known values are: "In".
         :paramtype operator: str or ~azure.mgmt.consumption.models.BudgetOperatorType
         :keyword values: Required. Array of values to use for comparison.
         :paramtype values: list[str]
@@ -533,8 +534,6 @@ class BudgetFilter(msrest.serialization.Model):
 
     :ivar and_property: The logical "AND" expression. Must have at least 2 items.
     :vartype and_property: list[~azure.mgmt.consumption.models.BudgetFilterProperties]
-    :ivar not_property: The logical "NOT" expression.
-    :vartype not_property: ~azure.mgmt.consumption.models.BudgetFilterProperties
     :ivar dimensions: Has comparison expression for a dimension.
     :vartype dimensions: ~azure.mgmt.consumption.models.BudgetComparisonExpression
     :ivar tags: A set of tags. Has comparison expression for a tag.
@@ -543,7 +542,6 @@ class BudgetFilter(msrest.serialization.Model):
 
     _attribute_map = {
         'and_property': {'key': 'and', 'type': '[BudgetFilterProperties]'},
-        'not_property': {'key': 'not', 'type': 'BudgetFilterProperties'},
         'dimensions': {'key': 'dimensions', 'type': 'BudgetComparisonExpression'},
         'tags': {'key': 'tags', 'type': 'BudgetComparisonExpression'},
     }
@@ -551,17 +549,14 @@ class BudgetFilter(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        and_property: Optional[List["BudgetFilterProperties"]] = None,
-        not_property: Optional["BudgetFilterProperties"] = None,
-        dimensions: Optional["BudgetComparisonExpression"] = None,
-        tags: Optional["BudgetComparisonExpression"] = None,
+        and_property: Optional[List["_models.BudgetFilterProperties"]] = None,
+        dimensions: Optional["_models.BudgetComparisonExpression"] = None,
+        tags: Optional["_models.BudgetComparisonExpression"] = None,
         **kwargs
     ):
         """
         :keyword and_property: The logical "AND" expression. Must have at least 2 items.
         :paramtype and_property: list[~azure.mgmt.consumption.models.BudgetFilterProperties]
-        :keyword not_property: The logical "NOT" expression.
-        :paramtype not_property: ~azure.mgmt.consumption.models.BudgetFilterProperties
         :keyword dimensions: Has comparison expression for a dimension.
         :paramtype dimensions: ~azure.mgmt.consumption.models.BudgetComparisonExpression
         :keyword tags: A set of tags. Has comparison expression for a tag.
@@ -569,7 +564,6 @@ class BudgetFilter(msrest.serialization.Model):
         """
         super(BudgetFilter, self).__init__(**kwargs)
         self.and_property = and_property
-        self.not_property = not_property
         self.dimensions = dimensions
         self.tags = tags
 
@@ -591,8 +585,8 @@ class BudgetFilterProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        dimensions: Optional["BudgetComparisonExpression"] = None,
-        tags: Optional["BudgetComparisonExpression"] = None,
+        dimensions: Optional["_models.BudgetComparisonExpression"] = None,
+        tags: Optional["_models.BudgetComparisonExpression"] = None,
         **kwargs
     ):
         """
@@ -724,8 +718,8 @@ class ChargeSummary(ProxyResource):
     :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
      used to determine whether the user is updating the latest version or not.
     :vartype e_tag: str
-    :ivar kind: Required. Specifies the kind of charge summary.Constant filled by server. Possible
-     values include: "legacy", "modern".
+    :ivar kind: Required. Specifies the kind of charge summary.Constant filled by server. Known
+     values are: "legacy", "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.ChargeSummaryKind
     """
 
@@ -1002,7 +996,7 @@ Some Error responses:
     def __init__(
         self,
         *,
-        error: Optional["ErrorDetails"] = None,
+        error: Optional["_models.ErrorDetails"] = None,
         **kwargs
     ):
         """
@@ -1076,9 +1070,9 @@ class EventSummary(ProxyResource):
     :vartype charges: ~azure.mgmt.consumption.models.Amount
     :ivar closed_balance: The balance after the event.
     :vartype closed_balance: ~azure.mgmt.consumption.models.Amount
-    :ivar event_type: Identifies the type of the event. Possible values include: "SettledCharges",
+    :ivar event_type: Identifies the type of the event. Known values are: "SettledCharges",
      "PendingCharges", "PendingAdjustments", "PendingNewCredit", "PendingExpiredCredit", "UnKnown",
-     "NewCredit".
+     "NewCredit", "CreditExpired".
     :vartype event_type: str or ~azure.mgmt.consumption.models.EventType
     :ivar invoice_number: The number which uniquely identifies the invoice on which the event was
      billed. This will be empty for unbilled events.
@@ -1184,16 +1178,16 @@ class EventSummary(ProxyResource):
         self,
         *,
         e_tag: Optional[str] = None,
-        event_type: Optional[Union[str, "EventType"]] = None,
+        event_type: Optional[Union[str, "_models.EventType"]] = None,
         **kwargs
     ):
         """
         :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
          used to determine whether the user is updating the latest version or not.
         :paramtype e_tag: str
-        :keyword event_type: Identifies the type of the event. Possible values include:
-         "SettledCharges", "PendingCharges", "PendingAdjustments", "PendingNewCredit",
-         "PendingExpiredCredit", "UnKnown", "NewCredit".
+        :keyword event_type: Identifies the type of the event. Known values are: "SettledCharges",
+         "PendingCharges", "PendingAdjustments", "PendingNewCredit", "PendingExpiredCredit", "UnKnown",
+         "NewCredit", "CreditExpired".
         :paramtype event_type: str or ~azure.mgmt.consumption.models.EventType
         """
         super(EventSummary, self).__init__(e_tag=e_tag, **kwargs)
@@ -1310,7 +1304,7 @@ Some Error responses:
     def __init__(
         self,
         *,
-        error: Optional["HighCasedErrorDetails"] = None,
+        error: Optional["_models.HighCasedErrorDetails"] = None,
         **kwargs
     ):
         """
@@ -1337,8 +1331,8 @@ class LegacyChargeSummary(ChargeSummary):
     :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
      used to determine whether the user is updating the latest version or not.
     :vartype e_tag: str
-    :ivar kind: Required. Specifies the kind of charge summary.Constant filled by server. Possible
-     values include: "legacy", "modern".
+    :ivar kind: Required. Specifies the kind of charge summary.Constant filled by server. Known
+     values are: "legacy", "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.ChargeSummaryKind
     :ivar billing_period_id: The id of the billing period resource that the charge belongs to.
     :vartype billing_period_id: str
@@ -1464,7 +1458,7 @@ class ReservationRecommendation(Resource, ResourceAttributes):
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar kind: Required. Specifies the kind of reservation recommendation.Constant filled by
-     server. Possible values include: "legacy", "modern".
+     server. Known values are: "legacy", "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.ReservationRecommendationKind
     """
 
@@ -1509,7 +1503,6 @@ class ReservationRecommendation(Resource, ResourceAttributes):
         self.type = None
         self.etag = None
         self.tags = None
-        self.kind = 'ReservationRecommendation'  # type: str
 
 
 class LegacyReservationRecommendation(ReservationRecommendation):
@@ -1534,7 +1527,7 @@ class LegacyReservationRecommendation(ReservationRecommendation):
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar kind: Required. Specifies the kind of reservation recommendation.Constant filled by
-     server. Possible values include: "legacy", "modern".
+     server. Known values are: "legacy", "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.ReservationRecommendationKind
     :ivar look_back_period: The number of days of usage to look back for recommendation.
     :vartype look_back_period: str
@@ -2281,8 +2274,8 @@ class UsageDetail(Resource):
     :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: Required. Specifies the kind of usage details.Constant filled by server. Possible
-     values include: "legacy", "modern".
+    :ivar kind: Required. Specifies the kind of usage details.Constant filled by server. Known
+     values are: "legacy", "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.UsageDetailsKind
     """
 
@@ -2335,8 +2328,8 @@ class LegacyUsageDetail(UsageDetail):
     :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: Required. Specifies the kind of usage details.Constant filled by server. Possible
-     values include: "legacy", "modern".
+    :ivar kind: Required. Specifies the kind of usage details.Constant filled by server. Known
+     values are: "legacy", "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.UsageDetailsKind
     :ivar billing_account_id: Billing Account identifier.
     :vartype billing_account_id: str
@@ -2445,8 +2438,8 @@ class LegacyUsageDetail(UsageDetail):
     :vartype benefit_id: str
     :ivar benefit_name: Name of the applicable benefit.
     :vartype benefit_name: str
-    :ivar pricing_model: Identifier that indicates how the meter is priced. Possible values
-     include: "On Demand", "Reservation", "Spot".
+    :ivar pricing_model: Identifier that indicates how the meter is priced. Known values are: "On
+     Demand", "Reservation", "Spot".
     :vartype pricing_model: str or ~azure.mgmt.consumption.models.PricingModelType
     """
 
@@ -2666,8 +2659,8 @@ class LotSummary(ProxyResource):
     :vartype original_amount: ~azure.mgmt.consumption.models.Amount
     :ivar closed_balance: The balance as of the last invoice.
     :vartype closed_balance: ~azure.mgmt.consumption.models.Amount
-    :ivar source: The source of the lot. Possible values include: "PurchasedCredit",
-     "PromotionalCredit", "ConsumptionCommitment".
+    :ivar source: The source of the lot. Known values are: "PurchasedCredit", "PromotionalCredit",
+     "ConsumptionCommitment".
     :vartype source: str or ~azure.mgmt.consumption.models.LotSource
     :ivar start_date: The date when the lot became effective.
     :vartype start_date: ~datetime.datetime
@@ -2678,8 +2671,8 @@ class LotSummary(ProxyResource):
     :vartype po_number: str
     :ivar purchased_date: The date when the lot was added.
     :vartype purchased_date: ~datetime.datetime
-    :ivar status: The status of the lot. Possible values include: "None", "Active", "Inactive",
-     "Expired", "Complete", "Canceled".
+    :ivar status: The status of the lot. Known values are: "None", "Active", "Inactive", "Expired",
+     "Complete", "Canceled".
     :vartype status: str or ~azure.mgmt.consumption.models.Status
     :ivar credit_currency: The currency of the lot.
     :vartype credit_currency: str
@@ -2843,7 +2836,7 @@ class ManagementGroupAggregatedCostResult(Resource):
     def __init__(
         self,
         *,
-        children: Optional[List["ManagementGroupAggregatedCostResult"]] = None,
+        children: Optional[List["_models.ManagementGroupAggregatedCostResult"]] = None,
         included_subscriptions: Optional[List[str]] = None,
         excluded_subscriptions: Optional[List[str]] = None,
         **kwargs
@@ -3213,8 +3206,8 @@ class ModernChargeSummary(ChargeSummary):
     :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
      used to determine whether the user is updating the latest version or not.
     :vartype e_tag: str
-    :ivar kind: Required. Specifies the kind of charge summary.Constant filled by server. Possible
-     values include: "legacy", "modern".
+    :ivar kind: Required. Specifies the kind of charge summary.Constant filled by server. Known
+     values are: "legacy", "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.ChargeSummaryKind
     :ivar billing_period_id: The id of the billing period resource that the charge belongs to.
     :vartype billing_period_id: str
@@ -3325,7 +3318,7 @@ class ModernReservationRecommendation(ReservationRecommendation):
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar kind: Required. Specifies the kind of reservation recommendation.Constant filled by
-     server. Possible values include: "legacy", "modern".
+     server. Known values are: "legacy", "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.ReservationRecommendationKind
     :ivar location_properties_location: Resource Location.
     :vartype location_properties_location: str
@@ -3632,15 +3625,15 @@ class ModernUsageDetail(UsageDetail):
     :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: Required. Specifies the kind of usage details.Constant filled by server. Possible
-     values include: "legacy", "modern".
+    :ivar kind: Required. Specifies the kind of usage details.Constant filled by server. Known
+     values are: "legacy", "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.UsageDetailsKind
     :ivar billing_account_id: Billing Account identifier.
     :vartype billing_account_id: str
     :ivar effective_price: Effective Price that's charged for the usage.
     :vartype effective_price: float
-    :ivar pricing_model: Identifier that indicates how the meter is priced. Possible values
-     include: "On Demand", "Reservation", "Spot".
+    :ivar pricing_model: Identifier that indicates how the meter is priced. Known values are: "On
+     Demand", "Reservation", "Spot".
     :vartype pricing_model: str or ~azure.mgmt.consumption.models.PricingModelType
     :ivar billing_account_name: Name of the Billing Account.
     :vartype billing_account_name: str
@@ -4079,8 +4072,8 @@ class Notification(msrest.serialization.Model):
 
     :ivar enabled: Required. The notification is enabled or not.
     :vartype enabled: bool
-    :ivar operator: Required. The comparison operator. Possible values include: "EqualTo",
-     "GreaterThan", "GreaterThanOrEqualTo".
+    :ivar operator: Required. The comparison operator. Known values are: "EqualTo", "GreaterThan",
+     "GreaterThanOrEqualTo".
     :vartype operator: str or ~azure.mgmt.consumption.models.OperatorType
     :ivar threshold: Required. Threshold value associated with a notification. Notification is sent
      when the cost exceeded the threshold. It is always percent and has to be between 0 and 1000.
@@ -4097,13 +4090,13 @@ class Notification(msrest.serialization.Model):
      exceeded. Must be provided as a fully qualified Azure resource id. Only supported at
      Subscription or Resource Group scopes.
     :vartype contact_groups: list[str]
-    :ivar threshold_type: The type of threshold. Possible values include: "Actual", "Forecasted".
-     Default value: "Actual".
+    :ivar threshold_type: The type of threshold. Known values are: "Actual", "Forecasted". Default
+     value: "Actual".
     :vartype threshold_type: str or ~azure.mgmt.consumption.models.ThresholdType
-    :ivar locale: Language in which the recipient will receive the notification. Possible values
-     include: "en-us", "ja-jp", "zh-cn", "de-de", "es-es", "fr-fr", "it-it", "ko-kr", "pt-br",
-     "ru-ru", "zh-tw", "cs-cz", "pl-pl", "tr-tr", "da-dk", "en-gb", "hu-hu", "nb-no", "nl-nl",
-     "pt-pt", "sv-se".
+    :ivar locale: Language in which the recipient will receive the notification. Known values are:
+     "en-us", "ja-jp", "zh-cn", "de-de", "es-es", "fr-fr", "it-it", "ko-kr", "pt-br", "ru-ru",
+     "zh-tw", "cs-cz", "pl-pl", "tr-tr", "da-dk", "en-gb", "hu-hu", "nb-no", "nl-nl", "pt-pt",
+     "sv-se".
     :vartype locale: str or ~azure.mgmt.consumption.models.CultureCode
     """
 
@@ -4130,19 +4123,19 @@ class Notification(msrest.serialization.Model):
         self,
         *,
         enabled: bool,
-        operator: Union[str, "OperatorType"],
+        operator: Union[str, "_models.OperatorType"],
         threshold: float,
         contact_emails: List[str],
         contact_roles: Optional[List[str]] = None,
         contact_groups: Optional[List[str]] = None,
-        threshold_type: Optional[Union[str, "ThresholdType"]] = "Actual",
-        locale: Optional[Union[str, "CultureCode"]] = None,
+        threshold_type: Optional[Union[str, "_models.ThresholdType"]] = "Actual",
+        locale: Optional[Union[str, "_models.CultureCode"]] = None,
         **kwargs
     ):
         """
         :keyword enabled: Required. The notification is enabled or not.
         :paramtype enabled: bool
-        :keyword operator: Required. The comparison operator. Possible values include: "EqualTo",
+        :keyword operator: Required. The comparison operator. Known values are: "EqualTo",
          "GreaterThan", "GreaterThanOrEqualTo".
         :paramtype operator: str or ~azure.mgmt.consumption.models.OperatorType
         :keyword threshold: Required. Threshold value associated with a notification. Notification is
@@ -4161,13 +4154,13 @@ class Notification(msrest.serialization.Model):
          exceeded. Must be provided as a fully qualified Azure resource id. Only supported at
          Subscription or Resource Group scopes.
         :paramtype contact_groups: list[str]
-        :keyword threshold_type: The type of threshold. Possible values include: "Actual",
-         "Forecasted". Default value: "Actual".
+        :keyword threshold_type: The type of threshold. Known values are: "Actual", "Forecasted".
+         Default value: "Actual".
         :paramtype threshold_type: str or ~azure.mgmt.consumption.models.ThresholdType
-        :keyword locale: Language in which the recipient will receive the notification. Possible values
-         include: "en-us", "ja-jp", "zh-cn", "de-de", "es-es", "fr-fr", "it-it", "ko-kr", "pt-br",
-         "ru-ru", "zh-tw", "cs-cz", "pl-pl", "tr-tr", "da-dk", "en-gb", "hu-hu", "nb-no", "nl-nl",
-         "pt-pt", "sv-se".
+        :keyword locale: Language in which the recipient will receive the notification. Known values
+         are: "en-us", "ja-jp", "zh-cn", "de-de", "es-es", "fr-fr", "it-it", "ko-kr", "pt-br", "ru-ru",
+         "zh-tw", "cs-cz", "pl-pl", "tr-tr", "da-dk", "en-gb", "hu-hu", "nb-no", "nl-nl", "pt-pt",
+         "sv-se".
         :paramtype locale: str or ~azure.mgmt.consumption.models.CultureCode
         """
         super(Notification, self).__init__(**kwargs)
@@ -4208,7 +4201,7 @@ class Operation(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         **kwargs
     ):
         """
@@ -4836,7 +4829,7 @@ class ReservationRecommendationDetailsSavingsProperties(msrest.serialization.Mod
     def __init__(
         self,
         *,
-        calculated_savings: Optional[List["ReservationRecommendationDetailsCalculatedSavingsProperties"]] = None,
+        calculated_savings: Optional[List["_models.ReservationRecommendationDetailsCalculatedSavingsProperties"]] = None,
         **kwargs
     ):
         """
@@ -5243,7 +5236,7 @@ class TagsResult(ProxyResource):
         self,
         *,
         e_tag: Optional[str] = None,
-        tags: Optional[List["Tag"]] = None,
+        tags: Optional[List["_models.Tag"]] = None,
         **kwargs
     ):
         """

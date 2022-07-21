@@ -4,10 +4,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
-from azure.core import credentials
+import os
 import pytest
 import six
-import time
 
 from azure.containerregistry import (
     RepositoryProperties,
@@ -17,6 +16,7 @@ from azure.containerregistry import (
     ArtifactTagOrder,
     ContainerRegistryClient,
 )
+from azure.containerregistry._helpers import _deserialize_manifest
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.paging import ItemPaged
 
@@ -601,3 +601,136 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             last_udpated_on = properties.last_udpated_on
         last_updated_on = properties.last_updated_on
         assert last_udpated_on == last_updated_on
+
+    @pytest.mark.live_test_only
+    @acr_preparer()
+    def test_upload_oci_manifest(self, containerregistry_endpoint):
+        # TODO: remove the "@pytest.mark.live_test_only" annotation once moved to the new test framework
+        # Arrange
+        repo = self.get_resource_name("repo")
+        manifest = self.create_oci_manifest()
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        self.upload_manifest_prerequisites(repo, client)
+
+        # Act
+        digest = client.upload_manifest(repo, manifest)
+
+        # Assert
+        response = client.download_manifest(repo, digest)
+        assert response.digest == digest
+        assert response.data.tell() == 0
+        self.assert_manifest(response.manifest, manifest)
+        
+        client.delete_manifest(repo, digest)
+
+    @pytest.mark.live_test_only
+    @acr_preparer()
+    def test_upload_oci_manifest_stream(self, containerregistry_endpoint):
+        # TODO: remove the "@pytest.mark.live_test_only" annotation once moved to the new test framework
+        # Arrange
+        repo = self.get_resource_name("repo")
+        base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
+        manifest_stream = open(os.path.join(base_path, "manifest.json"), "rb")
+        manifest = _deserialize_manifest(manifest_stream)     
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        self.upload_manifest_prerequisites(repo, client)
+
+        # Act
+        digest = client.upload_manifest(repo, manifest_stream)
+
+        # Assert
+        response = client.download_manifest(repo, digest)
+        assert response.digest == digest
+        assert response.data.tell() == 0
+        self.assert_manifest(response.manifest, manifest)
+        
+        client.delete_manifest(repo, digest)
+
+    @pytest.mark.live_test_only
+    @acr_preparer()
+    def test_upload_oci_manifest_with_tag(self, containerregistry_endpoint):
+        # TODO: remove the "@pytest.mark.live_test_only" annotation once moved to the new test framework
+        # Arrange
+        repo = self.get_resource_name("repo")
+        manifest = self.create_oci_manifest()
+        client = self.create_registry_client(containerregistry_endpoint)
+        tag = "v1"
+        
+        self.upload_manifest_prerequisites(repo, client)
+        
+        # Act
+        digest = client.upload_manifest(repo, manifest, tag=tag)
+        
+        # Assert
+        response = client.download_manifest(repo, digest)
+        assert response.digest == digest
+        assert response.data.tell() == 0
+        self.assert_manifest(response.manifest, manifest)
+
+        response = client.download_manifest(repo, tag)
+        assert response.digest == digest
+        assert response.data.tell() == 0
+        self.assert_manifest(response.manifest, manifest)
+
+        tags = client.get_manifest_properties(repo, digest).tags
+        assert len(tags) == 1
+        assert tags[0] == tag
+        
+        client.delete_manifest(repo, digest)
+        
+    @pytest.mark.live_test_only
+    @acr_preparer()
+    def test_upload_oci_manifest_stream_with_tag(self, containerregistry_endpoint):
+        # TODO: remove the "@pytest.mark.live_test_only" annotation once moved to the new test framework
+        # Arrange
+        repo = self.get_resource_name("repo")
+        base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
+        manifest_stream = open(os.path.join(base_path, "manifest.json"), "rb")
+        manifest = _deserialize_manifest(manifest_stream)
+        client = self.create_registry_client(containerregistry_endpoint)
+        tag = "v1"
+        
+        self.upload_manifest_prerequisites(repo, client)
+        
+        # Act
+        digest = client.upload_manifest(repo, manifest_stream, tag=tag)
+        
+        # Assert
+        response = client.download_manifest(repo, digest)
+        assert response.digest == digest
+        assert response.data.tell() == 0
+        self.assert_manifest(response.manifest, manifest)
+
+        response = client.download_manifest(repo, tag)
+        assert response.digest == digest
+        assert response.data.tell() == 0
+        self.assert_manifest(response.manifest, manifest)
+
+        tags = client.get_manifest_properties(repo, digest).tags
+        assert len(tags) == 1
+        assert tags[0] == tag
+        
+        client.delete_manifest(repo, digest)
+    
+    @pytest.mark.live_test_only
+    @acr_preparer()
+    def test_upload_blob(self, containerregistry_endpoint):
+        # TODO: remove the "@pytest.mark.live_test_only" annotation once moved to the new test framework
+        # Arrange
+        repo = self.get_resource_name("repo")
+        client = self.create_registry_client(containerregistry_endpoint)       
+        blob = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
+        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", blob)
+        
+        # Act
+        data = open(path, "rb")
+        digest = client.upload_blob(repo, data)
+        
+        # Assert
+        res = client.download_blob(repo, digest)
+        assert len(res.data.read()) == len(data.read())
+        assert res.digest == digest
+        
+        client.delete_blob(repo, digest)

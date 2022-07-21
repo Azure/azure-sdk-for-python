@@ -1,15 +1,15 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "856",
+        "Content-Length": "718",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -26,7 +26,7 @@
             "taskName": "0",
             "kind": "EntityRecognition",
             "parameters": {
-              "model-version": "bad",
+              "modelVersion": "bad",
               "stringIndexType": "UnicodeCodePoint"
             }
           },
@@ -34,14 +34,14 @@
             "taskName": "1",
             "kind": "KeyPhraseExtraction",
             "parameters": {
-              "model-version": "bad"
+              "modelVersion": "bad"
             }
           },
           {
             "taskName": "2",
             "kind": "PiiEntityRecognition",
             "parameters": {
-              "model-version": "bad",
+              "modelVersion": "bad",
               "stringIndexType": "UnicodeCodePoint"
             }
           },
@@ -49,7 +49,7 @@
             "taskName": "3",
             "kind": "EntityLinking",
             "parameters": {
-              "model-version": "bad",
+              "modelVersion": "bad",
               "stringIndexType": "UnicodeCodePoint"
             }
           },
@@ -57,15 +57,7 @@
             "taskName": "4",
             "kind": "SentimentAnalysis",
             "parameters": {
-              "model-version": "bad",
-              "stringIndexType": "UnicodeCodePoint"
-            }
-          },
-          {
-            "taskName": "5",
-            "kind": "ExtractiveSummarization",
-            "parameters": {
-              "model-version": "bad",
+              "modelVersion": "bad",
               "stringIndexType": "UnicodeCodePoint"
             }
           }
@@ -73,13 +65,13 @@
       },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "79d3f5c8-5dc5-491b-bbad-b6cd2a81e8ad",
+        "apim-request-id": "b1be192f-fc03-4a56-8aa9-c5e1ddac2f71",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Apr 2022 23:38:13 GMT",
+        "Date": "Thu, 09 Jun 2022 17:10:09 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "6"
+        "x-envoy-upstream-service-time": "5"
       },
       "ResponseBody": {
         "error": {

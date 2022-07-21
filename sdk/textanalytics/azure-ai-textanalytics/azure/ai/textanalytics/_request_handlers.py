@@ -89,14 +89,12 @@ def _determine_action_type(action):  # pylint: disable=too-many-return-statement
         return _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
     if action.__class__.__name__ in ["SentimentAnalysisTask", "SentimentAnalysisLROTask"]:
         return _AnalyzeActionsType.ANALYZE_SENTIMENT
-    if action.__class__.__name__ == "ExtractiveSummarizationLROTask":
-        return _AnalyzeActionsType.EXTRACT_SUMMARY
     if action.__class__.__name__ == "CustomEntitiesLROTask":
         return _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES
     if action.__class__.__name__ == "CustomSingleLabelClassificationLROTask":
-        return _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY
+        return _AnalyzeActionsType.SINGLE_LABEL_CLASSIFY
     if action.__class__.__name__ == "CustomMultiLabelClassificationLROTask":
-        return _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
+        return _AnalyzeActionsType.MULTI_LABEL_CLASSIFY
     if action.__class__.__name__ == "HealthcareLROTask":
         return _AnalyzeActionsType.ANALYZE_HEALTHCARE_ENTITIES
     return _AnalyzeActionsType.EXTRACT_KEY_PHRASES

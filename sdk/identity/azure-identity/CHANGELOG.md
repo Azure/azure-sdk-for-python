@@ -1,5 +1,25 @@
 # Release History
 
+## 1.11.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.11.0b2 (2022-07-05)
+
+### Features Added
+
+- `EnvironmentCredential` added `AZURE_CLIENT_CERTIFICATE_PASSWORD` support for the cert password    ([#24652](https://github.com/Azure/azure-sdk-for-python/issues/24652))
+
+### Bugs Fixed
+
+- Fixed the issue that failed to parse PEM certificate if it does not start with "-----"    ([#24643](https://github.com/Azure/azure-sdk-for-python/issues/24643))
+
 ## 1.11.0b1 (2022-05-10)
 
 ### Features Added

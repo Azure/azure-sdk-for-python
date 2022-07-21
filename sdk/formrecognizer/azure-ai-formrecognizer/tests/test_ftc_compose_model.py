@@ -6,7 +6,7 @@
 
 import pytest
 import functools
-from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
+from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer import FormTrainingClient, CustomFormModel
 from testcase import FormRecognizerTest
@@ -19,17 +19,10 @@ FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTraini
 
 class TestTraining(FormRecognizerTest):
 
-    def teardown(self):
-        self.sleep(4)
-
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
     def test_compose_model_v21(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True)
         model_1 = poller.result()
@@ -49,10 +42,6 @@ class TestTraining(FormRecognizerTest):
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
     def test_compose_model_invalid_unlabeled_models_v21(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
         model_1 = poller.result()

@@ -56,6 +56,10 @@ setup(
     packages=[
         'azure.core.tracing.ext.opencensus_span',
     ],
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     python_requires=">=3.6",
     install_requires=[
         'opencensus>=0.6.0',

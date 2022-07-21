@@ -6,45 +6,39 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List,
+    Any, Dict, List, Optional, Union,
     TYPE_CHECKING)
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse # type: ignore
+from urllib.parse import urlparse
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-from ._serialize import get_api_version
-from ._shared.models import LocationMode
+
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
+from ._shared.models import LocationMode
 from ._shared.response_handlers import process_storage_error
 from ._generated import AzureQueueStorage
 from ._generated.models import StorageServiceProperties
-
+from ._encryption import StorageEncryptionMixin
 from ._models import (
     QueuePropertiesPaged,
     service_stats_deserialize,
     service_properties_deserialize,
 )
-
+from ._serialize import get_api_version
 from ._queue_client import QueueClient
 
 if TYPE_CHECKING:
-    from datetime import datetime
-    from azure.core.configuration import Configuration
-    from azure.core.pipeline.policies import HTTPPolicy
     from ._models import (
+        CorsRule,
+        Metrics,
         QueueProperties,
         QueueAnalyticsLogging,
-        Metrics,
-        CorsRule,
     )
 
 
-class QueueServiceClient(StorageAccountHostsMixin):
+class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     """A client to interact with the Queue Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -110,6 +104,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         super(QueueServiceClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._configure_encryption(kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -433,5 +428,6 @@ class QueueServiceClient(StorageAccountHostsMixin):
         return QueueClient(
             self.url, queue_name=queue_name, credential=self.credential,
             key_resolver_function=self.key_resolver_function, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, api_version=self.api_version, _pipeline=_pipeline,
-            _configuration=self._config, _location_mode=self._location_mode, _hosts=self._hosts, **kwargs)
+            encryption_version=self.encryption_version, key_encryption_key=self.key_encryption_key,
+            api_version=self.api_version, _pipeline=_pipeline, _configuration=self._config,
+            _location_mode=self._location_mode, _hosts=self._hosts, **kwargs)

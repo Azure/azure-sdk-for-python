@@ -7,53 +7,48 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO, Iterator,
-    TYPE_CHECKING,
-    TypeVar)
-
-
-try:
-    from urllib.parse import urlparse, quote, unquote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import quote, unquote # type: ignore
+    Any, AnyStr, Dict, List, IO, Iterable, Iterator, Optional, overload, TypeVar, Union,
+    TYPE_CHECKING
+)
+from urllib.parse import urlparse, quote, unquote
 
 import six
-
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
-    return_headers_and_deserialized)
+    return_headers_and_deserialized
+)
 from ._generated import AzureBlobStorage
 from ._generated.models import SignedIdentifier
+from ._blob_client import BlobClient
 from ._deserialize import deserialize_container_properties
-from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
-from ._models import ( # pylint: disable=unused-import
+from ._download import StorageStreamDownloader
+from ._encryption import StorageEncryptionMixin
+from ._lease import BlobLeaseClient
+from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged, FilteredBlobPaged
+from ._models import (
     ContainerProperties,
     BlobProperties,
     BlobType,
-    FilteredBlob)
-from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged, FilteredBlobPaged
-from ._lease import BlobLeaseClient
-from ._blob_client import BlobClient
+    FilteredBlob
+)
+from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpTransport, HttpResponse  # pylint: disable=ungrouped-imports
-    from azure.core.pipeline.policies import HTTPPolicy # pylint: disable=ungrouped-imports
+    from azure.core.pipeline.transport import HttpResponse  # pylint: disable=ungrouped-imports
     from datetime import datetime
     from ._models import (  # pylint: disable=unused-import
         PublicAccess,
         AccessPolicy,
-        ContentSettings,
         StandardBlobTier,
         PremiumPageBlobTier)
 
@@ -73,7 +68,7 @@ def _get_blob_name(blob):
 ClassType = TypeVar("ClassType")
 
 
-class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-public-methods
+class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # pylint: disable=too-many-public-methods
     """A client to interact with a specific container, although that container
     may not yet exist.
 
@@ -161,6 +156,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
+        self._configure_encryption(kwargs)
 
     def _format_url(self, hostname):
         container_name = self.container_name
@@ -323,7 +319,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         """
         lease = kwargs.pop('lease', None)
         try:
-            kwargs['source_lease_id'] = lease.id  # type: str
+            kwargs['source_lease_id'] = lease.id
         except AttributeError:
             kwargs['source_lease_id'] = lease
         try:
@@ -331,8 +327,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
                 "{}://{}".format(self.scheme, self.primary_hostname), container_name=new_name,
                 credential=self.credential, api_version=self.api_version, _configuration=self._config,
                 _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-                require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-                key_resolver_function=self.key_resolver_function)
+                require_encryption=self.require_encryption, encryption_version=self.encryption_version,
+                key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
             renamed_container._client.container.rename(self.container_name, **kwargs)   # pylint: disable = protected-access
             return renamed_container
         except HttpResponseError as error:
@@ -619,8 +615,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             "{}://{}".format(self.scheme, self.primary_hostname),
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
             _location_mode=self._location_mode, _hosts=self._hosts, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function,
-            _pipeline=_pipeline)
+            encryption_version=self.encryption_version, key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function, _pipeline=_pipeline)
 
     @distributed_trace
     def get_container_access_policy(self, **kwargs):
@@ -746,10 +742,11 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         :param str name_starts_with:
             Filters the results to return only blobs whose names
             begin with the specified prefix.
-        :param list[str] or str include:
+        :param include:
             Specifies one or more additional datasets to include in the response.
             Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'deletedwithversions',
             'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
+        :paramtype include: list[str] or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of BlobProperties.
@@ -1065,9 +1062,34 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             timeout=timeout,
             **kwargs)
 
+    @overload
+    def download_blob(
+            self, blob: Union[str, BlobProperties],
+            offset: int = None,
+            length: int = None,
+            *,
+            encoding: str,
+            **kwargs) -> StorageStreamDownloader[str]:
+        ...
+
+    @overload
+    def download_blob(
+            self, blob: Union[str, BlobProperties],
+            offset: int = None,
+            length: int = None,
+            *,
+            encoding: None = None,
+            **kwargs) -> StorageStreamDownloader[bytes]:
+        ...
+
     @distributed_trace
-    def download_blob(self, blob, offset=None, length=None, **kwargs):
-        # type: (Union[str, BlobProperties], Optional[int], Optional[int], **Any) -> StorageStreamDownloader
+    def download_blob(
+            self, blob: Union[str, BlobProperties],
+            offset: int = None,
+            length: int = None,
+            *,
+            encoding: Optional[str] = None,
+            **kwargs) -> StorageStreamDownloader:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
@@ -1148,10 +1170,15 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         """
         blob_client = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
-        return blob_client.download_blob(offset=offset, length=length, **kwargs)
+        return blob_client.download_blob(
+            offset=offset,
+            length=length,
+            encoding=encoding,
+            **kwargs)
 
     def _generate_delete_blobs_subrequest_options(
         self, snapshot=None,
+        version_id=None,
         delete_snapshots=None,
         lease_access_conditions=None,
         modified_access_conditions=None,
@@ -1185,6 +1212,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         query_parameters = {}
         if snapshot is not None:
             query_parameters['snapshot'] = self._client._serialize.query("snapshot", snapshot, 'str')  # pylint: disable=protected-access
+        if version_id is not None:
+            query_parameters['versionid'] = self._client._serialize.query("version_id", version_id, 'str')  # pylint: disable=protected-access
         if timeout is not None:
             query_parameters['timeout'] = self._client._serialize.query("timeout", timeout, 'int', minimum=0)  # pylint: disable=protected-access
 
@@ -1238,6 +1267,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             try:
                 options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
                     snapshot=blob.get('snapshot'),
+                    version_id=blob.get('version_id'),
                     delete_snapshots=delete_snapshots or blob.get('delete_snapshots'),
                     lease=blob.get('lease_id'),
                     if_modified_since=if_modified_since or blob.get('if_modified_since'),
@@ -1296,7 +1326,9 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
                     key: 'name', value type: str
                 snapshot you want to delete:
                     key: 'snapshot', value type: str
-                whether to delete snapthots when deleting blob:
+                version id:
+                    key: 'version_id', value type: str
+                whether to delete snapshots when deleting blob:
                     key: 'delete_snapshots', value: 'include' or 'only'
                 if the blob modified or not:
                     key: 'if_modified_since', 'if_unmodified_since', value type: datetime
@@ -1490,7 +1522,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
                 lease:
                     key: 'lease_id', value type: Union[str, LeaseClient]
                 snapshot:
-                    key: "snapshost", value type: str
+                    key: "snapshot", value type: str
                 version id:
                     key: "version_id", value type: str
                 tags match condition:
@@ -1608,5 +1640,5 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            require_encryption=self.require_encryption, encryption_version=self.encryption_version,
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)

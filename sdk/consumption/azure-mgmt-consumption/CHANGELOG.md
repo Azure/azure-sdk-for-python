@@ -1,5 +1,22 @@
 # Release History
 
+## 10.0.0 (2022-06-20)
+
+**Features**
+
+  - Added operation LotsOperations.list_by_customer
+
+**Breaking changes**
+
+  - Model BudgetFilter no longer has parameter not_property
+  - Operation ReservationRecommendationDetailsOperations.get has a new parameter resource_scope
+  - Operation ReservationRecommendationsOperations.list has a new parameter resource_scope
+  - Operation ReservationRecommendationsOperations.list no longer has parameter scope
+  - Operation ReservationsDetailsOperations.list has a new parameter resource_scope
+  - Operation ReservationsDetailsOperations.list no longer has parameter scope
+  - Operation ReservationsSummariesOperations.list has a new parameter resource_scope
+  - Operation ReservationsSummariesOperations.list no longer has parameter scope
+
 ## 9.0.0 (2022-01-06)
 
 **Features**

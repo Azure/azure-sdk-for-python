@@ -21,7 +21,7 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
             decode_url=False # type: bool
         ):
         # type: (...) -> None
-        super().__init__()
+        super(HMACCredentialsPolicy, self).__init__()
 
         if host.startswith("https://"):
             self._host = host.replace("https://", "")

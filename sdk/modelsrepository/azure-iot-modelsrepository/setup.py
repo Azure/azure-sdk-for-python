@@ -63,5 +63,9 @@ setup(
             "azure.iot",
         ]
     ),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     zip_safe=False,
 )

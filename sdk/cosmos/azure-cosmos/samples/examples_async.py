@@ -19,16 +19,7 @@ async def examples_async():
     # which can only be used within async methods like examples_async() here
 
     # Since this is an asynchronous client, in order to properly use it you also have to warm it up and close it down.
-    # One way to do it would be like below (all of these statements would be necessary if you want to do it this way).
-
-    async_client = CosmosClient(url, key)
-    await async_client.__aenter__()
-
-    # [CODE LOGIC HERE, CLOSING WITH THE STATEMENT BELOW WHEN DONE]
-
-    await async_client.close()
-
-    # Or better, you can use the `async with` keywords like below to start your clients - these keywords
+    # We recommend using the `async with` keywords like below to start your clients - these keywords
     # create a context manager that automatically warms up, initializes, and cleans up the client, so you don't have to.
 
     # [START create_client]
