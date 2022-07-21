@@ -17,7 +17,7 @@ _AUTO_ASK_FOR_CHECK = 'auto-ask-check'
 _BRANCH_ATTENTION = 'base-branch-attention'
 _7_DAY_ATTENTION = '7days attention'
 _MultiAPI = 'MultiAPI'
-_ON_TIME = 'on-time'
+_ON_TIME = 'on time'
 # record published issues
 _FILE_OUT = 'published_issues_python.csv'
 
