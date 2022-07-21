@@ -2717,7 +2717,7 @@ class DocumentLine:
             else [],
         )
 
-    def get_words(self, **kwargs: Any) -> Iterable["DocumentWord"]:  # pylint: disable=unused-argument
+    def get_words(self) -> Iterable["DocumentWord"]:
         """Get the words found in the spans of this DocumentLine.
 
         :return: iterable[DocumentWord]
