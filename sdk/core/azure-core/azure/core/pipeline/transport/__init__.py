@@ -26,6 +26,7 @@
 
 from ._base import HttpTransport, HttpRequest, HttpResponse
 
+
 __all__ = [
     'HttpTransport',
     'HttpRequest',
@@ -51,8 +52,8 @@ def __dir__():
 def __getattr__(name):
     if name == 'AsyncioRequestsTransport':
         try:
-            from ._requests_asyncio import AsyncHttpResponse
-            return AsyncHttpResponse
+            from ._requests_asyncio import AsyncioRequestsTransport
+            return AsyncioRequestsTransport
         except ImportError:
             pass
     if name == 'AsyncioRequestsTransportResponse':
