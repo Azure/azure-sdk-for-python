@@ -1,8 +1,10 @@
 # Release History
 
-## 0.0.0 (it should be stable) (2022-07-21)
+## 20.2.0 (2022-07-21)
 
+**Features**
 
+  - Add new api-version `2022-06-01`
 
 ## 20.1.0 (2022-07-21)
 
