@@ -162,7 +162,6 @@ Currently the features below are **not supported**. For alternatives options, ch
 
 * Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics
 * Create Geospatial Index
-* Update Autoscale throughput
 * Update analytical store ttl (time to live)
 * Get the connection string
 * Get the minimum RU/s of a container
