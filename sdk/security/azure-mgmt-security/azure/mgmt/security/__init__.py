@@ -7,9 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._security_center import SecurityCenter
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['SecurityCenter']
 
 try:
