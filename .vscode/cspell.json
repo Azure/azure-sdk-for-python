@@ -259,6 +259,7 @@
     "premf",
     "pschema",
     "PSECRET",
+    "pyfuncitem",
     "pygobject",
     "parameterizing",
     "pytyped",

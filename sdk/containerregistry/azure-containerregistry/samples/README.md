@@ -4,7 +4,7 @@ languages:
   - python
 products:
   - azure
-  - azure-containerregistry
+  - azure-container-registry
 urlFragment: containerregistry-samples
 ---
 

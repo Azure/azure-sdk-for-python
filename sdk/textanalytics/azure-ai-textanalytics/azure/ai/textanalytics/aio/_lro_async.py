@@ -6,7 +6,7 @@
 import base64
 import functools
 import json
-from typing import Mapping, Any, TypeVar, Generator, Awaitable
+from typing import Mapping, Any, TypeVar, Generator, Awaitable, cast
 from typing_extensions import Protocol, runtime_checkable
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling import AsyncLROPoller, AsyncPollingMethod
@@ -51,6 +51,9 @@ class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType], Awaitable):
         ...
 
     def __await__(self) -> Generator[Any, None, PollingReturnType]:
+        ...
+
+    async def cancel(self) -> None:  # pylint: disable=no-self-use
         ...
 
 
@@ -157,9 +160,14 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
 
     @property
     def id(self):
-        if not self._current_body:
-            return None
-        return self._current_body.job_id
+        if self._current_body and self._current_body.job_id is not None:
+            return self._current_body.job_id
+        return self._get_id_from_headers()
+
+    def _get_id_from_headers(self) -> str:
+        return self._initial_response.http_response.headers[
+            "Operation-Location"
+        ].split("/jobs/")[1].split("?")[0]
 
     @property
     def display_name(self):
@@ -177,11 +185,20 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
 
 class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType]):
     def polling_method(self) -> AsyncAnalyzeHealthcareEntitiesLROPollingMethod:  # type: ignore
-        """Return the polling method associated to this poller."""
+        """Return the polling method associated to this poller.
+
+        :return: AsyncAnalyzeHealthcareEntitiesLROPollingMethod
+        :rtype: AsyncAnalyzeHealthcareEntitiesLROPollingMethod
+        """
         return self._polling_method  # type: ignore
 
     @property
     def details(self) -> Mapping[str, Any]:
+        """Long-running operation metadata.
+
+        :return: A mapping of details about the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
         return {
             "id": self.polling_method().id,
             "created_on": self.polling_method().created_on,
@@ -209,7 +226,14 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
         continuation_token: str,
         **kwargs: Any
     ) -> "AsyncAnalyzeHealthcareEntitiesLROPoller":
-        """
+        """Internal use only.
+
+        :param polling_method: Polling method to use.
+        :type polling_method: AsyncAnalyzeHealthcareEntitiesLROPollingMethod
+        :param str continuation_token: Opaque token.
+        :return: AsyncAnalyzeHealthcareEntitiesLROPoller
+        :rtype: AsyncAnalyzeHealthcareEntitiesLROPoller
+
         :meta private:
         """
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
@@ -246,7 +270,6 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
                 :caption: Cancel an existing health operation.
         """
         polling_interval = kwargs.pop("polling_interval", 5)
-        await self.polling_method().update_status()
 
         try:
             client = getattr(
@@ -271,6 +294,7 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
         self._doc_id_order = kwargs.pop("doc_id_order", None)
         self._task_id_order = kwargs.pop("task_id_order", None)
         self._show_stats = kwargs.pop("show_stats", None)
+        self._text_analytics_client = kwargs.pop("text_analytics_client", None)
         super().__init__(*args, **kwargs)
 
     @property
@@ -327,9 +351,14 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
 
     @property
     def id(self):
-        if not self._current_body:
-            return None
-        return self._current_body.job_id
+        if self._current_body and self._current_body.job_id is not None:
+            return self._current_body.job_id
+        return self._get_id_from_headers()
+
+    def _get_id_from_headers(self) -> str:
+        return self._initial_response.http_response.headers[
+            "Operation-Location"
+        ].split("/jobs/")[1].split("?")[0]
 
     def get_continuation_token(self):
         # type: () -> str
@@ -342,11 +371,20 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
 
 class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
     def polling_method(self) -> AsyncAnalyzeActionsLROPollingMethod:  # type: ignore
-        """Return the polling method associated to this poller."""
+        """Return the polling method associated to this poller.
+
+        :return: AsyncAnalyzeActionsLROPollingMethod
+        :rtype: AsyncAnalyzeActionsLROPollingMethod
+        """
         return self._polling_method  # type: ignore
 
     @property
     def details(self) -> Mapping[str, Any]:
+        """Long-running operation metadata.
+
+        :return: A mapping of details about the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
         return {
             "id": self.polling_method().id,
             "created_on": self.polling_method().created_on,
@@ -382,7 +420,14 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
         continuation_token: str,
         **kwargs: Any
     ) -> "AsyncAnalyzeActionsLROPoller":  # type: ignore
-        """
+        """Internal use only.
+
+        :param polling_method: Polling method to use.
+        :type polling_method: AsyncAnalyzeActionsLROPollingMethod
+        :param str continuation_token: Opaque token.
+        :return: AsyncAnalyzeActionsLROPoller
+        :rtype: AsyncAnalyzeActionsLROPoller
+
         :meta private:
         """
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
@@ -399,3 +444,22 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
             functools.partial(deserialization_callback, initial_response),
             polling_method  # type: ignore
         )
+
+    async def cancel(self) -> None:
+        """Cancel the operation currently being polled.
+
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
+        """
+
+        cast(AsyncAnalyzeActionsLROPollingMethod, self.polling_method)
+        client = self.polling_method()._text_analytics_client  # pylint: disable=protected-access
+
+        try:
+            await client.begin_analyze_text_cancel_job(self.id, polling=False)
+        except ValueError:
+            raise ValueError("Cancellation not supported by API versions v3.0, v3.1.")
+        except HttpResponseError as error:
+            from .._response_handlers import process_http_response_error
+            process_http_response_error(error)
