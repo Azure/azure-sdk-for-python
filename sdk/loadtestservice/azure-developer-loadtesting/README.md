@@ -45,6 +45,10 @@ from azure.developer.loadtesting import LoadTestClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
+TEST_ID = "a011890b-0201-004d-010d"  
+DISPLAY_NAME = "new_namespace-new-namespace"  
+SUBSCRIPTION_ID = os.environ["SUBSCRIPTION_ID"]  
+
 client = LoadTestClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 try:
     result = client.load_test_administration.create_or_update_test(
@@ -73,6 +77,13 @@ except HttpResponseError as e:
 
 ### Uploading .jmx file to a Test
 ```python
+from azure.developer.loadtesting import LoadTestClient
+from azure.identity import DefaultAzureCredential
+from azure.core.exceptions import HttpResponseError
+
+TEST_ID = "a011890b-0201-004d-010d"  
+FILE_ID = "a012b234-1230-ab00-0040"  
+
 try:
     # opening .jmx file
     body = {}
@@ -86,6 +97,14 @@ except HttpResponseError as e:
 
 ### Running a Test
 ```python
+from azure.developer.loadtesting import LoadTestClient
+from azure.identity import DefaultAzureCredential
+from azure.core.exceptions import HttpResponseError
+
+TEST_ID = "a011890b-0201-004d-010d"  
+TEST_RUN_ID = "08673e89-3285-46a1-9c6b" 
+DISPLAY_NAME = "new_namespace-new-namespace"  
+
 try:
     result = client.load_test_runs.create_and_update_test(
         TEST_RUN_ID,
