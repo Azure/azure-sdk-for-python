@@ -152,6 +152,36 @@ def test_timeout():
             AzureCliCredential().get_token("scope")
 
 
+def test_multitenant_authentication_class():
+    default_tenant = "first-tenant"
+    first_token = "***"
+    second_tenant = "second-tenant"
+    second_token = first_token * 2
+
+    def fake_check_output(command_line, **_):
+        match = re.search("--tenant (.*)", command_line[-1])
+        tenant = match.groups()[0] if match else default_tenant
+        assert tenant in (default_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
+        return json.dumps(
+            {
+                "expiresOn": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
+                "accessToken": first_token if tenant == default_tenant else second_token,
+                "subscription": "some-guid",
+                "tenant": tenant,
+                "tokenType": "Bearer",
+            }
+        )
+
+    with mock.patch(CHECK_OUTPUT, fake_check_output):
+        token = AzureCliCredential().get_token("scope")
+        assert token.token == first_token
+
+        token = AzureCliCredential(tenant_id= default_tenant).get_token("scope")
+        assert token.token == first_token
+
+        token = AzureCliCredential(tenant_id= second_tenant).get_token("scope")
+        assert token.token == second_token
+        
 def test_multitenant_authentication():
     default_tenant = "first-tenant"
     first_token = "***"
