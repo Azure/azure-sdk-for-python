@@ -1,4 +1,3 @@
-import os
 import sys
 import pytest
 
@@ -45,11 +44,68 @@ class AzureMapsRenderClientE2ETest(AzureTestCase):
 
     @pytest.mark.live_test_only
     def test_get_map_tile(self):
-        result = self.client.get_map_tile(tileset_id=TilesetID.MICROSOFT_BASE, tile_index_z=6, tile_index_x=9, tile_index_y=22, tile_size="512")
+        result = self.client.get_map_tile(
+            tileset_id=TilesetID.MICROSOFT_BASE,
+            tile_index_z=6,
+            tile_index_x=9,
+            tile_index_y=22,
+            tile_size="512"
+        )
+        import types
+        assert isinstance(result, types.GeneratorType)
 
-        assert len(result.results) > 0
-        top_answer = result.results[0]
 
+    @pytest.mark.live_test_only
+    def test_get_map_tileset(self):
+        result = self.client.get_map_tileset(tileset_id=TilesetID.MICROSOFT_BASE)
+        assert result.name == "microsoft.base"
+        assert "TomTom" in result.attribution
+        assert len(result.tiles) > 0
+
+
+    @pytest.mark.live_test_only
+    def test_get_map_attribution(self):
+        result = self.client.get_map_attribution(
+            tileset_id=TilesetID.MICROSOFT_BASE,
+            zoom=6,
+            bounds=BoundingBox(bottom_left=(LatLon(42.982261, 24.980233)), top_right=(LatLon(56.526017, 1.355233)))
+        )
+        assert len(result.copyrights) > 0
+
+
+    @pytest.mark.live_test_only
+    def test_get_copyright_from_bounding_box(self):
+        result = self.client.get_copyright_from_bounding_box(
+            bounding_box=BoundingBox(bottom_left=LatLon(52.41064,4.84228), top_right=LatLon(52.41072,4.84239))
+        )
+        assert len(result.general_copyrights) > 0
+        copyrights = result.general_copyrights[0]
+        assert "TomTom" in copyrights
+        assert len(result.regions) > 0
+
+
+    @pytest.mark.live_test_only
+    def test_get_copyright_for_tile(self):
+        result = self.client.get_copyright_for_tile(tile_index_z=6, tile_index_x=9, tile_index_y=22)
+        assert len(result.general_copyrights) > 0
+        copyrights = result.general_copyrights[0]
+        assert "TomTom" in copyrights
+
+
+    @pytest.mark.live_test_only
+    def test_get_copyright_caption(self):
+        result = self.client.get_copyright_caption()
+        assert result.copyrights_caption is not None
+        assert "TomTom" in result.copyrights_caption
+
+
+    @pytest.mark.live_test_only
+    def test_get_copyright_for_world(self):
+        result = self.client.get_copyright_for_world()
+        assert len(result.general_copyrights) > 0
+        copyrights = result.general_copyrights[0]
+        assert "TomTom" in copyrights
+        assert len(result.regions) > 0
 
 
 if __name__ == "__main__" :

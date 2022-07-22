@@ -24,7 +24,6 @@ azure-keyvault==4.0.0b5
 azure-keyvault-secrets~=4.0
 azure-keyvault-keys~=4.0
 azure-loganalytics~=0.1.0
-azure-maps-nspkg~=3.0.2
 azure-mgmt~=4.0
 azure-mgmt-advisor~=1.0
 azure-mgmt-applicationinsights~=0.1.1
@@ -131,10 +130,13 @@ avro>=1.11.0
 pyjwt>=1.7.1
 chardet<5,>=3.0.2
 <<<<<<< HEAD
+<<<<<<< HEAD
 yarl<2.0,>=1.0
 =======
 azure-maps-nspkg~=3.0.2
 >>>>>>> 3cb788f927 (init PR)
+=======
+>>>>>>> 658596fc2d (Add Unit/Live test)
 #override azure-core typing-extensions>=4.0.1
 #override azure-search-documents typing-extensions>=3.7.4.3
 #override azure azure-keyvault~=1.0

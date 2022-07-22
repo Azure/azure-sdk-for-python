@@ -1,0 +1,43 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-maps-render/2.1-preview Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      subscription-key:
+      - <RealSubscriptionKey>
+      x-ms-client-id:
+      - <RealClientId>
+    method: GET
+    uri: https://atlas.microsoft.com/map/attribution?api-version=2.1&tilesetId=microsoft.base&zoom=6&bounds=42.982261,24.980233,56.526017,1.355233
+  response:
+    body:
+      string: '{"copyrights":["<a data-azure-maps-attribution-tileset=\"microsoft.base\">&copy;2022
+        TomTom</a>"]}'
+    headers:
+      content-length:
+      - '98'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 22 Jul 2022 06:40:18 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-cache:
+      - CONFIG_NOCACHE
+      x-content-type-options:
+      - nosniff
+      x-ms-azuremaps-region:
+      - West US 2
+      x-msedge-ref:
+      - 'Ref A: AD49C74B5E2B4B0794172486552E3DF8 Ref B: TPE30EDGE0619 Ref C: 2022-07-22T06:40:18Z'
+    status:
+      code: 200
+      message: OK
+version: 1

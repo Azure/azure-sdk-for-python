@@ -37,7 +37,8 @@ async def get_map_tileset_async():
 
     maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
-    result = maps_render_client.get_map_tileset(tileset_id=TilesetID.MICROSOFT_BASE)
+    async with maps_render_client:
+        result = await maps_render_client.get_map_tileset(tileset_id=TilesetID.MICROSOFT_BASE)
 
     print("Get map tileset result:")
     print(result)

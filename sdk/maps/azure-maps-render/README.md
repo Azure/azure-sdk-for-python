@@ -107,7 +107,8 @@ The following sections provide several code snippets covering some of the most c
 
 ### Get Maps Attribution
 
-Get Maps Attribution
+This request allows users to request map copyright attribution information for a
+section of a tileset.
 
 ```python
 from azure.maps.render import MapsRenderClient
@@ -124,7 +125,10 @@ result = maps_render_client.get_map_attribution(
 
 ### Get Maps Tile
 
-Get Maps Tile
+This request will return map tiles in vector or raster formats typically
+to be integrated into a map control or SDK. Some example tiles that can be requested are Azure
+Maps road tiles, real-time  Weather Radar tiles. By default, Azure Maps uses vector tiles for its web map
+control (Web SDK) and Android SDK.
 
 ```python
 from azure.maps.render import MapsRenderClient
@@ -140,7 +144,7 @@ result = maps_render_client.get_map_tile(
 
 ### Get Maps Tileset
 
-Get Maps Tileset
+This request will give metadata for a tileset.
 
 ```python
 from azure.maps.render import MapsRenderClient
@@ -150,7 +154,10 @@ result = maps_render_client.get_map_tileset(tileset_id=TilesetID.MICROSOFT_BASE)
 
 ### Get Maps Static Image
 
-Get Maps State Image
+This request will provide the static image service renders a user-defined, rectangular image containing a map section
+using a zoom level from 0 to 20.
+The static image service renders a user-defined,
+rectangular image containing a map section using a zoom level from 0 to 20.
 
 ```python
 from azure.maps.render import MapsRenderClient
@@ -160,7 +167,7 @@ result = maps_render_client.get_map_static_image(img_format="png", center=(52.41
 
 ### Get Maps Copyright for World
 
-Get Maps Copyright for world
+This request will serve copyright information for Render Tile service.
 
 ```python
 from azure.maps.render import MapsRenderClient

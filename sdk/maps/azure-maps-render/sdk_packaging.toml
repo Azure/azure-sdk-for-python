@@ -1,7 +1,7 @@
 [packaging]
 package_name = "azure-maps-render"
 package_nspkg = "azure-maps-nspkg"
-package_pprint_name = "Azure Maps Render"
+package_pprint_name = "Maps Render"
 package_doc_id = ""
 is_stable = false
 is_arm = true

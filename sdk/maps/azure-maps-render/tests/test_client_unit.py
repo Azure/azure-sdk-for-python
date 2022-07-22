@@ -1,4 +1,3 @@
-import os
 import sys
 import pytest
 try:
@@ -8,10 +7,9 @@ except ImportError:  # python < 3.3
 
 from devtools_testutils import AzureTestCase
 from azure.core.pipeline.transport import HttpTransport, HttpResponse
-from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+from azure.core.credentials import AzureKeyCredential
 from azure.maps.render import MapsRenderClient
-from azure.maps.render.models import LatLon
+from azure.maps.render.models import LatLon, TilesetID, BoundingBox
 
 
 # cSpell:disable
@@ -36,8 +34,7 @@ class MockTransport(HttpTransport):
         return response
 
 def create_mock_client(status_code=0, body=None, **kwargs):
-    return RenderClient(credential="NotUsed",
-                        authentication_policy = Mock(AzureKeyCredentialPolicy),
+    return MapsRenderClient(credential= Mock(AzureKeyCredential),
                         transport=MockTransport(status_code, body, **kwargs))
 
 class AzureMapsRenderClientUnitTest(AzureTestCase):
@@ -47,9 +44,46 @@ class AzureMapsRenderClientUnitTest(AzureTestCase):
     def setUp(self):
         super(AzureMapsRenderClientUnitTest, self).setUp()
 
+    def test_get_map_tile_invalid_index_y(self):
+        client = create_mock_client()
+        with pytest.raises(TypeError):
+            client.get_map_tile(
+                tileset_id=TilesetID.MICROSOFT_BASE,
+                tile_index_z=6,
+                tile_index_x=9,
+                tile_index_y="two",
+                tile_size="512"
+            )
 
+    def test_get_map_tileset_invalid_tileset_id(self):
+        client = create_mock_client()
+        with pytest.raises(TypeError):
+            client.get_map_tileset()
 
+    def test_get_map_attribution_invalid_zoom(self):
+        client = create_mock_client()
+        with pytest.raises(TypeError):
+            client.get_map_attribution(
+                tileset_id=TilesetID.MICROSOFT_BASE,
+                zoom="six",
+                bounds=BoundingBox(bottom_left=(LatLon(42.982261, 24.980233)), top_right=(LatLon(56.526017, 1.355233)))
+            )
 
+    def test_get_copyright_from_bounding_box_invalid_LatLon(self):
+        client = create_mock_client()
+        with pytest.raises(TypeError):
+            client.get_copyright_from_bounding_box(
+                bounding_box=BoundingBox(bottom_left=LatLon("random"), top_right=LatLon(52.41072,4.84239))
+            )
+
+    def test_get_copyright_for_tile_invalid_index_x(self):
+        client = create_mock_client()
+        with pytest.raises(TypeError):
+            client.get_copyright_for_tile(
+                tile_index_z=6,
+                tile_index_x="nine",
+                tile_index_y="two"
+            )
 
 if __name__ == "__main__" :
     testArgs = [ "-v" , "-s" ] if len(sys.argv) == 1 else sys.argv[1:]

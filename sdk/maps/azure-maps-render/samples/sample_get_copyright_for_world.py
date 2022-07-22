@@ -9,11 +9,11 @@
 """
 FILE: sample_get_copyright_for_world.py
 DESCRIPTION:
-    This sample demonstrates how to serve copyright information for Render Tile  service. In addition
-        to basic copyright for the whole map, API is serving  specific groups of copyrights for some
-        countries.
-        Returns the copyright information for the world. To obtain the default copyright information
-        for the whole world, do not specify a tile or bounding box.
+    This sample demonstrates how to serve copyright information for Render Tile service. In addition
+    to basic copyright for the whole map, API is serving  specific groups of copyrights for some
+    countries.
+    Returns the copyright information for the world. To obtain the default copyright information
+    for the whole world, do not specify a tile or bounding box.
 
 USAGE:
     python sample_get_copyright_for_world.py

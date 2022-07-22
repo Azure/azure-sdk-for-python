@@ -1,0 +1,45 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-maps-render/2.1-preview Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      subscription-key:
+      - <RealSubscriptionKey>
+      x-ms-client-id:
+      - <RealClientId>
+    method: GET
+    uri: https://atlas.microsoft.com/map/tileset?api-version=2.1&tilesetId=microsoft.base
+  response:
+    body:
+      string: '{"tilejson":"2.2.0","name":"microsoft.base","version":"1.0.0","attribution":"<a
+        data-azure-maps-attribution-tileset=\"microsoft.base\">&copy;2022 TomTom</a>","scheme":"xyz","tiles":["https://atlas.microsoft.com/map/tile?api-version=2.1&tilesetId=microsoft.base&zoom={z}&x={x}&y={y}"],"grids":[],"data":[],"minzoom":0,"maxzoom":22,"bounds":[-180.0,-90.0,180.0,90.0]}'
+    headers:
+      content-length:
+      - '365'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 22 Jul 2022 06:40:18 GMT
+      expires:
+      - Fri, 29 Jul 2022 06:40:19 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-cache:
+      - CONFIG_NOCACHE
+      x-content-type-options:
+      - nosniff
+      x-ms-azuremaps-region:
+      - West US 2
+      x-msedge-ref:
+      - 'Ref A: 31F23EFA999C49A4B64A7CAEF7916397 Ref B: TPE30EDGE0908 Ref C: 2022-07-22T06:40:19Z'
+    status:
+      code: 200
+      message: OK
+version: 1
