@@ -91,8 +91,12 @@ def __getattr__(name):
         try:
             from ._requests_trio import TrioRequestsTransport
             return TrioRequestsTransport
-        except ImportError:
-            raise ImportError("trio package is not installed")
+        except ImportError as ex:
+            if ex.msg.endswith("'requests'"):
+                raise ImportError("requests package is not installed")
+            else:
+                raise ImportError("trio package is not installed")
+                
     if name == 'TrioRequestsTransportResponse':
         try:
             from ._requests_trio import TrioRequestsTransportResponse
