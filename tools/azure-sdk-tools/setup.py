@@ -10,6 +10,7 @@ DEPENDENCIES = [
     "wheel",
     "Jinja2",
     "MarkupSafe==2.0.1",
+    # black,
     "pytoml",
     "json-delta>=2.0",
     # Tests

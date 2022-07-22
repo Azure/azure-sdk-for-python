@@ -79,11 +79,11 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
 
     @distributed_trace
     def begin_analyze_document(
-        self, model: str, document: Union[bytes, IO[bytes]], **kwargs: Any
+        self, model_id: str, document: Union[bytes, IO[bytes]], **kwargs: Any
     ) -> LROPoller[AnalyzeResult]:
         """Analyze field text and semantic values from a given document.
 
-        :param str model: A unique model identifier can be passed in as a string.
+        :param str model_id: A unique model identifier can be passed in as a string.
             Use this to specify the custom model ID or prebuilt model ID. Prebuilt model IDs supported
             can be found here: https://aka.ms/azsdk/formrecognizer/models
         :param document: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
@@ -93,7 +93,6 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
             `pages="1-3, 5-6"`. Separate each page number or range with a comma.
         :keyword str locale: Locale hint of the input document.
             See supported locales here: https://aka.ms/azsdk/formrecognizer/supportedlocales.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.AnalyzeResult]
@@ -116,14 +115,14 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
                 :caption: Analyze a custom document. For more samples see the `samples` folder.
         """
 
-        if not model:
-            raise ValueError("model cannot be None or empty.")
+        if not model_id:
+            raise ValueError("model_id cannot be None or empty.")
 
         cls = kwargs.pop("cls", self._analyze_document_callback)
         continuation_token = kwargs.pop("continuation_token", None)
 
         return self._client.begin_analyze_document(  # type: ignore
-            model_id=model,
+            model_id=model_id,
             analyze_request=document,  # type: ignore
             content_type="application/octet-stream",
             string_index_type="unicodeCodePoint",
@@ -133,11 +132,13 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_analyze_document_from_url(self, model: str, document_url: str, **kwargs: Any) -> LROPoller[AnalyzeResult]:
+    def begin_analyze_document_from_url(
+        self, model_id: str, document_url: str, **kwargs: Any
+    ) -> LROPoller[AnalyzeResult]:
         """Analyze field text and semantic values from a given document.
         The input must be the location (URL) of the document to be analyzed.
 
-        :param str model: A unique model identifier can be passed in as a string.
+        :param str model_id: A unique model identifier can be passed in as a string.
             Use this to specify the custom model ID or prebuilt model ID. Prebuilt model IDs supported
             can be found here: https://aka.ms/azsdk/formrecognizer/models
         :param str document_url: The URL of the document to analyze. The input must be a valid, properly
@@ -148,7 +149,6 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
             `pages="1-3, 5-6"`. Separate each page number or range with a comma.
         :keyword str locale: Locale hint of the input document.
             See supported locales here: https://aka.ms/azsdk/formrecognizer/supportedlocales.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.AnalyzeResult]
@@ -164,14 +164,14 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
                 :caption: Analyze a receipt. For more samples see the `samples` folder.
         """
 
-        if not model:
-            raise ValueError("model cannot be None or empty.")
+        if not model_id:
+            raise ValueError("model_id cannot be None or empty.")
 
         cls = kwargs.pop("cls", self._analyze_document_callback)
         continuation_token = kwargs.pop("continuation_token", None)
 
         return self._client.begin_analyze_document(  # type: ignore
-            model_id=model,
+            model_id=model_id,
             analyze_request={"urlSource": document_url},  # type: ignore
             string_index_type="unicodeCodePoint",
             continuation_token=continuation_token,
