@@ -13,6 +13,7 @@
 - Renamed `DocumentModel` to `DocumentModelDetails`.
 - Renamed `ModelOperation` to `ModelOperationDetails`.
 - Renamed `ModelOperationInfo` to `ModelOperationSummary`.
+- Renamed `model` parameter to `model_id` on `begin_analyze_document()` and `begin_analyze_document_from_url()`.
 - Removed `continuation_token` keyword from `begin_analyze_document()` and `begin_analyze_document_from_url()` on `DocumentAnalysisClient` and from `begin_build_model()`, `begin_compose_model()` and `begin_copy_model_to()` on `DocumentModelAdministrationClient`.
 - Changed return type of `get_copy_authorization()` from `dict[str, str]` to `TargetAuthorization`.
 - Changed expected `target` parameter in `begin_copy_to()` from `dict[str, str]` to `TargetAuthorization`.
