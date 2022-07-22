@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 
 from ._base import HttpTransport, HttpRequest, HttpResponse
+from ._base_async import AsyncHttpTransport, AsyncHttpResponse
 
 
 __all__ = [
@@ -55,25 +56,13 @@ def __getattr__(name):
             from ._requests_asyncio import AsyncioRequestsTransport
             return AsyncioRequestsTransport
         except ImportError:
-            pass
+            raise ImportError("requests package is not installed")
     if name == 'AsyncioRequestsTransportResponse':
         try:
             from ._requests_asyncio import AsyncioRequestsTransportResponse
             return AsyncioRequestsTransportResponse
         except ImportError:
-            pass
-    if name == 'AsyncHttpTransport':
-        try:
-            from ._base_async import AsyncHttpTransport
-            return AsyncHttpTransport
-        except ImportError:
-            pass
-    if name == 'AsyncHttpResponse':
-        try:
-            from ._base_async import AsyncHttpResponse
-            return AsyncHttpResponse
-        except ImportError:
-            pass
+            raise ImportError("requests package is not installed")
     if name == 'RequestsTransport':
         try:
             from ._requests_basic import RequestsTransport
@@ -110,6 +99,6 @@ def __getattr__(name):
             return TrioRequestsTransportResponse
         except ImportError:
             raise ImportError("trio package is not installed")
-    if name == '__bases__':
-        raise AttributeError("module 'azure.core.pipeline.transport' has no attribute '__bases__'")
-    return name
+    
+    raise AttributeError(f"module 'azure.core.pipeline.transport' has no attribute {name}")
+    
