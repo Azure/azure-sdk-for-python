@@ -38,7 +38,7 @@ LARGE_BLOB_SIZE = 5 * 1024 + 5
 
 
 class TestStorageBlockBlob(StorageRecordedTestCase):
-
+    # --Helpers-----------------------------------------------------------------
     def _setup(self, storage_account_name, key, container_name='utcontainer'):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
@@ -68,7 +68,6 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             except:
                 pass
 
-    #--Helpers-----------------------------------------------------------------
     def _get_blob_reference(self, prefix=TEST_BLOB_PREFIX):
         return self.get_resource_name(prefix)
 
@@ -1430,7 +1429,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_create_blob_from_stream_chnked_upload_with_properties(self, **kwargs):
+    def test_create_blob_from_stream_chunked_upload_with_properties(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -1438,7 +1437,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'chnked_upload_with_properti.temp.{}.dat'.format(str(uuid.uuid4()))
+        FILE_PATH = 'stream_chunked_upload_with_properties.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1456,9 +1455,10 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         assert properties.content_settings.content_language == content_settings.content_language
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
-    @recorded_by_proxy
-    def test_create_blob_from_stream_chunked_upload_with_properties(self, **kwargs):
+    def test_create_blob_from_stream_chunked_upload_with_properties_parallel(self, **kwargs):
+        # parallel tests introduce random order of requests, can only run live
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -1467,7 +1467,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'blob_from_stream_chunked_upload.temp.{}.dat'.format(str(uuid.uuid4()))
+        FILE_PATH = 'stream_chunked_upload_with_properties.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
         blob_tier = StandardBlobTier.Cool
