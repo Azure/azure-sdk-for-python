@@ -645,7 +645,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_upload_oci_manifest_stream(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        base_path = os.path.join(os.getcwd(), "data", "oci_artifact")
+        base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
         manifest_stream = open(os.path.join(base_path, "manifest.json"), "rb")
         manifest = _deserialize_manifest(manifest_stream)     
         client = self.create_registry_client(containerregistry_endpoint)
@@ -697,7 +697,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_upload_oci_manifest_stream_with_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        base_path = os.path.join(os.getcwd(), "data", "oci_artifact")
+        base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
         manifest_stream = open(os.path.join(base_path, "manifest.json"), "rb")
         manifest = _deserialize_manifest(manifest_stream)
         client = self.create_registry_client(containerregistry_endpoint)
