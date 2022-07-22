@@ -1,5 +1,21 @@
 # Release History
 
+## 7.0.0 (2022-07-22)
+
+**Features**
+
+  - Added operation MongoDBResourcesOperations.begin_retrieve_continuous_backup_information
+  - Added operation group CassandraClustersOperations
+  - Added operation group CassandraDataCentersOperations
+  - Added operation group LocationsOperations
+  - Added operation group ServiceOperations
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter capacity
+  - Model DatabaseAccountGetResults has a new parameter capacity
+  - Model DatabaseAccountUpdateParameters has a new parameter capacity
+  - Model GremlinGraphGetPropertiesResource has a new parameter analytical_storage_ttl
+  - Model GremlinGraphResource has a new parameter analytical_storage_ttl
+  - Model PeriodicModeProperties has a new parameter backup_storage_redundancy
+
 ## 7.0.0b6 (2022-05-23)
 
 **Features**

@@ -24,7 +24,7 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
-            client.begin_analyze_document_from_url(model=None, document_url="https://badurl.jpg")
+            client.begin_analyze_document_from_url(model_id=None, document_url="https://badurl.jpg")
 
     @FormRecognizerPreparer()
     def test_document_analysis_empty_model_id(self, **kwargs):
@@ -32,7 +32,7 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
-            client.begin_analyze_document_from_url(model="", document_url="https://badurl.jpg")
+            client.begin_analyze_document_from_url(model_id="", document_url="https://badurl.jpg")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -53,7 +53,7 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
             responses.append(document)
 
         poller = da_client.begin_analyze_document_from_url(
-            model=model.model_id,
+            model_id=model.model_id,
             document_url=self.selection_mark_url_pdf,
             cls=callback
         )
