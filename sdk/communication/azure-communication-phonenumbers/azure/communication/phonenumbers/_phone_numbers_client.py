@@ -23,7 +23,16 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
-    from ._generated.models import *
+    from ._generated.models import (
+        AreaCodeResult,
+        PhoneNumberLocality,
+        PhoneNumberCountry,
+        PhoneNumberOffering,
+        PhoneNumberCapabilities,
+        PhoneNumberSearchResult,
+        PhoneNumberCapabilityType,
+        PurchasedPhoneNumber,
+    )
 
 
 class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-keyword
@@ -260,9 +269,6 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
 
         Gets the list of supported countries.
 
-        :keyword accept_language: The locale to display in the localized fields in the response.
-         Default value is None.
-        :paramtype accept_language: str
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
@@ -293,9 +299,6 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         :param administrative_division: An optional parameter for the name of the state or province
          in which to search for the area code. e.g. California. Default value is None.
         :type administrative_division: str
-        :keyword accept_language: The locale to display in the localized fields in the response.
-         Default value is None.
-        :paramtype accept_language: str
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
