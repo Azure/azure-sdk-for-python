@@ -7,7 +7,8 @@
 
 import datetime
 import json
-from typing import Callable, Mapping, Union, TypeVar, Any, Protocol, Optional
+from typing import Callable, Mapping, Union, TypeVar, Any, Optional
+from typing_extensions import Protocol
 from azure.core.exceptions import HttpResponseError, ODataV4Format
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import (
@@ -73,12 +74,6 @@ class DocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
         ...
 
     def remove_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
-        ...
-
-    @classmethod
-    def from_continuation_token(
-        cls, polling_method: PollingMethod[PollingReturnType], continuation_token: str, **kwargs: Any
-    ) -> "DocumentModelAdministrationLROPoller": # pylint: disable=no-self-use, unused-argument
         ...
 
 

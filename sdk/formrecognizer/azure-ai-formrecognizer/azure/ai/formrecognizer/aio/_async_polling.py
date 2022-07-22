@@ -7,7 +7,8 @@
 
 import json
 import datetime
-from typing import TypeVar, Any, Protocol, Mapping, Callable, Optional
+from typing import TypeVar, Any, Mapping, Callable, Optional
+from typing_extensions import Protocol
 from azure.core.polling import AsyncLROPoller, AsyncPollingMethod
 from .._polling import parse_operation_id
 
@@ -43,12 +44,6 @@ class AsyncDocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
         ...
 
     def remove_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
-        ...
-
-    @classmethod
-    def from_continuation_token(
-        cls, polling_method: AsyncPollingMethod[PollingReturnType], continuation_token: str, **kwargs: Any
-    ) -> "AsyncDocumentModelAdministrationLROPoller": # pylint: disable=no-self-use, unused-argument
         ...
 
 
