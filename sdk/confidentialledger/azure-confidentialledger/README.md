@@ -463,7 +463,7 @@ These code samples show common scenario operations with the Azure Confidential L
   - [use_collections_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/use_collections_async.py) (async version)
   
 - Getting receipts for ledger writes: 
-  - [get_receipt.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/get_receipt.py])
+  - [get_receipt.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/get_receipt.py)
   - [get_receipt_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/get_receipt_async.py) (async version)
   
 - Verifying service details: 
