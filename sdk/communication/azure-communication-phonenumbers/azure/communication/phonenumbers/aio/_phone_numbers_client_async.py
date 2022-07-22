@@ -297,17 +297,17 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
 
         Gets the list of cities or towns with available phone numbers.
 
-        :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
-        :type country_code: str
+        :param two_letter_iso_country_name: The ISO 3166-2 country/region code, e.g. US. Required.
+        :type two_letter_iso_country_name: str
+        :param administrative_division: An optional parameter for the name of the state or province
+         in which to search for the area code. e.g. California. Default value is None.
+        :type administrative_division: str
         :keyword accept_language: The locale to display in the localized fields in the response.
          Default value is None.
         :paramtype accept_language: str
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
-        :keyword administrative_division: An optional parameter for the name of the state or province
-         in which to search for the area code. e.g. California. Default value is None.
-        :paramtype administrative_division: str
         :return: An iterator like instance of PhoneNumberLocality
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.PhoneNumberLocality]
@@ -333,15 +333,14 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
 
         List available offerings of capabilities with rates for the given country/region.
 
-        :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
-        :type country_code: str
-        :keyword phone_number_type: Filter by phoneNumberType, e.g. Geographic, TollFree. Known values
+        :param two_letter_iso_country_name: The ISO 3166-2 country/region code, e.g. US. Required.
+        :type two_letter_iso_country_name: str
+        :param phone_number_type: Filter by phoneNumberType, e.g. Geographic, TollFree. Known values
          are: "geographic" and "tollFree". Default value is None.
-        :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
-        :keyword assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
+        :type phone_number_type: ~azure.communication.phonenumbers.models.PhoneNumberType
+        :param phone_number_assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
          "person" and "application". Default value is None.
-        :paramtype assignment_type: str or
-         ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
+        :type phone_number_assignment_type: ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
@@ -364,12 +363,12 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         **kwargs # type: Any
     ):
         # type: (...) -> AsyncItemPaged[AreaCodeResult]
-        """Gets the list of available toll-free area codes.
+        """Gets the list of available toll free area codes.
 
-        Gets the list of available area codes.
+        Gets the list of available toll free area codes.
 
-        :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
-        :type country_code: str
+        :param two_letter_iso_country_name: The ISO 3166-2 country/region code, e.g. US. Required.
+        :type two_letter_iso_country_name: str
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
@@ -395,25 +394,24 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         **kwargs # type: Any
     ):
         # type: (...) -> AsyncItemPaged[AreaCodeResult]
-        """Gets the list of available area codes.
+        """Gets the list of available geographic area codes.
 
-        Gets the list of available area codes.
+        Gets the list of available geographic area codes.
 
-        :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
-        :type country_code: str
+        :param two_letter_iso_country_name: The ISO 3166-2 country/region code, e.g. US. Required.
+        :type two_letter_iso_country_name: str
+        :param phone_number_assignment_type: Filter by assignmentType, e.g. user, application. Known values are:
+         "person" and "application". Default value is None.
+        :type phone_number_assignment_type: ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
+        :param locality: The name of locality in which to search for the area code. e.g. Seattle.
+         This is required if the phone number type is Geographic. Default value is None.
+        :type locality: str
+        :param administrative_division: The name of the state or province in which to search for the
+         area code. e.g. California. Default value is None.
+        :type administrative_division: str
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
-        :keyword assignment_type: Filter by assignmentType, e.g. user, application. Known values are:
-         "person" and "application". Default value is None.
-        :paramtype assignment_type: str or
-         ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
-        :keyword locality: The name of locality in which to search for the area code. e.g. Seattle.
-         This is required if the phone number type is Geographic. Default value is None.
-        :paramtype locality: str
-        :keyword administrative_division: The name of the state or province in which to search for the
-         area code. e.g. California. Default value is None.
-        :paramtype administrative_division: str
         :return: An iterator like instance of AreaCodeResult
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.AreaCodeResult]
