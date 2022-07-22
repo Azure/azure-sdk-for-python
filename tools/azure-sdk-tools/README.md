@@ -83,15 +83,25 @@ On top of assembling packages, azure-sdk-tools also can be used to complete vari
 
 ### `sdk_set_dev_version`
 
-```bash
-sdk_set_dev_version
+```text
+usage: sdk_set_dev_version [-h] [--service SERVICE] -b BUILD_ID [--repo REPO] [glob_string]
+
+Increments version for a given package name based on the released version
+
+positional arguments:
+  glob_string           A comma separated list of glob strings that will target the top level directories that contain packages.Examples: All = "azure-*",
+                        Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --service SERVICE     name of the service for which to set the dev build id (e.g. keyvault)
+  -b BUILD_ID, --build-id BUILD_ID
+                        id of the build (generally of the form YYYYMMDD.r) dot characters(.) will be removed
+  --repo REPO           Where is the start directory that we are building against? If not provided, the current working directory will be used. Please
+                        ensure you are within the azure-sdk-for-python repository.
 ```
 
 ### sdk_set_version
-
-```bash
-sdk_set_version --package-name 'azure-core' --release-date 2022-07-22
-```
 
 ```text
 usage: sdk_set_version [-h] --package-name PACKAGE_NAME --new-version NEW_VERSION --service SERVICE [--release-date RELEASE_DATE]
@@ -121,8 +131,22 @@ optional arguments:
 
 ### sdk_increment_version
 
-```bash
-sdk_set_dev_version
+```text
+usage: sdk_increment_version [-h] --package-name PACKAGE_NAME --service SERVICE [--repo REPO] [glob_string]
+
+Increments version for a given package name based on the released version
+
+positional arguments:
+  glob_string           A comma separated list of glob strings that will target the top level directories that contain packages.Examples: All = "azure-*",
+                        Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --package-name PACKAGE_NAME
+                        name of package (accetps both formats: azure-service-package and azure_service_pacage)
+  --service SERVICE     name of the service for which to set the dev build id (e.g. keyvault)
+  --repo REPO           Where is the start directory that we are building against? If not provided, the current working directory will be used. Please
+                        ensure you are within the azure-sdk-for-python repository.
 ```
 
 ## Relevant Environment Variables
