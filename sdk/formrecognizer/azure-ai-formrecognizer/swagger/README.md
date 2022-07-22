@@ -73,15 +73,15 @@ output-folder: $(python-sdks-folder)/formrecognizer/azure-ai-formrecognizer/azur
 ```
 
 
-### Override with DocumentModelAdministrationLROPoller
+### Override with DocumentModelAdministrationClientLROPoller
 
 ``` yaml
 directive:
     -   from: swagger-document
         where: '$.paths["/documentModels:build"].post'
         transform: >
-            $["x-python-custom-poller-sync"] = "...._polling.DocumentModelAdministrationLROPoller";
-            $["x-python-custom-poller-async"] = ".....aio._async_polling.AsyncDocumentModelAdministrationLROPoller";
+            $["x-python-custom-poller-sync"] = "...._polling.DocumentModelAdministrationClientLROPoller";
+            $["x-python-custom-poller-async"] = ".....aio._async_polling.AsyncDocumentModelAdministrationClientLROPoller";
 ```
 
 ``` yaml
@@ -89,8 +89,8 @@ directive:
     -   from: swagger-document
         where: '$.paths["/documentModels:compose"].post'
         transform: >
-            $["x-python-custom-poller-sync"] = "...._polling.DocumentModelAdministrationLROPoller";
-            $["x-python-custom-poller-async"] = ".....aio._async_polling.AsyncDocumentModelAdministrationLROPoller";
+            $["x-python-custom-poller-sync"] = "...._polling.DocumentModelAdministrationClientLROPoller";
+            $["x-python-custom-poller-async"] = ".....aio._async_polling.AsyncDocumentModelAdministrationClientLROPoller";
 ```
 
 ``` yaml
@@ -98,6 +98,6 @@ directive:
     -   from: swagger-document
         where: '$.paths["/documentModels/{modelId}:copyTo"].post'
         transform: >
-            $["x-python-custom-poller-sync"] = "...._polling.DocumentModelAdministrationLROPoller";
-            $["x-python-custom-poller-async"] = ".....aio._async_polling.AsyncDocumentModelAdministrationLROPoller";
+            $["x-python-custom-poller-sync"] = "...._polling.DocumentModelAdministrationClientLROPoller";
+            $["x-python-custom-poller-async"] = ".....aio._async_polling.AsyncDocumentModelAdministrationClientLROPoller";
 ```
