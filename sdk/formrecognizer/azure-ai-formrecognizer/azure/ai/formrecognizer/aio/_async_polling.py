@@ -91,7 +91,7 @@ class AsyncDocumentModelAdministrationClientLROPoller(AsyncLROPoller[PollingRetu
         polling_method: AsyncPollingMethod[PollingReturnType],
         continuation_token: str,
         **kwargs: Any
-    ) -> "AsyncDocumentModelAdministrationLROPoller":
+    ) -> "AsyncDocumentModelAdministrationClientLROPoller":
         (
             client,
             initial_response,
