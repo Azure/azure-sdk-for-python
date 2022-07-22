@@ -3,6 +3,7 @@
 ## 12.5.0b1 (Unreleased)
 
 ### Features Added
+- Added support for `AzureNamedKeyCredential` as a valid `credential` type.
 
 ### Bugs Fixed
 
