@@ -42,9 +42,14 @@ def build_list_request(
 ):
     # type: (...) -> HttpRequest
     api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
+    skiptoken = kwargs.pop('skiptoken', None)  # type: Optional[str]
     order_by = kwargs.pop('order_by', None)  # type: Optional[str]
     top = kwargs.pop('top', None)  # type: Optional[int]
-    skiptoken = kwargs.pop('skiptoken', None)  # type: Optional[str]
+    version = kwargs.pop('version', None)  # type: Optional[str]
+    description = kwargs.pop('description', None)  # type: Optional[str]
+    tags = kwargs.pop('tags', None)  # type: Optional[str]
+    properties = kwargs.pop('properties', None)  # type: Optional[str]
+    list_view_type = kwargs.pop('list_view_type', None)  # type: Optional[Union[str, "_models.ListViewType"]]
 
     accept = "application/json"
     # Construct URL
@@ -61,12 +66,22 @@ def build_list_request(
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    if skiptoken is not None:
+        query_parameters['$skiptoken'] = _SERIALIZER.query("skiptoken", skiptoken, 'str')
     if order_by is not None:
         query_parameters['$orderBy'] = _SERIALIZER.query("order_by", order_by, 'str')
     if top is not None:
         query_parameters['$top'] = _SERIALIZER.query("top", top, 'int')
-    if skiptoken is not None:
-        query_parameters['$skiptoken'] = _SERIALIZER.query("skiptoken", skiptoken, 'str')
+    if version is not None:
+        query_parameters['version'] = _SERIALIZER.query("version", version, 'str')
+    if description is not None:
+        query_parameters['description'] = _SERIALIZER.query("description", description, 'str')
+    if tags is not None:
+        query_parameters['tags'] = _SERIALIZER.query("tags", tags, 'str')
+    if properties is not None:
+        query_parameters['properties'] = _SERIALIZER.query("properties", properties, 'str')
+    if list_view_type is not None:
+        query_parameters['listViewType'] = _SERIALIZER.query("list_view_type", list_view_type, 'str')
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -235,9 +250,14 @@ class ModelVersionsOperations(object):
         name,  # type: str
         resource_group_name,  # type: str
         registry_name,  # type: str
+        skiptoken=None,  # type: Optional[str]
         order_by=None,  # type: Optional[str]
         top=None,  # type: Optional[int]
-        skiptoken=None,  # type: Optional[str]
+        version=None,  # type: Optional[str]
+        description=None,  # type: Optional[str]
+        tags=None,  # type: Optional[str]
+        properties=None,  # type: Optional[str]
+        list_view_type=None,  # type: Optional[Union[str, "_models.ListViewType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.ModelVersionResourceArmPaginatedResult"]
@@ -245,18 +265,30 @@ class ModelVersionsOperations(object):
 
         List versions.
 
-        :param name: Container name.
+        :param name: Container name. This is case-sensitive.
         :type name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param registry_name:
         :type registry_name: str
+        :param skiptoken: Continuation token for pagination.
+        :type skiptoken: str
         :param order_by: Ordering of list.
         :type order_by: str
         :param top: Maximum number of records to return.
         :type top: int
-        :param skiptoken: Continuation token for pagination.
-        :type skiptoken: str
+        :param version: Version identifier.
+        :type version: str
+        :param description: Model description.
+        :type description: str
+        :param tags: Comma-separated list of tag names (and optionally values). Example:
+         tag1,tag2=value2.
+        :type tags: str
+        :param properties: Comma-separated list of property names (and optionally values). Example:
+         prop1,prop2=value2.
+        :type properties: str
+        :param list_view_type: View type for including/excluding (for example) archived entities.
+        :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
         :keyword api_version: Api Version. The default value is "2021-10-01-dataplanepreview". Note
          that overriding this default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -283,9 +315,14 @@ class ModelVersionsOperations(object):
                     resource_group_name=resource_group_name,
                     registry_name=registry_name,
                     api_version=api_version,
+                    skiptoken=skiptoken,
                     order_by=order_by,
                     top=top,
-                    skiptoken=skiptoken,
+                    version=version,
+                    description=description,
+                    tags=tags,
+                    properties=properties,
+                    list_view_type=list_view_type,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -299,9 +336,14 @@ class ModelVersionsOperations(object):
                     resource_group_name=resource_group_name,
                     registry_name=registry_name,
                     api_version=api_version,
+                    skiptoken=skiptoken,
                     order_by=order_by,
                     top=top,
-                    skiptoken=skiptoken,
+                    version=version,
+                    description=description,
+                    tags=tags,
+                    properties=properties,
+                    list_view_type=list_view_type,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -414,9 +456,9 @@ class ModelVersionsOperations(object):
 
         Get version.
 
-        :param name: Container name.
+        :param name: Container name. This is case-sensitive.
         :type name: str
-        :param version: Version identifier.
+        :param version: Version identifier. This is case-sensitive.
         :type version: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str

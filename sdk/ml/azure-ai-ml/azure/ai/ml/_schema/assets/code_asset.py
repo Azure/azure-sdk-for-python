@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 
 import logging
-import uuid
 
 from azure.ai.ml._schema.core.fields import ArmStr
 
@@ -35,13 +34,7 @@ class AnonymousCodeAssetSchema(CodeAssetSchema, AnonymousAssetSchema):
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._assets import Code
 
-        return Code(
-            name=str(uuid.uuid4()),
-            version="1",
-            is_anonymous=True,
-            base_path=self.context[BASE_PATH_CONTEXT_KEY],
-            **data
-        )
+        return Code(is_anonymous=True, base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
 
     @pre_dump
     def validate(self, data, **kwargs):

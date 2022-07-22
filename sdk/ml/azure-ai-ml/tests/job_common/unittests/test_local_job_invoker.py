@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import pytest
 
-from azure.ai.ml._operations.local_job_invoker import (
+from azure.ai.ml.operations._local_job_invoker import (
     _get_creationflags_and_startupinfo_for_background_process,
     patch_invocation_script_serialization,
 )

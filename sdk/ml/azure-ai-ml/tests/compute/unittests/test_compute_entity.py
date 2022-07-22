@@ -11,6 +11,7 @@ from msrest import Serializer
 from azure.ai.ml._restclient.v2021_10_01.models import ComputeResource
 from typing import List, Union
 import pytest
+from azure.ai.ml import load_compute
 
 
 @pytest.mark.unittest
@@ -43,7 +44,7 @@ class TestComputeEntity:
         assert compute.identity.user_assigned_identities[0].resource_id == uai_resource_id
 
     def test_compute_from_yaml(self):
-        compute: AmlCompute = Compute.load("tests/test_configs/compute/compute-aml.yaml")
+        compute: AmlCompute = load_compute("tests/test_configs/compute/compute-aml.yaml")
         assert compute.name == "banchaml"
         assert compute.ssh_settings.admin_username == "azureuser"
         assert compute.identity.type == "user_assigned"
@@ -63,7 +64,7 @@ class TestComputeEntity:
     def test_compute_vm_from_yaml(self):
         resource_id = "/subscriptions/13e50845-67bc-4ac5-94db-48d493a6d9e8/resourceGroups/myrg/providers/Microsoft.Compute/virtualMachines/myvm"
         fake_key = "myfakekey"
-        compute: VirtualMachineCompute = Compute.load("tests/test_configs/compute/compute-vm.yaml")
+        compute: VirtualMachineCompute = load_compute("tests/test_configs/compute/compute-vm.yaml")
         assert compute.name == "banchcivm"
         assert compute.ssh_settings.admin_username == "azureuser"
         assert compute.ssh_settings.admin_password == "azureuserpassword"
@@ -103,7 +104,7 @@ class TestComputeEntity:
         return uai_dict
 
     def test_compute_instance_load_from_rest(self):
-        compute_instance: ComputeInstance = Compute.load("tests/test_configs/compute/compute-ci-unit.yaml")
+        compute_instance: ComputeInstance = load_compute("tests/test_configs/compute/compute-ci-unit.yaml")
         compute_instance._set_full_subnet_name("subscription_id", "resource_group_name")
         compute_resource = compute_instance._to_rest_object()
         compute_instance2: ComputeInstance = ComputeInstance._load_from_rest(compute_resource)
@@ -111,7 +112,7 @@ class TestComputeEntity:
         assert compute_instance.services == compute_instance2.services
 
     def test_compute_instance_schedules_from_yaml(self):
-        compute_instance: ComputeInstance = Compute.load("tests/test_configs/compute/compute-ci-schedules.yaml")
+        compute_instance: ComputeInstance = load_compute("tests/test_configs/compute/compute-ci-schedules.yaml")
         assert len(compute_instance.schedules.compute_start_stop) == 2
 
         compute_resource = compute_instance._to_rest_object()

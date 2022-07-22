@@ -11,6 +11,7 @@ API_VERSION_2020_09_01_DATAPLANE = "2020-09-01-dataplanepreview"
 ONLINE_ENDPOINT_TYPE = "online"
 BATCH_ENDPOINT_TYPE = "batch"
 BASE_PATH_CONTEXT_KEY = "base_path"
+SOURCE_PATH_CONTEXT_KEY = "source_path"
 PARAMS_OVERRIDE_KEY = "params_override"
 TYPE = "type"
 JOBLIMITSTYPE = "JobLimitsType"
@@ -43,6 +44,7 @@ DEFAULT_ARM_RETRY_INTERVAL = 60
 COMPONENT_TYPE = "type"
 TID_FMT = "&tid={}"
 AZUREML_PRIVATE_FEATURES_ENV_VAR = "AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED"
+COMMON_RUNTIME_ENV_VAR = "AZUREML_COMPUTE_USE_COMMON_RUNTIME"
 ENDPOINT_DEPLOYMENT_START_MSG = "{}/#blade/HubsExtension/DeploymentDetailsBlade/overview/id/%2Fsubscriptions%2F{}%2FresourceGroups%2F{}%2Fproviders%2FMicrosoft.Resources%2Fdeployments%2F{}\n"
 AZUREML_LOCAL_ENDPOINTS_NOT_IMPLEMENTED_ERROR = "This operation for local endpoints is not supported yet."
 BATCH_JOB_NOT_SUPPORTED_ERROR_CODE = "BatchJobNotSupported"
@@ -57,6 +59,7 @@ COMPUTE_UPDATE_ERROR = (
     "Only AmlCompute/KubernetesCompute cluster properties are supported, compute name {}, is {} type."
 )
 MAX_AUTOINCREMENT_ATTEMPTS = 3
+REGISTRY_DISCOVERY_BASE_URI = "https://eastus.api.azureml.ms"
 REGISTRY_URI_REGEX_FORMAT = "azureml://registries/*"
 REGISTRY_URI_FORMAT = "azureml://registries/"
 REGISTRY_VERSION_PATTERN = "^azureml://registries/([^/]+)/([^/]+)/([^/]+)/versions/([^/]+)"
@@ -89,12 +92,28 @@ SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME = "best_child_run_id"
 BATCH_JOB_CHILD_RUN_NAME = "batchscoring"
 BATCH_JOB_CHILD_RUN_OUTPUT_NAME = "score"
 DEFAULT_ARTIFACT_STORE_OUTPUT_NAME = "default"
+DEFAULT_EXPERIMENT_NAME = "Default"
 
 CREATE_ENVIRONMENT_ERROR_MESSAGE = "It looks like you are trying to specify a conda file for the --file/-f argument. --file/-f is reserved for the Azure ML Environment definition (see schema here: {}). To specify a conda file via command-line argument, please use --conda-file/-c argument."
 API_URL_KEY = "api"
 ANONYMOUS_ENV_NAME = "CliV2AnonymousEnvironment"
 SKIP_VALIDATION_MESSAGE = "To skip this validation use the --skip-validation param"
-MLTABLE_SCHEMA_URL_FALLBACK = "https://azuremlschemasprod.azureedge.net/latest/MLTable.schema.json"
+MLTABLE_METADATA_SCHEMA_URL_FALLBACK = "https://azuremlschemasprod.azureedge.net/latest/MLTable.schema.json"
+INVOCATION_ZIP_FILE = "invocation.zip"
+INVOCATION_BAT_FILE = "Invocation.bat"
+INVOCATION_BASH_FILE = "Invocation.sh"
+AZUREML_RUN_SETUP_DIR = "azureml-setup"
+AZUREML_RUNS_DIR = "azureml_runs"
+EXECUTION_SERVICE_URL_KEY = "&fake="
+LOCAL_JOB_FAILURE_MSG = "Failed to start local executable job.\n Detailed message: {}"
+STORAGE_ACCOUNT_URLS = {
+    "AzureBlob": "https://{}.blob.{}",
+    "AzureDataLakeGen2": "https://{}.dfs.{}",
+    "AzureFile": "https://{}.file.{}",
+}
+
+ANONYMOUS_COMPONENT_NAME = "azureml_anonymous"
+GIT_PATH_PREFIX = "git+"
 
 
 class SearchSpace:
@@ -245,7 +264,7 @@ class ArmConstants(object):
     SKU = "sku"
     KEY_VAULT_PARAMETER_NAME = "vaults"
     STORAGE_ACCOUNT_PARAMETER_NAME = "storageAccounts"
-    APP_INSIGHTS_PARAMTER_NAME = "components"
+    APP_INSIGHTS_PARAMETER_NAME = "components"
     CONTAINER_REGISTRY_PARAMETER_NAME = "registries"
 
     CODE_TYPE = "code"
@@ -259,7 +278,7 @@ class ArmConstants(object):
     UPDATE_ONLINE_ENDPOINT_TYPE = "update_online_endpoint"
     BASE_TYPE = "base"
     WORKSPACE_BASE = "workspace_base"
-    WORKSPACE_PARAM = "worpspace_param"
+    WORKSPACE_PARAM = "workspace_param"
 
     OPERATION_CREATE = "create"
     OPERATION_UPDATE = "update"
@@ -311,6 +330,7 @@ class EndpointGetLogsFields(object):
 
 class CommonYamlFields(object):
     TYPE = "type"
+    NAME = "name"
 
 
 class JobComputePropertyFields(object):
@@ -413,6 +433,9 @@ class PipelineConstants:
     DATASTORE_REST = "Datastore"
     ENVIRONMENT = "environment"
     CODE = "code"
+    REUSED_FLAG_FIELD = "azureml.isreused"
+    REUSED_FLAG_TRUE = "true"
+    REUSED_JOB_ID = "azureml.reusedrunid"
 
 
 class OnlineEndpointConfigurations:
@@ -479,7 +502,7 @@ class LocalEndpointConstants:
     ENVVAR_KEY_AZUREML_ENTRY_SCRIPT = "AZUREML_ENTRY_SCRIPT"
     ENVVAR_KEY_AZUREML_MODEL_DIR = "AZUREML_MODEL_DIR"
     ENVVAR_KEY_AML_APP_ROOT = "AML_APP_ROOT"
-    ENNVAR_KEY_AZUREML_INFERENCE_PYTHON_PATH = "AZUREML_INFERENCE_PYTHON_PATH"
+    ENVVAR_KEY_AZUREML_INFERENCE_PYTHON_PATH = "AZUREML_INFERENCE_PYTHON_PATH"
     CONDA_ENV_NAME = "inf-conda-env"
     CONDA_ENV_BIN_PATH = "/opt/miniconda/envs/inf-conda-env/bin"
     CONDA_ENV_PYTHON_PATH = "/opt/miniconda/envs/inf-conda-env/bin/python"
@@ -584,12 +607,12 @@ class NodeType(object):
     AUTOML = "automl"
 
 
-class ComponentSource(Enum):
+class ComponentSource:
     """Indicate where the component is constructed."""
 
     BUILDER = "BUILDER"
     DSL = "DSL"
-    OTHER = "OTHER"
+    SDK = "SDK"
     REST = "REST"
     YAML = "YAML"
 
@@ -724,7 +747,7 @@ class TimeZone(str, Enum):
     TASMANIA_STANDARD_TIME = "Tasmania Standard Time"
     VLADIVOSTOK_STANDARD_TIME = "Vladivostok Standard Time"
     LORDE_HOWE_STANDARD_TIME = "Lord Howe Standard Time"
-    BOUGANVILLE_STANDARD_TIME = "Bougainville Standard Time"
+    BOUGAINVILLE_STANDARD_TIME = "Bougainville Standard Time"
     RUSSIA_TIME_ZONE_10 = "Russia Time Zone 10"
     MAGADAN_STANDARD_TIME = "Magadan Standard Time"
     NORFOLK_STANDARD_TIME = "Norfolk Standard Time"
@@ -739,3 +762,32 @@ class TimeZone(str, Enum):
     TONGA__STANDARD_TIME = "Tonga Standard Time"
     SAMOA_STANDARD_TIME = "Samoa Standard Time"
     LINE_ISLANDS_STANDARD_TIME = "Line Islands Standard Time"
+
+
+class IO_CONSTANTS:
+    PRIMITIVE_STR_2_TYPE = {"integer": int, "string": str, "number": float, "boolean": bool}
+    PRIMITIVE_TYPE_2_STR = {int: "integer", str: "string", float: "number", bool: "boolean"}
+    TYPE_MAPPING_YAML_2_REST = {
+        "string": "String",
+        "integer": "Integer",
+        "number": "Number",
+        "boolean": "Boolean",
+    }
+    PARAM_PARSERS = {
+        "float": float,
+        "integer": lambda v: int(float(v)),  # backend returns 10.0 for integer, parse it to float before int
+        "boolean": lambda v: str(v).lower() == "true",
+        "number": float,
+    }
+    # For validation, indicates specific parameters combination for each type
+    INPUT_TYPE_COMBINATION = {
+        "uri_folder": ["path", "mode"],
+        "uri_file": ["path", "mode"],
+        "mltable": ["path", "mode"],
+        "mlflow_model": ["path", "mode"],
+        "custom_model": ["path", "mode"],
+        "integer": ["default", "min", "max"],
+        "number": ["default", "min", "max"],
+        "string": ["default"],
+        "boolean": ["default"],
+    }

@@ -7,18 +7,18 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "6825dddf-f666-4c8f-9faa-b7d8ee30d38c",
+        "apim-request-id": "f72f2d1e-00c4-46bc-b0bf-adfd18b80b91",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 26 May 2022 00:51:04 GMT",
+        "Date": "Fri, 24 Jun 2022 00:04:10 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "7"
+        "x-envoy-upstream-service-time": "4"
       },
       "ResponseBody": {
         "docTypes": {
@@ -156,7 +156,7 @@
         "modelId": "prebuilt-invoice",
         "createdDateTime": "2022-06-30T00:00:00Z",
         "apiVersion": "2022-06-30-preview",
-        "description": "Prebuilt model to extract key information from English invoices, including customer, vendor, invoice ID, due date, total, and more."
+        "description": "Extract key information from invoices."
       }
     }
   ],

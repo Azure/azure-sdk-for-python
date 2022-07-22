@@ -62,7 +62,7 @@ async def run_sample():
         content_type=CertificateContentType.pkcs12,
         validity_in_months=24,
     )
-    cert_name = "HelloWorldCertificate"
+    cert_name = "HelloWorldCertificateAsync"
 
     # Awaiting create_certificate will return the certificate as a KeyVaultCertificate
     # if creation is successful, and the CertificateOperation if not.

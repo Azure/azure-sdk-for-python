@@ -1,11 +1,9 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 
 import re
-import six
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, SansIOHTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
@@ -111,7 +109,7 @@ def get_authentication_policy(credential):
 def get_content_type(form):
     """Source: https://en.wikipedia.org/wiki/Magic_number_(programming)#Magic_numbers_in_files"""
 
-    if isinstance(form, six.binary_type):
+    if isinstance(form, bytes):
         return check_beginning_bytes(form)
 
     if hasattr(form, "read") and hasattr(form, "seek"):

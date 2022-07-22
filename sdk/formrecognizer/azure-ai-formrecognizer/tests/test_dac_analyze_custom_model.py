@@ -6,7 +6,7 @@
 
 import pytest
 import functools
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher, set_custom_default_matcher
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient, DocumentModelAdministrationClient, AnalyzeResult
 from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import AnalyzeResultOperation
@@ -24,7 +24,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
-            client.begin_analyze_document(model=None, document=b"xx")
+            client.begin_analyze_document(model_id=None, document=b"xx")
 
     @FormRecognizerPreparer()
     def test_analyze_document_empty_model_id(self, **kwargs):
@@ -32,16 +32,13 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
-            client.begin_analyze_document(model="", document=b"xx")
+            client.begin_analyze_document(model_id="", document=b"xx")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_custom_document_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
+        set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
@@ -82,15 +79,11 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
-    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_custom_document_multipage_transform(self, client, formrecognizer_multipage_storage_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
+        set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
         poller = client.begin_build_model(formrecognizer_multipage_storage_container_sas_url, "template")
@@ -135,10 +128,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_custom_document_selection_mark(self, client, formrecognizer_selection_mark_storage_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
+        set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
         poller = client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url, "template")
@@ -183,10 +173,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_pages_kwarg_specified(self, client, formrecognizer_storage_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
+        set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
         with open(self.form_jpg, "rb") as fd:
@@ -223,3 +210,26 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         assert result.documents[0].fields.get("FullSignature").value_type == "signature"
         # this will notify us of changes in the service, currently expecting to get a None content for signature type fields
         assert result.documents[0].fields.get("FullSignature").content == None
+
+    @FormRecognizerPreparer()
+    @DocumentModelAdministrationClientPreparer()
+    @recorded_by_proxy
+    def test_custom_document_blank_pdf(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()
+        da_client = client.get_document_analysis_client()
+
+        with open(self.blank_pdf, "rb") as fd:
+            my_file = fd.read()
+
+        build_polling = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+        model = build_polling.result()
+
+        poller = da_client.begin_analyze_document(
+            model.model_id,
+            my_file,
+        )
+        result = poller.result()
+
+        assert result is not None
+        assert len(result.pages) == 1
+        assert len(result.pages[0].lines) == 0

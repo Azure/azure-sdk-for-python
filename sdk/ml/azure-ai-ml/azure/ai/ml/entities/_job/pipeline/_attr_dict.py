@@ -127,3 +127,20 @@ class _AttrDict(Generic[K, V], dict, ABC):
     def __dir__(self):
         # For Jupyter Notebook auto-completion
         return list(super().__dir__()) + list(self.keys())
+
+
+def try_get_non_arbitrary_attr_for_potential_attr_dict(obj, attr):
+    """
+    Try to get non-arbitrary attribute for potential attribute dict. Will not create target attribute if
+    it is an arbitrary attribute in _AttrDict.
+    """
+    if isinstance(obj, _AttrDict):
+        has_attr = not obj._is_arbitrary_attr(attr)
+    elif isinstance(obj, dict):
+        return obj[attr] if attr in obj else None
+    else:
+        has_attr = hasattr(obj, attr)
+    if has_attr:
+        return getattr(obj, attr)
+    else:
+        return None

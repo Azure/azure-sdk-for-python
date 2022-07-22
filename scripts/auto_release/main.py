@@ -256,15 +256,6 @@ class CodegenTestPR:
 
         modify_file(sdk_readme, edit_sdk_readme)
 
-    def check_sdk_setup(self):
-        def edit_sdk_setup(content: List[str]):
-            for i in range(0, len(content)):
-                content[i] = content[i].replace('msrestazure>=0.4.32,<2.0.0', 'azure-mgmt-core>=1.3.0,<2.0.0')
-                content[i] = content[i].replace('azure-mgmt-core>=1.2.0,<2.0.0', 'azure-mgmt-core>=1.3.0,<2.0.0')
-                content[i] = content[i].replace('msrest>=0.5.0', 'msrest>=0.6.21')
-
-        modify_file(str(Path(self.sdk_code_path()) / 'setup.py'), edit_sdk_setup)
-
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
     def check_file_with_packaging_tool(self):
@@ -294,7 +285,8 @@ class CodegenTestPR:
         preview_tag = not self.tag_is_stable
         changelog = self.get_changelog()
         if changelog == '':
-            return '0.0.0'
+            msg = 'it should be stable' if self.tag_is_stable else 'it should be perview'
+            return f'0.0.0 ({msg})'
         preview_version = 'rc' in last_version or 'b' in last_version
         #                                           |   preview tag                     | stable tag
         # preview version(1.0.0rc1/1.0.0b1)         | 1.0.0rc2(track1)/1.0.0b2(track2)  |  1.0.0
@@ -414,7 +406,6 @@ class CodegenTestPR:
         self.check_file_with_packaging_tool()
         self.check_pprint_name()
         self.check_sdk_readme()
-        self.check_sdk_setup()
         self.check_version()
         self.check_changelog_file()
         self.check_ci_file()

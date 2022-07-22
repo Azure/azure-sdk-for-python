@@ -76,7 +76,7 @@ class Workspace(Resource):
         :type public_network_access: str
         :param softdelete_enable: Create a workspace with soft delete capability
         :type softdelete_enable: bool
-        :param allow_recover_softdeleted_workspace: Allow an exising soft-deleted workspace to be recovered
+        :param allow_recover_softdeleted_workspace: Allow an existing soft-deleted workspace to be recovered
         :type allow_recover_softdeleted_workspace: bool
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
@@ -128,30 +128,6 @@ class Workspace(Resource):
 
     def _to_dict(self) -> Dict:
         return WorkspaceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
-
-    @classmethod
-    def load(
-        cls,
-        path: Union[PathLike, str],
-        params_override: list = None,
-        **kwargs,
-    ) -> "Workspace":
-        """Load a workspace object from a yaml file.
-
-        :param path: Path to a local file as the source.
-        :type path: str
-        :param params_override: Fields to overwrite on top of the yaml file. Format is [{"field1": "value1"}, {"field2": "value2"}]
-        :type params_override: list
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
-
-        :return: Loaded workspace object.
-        :rtype: Workspace
-        """
-
-        params_override = params_override or []
-        yaml_dict = load_yaml(path)
-        return cls._load(data=yaml_dict, yaml_path=path, params_override=params_override, **kwargs)
 
     @classmethod
     def _load(

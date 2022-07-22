@@ -47,7 +47,7 @@ perform-load: false
 These settings apply only when `--tag=release_3_0` is specified on the command line.
 
 ```yaml $(tag) == 'release_3_0'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/TextAnalytics/stable/v3.0/TextAnalytics.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/0de25e2a040e1257b3a90faea868ad93c3435e48/specification/cognitiveservices/data-plane/TextAnalytics/stable/v3.0/TextAnalytics.json
 namespace: azure.ai.textanalytics.v3_0
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v3_0
 ```
@@ -57,7 +57,7 @@ output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/
 These settings apply only when `--tag=release_3_1` is specified on the command line.
 
 ```yaml $(tag) == 'release_3_1'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/TextAnalytics/stable/v3.1/TextAnalytics.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/0de25e2a040e1257b3a90faea868ad93c3435e48/specification/cognitiveservices/data-plane/TextAnalytics/stable/v3.1/TextAnalytics.json
 namespace: azure.ai.textanalytics.v3_1
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v3_1
 ```
@@ -67,7 +67,7 @@ output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/
 These settings apply only when `--tag=release_2022_05_01` is specified on the command line.
 
 ```yaml $(tag) == 'release_2022_05_01'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/Language/stable/2022-05-01/textanalytics.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/0de25e2a040e1257b3a90faea868ad93c3435e48/specification/cognitiveservices/data-plane/Language/stable/2022-05-01/textanalytics.json
 namespace: azure.ai.textanalytics.v2022_05_01
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2022_05_01
 ```
@@ -164,4 +164,14 @@ directive:
     where: '$["info"]'
     transform: >
       $["title"] = "Text Analytics Client";
+```
+
+
+### Rename changed JobState property with ApiVersion v2022_05_01
+
+```yaml $(tag) == 'release_2022_05_01'
+directive:
+  - from: swagger-document
+    where: $.definitions.JobState
+    transform: $.properties.lastUpdatedDateTime["x-ms-client-name"] = "lastUpdateDateTime";
 ```

@@ -7,6 +7,7 @@ import json
 import logging
 import os
 import re
+from pathlib import PosixPath, PureWindowsPath
 import pydash
 import requests
 import sys
@@ -25,7 +26,7 @@ import time
 import random
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from os import PathLike
-from azure.ai.ml._restclient.v2021_10_01.models import ResourceIdentity, ListViewType
+from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity, ListViewType
 from azure.ai.ml.constants import API_URL_KEY, AZUREML_PRIVATE_FEATURES_ENV_VAR
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 
@@ -407,10 +408,10 @@ def hash_dict(items: dict, keys_to_omit=None):
     return str(UUID(object_hash.hexdigest()))
 
 
-def convert_identity_dict(identity: ResourceIdentity = None) -> ResourceIdentity:
+def convert_identity_dict(identity: ManagedServiceIdentity = None) -> ManagedServiceIdentity:
     if identity:
         if identity.type.lower() in ("system_assigned", "none"):
-            identity = ResourceIdentity(type="SystemAssigned")
+            identity = ManagedServiceIdentity(type="SystemAssigned")
         else:
             if identity.user_assigned_identities:
                 if isinstance(identity.user_assigned_identities, dict):  # if the identity is already in right format
@@ -422,7 +423,7 @@ def convert_identity_dict(identity: ResourceIdentity = None) -> ResourceIdentity
                     identity.user_assigned_identities = ids
                     identity.type = snake_to_camel(identity.type)
     else:
-        identity = ResourceIdentity(type="SystemAssigned")
+        identity = ManagedServiceIdentity(type="SystemAssigned")
     return identity
 
 
@@ -565,7 +566,7 @@ def get_all_data_binding_expressions(
     if isinstance(binding_prefix, str):
         binding_prefix = [binding_prefix]
     if isinstance(value, str):
-        target_regex = r"\$\{\{\s*(" + "\\.".join(binding_prefix) + r"\S*)\s*\}\}"
+        target_regex = r"\$\{\{\s*(" + "\\.".join(binding_prefix) + r"\S*?)\s*\}\}"
         if is_singular:
             target_regex = "^" + target_regex + "$"
         return re.findall(target_regex, value)
@@ -583,3 +584,60 @@ def is_valid_node_name(name):
     The regular expression match pattern is r"^[a-z_][a-z0-9_]*".
     """
     return isinstance(name, str) and name.isidentifier() and re.fullmatch(r"^[a-z_][a-z\d_]*", name) is not None
+
+
+def parse_args_description_from_docstring(docstring):
+    """Return arg descriptions in docstring with google style
+
+    e.g.
+        docstring =
+            '''
+            A pipeline with detailed docstring, including descriptions for inputs and outputs.
+
+            In this pipeline docstring, there are descriptions for inputs and outputs
+            Input/Output descriptions can infer from descriptions here.
+
+            Args:
+                job_in_path: a path parameter
+                job_in_number: a number parameter
+                                with multi-line description
+                job_in_int (int): a int parameter
+
+            Other docstring xxxxxx
+                random_key: random_value
+            '''
+
+    return dict:
+            args = {
+                'job_in_path': 'a path parameter',
+                'job_in_number': 'a number parameter with multi-line description',
+                'job_in_int': 'a int parameter'
+            }
+    """
+    args = {}
+    if not isinstance(docstring, str):
+        return args
+    lines = [line.strip() for line in docstring.splitlines()]
+    for index, line in enumerate(lines):
+        if line.lower() == "args:":
+            args_region = lines[index + 1 :]
+            args_line_end = args_region.index("") if "" in args_region else len(args_region)
+            args_region = args_region[0:args_line_end]
+            while len(args_region) > 0 and ":" in args_region[0]:
+                arg_line = args_region[0]
+                colon_index = arg_line.index(":")
+                arg, description = arg_line[0:colon_index].strip(), arg_line[colon_index + 1 :].strip()
+                # handle case like "param (float) : xxx"
+                if "(" in arg:
+                    arg = arg[0 : arg.index("(")].strip()
+                args[arg] = description
+                args_region.pop(0)
+                # handle multi-line description, assuming description has no colon inside.
+                while len(args_region) > 0 and ":" not in args_region[0]:
+                    args[arg] += " " + args_region[0]
+                    args_region.pop(0)
+    return args
+
+
+def convert_windows_path_to_unix(path: Union[str, PathLike]) -> PosixPath:
+    return PureWindowsPath(path).as_posix()

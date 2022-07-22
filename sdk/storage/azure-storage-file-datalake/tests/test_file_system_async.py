@@ -560,6 +560,7 @@ class FileSystemTest(StorageTestCase):
 
         self.assertEqual(len(paths1), 2)
         self.assertEqual(len(paths2), 4)
+        self.assertEqual(paths2[0].name, "dir12")
 
     @DataLakePreparer()
     async def test_list_paths_under_specific_path_async(

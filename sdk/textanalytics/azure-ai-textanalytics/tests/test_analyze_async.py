@@ -20,6 +20,7 @@ from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from testcase import TextAnalyticsTest
+from azure.ai.textanalytics.aio._lro_async import AsyncAnalyzeActionsLROPoller
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     TextDocumentInput,
@@ -35,8 +36,8 @@ from azure.ai.textanalytics import (
     AnalyzeSentimentResult,
     ExtractKeyPhrasesResult,
     PiiEntityCategory,
-    SingleCategoryClassifyAction,
-    MultiCategoryClassifyAction,
+    SingleLabelClassifyAction,
+    MultiLabelClassifyAction,
     RecognizeCustomEntitiesAction,
     ClassifyDocumentResult,
     RecognizeCustomEntitiesResult,
@@ -50,10 +51,10 @@ TextAnalyticsCustomPreparer = functools.partial(
     TextAnalyticsPreparer,
     textanalytics_custom_text_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
     textanalytics_custom_text_key="fakeZmFrZV9hY29jdW50X2tleQ==",
-    textanalytics_single_category_classify_project_name="single_category_classify_project_name",
-    textanalytics_single_category_classify_deployment_name="single_category_classify_deployment_name",
-    textanalytics_multi_category_classify_project_name="multi_category_classify_project_name",
-    textanalytics_multi_category_classify_deployment_name="multi_category_classify_deployment_name",
+    textanalytics_single_label_classify_project_name="single_label_classify_project_name",
+    textanalytics_single_label_classify_deployment_name="single_label_classify_deployment_name",
+    textanalytics_multi_label_classify_project_name="multi_label_classify_project_name",
+    textanalytics_multi_label_classify_deployment_name="multi_label_classify_deployment_name",
     textanalytics_custom_entities_project_name="custom_entities_project_name",
     textanalytics_custom_entities_deployment_name="custom_entities_deployment_name",
 )
@@ -171,12 +172,12 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             elif idx == 1:
                 assert document_result.sentiment == "negative"
                 assert len(document_result.sentences) == 2
-                assert document_result.sentences[0].text == "I did not like the hotel we stayed at."
+                assert document_result.sentences[0].text == "I did not like the hotel we stayed at. "  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14208842
                 assert document_result.sentences[1].text == "It was too expensive."
             else:
                 assert document_result.sentiment == "positive"
                 assert len(document_result.sentences) == 2
-                assert document_result.sentences[0].text == "The restaurant had really good food."
+                assert document_result.sentences[0].text == "The restaurant had really good food. "  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14208842
                 assert document_result.sentences[1].text == "I recommend you try it."
 
     @TextAnalyticsPreparer()
@@ -224,13 +225,13 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         assert 9 == sleek_opinion.offset
                         assert not sleek_opinion.is_negated
 
-                        premium_opinion = mined_opinion.assessments[1]
-                        assert 'premium' == premium_opinion.text
-                        assert 'positive' == premium_opinion.sentiment
-                        assert 0.0 == premium_opinion.confidence_scores.neutral
-                        self.validateConfidenceScores(premium_opinion.confidence_scores)
-                        assert 15 == premium_opinion.offset
-                        assert not premium_opinion.is_negated
+                        beautiful_opinion = mined_opinion.assessments[1]
+                        assert 'beautiful' == beautiful_opinion.text
+                        assert 'positive' == beautiful_opinion.sentiment
+                        assert 0.0 == beautiful_opinion.confidence_scores.neutral
+                        self.validateConfidenceScores(beautiful_opinion.confidence_scores)
+                        assert 53 == beautiful_opinion.offset
+                        assert not beautiful_opinion.is_negated
                 else:
                     food_target = sentence.mined_opinions[0].target
                     service_target = sentence.mined_opinions[1].target
@@ -238,7 +239,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     assert 4 == food_target.offset
 
                     assert 'service' == service_target.text
-                    assert 'negative' == service_target.sentiment
+                    assert 'positive' == service_target.sentiment
                     assert 0.0 == service_target.confidence_scores.neutral
                     self.validateConfidenceScores(service_target.confidence_scores)
                     assert 13 == service_target.offset
@@ -556,7 +557,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     assert document_result.statistics.character_count
                     assert document_result.statistics.transaction_count
 
-    @pytest.mark.skip("code changes needed before we can run test")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -575,6 +575,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
 
             response = await poller.result()
 
+            assert isinstance(poller, AsyncAnalyzeActionsLROPoller)
             assert isinstance(poller.created_on, datetime.datetime)
             assert not poller.display_name
             assert isinstance(poller.expires_on, datetime.datetime)
@@ -748,10 +749,10 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             self,
             textanalytics_custom_text_endpoint,
             textanalytics_custom_text_key,
-            textanalytics_single_category_classify_project_name,
-            textanalytics_single_category_classify_deployment_name,
-            textanalytics_multi_category_classify_project_name,
-            textanalytics_multi_category_classify_deployment_name,
+            textanalytics_single_label_classify_project_name,
+            textanalytics_single_label_classify_deployment_name,
+            textanalytics_multi_label_classify_project_name,
+            textanalytics_multi_label_classify_deployment_name,
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
@@ -763,14 +764,14 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             RecognizePiiEntitiesAction(disable_service_logs=True),
             RecognizeLinkedEntitiesAction(disable_service_logs=True),
             AnalyzeSentimentAction(disable_service_logs=True),
-            SingleCategoryClassifyAction(
-                project_name=textanalytics_single_category_classify_project_name,
-                deployment_name=textanalytics_single_category_classify_deployment_name,
+            SingleLabelClassifyAction(
+                project_name=textanalytics_single_label_classify_project_name,
+                deployment_name=textanalytics_single_label_classify_deployment_name,
                 disable_service_logs=True
             ),
-            MultiCategoryClassifyAction(
-                project_name=textanalytics_multi_category_classify_project_name,
-                deployment_name=textanalytics_multi_category_classify_deployment_name,
+            MultiLabelClassifyAction(
+                project_name=textanalytics_multi_label_classify_project_name,
+                deployment_name=textanalytics_multi_label_classify_deployment_name,
                 disable_service_logs=True
             ),
             RecognizeCustomEntitiesAction(
@@ -985,16 +986,15 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         assert action_results[1][1].is_error
         assert action_results[1][2].is_error
 
-    @pytest.mark.skip("code changes needed before we can run test")
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy_async
-    async def test_single_category_classify(
+    async def test_single_label_classify(
             self,
             textanalytics_custom_text_endpoint,
             textanalytics_custom_text_key,
-            textanalytics_single_category_classify_project_name,
-            textanalytics_single_category_classify_deployment_name
+            textanalytics_single_label_classify_project_name,
+            textanalytics_single_label_classify_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
@@ -1008,9 +1008,9 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             response = await (await client.begin_analyze_actions(
                 docs,
                 actions=[
-                    SingleCategoryClassifyAction(
-                        project_name=textanalytics_single_category_classify_project_name,
-                        deployment_name=textanalytics_single_category_classify_deployment_name
+                    SingleLabelClassifyAction(
+                        project_name=textanalytics_single_label_classify_project_name,
+                        deployment_name=textanalytics_single_label_classify_deployment_name
                     ),
                 ],
                 show_stats=True,
@@ -1033,12 +1033,12 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy_async
-    async def test_multi_category_classify(
+    async def test_multi_label_classify(
             self,
             textanalytics_custom_text_endpoint,
             textanalytics_custom_text_key,
-            textanalytics_multi_category_classify_project_name,
-            textanalytics_multi_category_classify_deployment_name
+            textanalytics_multi_label_classify_project_name,
+            textanalytics_multi_label_classify_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
@@ -1052,9 +1052,9 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             response = await (await client.begin_analyze_actions(
                 docs,
                 actions=[
-                    MultiCategoryClassifyAction(
-                        project_name=textanalytics_multi_category_classify_project_name,
-                        deployment_name=textanalytics_multi_category_classify_deployment_name
+                    MultiLabelClassifyAction(
+                        project_name=textanalytics_multi_label_classify_project_name,
+                        deployment_name=textanalytics_multi_label_classify_deployment_name
                     ),
                 ],
                 show_stats=True,
@@ -1123,7 +1123,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     assert entity.length is not None
                     assert entity.confidence_score is not None
 
-    @pytest.mark.skip("code changes needed before we can run test")
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy_async
@@ -1131,10 +1130,10 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             self,
             textanalytics_custom_text_endpoint,
             textanalytics_custom_text_key,
-            textanalytics_single_category_classify_project_name,
-            textanalytics_single_category_classify_deployment_name,
-            textanalytics_multi_category_classify_project_name,
-            textanalytics_multi_category_classify_deployment_name,
+            textanalytics_single_label_classify_project_name,
+            textanalytics_single_label_classify_deployment_name,
+            textanalytics_multi_label_classify_project_name,
+            textanalytics_multi_label_classify_deployment_name,
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
@@ -1148,13 +1147,13 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             response = await (await client.begin_analyze_actions(
                 docs,
                 actions=[
-                    SingleCategoryClassifyAction(
-                        project_name=textanalytics_single_category_classify_project_name,
-                        deployment_name=textanalytics_single_category_classify_deployment_name
+                    SingleLabelClassifyAction(
+                        project_name=textanalytics_single_label_classify_project_name,
+                        deployment_name=textanalytics_single_label_classify_deployment_name
                     ),
-                    MultiCategoryClassifyAction(
-                        project_name=textanalytics_multi_category_classify_project_name,
-                        deployment_name=textanalytics_multi_category_classify_deployment_name
+                    MultiLabelClassifyAction(
+                        project_name=textanalytics_multi_label_classify_project_name,
+                        deployment_name=textanalytics_multi_label_classify_deployment_name
                     ),
                     RecognizeCustomEntitiesAction(
                         project_name=textanalytics_custom_entities_project_name,
@@ -1211,7 +1210,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 polling_interval=self._interval(),
             )
             response = await poller.result()
-
+            assert isinstance(poller, AsyncAnalyzeActionsLROPoller)
             action_results = []
             async for action_result in response:
                 action_results.append(action_result)
@@ -1335,7 +1334,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 client._client.analyze_text_job_status,
                 response,
                 deserialized,
-                headers,
                 show_stats=True,
             )
 
@@ -1487,7 +1485,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 client._client.analyze_text_job_status,
                 response,
                 deserialized,
-                headers,
                 show_stats=True,
             )
 
@@ -1631,7 +1628,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 client._client.analyze_text_job_status,
                 response,
                 deserialized,
-                headers,
                 show_stats=True,
             )
         async with client:
@@ -1722,10 +1718,10 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     async def test_analyze_multiapi_validate_v3_1(self, **kwargs):
         textanalytics_custom_text_endpoint = kwargs.pop("textanalytics_custom_text_endpoint")
         textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
-        textanalytics_single_category_classify_project_name = kwargs.pop("textanalytics_single_category_classify_project_name")
-        textanalytics_single_category_classify_deployment_name = kwargs.pop("textanalytics_single_category_classify_deployment_name")
-        textanalytics_multi_category_classify_project_name = kwargs.pop("textanalytics_multi_category_classify_project_name")
-        textanalytics_multi_category_classify_deployment_name = kwargs.pop("textanalytics_multi_category_classify_deployment_name")
+        textanalytics_single_label_classify_project_name = kwargs.pop("textanalytics_single_label_classify_project_name")
+        textanalytics_single_label_classify_deployment_name = kwargs.pop("textanalytics_single_label_classify_deployment_name")
+        textanalytics_multi_label_classify_project_name = kwargs.pop("textanalytics_multi_label_classify_project_name")
+        textanalytics_multi_label_classify_deployment_name = kwargs.pop("textanalytics_multi_label_classify_deployment_name")
         textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
         textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
 
@@ -1740,13 +1736,13 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             response = await (await client.begin_analyze_actions(
                 docs,
                 actions=[
-                    SingleCategoryClassifyAction(
-                        project_name=textanalytics_single_category_classify_project_name,
-                        deployment_name=textanalytics_single_category_classify_deployment_name
+                    SingleLabelClassifyAction(
+                        project_name=textanalytics_single_label_classify_project_name,
+                        deployment_name=textanalytics_single_label_classify_deployment_name
                     ),
-                    MultiCategoryClassifyAction(
-                        project_name=textanalytics_multi_category_classify_project_name,
-                        deployment_name=textanalytics_multi_category_classify_deployment_name
+                    MultiLabelClassifyAction(
+                        project_name=textanalytics_multi_label_classify_project_name,
+                        deployment_name=textanalytics_multi_label_classify_deployment_name
                     ),
                     RecognizeCustomEntitiesAction(
                         project_name=textanalytics_custom_entities_project_name,
@@ -1757,12 +1753,11 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 polling_interval=self._interval(),
             )).result()
         assert str(e.value) == f"'RecognizeCustomEntitiesAction' is only available for API version " \
-                               f"{version_supported} and up.\n'SingleCategoryClassifyAction' is only available " \
-                               f"for API version {version_supported} and up.\n'MultiCategoryClassifyAction' is " \
+                               f"{version_supported} and up.\n'SingleLabelClassifyAction' is only available " \
+                               f"for API version {version_supported} and up.\n'MultiLabelClassifyAction' is " \
                                f"only available for API version {version_supported} and up.\n'AnalyzeHealthcareEntitiesAction' is " \
                                f"only available for API version {version_supported} and up.\n"
 
-    @pytest.mark.skip("code changes needed before we can run test")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -1778,7 +1773,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 actions=[
                     AnalyzeHealthcareEntitiesAction(
                         model_version="latest",
-                        fhir_version="4.0.1"
                     )
                 ],
                 show_stats=True,
@@ -1795,5 +1789,112 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         assert res.error.code == "InvalidDocument"
                     else:
                         assert res.entities
-                        assert res.fhir_bundle
                         assert res.statistics
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
+    async def test_cancel(self, client):
+        single_doc = "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
+        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 20)))]
+        actions=[
+            RecognizeEntitiesAction(),
+            ExtractKeyPhrasesAction(),
+            RecognizePiiEntitiesAction(),
+            RecognizeLinkedEntitiesAction(),
+            AnalyzeSentimentAction(),
+        ]
+        async with client:
+            poller = await client.begin_analyze_actions(
+                docs,
+                actions,
+                show_stats=True,
+                polling_interval=self._interval(),
+            )
+            await poller.cancel()
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
+    async def test_cancel_partial_results(self, client):
+        single_doc = "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
+        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 5)))]
+        actions=[
+            RecognizeEntitiesAction(),
+            ExtractKeyPhrasesAction(),
+            RecognizePiiEntitiesAction(),
+            RecognizeLinkedEntitiesAction(),
+            AnalyzeSentimentAction(),
+        ]
+        async with client:
+            poller = await client.begin_analyze_actions(
+                docs,
+                actions,
+                show_stats=True,
+                polling_interval=self._interval(),
+            )
+            await poller.cancel()
+            res = await poller.result()
+            result = []
+            async for doc in res:
+                result.append(doc)
+
+            # assert that we pad the result with doc errors for correct ordering
+            # (since some results may have finished and others have cancelled)
+            for idx, doc_result in enumerate(result):
+                assert len(doc_result) == len(actions)
+                for doc in doc_result:
+                    assert doc.id == str(idx)
+                    if doc.is_error:
+                        assert doc.error.message == "No result for document. Action returned status 'cancelled'."
+            assert poller.status() == "cancelled"
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
+    async def test_cancel_fail_terminal_state(self, client):
+        single_doc = "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
+        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 20)))] # max number of documents is 25
+        actions=[
+            RecognizeEntitiesAction(),
+            ExtractKeyPhrasesAction(),
+            RecognizePiiEntitiesAction(),
+            RecognizeLinkedEntitiesAction(),
+            AnalyzeSentimentAction(),
+        ]
+        async with client:
+            poller = await client.begin_analyze_actions(
+                docs,
+                actions,
+                show_stats=True,
+                polling_interval=self._interval(),
+            )
+            await poller.result()
+            assert poller.status() == "succeeded"
+            with pytest.raises(HttpResponseError):
+                await poller.cancel()  # can't cancel when already in terminal state
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer({"api_version": "v3.1"})
+    @recorded_by_proxy_async
+    async def test_cancel_fail_v3_1(self, client):
+        single_doc = "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
+        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 20)))] # max number of documents is 25
+        actions=[
+            RecognizeEntitiesAction(),
+            ExtractKeyPhrasesAction(),
+            RecognizePiiEntitiesAction(),
+            RecognizeLinkedEntitiesAction(),
+            AnalyzeSentimentAction(),
+        ]
+        async with client:
+            poller = await client.begin_analyze_actions(
+                docs,
+                actions,
+                show_stats=True,
+                polling_interval=self._interval(),
+            )
+
+            with pytest.raises(ValueError) as e:
+                await poller.cancel()
+            assert"Cancellation not supported by API versions v3.0, v3.1." in str(e.value)
