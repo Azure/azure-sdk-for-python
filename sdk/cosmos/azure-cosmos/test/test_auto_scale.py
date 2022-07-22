@@ -174,3 +174,74 @@ class AutoScaleTest(unittest.TestCase):
             ['throughputPolicy']['incrementPercent'], 7)
 
         created_database.delete_container(created_container)
+    def test_replace_auto_scale_max_throughput(self):
+        created_container = self.created_database.create_container(
+            id='container_with_auto_scale_settings',
+            partition_key=PartitionKey(path="/id"),
+            offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
+
+        )
+        new_throughput = created_container.replace_throughput(
+            throughput=Offer(auto_scale_max_throughput=7000, auto_scale_increment_percent=0))
+        created_container_properties = created_container.get_throughput()
+        # Testing the input value of the max_throughput
+        self.assertEqual(
+            created_container_properties.properties['content']['offerAutopilotSettings']['maxThroughput'], 7000)
+
+        self.created_database.delete_container(created_container)
+        # Testing the incorrect passing of an input value of the max_throughput to verify negative behavior
+        try:
+            created_container = self.created_database.create_container(
+                id='container_with_wrong_auto_scale_settings',
+                partition_key=PartitionKey(path="/id"),
+                offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
+
+            )
+            new_throughput = created_container.replace_throughput(
+                throughput=Offer(auto_scale_max_throughput=-6000, auto_scale_increment_percent=0))
+            created_container_properties = created_container.get_throughput()
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, http_constants.StatusCodes.BAD_REQUEST)
+
+    def test_replace_auto_scale_increment_percent(self):
+        created_container = self.created_database.create_container(
+            id='container_with_auto_scale_settings',
+            partition_key=PartitionKey(path="/id"),
+            offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
+
+        )
+        new_throughput = created_container.replace_throughput(
+            throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percent=5))
+        created_container_properties = created_container.get_throughput()
+        # Testing the input value of the increment_percent
+        self.assertEqual(
+            created_container_properties.properties['content']['offerAutopilotSettings']['autoUpgradePolicy']
+            ['throughputPolicy']['incrementPercent'], 5)
+
+        self.created_database.delete_container(created_container)
+        try:
+            created_container = self.created_database.create_container(
+                id='container_with_wrong_auto_scale_settings',
+                partition_key=PartitionKey(path="/id"),
+                offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
+
+            )
+            new_throughput = created_container.replace_throughput(
+                throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percent=-25))
+            created_container_properties = created_container.get_throughput()
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, http_constants.StatusCodes.BAD_REQUEST)
+
+    def test_replace_auto_scale_settings(self):
+        created_container = self.created_database.create_container(
+            id='container_with_auto_scale_settings',
+            partition_key=PartitionKey(path="/id"),
+            offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
+
+        )
+        try:
+            new_throughput = created_container.replace_throughput(
+            throughput=Offer(auto_scale_max_throughput="wrong input", auto_scale_increment_percent="0"))
+            created_container_properties = created_container.get_throughput()
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, http_constants.StatusCodes.BAD_REQUEST)
