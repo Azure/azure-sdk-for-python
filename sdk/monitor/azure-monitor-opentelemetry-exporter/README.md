@@ -113,7 +113,7 @@ Some of the key concepts for the Azure monitor exporter include:
 
 * [AzureMonitorMetricExporter][metric_reference]: This is the class that is initialized to send metric related telemetry to Azure Monitor.
 
-* [Trace][trace_concept]: Trace refers to distributed tracing. A distributed trace is a set of events, triggered as a result of a single logical operation, consolidated across various components of an application.
+* [Trace][trace_concept]: Trace refers to distributed tracing. A distributed trace is a set of events, triggered as a result of a single logical operation, consolidated across various components of an application. In particular, a Trace can be thought of as a directed acyclic graph (DAG) of Spans, where the edges between Spans are defined as parent/child relationship.
 
 * [Span][span]: Represents a single operation within a `Trace`. Can be nested to form a trace tree. Each trace contains a root span, which typically describes the entire operation and, optionally, one ore more sub-spans for its sub-operations.
 
