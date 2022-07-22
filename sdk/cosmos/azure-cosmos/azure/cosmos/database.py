@@ -779,7 +779,7 @@ class DatabaseProxy(object):
 
     @distributed_trace
     def replace_throughput(self, throughput, **kwargs):
-        # type: (Optional[int], Any) -> ThroughputProperties
+        # type: (Optional[Union[int, ThroughputProperties]], Any) -> ThroughputProperties
         """Replace the database-level throughput.
 
         :param throughput: The throughput to be set (an integer).
@@ -805,7 +805,13 @@ class DatabaseProxy(object):
                 status_code=StatusCodes.NOT_FOUND,
                 message="Could not find ThroughputProperties for database " + self.database_link)
         new_offer = throughput_properties[0].copy()
-        new_offer["content"]["offerThroughput"] = throughput
+        if isinstance(throughput, object):
+            if throughput.auto_scale_max_throughput is not None:
+                new_offer['content']['offerAutopilotSettings']['maxThroughput'] = throughput.auto_scale_max_throughput
+                if throughput.auto_scale_increment_percent:
+                    new_offer['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy']['incrementPercent'] = throughput.auto_scale_increment_percent
+        if isinstance(throughput, int):
+            new_offer["content"]["offerThroughput"] = throughput
         data = self.client_connection.ReplaceOffer(offer_link=throughput_properties[0]["_self"],
                                                    offer=throughput_properties[0], **kwargs)
         if response_hook:
