@@ -64,7 +64,8 @@ class PhoneNumbersClientTest(CommunicationTestCase):
             endpoint, 
             credential, 
             http_logging_policy=get_http_logging_policy(),
-            headers_policy=get_header_policy()
+            headers_policy=get_header_policy(),
+            api_version=API_VERSION
         )
 
     def test_list_purchased_phone_numbers_from_managed_identity(self):

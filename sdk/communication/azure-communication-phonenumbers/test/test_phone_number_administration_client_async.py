@@ -65,7 +65,8 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             endpoint, 
             credential, 
             http_logging_policy=get_http_logging_policy(),
-            headers_policy=get_header_policy()
+            headers_policy=get_header_policy(),
+            api_version=API_VERSION
         )
 
     @AsyncCommunicationTestCase.await_prepared_test

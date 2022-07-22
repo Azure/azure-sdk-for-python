@@ -21,4 +21,5 @@ clear-output-folder: true
 v3: true
 python: true
 title: Phone Numbers Client
+models-mode: msrest
 ```

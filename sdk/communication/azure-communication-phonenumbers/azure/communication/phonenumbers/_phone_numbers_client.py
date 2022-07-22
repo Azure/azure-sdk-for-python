@@ -8,7 +8,13 @@ from typing import TYPE_CHECKING
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._generated._client import PhoneNumbersClient as PhoneNumbersClientGen
-from ._generated.models import PhoneNumberSearchRequest
+from ._generated.models import (
+    PhoneNumberSearchRequest,
+    PhoneNumberCapabilitiesRequest,
+    PhoneNumberPurchaseRequest,
+    PhoneNumberType,
+    PhoneNumberAssignmentType
+)
 from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
 
@@ -47,6 +53,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
                 "You need to provide account shared key to authenticate.")
 
         self._endpoint = endpoint
+        self._accepted_language = kwargs.pop("accepted_language", None)
         self._phone_number_client = PhoneNumbersClientGen(
             self._endpoint,
             authentication_policy=get_authentication_policy(endpoint, credential),
@@ -88,8 +95,10 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
+        purchase_request = PhoneNumberPurchaseRequest(search_id=search_id)
+
         return self._phone_number_client.phone_numbers.begin_purchase_phone_numbers(
-            search_id,
+            body=purchase_request,
             **kwargs
         )
 
@@ -190,10 +199,12 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
         """
+
+        capabilities_request = PhoneNumberCapabilitiesRequest(calling=calling, sms=sms)
+
         poller = self._phone_number_client.phone_numbers.begin_update_capabilities(
-            phone_number,
-            calling=calling,
-            sms=sms,
+            phone_number, 
+            body=capabilities_request,
             **kwargs
         )
 
@@ -261,6 +272,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._phone_number_client.phone_numbers.list_available_countries(
+            accept_language=self._accepted_language,
             **kwargs
         )
 
@@ -295,6 +307,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         return self._phone_number_client.phone_numbers.list_available_localities(
             two_letter_iso_country_name,
             administrative_division=administrative_division,
+            accept_language=self._accepted_language,
             **kwargs
         )
 
@@ -358,7 +371,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         return self._phone_number_client.phone_numbers.list_area_codes(
             two_letter_iso_country_name,
             phone_number_type=PhoneNumberType.GEOGRAPHIC,
-            assignment_type= PhoneNumberAssignmentType.APPLICATION,
+            assignment_type=PhoneNumberAssignmentType.APPLICATION,
             **kwargs
         )
 
