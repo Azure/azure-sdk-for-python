@@ -131,7 +131,7 @@ def judge_tag_preview(path: str) -> bool:
 
 def format_samples(sdk_code_path) -> None:
     generate_sample_path = Path(sdk_code_path) / 'generated_samples'
-    if not os.path.exists(generate_sample_path):
+    if not generate_sample_path.exists():
         _LOGGER.info(f'not find generate_sample')
         return
 
