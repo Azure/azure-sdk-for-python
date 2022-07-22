@@ -22,17 +22,6 @@ $ pip install azure-monitor-opentelemetry-exporter --pre
 
 ## Run the Applications
 
-### Metrics
-
-* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
-
-* Run the sample
-
-```sh
-$ # from this directory
-$ python sample_metrics.py
-```
-
 ### Instrument usage
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
