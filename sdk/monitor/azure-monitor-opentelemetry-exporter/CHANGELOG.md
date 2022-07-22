@@ -14,7 +14,7 @@
 
 ### Features Added
 - Added OpenTelemetry entry points for auto-instrumentation of Azure Monitor exporters
-    ([#XXXXX](https://github.com/Azure/azure-sdk-for-python/pull/XXXXX))
+    ([#25368](https://github.com/Azure/azure-sdk-for-python/pull/25368))
 - Implement log exporter using experimental OT logging sdk
     ([#23486](https://github.com/Azure/azure-sdk-for-python/pull/23486))
 - Implement sending of exception telemetry via log exporter
