@@ -39,4 +39,4 @@ pytest-cov==2.8.1
 
 # local dev packages
 ./tools/azure-devtools
-./tools/azure-sdk-tools
+./tools/azure-sdk-tools[build]

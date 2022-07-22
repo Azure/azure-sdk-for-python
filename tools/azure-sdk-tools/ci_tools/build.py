@@ -52,7 +52,6 @@ def build() -> None:
         "--devbuild",
         default=False,
         dest="is_dev_build",
-        action="store_true",
         help=(
             "Set build type to dev build so package requirements will be updated if required package is not available on PyPI"
         ),
@@ -112,8 +111,6 @@ def build() -> None:
 
 
 # TODO: pull in build_conda_artifacts here
-# TODO: pull build_alpha_version into here
-# TODO: pull build_apiview_artifactzip into here
 def build_packages(
     targeted_packages: List[str],
     distribution_directory: str = None,
@@ -130,8 +127,6 @@ def build_packages(
         dist_dir = os.path.join(distribution_directory, package_name_in_artifacts)
 
         if is_dev_build:
-            # TODO: shouldn't we just make this _always_ make things alpha version during daily build?
-            # update the requirements to alpha version if the required version is not on pypi
             process_requires(package_root)
 
             new_version = get_dev_version(setup_parsed.version, build_id)
@@ -151,7 +146,6 @@ def create_package(setup_directory_or_file: str, dest_folder: str = None):
     """
 
     dist = get_artifact_directory(dest_folder)
-    pdb.set_trace()
 
     if not os.path.isdir(setup_directory_or_file):
         setup_directory_or_file = os.path.dirname(setup_directory_or_file)
