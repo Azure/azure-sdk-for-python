@@ -1,6 +1,5 @@
 import os
 
-
 def discover_repo_root(input_repo: str = None):
     """
     Resolves the root of the repository given a current working directory. This function should be used if a target repo argument is not provided.
@@ -19,7 +18,7 @@ def discover_repo_root(input_repo: str = None):
         else:
             current_dir = os.path.dirname(current_dir)
 
-    raise BadArgumentUsage(
+    raise Exception(
         "Commands invoked against azure-sdk-tooling should either be run from within the repo directory or provide --repo_root argument that directs at one."
     )
 
@@ -36,4 +35,4 @@ def get_artifact_directory(input_directory: str = None) -> str:
 
 
 DEV_BUILD_IDENTIFIER = os.getenv("SDK_DEV_BUILD_IDENTIFIER", "a")
-DEFAULT_BUILD_ID = os.getenv("GITHUB_RUN_ID", os.getenv("BUILD.BUILDID", os.getenv("SDK_BUILD_ID", "22222222.22")))
+DEFAULT_BUILD_ID = os.getenv("GITHUB_RUN_ID", os.getenv("BUILD.BUILDID", os.getenv("SDK_BUILD_ID", "20220101.1")))

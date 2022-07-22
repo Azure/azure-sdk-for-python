@@ -66,7 +66,7 @@ def version_set_main():
     set_version_py(target_package.setup_filename, new_version)
     set_dev_classifier(target_package.setup_filename, new_version)
     update_change_log(
-        target_package[0],
+        target_package.setup_filename,
         new_version,
         args.service,
         args.package_name,
