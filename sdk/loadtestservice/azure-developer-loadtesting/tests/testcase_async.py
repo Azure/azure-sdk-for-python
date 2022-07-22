@@ -5,6 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from devtools_testutils import AzureTestCase
+
 from azure.developer.loadtesting.aio import LoadTestingClient
 
 

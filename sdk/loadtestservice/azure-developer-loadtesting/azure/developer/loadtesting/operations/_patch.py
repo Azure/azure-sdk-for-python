@@ -7,8 +7,8 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload, List
-from .._serialization import Serializer
+from typing import Any, IO, Optional, Union, cast, overload, List
+
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -16,22 +16,24 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     map_error,
 )
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
-from .._vendor import _format_url_section
-from ._operations import TestOperations as TestOperationsGenerated, JSON, ClsType
+
 from ._operations import AppComponentOperations as AppComponentOperationsGenerated
+from ._operations import TestOperations as TestOperationsGenerated, JSON, ClsType
+from .._serialization import Serializer
+from .._vendor import _format_url_section
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
 def build_upload_test_file_request(
-    test_id: str,
-    file_id: str,
-    file_content,
-    **kwargs,
+        test_id: str,
+        file_id: str,
+        file_content,
+        **kwargs,
 ) -> HttpRequest:
     """
     Core logic for uploading a file
@@ -132,12 +134,12 @@ class AppComponentOperations:
         self.__app_component_operations_generated = AppComponentOperationsGenerated(*args, **kwargs)
 
     def get_app_components(
-        self,
-        *,
-        test_run_id: Optional[str] = None,
-        test_id: Optional[str] = None,
-        name: Optional[str] = None,
-        **kwargs: Any,
+            self,
+            *,
+            test_run_id: Optional[str] = None,
+            test_id: Optional[str] = None,
+            name: Optional[str] = None,
+            **kwargs: Any,
     ) -> JSON:
         """Get App Components for a test or a test run by its name.
 
@@ -188,7 +190,8 @@ class AppComponentOperations:
         if name is not None:
             return self.__app_component_operations_generated.get_app_component_by_name(name=name, **kwargs)
         else:
-            return self.__app_component_operations_generated.get_app_component(test_run_id=test_run_id, test_id=test_id, **kwargs)
+            return self.__app_component_operations_generated.get_app_component(test_run_id=test_run_id, test_id=test_id,
+                                                                               **kwargs)
 
     @overload
     def create_or_update_app_components(
@@ -397,10 +400,13 @@ class AppComponentOperations:
             :rtype: None
             :raises ~azure.core.exceptions.HttpResponseError:
             """
+
         return self.__app_component_operations_generated.delete_app_components(name, **kwargs)
 
 
 __all__: List[str] = ["TestOperations", "AppComponentOperations"]
+
+
 # Add all objects you want publicly available to users at this package level
 
 

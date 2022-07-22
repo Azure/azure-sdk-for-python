@@ -7,11 +7,10 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List, Any
-from ._client import LoadTestingClient as LoadTestingClientGenerated
-
 
 from azure.core import PipelineClient
 
+from ._client import LoadTestingClient as LoadTestingClientGenerated
 from ._configuration import LoadTestingClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import AppComponentOperations, ServerMetricsOperations, TestOperations, TestRunOperations
@@ -22,12 +21,12 @@ class LoadTestingAdministration(AppComponentOperations, ServerMetricsOperations,
     class to hold LoadTestAdministration
     """
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serialize, deserialize):
         self._client = client
         self._config = config
 
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
+        self._serialize = serialize
+        self._deserialize = deserialize
         self._serialize.client_side_validation = False
 
         AppComponentOperations.__init__(self, self._client, self._config, self._serialize, self._deserialize)
@@ -64,7 +63,8 @@ class LoadTestingClient(LoadTestingClientGenerated):  # pylint: disable=client-a
         self._serialize.client_side_validation = False
 
         self.load_test_runs = TestRunOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.load_test_administration = LoadTestingAdministration(self._client, self._config, self._serialize, self._deserialize)
+        self.load_test_administration = LoadTestingAdministration(self._client, self._config, self._serialize,
+                                                                  self._deserialize)
 
 
 __all__: List[str] = ["LoadTestingClient"]  # Add all objects you want publicly available to users at this package level
