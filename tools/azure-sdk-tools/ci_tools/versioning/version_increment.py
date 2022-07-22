@@ -71,16 +71,16 @@ def version_increment_main():
 
     packages = get_packages(args, package_name, additional_excludes=["mgmt", "-nspkg"], root_dir=root_dir)
 
-    package_map = {pkg[1][0]: pkg for pkg in packages}
+    package_map = {pkg.name: pkg for pkg in packages}
 
     if package_name not in package_map:
         raise ValueError("Package name not found: {}".format(package_name))
 
     target_package = package_map[package_name]
 
-    new_version = increment_version(target_package[1][1])
-    print("{0}: {1} -> {2}".format(package_name, target_package[1][1], new_version))
+    new_version = increment_version(target_package.version)
+    print("{0}: {1} -> {2}".format(package_name, target_package.version, new_version))
 
-    set_version_py(target_package[0], new_version)
-    set_dev_classifier(target_package[0], new_version)
-    update_change_log(target_package[0], new_version, args.service, args.package_name, True, False, root_dir=root_dir)
+    set_version_py(target_package.setup_filename, new_version)
+    set_dev_classifier(target_package.setup_filename, new_version)
+    update_change_log(target_package.setup_filename, new_version, args.service, args.package_name, True, False, root_dir=root_dir)
