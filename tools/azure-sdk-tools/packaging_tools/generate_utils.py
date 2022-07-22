@@ -154,4 +154,4 @@ def format_samples(sdk_code_path) -> None:
         with open(path, 'w') as fw:
             fw.write(file_content)
 
-    _LOGGER.info(f'format generate_sample successfully')
+    _LOGGER.info(f'format generated_samples successfully')
