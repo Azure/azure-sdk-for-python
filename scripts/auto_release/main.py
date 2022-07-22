@@ -81,8 +81,8 @@ def all_files(path: str, files: List[str]):
 
 
 def checkout_azure_default_branch():
-    usr = 'BigCat20196'
-    branch = 'bigcat/update_auto_codegen'
+    usr = 'Azure'
+    branch = 'main'
     print_exec(f'git remote add {usr} https://github.com/{usr}/azure-sdk-for-python.git')
     print_check(f'git fetch {usr} {branch}')
     print_check(f'git checkout {usr}/{branch}')
@@ -191,6 +191,7 @@ class CodegenTestPR:
         print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
 
         generate_result = self.get_autorest_result()
+        print(f"*** generate_result: {generate_result}")
         self.tag_is_stable = list(generate_result.values())[0]['tagIsStable']
         log(f"tag_is_stable is {self.tag_is_stable}")
         
