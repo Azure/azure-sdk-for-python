@@ -250,9 +250,12 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
          # type: (...) -> ItemPaged[PurchasedPhoneNumber]
         """Gets the list of all purchased phone numbers.
 
-        :param skip: An optional parameter for how many entries to skip, for pagination purposes. The
-         default value is 0.
-        :type skip: int
+        :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
+         default value is 0. Default value is 0.
+        :paramtype skip: int
+        :keyword top: An optional parameter for how many entries to return, for pagination purposes.
+         The default value is 100. Default value is 100.
+        :paramtype top: int
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
         """
         return self._phone_number_client.phone_numbers.list_phone_numbers(

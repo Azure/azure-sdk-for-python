@@ -254,9 +254,6 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         :keyword top: An optional parameter for how many entries to return, for pagination purposes.
          The default value is 100. Default value is 100.
         :paramtype top: int
-        :keyword accept_language: The locale to display in the localized fields in the response.
-         Default value is None.
-        :paramtype accept_language: str
         :return: An iterator like instance of PurchasedPhoneNumber
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
