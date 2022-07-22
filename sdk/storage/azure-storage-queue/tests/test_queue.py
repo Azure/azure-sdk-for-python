@@ -14,7 +14,7 @@ from datetime import (
     date,
 )
 
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import (
     HttpResponseError,
@@ -724,6 +724,22 @@ class StorageQueueTest(StorageTestCase):
             self.assertIsNotNone(message)
             self.assertNotEqual('', message.id)
             self.assertEqual(u'message1', message.content)
+
+    @QueuePreparer()
+    def test_azure_named_key_credential_access(self, storage_account_name, storage_account_key):
+
+        # Arrange
+        named_key = AzureNamedKeyCredential(storage_account_name, storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), named_key)
+        queue_client = self._get_queue_reference(qsc)
+        queue_client.create_queue()
+        queue_client.send_message(u'message1')
+
+        # Act
+        result = queue_client.peek_messages()
+
+        # Assert
+        self.assertIsNotNone(result)
 
     @QueuePreparer()
     def test_account_sas_raises_if_sas_already_in_uri(self, storage_account_name, storage_account_key):
