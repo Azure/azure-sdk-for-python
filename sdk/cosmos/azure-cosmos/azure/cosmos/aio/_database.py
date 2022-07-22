@@ -782,7 +782,13 @@ class DatabaseProxy(object):
                 message="Could not find Offer for database " + self.database_link)
 
         new_offer = throughput_properties[0].copy()
-        new_offer["content"]["offerThroughput"] = throughput
+        if isinstance(throughput, object):
+            if throughput.auto_scale_max_throughput is not None:
+                new_offer['content']['offerAutopilotSettings']['maxThroughput'] = throughput.auto_scale_max_throughput
+                if throughput.auto_scale_increment_percent:
+                    new_offer['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy']['incrementPercent'] = throughput.auto_scale_increment_percent
+        if isinstance(throughput, int):
+            new_offer["content"]["offerThroughput"] = throughput
         data = await self.client_connection.ReplaceOffer(offer_link=throughput_properties[0]["_self"],
                                                          offer=throughput_properties[0], **kwargs)
         if response_hook:
