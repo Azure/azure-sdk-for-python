@@ -1,3 +1,4 @@
+from contextlib import suppress
 import json
 import logging
 import os
@@ -126,3 +127,31 @@ def judge_tag_preview(path: str) -> bool:
 
     _LOGGER.info(f'find single api version:{api_version}')
     return 'preview' in api_version
+
+
+def format_samples(sdk_code_path) -> None:
+    generate_sample_path = Path(sdk_code_path) / 'generated_samples'
+    if not generate_sample_path.exists():
+        _LOGGER.info(f'not find generated_samples')
+        return
+
+    try:
+        import black
+    except Exception as e:
+        check_call('pip install black', shell=True)
+        import black
+
+    _BLACK_MODE = black.Mode()
+    _BLACK_MODE.line_length = 120
+    files = generate_sample_path.glob('**/*.py')
+    for path in files:
+        with open(path, 'r') as fr:
+            file_content = fr.read()
+
+        with suppress(black.NothingChanged):
+            file_content = black.format_file_contents(file_content, fast=True, mode=_BLACK_MODE)
+
+        with open(path, 'w') as fw:
+            fw.write(file_content)
+
+    _LOGGER.info(f'format generated_samples successfully')
