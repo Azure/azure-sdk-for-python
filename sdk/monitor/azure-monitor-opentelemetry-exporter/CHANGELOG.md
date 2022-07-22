@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 - Opentelemetry span events have wrong ParentId in Azure Monitor logs
-    ([#23486](https://github.com/Azure/azure-sdk-for-python/pull/23486))
+    ([#25369](https://github.com/Azure/azure-sdk-for-python/pull/25369))
 
 ### Other Changes
 
