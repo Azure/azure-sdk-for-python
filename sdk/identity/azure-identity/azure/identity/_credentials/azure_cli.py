@@ -72,7 +72,7 @@ class AzureCliCredential(object):
         resource = _scopes_to_resource(*scopes)
         command = COMMAND_LINE.format(resource)
         tenant = resolve_tenant(default_tenant= self.tenant_id, **kwargs)
-        
+
         if tenant:
             command += " --tenant " + tenant
         output = _run_command(command)
