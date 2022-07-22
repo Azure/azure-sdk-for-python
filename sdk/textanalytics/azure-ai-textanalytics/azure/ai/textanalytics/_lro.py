@@ -215,11 +215,20 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
 
 class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType]):
     def polling_method(self) -> AnalyzeHealthcareEntitiesLROPollingMethod:
-        """Return the polling method associated to this poller."""
+        """Return the polling method associated to this poller.
+
+        :return: AnalyzeHealthcareEntitiesLROPollingMethod
+        :rtype: AnalyzeHealthcareEntitiesLROPollingMethod
+        """
         return self._polling_method  # type: ignore
 
     @property
     def details(self) -> Mapping[str, Any]:
+        """Long-running operation metadata.
+
+        :return: A mapping of details about the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
         return {
             "id": self.polling_method().id,
             "created_on": self.polling_method().created_on,
@@ -247,7 +256,14 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType]):
         continuation_token: str,
         **kwargs: Any
     ) -> "AnalyzeHealthcareEntitiesLROPoller":  # type: ignore
-        """
+        """Internal use only.
+
+        :param polling_method: Polling method to use.
+        :type polling_method: AnalyzeHealthcareEntitiesLROPollingMethod
+        :param str continuation_token: Opaque token.
+        :return: AnalyzeHealthcareEntitiesLROPoller
+        :rtype: AnalyzeHealthcareEntitiesLROPoller
+
         :meta private:
         """
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
@@ -388,11 +404,20 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
 
 class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
     def polling_method(self) -> AnalyzeActionsLROPollingMethod:
-        """Return the polling method associated to this poller."""
+        """Return the polling method associated to this poller.
+
+        :return: AnalyzeActionsLROPollingMethod
+        :rtype: AnalyzeActionsLROPollingMethod
+        """
         return self._polling_method  # type: ignore
 
     @property
     def details(self) -> Mapping[str, Any]:
+        """Long-running operation metadata.
+
+        :return: A mapping of details about the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
         return {
             "id": self.polling_method().id,
             "created_on": self.polling_method().created_on,
@@ -428,7 +453,14 @@ class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
         continuation_token: str,
         **kwargs: Any
     ) -> "AnalyzeActionsLROPoller":  # type: ignore
-        """
+        """Internal use only.
+
+        :param polling_method: Polling method to use.
+        :type polling_method: AnalyzeActionsLROPollingMethod
+        :param str continuation_token: Opaque token.
+        :return: AnalyzeActionsLROPoller
+        :rtype: AnalyzeActionsLROPoller
+
         :meta private:
         """
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
