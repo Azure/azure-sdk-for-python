@@ -20,7 +20,8 @@ Goals for the refactor:
 Minutae
 - [x] Move `sanitize_setup` functions into `functions.py`
 - [ ] Make a pass over all moved entry scripts. Ensure standardized arguments are present and working.
-- [ ] Document new environment variables
+- [ ] Update Versioning scripts to be available from main
+- [ ] Document new environment variables / Enhance Azure SDK Tools readme w/ Build/Versioning help
 - [ ] Update the usings in tox_harness. Ton of dependencies that need to be cleaned up.
 - [ ] Update existing call sites to enable CI to continue working post refactor start.
 

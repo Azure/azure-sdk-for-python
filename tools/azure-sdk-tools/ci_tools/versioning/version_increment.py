@@ -33,8 +33,7 @@ def increment_version(old_version):
 
     return "{0}.{1}.{2}".format(release[0], release[1], release[2] + 1)
 
-
-if __name__ == "__main__":
+def version_increment_main():
     parser = argparse.ArgumentParser(
         description="Increments version for a given package name based on the released version"
     )

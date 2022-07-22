@@ -8,11 +8,13 @@
 # Below are common methods for the devops build steps. This is the common location that will be updated with
 # package targeting during release.
 
+from argparse import Namespace
 import sys
 import os
 from os import path
 import re
 import logging
+from typing import TYPE_CHECKING
 from packaging.version import parse
 
 from datetime import date
@@ -33,6 +35,8 @@ DEV_STATUS_REGEX = r'(classifiers=\[(\s)*)(["\']Development Status :: .*["\'])'
 
 logging.getLogger().setLevel(logging.INFO)
 
+from typing import List
+
 
 def path_excluded(path, additional_excludes):
     return any([excl in path for excl in additional_excludes]) or "tests" in path or is_metapackage(path)
@@ -52,7 +56,7 @@ def get_setup_py_paths(glob_string, base_path, additional_excludes):
     return filtered_paths
 
 
-def get_packages(args, package_name="", additional_excludes=[], root_dir: str = None):
+def get_packages(args: Namespace, package_name: str = "", additional_excludes: List[str] = [], root_dir: str = None) -> List[ParsedSetup]:
     if root_dir is None:
         root_dir = discover_repo_root()
     # This function returns list of path to setup.py and setup info like install requires, version for all packages discovered using glob
@@ -74,8 +78,7 @@ def get_packages(args, package_name="", additional_excludes=[], root_dir: str = 
     for setup_path in paths:
         try:
             setup_info = ParsedSetup.from_path(setup_path)
-            setup_entry = (setup_path, setup_info)
-            packages.append(setup_entry)
+            packages.append(setup_info)
         except:
             print("Error parsing {}".format(setup_path))
             raise

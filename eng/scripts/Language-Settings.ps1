@@ -517,8 +517,8 @@ function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseD
   {
     $ReleaseDate = Get-Date -Format "yyyy-MM-dd"
   }
-  pip install -r "$EngDir/versioning/requirements.txt" -q -I
-  python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version `
+  pip install "$RepoRoot/tools/azure-sdk-tools[build]" -q -I
+  sdk_version_set_dev --package-name $PackageName --new-version $Version `
   --service $ServiceDirectory --release-date $ReleaseDate --replace-latest-entry-title $ReplaceLatestEntryTitle
 }
 

@@ -1,6 +1,4 @@
-import os
 import argparse
-import logging
 from ci_tools.variables import discover_repo_root
 
 from ci_tools.versioning.version_shared import (
@@ -10,7 +8,7 @@ from ci_tools.versioning.version_shared import (
     update_change_log,
 )
 
-if __name__ == "__main__":
+def version_set_main():
     parser = argparse.ArgumentParser(
         description="Increments version for a given package name based on the released version"
     )

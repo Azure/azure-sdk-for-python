@@ -197,13 +197,11 @@ stages:
                       - checkout: self
                       - task: UsePythonVersion@0
                       - script: |
-                          pip install -r ./eng/versioning/requirements.txt
+                          pip install tools/azure-sdk-tools[build]
                         displayName: Install versioning tool dependencies
-                      - task: PythonScript@0
+                      - pwsh: |
+                          sdk_version_increment --package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}
                         displayName: Increment package version
-                        inputs:
-                          scriptPath: 'eng/versioning/version_increment.py'
-                          arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
                           RepoName: azure-sdk-for-python

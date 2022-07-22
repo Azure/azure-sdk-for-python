@@ -12,9 +12,7 @@ steps:
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
-  - task: PythonScript@0
-    condition: and(succeededOrFailed(), eq(variables['SetDevVersion'],'true'))
+  - pwsh: |
+      pip install tools/azure-sdk-tools[build]
+      sdk_version_set_dev "$(TargetingString)" --service="${{parameters.ServiceDirectory}}" --build-id="$(Build.BuildNumber)"
     displayName: "Update package versions for dev build"
-    inputs:
-      scriptPath: 'eng/versioning/version_set_dev.py'
-      arguments: '"$(TargetingString)" --service="${{parameters.ServiceDirectory}}" --build-id="$(Build.BuildNumber)"'

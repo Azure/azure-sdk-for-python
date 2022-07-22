@@ -1,5 +1,4 @@
 from ast import Not
-from click import BadArgumentUsage
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse
 from pkg_resources import Requirement

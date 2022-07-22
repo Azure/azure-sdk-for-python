@@ -66,7 +66,7 @@ def read_setup_py_content(setup_filename: str) -> str:
         return content
 
 
-def parse_setup(setup_filename: str) -> ParsedSetup:
+def parse_setup(setup_filename: str) -> Tuple[str, str, List[str], List[str], bool, str]:
     """
     Used to evaluate a setup.py (or a directory containing a setup.py) and return a tuple containing:
     (<package-name>, <package_version>, <python_requires>, <requires>, <boolean indicating track1 vs track2>, <parsed setup.py location>)
