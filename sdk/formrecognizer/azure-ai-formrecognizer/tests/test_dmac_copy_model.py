@@ -10,8 +10,7 @@ import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
-from azure.ai.formrecognizer import DocumentModelInfo
-from azure.ai.formrecognizer import DocumentModelAdministrationClient
+from azure.ai.formrecognizer import DocumentModelInfo,DocumentModelAdministrationClient, DocumentModelAdministrationLROPoller
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
@@ -207,6 +206,7 @@ class TestCopyModel(FormRecognizerTest):
 
         poller = client.begin_copy_model_to(model.model_id, target=target)
         poller.result()
+        assert isinstance(poller, DocumentModelAdministrationLROPoller)
         details = poller.details
         assert details["operation_id"]
         assert details["percent_completed"] is not None

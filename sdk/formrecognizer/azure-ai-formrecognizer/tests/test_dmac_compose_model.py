@@ -8,7 +8,7 @@ import pytest
 import uuid
 import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
-from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModelInfo
+from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModelInfo, DocumentModelAdministrationLROPoller
 from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -115,6 +115,7 @@ class TestTraining(FormRecognizerTest):
 
         poller = client.begin_compose_model([model_1.model_id, model_2.model_id])
         poller.result()
+        assert isinstance(poller, DocumentModelAdministrationLROPoller)
         details = poller.details
         assert details["operation_id"]
         assert details["percent_completed"] is not None

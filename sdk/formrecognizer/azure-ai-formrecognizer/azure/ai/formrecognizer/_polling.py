@@ -8,7 +8,7 @@
 import datetime
 import json
 from typing import Callable, Mapping, Union, TypeVar, Any, Optional
-from typing_extensions import Protocol
+from typing_extensions import Protocol, runtime_checkable
 from azure.core.exceptions import HttpResponseError, ODataV4Format
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import (
@@ -45,6 +45,7 @@ def parse_operation_id(location):
     return operation_id
 
 
+@runtime_checkable
 class DocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
     """Implements a protocol followed by returned poller objects."""
 
@@ -94,10 +95,7 @@ class DocumentModelAdministrationClientLROPoller(LROPoller[PollingReturnType]):
 
     @property
     def details(self) -> Mapping[str, Any]:
-        """The operation ID of the model operation.
-
-        :rtype: str
-        """
+        """Returns metadata associated with the long-running operation."""
         created_on = self._current_body.get("createdDateTime", None)
         if created_on:
             created_on = datetime.datetime.strptime(created_on, "%Y-%m-%dT%H:%M:%SZ")

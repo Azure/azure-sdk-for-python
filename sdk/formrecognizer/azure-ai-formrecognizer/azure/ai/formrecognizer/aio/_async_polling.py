@@ -7,14 +7,15 @@
 
 import json
 import datetime
-from typing import TypeVar, Any, Mapping, Callable, Optional
-from typing_extensions import Protocol
+from typing import TypeVar, Any, Mapping
+from typing_extensions import Protocol, runtime_checkable
 from azure.core.polling import AsyncLROPoller, AsyncPollingMethod
 from .._polling import parse_operation_id
 
 PollingReturnType = TypeVar("PollingReturnType")
 
 
+@runtime_checkable
 class AsyncDocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
     """Implements a protocol followed by returned poller objects."""
 
@@ -31,19 +32,13 @@ class AsyncDocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
     def status(self) -> str:  # pylint: disable=no-self-use
         ...
 
-    def result(self, timeout: Optional[int] = None) -> PollingReturnType: # pylint: disable=no-self-use, unused-argument
+    async def result(self) -> PollingReturnType: # pylint: disable=no-self-use, unused-argument
         ...
 
-    def wait(self, timeout: Optional[float] = None) -> None:  # pylint: disable=no-self-use, unused-argument
+    async def wait(self) -> None:  # pylint: disable=no-self-use, unused-argument
         ...
 
     def done(self) -> bool:  # pylint: disable=no-self-use
-        ...
-
-    def add_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
-        ...
-
-    def remove_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
         ...
 
 
@@ -64,10 +59,7 @@ class AsyncDocumentModelAdministrationClientLROPoller(AsyncLROPoller[PollingRetu
 
     @property
     def details(self) -> Mapping[str, Any]:
-        """The operation ID of the model operation.
-
-        :rtype: str
-        """
+        """Returns metadata associated with the long-running operation."""
         created_on = self._current_body.get("createdDateTime", None)
         if created_on:
             created_on = datetime.datetime.strptime(created_on, "%Y-%m-%dT%H:%M:%SZ")

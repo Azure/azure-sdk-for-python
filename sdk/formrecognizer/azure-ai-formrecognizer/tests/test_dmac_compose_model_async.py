@@ -9,7 +9,7 @@ import uuid
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import set_bodiless_matcher
-from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
+from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, AsyncDocumentModelAdministrationLROPoller
 from azure.ai.formrecognizer import DocumentModelInfo
 from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
 from preparers import FormRecognizerPreparer
@@ -120,6 +120,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
             poller = await client.begin_compose_model([model_1.model_id, model_2.model_id])
             await poller.result()
+            assert isinstance(poller, AsyncDocumentModelAdministrationLROPoller)
             details = poller.details
             assert details["operation_id"]
             assert details["percent_completed"] is not None
