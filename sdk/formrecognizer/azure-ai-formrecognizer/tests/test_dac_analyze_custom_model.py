@@ -24,7 +24,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
-            client.begin_analyze_document(model=None, document=b"xx")
+            client.begin_analyze_document(model_id=None, document=b"xx")
 
     @FormRecognizerPreparer()
     def test_analyze_document_empty_model_id(self, **kwargs):
@@ -32,7 +32,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
-            client.begin_analyze_document(model="", document=b"xx")
+            client.begin_analyze_document(model_id="", document=b"xx")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
