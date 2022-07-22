@@ -191,7 +191,6 @@ class CodegenTestPR:
         print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
 
         generate_result = self.get_autorest_result()
-        print(f"*** generate_result: {generate_result}")
         self.tag_is_stable = list(generate_result.values())[0]['tagIsStable']
         log(f"tag_is_stable is {self.tag_is_stable}")
         
