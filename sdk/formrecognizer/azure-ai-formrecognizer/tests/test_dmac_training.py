@@ -234,11 +234,12 @@ class TestDMACTraining(FormRecognizerTest):
     def test_build_model_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
-        assert poller.operation_id
-        assert poller.percent_completed is not None
         poller.result()
-        assert poller.operation_kind == "documentModelBuild"
-        assert poller.percent_completed == 100
-        assert poller.resource_location_url
-        assert poller.created_on
-        assert poller.last_updated_on
+        details = poller.details
+        assert details["operation_id"]
+        assert details["percent_completed"] is not None
+        assert details["operation_kind"] == "documentModelBuild"
+        assert details["percent_completed"] == 100
+        assert details["resource_location_url"]
+        assert details["created_on"]
+        assert details["last_updated_on"]

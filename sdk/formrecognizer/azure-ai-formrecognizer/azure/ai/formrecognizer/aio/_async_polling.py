@@ -78,7 +78,7 @@ class AsyncDocumentModelAdministrationClientLROPoller(AsyncLROPoller[PollingRetu
             created_on = datetime.datetime.strptime(created_on, "%Y-%m-%dT%H:%M:%SZ")
         last_updated_on = self._current_body.get("lastUpdatedDateTime", None)
         if last_updated_on:
-            return datetime.datetime.strptime(last_updated_on, "%Y-%m-%dT%H:%M:%SZ")
+            last_updated_on = datetime.datetime.strptime(last_updated_on, "%Y-%m-%dT%H:%M:%SZ")
         return {
             "operation_id": parse_operation_id(
                     self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore
