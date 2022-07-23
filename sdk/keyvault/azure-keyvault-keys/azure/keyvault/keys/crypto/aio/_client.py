@@ -166,8 +166,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
         :param bytes plaintext: Bytes to encrypt
         :keyword bytes iv: Initialization vector. Required for only AES-CBC(PAD) encryption. If you pass your own IV,
-            make sure you use a cryptographically random, non-repeating IV. If omitted for remote cryptography, Key
-            Vault will generate an IV.
+            make sure you use a cryptographically random, non-repeating IV. If omitted, an attempt will be made to
+            generate an IV via `os.urandom <https://docs.python.org/library/os.html#os.urandom>`_ for local
+            cryptography; for remote cryptography, Key Vault will generate an IV.
         :keyword bytes additional_authenticated_data: Optional data that is authenticated but not encrypted. For use
             with AES-GCM encryption.
         :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
