@@ -19,10 +19,13 @@ Goals for the refactor:
 
 Minutae
 - [x] Move `sanitize_setup` functions into `functions.py`
-- [ ] Make a pass over all moved entry scripts. Ensure standardized arguments are present and working.
-- [ ] Update Versioning scripts to be available from main
-- [ ] Document new environment variables / Enhance Azure SDK Tools readme w/ Build/Versioning help
+- [x] Make a pass over all moved entry scripts. Ensure standardized arguments are present and working.
+- [x] Update Versioning scripts to be available from main
+- [x] Document new environment variables / Enhance Azure SDK Tools readme w/ Build/Versioning help
+- [ ] Update the usings in setup_execute_tests. Ton of dependencies that need to be cleaned up.
 - [ ] Update the usings in tox_harness. Ton of dependencies that need to be cleaned up.
+- [ ] Update the usings in test_regression. Ton of dependencies that need to be cleaned up.
+- [ ] Try version_set. Still hitting weird issue in update-changelog.ps1
 - [ ] Update existing call sites to enable CI to continue working post refactor start.
 
 ## Refactoring our logging
