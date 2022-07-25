@@ -63,13 +63,13 @@ if __name__ == '__main__':
 
 **Note:** The samples in this doc use the azure-identity library's `DefaultAzureCredential` to fetch Azure AD Access Token. The other supported `TokenCredential` implementations that can be used from azure-identity for Python are as follows:
 
-- [Client Certificate Credential](http://aka.ms/azsdk/python/identity/certificatecredential)
-- [Client Secret Credential](http://aka.ms/azsdk/python/identity/clientsecretcredential)
-- [Managed Identity Credential](http://aka.ms/azsdk/python/identity/managedidentitycredential)
-- [Username Password Credential](http://aka.ms/azsdk/python/identity/usernamepasswordcredential)
-- [Azure CLI Credential](http://aka.ms/azsdk/python/identity/azclicredential)
-- [Interactive Browser Credential](http://aka.ms/azsdk/python/identity/interactivebrowsercredential)
-- [Device Code Credential](http://aka.ms/azsdk/python/identity/devicecodecredential)
+- [Client Certificate Credential](https://aka.ms/azsdk/python/identity/certificatecredential)
+- [Client Secret Credential](https://aka.ms/azsdk/python/identity/clientsecretcredential)
+- [Managed Identity Credential](https://aka.ms/azsdk/python/identity/managedidentitycredential)
+- [Username Password Credential](https://aka.ms/azsdk/python/identity/usernamepasswordcredential)
+- [Azure CLI Credential](https://aka.ms/azsdk/python/identity/azclicredential)
+- [Interactive Browser Credential](https://aka.ms/azsdk/python/identity/interactivebrowsercredential)
+- [Device Code Credential](https://aka.ms/azsdk/python/identity/devicecodecredential)
 
 #### Authenticate with Azure AD: handle re-authentication
 
