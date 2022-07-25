@@ -185,11 +185,20 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
 
 class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType]):
     def polling_method(self) -> AsyncAnalyzeHealthcareEntitiesLROPollingMethod:  # type: ignore
-        """Return the polling method associated to this poller."""
+        """Return the polling method associated to this poller.
+
+        :return: AsyncAnalyzeHealthcareEntitiesLROPollingMethod
+        :rtype: AsyncAnalyzeHealthcareEntitiesLROPollingMethod
+        """
         return self._polling_method  # type: ignore
 
     @property
     def details(self) -> Mapping[str, Any]:
+        """Long-running operation metadata.
+
+        :return: A mapping of details about the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
         return {
             "id": self.polling_method().id,
             "created_on": self.polling_method().created_on,
@@ -217,7 +226,14 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
         continuation_token: str,
         **kwargs: Any
     ) -> "AsyncAnalyzeHealthcareEntitiesLROPoller":
-        """
+        """Internal use only.
+
+        :param polling_method: Polling method to use.
+        :type polling_method: AsyncAnalyzeHealthcareEntitiesLROPollingMethod
+        :param str continuation_token: Opaque token.
+        :return: AsyncAnalyzeHealthcareEntitiesLROPoller
+        :rtype: AsyncAnalyzeHealthcareEntitiesLROPoller
+
         :meta private:
         """
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
@@ -355,11 +371,20 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
 
 class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
     def polling_method(self) -> AsyncAnalyzeActionsLROPollingMethod:  # type: ignore
-        """Return the polling method associated to this poller."""
+        """Return the polling method associated to this poller.
+
+        :return: AsyncAnalyzeActionsLROPollingMethod
+        :rtype: AsyncAnalyzeActionsLROPollingMethod
+        """
         return self._polling_method  # type: ignore
 
     @property
     def details(self) -> Mapping[str, Any]:
+        """Long-running operation metadata.
+
+        :return: A mapping of details about the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
         return {
             "id": self.polling_method().id,
             "created_on": self.polling_method().created_on,
@@ -395,7 +420,14 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
         continuation_token: str,
         **kwargs: Any
     ) -> "AsyncAnalyzeActionsLROPoller":  # type: ignore
-        """
+        """Internal use only.
+
+        :param polling_method: Polling method to use.
+        :type polling_method: AsyncAnalyzeActionsLROPollingMethod
+        :param str continuation_token: Opaque token.
+        :return: AsyncAnalyzeActionsLROPoller
+        :rtype: AsyncAnalyzeActionsLROPoller
+
         :meta private:
         """
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
