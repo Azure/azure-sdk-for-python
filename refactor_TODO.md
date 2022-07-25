@@ -34,7 +34,11 @@ We have a lot of noise in our builds right now. We can stand to eliminate _some_
 
 We want the logging to help you, and NOT BE IN YOUR WAY when you're trying to repro the issue. The first stage including build and versioning will not adjust any of our logging.
 
-## Refactoring how we install required packages for `regression`, `min/latestdependency` and any of our test scenarios
+## Build `scenario` generation with newly centralized code
+
+- [ ] This should belong to `ci_tools.scenarios`
+- [ ] Should enable new command `sdk_scenario` that can be used to generate a requirements file for any of our tox enviornments. 
+- [ ] Provide a --buildUrl argument to enable download and repro of a scenario generated from a build
 
 Right now we essentially follow the standard of:
 
@@ -56,14 +60,14 @@ We want to take into account:
 The method:
 
 1. Examine the package. Are we grabbing it from a prebuilt directory? Are we in `dev_mode` (alpha versioned and requirements allow alpha) 
-  - Add the resolved package reference to a `scenario.txt` 
+   - Add the resolved package reference to a `scenario.txt` 
 2. Examine our dev_requirements. Do we need to do any pre-processing like we currently do in `tox_harness.py`? 
- - Pass set of requirements to the next phase.
+   - Pass set of requirements to the next phase.
 3. Process package requirements.
-  - Are we in dev mode? That affects our search
-  - Select which versions of the requirements should be installed
-  - Any requirements resolved in this phase supplant those in the dictionary passed from phase 2. 
-  - Pass combination requirements to next phase.
+   - Are we in dev mode? That affects our search
+   - Select which versions of the requirements should be installed
+   - Any requirements resolved in this phase supplant those in the dictionary passed from phase 2. 
+   - Pass combination requirements to next phase.
 4. Combine stripped down tox_environment_requirements.txt file to combination, with previous values holding weight over values from tox_environment_requirements.txt
 5. Write entire combination of requirements to `scenario_name.txt`
 6. The tox environment should install only azure_sdk_tools to start with, invoke `scenario_generator`, then install _that_ file. 
