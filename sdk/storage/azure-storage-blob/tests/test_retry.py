@@ -440,7 +440,7 @@ class StorageRetryTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    def test_streaming_error(self, storage_account_name, storage_account_key):
+    def test_streaming_retry(self, storage_account_name, storage_account_key):
         """Test that retry mechanisms are working when streaming data."""
         container_name = self.get_resource_name('utcontainer')
         service = self._create_storage_service(
