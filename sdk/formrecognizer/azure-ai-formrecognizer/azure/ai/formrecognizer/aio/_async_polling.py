@@ -7,19 +7,47 @@
 
 import json
 import datetime
-from typing import TypeVar, Any
+from typing import TypeVar, Any, Mapping
+from typing_extensions import Protocol, runtime_checkable
 from azure.core.polling import AsyncLROPoller, AsyncPollingMethod
 from .._polling import parse_operation_id
 
 PollingReturnType = TypeVar("PollingReturnType")
 
 
-class AsyncDocumentModelAdministrationLROPoller(AsyncLROPoller[PollingReturnType]):
-    """Custom poller for model build operations. Call `result()` on the poller to return
-    a :class:`~azure.ai.formrecognizer.DocumentModelDetails`.
+@runtime_checkable
+class AsyncDocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
+    """Implements a protocol followed by returned poller objects."""
 
-    .. versionadded:: 2021-09-30-preview
-        The *AsyncDocumentModelAdministrationLROPoller* poller object
+    @property
+    def details(self) -> Mapping[str, Any]: # pylint: disable=no-self-use, unused-argument
+        ...
+
+    def polling_method(self) -> AsyncPollingMethod[PollingReturnType]:  # pylint: disable=no-self-use
+        ...
+
+    def continuation_token(self) -> str:  # pylint: disable=no-self-use
+        ...
+
+    def status(self) -> str:  # pylint: disable=no-self-use
+        ...
+
+    async def result(self) -> PollingReturnType: # pylint: disable=no-self-use, unused-argument
+        ...
+
+    async def wait(self) -> None:  # pylint: disable=no-self-use, unused-argument
+        ...
+
+    def done(self) -> bool:  # pylint: disable=no-self-use
+        ...
+
+
+class AsyncDocumentModelAdministrationClientLROPoller(AsyncLROPoller[PollingReturnType]):
+    """Custom poller for model build operations. Call `result()` on the poller to return
+    a :class:`~azure.ai.formrecognizer.DocumentModelInfo`.
+
+    .. versionadded:: 2022-06-30-preview
+        The *AsyncDocumentModelAdministrationClientLROPoller* poller object
     """
 
     @property
@@ -30,62 +58,24 @@ class AsyncDocumentModelAdministrationLROPoller(AsyncLROPoller[PollingReturnType
         return {}
 
     @property
-    def operation_id(self) -> str:
-        """The operation ID of the model operation.
-
-        :rtype: str
-        """
-        return parse_operation_id(
-            self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore
-        )
-
-    @property
-    def operation_kind(self) -> str:
-        """The model operation kind. For example, 'documentModelBuild', 'documentModelCompose',
-        'documentModelCopyTo'.
-
-        :rtype: str
-        """
-        return self._current_body.get("kind", None)
-
-    @property
-    def percent_completed(self) -> int:
-        """Operation progress (0-100).
-
-        :rtype: int
-        """
-        percent_completed = self._current_body.get("percentCompleted", None)
-        return 0 if percent_completed is None else percent_completed
-
-    @property
-    def resource_location_url(self) -> str:
-        """URL of the resource targeted by this operation.
-
-        :rtype: str
-        """
-        return self._current_body.get("resourceLocation", None)
-
-    @property
-    def created_on(self) -> datetime.datetime:
-        """Date and time (UTC) when the operation was created.
-
-        :rtype: ~datetime.datetime
-        """
+    def details(self) -> Mapping[str, Any]:
+        """Returns metadata associated with the long-running operation."""
         created_on = self._current_body.get("createdDateTime", None)
         if created_on:
-            return datetime.datetime.strptime(created_on, "%Y-%m-%dT%H:%M:%SZ")
-        return created_on
-
-    @property
-    def last_updated_on(self) -> datetime.datetime:
-        """Date and time (UTC) when the operation was last updated.
-
-        :rtype: ~datetime.datetime
-        """
+            created_on = datetime.datetime.strptime(created_on, "%Y-%m-%dT%H:%M:%SZ")
         last_updated_on = self._current_body.get("lastUpdatedDateTime", None)
         if last_updated_on:
-            return datetime.datetime.strptime(last_updated_on, "%Y-%m-%dT%H:%M:%SZ")
-        return last_updated_on
+            last_updated_on = datetime.datetime.strptime(last_updated_on, "%Y-%m-%dT%H:%M:%SZ")
+        return {
+            "operation_id": parse_operation_id(
+                    self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore
+                ),
+            "operation_kind": self._current_body.get("kind", None),
+            "percent_completed": self._current_body.get("percentCompleted", 0),
+            "resource_location_url": self._current_body.get("resourceLocation", None),
+            "created_on": created_on,
+            "last_updated_on": last_updated_on,
+        }
 
     @classmethod
     def from_continuation_token(
@@ -93,7 +83,7 @@ class AsyncDocumentModelAdministrationLROPoller(AsyncLROPoller[PollingReturnType
         polling_method: AsyncPollingMethod[PollingReturnType],
         continuation_token: str,
         **kwargs: Any
-    ) -> "AsyncDocumentModelAdministrationLROPoller":
+    ) -> "AsyncDocumentModelAdministrationClientLROPoller":
         (
             client,
             initial_response,

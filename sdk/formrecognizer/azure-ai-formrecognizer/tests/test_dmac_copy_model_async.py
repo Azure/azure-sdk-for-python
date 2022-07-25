@@ -12,7 +12,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
 from azure.ai.formrecognizer import DocumentModelDetails
-from azure.ai.formrecognizer.aio import FormTrainingClient, DocumentModelAdministrationClient
+from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, AsyncDocumentModelAdministrationLROPoller
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -215,11 +215,13 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             target = await client.get_copy_authorization()
 
             poller = await client.begin_copy_model_to(model.model_id, target=target)
-            assert poller.operation_id
-            assert poller.percent_completed is not None
             await poller.result()
-            assert poller.operation_kind == "documentModelCopyTo"
-            assert poller.percent_completed == 100
-            assert poller.resource_location_url
-            assert poller.created_on
-            assert poller.last_updated_on
+            assert isinstance(poller, AsyncDocumentModelAdministrationLROPoller)
+            details = poller.details
+            assert details["operation_id"]
+            assert details["percent_completed"] is not None
+            assert details["operation_kind"] == "documentModelCopyTo"
+            assert details["percent_completed"] == 100
+            assert details["resource_location_url"]
+            assert details["created_on"]
+            assert details["last_updated_on"]
