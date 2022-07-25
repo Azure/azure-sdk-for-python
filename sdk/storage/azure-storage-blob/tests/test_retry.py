@@ -3,15 +3,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
+import asyncio
+from unittest import mock
 import pytest
 
+from aiohttp import ClientResponse
+from aiohttp.client_exceptions import ClientPayloadError
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     AzureError,
     ClientAuthenticationError
 )
+from azure.storage.blob import aio
 from azure.core.pipeline.transport import(
     RequestsTransport
 )
@@ -433,7 +437,33 @@ class StorageRetryTest(StorageTestCase):
         # Assert
         # No retry should be performed since the signing error is fatal
         self.assertEqual(retry_counter.count, 0)
+    @pytest.mark.live_test_only
 
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_async_streaming_retry(self, storage_account_name, storage_account_key):
+        """Test that retry mechanisms are working when streaming data."""
+        container_name = self.get_resource_name('utcontainer')
+        service = self._create_storage_service(
+            BlobServiceClient, storage_account_name, storage_account_key)
+        container = service.get_container_client(container_name)
+        container.create_container()
+        assert container.exists()
+        blob_name = "myblob"
+        container.upload_blob(blob_name, b"abcde")
+
+        read_mock = mock.Mock()
+        future = asyncio.Future()
+        future.set_exception(
+        read_mock.side_effect = ClientPayloadError()
+        with mock.patch.object(ClientResponse, "read", read_mock):
+            blob = aio.BlobClient(
+                account_url=service.url,
+                container_name=container_name,
+                blob_name=blob_name,
+                credential=storage_account_key
+            )
+            blob = container.get_blob_client(blob=blob_name)
+            blob.download_blob()
 
 # ------------------------------------------------------------------------------
-
