@@ -3,14 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
+from unittest import mock
 import pytest
 
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     AzureError,
-    ClientAuthenticationError
+    ClientAuthenticationError,
+    ServiceResponseError
 )
 from azure.core.pipeline.transport import(
     RequestsTransport
@@ -24,6 +25,9 @@ from azure.storage.blob import (
     LinearRetry,
     ExponentialRetry,
 )
+from requests import Response
+from requests.exceptions import ContentDecodingError, ChunkedEncodingError
+from azure.core.exceptions import DecodeError
 
 from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
@@ -434,6 +438,25 @@ class StorageRetryTest(StorageTestCase):
         # No retry should be performed since the signing error is fatal
         self.assertEqual(retry_counter.count, 0)
 
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_streaming_error(self, storage_account_name, storage_account_key):
+        """Test that retry mechanisms are working when streaming data."""
+        container_name = self.get_resource_name('utcontainer')
+        service = self._create_storage_service(
+            BlobServiceClient, storage_account_name, storage_account_key)
+        container = service.get_container_client(container_name)
+        container.create_container()
+        assert container.exists()
+        blob_name = "myblob"
+        container.upload_blob(blob_name, b"abcde")
 
-# ------------------------------------------------------------------------------
-
+        for error in (ContentDecodingError(), ChunkedEncodingError(), ChunkedEncodingError("IncompleteRead")):
+            iterator_mock = mock.MagicMock()
+            iterator_mock.__next__.side_effect = error
+            iter_content_mock = mock.Mock()
+            iter_content_mock.return_value = iterator_mock
+            with mock.patch.object(Response, "iter_content", iter_content_mock), pytest.raises(ServiceResponseError):
+                blob = container.get_blob_client(blob=blob_name)
+                blob.download_blob()
+            assert iterator_mock.__next__.call_count == 3
