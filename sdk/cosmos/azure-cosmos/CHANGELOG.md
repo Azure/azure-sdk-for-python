@@ -3,6 +3,7 @@
 ### 4.3.1 (Unreleased)
 
 #### Features Added
+- GA release of integrated cache functionality.
 
 #### Breaking Changes
 
@@ -48,8 +49,8 @@ Method call will now require an 'id' field to be present in the document body.
 > for more details on consistency levels, or the README section on this change [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos#note-on-client-consistency-levels).
 
 #### Features Added
-- Added new `max_integrated_cache_staleness_in_ms` parameter to read item and query items APIs in order
-  to make use of the CosmosDB integrated cache functionality.
+- Added new **provisional** `max_integrated_cache_staleness_in_ms` parameter to read item and query items APIs in order
+  to make use of the **preview** CosmosDB integrated cache functionality.
   Please see [Azure Cosmos DB integrated cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache) for more details.
 - Added support for split-proof queries for the async client.
 
