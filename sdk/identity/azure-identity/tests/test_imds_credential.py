@@ -5,6 +5,7 @@
 import json
 import time
 
+from devtools_testutils import recorded_by_proxy
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
@@ -215,13 +216,15 @@ def test_imds_authority_override():
 
 
 @pytest.mark.usefixtures("record_imds_test")
-class RecordedTests(RecordedTestCase):
+class TestImds(RecordedTestCase):
+    @recorded_by_proxy
     def test_system_assigned(self):
         credential = ImdsCredential()
         token = credential.get_token(self.scope)
         assert token.token
         assert isinstance(token.expires_on, int)
 
+    @recorded_by_proxy
     def test_system_assigned_tenant_id(self):
         credential = ImdsCredential()
         token = credential.get_token(self.scope, tenant_id="tenant_id")
@@ -229,6 +232,7 @@ class RecordedTests(RecordedTestCase):
         assert isinstance(token.expires_on, int)
 
     @pytest.mark.usefixtures("user_assigned_identity_client_id")
+    @recorded_by_proxy
     def test_user_assigned(self):
         credential = ImdsCredential(client_id=self.user_assigned_identity_client_id)
         token = credential.get_token(self.scope)
@@ -236,6 +240,7 @@ class RecordedTests(RecordedTestCase):
         assert isinstance(token.expires_on, int)
 
     @pytest.mark.usefixtures("user_assigned_identity_client_id")
+    @recorded_by_proxy
     def test_user_assigned_tenant_id(self):
         credential = ImdsCredential(client_id=self.user_assigned_identity_client_id)
         token = credential.get_token(self.scope, tenant_id="tenant_id")

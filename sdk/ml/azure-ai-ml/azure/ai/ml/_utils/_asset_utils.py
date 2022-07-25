@@ -8,20 +8,28 @@ import uuid
 from typing import TYPE_CHECKING, Tuple, Union, Optional, List, Iterable, Dict, Any, cast
 from pathlib import Path
 import hashlib
-from azure.ai.ml.entities._assets.asset import Asset
+from contextlib import suppress
+from colorama import Fore
 import pathspec
 from tqdm import tqdm, TqdmWarning
 import warnings
 from platform import system
+from multiprocessing import cpu_count
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from azure.ai.ml._artifacts._constants import (
     CHUNK_SIZE,
     ARTIFACT_ORIGIN,
     UPLOAD_CONFIRMATION,
-    HASH_ALGORITHM_NAME,
     AML_IGNORE_FILE_NAME,
     GIT_IGNORE_FILE_NAME,
+    EMPTY_DIRECTORY_ERROR,
+    PROCESSES_PER_CORE,
+    MAX_CONCURRENCY,
+    BLOB_STORAGE_CLIENT_NAME,
+    GEN2_STORAGE_CLIENT_NAME,
 )
+from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml._restclient.v2021_10_01.models import (
     DatasetVersionData,
     ModelVersionData,
@@ -37,10 +45,14 @@ from azure.ai.ml._restclient.v2022_02_01_preview.operations import (
     ComponentVersionsOperations,
     ComponentContainersOperations,
 )
-from azure.ai.ml.constants import OrderString, MAX_AUTOINCREMENT_ATTEMPTS
+from azure.ai.ml.constants import (
+    OrderString,
+    MAX_AUTOINCREMENT_ATTEMPTS,
+)
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.ai.ml._utils.utils import retry
+from azure.ai.ml._utils.utils import retry, convert_windows_path_to_unix
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from azure.ai.ml._utils._exception_utils import EmptyDirectoryError
 
 if TYPE_CHECKING:
     from azure.ai.ml.operations import (
@@ -182,6 +194,8 @@ def _get_dir_hash(directory: Union[str, Path], hash: hash_type, ignore_file: Ign
         if ignore_file.is_file_excluded(path):
             continue
         hash.update(path.name.encode())
+        if os.path.islink(path):  # ensure we're hashing the contents of the linked file
+            path = Path(os.readlink(convert_windows_path_to_unix(path)))
         if path.is_file():
             hash = _get_file_hash(path, hash)
         elif path.is_dir():
@@ -213,6 +227,8 @@ def get_object_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile
     if Path(path).is_dir():
         object_hash = _get_dir_hash(directory=path, hash=hash, ignore_file=ignore_file)
     else:
+        if os.path.islink(path):  # ensure we're hashing the contents of the linked file
+            path = Path(os.readlink(convert_windows_path_to_unix(path)))
         object_hash = _get_file_hash(filename=path, hash=hash)
     return str(object_hash.hexdigest())
 
@@ -220,18 +236,80 @@ def get_object_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile
 def traverse_directory(
     root: str, files: List[str], source: str, prefix: str, ignore_file: IgnoreFile = IgnoreFile()
 ) -> Iterable[Tuple[str, Union[str, Any]]]:
-    dir_parts = [os.path.relpath(root, source) for _ in files]
-    dir_parts = ["" if dir_part == "." else dir_part + "/" for dir_part in dir_parts]
+    """
+    Enumerate all files in the given directory and compose paths for them to be uploaded to in the remote storage.
+    e.g. [/mnt/c/Users/dipeck/upload_files/my_file1.txt, /mnt/c/Users/dipeck/upload_files/my_file2.txt] -->
+        [(/mnt/c/Users/dipeck/upload_files/my_file1.txt, LocalUpload/<guid>/upload_files/my_file1.txt),
+        (/mnt/c/Users/dipeck/upload_files/my_file2.txt, LocalUpload/<guid>/upload_files/my_file2.txt))]
+
+    :param root: Root directory path
+    :type root: str
+    :param files: List of all file paths in the directory
+    :type files: List[str]
+    :param source: Local path to project directory
+    :type source: str
+    :param prefix: Remote upload path for project directory (e.g. LocalUpload/<guid>/project_dir)
+    :type prefix: str
+    :param ignore_file: The .amlignore or .gitignore file in the project directory
+    :type ignore_file: azure.ai.ml._utils._asset_utils.IgnoreFile
+    :return: Zipped list of tuples representing the local path and remote destination path for each file
+    :rtype: Iterable[Tuple[str, Union[str, Any]]]
+    """
+    # Normalize Windows paths
+    root = convert_windows_path_to_unix(root)
+    source = convert_windows_path_to_unix(source)
+    working_dir = convert_windows_path_to_unix(os.getcwd())
+    project_dir = root[len(str(working_dir)) :] + "/"
+    file_paths = [
+        convert_windows_path_to_unix(os.path.join(root, name))
+        for name in files
+        if not ignore_file.is_file_excluded(os.path.join(root, name))
+    ]  # get all files not excluded by the ignore file
+    file_paths_including_links = {fp: None for fp in file_paths}
+
+    for path in file_paths:
+        target_prefix = ""
+        symlink_prefix = ""
+
+        # check for symlinks to get their true paths
+        if os.path.islink(path):
+            target_absolute_path = os.path.join(working_dir, os.readlink(path))
+            target_prefix = "/".join([root, str(os.readlink(path))]).replace(project_dir, "/")
+
+            # follow and add child links if the directory is a symlink
+            if os.path.isdir(target_absolute_path):
+                symlink_prefix = path.replace(root + "/", "")
+
+                for r, _, f in os.walk(target_absolute_path, followlinks=True):
+                    target_file_paths = {
+                        os.path.join(r, name): symlink_prefix + os.path.join(r, name).replace(target_prefix, "")
+                        for name in f
+                    }  # for each symlink, store its target_path as key and symlink path as value
+                    file_paths_including_links.update(target_file_paths)  # Add discovered symlinks to file paths list
+            else:
+                file_path_info = {
+                    target_absolute_path: path.replace(root + "/", "")
+                }  # for each symlink, store its target_path as key and symlink path as value
+                file_paths_including_links.update(file_path_info)  # Add discovered symlinks to file paths list
+            del file_paths_including_links[path]  # Remove original symlink entry now that detailed entry has been added
+        else:
+            pass
+
     file_paths = sorted(
-        [os.path.join(root, name) for name in files if not ignore_file.is_file_excluded(os.path.join(root, name))]
-    )
-    blob_paths = sorted(
-        [
-            prefix + dir_part + name
-            for (dir_part, name) in zip(dir_parts, files)
-            if not ignore_file.is_file_excluded(os.path.join(root, name))
-        ]
-    )
+        file_paths_including_links
+    )  # sort files to keep consistent order in case of repeat upload comparisons
+    dir_parts = [os.path.relpath(root, source) for _ in file_paths]
+    dir_parts = ["" if dir_part == "." else dir_part + "/" for dir_part in dir_parts]
+    blob_paths = []
+
+    for (dir_part, name) in zip(dir_parts, file_paths):
+        if file_paths_including_links.get(
+            name
+        ):  # for symlinks, use symlink name and structure in directory to create remote upload path
+            blob_path = prefix + dir_part + file_paths_including_links.get(name)
+        else:
+            blob_path = prefix + dir_part + name.replace(root + "/", "")
+        blob_paths.append(blob_path)
 
     return zip(file_paths, blob_paths)
 
@@ -247,14 +325,193 @@ def get_directory_size(root: os.PathLike) -> Tuple[int, Dict[str, int]]:
     """Returns total size of a directory and a dictionary itemizing each sub-path and its size."""
     total_size = 0
     size_list = {}
-    for dirpath, _, filenames in os.walk(root):
+    for dirpath, _, filenames in os.walk(root, followlinks=True):
         for name in filenames:
             full_path = os.path.join(dirpath, name)
-            if not os.path.islink(full_path):  # symlinks aren't counted
+            if not os.path.islink(full_path):
                 path_size = os.path.getsize(full_path)
-                size_list[full_path] = path_size
-                total_size += path_size
+            else:
+                path_size = os.path.getsize(
+                    os.readlink(convert_windows_path_to_unix(full_path))
+                )  # ensure we're counting the size of the linked file
+            size_list[full_path] = path_size
+            total_size += path_size
     return total_size, size_list
+
+
+def upload_file(
+    storage_client: Union["BlobStorageClient", "Gen2StorageClient"],
+    source: str,
+    dest: str = None,
+    msg: Optional[str] = None,
+    size: int = 0,
+    show_progress: Optional[bool] = None,
+    in_directory: bool = False,
+    callback: Any = None,
+) -> None:
+    """
+    Upload a single file to remote storage.
+
+    :param storage_client: Storage client object
+    :type storage_client: Union[azure.ai.ml._artifacts._blob_storage_helper.BlobStorageClient, azure.ai.ml._artifacts._gen2_storage_helper.Gen2StorageClient]
+    :param source: Local path to project directory
+    :type source: str
+    :param dest: Remote upload path for project directory (e.g. LocalUpload/<guid>/project_dir)
+    :type dest: str
+    :param msg: Message to be shown with progress bar (e.g. "Uploading <source>")
+    :type msg: str
+    :param size: Size of the file in bytes
+    :type size: int
+    :param show_progress: Whether to show progress bar or not
+    :type show_progress: bool
+    :param in_directory: Whether the file is part of a directory of files
+    :type in_directory: bool
+    :param callback: Callback to progress bar
+    :type callback: Any
+    :return: None
+    """
+    validate_content = size > 0  # don't do checksum for empty files
+
+    if (
+        type(storage_client).__name__ == GEN2_STORAGE_CLIENT_NAME
+    ):  # Only for Gen2StorageClient, Blob Storage doesn't have true directories
+        if in_directory:
+            storage_client.file_client = storage_client.sub_directory_client.create_file(source.split("/")[-1])
+        else:
+            storage_client.file_client = storage_client.directory_client.create_file(source.split("/")[-1])
+
+    with open(source, "rb") as data:
+        if show_progress and not in_directory:
+            file_size, _ = get_directory_size(source)
+            file_size_in_mb = file_size / 10**6
+            if file_size_in_mb < 1:
+                msg += Fore.GREEN + " (< 1 MB)"
+            else:
+                msg += Fore.GREEN + f" ({round(file_size_in_mb, 2)} MBs)"
+            cntx_manager = FileUploadProgressBar(msg=msg)
+        else:
+            cntx_manager = suppress()
+
+        with cntx_manager as c:
+            callback = c.update_to if (show_progress and not in_directory) else None
+            if type(storage_client).__name__ == GEN2_STORAGE_CLIENT_NAME:
+                storage_client.file_client.upload_data(
+                    data=data.read(),
+                    overwrite=True,
+                    validate_content=validate_content,
+                    raw_response_hook=callback,
+                    max_concurrency=MAX_CONCURRENCY,
+                )
+            elif type(storage_client).__name__ == BLOB_STORAGE_CLIENT_NAME:
+                storage_client.container_client.upload_blob(
+                    name=dest,
+                    data=data,
+                    validate_content=validate_content,
+                    overwrite=storage_client.overwrite,
+                    raw_response_hook=callback,
+                    max_concurrency=MAX_CONCURRENCY,
+                )
+
+    storage_client.uploaded_file_count += 1
+
+
+def upload_directory(
+    storage_client: Union["BlobStorageClient", "Gen2StorageClient"],
+    source: str,
+    dest: str,
+    msg: str,
+    show_progress: bool,
+    ignore_file: IgnoreFile,
+) -> None:
+    """
+    Upload directory to remote storage.
+
+    :param storage_client: Storage client object
+    :type storage_client: Union[azure.ai.ml._artifacts._blob_storage_helper.BlobStorageClient, azure.ai.ml._artifacts._gen2_storage_helper.Gen2StorageClient]
+    :param source: Local path to project directory
+    :type source: str
+    :param dest: Remote upload path for project directory (e.g. LocalUpload/<guid>/project_dir)
+    :type dest: str
+    :param msg: Message to be shown with progress bar (e.g. "Uploading <source>")
+    :type msg: str
+    :param show_progress: Whether to show progress bar or not
+    :type show_progress: bool
+    :param ignore_file: The .amlignore or .gitignore file in the project directory
+    :type ignore_file: azure.ai.ml._utils._asset_utils.IgnoreFile
+    :return: None
+    """
+    source_path = Path(source).resolve()
+    prefix = "" if dest == "" else dest + "/"
+    prefix += os.path.basename(source_path) + "/"
+
+    if (
+        type(storage_client).__name__ == GEN2_STORAGE_CLIENT_NAME
+    ):  # Only for Gen2StorageClient, Blob Storage doesn't have true directories
+        storage_client.sub_directory_client = storage_client.directory_client.create_sub_directory(
+            prefix.strip("/").split("/")[-1]
+        )
+
+    # Enumerate all files in the given directory and compose paths for them to be uploaded to in the remote storage
+    upload_paths = []
+    size_dict = {}
+    total_size = 0
+    for root, _, files in os.walk(source_path, followlinks=True):
+        upload_paths += list(traverse_directory(root, files, source_path, prefix, ignore_file=ignore_file))
+
+    # Get each file's size for progress bar tracking
+    for path, _ in upload_paths:
+        if os.path.islink(path):
+            path_size = os.path.getsize(
+                os.readlink(convert_windows_path_to_unix(path))
+            )  # ensure we're counting the size of the linked file
+        else:
+            path_size = os.path.getsize(path)
+        size_dict[path] = path_size
+        total_size += path_size
+
+    upload_paths = sorted(upload_paths)
+    if len(upload_paths) == 0:
+        raise EmptyDirectoryError(
+            message=EMPTY_DIRECTORY_ERROR.format(source),
+            no_personal_data_message=msg.format("[source]"),
+            target=ErrorTarget.ARTIFACT,
+            error_category=ErrorCategory.USER_ERROR,
+        )
+    storage_client.total_file_count = len(upload_paths)
+
+    if (
+        type(storage_client).__name__ == BLOB_STORAGE_CLIENT_NAME
+    ):  # Only for Gen2StorageClient, Blob Storage doesn't have true directories
+        # Only for BlobStorageClient
+        # Azure Blob doesn't allow metadata setting at the directory level, so the first
+        # file in the directory is designated as the file where the confirmation metadata
+        # will be added at the end of the upload.
+        storage_client.indicator_file = upload_paths[0][1]
+        storage_client.check_blob_exists()
+
+    # Submit paths to workers for upload
+    num_cores = int(cpu_count()) * PROCESSES_PER_CORE
+    with ThreadPoolExecutor(max_workers=num_cores) as ex:
+        futures_dict = {
+            ex.submit(
+                upload_file,
+                storage_client=storage_client,
+                source=src,
+                dest=dest,
+                size=size_dict.get(src),
+                in_directory=True,
+                show_progress=show_progress,
+            ): (src, dest)
+            for (src, dest) in upload_paths
+        }
+        if show_progress:
+            warnings.simplefilter("ignore", category=TqdmWarning)
+            msg += f" ({round(total_size/10**6, 2)} MBs)"
+            ascii = system() == "Windows"  # Default unicode progress bar doesn't display well on Windows
+            with tqdm(total=total_size, desc=msg, ascii=ascii) as pbar:
+                for future in as_completed(futures_dict):
+                    file_path_name = futures_dict[future][0]
+                    pbar.update(size_dict.get(file_path_name) or 0)
 
 
 @retry(

@@ -17,7 +17,7 @@ _Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For mor
 ## Getting started
 
 ### Prerequisites
-* Python 3.6 or later is required to use this package.
+* Python 3.7 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and a
 [Cognitive Services or Form Recognizer resource][FR_or_CS_resource] to use this package.
 
@@ -158,7 +158,7 @@ document_analysis_client = DocumentAnalysisClient(
 
 ### DocumentAnalysisClient
 `DocumentAnalysisClient` provides operations for analyzing input documents using prebuilt and custom models through the `begin_analyze_document` and `begin_analyze_document_from_url` APIs.
-Use the `model` parameter to select the type of model for analysis. See a full list of supported models [here][fr-models].
+Use the `model_id` parameter to select the type of model for analysis. See a full list of supported models [here][fr-models].
 
 Sample code snippets are provided to illustrate using a DocumentAnalysisClient [here](#examples "Examples").
 More information about analyzing documents, including supported features, locales, and document types can be found in the [service documentation][fr-models].
@@ -276,7 +276,7 @@ for table_idx, table in enumerate(result.tables):
 
 ### Using the General Document Model
 Analyze key-value pairs, tables, styles, and selection marks from documents using the general document model provided by the Form Recognizer service.
-Select the General Document Model by passing `model="prebuilt-document"` into the `begin_analyze_document` method:
+Select the General Document Model by passing `model_id="prebuilt-document"` into the `begin_analyze_document` method:
 
 ```python
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -373,7 +373,7 @@ for page in result.pages:
 ### Using Prebuilt Models
 Extract fields from select document types such as receipts, invoices, business cards, identity documents, and U.S. W-2 tax documents using prebuilt models provided by the Form Recognizer service.
 
-For example, to analyze fields from a sales receipt, use the prebuilt receipt model provided by passing `model="prebuilt-receipt"` into the `begin_analyze_document` method:
+For example, to analyze fields from a sales receipt, use the prebuilt receipt model provided by passing `model_id="prebuilt-receipt"` into the `begin_analyze_document` method:
 
 ```python
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -455,7 +455,7 @@ model_id = "<your custom model id>"
 with open("<path to your document>", "rb") as fd:
     document = fd.read()
 
-poller = document_analysis_client.begin_analyze_document(model=model_id, document=document)
+poller = document_analysis_client.begin_analyze_document(model_id=model_id, document=document)
 result = poller.result()
 
 for analyzed_document in result.documents:
@@ -501,7 +501,7 @@ Alternatively, a document URL can also be used to analyze documents using the `b
 
 ```python
 document_url = "<url_of_the_document>"
-poller = document_analysis_client.begin_analyze_document_from_url(model=model_id, document_url=document_url)
+poller = document_analysis_client.begin_analyze_document_from_url(model_id=model_id, document_url=document_url)
 result = poller.result()
 ```
 

@@ -253,14 +253,6 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         )
 
     def _validate(self) -> None:
-        if self.name is None:
-            msg = "Job name is required"
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message=msg,
-                target=ErrorTarget.JOB,
-                error_category=ErrorCategory.USER_ERROR,
-            )
         if self.compute is None:
             msg = "compute is required"
             raise ValidationException(

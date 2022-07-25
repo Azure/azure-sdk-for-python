@@ -1,36 +1,32 @@
-import os
 import pytest
 from azure.monitor.ingestion import LogsIngestionClient
 from azure.identity import ClientSecretCredential
 
-def _credential():
-    credential  = ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
-    return credential
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from preparer import IngestionPreparer
 
+class TestLogsIngestionClient(AzureRecordedTestCase):
+    @pytest.mark.live_test_only
+    @IngestionPreparer()
+    @recorded_by_proxy
+    def test_send_logs(self, variables, azure_monitor_dce, azure_monitor_dcr_id, monitor_client_id, monitor_client_secret, monitor_tenant_id):
+        credential = ClientSecretCredential(
+        client_id = monitor_client_id,
+        client_secret = monitor_client_secret,
+        tenant_id = monitor_tenant_id
+        )
+        client = LogsIngestionClient(endpoint=azure_monitor_dce, credential=credential)
+        body = [
+            {
+                "Time": "2021-12-08T23:51:14.1104269Z",
+                "Computer": "Computer1",
+                "AdditionalContext": "sabhyrav-2"
+            },
+            {
+                "Time": "2021-12-08T23:51:14.1104269Z",
+                "Computer": "Computer2",
+                "AdditionalContext": "sabhyrav"
+            }
+            ]
 
-@pytest.mark.live_test_only
-def test_send_logs():
-    endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
-    credential = _credential()
-
-    client = LogsIngestionClient(endpoint=endpoint, credential=credential, logging_enable=True)
-
-    rule_id = os.environ['LOGS_DCR_RULE_ID']
-    body = [
-        {
-            "Time": "2021-12-08T23:51:14.1104269Z",
-            "Computer": "Computer1",
-            "AdditionalContext": "sabhyrav-2"
-        },
-        {
-            "Time": "2021-12-08T23:51:14.1104269Z",
-            "Computer": "Computer2",
-            "AdditionalContext": "sabhyrav"
-        }
-        ]
-
-    response = client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
+        response = client.upload(rule_id=azure_monitor_dcr_id, stream_name="Custom-MyTableRawData", logs=body)

@@ -4,7 +4,7 @@
 import logging
 from marshmallow import INCLUDE
 
-from azure.ai.ml.constants import JobType
+from azure.ai.ml.constants import JobType, NodeType
 from azure.ai.ml._schema import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.job import BaseJobSchema
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
@@ -17,7 +17,7 @@ from azure.ai.ml._schema.pipeline.component_job import (
     _resolve_inputs_outputs,
 )
 from marshmallow import fields, post_load, pre_dump
-from azure.ai.ml._schema.core.fields import ComputeField, PipelineNodeNameStr
+from azure.ai.ml._schema.core.fields import ComputeField, PipelineNodeNameStr, TypeSensitiveUnionField
 from azure.ai.ml._schema.pipeline.pipeline_command_job import PipelineCommandJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_parallel_job import PipelineParallelJobSchema
 from azure.ai.ml._schema.schedule.schedule import CronScheduleSchema, RecurrenceScheduleSchema
@@ -35,16 +35,17 @@ class PipelineJobSchema(BaseJobSchema):
     type = StringTransformedEnum(allowed_values=[JobType.PIPELINE])
     jobs = fields.Dict(
         keys=NodeNameStr(),
-        values=UnionField(
-            [
-                NestedField(CommandSchema, unknown=INCLUDE),
-                NestedField(SweepSchema, unknown=INCLUDE),
-                # ParallelSchema support parallel pipeline yml with "component"
-                NestedField(ParallelSchema, unknown=INCLUDE),
-                NestedField(PipelineCommandJobSchema),
-                AutoMLNodeSchema(unknown=INCLUDE),
-                NestedField(PipelineParallelJobSchema, unknown=INCLUDE),
-            ]
+        values=TypeSensitiveUnionField(
+            {
+                NodeType.COMMAND: [NestedField(CommandSchema, unknown=INCLUDE), NestedField(PipelineCommandJobSchema)],
+                NodeType.SWEEP: [NestedField(SweepSchema, unknown=INCLUDE)],
+                NodeType.PARALLEL: [
+                    # ParallelSchema support parallel pipeline yml with "component"
+                    NestedField(ParallelSchema, unknown=INCLUDE),
+                    NestedField(PipelineParallelJobSchema, unknown=INCLUDE),
+                ],
+                NodeType.AUTOML: [AutoMLNodeSchema(unknown=INCLUDE)],
+            }
         ),
     )
     compute = ComputeField()

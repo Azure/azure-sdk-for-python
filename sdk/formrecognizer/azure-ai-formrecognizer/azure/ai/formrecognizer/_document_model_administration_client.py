@@ -10,7 +10,6 @@ from typing import (
     Any,
     Union,
     List,
-    Dict,
 )
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.tracing.decorator import distributed_trace
@@ -32,6 +31,7 @@ from ._models import (
     ModelOperation,
     ModelOperationInfo,
     ResourceInfo,
+    TargetAuthorization,
 )
 
 
@@ -118,7 +118,6 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
             `prefix` should end in '/' to avoid cases where filenames share the same prefix.
         :keyword tags: List of user defined key-value tag attributes associated with the model.
         :paramtype tags: dict[str, str]
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an DocumentModelAdministrationLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.DocumentModelInfo`.
         :rtype: ~azure.ai.formrecognizer.DocumentModelAdministrationLROPoller[DocumentModelInfo]
@@ -195,7 +194,6 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         :keyword str description: An optional description to add to the model.
         :keyword tags: List of user defined key-value tag attributes associated with the model.
         :paramtype tags: dict[str, str]
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an DocumentModelAdministrationLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.DocumentModelInfo`.
         :rtype: ~azure.ai.formrecognizer.DocumentModelAdministrationLROPoller[DocumentModelInfo]
@@ -259,7 +257,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def get_copy_authorization(self, **kwargs: Any) -> Dict[str, str]:
+    def get_copy_authorization(self, **kwargs: Any) -> TargetAuthorization:
         """Generate authorization for copying a custom model into the target Form Recognizer resource.
 
         This should be called by the target resource (where the model will be copied to)
@@ -271,7 +269,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         :keyword tags: List of user defined key-value tag attributes associated with the model.
         :paramtype tags: dict[str, str]
         :return: A dictionary with values necessary for the copy authorization.
-        :rtype: Dict[str, str]
+        :rtype: TargetAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2022-01-30-preview
@@ -298,7 +296,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
     def begin_copy_model_to(
         self,
         model_id: str,
-        target: Dict[str, str],
+        target: TargetAuthorization,
         **kwargs: Any
     ) -> DocumentModelAdministrationLROPoller[DocumentModelInfo]:
         """Copy a model stored in this resource (the source) to the user specified
@@ -309,10 +307,9 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         target resource's output from calling the :func:`~get_copy_authorization()` method.
 
         :param str model_id: Model identifier of the model to copy to target resource.
-        :param Dict[str, str] target:
+        :param TargetAuthorization target:
             The copy authorization generated from the target resource's call to
             :func:`~get_copy_authorization()`.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of a DocumentModelAdministrationLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.DocumentModelInfo`.
         :rtype: ~azure.ai.formrecognizer.DocumentModelAdministrationLROPoller[DocumentModelInfo]
