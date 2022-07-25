@@ -201,8 +201,8 @@ class EventHubConsumer(
                 try:
                     if self._open():
                         # TODO: for pyamqp, this will pass in batch. But, in the ReceiveClient._client_run,
-                        # can pass (batch=self._link_credit)
-                        self._handler.do_work()  # type: ignore
+                        # can remove (batch=self._link_credit)?
+                        self._handler.do_work(batch=self._prefetch)  # type: ignore
                     break
                 except Exception as exception:  # pylint: disable=broad-except
                     if (

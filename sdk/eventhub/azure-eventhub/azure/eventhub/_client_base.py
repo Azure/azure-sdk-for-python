@@ -292,7 +292,10 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         if not self._uamqp_transport:
             self._amqp_transport = PyamqpTransport()
         else:
-            self._amqp_transport = UamqpTransport()
+            try:
+                self._amqp_transport = UamqpTransport()
+            except ImportError:
+                raise ImportError("uamqp package is not installed")
 
         self.eventhub_name = eventhub_name
         if not eventhub_name:
@@ -579,9 +582,9 @@ class ConsumerProducerMixin(object):
                 "Authorization timeout.",
                 condition=errors.ErrorCondition.InternalError,
             )
-        return self._amqp_transport._handle_exception(
+        return self._amqp_transport._handle_exception(  # pylint: disable=protected-access
             exception, self
-        )  # pylint: disable=protected-access
+        )
 
     def _do_retryable_operation(self, operation, timeout=None, **kwargs):
         # pylint:disable=protected-access

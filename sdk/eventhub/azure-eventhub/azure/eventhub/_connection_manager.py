@@ -88,6 +88,7 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
                 self._conn.close()
             self._conn = None
 
+    # TODO: fix and add uamqp stuff
     def reset_connection_if_broken(self):
         # type: () -> None
         with self._lock:

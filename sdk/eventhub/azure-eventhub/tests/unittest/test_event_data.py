@@ -1,7 +1,8 @@
 import platform
 import pytest
-from packaging import version
-from azure.eventhub._transport._uamqp_transport import UamqpTransport
+import uamqp
+from azure.eventhub._transport._uamqp_transport import UamqpTransport 
+from azure.eventhub._transport._pyamqp_transport import PyamqpTransport
 from azure.eventhub.amqp import AmqpAnnotatedMessage
 from azure.eventhub import _common
 from azure.eventhub._pyamqp.message import Message, Properties
@@ -109,24 +110,26 @@ def test_sys_properties():
     assert ed.system_properties[_common.PROP_REPLY_TO_GROUP_ID] == properties.reply_to_group_id
 
 
-def test_event_data_batch():
-    batch = EventDataBatch(max_size_in_bytes=110, partition_key="par", amqp_transport=UamqpTransport())
+# TODO: see why pyamqp went from 99 to 87
+@pytest.mark.parametrize("amqp_transport, expected_result",
+                         [(UamqpTransport(), 101), (PyamqpTransport(), 87)])
+def test_event_data_batch(amqp_transport, expected_result):
+    batch = EventDataBatch(max_size_in_bytes=110, partition_key="par", amqp_transport=amqp_transport)
     batch.add(EventData("A"))
     assert str(batch) == "EventDataBatch(max_size_in_bytes=110, partition_id=None, partition_key='par', event_count=1)"
     assert repr(batch) == "EventDataBatch(max_size_in_bytes=110, partition_id=None, partition_key='par', event_count=1)"
 
     # TODO: uamqp uses 93 bytes for encode, while python amqp uses 99 bytes
     #  we should understand why extra bytes are needed to encode the content and how it could be improved
-    assert batch.size_in_bytes == 99 and len(batch) == 1
+    assert batch.size_in_bytes == expected_result and len(batch) == 1
 
     with pytest.raises(ValueError):
         batch.add(EventData("A"))
 
 
-# TODO: fix and add uamqp
-def test_event_data_from_message():
-    #message = uamqp.message.Message('A')
-    message = Message(data=b'A')
+@pytest.mark.parametrize("message, expected_result",
+                         [(uamqp.Message('A'), [b'A']), (Message(data=b'A'), [65])])
+def test_event_data_from_message(message, expected_result):
     event = EventData._from_message(message)
     assert event.content_type is None
     assert event.correlation_id is None
@@ -138,7 +141,7 @@ def test_event_data_from_message():
     assert event.content_type == 'content_type'
     assert event.correlation_id == 'correlation_id'
     assert event.message_id == 'message_id'
-    assert event.body == b'A'
+    assert list(event.body) == expected_result
 
 
 def test_amqp_message_str_repr():

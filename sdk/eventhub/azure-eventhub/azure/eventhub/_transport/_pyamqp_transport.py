@@ -3,11 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import time
 import logging
-from datetime import timedelta
 from typing import TYPE_CHECKING, Optional, Union, Any
-from azure.core.credentials import AccessToken
 
 from .._pyamqp import (
     error as errors,
@@ -40,69 +37,10 @@ from ..exceptions import (
     EventHubError,
     AuthenticationError,
     ConnectionLostError,
-    EventDataError,
     EventDataSendError,
 )
 
-if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential
-
 _LOGGER = logging.getLogger(__name__)
-
-
-def _generate_sas_token(uri, policy, key, expiry=None):
-    # type: (str, str, str, Optional[timedelta]) -> AccessToken
-    """Create a shared access signature token as a string literal.
-    :returns: SAS token as string literal.
-    :rtype: str
-    """
-    if not expiry:
-        expiry = timedelta(hours=1)  # Default to 1 hour.
-
-    abs_expiry = int(time.time()) + expiry.seconds
-
-    token = utils.generate_sas_token(uri, policy, key, abs_expiry).encode()
-    return AccessToken(token=token, expires_on=abs_expiry)
-
-
-class EventHubSharedKeyCredential(object):
-    """The shared access key credential used for authentication.
-
-    :param str policy: The name of the shared access policy.
-    :param str key: The shared access key.
-    """
-
-    def __init__(self, policy, key):
-        # type: (str, str) -> None
-        self.policy = policy
-        self.key = key
-        self.token_type = b"servicebus.windows.net:sastoken"
-
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
-        if not scopes:
-            raise ValueError("No token scope provided.")
-        return _generate_sas_token(scopes[0], self.policy, self.key)
-
-
-class EventhubAzureNamedKeyTokenCredential(object):
-    """The named key credential used for authentication.
-
-    :param credential: The AzureNamedKeyCredential that should be used.
-    :type credential: ~azure.core.credentials.AzureNamedKeyCredential
-    """
-
-    def __init__(self, azure_named_key_credential):
-        # type: (AzureNamedKeyCredential) -> None
-        self._credential = azure_named_key_credential
-        self.token_type = b"servicebus.windows.net:sastoken"
-
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
-        if not scopes:
-            raise ValueError("No token scope provided.")
-        name, key = self._credential.named_key
-        return _generate_sas_token(scopes[0], name, key)
 
 
 class PyamqpTransport(AmqpTransport):
@@ -189,14 +127,6 @@ class PyamqpTransport(AmqpTransport):
             message_dict["value"] = annotated_message.body
 
         return Message(**message_dict)
-
-    @classmethod
-    def create_named_key_token_credential(cls, credential):
-        return EventhubAzureNamedKeyTokenCredential(credential)
-
-    @classmethod
-    def create_shared_key_credential(cls, policy, key):
-        return EventHubSharedKeyCredential(policy, key)
 
     def get_batch_message_encoded_size(self, message):
         """
