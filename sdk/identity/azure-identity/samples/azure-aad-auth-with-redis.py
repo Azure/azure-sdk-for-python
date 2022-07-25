@@ -24,7 +24,7 @@ def hello_world():
     token = cred.get_token(scope)
     r = redis.Redis(host=host,
                     port=port,
-                    ssl=True,
+                    ssl=True,   # ssl connection is required.
                     username=user_name,
                     password=token.token,
                     decode_responses=True)
