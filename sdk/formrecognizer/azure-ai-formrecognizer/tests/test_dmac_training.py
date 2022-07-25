@@ -11,8 +11,7 @@ from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
-from azure.ai.formrecognizer._models import CustomFormModel, DocumentModelInfo
-from azure.ai.formrecognizer import DocumentModelAdministrationClient, _models
+from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModelInfo, DocumentModelAdministrationLROPoller
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
@@ -152,7 +151,7 @@ class TestDMACTraining(FormRecognizerTest):
         self.assertModelTransformCorrect(document_model, raw_model)
 
         document_model_dict = document_model.to_dict()
-        document_model_from_dict = _models.DocumentModelInfo.from_dict(document_model_dict)
+        document_model_from_dict = DocumentModelInfo.from_dict(document_model_dict)
         assert document_model_from_dict.model_id == document_model.model_id
         self.assertModelTransformCorrect(document_model_from_dict, raw_model)
 
@@ -202,7 +201,7 @@ class TestDMACTraining(FormRecognizerTest):
 
         document_model_dict = document_model.to_dict()
 
-        document_model_from_dict = _models.DocumentModelInfo.from_dict(document_model_dict)
+        document_model_from_dict = DocumentModelInfo.from_dict(document_model_dict)
         assert document_model_from_dict.model_id == document_model.model_id
         self.assertModelTransformCorrect(document_model_from_dict, raw_model)
 
@@ -234,11 +233,13 @@ class TestDMACTraining(FormRecognizerTest):
     def test_build_model_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
-        assert poller.operation_id
-        assert poller.percent_completed is not None
         poller.result()
-        assert poller.operation_kind == "documentModelBuild"
-        assert poller.percent_completed == 100
-        assert poller.resource_location_url
-        assert poller.created_on
-        assert poller.last_updated_on
+        assert isinstance(poller, DocumentModelAdministrationLROPoller)
+        details = poller.details
+        assert details["operation_id"]
+        assert details["percent_completed"] is not None
+        assert details["operation_kind"] == "documentModelBuild"
+        assert details["percent_completed"] == 100
+        assert details["resource_location_url"]
+        assert details["created_on"]
+        assert details["last_updated_on"]
