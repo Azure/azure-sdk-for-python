@@ -18,7 +18,7 @@ from .operations import AppComponentOperations, ServerMetricsOperations, TestOpe
 
 class LoadTestingAdministration(AppComponentOperations, ServerMetricsOperations, TestOperations):
     """
-    class to hold LoadTestAdministration
+    class to hold LoadTestingAdministration
     """
 
     def __init__(self, client, config, serialize, deserialize):

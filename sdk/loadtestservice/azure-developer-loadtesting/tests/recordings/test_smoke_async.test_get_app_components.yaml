@@ -1,0 +1,27 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.10.2 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://myservice.azure.com/appcomponents?api-version=2022-06-01-preview&testId=a011890b-0201-004d-020d
+  response:
+    body:
+      string: '{"resourceId":"/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk","testId":"a011890b-0201-004d-020d","testRunId":null,"name":"01730263-6671-4212-b283","value":{"/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo":{"resourceId":"/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo","resourceName":"App-Service-Sample-Demo","resourceType":"Microsoft.Web/sites","displayName":null,"resourceGroup":"App-Service-Sample-Demo-rg","subscriptionId":"7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a","kind":null}}}'
+    headers:
+      api-supported-versions: 2021-07-01-preview, 2022-06-01-preview
+      connection: keep-alive
+      content-length: '772'
+      content-type: application/json; charset=utf-8
+      date: Mon, 25 Jul 2022 11:25:14 GMT
+      mise-correlation-id: 08734605-3ede-4520-9975-eb29d95d0373
+      strict-transport-security: max-age=15724800; includeSubDomains
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://eccdc9b7-7603-402b-879d-bde2b637db56.eus.cnt-prod.loadtesting.azure.com/appcomponents?api-version=2022-06-01-preview&testId=a011890b-0201-004d-020d
+version: 1

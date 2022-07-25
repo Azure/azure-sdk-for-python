@@ -6,14 +6,20 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Any
+from typing import List, Any, TYPE_CHECKING
 
-from azure.core import PipelineClient
+from azure.core import AsyncPipelineClient
 
 from ._client import LoadTestingClient as LoadTestingClientGenerated
 from ._configuration import LoadTestingClientConfiguration
 from .operations import AppComponentOperations, ServerMetricsOperations, TestOperations, TestRunOperations
 from .._serialization import Deserializer, Serializer
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Dict
+
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class LoadTestingAdministration(AppComponentOperations, ServerMetricsOperations, TestOperations):
@@ -38,25 +44,30 @@ class LoadTestingClient(LoadTestingClientGenerated):  # pylint: disable=client-a
     """These APIs allow end users to create, view and run load tests using Azure Load Test Service.
 
     :ivar app_component: AppComponentOperations operations
-    :vartype app_component: azure.developer.loadtesting.operations.AppComponentOperations
+    :vartype app_component: azure.developer.loadtesting.aio.operations.AppComponentOperations
     :ivar server_metrics: ServerMetricsOperations operations
-    :vartype server_metrics: azure.developer.loadtesting.operations.ServerMetricsOperations
+    :vartype server_metrics: azure.developer.loadtesting.aio.operations.ServerMetricsOperations
     :ivar test: TestOperations operations
-    :vartype test: azure.developer.loadtesting.operations.TestOperations
+    :vartype test: azure.developer.loadtesting.aio.operations.TestOperations
     :ivar test_run: TestRunOperations operations
-    :vartype test_run: azure.developer.loadtesting.operations.TestRunOperations
+    :vartype test_run: azure.developer.loadtesting.aio.operations.TestRunOperations
     :param endpoint: URL to perform data plane API operations on the resource. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: Api Version. Default value is "2022-06-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: "AsyncTokenCredential",
+        **kwargs: Any
+    ) -> None:
         self._config = LoadTestingClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
-        self._client = PipelineClient(base_url=endpoint, config=self._config, **kwargs)
+        self._client = AsyncPipelineClient(base_url=endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
