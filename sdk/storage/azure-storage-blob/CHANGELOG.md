@@ -15,6 +15,7 @@ This version and all future versions will require Python 3.7+. Python 3.6 is no 
 ### Bugs Fixed
 - Stable release of features from 12.13.0b1.
 - Added support for deleting versions in `delete_blobs` by supplying `version_id`.
+- Removed forced `aiohttp` import from storage async download. (#24965)
 
 ## 12.13.0b1 (2022-06-15)
 
