@@ -8,7 +8,7 @@ import copy
 
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, FILE_PREFIX, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, FILE_PREFIX, PARAMS_OVERRIDE_KEY, SOURCE_PATH_CONTEXT_KEY
 from marshmallow import post_load, pre_load, fields
 from pydash import objects
 
@@ -80,9 +80,14 @@ class YamlFileSchema(PathAwareSchema):
     def __init__(self, *args, **kwargs):
         self._previous_base_path = None
         super().__init__(*args, **kwargs)
+        self._previous_source_path = None
+        if SOURCE_PATH_CONTEXT_KEY not in self.context:
+            self.context[SOURCE_PATH_CONTEXT_KEY] = None
 
     @pre_load
     def load_from_file(self, data, **kwargs):
+        # always push update
+        self._previous_source_path = self.context[SOURCE_PATH_CONTEXT_KEY]
         if isinstance(data, str) and data.startswith(FILE_PREFIX):
             self._previous_base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
             # Use directly if absolute path
@@ -94,6 +99,8 @@ class YamlFileSchema(PathAwareSchema):
             # deepcopy self.context[BASE_PATH_CONTEXT_KEY] to update old base path
             self.old_base_path = copy.deepcopy(self.context[BASE_PATH_CONTEXT_KEY])
             self.context[BASE_PATH_CONTEXT_KEY] = path.parent
+            self.context[SOURCE_PATH_CONTEXT_KEY] = path
+
             data = load_yaml(path)
             return data
         return data
@@ -104,4 +111,6 @@ class YamlFileSchema(PathAwareSchema):
         if self._previous_base_path is not None:
             # pop state
             self.context[BASE_PATH_CONTEXT_KEY] = self._previous_base_path
+        # always pop state
+        self.context[SOURCE_PATH_CONTEXT_KEY] = self._previous_source_path
         return data

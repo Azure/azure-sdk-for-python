@@ -27,7 +27,7 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
             async with client:
-                await client.begin_analyze_document_from_url(model=None, document_url="https://badurl.jpg")
+                await client.begin_analyze_document_from_url(model_id=None, document_url="https://badurl.jpg")
 
     @FormRecognizerPreparer()
     async def test_document_analysis_empty_model_id(self, **kwargs):
@@ -36,7 +36,7 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
             async with client:
-                await client.begin_analyze_document_from_url(model="", document_url="https://badurl.jpg")
+                await client.begin_analyze_document_from_url(model_id="", document_url="https://badurl.jpg")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -60,7 +60,7 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
 
 
             poller = await da_client.begin_analyze_document_from_url(
-                model=model.model_id,
+                model_id=model.model_id,
                 document_url=self.selection_mark_url_pdf,
                 cls=callback
             )

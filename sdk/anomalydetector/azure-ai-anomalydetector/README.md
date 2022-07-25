@@ -70,7 +70,7 @@ from azure.identity import DefaultAzureCredential
 credential = DefaultAzureCredential()
 client = AnomalyDetectorClient(
     endpoint="https://<resource-name>.cognitiveservices.azure.com/",
-    authentication_policy=BearerTokenCredentialPolicy(credential, "https://cognitiveservices.azure.com/.default")
+    authentication_policy=BearerTokenCredentialPolicy(credential, "https://cognitiveservices.azure.com/.default"),
     credential=credential
 )
 ```
@@ -97,5 +97,4 @@ section of the project.
 [cognitive_authentication_aad]: https://docs.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[service_limits]: https://aka.ms/azsdk/textanalytics/data-limits
 [azure-key-credential]: https://aka.ms/azsdk-python-core-azurekeycredential

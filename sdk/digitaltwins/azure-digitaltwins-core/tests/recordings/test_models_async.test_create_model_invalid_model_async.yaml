@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModel77db1685;1?includeModelDefinition=false&api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModel77db1685;1?includeModelDefinition=false&api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
@@ -16,12 +16,14 @@ interactions:
     headers:
       content-length: '226'
       content-type: application/json; charset=utf-8
-      date: Tue, 24 Nov 2020 21:10:08 GMT
+      date: Thu, 26 May 2022 07:28:35 GMT
+      mise-correlation-id: bc47ba25-7600-4e1e-a215-57eadc6bd98a
       strict-transport-security: max-age=2592000
+      traceresponse: 00-75ad79fcfee2b344884ba6ae12a1aaa8-ca9ef9718cc32046-01
     status:
       code: 404
       message: Not Found
-    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModel77db1685;1?includeModelDefinition=false&api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModel77db1685;1?includeModelDefinition=false&api-version=2022-05-31
 - request:
     body: '[{"@context": "dtmi:dtdl:context;2", "displayName": "TempModel", "contents":
       [{"@type": "Property", "name": "Prop1", "schema": "string"}, {"@type": "Component",
@@ -35,23 +37,26 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DTDLParserError","message":"None of the models in
-        this request could be created due to a problem with one or more models: Top-level
-        element requires an identifer but none provided. Add an ''@id'' property whose
-        value is a string that conforms to the DTMI syntax -- see https://github.com/Azure/digital-twin-model-identifier..
-        See model documentation(http://aka.ms/ADTv2Models) for supported format."}}'
+        this request could be created due to a problem with one or more models: In
+        source, top-level JSON element requires an identifer but none provided. Add
+        an ''@id'' property whose value is a string that conforms to the DTMI syntax
+        -- see https://github.com/Azure/digital-twin-model-identifier.. See model
+        documentation(https://aka.ms/ADTv2Models) for supported format."}}'
     headers:
-      content-length: '417'
+      content-length: '434'
       content-type: application/json; charset=utf-8
-      date: Tue, 24 Nov 2020 21:10:08 GMT
+      date: Thu, 26 May 2022 07:28:35 GMT
+      mise-correlation-id: 94e4950a-c586-49d5-90be-d33176aa93aa
       strict-transport-security: max-age=2592000
+      traceresponse: 00-6c615ef10576d1438dcfadbd08a89da2-978d19ffb6406441-01
     status:
       code: 400
       message: Bad Request
-    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
 version: 1

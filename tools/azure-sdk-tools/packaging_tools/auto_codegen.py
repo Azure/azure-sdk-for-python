@@ -6,7 +6,8 @@ from subprocess import check_call
 
 from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE, CONFIG_FILE_DPG
 from .generate_sdk import generate
-from .generate_utils import get_package_names, init_new_service, update_servicemetadata, judge_tag_preview
+from .generate_utils import (get_package_names, init_new_service, update_servicemetadata, judge_tag_preview,
+                             format_samples)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -47,6 +48,7 @@ def main(generate_input, generate_output):
 
             # Generate some necessary file for new service
             init_new_service(package_name, folder_name)
+            format_samples(sdk_code_path)
 
             # Update metadata
             try:
