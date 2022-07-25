@@ -11,8 +11,6 @@ import os
 import re
 from setuptools import setup, find_packages
 
-
-
 PACKAGE_NAME = "azure-developer-loadtesting"
 PACKAGE_PPRINT_NAME = "Azure Developer LoadTesting"
 
@@ -28,22 +26,17 @@ with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
 if not version:
     raise RuntimeError("Cannot find version information")
 
-
-
 setup(
     name=PACKAGE_NAME,
     version=version,
     description="Microsoft Azure Developer LoadTesting Client Library for Python",
-    
     long_description=open("README.md", "r").read(),
     long_description_content_type="text/markdown",
     license="MIT License",
     author="Microsoft Corporation",
-    
     author_email="azpysdkhelp@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk",
     keywords="azure, azure sdk",
-    
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
@@ -60,9 +53,7 @@ setup(
     packages=find_packages(
         exclude=[
             "tests",
-            
             # Exclude packages that will be covered by PEP420 or nspkg
-            
             "azure",
             "azure.developer",
         ]
@@ -71,16 +62,9 @@ setup(
     package_data={
         'pytyped': ['py.typed'],
     },
-    
     install_requires=[
-        
         "isodate<1.0.0,>=0.6.1",
-        
-        
         "azure-core<2.0.0,>=1.24.0",
-        
     ],
-    
     python_requires=">=3.6",
-    
 )
