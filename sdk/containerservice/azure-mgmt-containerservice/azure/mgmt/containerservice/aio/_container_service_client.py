@@ -55,7 +55,7 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2022-04-01'
+    DEFAULT_API_VERSION = '2022-06-01'
     _PROFILE_TAG = "azure.mgmt.containerservice.ContainerServiceClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -129,6 +129,7 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
            * 2022-04-01: :mod:`v2022_04_01.models<azure.mgmt.containerservice.v2022_04_01.models>`
            * 2022-04-02-preview: :mod:`v2022_04_02_preview.models<azure.mgmt.containerservice.v2022_04_02_preview.models>`
            * 2022-05-02-preview: :mod:`v2022_05_02_preview.models<azure.mgmt.containerservice.v2022_05_02_preview.models>`
+           * 2022-06-01: :mod:`v2022_06_01.models<azure.mgmt.containerservice.v2022_06_01.models>`
            * 2022-06-02-preview: :mod:`v2022_06_02_preview.models<azure.mgmt.containerservice.v2022_06_02_preview.models>`
         """
         if api_version == '2017-07-01':
@@ -248,6 +249,9 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2022-05-02-preview':
             from ..v2022_05_02_preview import models
             return models
+        elif api_version == '2022-06-01':
+            from ..v2022_06_01 import models
+            return models
         elif api_version == '2022-06-02-preview':
             from ..v2022_06_02_preview import models
             return models
@@ -289,6 +293,7 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
            * 2022-04-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_04_01.aio.operations.AgentPoolsOperations>`
            * 2022-04-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_04_02_preview.aio.operations.AgentPoolsOperations>`
            * 2022-05-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_05_02_preview.aio.operations.AgentPoolsOperations>`
+           * 2022-06-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_06_01.aio.operations.AgentPoolsOperations>`
            * 2022-06-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_06_02_preview.aio.operations.AgentPoolsOperations>`
         """
         api_version = self._get_api_version('agent_pools')
@@ -356,6 +361,8 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_04_02_preview.aio.operations import AgentPoolsOperations as OperationClass
         elif api_version == '2022-05-02-preview':
             from ..v2022_05_02_preview.aio.operations import AgentPoolsOperations as OperationClass
+        elif api_version == '2022-06-01':
+            from ..v2022_06_01.aio.operations import AgentPoolsOperations as OperationClass
         elif api_version == '2022-06-02-preview':
             from ..v2022_06_02_preview.aio.operations import AgentPoolsOperations as OperationClass
         else:
@@ -423,6 +430,7 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
            * 2022-04-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_04_01.aio.operations.MaintenanceConfigurationsOperations>`
            * 2022-04-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_04_02_preview.aio.operations.MaintenanceConfigurationsOperations>`
            * 2022-05-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_05_02_preview.aio.operations.MaintenanceConfigurationsOperations>`
+           * 2022-06-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_06_01.aio.operations.MaintenanceConfigurationsOperations>`
            * 2022-06-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_06_02_preview.aio.operations.MaintenanceConfigurationsOperations>`
         """
         api_version = self._get_api_version('maintenance_configurations')
@@ -462,6 +470,8 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_04_02_preview.aio.operations import MaintenanceConfigurationsOperations as OperationClass
         elif api_version == '2022-05-02-preview':
             from ..v2022_05_02_preview.aio.operations import MaintenanceConfigurationsOperations as OperationClass
+        elif api_version == '2022-06-01':
+            from ..v2022_06_01.aio.operations import MaintenanceConfigurationsOperations as OperationClass
         elif api_version == '2022-06-02-preview':
             from ..v2022_06_02_preview.aio.operations import MaintenanceConfigurationsOperations as OperationClass
         else:
@@ -531,6 +541,7 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
            * 2022-04-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_04_01.aio.operations.ManagedClustersOperations>`
            * 2022-04-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_04_02_preview.aio.operations.ManagedClustersOperations>`
            * 2022-05-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_05_02_preview.aio.operations.ManagedClustersOperations>`
+           * 2022-06-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_06_01.aio.operations.ManagedClustersOperations>`
            * 2022-06-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_06_02_preview.aio.operations.ManagedClustersOperations>`
         """
         api_version = self._get_api_version('managed_clusters')
@@ -602,6 +613,8 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_04_02_preview.aio.operations import ManagedClustersOperations as OperationClass
         elif api_version == '2022-05-02-preview':
             from ..v2022_05_02_preview.aio.operations import ManagedClustersOperations as OperationClass
+        elif api_version == '2022-06-01':
+            from ..v2022_06_01.aio.operations import ManagedClustersOperations as OperationClass
         elif api_version == '2022-06-02-preview':
             from ..v2022_06_02_preview.aio.operations import ManagedClustersOperations as OperationClass
         else:
@@ -668,6 +681,7 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
            * 2022-04-01: :class:`Operations<azure.mgmt.containerservice.v2022_04_01.aio.operations.Operations>`
            * 2022-04-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_04_02_preview.aio.operations.Operations>`
            * 2022-05-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_05_02_preview.aio.operations.Operations>`
+           * 2022-06-01: :class:`Operations<azure.mgmt.containerservice.v2022_06_01.aio.operations.Operations>`
            * 2022-06-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_06_02_preview.aio.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
@@ -739,6 +753,8 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_04_02_preview.aio.operations import Operations as OperationClass
         elif api_version == '2022-05-02-preview':
             from ..v2022_05_02_preview.aio.operations import Operations as OperationClass
+        elif api_version == '2022-06-01':
+            from ..v2022_06_01.aio.operations import Operations as OperationClass
         elif api_version == '2022-06-02-preview':
             from ..v2022_06_02_preview.aio.operations import Operations as OperationClass
         else:
@@ -771,6 +787,7 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
            * 2022-04-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_04_01.aio.operations.PrivateEndpointConnectionsOperations>`
            * 2022-04-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_04_02_preview.aio.operations.PrivateEndpointConnectionsOperations>`
            * 2022-05-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_05_02_preview.aio.operations.PrivateEndpointConnectionsOperations>`
+           * 2022-06-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_06_01.aio.operations.PrivateEndpointConnectionsOperations>`
            * 2022-06-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_06_02_preview.aio.operations.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
@@ -818,6 +835,8 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_04_02_preview.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
         elif api_version == '2022-05-02-preview':
             from ..v2022_05_02_preview.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2022-06-01':
+            from ..v2022_06_01.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
         elif api_version == '2022-06-02-preview':
             from ..v2022_06_02_preview.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
@@ -848,6 +867,7 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
            * 2022-04-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_04_01.aio.operations.PrivateLinkResourcesOperations>`
            * 2022-04-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_04_02_preview.aio.operations.PrivateLinkResourcesOperations>`
            * 2022-05-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_05_02_preview.aio.operations.PrivateLinkResourcesOperations>`
+           * 2022-06-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_06_01.aio.operations.PrivateLinkResourcesOperations>`
            * 2022-06-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_06_02_preview.aio.operations.PrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_resources')
@@ -891,6 +911,8 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_04_02_preview.aio.operations import PrivateLinkResourcesOperations as OperationClass
         elif api_version == '2022-05-02-preview':
             from ..v2022_05_02_preview.aio.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2022-06-01':
+            from ..v2022_06_01.aio.operations import PrivateLinkResourcesOperations as OperationClass
         elif api_version == '2022-06-02-preview':
             from ..v2022_06_02_preview.aio.operations import PrivateLinkResourcesOperations as OperationClass
         else:
@@ -921,6 +943,7 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
            * 2022-04-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_04_01.aio.operations.ResolvePrivateLinkServiceIdOperations>`
            * 2022-04-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_04_02_preview.aio.operations.ResolvePrivateLinkServiceIdOperations>`
            * 2022-05-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_05_02_preview.aio.operations.ResolvePrivateLinkServiceIdOperations>`
+           * 2022-06-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_06_01.aio.operations.ResolvePrivateLinkServiceIdOperations>`
            * 2022-06-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_06_02_preview.aio.operations.ResolvePrivateLinkServiceIdOperations>`
         """
         api_version = self._get_api_version('resolve_private_link_service_id')
@@ -964,6 +987,8 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_04_02_preview.aio.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
         elif api_version == '2022-05-02-preview':
             from ..v2022_05_02_preview.aio.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
+        elif api_version == '2022-06-01':
+            from ..v2022_06_01.aio.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
         elif api_version == '2022-06-02-preview':
             from ..v2022_06_02_preview.aio.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
         else:
@@ -987,6 +1012,7 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
            * 2022-04-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_04_01.aio.operations.SnapshotsOperations>`
            * 2022-04-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_04_02_preview.aio.operations.SnapshotsOperations>`
            * 2022-05-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_05_02_preview.aio.operations.SnapshotsOperations>`
+           * 2022-06-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_06_01.aio.operations.SnapshotsOperations>`
            * 2022-06-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_06_02_preview.aio.operations.SnapshotsOperations>`
         """
         api_version = self._get_api_version('snapshots')
@@ -1016,6 +1042,8 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_04_02_preview.aio.operations import SnapshotsOperations as OperationClass
         elif api_version == '2022-05-02-preview':
             from ..v2022_05_02_preview.aio.operations import SnapshotsOperations as OperationClass
+        elif api_version == '2022-06-01':
+            from ..v2022_06_01.aio.operations import SnapshotsOperations as OperationClass
         elif api_version == '2022-06-02-preview':
             from ..v2022_06_02_preview.aio.operations import SnapshotsOperations as OperationClass
         else:
