@@ -14,5 +14,5 @@ steps:
 
   - pwsh: |
       pip install tools/azure-sdk-tools[build]
-      sdk_version_set_dev "$(TargetingString)" --service="${{parameters.ServiceDirectory}}" --build-id="$(Build.BuildNumber)"
+      sdk_set_dev_version "$(TargetingString)" --service="${{parameters.ServiceDirectory}}" --build-id="$(Build.BuildNumber)"
     displayName: "Update package versions for dev build"

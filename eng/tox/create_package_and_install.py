@@ -22,10 +22,7 @@ from tox_helper_tasks import find_whl, find_sdist, get_package_details, get_pip_
 
 logging.getLogger().setLevel(logging.INFO)
 
-setup_parser_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "versioning"))
-sys.path.append(setup_parser_path)
-from setup_parser import get_install_requires
-
+from ci_tools.parsing import ParsedSetup
 
 def cleanup_build_artifacts(build_folder):
     # clean up egginfo
@@ -210,7 +207,7 @@ if __name__ == "__main__":
                 logging.info("Installing {w} from fresh built package.".format(w=built_package))
 
             if not args.pre_download_disabled:
-                requirements = get_install_requires(os.path.join(os.path.abspath(args.target_setup), "setup.py"))
+                requirements = ParsedSetup.from_path(os.path.join(os.path.abspath(args.target_setup), "setup.py")).requires
                 azure_requirements = [req.split(";")[0] for req in requirements if req.startswith("azure")]
 
                 if azure_requirements:
