@@ -3,7 +3,7 @@ ignore-patterns=test_*,conftest,setup
 reports=no
 
 # PYLINT DIRECTORY BLACKLIST.
-ignore=_vendor,_generated,samples,examples,test,tests,doc,.tox
+ignore=_vendor,_generated,_restclient,samples,examples,test,tests,doc,.tox
 ignore-paths=azure\\mixedreality\\remoterendering\\_api_version.py,azure/mixedreality/remoterendering/_api_version.py
 
 load-plugins=pylint_guidelines_checker
