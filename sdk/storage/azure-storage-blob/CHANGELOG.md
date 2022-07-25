@@ -13,8 +13,6 @@
 ### Bugs Fixed
 - Stable release of features from 12.13.0b1.
 - Added support for deleting versions in `delete_blobs` by supplying `version_id`.
-- Stable release of features from 12.13.0b1.
-- Added support for deleting versions in `delete_blobs` by supplying `version_id`.
 - Removed forced `requests` import for sync calls. (#25017)
 
 ## 12.13.0b1 (2022-06-15)
