@@ -14,7 +14,7 @@ from ._pyamqp.error import (
     ErrorCondition,
     AMQPException,
     RetryPolicy,
-    AMQPConnectionError, 
+    AMQPConnectionError,
 )
 
 from ._common.constants import (

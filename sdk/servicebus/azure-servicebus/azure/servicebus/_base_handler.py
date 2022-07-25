@@ -12,12 +12,11 @@ from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKe
 from azure.core.pipeline.policies import RetryMode
 
 try:
-    from urllib.parse import quote_plus, urlparse
+    from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse  # type: ignore
 
 from ._pyamqp.utils import generate_sas_token
-from ._pyamqp import error as utils
 from ._pyamqp.message import Message, Properties
 
 from ._common._configuration import Configuration
@@ -494,7 +493,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             )
             return callback(status, response, description)
         except Exception as exp:  # pylint: disable=broad-except
-            if isinstance(exp, compat.TimeoutException):
+            if isinstance(exp, TimeoutError): #TODO: was compat.TimeoutException
                 raise OperationTimeoutError(error=exp)
             raise
 
