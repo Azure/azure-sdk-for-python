@@ -13,7 +13,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, AsyncDocumentModelAdministrationLROPoller
-from azure.ai.formrecognizer import DocumentModelInfo
+from azure.ai.formrecognizer import DocumentModelDetails
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -147,7 +147,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         def callback(response, _, headers):
             op_response = client._deserialize(GetOperationResponse, response)
             model_info = client._deserialize(ModelInfo, op_response.result)
-            document_model = DocumentModelInfo._from_generated(model_info)
+            document_model = DocumentModelDetails._from_generated(model_info)
             raw_response.append(model_info)
             raw_response.append(document_model)
 
@@ -160,7 +160,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         self.assertModelTransformCorrect(document_model, raw_model)
 
         document_model_dict = document_model.to_dict()
-        document_model_from_dict = DocumentModelInfo.from_dict(document_model_dict)
+        document_model_from_dict = DocumentModelDetails.from_dict(document_model_dict)
         assert document_model_from_dict.model_id == document_model.model_id
         self.assertModelTransformCorrect(document_model_from_dict, raw_model)
 
@@ -175,7 +175,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         def callback(response, _, headers):
             op_response = client._deserialize(GetOperationResponse, response)
             model_info = client._deserialize(ModelInfo, op_response.result)
-            document_model = DocumentModelInfo._from_generated(model_info)
+            document_model = DocumentModelDetails._from_generated(model_info)
             raw_response.append(model_info)
             raw_response.append(document_model)
 
@@ -198,7 +198,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         def callback(response, _, headers):
             op_response = client._deserialize(GetOperationResponse, response)
             model_info = client._deserialize(ModelInfo, op_response.result)
-            document_model = DocumentModelInfo._from_generated(model_info)
+            document_model = DocumentModelDetails._from_generated(model_info)
             raw_response.append(model_info)
             raw_response.append(document_model)
 
@@ -212,7 +212,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
         document_model_dict = document_model.to_dict()
 
-        document_model_from_dict = DocumentModelInfo.from_dict(document_model_dict)
+        document_model_from_dict = DocumentModelDetails.from_dict(document_model_dict)
         assert document_model_from_dict.model_id == document_model.model_id
         self.assertModelTransformCorrect(document_model_from_dict, raw_model)
 
