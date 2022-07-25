@@ -68,7 +68,7 @@ class ConversationAppAsyncTests(AsyncConversationTest):
     @GlobalConversationAccountPreparer()
     async def test_conversation_app_aad_auth(self, endpoint, conv_project_name, conv_deployment_name):
         token = self.get_credential(ConversationAnalysisClient, is_async=True)
-        client = ConversationAnalysisClient(endpoint, token)
+        client = ConversationAnalysisClient(endpoint, token, api_version="2022-05-01")
         async with client:
             query = "Send an email to Carol about the tomorrow's demo"
             result = await client.analyze_conversation(
@@ -101,9 +101,9 @@ class ConversationAppAsyncTests(AsyncConversationTest):
             assert result["result"]["prediction"]["projectKind"] == 'Conversation'
 
             # assert - top intent
-            assert result["result"]["prediction"]["topIntent"] == 'Setup'
+            assert result["result"]["prediction"]["topIntent"] == 'Send'
             assert len(result["result"]["prediction"]["intents"]) > 0
-            assert result["result"]["prediction"]["intents"][0]["category"] == 'Setup'
+            assert result["result"]["prediction"]["intents"][0]["category"] == 'Send'
             assert result["result"]["prediction"]["intents"][0]["confidenceScore"] > 0
 
             # assert - entities

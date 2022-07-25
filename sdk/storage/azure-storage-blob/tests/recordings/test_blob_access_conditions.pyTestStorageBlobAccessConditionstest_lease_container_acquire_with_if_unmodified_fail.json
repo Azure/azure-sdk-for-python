@@ -1,0 +1,69 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainer8303f2b?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Wed, 13 Jul 2022 23:44:58 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Wed, 13 Jul 2022 23:44:58 GMT",
+        "ETag": "\u00220x8DA6529B23F244F\u0022",
+        "Last-Modified": "Wed, 13 Jul 2022 23:44:58 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainer8303f2b?comp=lease\u0026restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "If-Unmodified-Since": "Wed, 13 Jul 2022 23:29:58 GMT",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Wed, 13 Jul 2022 23:44:58 GMT",
+        "x-ms-lease-action": "acquire",
+        "x-ms-lease-duration": "-1",
+        "x-ms-proposed-lease-id": "00000000-1111-2222-3333-444444444444",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 412,
+      "ResponseHeaders": {
+        "Content-Length": "252",
+        "Content-Type": "application/xml",
+        "Date": "Wed, 13 Jul 2022 23:44:58 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-error-code": "ConditionNotMet",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EConditionNotMet\u003C/Code\u003E\u003CMessage\u003EThe condition specified using HTTP conditional header(s) is not met.\n",
+        "RequestId:aac9e7c0-a01e-0084-7812-97a8c3000000\n",
+        "Time:2022-07-13T23:44:58.5723031Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
+    }
+  ],
+  "Variables": {
+    "if_modified": "2022-07-13T23:29:58.968416"
+  }
+}

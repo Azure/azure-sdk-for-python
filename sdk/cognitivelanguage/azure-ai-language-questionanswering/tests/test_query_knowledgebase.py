@@ -165,6 +165,49 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                     assert prompt.qna_id
                     assert prompt.display_text
 
+    @pytest.mark.live_test_only
+    @GlobalQuestionAnsweringAccountPreparer()
+    def test_query_knowledgebase_aad(self, qna_account, qna_key, qna_project):
+        token = self.get_credential(QuestionAnsweringClient)
+        client = QuestionAnsweringClient(qna_account, token)
+        query_params = AnswersOptions(
+            question="Ports and connectors",
+            top=3,
+            answer_context=KnowledgeBaseAnswerContext(
+                previous_question="Meet Surface Pro 4",
+                previous_qna_id=4
+            )
+        )
+
+        with client:
+            output = client.get_answers(
+                query_params,
+                project_name=qna_project,
+                deployment_name='test'
+            )
+
+        assert output.answers
+        for answer in output.answers:
+            assert answer.answer
+            assert answer.confidence
+            assert answer.qna_id
+            assert answer.source
+            assert answer.metadata is not None
+            assert not answer.short_answer
+
+            assert answer.questions
+            for question in answer.questions:
+                assert question
+
+            assert answer.dialog
+            assert answer.dialog.is_context_only is not None
+            assert answer.dialog.prompts is not None
+            if answer.dialog.prompts:
+                for prompt in answer.dialog.prompts:
+                    assert prompt.display_order is not None
+                    assert prompt.qna_id
+                    assert prompt.display_text
+
     @GlobalQuestionAnsweringAccountPreparer()
     def test_query_knowledgebase_with_answerspan(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))

@@ -6,11 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._compute_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AccessUri(msrest.serialization.Model):
@@ -66,8 +68,8 @@ class ApiError(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        details: Optional[List["ApiErrorBase"]] = None,
-        innererror: Optional["InnerError"] = None,
+        details: Optional[List["_models.ApiErrorBase"]] = None,
+        innererror: Optional["_models.InnerError"] = None,
         code: Optional[str] = None,
         target: Optional[str] = None,
         message: Optional[str] = None,
@@ -139,8 +141,8 @@ class CreationData(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar create_option: Required. This enumerates the possible sources of a disk's creation.
-     Possible values include: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", "Upload".
+    :ivar create_option: Required. This enumerates the possible sources of a disk's creation. Known
+     values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", "Upload".
     :vartype create_option: str or ~azure.mgmt.compute.v2020_06_30.models.DiskCreateOption
     :ivar storage_account_id: Required if createOption is Import. The Azure Resource Manager
      identifier of the storage account containing the blob to import as a disk.
@@ -189,10 +191,10 @@ class CreationData(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        create_option: Union[str, "DiskCreateOption"],
+        create_option: Union[str, "_models.DiskCreateOption"],
         storage_account_id: Optional[str] = None,
-        image_reference: Optional["ImageDiskReference"] = None,
-        gallery_image_reference: Optional["ImageDiskReference"] = None,
+        image_reference: Optional["_models.ImageDiskReference"] = None,
+        gallery_image_reference: Optional["_models.ImageDiskReference"] = None,
         source_uri: Optional[str] = None,
         source_resource_id: Optional[str] = None,
         upload_size_bytes: Optional[int] = None,
@@ -201,7 +203,7 @@ class CreationData(msrest.serialization.Model):
     ):
         """
         :keyword create_option: Required. This enumerates the possible sources of a disk's creation.
-         Possible values include: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", "Upload".
+         Known values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", "Upload".
         :paramtype create_option: str or ~azure.mgmt.compute.v2020_06_30.models.DiskCreateOption
         :keyword storage_account_id: Required if createOption is Import. The Azure Resource Manager
          identifier of the storage account containing the blob to import as a disk.
@@ -323,10 +325,10 @@ class Disk(Resource):
     :vartype zones: list[str]
     :ivar time_created: The time when the disk was created.
     :vartype time_created: ~datetime.datetime
-    :ivar os_type: The Operating System type. Possible values include: "Windows", "Linux".
+    :ivar os_type: The Operating System type. Known values are: "Windows", "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2020_06_30.models.OperatingSystemTypes
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Possible values include: "V1", "V2".
+     disks only. Known values are: "V1", "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2020_06_30.models.HyperVGeneration
     :ivar creation_data: Disk source information. CreationData information cannot be changed after
      the disk has been created.
@@ -360,7 +362,7 @@ class Disk(Resource):
      mounting the shared disk as ReadOnly. MBps means millions of bytes per second - MB here uses
      the ISO notation, of powers of 10.
     :vartype disk_m_bps_read_only: long
-    :ivar disk_state: The state of the disk. Possible values include: "Unattached", "Attached",
+    :ivar disk_state: The state of the disk. Known values are: "Unattached", "Attached",
      "Reserved", "ActiveSAS", "ReadyToUpload", "ActiveUpload".
     :vartype disk_state: str or ~azure.mgmt.compute.v2020_06_30.models.DiskState
     :ivar encryption: Encryption property can be used to encrypt data at rest with customer managed
@@ -372,8 +374,8 @@ class Disk(Resource):
     :ivar share_info: Details of the list of all VMs that have the disk attached. maxShares should
      be set to a value greater than one for disks to allow attaching them to multiple VMs.
     :vartype share_info: list[~azure.mgmt.compute.v2020_06_30.models.ShareInfoElement]
-    :ivar network_access_policy: Policy for accessing the disk via network. Possible values
-     include: "AllowAll", "AllowPrivate", "DenyAll".
+    :ivar network_access_policy: Policy for accessing the disk via network. Known values are:
+     "AllowAll", "AllowPrivate", "DenyAll".
     :vartype network_access_policy: str or
      ~azure.mgmt.compute.v2020_06_30.models.NetworkAccessPolicy
     :ivar disk_access_id: ARM id of the DiskAccess resource for using private endpoints on disks.
@@ -436,20 +438,20 @@ class Disk(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["DiskSku"] = None,
+        sku: Optional["_models.DiskSku"] = None,
         zones: Optional[List[str]] = None,
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGeneration"]] = None,
-        creation_data: Optional["CreationData"] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
+        creation_data: Optional["_models.CreationData"] = None,
         disk_size_gb: Optional[int] = None,
-        encryption_settings_collection: Optional["EncryptionSettingsCollection"] = None,
+        encryption_settings_collection: Optional["_models.EncryptionSettingsCollection"] = None,
         disk_iops_read_write: Optional[int] = None,
         disk_m_bps_read_write: Optional[int] = None,
         disk_iops_read_only: Optional[int] = None,
         disk_m_bps_read_only: Optional[int] = None,
-        encryption: Optional["Encryption"] = None,
+        encryption: Optional["_models.Encryption"] = None,
         max_shares: Optional[int] = None,
-        network_access_policy: Optional[Union[str, "NetworkAccessPolicy"]] = None,
+        network_access_policy: Optional[Union[str, "_models.NetworkAccessPolicy"]] = None,
         disk_access_id: Optional[str] = None,
         tier: Optional[str] = None,
         **kwargs
@@ -464,10 +466,10 @@ class Disk(Resource):
         :paramtype sku: ~azure.mgmt.compute.v2020_06_30.models.DiskSku
         :keyword zones: The Logical zone list for Disk.
         :paramtype zones: list[str]
-        :keyword os_type: The Operating System type. Possible values include: "Windows", "Linux".
+        :keyword os_type: The Operating System type. Known values are: "Windows", "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2020_06_30.models.OperatingSystemTypes
         :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-         disks only. Possible values include: "V1", "V2".
+         disks only. Known values are: "V1", "V2".
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2020_06_30.models.HyperVGeneration
         :keyword creation_data: Disk source information. CreationData information cannot be changed
          after the disk has been created.
@@ -501,8 +503,8 @@ class Disk(Resource):
         :keyword max_shares: The maximum number of VMs that can attach to the disk at the same time.
          Value greater than one indicates a disk that can be mounted on multiple VMs at the same time.
         :paramtype max_shares: int
-        :keyword network_access_policy: Policy for accessing the disk via network. Possible values
-         include: "AllowAll", "AllowPrivate", "DenyAll".
+        :keyword network_access_policy: Policy for accessing the disk via network. Known values are:
+         "AllowAll", "AllowPrivate", "DenyAll".
         :paramtype network_access_policy: str or
          ~azure.mgmt.compute.v2020_06_30.models.NetworkAccessPolicy
         :keyword disk_access_id: ARM id of the DiskAccess resource for using private endpoints on
@@ -631,7 +633,7 @@ class DiskAccessList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["DiskAccess"],
+        value: List["_models.DiskAccess"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -692,8 +694,8 @@ class DiskEncryptionSet(Resource):
     :ivar identity: The managed identity for the disk encryption set. It should be given permission
      on the key vault before it can be used to encrypt disks.
     :vartype identity: ~azure.mgmt.compute.v2020_06_30.models.EncryptionSetIdentity
-    :ivar encryption_type: The type of key used to encrypt the data of the disk. Possible values
-     include: "EncryptionAtRestWithCustomerKey", "EncryptionAtRestWithPlatformAndCustomerKeys".
+    :ivar encryption_type: The type of key used to encrypt the data of the disk. Known values are:
+     "EncryptionAtRestWithCustomerKey", "EncryptionAtRestWithPlatformAndCustomerKeys".
     :vartype encryption_type: str or ~azure.mgmt.compute.v2020_06_30.models.DiskEncryptionSetType
     :ivar active_key: The key vault key which is currently used by this disk encryption set.
     :vartype active_key: ~azure.mgmt.compute.v2020_06_30.models.KeyVaultAndKeyReference
@@ -732,9 +734,9 @@ class DiskEncryptionSet(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["EncryptionSetIdentity"] = None,
-        encryption_type: Optional[Union[str, "DiskEncryptionSetType"]] = None,
-        active_key: Optional["KeyVaultAndKeyReference"] = None,
+        identity: Optional["_models.EncryptionSetIdentity"] = None,
+        encryption_type: Optional[Union[str, "_models.DiskEncryptionSetType"]] = None,
+        active_key: Optional["_models.KeyVaultAndKeyReference"] = None,
         **kwargs
     ):
         """
@@ -745,8 +747,8 @@ class DiskEncryptionSet(Resource):
         :keyword identity: The managed identity for the disk encryption set. It should be given
          permission on the key vault before it can be used to encrypt disks.
         :paramtype identity: ~azure.mgmt.compute.v2020_06_30.models.EncryptionSetIdentity
-        :keyword encryption_type: The type of key used to encrypt the data of the disk. Possible values
-         include: "EncryptionAtRestWithCustomerKey", "EncryptionAtRestWithPlatformAndCustomerKeys".
+        :keyword encryption_type: The type of key used to encrypt the data of the disk. Known values
+         are: "EncryptionAtRestWithCustomerKey", "EncryptionAtRestWithPlatformAndCustomerKeys".
         :paramtype encryption_type: str or ~azure.mgmt.compute.v2020_06_30.models.DiskEncryptionSetType
         :keyword active_key: The key vault key which is currently used by this disk encryption set.
         :paramtype active_key: ~azure.mgmt.compute.v2020_06_30.models.KeyVaultAndKeyReference
@@ -783,7 +785,7 @@ class DiskEncryptionSetList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["DiskEncryptionSet"],
+        value: List["_models.DiskEncryptionSet"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -804,8 +806,8 @@ class DiskEncryptionSetUpdate(msrest.serialization.Model):
 
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar encryption_type: The type of key used to encrypt the data of the disk. Possible values
-     include: "EncryptionAtRestWithCustomerKey", "EncryptionAtRestWithPlatformAndCustomerKeys".
+    :ivar encryption_type: The type of key used to encrypt the data of the disk. Known values are:
+     "EncryptionAtRestWithCustomerKey", "EncryptionAtRestWithPlatformAndCustomerKeys".
     :vartype encryption_type: str or ~azure.mgmt.compute.v2020_06_30.models.DiskEncryptionSetType
     :ivar active_key: Key Vault Key Url and vault id of KeK, KeK is optional and when provided is
      used to unwrap the encryptionKey.
@@ -822,15 +824,15 @@ class DiskEncryptionSetUpdate(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        encryption_type: Optional[Union[str, "DiskEncryptionSetType"]] = None,
-        active_key: Optional["KeyVaultAndKeyReference"] = None,
+        encryption_type: Optional[Union[str, "_models.DiskEncryptionSetType"]] = None,
+        active_key: Optional["_models.KeyVaultAndKeyReference"] = None,
         **kwargs
     ):
         """
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword encryption_type: The type of key used to encrypt the data of the disk. Possible values
-         include: "EncryptionAtRestWithCustomerKey", "EncryptionAtRestWithPlatformAndCustomerKeys".
+        :keyword encryption_type: The type of key used to encrypt the data of the disk. Known values
+         are: "EncryptionAtRestWithCustomerKey", "EncryptionAtRestWithPlatformAndCustomerKeys".
         :paramtype encryption_type: str or ~azure.mgmt.compute.v2020_06_30.models.DiskEncryptionSetType
         :keyword active_key: Key Vault Key Url and vault id of KeK, KeK is optional and when provided
          is used to unwrap the encryptionKey.
@@ -866,7 +868,7 @@ class DiskList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["Disk"],
+        value: List["_models.Disk"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -887,8 +889,8 @@ class DiskSku(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar name: The sku name. Possible values include: "Standard_LRS", "Premium_LRS",
-     "StandardSSD_LRS", "UltraSSD_LRS".
+    :ivar name: The sku name. Known values are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS",
+     "UltraSSD_LRS".
     :vartype name: str or ~azure.mgmt.compute.v2020_06_30.models.DiskStorageAccountTypes
     :ivar tier: The sku tier.
     :vartype tier: str
@@ -906,11 +908,11 @@ class DiskSku(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: Optional[Union[str, "DiskStorageAccountTypes"]] = None,
+        name: Optional[Union[str, "_models.DiskStorageAccountTypes"]] = None,
         **kwargs
     ):
         """
-        :keyword name: The sku name. Possible values include: "Standard_LRS", "Premium_LRS",
+        :keyword name: The sku name. Known values are: "Standard_LRS", "Premium_LRS",
          "StandardSSD_LRS", "UltraSSD_LRS".
         :paramtype name: str or ~azure.mgmt.compute.v2020_06_30.models.DiskStorageAccountTypes
         """
@@ -927,7 +929,7 @@ class DiskUpdate(msrest.serialization.Model):
     :ivar sku: The disks sku name. Can be Standard_LRS, Premium_LRS, StandardSSD_LRS, or
      UltraSSD_LRS.
     :vartype sku: ~azure.mgmt.compute.v2020_06_30.models.DiskSku
-    :ivar os_type: the Operating System type. Possible values include: "Windows", "Linux".
+    :ivar os_type: the Operating System type. Known values are: "Windows", "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2020_06_30.models.OperatingSystemTypes
     :ivar disk_size_gb: If creationData.createOption is Empty, this field is mandatory and it
      indicates the size of the disk to create. If this field is present for updates or creation with
@@ -958,8 +960,8 @@ class DiskUpdate(msrest.serialization.Model):
     :ivar encryption: Encryption property can be used to encrypt data at rest with customer managed
      keys or platform managed keys.
     :vartype encryption: ~azure.mgmt.compute.v2020_06_30.models.Encryption
-    :ivar network_access_policy: Policy for accessing the disk via network. Possible values
-     include: "AllowAll", "AllowPrivate", "DenyAll".
+    :ivar network_access_policy: Policy for accessing the disk via network. Known values are:
+     "AllowAll", "AllowPrivate", "DenyAll".
     :vartype network_access_policy: str or
      ~azure.mgmt.compute.v2020_06_30.models.NetworkAccessPolicy
     :ivar disk_access_id: ARM id of the DiskAccess resource for using private endpoints on disks.
@@ -991,17 +993,17 @@ class DiskUpdate(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["DiskSku"] = None,
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
+        sku: Optional["_models.DiskSku"] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
         disk_size_gb: Optional[int] = None,
-        encryption_settings_collection: Optional["EncryptionSettingsCollection"] = None,
+        encryption_settings_collection: Optional["_models.EncryptionSettingsCollection"] = None,
         disk_iops_read_write: Optional[int] = None,
         disk_m_bps_read_write: Optional[int] = None,
         disk_iops_read_only: Optional[int] = None,
         disk_m_bps_read_only: Optional[int] = None,
         max_shares: Optional[int] = None,
-        encryption: Optional["Encryption"] = None,
-        network_access_policy: Optional[Union[str, "NetworkAccessPolicy"]] = None,
+        encryption: Optional["_models.Encryption"] = None,
+        network_access_policy: Optional[Union[str, "_models.NetworkAccessPolicy"]] = None,
         disk_access_id: Optional[str] = None,
         tier: Optional[str] = None,
         **kwargs
@@ -1012,7 +1014,7 @@ class DiskUpdate(msrest.serialization.Model):
         :keyword sku: The disks sku name. Can be Standard_LRS, Premium_LRS, StandardSSD_LRS, or
          UltraSSD_LRS.
         :paramtype sku: ~azure.mgmt.compute.v2020_06_30.models.DiskSku
-        :keyword os_type: the Operating System type. Possible values include: "Windows", "Linux".
+        :keyword os_type: the Operating System type. Known values are: "Windows", "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2020_06_30.models.OperatingSystemTypes
         :keyword disk_size_gb: If creationData.createOption is Empty, this field is mandatory and it
          indicates the size of the disk to create. If this field is present for updates or creation with
@@ -1043,8 +1045,8 @@ class DiskUpdate(msrest.serialization.Model):
         :keyword encryption: Encryption property can be used to encrypt data at rest with customer
          managed keys or platform managed keys.
         :paramtype encryption: ~azure.mgmt.compute.v2020_06_30.models.Encryption
-        :keyword network_access_policy: Policy for accessing the disk via network. Possible values
-         include: "AllowAll", "AllowPrivate", "DenyAll".
+        :keyword network_access_policy: Policy for accessing the disk via network. Known values are:
+         "AllowAll", "AllowPrivate", "DenyAll".
         :paramtype network_access_policy: str or
          ~azure.mgmt.compute.v2020_06_30.models.NetworkAccessPolicy
         :keyword disk_access_id: ARM id of the DiskAccess resource for using private endpoints on
@@ -1078,7 +1080,7 @@ class Encryption(msrest.serialization.Model):
     :ivar disk_encryption_set_id: ResourceId of the disk encryption set to use for enabling
      encryption at rest.
     :vartype disk_encryption_set_id: str
-    :ivar type: The type of key used to encrypt the data of the disk. Possible values include:
+    :ivar type: The type of key used to encrypt the data of the disk. Known values are:
      "EncryptionAtRestWithPlatformKey", "EncryptionAtRestWithCustomerKey",
      "EncryptionAtRestWithPlatformAndCustomerKeys".
     :vartype type: str or ~azure.mgmt.compute.v2020_06_30.models.EncryptionType
@@ -1093,14 +1095,14 @@ class Encryption(msrest.serialization.Model):
         self,
         *,
         disk_encryption_set_id: Optional[str] = None,
-        type: Optional[Union[str, "EncryptionType"]] = None,
+        type: Optional[Union[str, "_models.EncryptionType"]] = None,
         **kwargs
     ):
         """
         :keyword disk_encryption_set_id: ResourceId of the disk encryption set to use for enabling
          encryption at rest.
         :paramtype disk_encryption_set_id: str
-        :keyword type: The type of key used to encrypt the data of the disk. Possible values include:
+        :keyword type: The type of key used to encrypt the data of the disk. Known values are:
          "EncryptionAtRestWithPlatformKey", "EncryptionAtRestWithCustomerKey",
          "EncryptionAtRestWithPlatformAndCustomerKeys".
         :paramtype type: str or ~azure.mgmt.compute.v2020_06_30.models.EncryptionType
@@ -1116,7 +1118,7 @@ class EncryptionSetIdentity(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar type: The type of Managed Identity used by the DiskEncryptionSet. Only SystemAssigned is
-     supported. Possible values include: "SystemAssigned".
+     supported. Known values are: "SystemAssigned".
     :vartype type: str or ~azure.mgmt.compute.v2020_06_30.models.DiskEncryptionSetIdentityType
     :ivar principal_id: The object id of the Managed Identity Resource. This will be sent to the RP
      from ARM via the x-ms-identity-principal-id header in the PUT request if the resource has a
@@ -1142,12 +1144,12 @@ class EncryptionSetIdentity(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "DiskEncryptionSetIdentityType"]] = None,
+        type: Optional[Union[str, "_models.DiskEncryptionSetIdentityType"]] = None,
         **kwargs
     ):
         """
         :keyword type: The type of Managed Identity used by the DiskEncryptionSet. Only SystemAssigned
-         is supported. Possible values include: "SystemAssigned".
+         is supported. Known values are: "SystemAssigned".
         :paramtype type: str or ~azure.mgmt.compute.v2020_06_30.models.DiskEncryptionSetIdentityType
         """
         super(EncryptionSetIdentity, self).__init__(**kwargs)
@@ -1189,7 +1191,7 @@ class EncryptionSettingsCollection(msrest.serialization.Model):
         self,
         *,
         enabled: bool,
-        encryption_settings: Optional[List["EncryptionSettingsElement"]] = None,
+        encryption_settings: Optional[List["_models.EncryptionSettingsElement"]] = None,
         encryption_settings_version: Optional[str] = None,
         **kwargs
     ):
@@ -1231,8 +1233,8 @@ class EncryptionSettingsElement(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        disk_encryption_key: Optional["KeyVaultAndSecretReference"] = None,
-        key_encryption_key: Optional["KeyVaultAndKeyReference"] = None,
+        disk_encryption_key: Optional["_models.KeyVaultAndSecretReference"] = None,
+        key_encryption_key: Optional["_models.KeyVaultAndKeyReference"] = None,
         **kwargs
     ):
         """
@@ -1253,7 +1255,7 @@ class GrantAccessData(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar access: Required. Possible values include: "None", "Read", "Write".
+    :ivar access: Required. Known values are: "None", "Read", "Write".
     :vartype access: str or ~azure.mgmt.compute.v2020_06_30.models.AccessLevel
     :ivar duration_in_seconds: Required. Time duration in seconds until the SAS access expires.
     :vartype duration_in_seconds: int
@@ -1272,12 +1274,12 @@ class GrantAccessData(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        access: Union[str, "AccessLevel"],
+        access: Union[str, "_models.AccessLevel"],
         duration_in_seconds: int,
         **kwargs
     ):
         """
-        :keyword access: Required. Possible values include: "None", "Read", "Write".
+        :keyword access: Required. Known values are: "None", "Read", "Write".
         :paramtype access: str or ~azure.mgmt.compute.v2020_06_30.models.AccessLevel
         :keyword duration_in_seconds: Required. Time duration in seconds until the SAS access expires.
         :paramtype duration_in_seconds: int
@@ -1385,7 +1387,7 @@ class KeyVaultAndKeyReference(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        source_vault: "SourceVault",
+        source_vault: "_models.SourceVault",
         key_url: str,
         **kwargs
     ):
@@ -1424,7 +1426,7 @@ class KeyVaultAndSecretReference(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        source_vault: "SourceVault",
+        source_vault: "_models.SourceVault",
         secret_url: str,
         **kwargs
     ):
@@ -1484,7 +1486,7 @@ class PrivateEndpointConnection(msrest.serialization.Model):
     :vartype private_link_service_connection_state:
      ~azure.mgmt.compute.v2020_06_30.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
-     Possible values include: "Succeeded", "Creating", "Deleting", "Failed".
+     Known values are: "Succeeded", "Creating", "Deleting", "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2020_06_30.models.PrivateEndpointConnectionProvisioningState
     """
@@ -1508,8 +1510,8 @@ class PrivateEndpointConnection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        private_endpoint: Optional["PrivateEndpoint"] = None,
-        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
+        private_endpoint: Optional["_models.PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
         **kwargs
     ):
         """
@@ -1598,7 +1600,7 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PrivateLinkResource"]] = None,
+        value: Optional[List["_models.PrivateLinkResource"]] = None,
         **kwargs
     ):
         """
@@ -1613,7 +1615,7 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """A collection of information about the state of the connection between service consumer and provider.
 
     :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
-     of the service. Possible values include: "Pending", "Approved", "Rejected".
+     of the service. Known values are: "Pending", "Approved", "Rejected".
     :vartype status: str or
      ~azure.mgmt.compute.v2020_06_30.models.PrivateEndpointServiceConnectionStatus
     :ivar description: The reason for approval/rejection of the connection.
@@ -1632,14 +1634,14 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        status: Optional[Union[str, "PrivateEndpointServiceConnectionStatus"]] = None,
+        status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = None,
         description: Optional[str] = None,
         actions_required: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
-         owner of the service. Possible values include: "Pending", "Approved", "Rejected".
+         owner of the service. Known values are: "Pending", "Approved", "Rejected".
         :paramtype status: str or
          ~azure.mgmt.compute.v2020_06_30.models.PrivateEndpointServiceConnectionStatus
         :keyword description: The reason for approval/rejection of the connection.
@@ -1746,10 +1748,10 @@ class Snapshot(Resource):
     :vartype sku: ~azure.mgmt.compute.v2020_06_30.models.SnapshotSku
     :ivar time_created: The time when the snapshot was created.
     :vartype time_created: ~datetime.datetime
-    :ivar os_type: The Operating System type. Possible values include: "Windows", "Linux".
+    :ivar os_type: The Operating System type. Known values are: "Windows", "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2020_06_30.models.OperatingSystemTypes
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Possible values include: "V1", "V2".
+     disks only. Known values are: "V1", "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2020_06_30.models.HyperVGeneration
     :ivar creation_data: Disk source information. CreationData information cannot be changed after
      the disk has been created.
@@ -1761,7 +1763,7 @@ class Snapshot(Resource):
     :vartype disk_size_gb: int
     :ivar disk_size_bytes: The size of the disk in bytes. This field is read only.
     :vartype disk_size_bytes: long
-    :ivar disk_state: The state of the snapshot. Possible values include: "Unattached", "Attached",
+    :ivar disk_state: The state of the snapshot. Known values are: "Unattached", "Attached",
      "Reserved", "ActiveSAS", "ReadyToUpload", "ActiveUpload".
     :vartype disk_state: str or ~azure.mgmt.compute.v2020_06_30.models.DiskState
     :ivar unique_id: Unique Guid identifying the resource.
@@ -1778,8 +1780,8 @@ class Snapshot(Resource):
     :ivar encryption: Encryption property can be used to encrypt data at rest with customer managed
      keys or platform managed keys.
     :vartype encryption: ~azure.mgmt.compute.v2020_06_30.models.Encryption
-    :ivar network_access_policy: Policy for accessing the disk via network. Possible values
-     include: "AllowAll", "AllowPrivate", "DenyAll".
+    :ivar network_access_policy: Policy for accessing the disk via network. Known values are:
+     "AllowAll", "AllowPrivate", "DenyAll".
     :vartype network_access_policy: str or
      ~azure.mgmt.compute.v2020_06_30.models.NetworkAccessPolicy
     :ivar disk_access_id: ARM id of the DiskAccess resource for using private endpoints on disks.
@@ -1828,15 +1830,15 @@ class Snapshot(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["SnapshotSku"] = None,
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGeneration"]] = None,
-        creation_data: Optional["CreationData"] = None,
+        sku: Optional["_models.SnapshotSku"] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
+        creation_data: Optional["_models.CreationData"] = None,
         disk_size_gb: Optional[int] = None,
-        encryption_settings_collection: Optional["EncryptionSettingsCollection"] = None,
+        encryption_settings_collection: Optional["_models.EncryptionSettingsCollection"] = None,
         incremental: Optional[bool] = None,
-        encryption: Optional["Encryption"] = None,
-        network_access_policy: Optional[Union[str, "NetworkAccessPolicy"]] = None,
+        encryption: Optional["_models.Encryption"] = None,
+        network_access_policy: Optional[Union[str, "_models.NetworkAccessPolicy"]] = None,
         disk_access_id: Optional[str] = None,
         **kwargs
     ):
@@ -1847,10 +1849,10 @@ class Snapshot(Resource):
         :paramtype tags: dict[str, str]
         :keyword sku: The snapshots sku name. Can be Standard_LRS, Premium_LRS, or Standard_ZRS.
         :paramtype sku: ~azure.mgmt.compute.v2020_06_30.models.SnapshotSku
-        :keyword os_type: The Operating System type. Possible values include: "Windows", "Linux".
+        :keyword os_type: The Operating System type. Known values are: "Windows", "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2020_06_30.models.OperatingSystemTypes
         :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-         disks only. Possible values include: "V1", "V2".
+         disks only. Known values are: "V1", "V2".
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2020_06_30.models.HyperVGeneration
         :keyword creation_data: Disk source information. CreationData information cannot be changed
          after the disk has been created.
@@ -1870,8 +1872,8 @@ class Snapshot(Resource):
         :keyword encryption: Encryption property can be used to encrypt data at rest with customer
          managed keys or platform managed keys.
         :paramtype encryption: ~azure.mgmt.compute.v2020_06_30.models.Encryption
-        :keyword network_access_policy: Policy for accessing the disk via network. Possible values
-         include: "AllowAll", "AllowPrivate", "DenyAll".
+        :keyword network_access_policy: Policy for accessing the disk via network. Known values are:
+         "AllowAll", "AllowPrivate", "DenyAll".
         :paramtype network_access_policy: str or
          ~azure.mgmt.compute.v2020_06_30.models.NetworkAccessPolicy
         :keyword disk_access_id: ARM id of the DiskAccess resource for using private endpoints on
@@ -1921,7 +1923,7 @@ class SnapshotList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["Snapshot"],
+        value: List["_models.Snapshot"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1942,8 +1944,7 @@ class SnapshotSku(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar name: The sku name. Possible values include: "Standard_LRS", "Premium_LRS",
-     "Standard_ZRS".
+    :ivar name: The sku name. Known values are: "Standard_LRS", "Premium_LRS", "Standard_ZRS".
     :vartype name: str or ~azure.mgmt.compute.v2020_06_30.models.SnapshotStorageAccountTypes
     :ivar tier: The sku tier.
     :vartype tier: str
@@ -1961,12 +1962,11 @@ class SnapshotSku(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: Optional[Union[str, "SnapshotStorageAccountTypes"]] = None,
+        name: Optional[Union[str, "_models.SnapshotStorageAccountTypes"]] = None,
         **kwargs
     ):
         """
-        :keyword name: The sku name. Possible values include: "Standard_LRS", "Premium_LRS",
-         "Standard_ZRS".
+        :keyword name: The sku name. Known values are: "Standard_LRS", "Premium_LRS", "Standard_ZRS".
         :paramtype name: str or ~azure.mgmt.compute.v2020_06_30.models.SnapshotStorageAccountTypes
         """
         super(SnapshotSku, self).__init__(**kwargs)
@@ -1981,7 +1981,7 @@ class SnapshotUpdate(msrest.serialization.Model):
     :vartype tags: dict[str, str]
     :ivar sku: The snapshots sku name. Can be Standard_LRS, Premium_LRS, or Standard_ZRS.
     :vartype sku: ~azure.mgmt.compute.v2020_06_30.models.SnapshotSku
-    :ivar os_type: the Operating System type. Possible values include: "Windows", "Linux".
+    :ivar os_type: the Operating System type. Known values are: "Windows", "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2020_06_30.models.OperatingSystemTypes
     :ivar disk_size_gb: If creationData.createOption is Empty, this field is mandatory and it
      indicates the size of the disk to create. If this field is present for updates or creation with
@@ -1995,8 +1995,8 @@ class SnapshotUpdate(msrest.serialization.Model):
     :ivar encryption: Encryption property can be used to encrypt data at rest with customer managed
      keys or platform managed keys.
     :vartype encryption: ~azure.mgmt.compute.v2020_06_30.models.Encryption
-    :ivar network_access_policy: Policy for accessing the disk via network. Possible values
-     include: "AllowAll", "AllowPrivate", "DenyAll".
+    :ivar network_access_policy: Policy for accessing the disk via network. Known values are:
+     "AllowAll", "AllowPrivate", "DenyAll".
     :vartype network_access_policy: str or
      ~azure.mgmt.compute.v2020_06_30.models.NetworkAccessPolicy
     :ivar disk_access_id: ARM id of the DiskAccess resource for using private endpoints on disks.
@@ -2018,12 +2018,12 @@ class SnapshotUpdate(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["SnapshotSku"] = None,
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
+        sku: Optional["_models.SnapshotSku"] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
         disk_size_gb: Optional[int] = None,
-        encryption_settings_collection: Optional["EncryptionSettingsCollection"] = None,
-        encryption: Optional["Encryption"] = None,
-        network_access_policy: Optional[Union[str, "NetworkAccessPolicy"]] = None,
+        encryption_settings_collection: Optional["_models.EncryptionSettingsCollection"] = None,
+        encryption: Optional["_models.Encryption"] = None,
+        network_access_policy: Optional[Union[str, "_models.NetworkAccessPolicy"]] = None,
         disk_access_id: Optional[str] = None,
         **kwargs
     ):
@@ -2032,7 +2032,7 @@ class SnapshotUpdate(msrest.serialization.Model):
         :paramtype tags: dict[str, str]
         :keyword sku: The snapshots sku name. Can be Standard_LRS, Premium_LRS, or Standard_ZRS.
         :paramtype sku: ~azure.mgmt.compute.v2020_06_30.models.SnapshotSku
-        :keyword os_type: the Operating System type. Possible values include: "Windows", "Linux".
+        :keyword os_type: the Operating System type. Known values are: "Windows", "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2020_06_30.models.OperatingSystemTypes
         :keyword disk_size_gb: If creationData.createOption is Empty, this field is mandatory and it
          indicates the size of the disk to create. If this field is present for updates or creation with
@@ -2046,8 +2046,8 @@ class SnapshotUpdate(msrest.serialization.Model):
         :keyword encryption: Encryption property can be used to encrypt data at rest with customer
          managed keys or platform managed keys.
         :paramtype encryption: ~azure.mgmt.compute.v2020_06_30.models.Encryption
-        :keyword network_access_policy: Policy for accessing the disk via network. Possible values
-         include: "AllowAll", "AllowPrivate", "DenyAll".
+        :keyword network_access_policy: Policy for accessing the disk via network. Known values are:
+         "AllowAll", "AllowPrivate", "DenyAll".
         :paramtype network_access_policy: str or
          ~azure.mgmt.compute.v2020_06_30.models.NetworkAccessPolicy
         :keyword disk_access_id: ARM id of the DiskAccess resource for using private endpoints on

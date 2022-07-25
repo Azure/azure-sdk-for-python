@@ -23,7 +23,7 @@ from ._storage_utils import AzureMLDatastorePathUri
 module_logger = logging.getLogger(__name__)
 
 
-def download_mltable_schema(mltable_schema_url: str):
+def download_mltable_metadata_schema(mltable_schema_url: str):
     response = requests.get(mltable_schema_url, stream=True)
     return response.json()
 

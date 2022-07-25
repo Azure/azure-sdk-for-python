@@ -11,6 +11,7 @@ API_VERSION_2020_09_01_DATAPLANE = "2020-09-01-dataplanepreview"
 ONLINE_ENDPOINT_TYPE = "online"
 BATCH_ENDPOINT_TYPE = "batch"
 BASE_PATH_CONTEXT_KEY = "base_path"
+SOURCE_PATH_CONTEXT_KEY = "source_path"
 PARAMS_OVERRIDE_KEY = "params_override"
 TYPE = "type"
 JOBLIMITSTYPE = "JobLimitsType"
@@ -58,6 +59,7 @@ COMPUTE_UPDATE_ERROR = (
     "Only AmlCompute/KubernetesCompute cluster properties are supported, compute name {}, is {} type."
 )
 MAX_AUTOINCREMENT_ATTEMPTS = 3
+REGISTRY_DISCOVERY_BASE_URI = "https://eastus.api.azureml.ms"
 REGISTRY_URI_REGEX_FORMAT = "azureml://registries/*"
 REGISTRY_URI_FORMAT = "azureml://registries/"
 REGISTRY_VERSION_PATTERN = "^azureml://registries/([^/]+)/([^/]+)/([^/]+)/versions/([^/]+)"
@@ -90,12 +92,13 @@ SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME = "best_child_run_id"
 BATCH_JOB_CHILD_RUN_NAME = "batchscoring"
 BATCH_JOB_CHILD_RUN_OUTPUT_NAME = "score"
 DEFAULT_ARTIFACT_STORE_OUTPUT_NAME = "default"
+DEFAULT_EXPERIMENT_NAME = "Default"
 
 CREATE_ENVIRONMENT_ERROR_MESSAGE = "It looks like you are trying to specify a conda file for the --file/-f argument. --file/-f is reserved for the Azure ML Environment definition (see schema here: {}). To specify a conda file via command-line argument, please use --conda-file/-c argument."
 API_URL_KEY = "api"
 ANONYMOUS_ENV_NAME = "CliV2AnonymousEnvironment"
 SKIP_VALIDATION_MESSAGE = "To skip this validation use the --skip-validation param"
-MLTABLE_SCHEMA_URL_FALLBACK = "https://azuremlschemasprod.azureedge.net/latest/MLTable.schema.json"
+MLTABLE_METADATA_SCHEMA_URL_FALLBACK = "https://azuremlschemasprod.azureedge.net/latest/MLTable.schema.json"
 INVOCATION_ZIP_FILE = "invocation.zip"
 INVOCATION_BAT_FILE = "Invocation.bat"
 INVOCATION_BASH_FILE = "Invocation.sh"
@@ -110,6 +113,7 @@ STORAGE_ACCOUNT_URLS = {
 }
 
 ANONYMOUS_COMPONENT_NAME = "azureml_anonymous"
+GIT_PATH_PREFIX = "git+"
 
 
 class SearchSpace:
@@ -326,6 +330,7 @@ class EndpointGetLogsFields(object):
 
 class CommonYamlFields(object):
     TYPE = "type"
+    NAME = "name"
 
 
 class JobComputePropertyFields(object):
@@ -757,3 +762,32 @@ class TimeZone(str, Enum):
     TONGA__STANDARD_TIME = "Tonga Standard Time"
     SAMOA_STANDARD_TIME = "Samoa Standard Time"
     LINE_ISLANDS_STANDARD_TIME = "Line Islands Standard Time"
+
+
+class IO_CONSTANTS:
+    PRIMITIVE_STR_2_TYPE = {"integer": int, "string": str, "number": float, "boolean": bool}
+    PRIMITIVE_TYPE_2_STR = {int: "integer", str: "string", float: "number", bool: "boolean"}
+    TYPE_MAPPING_YAML_2_REST = {
+        "string": "String",
+        "integer": "Integer",
+        "number": "Number",
+        "boolean": "Boolean",
+    }
+    PARAM_PARSERS = {
+        "float": float,
+        "integer": lambda v: int(float(v)),  # backend returns 10.0 for integer, parse it to float before int
+        "boolean": lambda v: str(v).lower() == "true",
+        "number": float,
+    }
+    # For validation, indicates specific parameters combination for each type
+    INPUT_TYPE_COMBINATION = {
+        "uri_folder": ["path", "mode"],
+        "uri_file": ["path", "mode"],
+        "mltable": ["path", "mode"],
+        "mlflow_model": ["path", "mode"],
+        "custom_model": ["path", "mode"],
+        "integer": ["default", "min", "max"],
+        "number": ["default", "min", "max"],
+        "string": ["default"],
+        "boolean": ["default"],
+    }

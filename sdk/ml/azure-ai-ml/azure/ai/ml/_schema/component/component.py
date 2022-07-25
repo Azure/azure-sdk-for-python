@@ -5,10 +5,11 @@ from marshmallow import fields, post_load, pre_load
 
 from azure.ai.ml._schema.core.fields import VersionField, PythonFuncNameStr
 from azure.ai.ml.constants import AzureMLResourceType, BASE_PATH_CONTEXT_KEY
-from azure.ai.ml._schema import PathAwareSchema, UnionField, NestedField, ArmVersionedStr
+from azure.ai.ml._schema import UnionField, NestedField, ArmVersionedStr
 from azure.ai.ml._schema.component.input_output import InputPortSchema, ParameterSchema, OutputPortSchema
 from azure.ai.ml._schema.job.creation_context import CreationContextSchema
 from ..core.fields import RegistryStr
+from ..core.resource import ResourceSchema
 
 
 class ComponentNameStr(PythonFuncNameStr):
@@ -16,7 +17,7 @@ class ComponentNameStr(PythonFuncNameStr):
         return "Component"
 
 
-class BaseComponentSchema(PathAwareSchema):
+class BaseComponentSchema(ResourceSchema):
     schema = fields.Str(data_key="$schema", attribute="_schema")
     name = ComponentNameStr(required=True)
     id = UnionField(

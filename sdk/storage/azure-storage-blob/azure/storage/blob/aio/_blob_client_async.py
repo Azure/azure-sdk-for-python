@@ -8,7 +8,7 @@
 import warnings
 from functools import partial
 from typing import (  # pylint: disable=unused-import
-    Any, AnyStr, Dict, IO, Iterable, List, Tuple, Optional, Union,
+    Any, AnyStr, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
 
@@ -131,7 +131,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
-        self.configure_encryption(kwargs)
+        self._configure_encryption(kwargs)
 
     @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore
@@ -253,7 +253,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
 
     @distributed_trace_async
     async def upload_blob(
-            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -405,9 +405,31 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             return await upload_page_blob(**options)
         return await upload_append_blob(**options)
 
+    @overload
+    async def download_blob(
+            self, offset: int = None,
+            length: int = None,
+            *,
+            encoding: str,
+            **kwargs) -> StorageStreamDownloader[str]:
+        ...
+
+    @overload
+    async def download_blob(
+            self, offset: int = None,
+            length: int = None,
+            *,
+            encoding: None = None,
+            **kwargs) -> StorageStreamDownloader[bytes]:
+        ...
+
     @distributed_trace_async
-    async def download_blob(self, offset=None, length=None, **kwargs):
-        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
+    async def download_blob(
+            self, offset: int = None,
+            length: int = None,
+            *,
+            encoding: Optional[str] = None,
+            **kwargs) -> StorageStreamDownloader:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
@@ -495,6 +517,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         options = self._download_blob_options(
             offset=offset,
             length=length,
+            encoding=encoding,
             **kwargs)
         downloader = StorageStreamDownloader(**options)
         await downloader._setup()  # pylint: disable=protected-access
@@ -2471,7 +2494,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
 
     @distributed_trace_async
     async def append_block( # type: ignore
-            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             **kwargs
         ):
