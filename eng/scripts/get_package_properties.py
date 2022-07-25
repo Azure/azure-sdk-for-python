@@ -4,8 +4,7 @@ import glob
 import os
 import re
 
-sys.path.append(os.path.join('scripts', 'devops_tasks'))
-from common_tasks import get_package_properties
+from ci_tools.parsing import ParsedSetup
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Get package version details from the repo')
@@ -17,8 +16,9 @@ if __name__ == '__main__':
         if re.search(r"sdk[\\/][^\\/]+[\\/][^\\/]+$", root):
             if "setup.py" in files:
                 try:
+                    parsed = ParsedSetup.from_path(root)
                     pkgName, version, is_new_sdk, setup_py_path = get_package_properties(root)
-                    print("{0} {1} {2} {3}".format(pkgName, version, is_new_sdk, setup_py_path))
+                    print("{0} {1} {2} {3}".format(parsed.name, parsed.version, parsed.is_new_sdk, parsed.setup_filename))
                 except:
                     # Skip setup.py if the package cannot be parsed
                     pass
