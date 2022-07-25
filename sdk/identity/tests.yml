@@ -15,3 +15,5 @@ stages:
         PEM_CONTENT_PASSWORD_PROTECTED: $(python-identity-certificate-with-password)
         PFX_CONTENT: $(python-identity-certificate-pfx)
         PFX_CONTENT_PASSWORD_PROTECTED: $(python-identity-certificate-with-password-pfx)
+        AZURE_TEST_RUN_LIVE: true
+        AZURE_SKIP_LIVE_RECORDING: 'True'

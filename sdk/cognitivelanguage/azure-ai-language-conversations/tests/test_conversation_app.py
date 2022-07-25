@@ -68,7 +68,7 @@ class TestConversationAppTests(ConversationTest):
     @GlobalConversationAccountPreparer()
     def test_conversation_app_aad_auth(self, endpoint, key, conv_project_name, conv_deployment_name):
         token = self.get_credential(ConversationAnalysisClient)
-        client = ConversationAnalysisClient(endpoint, token)
+        client = ConversationAnalysisClient(endpoint, token, api_version="2022-05-01")
         with client:
             query = "Send an email to Carol about the tomorrow's demo"
             result = client.analyze_conversation(

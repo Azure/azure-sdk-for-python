@@ -316,19 +316,24 @@ class TestExample(AzureRecordedTestCase):
 
     @recorded_by_proxy
     def test_example(self, **kwargs):
-        # in live mode, variables is an empty dictionary
-        # in playback mode, the value of variables is {"table_name": "random-value"}
-        variables = kwargs.pop("variables")
-        if self.is_live:
-            table_name = "random-value"
-            variables = {"table_name": table_name}
+        # In live mode, variables is an empty dictionary
+        # In playback mode, the value of variables is {"table_name": "random-value"}
+        variables = kwargs.pop("variables", {})
+ 
+        # To fetch variable values, use the `setdefault` method to look for a key ("table_name")
+        # and set a real value for that key if it's not present ("random-value")
+        table_name = variables.setdefault("table_name", "random-value")
 
         # use variables["table_name"] when using the table name throughout the test
         ...
 
-        # return the variables at the end of the test
+        # return the variables at the end of the test to record them
         return variables
 ```
+
+> **Note:** `variables` will be passed as a named argument to any test that accepts `kwargs` by the test proxy. In
+> environments that don't use the test proxy, though -- like live test pipelines -- `variables` won't be provided.
+> To avoid a KeyError, providing an empty dictionary as the default value to `kwargs.pop` is recommended.
 
 ## Migrate management-plane tests
 

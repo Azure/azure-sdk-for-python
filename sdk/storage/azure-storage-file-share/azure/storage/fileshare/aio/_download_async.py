@@ -52,6 +52,9 @@ class _AsyncChunkDownloader(_ChunkDownloader):
         else:
             self.progress_total += length
 
+        if self.progress_hook:
+            await self.progress_hook(self.progress_total, self.total_size)
+
     async def _write_to_stream(self, chunk_data, chunk_start):
         if self.stream_lock:
             async with self.stream_lock:  # pylint: disable=not-async-context-manager
@@ -184,6 +187,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._max_concurrency = max_concurrency
         self._encoding = encoding
         self._validate_content = validate_content
+        self._progress_hook = kwargs.pop('progress_hook', None)
         self._request_options = kwargs
         self._location_mode = None
         self._download_complete = False
@@ -329,10 +333,11 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         )
 
     async def readall(self):
+        # type: () -> bytes
         """Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
-        :rtype: bytes or str
+        :rtype: bytes
         """
         stream = BytesIO()
         await self.readinto(stream)
@@ -400,6 +405,9 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         # Write the content to the user stream
         stream.write(self._current_content)
+        if self._progress_hook:
+            await self._progress_hook(len(self._current_content), self.size)
+
         if self._download_complete:
             return self.size
 
@@ -419,6 +427,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             parallel=parallel,
             validate_content=self._validate_content,
             use_location=self._location_mode,
+            progress_hook=self._progress_hook,
             etag=self._etag,
             **self._request_options)
 

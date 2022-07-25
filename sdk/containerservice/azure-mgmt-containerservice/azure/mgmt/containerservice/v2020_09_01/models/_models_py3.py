@@ -6,11 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._container_service_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class SubResource(msrest.serialization.Model):
@@ -67,7 +69,7 @@ class AgentPool(SubResource):
      range of 0 to 100 (inclusive) for user pools and in the range of 1 to 100 (inclusive) for
      system pools. The default value is 1.
     :vartype count: int
-    :ivar vm_size: Size of agent VMs. Possible values include: "Standard_A1", "Standard_A10",
+    :ivar vm_size: Size of agent VMs. Known values are: "Standard_A1", "Standard_A10",
      "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2", "Standard_A2m_v2",
      "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2", "Standard_A5",
      "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2", "Standard_A8m_v2",
@@ -112,15 +114,15 @@ class AgentPool(SubResource):
      the vmSize specified.
     :vartype os_disk_size_gb: int
     :ivar os_disk_type: OS disk type to be used for machines in a given agent pool. Allowed values
-     are 'Ephemeral' and 'Managed'. Defaults to 'Managed'. May not be changed after creation.
-     Possible values include: "Managed", "Ephemeral".
+     are 'Ephemeral' and 'Managed'. Defaults to 'Managed'. May not be changed after creation. Known
+     values are: "Managed", "Ephemeral".
     :vartype os_disk_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.OSDiskType
     :ivar vnet_subnet_id: VNet SubnetID specifies the VNet's subnet identifier.
     :vartype vnet_subnet_id: str
     :ivar max_pods: Maximum number of pods that can run on a node.
     :vartype max_pods: int
     :ivar os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default to
-     Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+     Linux. Known values are: "Linux", "Windows". Default value: "Linux".
     :vartype os_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.OSType
     :ivar max_count: Maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -128,12 +130,11 @@ class AgentPool(SubResource):
     :vartype min_count: int
     :ivar enable_auto_scaling: Whether to enable auto-scaler.
     :vartype enable_auto_scaling: bool
-    :ivar type_properties_type: AgentPoolType represents types of an agent pool. Possible values
-     include: "VirtualMachineScaleSets", "AvailabilitySet".
+    :ivar type_properties_type: AgentPoolType represents types of an agent pool. Known values are:
+     "VirtualMachineScaleSets", "AvailabilitySet".
     :vartype type_properties_type: str or
      ~azure.mgmt.containerservice.v2020_09_01.models.AgentPoolType
-    :ivar mode: AgentPoolMode represents mode of an agent pool. Possible values include: "System",
-     "User".
+    :ivar mode: AgentPoolMode represents mode of an agent pool. Known values are: "System", "User".
     :vartype mode: str or ~azure.mgmt.containerservice.v2020_09_01.models.AgentPoolMode
     :ivar orchestrator_version: Version of orchestrator specified when creating the managed
      cluster.
@@ -154,12 +155,11 @@ class AgentPool(SubResource):
     :ivar enable_node_public_ip: Enable public IP for nodes.
     :vartype enable_node_public_ip: bool
     :ivar scale_set_priority: ScaleSetPriority to be used to specify virtual machine scale set
-     priority. Default to regular. Possible values include: "Spot", "Regular". Default value:
-     "Regular".
+     priority. Default to regular. Known values are: "Spot", "Regular". Default value: "Regular".
     :vartype scale_set_priority: str or
      ~azure.mgmt.containerservice.v2020_09_01.models.ScaleSetPriority
     :ivar scale_set_eviction_policy: ScaleSetEvictionPolicy to be used to specify eviction policy
-     for Spot virtual machine scale set. Default to Delete. Possible values include: "Delete",
+     for Spot virtual machine scale set. Default to Delete. Known values are: "Delete",
      "Deallocate". Default value: "Delete".
     :vartype scale_set_eviction_policy: str or
      ~azure.mgmt.containerservice.v2020_09_01.models.ScaleSetEvictionPolicy
@@ -225,23 +225,23 @@ class AgentPool(SubResource):
         self,
         *,
         count: Optional[int] = None,
-        vm_size: Optional[Union[str, "ContainerServiceVMSizeTypes"]] = None,
+        vm_size: Optional[Union[str, "_models.ContainerServiceVMSizeTypes"]] = None,
         os_disk_size_gb: Optional[int] = None,
-        os_disk_type: Optional[Union[str, "OSDiskType"]] = None,
+        os_disk_type: Optional[Union[str, "_models.OSDiskType"]] = None,
         vnet_subnet_id: Optional[str] = None,
         max_pods: Optional[int] = None,
-        os_type: Optional[Union[str, "OSType"]] = "Linux",
+        os_type: Optional[Union[str, "_models.OSType"]] = "Linux",
         max_count: Optional[int] = None,
         min_count: Optional[int] = None,
         enable_auto_scaling: Optional[bool] = None,
-        type_properties_type: Optional[Union[str, "AgentPoolType"]] = None,
-        mode: Optional[Union[str, "AgentPoolMode"]] = None,
+        type_properties_type: Optional[Union[str, "_models.AgentPoolType"]] = None,
+        mode: Optional[Union[str, "_models.AgentPoolMode"]] = None,
         orchestrator_version: Optional[str] = None,
-        upgrade_settings: Optional["AgentPoolUpgradeSettings"] = None,
+        upgrade_settings: Optional["_models.AgentPoolUpgradeSettings"] = None,
         availability_zones: Optional[List[str]] = None,
         enable_node_public_ip: Optional[bool] = None,
-        scale_set_priority: Optional[Union[str, "ScaleSetPriority"]] = "Regular",
-        scale_set_eviction_policy: Optional[Union[str, "ScaleSetEvictionPolicy"]] = "Delete",
+        scale_set_priority: Optional[Union[str, "_models.ScaleSetPriority"]] = "Regular",
+        scale_set_eviction_policy: Optional[Union[str, "_models.ScaleSetEvictionPolicy"]] = "Delete",
         spot_max_price: Optional[float] = -1,
         tags: Optional[Dict[str, str]] = None,
         node_labels: Optional[Dict[str, str]] = None,
@@ -254,7 +254,7 @@ class AgentPool(SubResource):
          range of 0 to 100 (inclusive) for user pools and in the range of 1 to 100 (inclusive) for
          system pools. The default value is 1.
         :paramtype count: int
-        :keyword vm_size: Size of agent VMs. Possible values include: "Standard_A1", "Standard_A10",
+        :keyword vm_size: Size of agent VMs. Known values are: "Standard_A1", "Standard_A10",
          "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2", "Standard_A2m_v2",
          "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2", "Standard_A5",
          "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2", "Standard_A8m_v2",
@@ -300,14 +300,14 @@ class AgentPool(SubResource):
         :paramtype os_disk_size_gb: int
         :keyword os_disk_type: OS disk type to be used for machines in a given agent pool. Allowed
          values are 'Ephemeral' and 'Managed'. Defaults to 'Managed'. May not be changed after creation.
-         Possible values include: "Managed", "Ephemeral".
+         Known values are: "Managed", "Ephemeral".
         :paramtype os_disk_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.OSDiskType
         :keyword vnet_subnet_id: VNet SubnetID specifies the VNet's subnet identifier.
         :paramtype vnet_subnet_id: str
         :keyword max_pods: Maximum number of pods that can run on a node.
         :paramtype max_pods: int
         :keyword os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default
-         to Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+         to Linux. Known values are: "Linux", "Windows". Default value: "Linux".
         :paramtype os_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.OSType
         :keyword max_count: Maximum number of nodes for auto-scaling.
         :paramtype max_count: int
@@ -315,12 +315,12 @@ class AgentPool(SubResource):
         :paramtype min_count: int
         :keyword enable_auto_scaling: Whether to enable auto-scaler.
         :paramtype enable_auto_scaling: bool
-        :keyword type_properties_type: AgentPoolType represents types of an agent pool. Possible values
-         include: "VirtualMachineScaleSets", "AvailabilitySet".
+        :keyword type_properties_type: AgentPoolType represents types of an agent pool. Known values
+         are: "VirtualMachineScaleSets", "AvailabilitySet".
         :paramtype type_properties_type: str or
          ~azure.mgmt.containerservice.v2020_09_01.models.AgentPoolType
-        :keyword mode: AgentPoolMode represents mode of an agent pool. Possible values include:
-         "System", "User".
+        :keyword mode: AgentPoolMode represents mode of an agent pool. Known values are: "System",
+         "User".
         :paramtype mode: str or ~azure.mgmt.containerservice.v2020_09_01.models.AgentPoolMode
         :keyword orchestrator_version: Version of orchestrator specified when creating the managed
          cluster.
@@ -334,13 +334,12 @@ class AgentPool(SubResource):
         :keyword enable_node_public_ip: Enable public IP for nodes.
         :paramtype enable_node_public_ip: bool
         :keyword scale_set_priority: ScaleSetPriority to be used to specify virtual machine scale set
-         priority. Default to regular. Possible values include: "Spot", "Regular". Default value:
-         "Regular".
+         priority. Default to regular. Known values are: "Spot", "Regular". Default value: "Regular".
         :paramtype scale_set_priority: str or
          ~azure.mgmt.containerservice.v2020_09_01.models.ScaleSetPriority
         :keyword scale_set_eviction_policy: ScaleSetEvictionPolicy to be used to specify eviction
-         policy for Spot virtual machine scale set. Default to Delete. Possible values include:
-         "Delete", "Deallocate". Default value: "Delete".
+         policy for Spot virtual machine scale set. Default to Delete. Known values are: "Delete",
+         "Deallocate". Default value: "Delete".
         :paramtype scale_set_eviction_policy: str or
          ~azure.mgmt.containerservice.v2020_09_01.models.ScaleSetEvictionPolicy
         :keyword spot_max_price: SpotMaxPrice to be used to specify the maximum price you are willing
@@ -419,7 +418,7 @@ class AgentPoolAvailableVersions(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        agent_pool_versions: Optional[List["AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem"]] = None,
+        agent_pool_versions: Optional[List["_models.AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem"]] = None,
         **kwargs
     ):
         """
@@ -496,7 +495,7 @@ class AgentPoolListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["AgentPool"]] = None,
+        value: Optional[List["_models.AgentPool"]] = None,
         **kwargs
     ):
         """
@@ -524,7 +523,7 @@ class AgentPoolUpgradeProfile(msrest.serialization.Model):
     :ivar kubernetes_version: Required. Kubernetes version (major, minor, patch).
     :vartype kubernetes_version: str
     :ivar os_type: Required. OsType to be used to specify os type. Choose from Linux and Windows.
-     Default to Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+     Default to Linux. Known values are: "Linux", "Windows". Default value: "Linux".
     :vartype os_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.OSType
     :ivar upgrades: List of orchestrator types and versions available for upgrade.
     :vartype upgrades:
@@ -556,8 +555,8 @@ class AgentPoolUpgradeProfile(msrest.serialization.Model):
         self,
         *,
         kubernetes_version: str,
-        os_type: Union[str, "OSType"] = "Linux",
-        upgrades: Optional[List["AgentPoolUpgradeProfilePropertiesUpgradesItem"]] = None,
+        os_type: Union[str, "_models.OSType"] = "Linux",
+        upgrades: Optional[List["_models.AgentPoolUpgradeProfilePropertiesUpgradesItem"]] = None,
         latest_node_image_version: Optional[str] = None,
         **kwargs
     ):
@@ -565,7 +564,7 @@ class AgentPoolUpgradeProfile(msrest.serialization.Model):
         :keyword kubernetes_version: Required. Kubernetes version (major, minor, patch).
         :paramtype kubernetes_version: str
         :keyword os_type: Required. OsType to be used to specify os type. Choose from Linux and
-         Windows. Default to Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+         Windows. Default to Linux. Known values are: "Linux", "Windows". Default value: "Linux".
         :paramtype os_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.OSType
         :keyword upgrades: List of orchestrator types and versions available for upgrade.
         :paramtype upgrades:
@@ -744,23 +743,23 @@ class BaseManagedCluster(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        identity: Optional["ManagedClusterIdentity"] = None,
+        identity: Optional["_models.ManagedClusterIdentity"] = None,
         kubernetes_version: Optional[str] = None,
         dns_prefix: Optional[str] = None,
-        agent_pool_profiles: Optional[List["ManagedClusterAgentPoolProfile"]] = None,
-        linux_profile: Optional["ContainerServiceLinuxProfile"] = None,
-        windows_profile: Optional["ManagedClusterWindowsProfile"] = None,
-        service_principal_profile: Optional["ManagedClusterServicePrincipalProfile"] = None,
-        addon_profiles: Optional[Dict[str, "ManagedClusterAddonProfile"]] = None,
+        agent_pool_profiles: Optional[List["_models.ManagedClusterAgentPoolProfile"]] = None,
+        linux_profile: Optional["_models.ContainerServiceLinuxProfile"] = None,
+        windows_profile: Optional["_models.ManagedClusterWindowsProfile"] = None,
+        service_principal_profile: Optional["_models.ManagedClusterServicePrincipalProfile"] = None,
+        addon_profiles: Optional[Dict[str, "_models.ManagedClusterAddonProfile"]] = None,
         node_resource_group: Optional[str] = None,
         enable_rbac: Optional[bool] = None,
         enable_pod_security_policy: Optional[bool] = None,
-        network_profile: Optional["ContainerServiceNetworkProfile"] = None,
-        aad_profile: Optional["ManagedClusterAADProfile"] = None,
-        auto_scaler_profile: Optional["ManagedClusterPropertiesAutoScalerProfile"] = None,
-        api_server_access_profile: Optional["ManagedClusterAPIServerAccessProfile"] = None,
+        network_profile: Optional["_models.ContainerServiceNetworkProfile"] = None,
+        aad_profile: Optional["_models.ManagedClusterAADProfile"] = None,
+        auto_scaler_profile: Optional["_models.ManagedClusterPropertiesAutoScalerProfile"] = None,
+        api_server_access_profile: Optional["_models.ManagedClusterAPIServerAccessProfile"] = None,
         disk_encryption_set_id: Optional[str] = None,
-        identity_profile: Optional[Dict[str, "ManagedClusterPropertiesIdentityProfileValue"]] = None,
+        identity_profile: Optional[Dict[str, "_models.ManagedClusterPropertiesIdentityProfileValue"]] = None,
         **kwargs
     ):
         """
@@ -867,7 +866,7 @@ class CloudErrorBody(msrest.serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["CloudErrorBody"]] = None,
+        details: Optional[List["_models.CloudErrorBody"]] = None,
         **kwargs
     ):
         """
@@ -911,7 +910,7 @@ class ContainerServiceDiagnosticsProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        vm_diagnostics: "ContainerServiceVMDiagnostics",
+        vm_diagnostics: "_models.ContainerServiceVMDiagnostics",
         **kwargs
     ):
         """
@@ -948,7 +947,7 @@ class ContainerServiceLinuxProfile(msrest.serialization.Model):
         self,
         *,
         admin_username: str,
-        ssh: "ContainerServiceSshConfiguration",
+        ssh: "_models.ContainerServiceSshConfiguration",
         **kwargs
     ):
         """
@@ -971,17 +970,17 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar count: Number of masters (VMs) in the container service cluster. Allowed values are 1, 3,
-     and 5. The default value is 1. Possible values include: 1, 3, 5. Default value: "1".
+     and 5. The default value is 1. Known values are: 1, 3, 5. Default value: "1".
     :vartype count: int or ~azure.mgmt.containerservice.v2020_09_01.models.Count
     :ivar dns_prefix: Required. DNS prefix to be used to create the FQDN for the master pool.
     :vartype dns_prefix: str
-    :ivar vm_size: Required. Size of agent VMs. Possible values include: "Standard_A1",
-     "Standard_A10", "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2",
-     "Standard_A2m_v2", "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2",
-     "Standard_A5", "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2",
-     "Standard_A8m_v2", "Standard_A9", "Standard_B2ms", "Standard_B2s", "Standard_B4ms",
-     "Standard_B8ms", "Standard_D1", "Standard_D11", "Standard_D11_v2", "Standard_D11_v2_Promo",
-     "Standard_D12", "Standard_D12_v2", "Standard_D12_v2_Promo", "Standard_D13", "Standard_D13_v2",
+    :ivar vm_size: Required. Size of agent VMs. Known values are: "Standard_A1", "Standard_A10",
+     "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2", "Standard_A2m_v2",
+     "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2", "Standard_A5",
+     "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2", "Standard_A8m_v2",
+     "Standard_A9", "Standard_B2ms", "Standard_B2s", "Standard_B4ms", "Standard_B8ms",
+     "Standard_D1", "Standard_D11", "Standard_D11_v2", "Standard_D11_v2_Promo", "Standard_D12",
+     "Standard_D12_v2", "Standard_D12_v2_Promo", "Standard_D13", "Standard_D13_v2",
      "Standard_D13_v2_Promo", "Standard_D14", "Standard_D14_v2", "Standard_D14_v2_Promo",
      "Standard_D15_v2", "Standard_D16_v3", "Standard_D16s_v3", "Standard_D1_v2", "Standard_D2",
      "Standard_D2_v2", "Standard_D2_v2_Promo", "Standard_D2_v3", "Standard_D2s_v3", "Standard_D3",
@@ -1026,7 +1025,7 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
     :vartype first_consecutive_static_ip: str
     :ivar storage_profile: Storage profile specifies what kind of storage used. Choose from
      StorageAccount and ManagedDisks. Leave it empty, we will choose for you based on the
-     orchestrator choice. Possible values include: "StorageAccount", "ManagedDisks".
+     orchestrator choice. Known values are: "StorageAccount", "ManagedDisks".
     :vartype storage_profile: str or
      ~azure.mgmt.containerservice.v2020_09_01.models.ContainerServiceStorageProfileTypes
     :ivar fqdn: FQDN for the master pool.
@@ -1055,27 +1054,27 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
         self,
         *,
         dns_prefix: str,
-        vm_size: Union[str, "ContainerServiceVMSizeTypes"],
-        count: Optional[Union[int, "Count"]] = 1,
+        vm_size: Union[str, "_models.ContainerServiceVMSizeTypes"],
+        count: Optional[Union[int, "_models.Count"]] = 1,
         os_disk_size_gb: Optional[int] = None,
         vnet_subnet_id: Optional[str] = None,
         first_consecutive_static_ip: Optional[str] = "10.240.255.5",
-        storage_profile: Optional[Union[str, "ContainerServiceStorageProfileTypes"]] = None,
+        storage_profile: Optional[Union[str, "_models.ContainerServiceStorageProfileTypes"]] = None,
         **kwargs
     ):
         """
         :keyword count: Number of masters (VMs) in the container service cluster. Allowed values are 1,
-         3, and 5. The default value is 1. Possible values include: 1, 3, 5. Default value: "1".
+         3, and 5. The default value is 1. Known values are: 1, 3, 5. Default value: "1".
         :paramtype count: int or ~azure.mgmt.containerservice.v2020_09_01.models.Count
         :keyword dns_prefix: Required. DNS prefix to be used to create the FQDN for the master pool.
         :paramtype dns_prefix: str
-        :keyword vm_size: Required. Size of agent VMs. Possible values include: "Standard_A1",
-         "Standard_A10", "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2",
-         "Standard_A2m_v2", "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2",
-         "Standard_A5", "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2",
-         "Standard_A8m_v2", "Standard_A9", "Standard_B2ms", "Standard_B2s", "Standard_B4ms",
-         "Standard_B8ms", "Standard_D1", "Standard_D11", "Standard_D11_v2", "Standard_D11_v2_Promo",
-         "Standard_D12", "Standard_D12_v2", "Standard_D12_v2_Promo", "Standard_D13", "Standard_D13_v2",
+        :keyword vm_size: Required. Size of agent VMs. Known values are: "Standard_A1", "Standard_A10",
+         "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2", "Standard_A2m_v2",
+         "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2", "Standard_A5",
+         "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2", "Standard_A8m_v2",
+         "Standard_A9", "Standard_B2ms", "Standard_B2s", "Standard_B4ms", "Standard_B8ms",
+         "Standard_D1", "Standard_D11", "Standard_D11_v2", "Standard_D11_v2_Promo", "Standard_D12",
+         "Standard_D12_v2", "Standard_D12_v2_Promo", "Standard_D13", "Standard_D13_v2",
          "Standard_D13_v2_Promo", "Standard_D14", "Standard_D14_v2", "Standard_D14_v2_Promo",
          "Standard_D15_v2", "Standard_D16_v3", "Standard_D16s_v3", "Standard_D1_v2", "Standard_D2",
          "Standard_D2_v2", "Standard_D2_v2_Promo", "Standard_D2_v3", "Standard_D2s_v3", "Standard_D3",
@@ -1120,7 +1119,7 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
         :paramtype first_consecutive_static_ip: str
         :keyword storage_profile: Storage profile specifies what kind of storage used. Choose from
          StorageAccount and ManagedDisks. Leave it empty, we will choose for you based on the
-         orchestrator choice. Possible values include: "StorageAccount", "ManagedDisks".
+         orchestrator choice. Known values are: "StorageAccount", "ManagedDisks".
         :paramtype storage_profile: str or
          ~azure.mgmt.containerservice.v2020_09_01.models.ContainerServiceStorageProfileTypes
         """
@@ -1138,13 +1137,13 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
 class ContainerServiceNetworkProfile(msrest.serialization.Model):
     """Profile of network configuration.
 
-    :ivar network_plugin: Network plugin used for building Kubernetes network. Possible values
-     include: "azure", "kubenet". Default value: "kubenet".
+    :ivar network_plugin: Network plugin used for building Kubernetes network. Known values are:
+     "azure", "kubenet". Default value: "kubenet".
     :vartype network_plugin: str or ~azure.mgmt.containerservice.v2020_09_01.models.NetworkPlugin
-    :ivar network_policy: Network policy used for building Kubernetes network. Possible values
-     include: "calico", "azure".
+    :ivar network_policy: Network policy used for building Kubernetes network. Known values are:
+     "calico", "azure".
     :vartype network_policy: str or ~azure.mgmt.containerservice.v2020_09_01.models.NetworkPolicy
-    :ivar network_mode: Network mode used for building Kubernetes network. Possible values include:
+    :ivar network_mode: Network mode used for building Kubernetes network. Known values are:
      "transparent", "bridge".
     :vartype network_mode: str or ~azure.mgmt.containerservice.v2020_09_01.models.NetworkMode
     :ivar pod_cidr: A CIDR notation IP range from which to assign pod IPs when kubenet is used.
@@ -1158,11 +1157,11 @@ class ContainerServiceNetworkProfile(msrest.serialization.Model):
     :ivar docker_bridge_cidr: A CIDR notation IP range assigned to the Docker bridge network. It
      must not overlap with any Subnet IP ranges or the Kubernetes service address range.
     :vartype docker_bridge_cidr: str
-    :ivar outbound_type: The outbound (egress) routing method. Possible values include:
-     "loadBalancer", "userDefinedRouting". Default value: "loadBalancer".
+    :ivar outbound_type: The outbound (egress) routing method. Known values are: "loadBalancer",
+     "userDefinedRouting". Default value: "loadBalancer".
     :vartype outbound_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.OutboundType
-    :ivar load_balancer_sku: The load balancer sku for the managed cluster. Possible values
-     include: "standard", "basic".
+    :ivar load_balancer_sku: The load balancer sku for the managed cluster. Known values are:
+     "standard", "basic".
     :vartype load_balancer_sku: str or
      ~azure.mgmt.containerservice.v2020_09_01.models.LoadBalancerSku
     :ivar load_balancer_profile: Profile of the cluster load balancer.
@@ -1193,27 +1192,27 @@ class ContainerServiceNetworkProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        network_plugin: Optional[Union[str, "NetworkPlugin"]] = "kubenet",
-        network_policy: Optional[Union[str, "NetworkPolicy"]] = None,
-        network_mode: Optional[Union[str, "NetworkMode"]] = None,
+        network_plugin: Optional[Union[str, "_models.NetworkPlugin"]] = "kubenet",
+        network_policy: Optional[Union[str, "_models.NetworkPolicy"]] = None,
+        network_mode: Optional[Union[str, "_models.NetworkMode"]] = None,
         pod_cidr: Optional[str] = "10.244.0.0/16",
         service_cidr: Optional[str] = "10.0.0.0/16",
         dns_service_ip: Optional[str] = "10.0.0.10",
         docker_bridge_cidr: Optional[str] = "172.17.0.1/16",
-        outbound_type: Optional[Union[str, "OutboundType"]] = "loadBalancer",
-        load_balancer_sku: Optional[Union[str, "LoadBalancerSku"]] = None,
-        load_balancer_profile: Optional["ManagedClusterLoadBalancerProfile"] = None,
+        outbound_type: Optional[Union[str, "_models.OutboundType"]] = "loadBalancer",
+        load_balancer_sku: Optional[Union[str, "_models.LoadBalancerSku"]] = None,
+        load_balancer_profile: Optional["_models.ManagedClusterLoadBalancerProfile"] = None,
         **kwargs
     ):
         """
-        :keyword network_plugin: Network plugin used for building Kubernetes network. Possible values
-         include: "azure", "kubenet". Default value: "kubenet".
+        :keyword network_plugin: Network plugin used for building Kubernetes network. Known values are:
+         "azure", "kubenet". Default value: "kubenet".
         :paramtype network_plugin: str or ~azure.mgmt.containerservice.v2020_09_01.models.NetworkPlugin
-        :keyword network_policy: Network policy used for building Kubernetes network. Possible values
-         include: "calico", "azure".
+        :keyword network_policy: Network policy used for building Kubernetes network. Known values are:
+         "calico", "azure".
         :paramtype network_policy: str or ~azure.mgmt.containerservice.v2020_09_01.models.NetworkPolicy
-        :keyword network_mode: Network mode used for building Kubernetes network. Possible values
-         include: "transparent", "bridge".
+        :keyword network_mode: Network mode used for building Kubernetes network. Known values are:
+         "transparent", "bridge".
         :paramtype network_mode: str or ~azure.mgmt.containerservice.v2020_09_01.models.NetworkMode
         :keyword pod_cidr: A CIDR notation IP range from which to assign pod IPs when kubenet is used.
         :paramtype pod_cidr: str
@@ -1226,11 +1225,11 @@ class ContainerServiceNetworkProfile(msrest.serialization.Model):
         :keyword docker_bridge_cidr: A CIDR notation IP range assigned to the Docker bridge network. It
          must not overlap with any Subnet IP ranges or the Kubernetes service address range.
         :paramtype docker_bridge_cidr: str
-        :keyword outbound_type: The outbound (egress) routing method. Possible values include:
-         "loadBalancer", "userDefinedRouting". Default value: "loadBalancer".
+        :keyword outbound_type: The outbound (egress) routing method. Known values are: "loadBalancer",
+         "userDefinedRouting". Default value: "loadBalancer".
         :paramtype outbound_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.OutboundType
-        :keyword load_balancer_sku: The load balancer sku for the managed cluster. Possible values
-         include: "standard", "basic".
+        :keyword load_balancer_sku: The load balancer sku for the managed cluster. Known values are:
+         "standard", "basic".
         :paramtype load_balancer_sku: str or
          ~azure.mgmt.containerservice.v2020_09_01.models.LoadBalancerSku
         :keyword load_balancer_profile: Profile of the cluster load balancer.
@@ -1272,7 +1271,7 @@ class ContainerServiceSshConfiguration(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        public_keys: List["ContainerServiceSshPublicKey"],
+        public_keys: List["_models.ContainerServiceSshPublicKey"],
         **kwargs
     ):
         """
@@ -1596,25 +1595,25 @@ class ManagedCluster(Resource, BaseManagedCluster):
         self,
         *,
         location: str,
-        identity: Optional["ManagedClusterIdentity"] = None,
+        identity: Optional["_models.ManagedClusterIdentity"] = None,
         kubernetes_version: Optional[str] = None,
         dns_prefix: Optional[str] = None,
-        agent_pool_profiles: Optional[List["ManagedClusterAgentPoolProfile"]] = None,
-        linux_profile: Optional["ContainerServiceLinuxProfile"] = None,
-        windows_profile: Optional["ManagedClusterWindowsProfile"] = None,
-        service_principal_profile: Optional["ManagedClusterServicePrincipalProfile"] = None,
-        addon_profiles: Optional[Dict[str, "ManagedClusterAddonProfile"]] = None,
+        agent_pool_profiles: Optional[List["_models.ManagedClusterAgentPoolProfile"]] = None,
+        linux_profile: Optional["_models.ContainerServiceLinuxProfile"] = None,
+        windows_profile: Optional["_models.ManagedClusterWindowsProfile"] = None,
+        service_principal_profile: Optional["_models.ManagedClusterServicePrincipalProfile"] = None,
+        addon_profiles: Optional[Dict[str, "_models.ManagedClusterAddonProfile"]] = None,
         node_resource_group: Optional[str] = None,
         enable_rbac: Optional[bool] = None,
         enable_pod_security_policy: Optional[bool] = None,
-        network_profile: Optional["ContainerServiceNetworkProfile"] = None,
-        aad_profile: Optional["ManagedClusterAADProfile"] = None,
-        auto_scaler_profile: Optional["ManagedClusterPropertiesAutoScalerProfile"] = None,
-        api_server_access_profile: Optional["ManagedClusterAPIServerAccessProfile"] = None,
+        network_profile: Optional["_models.ContainerServiceNetworkProfile"] = None,
+        aad_profile: Optional["_models.ManagedClusterAADProfile"] = None,
+        auto_scaler_profile: Optional["_models.ManagedClusterPropertiesAutoScalerProfile"] = None,
+        api_server_access_profile: Optional["_models.ManagedClusterAPIServerAccessProfile"] = None,
         disk_encryption_set_id: Optional[str] = None,
-        identity_profile: Optional[Dict[str, "ManagedClusterPropertiesIdentityProfileValue"]] = None,
+        identity_profile: Optional[Dict[str, "_models.ManagedClusterPropertiesIdentityProfileValue"]] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["ManagedClusterSKU"] = None,
+        sku: Optional["_models.ManagedClusterSKU"] = None,
         **kwargs
     ):
         """
@@ -1961,7 +1960,7 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
      range of 0 to 100 (inclusive) for user pools and in the range of 1 to 100 (inclusive) for
      system pools. The default value is 1.
     :vartype count: int
-    :ivar vm_size: Size of agent VMs. Possible values include: "Standard_A1", "Standard_A10",
+    :ivar vm_size: Size of agent VMs. Known values are: "Standard_A1", "Standard_A10",
      "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2", "Standard_A2m_v2",
      "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2", "Standard_A5",
      "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2", "Standard_A8m_v2",
@@ -2006,15 +2005,15 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
      the vmSize specified.
     :vartype os_disk_size_gb: int
     :ivar os_disk_type: OS disk type to be used for machines in a given agent pool. Allowed values
-     are 'Ephemeral' and 'Managed'. Defaults to 'Managed'. May not be changed after creation.
-     Possible values include: "Managed", "Ephemeral".
+     are 'Ephemeral' and 'Managed'. Defaults to 'Managed'. May not be changed after creation. Known
+     values are: "Managed", "Ephemeral".
     :vartype os_disk_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.OSDiskType
     :ivar vnet_subnet_id: VNet SubnetID specifies the VNet's subnet identifier.
     :vartype vnet_subnet_id: str
     :ivar max_pods: Maximum number of pods that can run on a node.
     :vartype max_pods: int
     :ivar os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default to
-     Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+     Linux. Known values are: "Linux", "Windows". Default value: "Linux".
     :vartype os_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.OSType
     :ivar max_count: Maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -2022,11 +2021,10 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
     :vartype min_count: int
     :ivar enable_auto_scaling: Whether to enable auto-scaler.
     :vartype enable_auto_scaling: bool
-    :ivar type: AgentPoolType represents types of an agent pool. Possible values include:
+    :ivar type: AgentPoolType represents types of an agent pool. Known values are:
      "VirtualMachineScaleSets", "AvailabilitySet".
     :vartype type: str or ~azure.mgmt.containerservice.v2020_09_01.models.AgentPoolType
-    :ivar mode: AgentPoolMode represents mode of an agent pool. Possible values include: "System",
-     "User".
+    :ivar mode: AgentPoolMode represents mode of an agent pool. Known values are: "System", "User".
     :vartype mode: str or ~azure.mgmt.containerservice.v2020_09_01.models.AgentPoolMode
     :ivar orchestrator_version: Version of orchestrator specified when creating the managed
      cluster.
@@ -2047,12 +2045,11 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
     :ivar enable_node_public_ip: Enable public IP for nodes.
     :vartype enable_node_public_ip: bool
     :ivar scale_set_priority: ScaleSetPriority to be used to specify virtual machine scale set
-     priority. Default to regular. Possible values include: "Spot", "Regular". Default value:
-     "Regular".
+     priority. Default to regular. Known values are: "Spot", "Regular". Default value: "Regular".
     :vartype scale_set_priority: str or
      ~azure.mgmt.containerservice.v2020_09_01.models.ScaleSetPriority
     :ivar scale_set_eviction_policy: ScaleSetEvictionPolicy to be used to specify eviction policy
-     for Spot virtual machine scale set. Default to Delete. Possible values include: "Delete",
+     for Spot virtual machine scale set. Default to Delete. Known values are: "Delete",
      "Deallocate". Default value: "Delete".
     :vartype scale_set_eviction_policy: str or
      ~azure.mgmt.containerservice.v2020_09_01.models.ScaleSetEvictionPolicy
@@ -2112,23 +2109,23 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
         self,
         *,
         count: Optional[int] = None,
-        vm_size: Optional[Union[str, "ContainerServiceVMSizeTypes"]] = None,
+        vm_size: Optional[Union[str, "_models.ContainerServiceVMSizeTypes"]] = None,
         os_disk_size_gb: Optional[int] = None,
-        os_disk_type: Optional[Union[str, "OSDiskType"]] = None,
+        os_disk_type: Optional[Union[str, "_models.OSDiskType"]] = None,
         vnet_subnet_id: Optional[str] = None,
         max_pods: Optional[int] = None,
-        os_type: Optional[Union[str, "OSType"]] = "Linux",
+        os_type: Optional[Union[str, "_models.OSType"]] = "Linux",
         max_count: Optional[int] = None,
         min_count: Optional[int] = None,
         enable_auto_scaling: Optional[bool] = None,
-        type: Optional[Union[str, "AgentPoolType"]] = None,
-        mode: Optional[Union[str, "AgentPoolMode"]] = None,
+        type: Optional[Union[str, "_models.AgentPoolType"]] = None,
+        mode: Optional[Union[str, "_models.AgentPoolMode"]] = None,
         orchestrator_version: Optional[str] = None,
-        upgrade_settings: Optional["AgentPoolUpgradeSettings"] = None,
+        upgrade_settings: Optional["_models.AgentPoolUpgradeSettings"] = None,
         availability_zones: Optional[List[str]] = None,
         enable_node_public_ip: Optional[bool] = None,
-        scale_set_priority: Optional[Union[str, "ScaleSetPriority"]] = "Regular",
-        scale_set_eviction_policy: Optional[Union[str, "ScaleSetEvictionPolicy"]] = "Delete",
+        scale_set_priority: Optional[Union[str, "_models.ScaleSetPriority"]] = "Regular",
+        scale_set_eviction_policy: Optional[Union[str, "_models.ScaleSetEvictionPolicy"]] = "Delete",
         spot_max_price: Optional[float] = -1,
         tags: Optional[Dict[str, str]] = None,
         node_labels: Optional[Dict[str, str]] = None,
@@ -2141,7 +2138,7 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
          range of 0 to 100 (inclusive) for user pools and in the range of 1 to 100 (inclusive) for
          system pools. The default value is 1.
         :paramtype count: int
-        :keyword vm_size: Size of agent VMs. Possible values include: "Standard_A1", "Standard_A10",
+        :keyword vm_size: Size of agent VMs. Known values are: "Standard_A1", "Standard_A10",
          "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2", "Standard_A2m_v2",
          "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2", "Standard_A5",
          "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2", "Standard_A8m_v2",
@@ -2187,14 +2184,14 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
         :paramtype os_disk_size_gb: int
         :keyword os_disk_type: OS disk type to be used for machines in a given agent pool. Allowed
          values are 'Ephemeral' and 'Managed'. Defaults to 'Managed'. May not be changed after creation.
-         Possible values include: "Managed", "Ephemeral".
+         Known values are: "Managed", "Ephemeral".
         :paramtype os_disk_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.OSDiskType
         :keyword vnet_subnet_id: VNet SubnetID specifies the VNet's subnet identifier.
         :paramtype vnet_subnet_id: str
         :keyword max_pods: Maximum number of pods that can run on a node.
         :paramtype max_pods: int
         :keyword os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default
-         to Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+         to Linux. Known values are: "Linux", "Windows". Default value: "Linux".
         :paramtype os_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.OSType
         :keyword max_count: Maximum number of nodes for auto-scaling.
         :paramtype max_count: int
@@ -2202,11 +2199,11 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
         :paramtype min_count: int
         :keyword enable_auto_scaling: Whether to enable auto-scaler.
         :paramtype enable_auto_scaling: bool
-        :keyword type: AgentPoolType represents types of an agent pool. Possible values include:
+        :keyword type: AgentPoolType represents types of an agent pool. Known values are:
          "VirtualMachineScaleSets", "AvailabilitySet".
         :paramtype type: str or ~azure.mgmt.containerservice.v2020_09_01.models.AgentPoolType
-        :keyword mode: AgentPoolMode represents mode of an agent pool. Possible values include:
-         "System", "User".
+        :keyword mode: AgentPoolMode represents mode of an agent pool. Known values are: "System",
+         "User".
         :paramtype mode: str or ~azure.mgmt.containerservice.v2020_09_01.models.AgentPoolMode
         :keyword orchestrator_version: Version of orchestrator specified when creating the managed
          cluster.
@@ -2220,13 +2217,12 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
         :keyword enable_node_public_ip: Enable public IP for nodes.
         :paramtype enable_node_public_ip: bool
         :keyword scale_set_priority: ScaleSetPriority to be used to specify virtual machine scale set
-         priority. Default to regular. Possible values include: "Spot", "Regular". Default value:
-         "Regular".
+         priority. Default to regular. Known values are: "Spot", "Regular". Default value: "Regular".
         :paramtype scale_set_priority: str or
          ~azure.mgmt.containerservice.v2020_09_01.models.ScaleSetPriority
         :keyword scale_set_eviction_policy: ScaleSetEvictionPolicy to be used to specify eviction
-         policy for Spot virtual machine scale set. Default to Delete. Possible values include:
-         "Delete", "Deallocate". Default value: "Delete".
+         policy for Spot virtual machine scale set. Default to Delete. Known values are: "Delete",
+         "Deallocate". Default value: "Delete".
         :paramtype scale_set_eviction_policy: str or
          ~azure.mgmt.containerservice.v2020_09_01.models.ScaleSetEvictionPolicy
         :keyword spot_max_price: SpotMaxPrice to be used to specify the maximum price you are willing
@@ -2284,7 +2280,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      range of 0 to 100 (inclusive) for user pools and in the range of 1 to 100 (inclusive) for
      system pools. The default value is 1.
     :vartype count: int
-    :ivar vm_size: Size of agent VMs. Possible values include: "Standard_A1", "Standard_A10",
+    :ivar vm_size: Size of agent VMs. Known values are: "Standard_A1", "Standard_A10",
      "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2", "Standard_A2m_v2",
      "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2", "Standard_A5",
      "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2", "Standard_A8m_v2",
@@ -2329,15 +2325,15 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      the vmSize specified.
     :vartype os_disk_size_gb: int
     :ivar os_disk_type: OS disk type to be used for machines in a given agent pool. Allowed values
-     are 'Ephemeral' and 'Managed'. Defaults to 'Managed'. May not be changed after creation.
-     Possible values include: "Managed", "Ephemeral".
+     are 'Ephemeral' and 'Managed'. Defaults to 'Managed'. May not be changed after creation. Known
+     values are: "Managed", "Ephemeral".
     :vartype os_disk_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.OSDiskType
     :ivar vnet_subnet_id: VNet SubnetID specifies the VNet's subnet identifier.
     :vartype vnet_subnet_id: str
     :ivar max_pods: Maximum number of pods that can run on a node.
     :vartype max_pods: int
     :ivar os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default to
-     Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+     Linux. Known values are: "Linux", "Windows". Default value: "Linux".
     :vartype os_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.OSType
     :ivar max_count: Maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -2345,11 +2341,10 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :vartype min_count: int
     :ivar enable_auto_scaling: Whether to enable auto-scaler.
     :vartype enable_auto_scaling: bool
-    :ivar type: AgentPoolType represents types of an agent pool. Possible values include:
+    :ivar type: AgentPoolType represents types of an agent pool. Known values are:
      "VirtualMachineScaleSets", "AvailabilitySet".
     :vartype type: str or ~azure.mgmt.containerservice.v2020_09_01.models.AgentPoolType
-    :ivar mode: AgentPoolMode represents mode of an agent pool. Possible values include: "System",
-     "User".
+    :ivar mode: AgentPoolMode represents mode of an agent pool. Known values are: "System", "User".
     :vartype mode: str or ~azure.mgmt.containerservice.v2020_09_01.models.AgentPoolMode
     :ivar orchestrator_version: Version of orchestrator specified when creating the managed
      cluster.
@@ -2370,12 +2365,11 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :ivar enable_node_public_ip: Enable public IP for nodes.
     :vartype enable_node_public_ip: bool
     :ivar scale_set_priority: ScaleSetPriority to be used to specify virtual machine scale set
-     priority. Default to regular. Possible values include: "Spot", "Regular". Default value:
-     "Regular".
+     priority. Default to regular. Known values are: "Spot", "Regular". Default value: "Regular".
     :vartype scale_set_priority: str or
      ~azure.mgmt.containerservice.v2020_09_01.models.ScaleSetPriority
     :ivar scale_set_eviction_policy: ScaleSetEvictionPolicy to be used to specify eviction policy
-     for Spot virtual machine scale set. Default to Delete. Possible values include: "Delete",
+     for Spot virtual machine scale set. Default to Delete. Known values are: "Delete",
      "Deallocate". Default value: "Delete".
     :vartype scale_set_eviction_policy: str or
      ~azure.mgmt.containerservice.v2020_09_01.models.ScaleSetEvictionPolicy
@@ -2441,23 +2435,23 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         *,
         name: str,
         count: Optional[int] = None,
-        vm_size: Optional[Union[str, "ContainerServiceVMSizeTypes"]] = None,
+        vm_size: Optional[Union[str, "_models.ContainerServiceVMSizeTypes"]] = None,
         os_disk_size_gb: Optional[int] = None,
-        os_disk_type: Optional[Union[str, "OSDiskType"]] = None,
+        os_disk_type: Optional[Union[str, "_models.OSDiskType"]] = None,
         vnet_subnet_id: Optional[str] = None,
         max_pods: Optional[int] = None,
-        os_type: Optional[Union[str, "OSType"]] = "Linux",
+        os_type: Optional[Union[str, "_models.OSType"]] = "Linux",
         max_count: Optional[int] = None,
         min_count: Optional[int] = None,
         enable_auto_scaling: Optional[bool] = None,
-        type: Optional[Union[str, "AgentPoolType"]] = None,
-        mode: Optional[Union[str, "AgentPoolMode"]] = None,
+        type: Optional[Union[str, "_models.AgentPoolType"]] = None,
+        mode: Optional[Union[str, "_models.AgentPoolMode"]] = None,
         orchestrator_version: Optional[str] = None,
-        upgrade_settings: Optional["AgentPoolUpgradeSettings"] = None,
+        upgrade_settings: Optional["_models.AgentPoolUpgradeSettings"] = None,
         availability_zones: Optional[List[str]] = None,
         enable_node_public_ip: Optional[bool] = None,
-        scale_set_priority: Optional[Union[str, "ScaleSetPriority"]] = "Regular",
-        scale_set_eviction_policy: Optional[Union[str, "ScaleSetEvictionPolicy"]] = "Delete",
+        scale_set_priority: Optional[Union[str, "_models.ScaleSetPriority"]] = "Regular",
+        scale_set_eviction_policy: Optional[Union[str, "_models.ScaleSetEvictionPolicy"]] = "Delete",
         spot_max_price: Optional[float] = -1,
         tags: Optional[Dict[str, str]] = None,
         node_labels: Optional[Dict[str, str]] = None,
@@ -2470,7 +2464,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
          range of 0 to 100 (inclusive) for user pools and in the range of 1 to 100 (inclusive) for
          system pools. The default value is 1.
         :paramtype count: int
-        :keyword vm_size: Size of agent VMs. Possible values include: "Standard_A1", "Standard_A10",
+        :keyword vm_size: Size of agent VMs. Known values are: "Standard_A1", "Standard_A10",
          "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2", "Standard_A2m_v2",
          "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2", "Standard_A5",
          "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2", "Standard_A8m_v2",
@@ -2516,14 +2510,14 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         :paramtype os_disk_size_gb: int
         :keyword os_disk_type: OS disk type to be used for machines in a given agent pool. Allowed
          values are 'Ephemeral' and 'Managed'. Defaults to 'Managed'. May not be changed after creation.
-         Possible values include: "Managed", "Ephemeral".
+         Known values are: "Managed", "Ephemeral".
         :paramtype os_disk_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.OSDiskType
         :keyword vnet_subnet_id: VNet SubnetID specifies the VNet's subnet identifier.
         :paramtype vnet_subnet_id: str
         :keyword max_pods: Maximum number of pods that can run on a node.
         :paramtype max_pods: int
         :keyword os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default
-         to Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+         to Linux. Known values are: "Linux", "Windows". Default value: "Linux".
         :paramtype os_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.OSType
         :keyword max_count: Maximum number of nodes for auto-scaling.
         :paramtype max_count: int
@@ -2531,11 +2525,11 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         :paramtype min_count: int
         :keyword enable_auto_scaling: Whether to enable auto-scaler.
         :paramtype enable_auto_scaling: bool
-        :keyword type: AgentPoolType represents types of an agent pool. Possible values include:
+        :keyword type: AgentPoolType represents types of an agent pool. Known values are:
          "VirtualMachineScaleSets", "AvailabilitySet".
         :paramtype type: str or ~azure.mgmt.containerservice.v2020_09_01.models.AgentPoolType
-        :keyword mode: AgentPoolMode represents mode of an agent pool. Possible values include:
-         "System", "User".
+        :keyword mode: AgentPoolMode represents mode of an agent pool. Known values are: "System",
+         "User".
         :paramtype mode: str or ~azure.mgmt.containerservice.v2020_09_01.models.AgentPoolMode
         :keyword orchestrator_version: Version of orchestrator specified when creating the managed
          cluster.
@@ -2549,13 +2543,12 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         :keyword enable_node_public_ip: Enable public IP for nodes.
         :paramtype enable_node_public_ip: bool
         :keyword scale_set_priority: ScaleSetPriority to be used to specify virtual machine scale set
-         priority. Default to regular. Possible values include: "Spot", "Regular". Default value:
-         "Regular".
+         priority. Default to regular. Known values are: "Spot", "Regular". Default value: "Regular".
         :paramtype scale_set_priority: str or
          ~azure.mgmt.containerservice.v2020_09_01.models.ScaleSetPriority
         :keyword scale_set_eviction_policy: ScaleSetEvictionPolicy to be used to specify eviction
-         policy for Spot virtual machine scale set. Default to Delete. Possible values include:
-         "Delete", "Deallocate". Default value: "Delete".
+         policy for Spot virtual machine scale set. Default to Delete. Known values are: "Delete",
+         "Deallocate". Default value: "Delete".
         :paramtype scale_set_eviction_policy: str or
          ~azure.mgmt.containerservice.v2020_09_01.models.ScaleSetEvictionPolicy
         :keyword spot_max_price: SpotMaxPrice to be used to specify the maximum price you are willing
@@ -2626,8 +2619,8 @@ class ManagedClusterIdentity(msrest.serialization.Model):
     :ivar type: The type of identity used for the managed cluster. Type 'SystemAssigned' will use
      an implicitly created identity in master components and an auto-created user assigned identity
      in MC_ resource group in agent nodes. Type 'None' will not use MSI for the managed cluster,
-     service principal will be used instead. Possible values include: "SystemAssigned",
-     "UserAssigned", "None".
+     service principal will be used instead. Known values are: "SystemAssigned", "UserAssigned",
+     "None".
     :vartype type: str or ~azure.mgmt.containerservice.v2020_09_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The user identity associated with the managed cluster. This
      identity will be used in control plane and only one user assigned identity is allowed. The user
@@ -2652,15 +2645,15 @@ class ManagedClusterIdentity(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "ManagedClusterIdentityUserAssignedIdentitiesValue"]] = None,
+        type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.ManagedClusterIdentityUserAssignedIdentitiesValue"]] = None,
         **kwargs
     ):
         """
         :keyword type: The type of identity used for the managed cluster. Type 'SystemAssigned' will
          use an implicitly created identity in master components and an auto-created user assigned
          identity in MC_ resource group in agent nodes. Type 'None' will not use MSI for the managed
-         cluster, service principal will be used instead. Possible values include: "SystemAssigned",
+         cluster, service principal will be used instead. Known values are: "SystemAssigned",
          "UserAssigned", "None".
         :paramtype type: str or ~azure.mgmt.containerservice.v2020_09_01.models.ResourceIdentityType
         :keyword user_assigned_identities: The user identity associated with the managed cluster. This
@@ -2732,7 +2725,7 @@ class ManagedClusterListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ManagedCluster"]] = None,
+        value: Optional[List["_models.ManagedCluster"]] = None,
         **kwargs
     ):
         """
@@ -2786,10 +2779,10 @@ class ManagedClusterLoadBalancerProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        managed_outbound_i_ps: Optional["ManagedClusterLoadBalancerProfileManagedOutboundIPs"] = None,
-        outbound_ip_prefixes: Optional["ManagedClusterLoadBalancerProfileOutboundIPPrefixes"] = None,
-        outbound_i_ps: Optional["ManagedClusterLoadBalancerProfileOutboundIPs"] = None,
-        effective_outbound_i_ps: Optional[List["ResourceReference"]] = None,
+        managed_outbound_i_ps: Optional["_models.ManagedClusterLoadBalancerProfileManagedOutboundIPs"] = None,
+        outbound_ip_prefixes: Optional["_models.ManagedClusterLoadBalancerProfileOutboundIPPrefixes"] = None,
+        outbound_i_ps: Optional["_models.ManagedClusterLoadBalancerProfileOutboundIPs"] = None,
+        effective_outbound_i_ps: Optional[List["_models.ResourceReference"]] = None,
         allocated_outbound_ports: Optional[int] = 0,
         idle_timeout_in_minutes: Optional[int] = 30,
         **kwargs
@@ -2872,7 +2865,7 @@ class ManagedClusterLoadBalancerProfileOutboundIPPrefixes(msrest.serialization.M
     def __init__(
         self,
         *,
-        public_ip_prefixes: Optional[List["ResourceReference"]] = None,
+        public_ip_prefixes: Optional[List["_models.ResourceReference"]] = None,
         **kwargs
     ):
         """
@@ -2898,7 +2891,7 @@ class ManagedClusterLoadBalancerProfileOutboundIPs(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        public_i_ps: Optional[List["ResourceReference"]] = None,
+        public_i_ps: Optional[List["_models.ResourceReference"]] = None,
         **kwargs
     ):
         """
@@ -2919,7 +2912,7 @@ class ManagedClusterPoolUpgradeProfile(msrest.serialization.Model):
     :ivar name: Pool name.
     :vartype name: str
     :ivar os_type: Required. OsType to be used to specify os type. Choose from Linux and Windows.
-     Default to Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+     Default to Linux. Known values are: "Linux", "Windows". Default value: "Linux".
     :vartype os_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.OSType
     :ivar upgrades: List of orchestrator types and versions available for upgrade.
     :vartype upgrades:
@@ -2942,9 +2935,9 @@ class ManagedClusterPoolUpgradeProfile(msrest.serialization.Model):
         self,
         *,
         kubernetes_version: str,
-        os_type: Union[str, "OSType"] = "Linux",
+        os_type: Union[str, "_models.OSType"] = "Linux",
         name: Optional[str] = None,
-        upgrades: Optional[List["ManagedClusterPoolUpgradeProfileUpgradesItem"]] = None,
+        upgrades: Optional[List["_models.ManagedClusterPoolUpgradeProfileUpgradesItem"]] = None,
         **kwargs
     ):
         """
@@ -2953,7 +2946,7 @@ class ManagedClusterPoolUpgradeProfile(msrest.serialization.Model):
         :keyword name: Pool name.
         :paramtype name: str
         :keyword os_type: Required. OsType to be used to specify os type. Choose from Linux and
-         Windows. Default to Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+         Windows. Default to Linux. Known values are: "Linux", "Windows". Default value: "Linux".
         :paramtype os_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.OSType
         :keyword upgrades: List of orchestrator types and versions available for upgrade.
         :paramtype upgrades:
@@ -3003,7 +2996,7 @@ class ManagedClusterPropertiesAutoScalerProfile(msrest.serialization.Model):
 
     :ivar balance_similar_node_groups:
     :vartype balance_similar_node_groups: str
-    :ivar expander: Possible values include: "least-waste", "most-pods", "random".
+    :ivar expander: Known values are: "least-waste", "most-pods", "random".
     :vartype expander: str or ~azure.mgmt.containerservice.v2020_09_01.models.Expander
     :ivar max_empty_bulk_delete:
     :vartype max_empty_bulk_delete: str
@@ -3058,7 +3051,7 @@ class ManagedClusterPropertiesAutoScalerProfile(msrest.serialization.Model):
         self,
         *,
         balance_similar_node_groups: Optional[str] = None,
-        expander: Optional[Union[str, "Expander"]] = None,
+        expander: Optional[Union[str, "_models.Expander"]] = None,
         max_empty_bulk_delete: Optional[str] = None,
         max_graceful_termination_sec: Optional[str] = None,
         max_total_unready_percentage: Optional[str] = None,
@@ -3078,7 +3071,7 @@ class ManagedClusterPropertiesAutoScalerProfile(msrest.serialization.Model):
         """
         :keyword balance_similar_node_groups:
         :paramtype balance_similar_node_groups: str
-        :keyword expander: Possible values include: "least-waste", "most-pods", "random".
+        :keyword expander: Known values are: "least-waste", "most-pods", "random".
         :paramtype expander: str or ~azure.mgmt.containerservice.v2020_09_01.models.Expander
         :keyword max_empty_bulk_delete:
         :paramtype max_empty_bulk_delete: str
@@ -3205,9 +3198,9 @@ class ManagedClusterServicePrincipalProfile(msrest.serialization.Model):
 class ManagedClusterSKU(msrest.serialization.Model):
     """ManagedClusterSKU.
 
-    :ivar name: Name of a managed cluster SKU. Possible values include: "Basic".
+    :ivar name: Name of a managed cluster SKU. Known values are: "Basic".
     :vartype name: str or ~azure.mgmt.containerservice.v2020_09_01.models.ManagedClusterSKUName
-    :ivar tier: Tier of a managed cluster SKU. Possible values include: "Paid", "Free".
+    :ivar tier: Tier of a managed cluster SKU. Known values are: "Paid", "Free".
     :vartype tier: str or ~azure.mgmt.containerservice.v2020_09_01.models.ManagedClusterSKUTier
     """
 
@@ -3219,14 +3212,14 @@ class ManagedClusterSKU(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: Optional[Union[str, "ManagedClusterSKUName"]] = None,
-        tier: Optional[Union[str, "ManagedClusterSKUTier"]] = None,
+        name: Optional[Union[str, "_models.ManagedClusterSKUName"]] = None,
+        tier: Optional[Union[str, "_models.ManagedClusterSKUTier"]] = None,
         **kwargs
     ):
         """
-        :keyword name: Name of a managed cluster SKU. Possible values include: "Basic".
+        :keyword name: Name of a managed cluster SKU. Known values are: "Basic".
         :paramtype name: str or ~azure.mgmt.containerservice.v2020_09_01.models.ManagedClusterSKUName
-        :keyword tier: Tier of a managed cluster SKU. Possible values include: "Paid", "Free".
+        :keyword tier: Tier of a managed cluster SKU. Known values are: "Paid", "Free".
         :paramtype tier: str or ~azure.mgmt.containerservice.v2020_09_01.models.ManagedClusterSKUTier
         """
         super(ManagedClusterSKU, self).__init__(**kwargs)
@@ -3275,8 +3268,8 @@ class ManagedClusterUpgradeProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        control_plane_profile: "ManagedClusterPoolUpgradeProfile",
-        agent_pool_profiles: List["ManagedClusterPoolUpgradeProfile"],
+        control_plane_profile: "_models.ManagedClusterPoolUpgradeProfile",
+        agent_pool_profiles: List["_models.ManagedClusterPoolUpgradeProfile"],
         **kwargs
     ):
         """
@@ -3318,7 +3311,7 @@ class ManagedClusterWindowsProfile(msrest.serialization.Model):
      "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!".
     :vartype admin_password: str
     :ivar license_type: The licenseType to use for Windows VMs. Windows_Server is used to enable
-     Azure Hybrid User Benefits for Windows VMs. Possible values include: "None", "Windows_Server".
+     Azure Hybrid User Benefits for Windows VMs. Known values are: "None", "Windows_Server".
     :vartype license_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.LicenseType
     """
 
@@ -3337,7 +3330,7 @@ class ManagedClusterWindowsProfile(msrest.serialization.Model):
         *,
         admin_username: str,
         admin_password: Optional[str] = None,
-        license_type: Optional[Union[str, "LicenseType"]] = None,
+        license_type: Optional[Union[str, "_models.LicenseType"]] = None,
         **kwargs
     ):
         """
@@ -3358,7 +3351,7 @@ class ManagedClusterWindowsProfile(msrest.serialization.Model):
          "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!".
         :paramtype admin_password: str
         :keyword license_type: The licenseType to use for Windows VMs. Windows_Server is used to enable
-         Azure Hybrid User Benefits for Windows VMs. Possible values include: "None", "Windows_Server".
+         Azure Hybrid User Benefits for Windows VMs. Known values are: "None", "Windows_Server".
         :paramtype license_type: str or ~azure.mgmt.containerservice.v2020_09_01.models.LicenseType
         """
         super(ManagedClusterWindowsProfile, self).__init__(**kwargs)
@@ -3449,8 +3442,8 @@ class OperationValue(msrest.serialization.Model):
 class PowerState(msrest.serialization.Model):
     """Describes the Power State of the cluster.
 
-    :ivar code: Tells whether the cluster is Running or Stopped. Possible values include:
-     "Running", "Stopped".
+    :ivar code: Tells whether the cluster is Running or Stopped. Known values are: "Running",
+     "Stopped".
     :vartype code: str or ~azure.mgmt.containerservice.v2020_09_01.models.Code
     """
 
@@ -3461,12 +3454,12 @@ class PowerState(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        code: Optional[Union[str, "Code"]] = None,
+        code: Optional[Union[str, "_models.Code"]] = None,
         **kwargs
     ):
         """
-        :keyword code: Tells whether the cluster is Running or Stopped. Possible values include:
-         "Running", "Stopped".
+        :keyword code: Tells whether the cluster is Running or Stopped. Known values are: "Running",
+         "Stopped".
         :paramtype code: str or ~azure.mgmt.containerservice.v2020_09_01.models.Code
         """
         super(PowerState, self).__init__(**kwargs)
@@ -3509,7 +3502,7 @@ class PrivateEndpointConnection(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :ivar provisioning_state: The current provisioning state. Possible values include: "Succeeded",
+    :ivar provisioning_state: The current provisioning state. Known values are: "Succeeded",
      "Creating", "Deleting", "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerservice.v2020_09_01.models.PrivateEndpointConnectionProvisioningState
@@ -3540,8 +3533,8 @@ class PrivateEndpointConnection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        private_endpoint: Optional["PrivateEndpoint"] = None,
-        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
+        private_endpoint: Optional["_models.PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
         **kwargs
     ):
         """
@@ -3575,7 +3568,7 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PrivateEndpointConnection"]] = None,
+        value: Optional[List["_models.PrivateEndpointConnection"]] = None,
         **kwargs
     ):
         """
@@ -3665,7 +3658,7 @@ class PrivateLinkResourcesListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PrivateLinkResource"]] = None,
+        value: Optional[List["_models.PrivateLinkResource"]] = None,
         **kwargs
     ):
         """
@@ -3679,7 +3672,7 @@ class PrivateLinkResourcesListResult(msrest.serialization.Model):
 class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """The state of a private link service connection.
 
-    :ivar status: The private link service connection status. Possible values include: "Pending",
+    :ivar status: The private link service connection status. Known values are: "Pending",
      "Approved", "Rejected", "Disconnected".
     :vartype status: str or ~azure.mgmt.containerservice.v2020_09_01.models.ConnectionStatus
     :ivar description: The private link service connection description.
@@ -3694,13 +3687,13 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        status: Optional[Union[str, "ConnectionStatus"]] = None,
+        status: Optional[Union[str, "_models.ConnectionStatus"]] = None,
         description: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword status: The private link service connection status. Possible values include:
-         "Pending", "Approved", "Rejected", "Disconnected".
+        :keyword status: The private link service connection status. Known values are: "Pending",
+         "Approved", "Rejected", "Disconnected".
         :paramtype status: str or ~azure.mgmt.containerservice.v2020_09_01.models.ConnectionStatus
         :keyword description: The private link service connection description.
         :paramtype description: str

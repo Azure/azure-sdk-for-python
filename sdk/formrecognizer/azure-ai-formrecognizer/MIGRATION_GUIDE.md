@@ -547,7 +547,7 @@ Analyze custom document with `3.2.x`:
 ```python
 with open(path_to_sample_documents, "rb") as f:
     poller = document_analysis_client.begin_analyze_document(
-        model=model_id, document=f
+        model_id=model_id, document=f
     )
 result = poller.result()
 

@@ -6,7 +6,7 @@
 ################
 
 # Git Hub integration and bot rules
-/.github/                                       @jsquire
+/.github/                                       @jsquire @ronniegeraghty
 
 ###########
 # SDK
@@ -91,7 +91,7 @@
 /sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @tjprescott @JericHunter
 
 # ServiceLabel: %Cosmos %Service Attention
-#/<NotInRepo>/                                                       @simorenoh @gahl-levy
+#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @gahl-levy
 
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis

@@ -105,6 +105,7 @@
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
     "sdk/ml/azure-ai-ml/tests/**",
+    "sdk/monitor/azure-monitor-ingestion/**",
     "eng/**/*.json",
     "eng/*.txt",
     "eng/tox/tox.ini",
@@ -253,6 +254,7 @@
     "prebuilts",
     "pschema",
     "PSECRET",
+    "pyfuncitem",
     "pygobject",
     "parameterizing",
     "pytyped",
@@ -427,6 +429,19 @@
       ]
     },
     {
+      "filename": "sdk/monitor/test-resources.json",
+      "words": [
+        "azconfig",
+        "azmonitordce",
+        "euap",
+        "azmonitordcr",
+        "azmonitorlogsws",
+        "authr",
+        "dcrrole",
+        "pergb"
+      ]
+    },
+    {
       "filename": "sdk/schemaregistry/**/tests/**/*.py",
       "words": [
         "favo",
@@ -515,7 +530,24 @@
         "kwonlyargcount",
         "dcid",
         "startf",
-        "dpkg"
+        "dpkg",
+        "isreused",
+        "reusedrunid",
+        "strictyaml",
+        "funcs",
+        "Fsubscriptions",
+        "Fresource",
+        "Fproviders",
+        "Fdeployments",
+        "isfolder",
+        "mylist",
+        "unioned"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/test-resources.bicep",
+      "words": [
+        "pysdkci"
       ]
     }
   ],

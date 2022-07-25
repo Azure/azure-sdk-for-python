@@ -118,7 +118,7 @@ async def authentication_with_api_key_credential_document_model_admin_client_asy
     document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
     # [END create_dt_client_with_key_async]
     async with document_model_admin_client:
-        info = await document_model_admin_client.get_account_info()
+        info = await document_model_admin_client.get_resource_info()
 
 
 async def authentication_with_azure_active_directory_document_model_admin_client_async():
@@ -137,7 +137,7 @@ async def authentication_with_azure_active_directory_document_model_admin_client
     document_model_admin_client = DocumentModelAdministrationClient(endpoint, credential, credential_scopes=credential_scopes)
     # [END create_dt_client_with_aad_async]
     async with document_model_admin_client:
-        info = await document_model_admin_client.get_account_info()
+        info = await document_model_admin_client.get_resource_info()
 
 
 async def main():

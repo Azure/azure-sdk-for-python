@@ -4,6 +4,8 @@ $PackageRepository = "PyPI"
 $packagePattern = "*.zip"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/main/_data/releases/latest/python-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=python%2F&delimiter=%2F"
+$GithubUri = "https://github.com/Azure/azure-sdk-for-python"
+$PackageRepositoryUri = "https://pypi.org/project"
 
 ."$PSScriptRoot/docs/Docs-ToC.ps1"
 
@@ -496,7 +498,7 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
   $whlDirectory = (Join-Path -Path $artifactDir -ChildPath $artifactName.Replace("_","-"))
 
   Write-Host "Searching for $($artifactName) wheel in artifact path $($whlDirectory)"
-  $files = Get-ChildItem $whlDirectory | ? {$_.Name.EndsWith(".whl")}
+  $files = @(Get-ChildItem $whlDirectory | ? {$_.Name.EndsWith(".whl")})
   if (!$files)
   {
     Write-Host "$whlDirectory does not have wheel package for $($artifactName)"

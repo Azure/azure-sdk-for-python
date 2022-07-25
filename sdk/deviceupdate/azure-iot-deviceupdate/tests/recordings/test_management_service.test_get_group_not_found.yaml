@@ -1,0 +1,33 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b3 Python/3.10.5 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://foo.api.adu.microsoft.com/deviceUpdate/bar/management/groups/foo?api-version=2022-07-01-preview
+  response:
+    body:
+      string: "{\r\n  \"type\": \"https://tools.ietf.org/html/rfc7231#section-6.5.4\",\r\n
+        \ \"title\": \"Not Found\",\r\n  \"status\": 404,\r\n  \"traceId\": \"00-9ee914705ece1445bbba2c42a6b4f92a-4fc73ab2ebf78f46-00\"\r\n}"
+    headers:
+      content-length:
+      - '183'
+      content-type:
+      - application/problem+json; charset=utf-8
+      date:
+      - Tue, 05 Jul 2022 22:02:59 GMT
+      mise-correlation-id:
+      - 57daea75-ebd8-4cd1-89ea-c4020604d4a3
+      traceparent:
+      - 00-9ee914705ece1445bbba2c42a6b4f92a-38feb55fb5446f4a-00
+    status:
+      code: 404
+      message: Not Found
+version: 1
