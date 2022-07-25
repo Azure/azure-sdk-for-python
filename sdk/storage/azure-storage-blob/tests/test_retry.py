@@ -460,3 +460,5 @@ class StorageRetryTest(StorageTestCase):
                 blob = container.get_blob_client(blob=blob_name)
                 blob.download_blob()
             assert iterator_mock.__next__.call_count == 3
+
+    # ------------------------------------------------------------------------------
