@@ -16,6 +16,7 @@ try:
 except ImportError:
     from urlparse import urlparse  # type: ignore
 
+from ._pyamqp.utils import generate_sas_token
 from ._pyamqp import error as utils
 from ._pyamqp.message import Message, Properties
 
@@ -143,7 +144,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
         expiry = timedelta(hours=1)  # Default to 1 hour.
 
     abs_expiry = int(time.time()) + expiry.seconds
-    token = utils.generate_sas_token(uri, policy, key, abs_expiry).encode("UTF-8")
+    token = generate_sas_token(uri, policy, key, abs_expiry).encode("UTF-8")
     return AccessToken(token=token, expires_on=abs_expiry)
 
 def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
