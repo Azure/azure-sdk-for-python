@@ -39,7 +39,7 @@ def re_authentication():
     token = cred.get_token(scope)
     r = redis.Redis(host=host,
                     port=port,
-                    ssl=True,
+                    ssl=True,   # ssl connection is required.
                     username=user_name,
                     password=token.token,
                     decode_responses=True)
@@ -50,12 +50,12 @@ def re_authentication():
             t = r.get("Az:key1")
             print(t)
             break
-        except redis.ConnectionError as ex:
+        except redis.ConnectionError:
             _LOGGER.info("Connection lost. Reconnecting.")
             token = cred.get_token(scope)
             r = redis.Redis(host=host,
                             port=port,
-                            ssl=True,
+                            ssl=True,   # ssl connection is required.
                             username=user_name,
                             password=token.token,
                             decode_responses=True)
