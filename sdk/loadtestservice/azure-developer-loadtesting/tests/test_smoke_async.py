@@ -4,18 +4,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import pytest
 from testcase import LoadtestingPowerShellPreparer
 from testcase_async import LoadtestingAsyncTest
 import os
-from pathlib import Path
 
 TEST_ID = "a011890b-0201-004d-020d"  # ID to be assigned to a test
 FILE_ID = "a012b234-1230-ab00-0240"  # ID to be assigned to file uploaded
 TEST_RUN_ID = "08673e89-3285-46a2-9c6b"  # ID to be assigned to a test run
 APP_COMPONENT = "01730263-6671-4212-b283"  # ID of the APP Component
 DISPLAY_NAME = "new_name"  # display name
-SUBSCRIPTION_ID = os.environ["SUBSCRIPTION_ID"]
+SUBSCRIPTION_ID = "fake-subs-id"
 
 
 class LoadtestingSmokeAsyncTest(LoadtestingAsyncTest):
