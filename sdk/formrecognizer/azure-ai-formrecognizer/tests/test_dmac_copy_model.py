@@ -10,8 +10,7 @@ import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
-from azure.ai.formrecognizer import DocumentModelInfo
-from azure.ai.formrecognizer import DocumentModelAdministrationClient
+from azure.ai.formrecognizer import DocumentModelDetails, DocumentModelAdministrationClient, DocumentModelAdministrationLROPoller
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
@@ -119,7 +118,7 @@ class TestCopyModel(FormRecognizerTest):
         def callback(response, _, headers):
             op_response = client._deserialize(GetOperationResponse, response)
             model_info = client._deserialize(ModelInfo, op_response.result)
-            document_model = DocumentModelInfo._from_generated(model_info)
+            document_model = DocumentModelDetails._from_generated(model_info)
             raw_response.append(model_info)
             raw_response.append(document_model)
 
@@ -206,11 +205,13 @@ class TestCopyModel(FormRecognizerTest):
         target = client.get_copy_authorization()
 
         poller = client.begin_copy_model_to(model.model_id, target=target)
-        assert poller.operation_id
-        assert poller.percent_completed is not None
         poller.result()
-        assert poller.operation_kind == "documentModelCopyTo"
-        assert poller.percent_completed == 100
-        assert poller.resource_location_url
-        assert poller.created_on
-        assert poller.last_updated_on
+        assert isinstance(poller, DocumentModelAdministrationLROPoller)
+        details = poller.details
+        assert details["operation_id"]
+        assert details["percent_completed"] is not None
+        assert details["operation_kind"] == "documentModelCopyTo"
+        assert details["percent_completed"] == 100
+        assert details["resource_location_url"]
+        assert details["created_on"]
+        assert details["last_updated_on"]
