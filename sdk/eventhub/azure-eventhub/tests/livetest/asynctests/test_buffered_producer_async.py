@@ -527,10 +527,10 @@ async def test_long_wait_small_buffer(connection_str):
 
     async with producer:
         for i in range(100):
-            producer.send_event(EventData("test"))
-            asyncio.sleep(.1)
+            await producer.send_event(EventData("test"))
+            await asyncio.sleep(.1)
 
-    asyncio.sleep(11)
+    await asyncio.sleep(11)
 
     assert not on_error.err
     assert sum([len(sent_events[key]) for key in sent_events]) == 100
