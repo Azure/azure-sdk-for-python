@@ -166,16 +166,11 @@ def gen_basic_config(origin_config: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "package-name": gen_package_name(origin_config),
         "license-header": "MICROSOFT_MIT_NO_VERSION",
-        "clear-output-folder": True,
-        "no-namespace-folders": True,
-        "version-tolerant": True,
         "package-version": origin_config.get("package-version", "1.0.0b1"),
         "require": ["../../../../../azure-rest-api-specs/" + line for line in origin_config["require"]],
+        "package-mode": "dataplane",
+        "output-folder": "../",
     }
-
-
-def gen_general_output_folder(package_name: str) -> str:
-    return "../" + package_name.replace('-', '/')
 
 
 def gen_general_namespace(package_name: str) -> str:
@@ -186,7 +181,6 @@ def gen_dpg_config_single_client(origin_config: Dict[str, Any]) -> str:
     package_name = Path(origin_config["output-folder"]).parts[-1]
     readme_config = gen_basic_config(origin_config)
     readme_config.update({
-        "output-folder": gen_general_output_folder(package_name),
         "namespace": gen_general_namespace(package_name),
     })
     readme_content = yaml_block(yaml.safe_dump(readme_config), "### Settings")
@@ -201,7 +195,6 @@ def gen_tag_config(origin_config: Dict[str, Any]) -> Dict[str, Any]:
         extra_part = tag_name.split("-")[-1]
         tag_config[tag_name] = {
             "namespace": gen_general_namespace(package_name) + f".{extra_part}",
-            "output-folder": gen_general_output_folder(package_name) + f"/{extra_part}"
         }
 
     return tag_config
