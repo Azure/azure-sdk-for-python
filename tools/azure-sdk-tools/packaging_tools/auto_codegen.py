@@ -28,7 +28,7 @@ def main(generate_input, generate_output):
             config = generate(CONFIG_FILE, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True,
                               python_tag=python_tag)
         else:
-            config = gen_dpg(input_readme, data.get('autorestConfig', ''), spec_folder)
+            config = gen_dpg(input_readme, data.get('autorestConfig', ''), "../../../../../azure-rest-api-specs/")
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
