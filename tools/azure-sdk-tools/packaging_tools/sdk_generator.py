@@ -6,7 +6,8 @@ from subprocess import check_call
 
 from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE
 from .generate_sdk import generate
-from .generate_utils import get_package_names, init_new_service, update_servicemetadata, judge_tag_preview, gen_dpg
+from .generate_utils import (get_package_names, init_new_service, update_servicemetadata, judge_tag_preview,
+                             format_samples, gen_dpg)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -19,13 +20,15 @@ def main(generate_input, generate_output):
     spec_folder = data["specFolder"]
     sdk_folder = "."
     result = {}
+    python_tag = data.get('python_tag')
     package_total = set()
     
     input_readme = data["relatedReadmeMdFile"]
     relative_path_readme = str(Path(spec_folder, input_readme))
     _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
     if 'resource-manager' in input_readme:
-        config = generate(CONFIG_FILE, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True)
+        config = generate(CONFIG_FILE, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True,
+                          python_tag=python_tag)
     else:
         config = gen_dpg(input_readme, data.get('autorestConfig', ''), spec_folder)
     package_names = get_package_names(sdk_folder)
@@ -50,6 +53,7 @@ def main(generate_input, generate_output):
 
         # Generate some necessary file for new service
         init_new_service(package_name, folder_name)
+        format_samples(sdk_code_path)
 
         # Update metadata
         try:
