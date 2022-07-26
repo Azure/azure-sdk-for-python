@@ -1440,21 +1440,25 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         assert cleared2[0]['start'] == 512
         assert cleared2[0]['end'] == 1023
 
-    # TODO
-    @pytest.mark.skip("Skipping for now")
     @pytest.mark.playback_test_only
     @BlobPreparer()
-    def test_get_page_managed_disk_diff(self, **kwargs):
+    @recorded_by_proxy
+    def test_get_page_range_diff_for_managed_disk(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key, max_page_size=4 * 1024)
+        # A Managed Disk account is required to run this test live.
+        # Change this URL as needed. (e.g. partitioned DNS, preprod, etc.)
+        account_url = f"https://{storage_account_name}.blob.core.windows.net/"
+        credential = {"account_name": storage_account_name, "account_key": storage_account_key}
+
+        bsc = BlobServiceClient(account_url, credential=credential, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc, length=2048)
         data = self.get_random_bytes(1536)
 
         snapshot1 = blob.create_snapshot()
-        snapshot_blob1 = BlobClient.from_blob_url(blob.url, credential=storage_account_key, snapshot=snapshot1['snapshot'])
+        snapshot_blob1 = BlobClient.from_blob_url(blob.url, credential=credential, snapshot=snapshot1['snapshot'])
         sas_token1 = self.generate_sas(
             generate_blob_sas,
             snapshot_blob1.account_name,
@@ -1468,7 +1472,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         blob.upload_page(data, offset=0, length=1536)
 
         snapshot2 = blob.create_snapshot()
-        snapshot_blob2 = BlobClient.from_blob_url(blob.url, credential=storage_account_key, snapshot=snapshot2['snapshot'])
+        snapshot_blob2 = BlobClient.from_blob_url(blob.url, credential=credential, snapshot=snapshot2['snapshot'])
         sas_token2 = self.generate_sas(
             generate_blob_sas,
             snapshot_blob2.account_name,
