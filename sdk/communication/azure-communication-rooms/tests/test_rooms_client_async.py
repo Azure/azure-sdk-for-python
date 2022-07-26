@@ -17,13 +17,6 @@ from unittest_helpers import mock_response
 
 from unittest.mock import Mock
 
-class FakeTokenCredential(object):
-    def __init__(self):
-        self.token = AccessToken("Fake Token", 0)
-
-    async def get_token(self, *args):
-        return self.token
-
 class TestRoomsClient(aiounittest.AsyncTestCase):
     room_id = "999126454"
     valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
@@ -55,7 +48,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                 "participants": [self.json_participant]
             })
 
-        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
 
         response = None
         try:
@@ -82,7 +75,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                 "participants": []
             })
 
-        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
 
         response = None
         try:
@@ -104,7 +97,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
         raised = False
         async def mock_send(*_, **__):
             return mock_response(status_code=404, json_payload={"msg": "some error"})
-        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
         try:
             await rooms_client.delete_room(room_id=self.room_id)
         except:
@@ -123,7 +116,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                 "participants": []
             })
 
-        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
 
         response = None
         try:
@@ -142,7 +135,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
         raised = False
         async def mock_send(*_, **__):
             return mock_response(status_code=404, json_payload={"msg": "some error"})
-        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
         try:
             await rooms_client.get_room(room_id=self.room_id)
         except:
@@ -169,7 +162,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
             })
 
         response = None
-        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
         try:
             response = await rooms_client.add_participants(room_id=self.room_id, participants=[additional_participant])
         except:
@@ -200,7 +193,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                 "participants": [updated_participant_json]
             })
 
-        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
 
         response = None
         try:
@@ -221,11 +214,11 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                 "participants": []
             })
 
-        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
 
         response = None
         try:
-            response = await rooms_client.remove_all_participants(room_id=self.room_id, participants=[user_to_remove])
+            response = await rooms_client.remove_participants(room_id=self.room_id, communication_identifiers=[user_to_remove])
         except:
             raised = True
             raise
@@ -241,7 +234,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                 "participants": [self.json_participant]
             })
 
-        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
 
         response = None
         try:

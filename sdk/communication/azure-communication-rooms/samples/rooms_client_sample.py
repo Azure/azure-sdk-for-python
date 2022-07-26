@@ -127,13 +127,6 @@ class RoomsSample(object):
         except HttpResponseError as ex:
             print(ex)
 
-    def clear_all_participants(self, room_id):
-        try:
-            update_room_response = self.rooms_client.remove_all_participants(room_id=room_id)
-            self.printRoom(response=update_room_response)
-        except HttpResponseError as ex:
-            print(ex)
-
     def delete_room_all_rooms(self):
         for room in self.rooms:
             print("deleting: ", room)
