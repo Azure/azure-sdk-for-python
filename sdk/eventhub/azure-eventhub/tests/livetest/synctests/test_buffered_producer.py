@@ -539,8 +539,8 @@ def test_long_wait_small_buffer(connection_str):
     time.sleep(11)
 
     assert not on_error.err
-    assert len(sent_events["0"]) == 100
-    assert len(received_events["0"]) == 100
+    assert sum([len(sent_events[key]) for key in sent_events]) == 100
+    assert sum([len(received_events[key]) for key in received_events]) == 100
 
     consumer.close()
     receive_thread.join()
