@@ -290,27 +290,6 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         return ParticipantsCollection(participants=remove_participants_response.participants)
 
     @distributed_trace_async
-    async def remove_all_participants(
-        self,
-        room_id, # type: str
-        **kwargs
-    ):
-        # type: (...) -> RoomModel
-        """Remove all participants from a room
-        :param room_id: Required. Id of room to be updated
-        :type room_id: str
-        :returns: Updated room.
-        :rtype: ~azure.communication.rooms.RoomModel
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
-        """
-        update_room_request = UpdateRoomRequest(
-            participants=[]
-        )
-        update_room_response = await self._rooms_service_client.rooms.update_room(
-            room_id=room_id, patch_room_request=update_room_request, **kwargs)
-        return RoomModel.from_room_response(update_room_response)
-
-    @distributed_trace_async
     async def get_participants(
         self,
         room_id, # type: str

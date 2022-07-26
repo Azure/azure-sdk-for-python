@@ -462,27 +462,6 @@ class RoomsClientTest(CommunicationTestCase):
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
-    @pytest.mark.live_test_only
-    def test_remove_all_participants(self):
-        # add john and chris to the room
-        participants = [
-            self.users["john"],
-            self.users["chris"]
-        ]
-        create_response = self.rooms_client.create_room(participants=participants)
-
-        # clear participants
-        update_response = self.rooms_client.remove_all_participants(room_id=create_response.id)
-
-        # delete created room
-        self.rooms_client.delete_room(room_id=create_response.id)
-        self.verify_successful_room_response(
-            response=update_response,
-            valid_from=create_response.valid_from,
-            valid_until=create_response.valid_until,
-            room_id=create_response.id,
-            participants=[])
-
     def test_update_room_incorrect_roomId(self):
         # try to update room with random room_id
         with pytest.raises(HttpResponseError) as ex:
