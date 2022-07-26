@@ -129,10 +129,10 @@ if __name__ == '__main__':
 ##### Invalid Username Password Pair Error
 
 In this error scenario, the username provided and the access token used as password are not compatible.
-To mitigate this error, ensure that:
+To mitigate this error, navigate to your Azure Cache for Redis resource in the Azure portal. Confirm that:
 
-- On Portal, Under your Redis Cache Resource -> RBAC Rules, you've assigned the required role to your user/service principal identity.
-- On Portal, Under your Redis Cache Resource -> Advanced settings -> AAD Access Authorization box is checked/enabled, if not enable it and press the Save button.
+- In **RBAC Rules**, you've assigned the required role to your user/service principal identity.
+- In **Advanced settings**, the **AAD access authorization** box is selected. If not, select it and select the **Save** button.
 
 ##### Permissions not granted / NOPERM Error
 
