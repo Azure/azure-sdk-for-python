@@ -438,7 +438,6 @@ class StorageRetryTest(StorageTestCase):
         # No retry should be performed since the signing error is fatal
         self.assertEqual(retry_counter.count, 0)
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
     def test_streaming_retry(self, storage_account_name, storage_account_key):
         """Test that retry mechanisms are working when streaming data."""
