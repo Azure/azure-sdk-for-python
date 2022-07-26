@@ -73,7 +73,7 @@ if __name__ == '__main__':
 
 #### Authenticate with Azure AD: handle re-authentication
 
-This sample is intended to assist in authenticating with Azure AD via redis client library. It focuses on displaying the logic required to fetch an Azure AD access token and to use it as password when setting up the redis instance. It also shows how to recreate and authenticate the redis instance when its connection is broken in error/exception scenarios.
+This sample is intended to assist in authenticating with Azure AD via the redis client library. It focuses on displaying the logic required to fetch an Azure AD access token and to use it as password when setting up the redis instance. It also shows how to recreate and authenticate the redis instance when its connection is broken in error/exception scenarios.
 
 ##### Migration guidance
 
