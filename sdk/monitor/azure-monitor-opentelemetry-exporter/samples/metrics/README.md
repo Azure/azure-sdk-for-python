@@ -10,9 +10,7 @@ products:
 
 These code samples show common champion scenario operations with the AzureMonitorMetricExporter.
 
-* Metrics: [sample_metrics.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/metrics/sample_metrics.py)
 * Instruments: [sample_instruments.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/metrics/sample_instruments.py)
-
 
 ## Installation
 
