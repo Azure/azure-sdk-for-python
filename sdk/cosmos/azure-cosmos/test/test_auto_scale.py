@@ -139,7 +139,6 @@ class AutoScaleTest(unittest.TestCase):
             created_container_properties.properties['content']['offerAutopilotSettings']['autoUpgradePolicy']
             ['throughputPolicy']['incrementPercent'], 3)
 
-        self.created_database.delete_container(created_container)
         self.client.delete_database(test_config._test_config.TEST_DATABASE_ID)
 
     def test_create_database_if_not_exists(self):
