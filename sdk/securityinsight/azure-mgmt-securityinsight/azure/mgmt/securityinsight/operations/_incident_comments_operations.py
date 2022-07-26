@@ -27,7 +27,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def build_list_request(
+def build_list_by_incident_request(
     subscription_id: str,
     resource_group_name: str,
     workspace_name: str,
@@ -42,14 +42,14 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}/comments")  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
         "incidentId": _SERIALIZER.url("incident_id", incident_id, 'str'),
     }
@@ -90,14 +90,14 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}/comments/{incidentCommentId}")  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
         "incidentId": _SERIALIZER.url("incident_id", incident_id, 'str'),
         "incidentCommentId": _SERIALIZER.url("incident_comment_id", incident_comment_id, 'str'),
@@ -120,7 +120,7 @@ def build_get_request(
     )
 
 
-def build_create_or_update_request(
+def build_create_comment_request(
     subscription_id: str,
     resource_group_name: str,
     workspace_name: str,
@@ -134,15 +134,15 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
     content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}/comments/{incidentCommentId}")  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
         "incidentId": _SERIALIZER.url("incident_id", incident_id, 'str'),
         "incidentCommentId": _SERIALIZER.url("incident_comment_id", incident_comment_id, 'str'),
@@ -168,47 +168,6 @@ def build_create_or_update_request(
         **kwargs
     )
 
-
-def build_delete_request(
-    subscription_id: str,
-    resource_group_name: str,
-    workspace_name: str,
-    incident_id: str,
-    incident_comment_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}/comments/{incidentCommentId}")  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
-        "incidentId": _SERIALIZER.url("incident_id", incident_id, 'str'),
-        "incidentCommentId": _SERIALIZER.url("incident_comment_id", incident_comment_id, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="DELETE",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
 class IncidentCommentsOperations:
     """
     .. warning::
@@ -230,7 +189,7 @@ class IncidentCommentsOperations:
 
 
     @distributed_trace
-    def list(
+    def list_by_incident(
         self,
         resource_group_name: str,
         workspace_name: str,
@@ -241,9 +200,10 @@ class IncidentCommentsOperations:
         skip_token: Optional[str] = None,
         **kwargs: Any
     ) -> Iterable[_models.IncidentCommentList]:
-        """Gets all comments for a given incident.
+        """Gets all incident comments.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group within the user's subscription. The
+         name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
@@ -269,7 +229,7 @@ class IncidentCommentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.IncidentCommentList]
 
         error_map = {
@@ -279,7 +239,7 @@ class IncidentCommentsOperations:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_request(
+                request = build_list_by_incident_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
@@ -289,7 +249,7 @@ class IncidentCommentsOperations:
                     orderby=orderby,
                     top=top,
                     skip_token=skip_token,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list_by_incident.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
@@ -298,7 +258,7 @@ class IncidentCommentsOperations:
 
             else:
                 
-                request = build_list_request(
+                request = build_list_by_incident_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
@@ -344,7 +304,7 @@ class IncidentCommentsOperations:
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}/comments"}  # type: ignore
+    list_by_incident.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}/comments"}  # type: ignore
 
     @distributed_trace
     def get(
@@ -355,9 +315,10 @@ class IncidentCommentsOperations:
         incident_comment_id: str,
         **kwargs: Any
     ) -> _models.IncidentComment:
-        """Gets a comment for a given incident.
+        """Gets an incident comment.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group within the user's subscription. The
+         name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
@@ -378,7 +339,7 @@ class IncidentCommentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.IncidentComment]
 
         
@@ -418,7 +379,7 @@ class IncidentCommentsOperations:
 
 
     @distributed_trace
-    def create_or_update(
+    def create_comment(
         self,
         resource_group_name: str,
         workspace_name: str,
@@ -427,9 +388,10 @@ class IncidentCommentsOperations:
         incident_comment: _models.IncidentComment,
         **kwargs: Any
     ) -> _models.IncidentComment:
-        """Creates or updates a comment for a given incident.
+        """Creates the incident comment.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group within the user's subscription. The
+         name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
@@ -452,13 +414,13 @@ class IncidentCommentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.IncidentComment]
 
         _json = self._serialize.body(incident_comment, 'IncidentComment')
 
-        request = build_create_or_update_request(
+        request = build_create_comment_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
@@ -467,7 +429,7 @@ class IncidentCommentsOperations:
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.create_or_update.metadata['url'],
+            template_url=self.create_comment.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -481,87 +443,16 @@ class IncidentCommentsOperations:
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('IncidentComment', pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize('IncidentComment', pipeline_response)
+        deserialized = self._deserialize('IncidentComment', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}/comments/{incidentCommentId}"}  # type: ignore
-
-
-    @distributed_trace
-    def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        incident_id: str,
-        incident_comment_id: str,
-        **kwargs: Any
-    ) -> None:
-        """Deletes a comment for a given incident.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: The name of the workspace.
-        :type workspace_name: str
-        :param incident_id: Incident ID.
-        :type incident_id: str
-        :param incident_comment_id: Incident comment ID.
-        :type incident_comment_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-
-        
-        request = build_delete_request(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            incident_id=incident_id,
-            incident_comment_id=incident_comment_id,
-            api_version=api_version,
-            template_url=self.delete.metadata['url'],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}/comments/{incidentCommentId}"}  # type: ignore
+    create_comment.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}/comments/{incidentCommentId}"}  # type: ignore
 

@@ -2,6 +2,119 @@
 
 ## 1.0.0 (2022-07-26)
 
+**Features**
+
+  - Added operation IncidentCommentsOperations.create_comment
+  - Added operation IncidentCommentsOperations.list_by_incident
+  - Model OfficeConsent has a new parameter tenant_name
+
+**Breaking changes**
+
+  - Model AADDataConnector no longer has parameter system_data
+  - Model AATPDataConnector no longer has parameter system_data
+  - Model ASCDataConnector no longer has parameter system_data
+  - Model ActionRequest no longer has parameter system_data
+  - Model ActionResponse no longer has parameter system_data
+  - Model AlertRule no longer has parameter system_data
+  - Model AlertRuleTemplate no longer has parameter system_data
+  - Model AwsCloudTrailDataConnector no longer has parameter system_data
+  - Model Bookmark no longer has parameter entity_mappings
+  - Model Bookmark no longer has parameter system_data
+  - Model Bookmark no longer has parameter tactics
+  - Model Bookmark no longer has parameter techniques
+  - Model DataConnector no longer has parameter system_data
+  - Model FusionAlertRule no longer has parameter scenario_exclusion_patterns
+  - Model FusionAlertRule no longer has parameter source_settings
+  - Model FusionAlertRule no longer has parameter system_data
+  - Model FusionAlertRule no longer has parameter techniques
+  - Model FusionAlertRuleTemplate no longer has parameter source_settings
+  - Model FusionAlertRuleTemplate no longer has parameter system_data
+  - Model FusionAlertRuleTemplate no longer has parameter techniques
+  - Model Incident no longer has parameter provider_incident_id
+  - Model Incident no longer has parameter provider_name
+  - Model Incident no longer has parameter system_data
+  - Model Incident no longer has parameter team_information
+  - Model IncidentAdditionalData no longer has parameter provider_incident_url
+  - Model IncidentAdditionalData no longer has parameter techniques
+  - Model IncidentComment no longer has parameter etag
+  - Model IncidentComment no longer has parameter last_modified_time_utc
+  - Model IncidentComment no longer has parameter system_data
+  - Model IncidentOwnerInfo no longer has parameter owner_type
+  - Model MCASDataConnector no longer has parameter system_data
+  - Model MDATPDataConnector no longer has parameter system_data
+  - Model MicrosoftSecurityIncidentCreationAlertRule no longer has parameter system_data
+  - Model MicrosoftSecurityIncidentCreationAlertRuleTemplate no longer has parameter system_data
+  - Model OfficeConsent no longer has parameter consent_id
+  - Model OfficeConsent no longer has parameter system_data
+  - Model OfficeDataConnector no longer has parameter system_data
+  - Model Operation no longer has parameter is_data_action
+  - Model Resource no longer has parameter system_data
+  - Model ResourceWithEtag no longer has parameter system_data
+  - Model ScheduledAlertRule no longer has parameter alert_details_override
+  - Model ScheduledAlertRule no longer has parameter custom_details
+  - Model ScheduledAlertRule no longer has parameter entity_mappings
+  - Model ScheduledAlertRule no longer has parameter event_grouping_settings
+  - Model ScheduledAlertRule no longer has parameter incident_configuration
+  - Model ScheduledAlertRule no longer has parameter system_data
+  - Model ScheduledAlertRule no longer has parameter techniques
+  - Model ScheduledAlertRule no longer has parameter template_version
+  - Model ScheduledAlertRuleCommonProperties no longer has parameter alert_details_override
+  - Model ScheduledAlertRuleCommonProperties no longer has parameter custom_details
+  - Model ScheduledAlertRuleCommonProperties no longer has parameter entity_mappings
+  - Model ScheduledAlertRuleCommonProperties no longer has parameter event_grouping_settings
+  - Model ScheduledAlertRuleProperties no longer has parameter alert_details_override
+  - Model ScheduledAlertRuleProperties no longer has parameter custom_details
+  - Model ScheduledAlertRuleProperties no longer has parameter entity_mappings
+  - Model ScheduledAlertRuleProperties no longer has parameter event_grouping_settings
+  - Model ScheduledAlertRuleProperties no longer has parameter incident_configuration
+  - Model ScheduledAlertRuleProperties no longer has parameter techniques
+  - Model ScheduledAlertRuleProperties no longer has parameter template_version
+  - Model ScheduledAlertRuleTemplate no longer has parameter alert_details_override
+  - Model ScheduledAlertRuleTemplate no longer has parameter custom_details
+  - Model ScheduledAlertRuleTemplate no longer has parameter entity_mappings
+  - Model ScheduledAlertRuleTemplate no longer has parameter event_grouping_settings
+  - Model ScheduledAlertRuleTemplate no longer has parameter system_data
+  - Model ScheduledAlertRuleTemplate no longer has parameter techniques
+  - Model ScheduledAlertRuleTemplate no longer has parameter version
+  - Model TIDataConnector no longer has parameter system_data
+  - Parameter object_id of model UserInfo is now required
+  - Removed operation DataConnectorsOperations.connect
+  - Removed operation DataConnectorsOperations.disconnect
+  - Removed operation IncidentCommentsOperations.create_or_update
+  - Removed operation IncidentCommentsOperations.delete
+  - Removed operation IncidentCommentsOperations.list
+  - Removed operation IncidentsOperations.create_team
+  - Removed operation IncidentsOperations.list_alerts
+  - Removed operation IncidentsOperations.list_bookmarks
+  - Removed operation IncidentsOperations.list_entities
+  - Removed operation IncidentsOperations.run_playbook
+  - Removed operation group AutomationRulesOperations
+  - Removed operation group BookmarkOperations
+  - Removed operation group BookmarkRelationsOperations
+  - Removed operation group DataConnectorsCheckRequirementsOperations
+  - Removed operation group DomainWhoisOperations
+  - Removed operation group EntitiesGetTimelineOperations
+  - Removed operation group EntitiesOperations
+  - Removed operation group EntitiesRelationsOperations
+  - Removed operation group EntityQueriesOperations
+  - Removed operation group EntityQueryTemplatesOperations
+  - Removed operation group EntityRelationsOperations
+  - Removed operation group IPGeodataOperations
+  - Removed operation group IncidentRelationsOperations
+  - Removed operation group MetadataOperations
+  - Removed operation group OfficeConsentsOperations
+  - Removed operation group ProductSettingsOperations
+  - Removed operation group SentinelOnboardingStatesOperations
+  - Removed operation group SourceControlOperations
+  - Removed operation group SourceControlsOperations
+  - Removed operation group ThreatIntelligenceIndicatorMetricsOperations
+  - Removed operation group ThreatIntelligenceIndicatorOperations
+  - Removed operation group ThreatIntelligenceIndicatorsOperations
+  - Removed operation group WatchlistItemsOperations
+  - Removed operation group WatchlistsOperations
+
+## 1.0.0 (2022-07-26)
+
 **Breaking changes**
 
   - Model Bookmark no longer has parameter entity_mappings

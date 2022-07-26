@@ -27,9 +27,9 @@ class SecurityInsightsConfiguration(Configuration):  # pylint: disable=too-many-
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: Azure subscription ID.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2021-10-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2020-01-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -41,7 +41,7 @@ class SecurityInsightsConfiguration(Configuration):  # pylint: disable=too-many-
         **kwargs: Any
     ) -> None:
         super(SecurityInsightsConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+        api_version = kwargs.pop('api_version', "2020-01-01")  # type: str
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

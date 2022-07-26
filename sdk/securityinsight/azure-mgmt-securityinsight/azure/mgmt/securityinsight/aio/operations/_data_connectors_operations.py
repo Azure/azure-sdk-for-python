@@ -53,7 +53,8 @@ class DataConnectorsOperations:
     ) -> AsyncIterable[_models.DataConnectorList]:
         """Gets all data connectors.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group within the user's subscription. The
+         name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
@@ -66,7 +67,7 @@ class DataConnectorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DataConnectorList]
 
         error_map = {
@@ -143,7 +144,8 @@ class DataConnectorsOperations:
     ) -> _models.DataConnector:
         """Gets a data connector.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group within the user's subscription. The
+         name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
@@ -162,7 +164,7 @@ class DataConnectorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DataConnector]
 
         
@@ -211,7 +213,8 @@ class DataConnectorsOperations:
     ) -> _models.DataConnector:
         """Creates or updates the data connector.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group within the user's subscription. The
+         name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
@@ -232,7 +235,7 @@ class DataConnectorsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DataConnector]
 
@@ -288,7 +291,8 @@ class DataConnectorsOperations:
     ) -> None:
         """Delete the data connector.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group within the user's subscription. The
+         name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
@@ -307,7 +311,7 @@ class DataConnectorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         

@@ -36,14 +36,14 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRuleTemplates")  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
     }
 
@@ -74,14 +74,14 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRuleTemplates/{alertRuleTemplateId}")  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
         "alertRuleTemplateId": _SERIALIZER.url("alert_rule_template_id", alert_rule_template_id, 'str'),
     }
@@ -131,7 +131,8 @@ class AlertRuleTemplatesOperations:
     ) -> Iterable[_models.AlertRuleTemplatesList]:
         """Gets all alert rule templates.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group within the user's subscription. The
+         name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
@@ -144,7 +145,7 @@ class AlertRuleTemplatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.AlertRuleTemplatesList]
 
         error_map = {
@@ -221,7 +222,8 @@ class AlertRuleTemplatesOperations:
     ) -> _models.AlertRuleTemplate:
         """Gets the alert rule template.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group within the user's subscription. The
+         name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
@@ -240,7 +242,7 @@ class AlertRuleTemplatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.AlertRuleTemplate]
 
         

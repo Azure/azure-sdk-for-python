@@ -37,14 +37,14 @@ def build_list_by_alert_rule_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRules/{ruleId}/actions")  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
         "ruleId": _SERIALIZER.url("rule_id", rule_id, 'str'),
     }
@@ -77,14 +77,14 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRules/{ruleId}/actions/{actionId}")  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
         "ruleId": _SERIALIZER.url("rule_id", rule_id, 'str'),
         "actionId": _SERIALIZER.url("action_id", action_id, 'str'),
@@ -121,15 +121,15 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
     content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRules/{ruleId}/actions/{actionId}")  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
         "ruleId": _SERIALIZER.url("rule_id", rule_id, 'str'),
         "actionId": _SERIALIZER.url("action_id", action_id, 'str'),
@@ -167,14 +167,14 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRules/{ruleId}/actions/{actionId}")  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
         "ruleId": _SERIALIZER.url("rule_id", rule_id, 'str'),
         "actionId": _SERIALIZER.url("action_id", action_id, 'str'),
@@ -226,7 +226,8 @@ class ActionsOperations:
     ) -> Iterable[_models.ActionsList]:
         """Gets all actions of alert rule.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group within the user's subscription. The
+         name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
@@ -240,7 +241,7 @@ class ActionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ActionsList]
 
         error_map = {
@@ -320,7 +321,8 @@ class ActionsOperations:
     ) -> _models.ActionResponse:
         """Gets the action of alert rule.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group within the user's subscription. The
+         name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
@@ -341,7 +343,7 @@ class ActionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ActionResponse]
 
         
@@ -392,7 +394,8 @@ class ActionsOperations:
     ) -> _models.ActionResponse:
         """Creates or updates the action of alert rule.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group within the user's subscription. The
+         name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
@@ -415,7 +418,7 @@ class ActionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ActionResponse]
 
@@ -473,7 +476,8 @@ class ActionsOperations:
     ) -> None:
         """Delete the action of alert rule.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group within the user's subscription. The
+         name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
@@ -494,7 +498,7 @@ class ActionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-01-01"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         

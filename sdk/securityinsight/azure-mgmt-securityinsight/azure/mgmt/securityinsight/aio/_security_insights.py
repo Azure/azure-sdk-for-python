@@ -16,7 +16,7 @@ from azure.mgmt.core import AsyncARMPipelineClient
 
 from .. import models
 from ._configuration import SecurityInsightsConfiguration
-from .operations import ActionsOperations, AlertRuleTemplatesOperations, AlertRulesOperations, AutomationRulesOperations, BookmarksOperations, DataConnectorsOperations, IncidentCommentsOperations, IncidentRelationsOperations, IncidentsOperations, Operations, SentinelOnboardingStatesOperations, ThreatIntelligenceIndicatorMetricsOperations, ThreatIntelligenceIndicatorOperations, ThreatIntelligenceIndicatorsOperations, WatchlistItemsOperations, WatchlistsOperations
+from .operations import ActionsOperations, AlertRuleTemplatesOperations, AlertRulesOperations, BookmarksOperations, DataConnectorsOperations, IncidentCommentsOperations, IncidentsOperations, Operations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -25,33 +25,6 @@ if TYPE_CHECKING:
 class SecurityInsights:    # pylint: disable=too-many-instance-attributes
     """API spec for Microsoft.SecurityInsights (Azure Security Insights) resource provider.
 
-    :ivar incidents: IncidentsOperations operations
-    :vartype incidents: azure.mgmt.securityinsight.aio.operations.IncidentsOperations
-    :ivar incident_comments: IncidentCommentsOperations operations
-    :vartype incident_comments:
-     azure.mgmt.securityinsight.aio.operations.IncidentCommentsOperations
-    :ivar incident_relations: IncidentRelationsOperations operations
-    :vartype incident_relations:
-     azure.mgmt.securityinsight.aio.operations.IncidentRelationsOperations
-    :ivar threat_intelligence_indicator: ThreatIntelligenceIndicatorOperations operations
-    :vartype threat_intelligence_indicator:
-     azure.mgmt.securityinsight.aio.operations.ThreatIntelligenceIndicatorOperations
-    :ivar threat_intelligence_indicators: ThreatIntelligenceIndicatorsOperations operations
-    :vartype threat_intelligence_indicators:
-     azure.mgmt.securityinsight.aio.operations.ThreatIntelligenceIndicatorsOperations
-    :ivar threat_intelligence_indicator_metrics: ThreatIntelligenceIndicatorMetricsOperations
-     operations
-    :vartype threat_intelligence_indicator_metrics:
-     azure.mgmt.securityinsight.aio.operations.ThreatIntelligenceIndicatorMetricsOperations
-    :ivar watchlists: WatchlistsOperations operations
-    :vartype watchlists: azure.mgmt.securityinsight.aio.operations.WatchlistsOperations
-    :ivar watchlist_items: WatchlistItemsOperations operations
-    :vartype watchlist_items: azure.mgmt.securityinsight.aio.operations.WatchlistItemsOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.securityinsight.aio.operations.Operations
-    :ivar sentinel_onboarding_states: SentinelOnboardingStatesOperations operations
-    :vartype sentinel_onboarding_states:
-     azure.mgmt.securityinsight.aio.operations.SentinelOnboardingStatesOperations
     :ivar alert_rules: AlertRulesOperations operations
     :vartype alert_rules: azure.mgmt.securityinsight.aio.operations.AlertRulesOperations
     :ivar actions: ActionsOperations operations
@@ -63,15 +36,20 @@ class SecurityInsights:    # pylint: disable=too-many-instance-attributes
     :vartype bookmarks: azure.mgmt.securityinsight.aio.operations.BookmarksOperations
     :ivar data_connectors: DataConnectorsOperations operations
     :vartype data_connectors: azure.mgmt.securityinsight.aio.operations.DataConnectorsOperations
-    :ivar automation_rules: AutomationRulesOperations operations
-    :vartype automation_rules: azure.mgmt.securityinsight.aio.operations.AutomationRulesOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.securityinsight.aio.operations.Operations
+    :ivar incidents: IncidentsOperations operations
+    :vartype incidents: azure.mgmt.securityinsight.aio.operations.IncidentsOperations
+    :ivar incident_comments: IncidentCommentsOperations operations
+    :vartype incident_comments:
+     azure.mgmt.securityinsight.aio.operations.IncidentCommentsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: Azure subscription ID.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2021-10-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2020-01-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -90,36 +68,6 @@ class SecurityInsights:    # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.incidents = IncidentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.incident_comments = IncidentCommentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.incident_relations = IncidentRelationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.threat_intelligence_indicator = ThreatIntelligenceIndicatorOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.threat_intelligence_indicators = ThreatIntelligenceIndicatorsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.threat_intelligence_indicator_metrics = ThreatIntelligenceIndicatorMetricsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.watchlists = WatchlistsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.watchlist_items = WatchlistItemsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.sentinel_onboarding_states = SentinelOnboardingStatesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.alert_rules = AlertRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -135,7 +83,13 @@ class SecurityInsights:    # pylint: disable=too-many-instance-attributes
         self.data_connectors = DataConnectorsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.automation_rules = AutomationRulesOperations(
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.incidents = IncidentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.incident_comments = IncidentCommentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
