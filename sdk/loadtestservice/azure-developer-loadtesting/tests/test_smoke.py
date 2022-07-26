@@ -9,7 +9,7 @@ from pathlib import Path
 
 from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
 
-TEST_ID = "a011890b-0201-004d-010d-1200d888bb11"  # ID to be assigned to a test
+TEST_ID = "TEST_ID"  # ID to be assigned to a test
 FILE_ID = "FILE_ID"  # ID to be assigned to file uploaded
 TEST_RUN_ID = "TEST_RUN_ID"  # ID to be assigned to a test run
 APP_COMPONENT = "APP_COMPONENT_ID"  # ID of the APP Componen

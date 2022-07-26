@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"name": "app_component", "testId": "a011890b-0201-004d-010d-1200d888bb11",
+    body: '{"name": "app_component", "testId": "TEST_ID",
       "value": {"/subscriptions/SUBSCRIPTION_ID/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo":
       {"resourceId": "/subscriptions/SUBSCRIPTION_ID/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo",
       "resourceName": "App-Service-Sample-Demo", "resourceType": "Microsoft.Web/sites",

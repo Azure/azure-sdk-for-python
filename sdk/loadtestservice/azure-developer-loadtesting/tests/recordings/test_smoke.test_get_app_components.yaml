@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.10.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://myservice.azure.com/appcomponents?api-version=2022-06-01-preview&testId=a011890b-0201-004d-010d-1200d888bb11
+    uri: https://myservice.azure.com/appcomponents?api-version=2022-06-01-preview&testId=TEST_ID
   response:
     body:
       string: '{"resourceId":"/subscriptions/SUBSCRIPTION_ID/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk","testId":"TEST_ID","testRunId":null,"name":"APP_COMPONENT_ID","value":{"/subscriptions/SUBSCRIPTION_ID/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo":{"resourceId":"/subscriptions/SUBSCRIPTION_ID/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo","resourceName":"App-Service-Sample-Demo","resourceType":"Microsoft.Web/sites","displayName":null,"resourceGroup":"App-Service-Sample-Demo-rg","subscriptionId":"SUBSCRIPTION_ID","kind":null}}}'

@@ -132,10 +132,10 @@ interactions:
       User-Agent:
       - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.10.2 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://myservice.azure.com/loadtests/a011890b-0201-004d-010d-1200d888bb11/files/FILE_ID?api-version=2022-06-01-preview
+    uri: https://myservice.azure.com/loadtests/TEST_ID/files/FILE_ID?api-version=2022-06-01-preview
   response:
     body:
-      string: '{"url":"https://stcntproddataeus.blob.core.windows.net/6d551c8f-ce57-4b46-a95b-47b1c5465101/FILE_ID?sv=2020-04-08&se=2022-07-26T13%3A41%3A09Z&sr=b&sp=r&sig=wu8MfFksCHY9alJkuunFGM5IBY5sdE4txq7oQknVhpA%3D","fileId":"FILE_ID","filename":"sample.jmx","fileType":0,"expireTime":"2022-07-26T13:41:09.5583741","validationStatus":"VALIDATION_INITIATED"}'
+      string: '{"url":"https://stcntproddataeus.blob.core.windows.net/6d551c8f-ce57-4b46-a95b-47b1c5465101/FILE_ID","fileId":"FILE_ID","filename":"sample.jmx","fileType":0,"expireTime":"2022-07-26T13:41:09.5583741","validationStatus":"VALIDATION_INITIATED"}'
     headers:
       api-supported-versions:
       - 2021-07-01-preview, 2022-06-01-preview
@@ -148,7 +148,7 @@ interactions:
       date:
       - Tue, 26 Jul 2022 13:31:09 GMT
       location:
-      - https://myservice.azure.com/loadtests/a011890b-0201-004d-010d-1200d888bb11/files/FILE_ID?resourceId=%2fsubscriptions%2fSUBSCRIPTION_ID%2fresourcegroups%2fyashika-rg%2fproviders%2fmicrosoft.loadtestservice%2floadtests%2floadtestsdk&api-version=2022-06-01-preview
+      - https://myservice.azure.com/loadtests/TEST_ID/files/FILE_ID?resourceId=%2fsubscriptions%2fSUBSCRIPTION_ID%2fresourcegroups%2fyashika-rg%2fproviders%2fmicrosoft.loadtestservice%2floadtests%2floadtestsdk&api-version=2022-06-01-preview
       mise-correlation-id:
       - 817f1501-bc83-4d84-be73-00ac430ed530
       strict-transport-security:
