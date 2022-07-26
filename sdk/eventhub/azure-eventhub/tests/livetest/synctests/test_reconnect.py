@@ -12,14 +12,13 @@ from azure.eventhub._pyamqp.client import ReceiveClient
 from azure.eventhub._pyamqp import error, constants
 
 import uamqp
-from uamqp import errors, compat
+from uamqp import compat
 
 from azure.eventhub import (
     EventData,
     EventHubSharedKeyCredential,
     EventHubProducerClient,
     EventHubConsumerClient,
-    amqp
 )
 from azure.eventhub.exceptions import OperationTimeoutError
 from azure.eventhub._utils import transform_outbound_single_message
@@ -75,14 +74,19 @@ def test_send_with_long_interval_sync(live_eventhub, sleep, uamqp_transport):
 
 # TODO: fix and add pyamqp transport
 @pytest.mark.parametrize("uamqp_transport",
-                         [True])
+                         [True, False])
 @pytest.mark.liveTest
 def test_send_connection_idle_timeout_and_reconnect_sync(connstr_receivers, uamqp_transport):
     connection_str, receivers = connstr_receivers
-    amqp_transport = UamqpTransport() if uamqp_transport else PyamqpTransport()
+    if uamqp_transport:
+        amqp_transport = UamqpTransport()
+        retry_total = 3
+    else:
+        amqp_transport = PyamqpTransport()
+        retry_total = 0
     # no retry, should just raise error
     client = EventHubProducerClient.from_connection_string(
-        conn_str=connection_str, idle_timeout=10, retry_total=0, uamqp_transport=uamqp_transport
+        conn_str=connection_str, idle_timeout=10, retry_total=retry_total, uamqp_transport=uamqp_transport
     )
     with client:
         ed = EventData('data')
@@ -90,8 +94,8 @@ def test_send_connection_idle_timeout_and_reconnect_sync(connstr_receivers, uamq
     with sender:
         sender._open_with_retry()
         time.sleep(11)
-        wrapped_ed = sender._wrap_eventdata(ed, None, None)
-        sender._unsent_events = [wrapped_ed.message]
+        ed = transform_outbound_single_message(ed, EventData, amqp_transport.to_outgoing_amqp_message)
+        sender._unsent_events = [ed.message]
         if uamqp_transport:
             sender._unsent_events[0].on_send_complete = sender._on_outcome
             with pytest.raises((uamqp.errors.ConnectionClose,

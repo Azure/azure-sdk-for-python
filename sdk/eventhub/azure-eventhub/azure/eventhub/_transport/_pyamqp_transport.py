@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 import logging
+import time
 from typing import TYPE_CHECKING, Optional, Union, Any
 
 from .._pyamqp import (
@@ -218,19 +219,20 @@ class PyamqpTransport(AmqpTransport):
         :param logger: Logger.
         """
         # pylint: disable=protected-access
-        # TODO: see if this works too
-        # timeout = timeout_time - time.time() if timeout_time else 0
-        # producer._handler.send_message(producer._unsent_events[0], timeout=timeout)
-        # producer._unsent_events = None
-        try:
-            producer._open()
-            producer._handler.send_message(
-                producer._unsent_events[0], timeout=timeout_time
-            )
-        except self.TIMEOUT_EXCEPTION as exc:
-            raise OperationTimeoutError(message=str(exc), details=exc)
-        except Exception as exc:
-            raise producer._handle_exception(exc)
+        producer._open()
+        timeout = timeout_time - time.time() if timeout_time else 0
+        producer._handler.send_message(producer._unsent_events[0], timeout=timeout)
+        producer._unsent_events = None
+        # TODO: figure out if we want to use below, and see if it affects error story
+        #try:
+        #    producer._open()
+        #    producer._handler.send_message(
+        #        producer._unsent_events[0], timeout=timeout_time
+        #    )
+        #except self.TIMEOUT_EXCEPTION as exc:
+        #    raise OperationTimeoutError(message=str(exc), details=exc)
+        #except Exception as exc:
+        #    raise producer._handle_exception(exc)
 
     def set_message_partition_key(
         self, message, partition_key, **kwargs
