@@ -28,7 +28,7 @@ import warnings
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
-from ._base import build_options, stringify_auto_scale
+from ._base import build_options, _stringify_auto_scale
 from .container import ContainerProxy
 from .offer import ThroughputProperties
 from .http_constants import StatusCodes
@@ -237,7 +237,7 @@ class DatabaseProxy(object):
                 request_options["offerThroughput"] = offer_throughput
 
             if isinstance(offer_throughput, object):
-                offer_throughput = stringify_auto_scale(offer=offer_throughput)
+                offer_throughput = _stringify_auto_scale(offer=offer_throughput)
                 request_options['autoUpgradePolicy'] = offer_throughput
 
         data = self.client_connection.CreateContainer(
