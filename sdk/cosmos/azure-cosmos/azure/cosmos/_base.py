@@ -678,7 +678,7 @@ def validate_cache_staleness_value(max_integrated_cache_staleness):
         raise ValueError("Parameter 'max_integrated_cache_staleness_in_ms' can only be a positive integer.")
 
 
-def stringify_auto_scale(offer):
+def _stringify_auto_scale(offer):
     auto_scale_params = None
     max_throughput = offer.auto_scale_max_throughput
     increment_percent = offer.auto_scale_increment_percent
