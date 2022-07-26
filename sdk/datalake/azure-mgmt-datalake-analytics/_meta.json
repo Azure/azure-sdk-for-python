@@ -1,0 +1,11 @@
+{
+  "autorest": "3.7.2",
+  "use": [
+    "@autorest/python@5.16.0",
+    "@autorest/modelerfour@4.19.3"
+  ],
+  "commit": "402c7fb924c5c0a30650d1c11338d4d516585933",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "autorest_command": "autorest specification/datalake-analytics/resource-manager/readme.md --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --python3-only --use=@autorest/python@5.16.0 --use=@autorest/modelerfour@4.19.3 --version=3.7.2",
+  "readme": "specification/datalake-analytics/resource-manager/readme.md"
+}
