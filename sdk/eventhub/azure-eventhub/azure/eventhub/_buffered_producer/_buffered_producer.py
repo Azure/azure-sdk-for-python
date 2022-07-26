@@ -97,8 +97,7 @@ class BufferedProducer:
                     new_events_len,
                 )
                 # flush the buffer
-                with self._lock:
-                    self.flush(timeout_time=timeout_time)
+                self.flush(timeout_time=timeout_time)
             if timeout_time and time.time() > timeout_time:
                 raise OperationTimeoutError(
                     "Failed to enqueue events into buffer due to timeout."
