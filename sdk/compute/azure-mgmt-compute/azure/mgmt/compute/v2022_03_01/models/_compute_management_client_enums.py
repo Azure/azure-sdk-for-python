@@ -251,7 +251,7 @@ class NetworkApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TWO_THOUSAND_TWENTY11_01 = "2020-11-01"
 
 class OperatingSystemStateTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The OS State.
+    """The OS State. For managed images, use Generalized.
     """
 
     #: Generalized image. Needs to be provisioned during deployment time.

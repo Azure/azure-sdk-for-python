@@ -6818,8 +6818,8 @@ class SshPublicKey(msrest.serialization.Model):
     :vartype path: str
     :ivar key_data: SSH public key certificate used to authenticate with the VM through ssh. The
      key needs to be at least 2048-bit and in ssh-rsa format. :code:`<br>`:code:`<br>` For creating
-     ssh keys, see [Create SSH keys on Linux and Mac for Linux VMs in
-     Azure]https://docs.microsoft.com/azure/virtual-machines/linux/create-ssh-keys-detailed).
+     ssh keys, see `Create SSH keys on Linux and Mac for Linux VMs in Azure
+     <https://docs.microsoft.com/azure/virtual-machines/linux/create-ssh-keys-detailed>`_.
     :vartype key_data: str
     """
 
@@ -6842,8 +6842,8 @@ class SshPublicKey(msrest.serialization.Model):
         :paramtype path: str
         :keyword key_data: SSH public key certificate used to authenticate with the VM through ssh. The
          key needs to be at least 2048-bit and in ssh-rsa format. :code:`<br>`:code:`<br>` For creating
-         ssh keys, see [Create SSH keys on Linux and Mac for Linux VMs in
-         Azure]https://docs.microsoft.com/azure/virtual-machines/linux/create-ssh-keys-detailed).
+         ssh keys, see `Create SSH keys on Linux and Mac for Linux VMs in Azure
+         <https://docs.microsoft.com/azure/virtual-machines/linux/create-ssh-keys-detailed>`_.
         :paramtype key_data: str
         """
         super(SshPublicKey, self).__init__(**kwargs)

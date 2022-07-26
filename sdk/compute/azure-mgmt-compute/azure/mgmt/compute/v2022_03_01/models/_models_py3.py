@@ -3296,7 +3296,8 @@ class ImageOSDisk(ImageDisk):
      values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known
      values are: "Windows", "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2022_03_01.models.OperatingSystemTypes
-    :ivar os_state: Required. The OS State. Known values are: "Generalized", "Specialized".
+    :ivar os_state: Required. The OS State. For managed images, use Generalized. Known values are:
+     "Generalized", "Specialized".
     :vartype os_state: str or ~azure.mgmt.compute.v2022_03_01.models.OperatingSystemStateTypes
     """
 
@@ -3362,7 +3363,8 @@ class ImageOSDisk(ImageDisk):
          values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known
          values are: "Windows", "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2022_03_01.models.OperatingSystemTypes
-        :keyword os_state: Required. The OS State. Known values are: "Generalized", "Specialized".
+        :keyword os_state: Required. The OS State. For managed images, use Generalized. Known values
+         are: "Generalized", "Specialized".
         :paramtype os_state: str or ~azure.mgmt.compute.v2022_03_01.models.OperatingSystemStateTypes
         """
         super(ImageOSDisk, self).__init__(snapshot=snapshot, managed_disk=managed_disk, blob_uri=blob_uri, caching=caching, disk_size_gb=disk_size_gb, storage_account_type=storage_account_type, disk_encryption_set=disk_encryption_set, **kwargs)

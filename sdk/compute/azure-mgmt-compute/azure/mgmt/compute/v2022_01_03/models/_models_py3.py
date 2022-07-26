@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
@@ -3798,7 +3798,7 @@ class SharingProfile(msrest.serialization.Model):
     :vartype groups: list[~azure.mgmt.compute.v2022_01_03.models.SharingProfileGroup]
     :ivar community_gallery_info: Information of community gallery if current gallery is shared to
      community.
-    :vartype community_gallery_info: any
+    :vartype community_gallery_info: ~azure.mgmt.compute.v2022_01_03.models.CommunityGalleryInfo
     """
 
     _validation = {
@@ -3808,14 +3808,14 @@ class SharingProfile(msrest.serialization.Model):
     _attribute_map = {
         'permissions': {'key': 'permissions', 'type': 'str'},
         'groups': {'key': 'groups', 'type': '[SharingProfileGroup]'},
-        'community_gallery_info': {'key': 'communityGalleryInfo', 'type': 'object'},
+        'community_gallery_info': {'key': 'communityGalleryInfo', 'type': 'CommunityGalleryInfo'},
     }
 
     def __init__(
         self,
         *,
         permissions: Optional[Union[str, "_models.GallerySharingPermissionTypes"]] = None,
-        community_gallery_info: Optional[Any] = None,
+        community_gallery_info: Optional["_models.CommunityGalleryInfo"] = None,
         **kwargs
     ):
         """
@@ -3827,7 +3827,7 @@ class SharingProfile(msrest.serialization.Model):
          ~azure.mgmt.compute.v2022_01_03.models.GallerySharingPermissionTypes
         :keyword community_gallery_info: Information of community gallery if current gallery is shared
          to community.
-        :paramtype community_gallery_info: any
+        :paramtype community_gallery_info: ~azure.mgmt.compute.v2022_01_03.models.CommunityGalleryInfo
         """
         super(SharingProfile, self).__init__(**kwargs)
         self.permissions = permissions
