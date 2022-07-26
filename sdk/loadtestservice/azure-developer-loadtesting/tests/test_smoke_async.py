@@ -8,12 +8,12 @@ from testcase import LoadtestingPowerShellPreparer
 from testcase_async import LoadtestingAsyncTest
 import os
 
-TEST_ID = "a011890b-0201-004d-020d"  # ID to be assigned to a test
-FILE_ID = "a012b234-1230-ab00-0240"  # ID to be assigned to file uploaded
-TEST_RUN_ID = "08673e89-3285-46a2-9c6b"  # ID to be assigned to a test run
-APP_COMPONENT = "01730263-6671-4212-b283"  # ID of the APP Component
-DISPLAY_NAME = "new_name"  # display name
-SUBSCRIPTION_ID = "fake-subs-id"
+TEST_ID = "TEST_ID"  # ID to be assigned to a test
+FILE_ID = "FILE_ID"  # ID to be assigned to file uploaded
+TEST_RUN_ID = "TEST_RUN_ID"  # ID to be assigned to a test run
+APP_COMPONENT = "APP_COMPONENT_ID"  # ID of the APP Componen
+SUBSCRIPTION_ID = "SUBSCRIPTION_ID"
+DISPLAY_NAME = "TestingResource"
 
 
 class LoadtestingSmokeAsyncTest(LoadtestingAsyncTest):

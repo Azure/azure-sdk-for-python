@@ -9,12 +9,12 @@ from pathlib import Path
 
 from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
 
-TEST_ID = "some-test-id"  # ID to be assigned to a test
-FILE_ID = "some-file-id"  # ID to be assigned to file uploaded
-TEST_RUN_ID = "some-testrun-id"  # ID to be assigned to a test run
-APP_COMPONENT = "some-appcomponent-id"  # ID of the APP Component
-DISPLAY_NAME = "new_namespace-new-namespace"  # display name
-SUBSCRIPTION_ID = "fake-subs-id"
+TEST_ID = "a011890b-0201-004d-010d-1200d888bb11"  # ID to be assigned to a test
+FILE_ID = "FILE_ID"  # ID to be assigned to file uploaded
+TEST_RUN_ID = "TEST_RUN_ID"  # ID to be assigned to a test run
+APP_COMPONENT = "APP_COMPONENT_ID"  # ID of the APP Componen
+SUBSCRIPTION_ID = "SUBSCRIPTION_ID"
+DISPLAY_NAME = "TestingResource"
 
 
 class LoadtestingSmokeTest(LoadtestingTest):

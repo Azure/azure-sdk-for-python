@@ -1,10 +1,10 @@
 interactions:
 - request:
-    body: '{"name": "app_component", "testId": "some-test-id", "value":
-      {"/subscriptions/fake-subs-id/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo":
-      {"resourceId": "/subscriptions/fake-subs-id/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo",
+    body: '{"name": "app_component", "testId": "a011890b-0201-004d-010d-1200d888bb11",
+      "value": {"/subscriptions/SUBSCRIPTION_ID/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo":
+      {"resourceId": "/subscriptions/SUBSCRIPTION_ID/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo",
       "resourceName": "App-Service-Sample-Demo", "resourceType": "Microsoft.Web/sites",
-      "subscriptionId": "fake-subs-id"}}}'
+      "subscriptionId": "SUBSCRIPTION_ID"}}}'
     headers:
       Accept:
       - application/json
@@ -13,29 +13,29 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '531'
+      - '544'
       Content-Type:
       - application/merge-patch+json
       User-Agent:
       - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.10.2 (Windows-10-10.0.22000-SP0)
     method: PATCH
-    uri: https://myservice.azure.com/appcomponents/some-appcomponent-id?api-version=2022-06-01-preview
+    uri: https://myservice.azure.com/appcomponents/APP_COMPONENT_ID?api-version=2022-06-01-preview
   response:
     body:
-      string: '{"resourceId":"/subscriptions/fake-subs-id/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk","testId":"some-test-id","testRunId":null,"name":"some-appcomponent-id","value":{"/subscriptions/fake-subs-id/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo":{"resourceId":"/subscriptions/fake-subs-id/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo","resourceName":"App-Service-Sample-Demo","resourceType":"Microsoft.Web/sites","displayName":null,"resourceGroup":"App-Service-Sample-Demo-rg","subscriptionId":"fake-subs-id","kind":null}}}'
+      string: '{"resourceId":"/subscriptions/SUBSCRIPTION_ID/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk","testId":"TEST_ID","testRunId":null,"name":"APP_COMPONENT_ID","value":{"/subscriptions/SUBSCRIPTION_ID/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo":{"resourceId":"/subscriptions/SUBSCRIPTION_ID/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo","resourceName":"App-Service-Sample-Demo","resourceType":"Microsoft.Web/sites","displayName":null,"resourceGroup":"App-Service-Sample-Demo-rg","subscriptionId":"SUBSCRIPTION_ID","kind":null}}}'
     headers:
       api-supported-versions:
       - 2021-07-01-preview, 2022-06-01-preview
       connection:
       - keep-alive
       content-length:
-      - '772'
+      - '800'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Jul 2022 10:14:48 GMT
+      - Tue, 26 Jul 2022 13:31:00 GMT
       mise-correlation-id:
-      - abd1a2cd-df51-4423-9c45-6defe722f851
+      - 7ad9df30-5ecd-455e-82ae-e220a64eb559
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       x-content-type-options:

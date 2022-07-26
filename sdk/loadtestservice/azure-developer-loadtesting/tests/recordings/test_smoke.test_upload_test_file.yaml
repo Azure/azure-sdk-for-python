@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: "--7a3c5c3aff2193ed7e4dd86df0da1eea\r\nContent-Disposition: form-data; name=\"file\";
+    body: "--3950ee1f758275a89730308af649635b\r\nContent-Disposition: form-data; name=\"file\";
       filename=\"sample.jmx\"\r\nContent-Type: application/octet-stream\r\n\r\n<?xml
       version=\"1.0\" encoding=\"UTF-8\"?>\r\n<jmeterTestPlan version=\"1.2\" properties=\"5.0\"
       jmeter=\"5.4.3\">\r\n  <hashTree>\r\n    <TestPlan guiclass=\"TestPlanGui\"
@@ -117,7 +117,7 @@ interactions:
       )}</stringProp>\r\n            <stringProp name=\"Argument.desc\">Web App URL</stringProp>\r\n
       \           <stringProp name=\"Argument.metadata\">=</stringProp>\r\n          </elementProp>\r\n
       \       </collectionProp>\r\n      </Arguments>\r\n      <hashTree/>\r\n    </hashTree>\r\n
-      \ </hashTree>\r\n</jmeterTestPlan>\r\n\r\n--7a3c5c3aff2193ed7e4dd86df0da1eea--\r\n"
+      \ </hashTree>\r\n</jmeterTestPlan>\r\n\r\n--3950ee1f758275a89730308af649635b--\r\n"
     headers:
       Accept:
       - application/json
@@ -128,29 +128,29 @@ interactions:
       Content-Length:
       - '10320'
       Content-Type:
-      - multipart/form-data; boundary=7a3c5c3aff2193ed7e4dd86df0da1eea
+      - multipart/form-data; boundary=3950ee1f758275a89730308af649635b
       User-Agent:
       - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.10.2 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://myservice.azure.com/loadtests/some-test-id/files/some-file-id?api-version=2022-06-01-preview
+    uri: https://myservice.azure.com/loadtests/a011890b-0201-004d-010d-1200d888bb11/files/FILE_ID?api-version=2022-06-01-preview
   response:
     body:
-      string: '{"url":"https://stcntproddataeus.blob.core.windows.net/0da106d7-b9ec-440d-ac83-73eee9129441/some-file-id","fileId":"some-file-id","filename":"sample.jmx","fileType":0,"expireTime":"2022-07-26T10:37:34.9175183","validationStatus":"VALIDATION_INITIATED"}'
+      string: '{"url":"https://stcntproddataeus.blob.core.windows.net/6d551c8f-ce57-4b46-a95b-47b1c5465101/FILE_ID?sv=2020-04-08&se=2022-07-26T13%3A41%3A09Z&sr=b&sp=r&sig=wu8MfFksCHY9alJkuunFGM5IBY5sdE4txq7oQknVhpA%3D","fileId":"FILE_ID","filename":"sample.jmx","fileType":0,"expireTime":"2022-07-26T13:41:09.5583741","validationStatus":"VALIDATION_INITIATED"}'
     headers:
       api-supported-versions:
       - 2021-07-01-preview, 2022-06-01-preview
       connection:
       - keep-alive
       content-length:
-      - '381'
+      - '405'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 Jul 2022 10:27:34 GMT
+      - Tue, 26 Jul 2022 13:31:09 GMT
       location:
-      - https://myservice.azure.com/loadtests/some-test-id/files/some-file-id?resourceId=%2fsubscriptions%2ffake-subs-id%2fresourcegroups%2fyashika-rg%2fproviders%2fmicrosoft.loadtestservice%2floadtests%2floadtestsdk&api-version=2022-06-01-preview
+      - https://myservice.azure.com/loadtests/a011890b-0201-004d-010d-1200d888bb11/files/FILE_ID?resourceId=%2fsubscriptions%2fSUBSCRIPTION_ID%2fresourcegroups%2fyashika-rg%2fproviders%2fmicrosoft.loadtestservice%2floadtests%2floadtestsdk&api-version=2022-06-01-preview
       mise-correlation-id:
-      - 97ac0471-10ad-426e-aa63-5f6c6e4aefe8
+      - 817f1501-bc83-4d84-be73-00ac430ed530
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       x-content-type-options:
