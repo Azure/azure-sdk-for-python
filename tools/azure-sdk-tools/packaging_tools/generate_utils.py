@@ -162,12 +162,13 @@ def gen_package_name(origin_config: Dict[str, Any]) -> str:
     return Path(origin_config["output-folder"]).parts[-1]
 
 
-def gen_basic_config(origin_config: Dict[str, Any]) -> Dict[str, Any]:
+def gen_basic_config(origin_config: Dict[str, Any], spec_folder: str = "../../../../../azure-rest-api-specs/") -> Dict[str, Any]:
+    spec_root = re.sub('specification', '', spec_folder)
     return {
         "package-name": gen_package_name(origin_config),
         "license-header": "MICROSOFT_MIT_NO_VERSION",
         "package-version": origin_config.get("package-version", "1.0.0b1"),
-        "require": ["../../../../../azure-rest-api-specs/" + line for line in origin_config["require"]],
+        "require": [spec_root + line for line in origin_config["require"]],
         "package-mode": "dataplane",
         "output-folder": "../",
     }
@@ -177,9 +178,9 @@ def gen_general_namespace(package_name: str) -> str:
     return package_name.replace('-', '.')
 
 
-def gen_dpg_config_single_client(origin_config: Dict[str, Any]) -> str:
+def gen_dpg_config_single_client(origin_config: Dict[str, Any], spec_folder: str) -> str:
     package_name = Path(origin_config["output-folder"]).parts[-1]
-    readme_config = gen_basic_config(origin_config)
+    readme_config = gen_basic_config(origin_config, spec_folder)
     readme_config.update({
         "namespace": gen_general_namespace(package_name),
     })
@@ -228,7 +229,7 @@ def gen_dpg_config_multi_client(origin_config: Dict[str, Any]) -> str:
 
 
 # generate swagger/README.md and return relative path based on SDK repo root path
-def gen_dpg_config(autorest_config: str) -> str:
+def gen_dpg_config(autorest_config: str, spec_folder: str) -> str:
     # remove useless lines
     autorest_config = extract_yaml_content(autorest_config)
     _LOGGER.info(f"autorestConfig after remove useless lines:\n{autorest_config}")
@@ -244,7 +245,7 @@ def gen_dpg_config(autorest_config: str) -> str:
     if "batch:" in autorest_config:
         readme_content = gen_dpg_config_multi_client(origin_config)
     else:
-        readme_content = gen_dpg_config_single_client(origin_config)
+        readme_content = gen_dpg_config_single_client(origin_config, spec_folder)
 
     # output autorest configuration
     swagger_readme = str(Path(swagger_folder, _DPG_README))
@@ -265,10 +266,10 @@ def lookup_swagger_readme(rest_readme_path: str) -> str:
     return ""
 
 
-def gen_dpg(rest_readme_path: str, autorest_config: str) -> Dict[str, Any]:
+def gen_dpg(rest_readme_path: str, autorest_config: str, spec_folder: str) -> Dict[str, Any]:
     # generate or find swagger/README.md
     if autorest_config:
-        swagger_readme = gen_dpg_config(autorest_config)
+        swagger_readme = gen_dpg_config(autorest_config, spec_folder)
     else:
         swagger_readme = lookup_swagger_readme(rest_readme_path)
     if not swagger_readme:

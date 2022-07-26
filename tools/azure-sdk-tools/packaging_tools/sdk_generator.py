@@ -4,9 +4,9 @@ import logging
 from pathlib import Path
 from subprocess import check_call
 
-from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE, CONFIG_FILE_DPG
+from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE
 from .generate_sdk import generate
-from .generate_utils import get_package_names, init_new_service, update_servicemetadata, judge_tag_preview
+from .generate_utils import get_package_names, init_new_service, update_servicemetadata, judge_tag_preview, gen_dpg
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,8 +24,10 @@ def main(generate_input, generate_output):
     input_readme = data["relatedReadmeMdFile"]
     relative_path_readme = str(Path(spec_folder, input_readme))
     _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
-    config_file = CONFIG_FILE if 'resource-manager' in input_readme else CONFIG_FILE_DPG
-    config = generate(config_file, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True)
+    if 'resource-manager' in input_readme:
+        config = generate(CONFIG_FILE, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True)
+    else:
+        config = gen_dpg(input_readme, data.get('autorestConfig', ''), spec_folder)
     package_names = get_package_names(sdk_folder)
     _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
@@ -39,10 +41,12 @@ def main(generate_input, generate_output):
             package_entry = {}
             package_entry["packageName"] = package_name
             package_entry["path"] = [folder_name]
+            package_entry["readmeMd"] = [input_readme]
             package_entry["tagIsStable"] = not judge_tag_preview(sdk_code_path)
             result[package_name] = package_entry
         else:
             result[package_name]["path"].append(folder_name)
+            result[package_name]["readmeMd"].append(input_readme)
 
         # Generate some necessary file for new service
         init_new_service(package_name, folder_name)
@@ -51,7 +55,7 @@ def main(generate_input, generate_output):
         try:
             update_servicemetadata(sdk_folder, data, config, folder_name, package_name, spec_folder, input_readme)
         except Exception as e:
-            _LOGGER.info(str(e))
+            _LOGGER.info(f"fail to update meta: {str(e)}")
 
         # Setup package locally
         check_call(
@@ -62,6 +66,7 @@ def main(generate_input, generate_output):
     # remove duplicates
     for value in result.values():
         value["path"] = list(set(value["path"]))
+        value["readmeMd"] = list(set(value["readmeMd"]))
 
     with open(generate_output, "w") as writer:
         json.dump(result, writer)
