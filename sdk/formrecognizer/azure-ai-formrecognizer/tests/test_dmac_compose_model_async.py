@@ -9,8 +9,8 @@ import uuid
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import set_bodiless_matcher
-from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
-from azure.ai.formrecognizer import DocumentModelInfo
+from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, AsyncDocumentModelAdministrationLROPoller
+from azure.ai.formrecognizer import DocumentModelDetails
 from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
 from preparers import FormRecognizerPreparer
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -62,7 +62,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         def callback(response, _, headers):
             op_response = client._deserialize(GetOperationResponse, response)
             model_info = client._deserialize(ModelInfo, op_response.result)
-            document_model = DocumentModelInfo._from_generated(model_info)
+            document_model = DocumentModelDetails._from_generated(model_info)
             raw_response.append(model_info)
             raw_response.append(document_model)
 
@@ -81,7 +81,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         self.assertModelTransformCorrect(document_model, generated)
 
         document_model_dict = document_model.to_dict()
-        document_model_from_dict = DocumentModelInfo.from_dict(document_model_dict)
+        document_model_from_dict = DocumentModelDetails.from_dict(document_model_dict)
         self.assertModelTransformCorrect(document_model_from_dict, generated)
 
     @pytest.mark.live_test_only
@@ -119,11 +119,13 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             model_2 = await poller.result()
 
             poller = await client.begin_compose_model([model_1.model_id, model_2.model_id])
-            assert poller.operation_id
-            assert poller.percent_completed is not None
             await poller.result()
-            assert poller.operation_kind == "documentModelCompose"
-            assert poller.percent_completed == 100
-            assert poller.resource_location_url
-            assert poller.created_on
-            assert poller.last_updated_on
+            assert isinstance(poller, AsyncDocumentModelAdministrationLROPoller)
+            details = poller.details
+            assert details["operation_id"]
+            assert details["percent_completed"] is not None
+            assert details["operation_kind"] == "documentModelCompose"
+            assert details["percent_completed"] == 100
+            assert details["resource_location_url"]
+            assert details["created_on"]
+            assert details["last_updated_on"]

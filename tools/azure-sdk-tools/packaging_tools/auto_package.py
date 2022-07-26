@@ -46,6 +46,11 @@ def main(generate_input, generate_output):
         # to distinguish with track1
         if 'azure-mgmt-' in package_name:
             package["packageName"] = "track2_" + package["packageName"]
+        for artifact in package["artifacts"]:
+            if ".whl" in artifact:
+                package["apiViewArtifact"] = artifact
+                package["language"] = "Python"
+                break
         result["packages"].append(package)
 
     with open(generate_output, "w") as writer:
