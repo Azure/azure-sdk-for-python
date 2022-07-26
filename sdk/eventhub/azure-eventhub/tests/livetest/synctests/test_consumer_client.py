@@ -6,10 +6,13 @@ from azure.eventhub import EventData
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub._eventprocessor.in_memory_checkpoint_store import InMemoryCheckpointStore
 from azure.eventhub._constants import ALL_PARTITIONS
+from ..._test_case import get_decorator
+
+uamqp_transport_vals = get_decorator()
 
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_receive_no_partition(connstr_senders, uamqp_transport):
     connection_str, senders = connstr_senders
@@ -53,7 +56,7 @@ def test_receive_no_partition(connstr_senders, uamqp_transport):
 
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_receive_partition(connstr_senders, uamqp_transport):
     connection_str, senders = connstr_senders
@@ -85,7 +88,7 @@ def test_receive_partition(connstr_senders, uamqp_transport):
 
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_receive_load_balancing(connstr_senders, uamqp_transport):
     if sys.platform.startswith('darwin'):
@@ -121,7 +124,7 @@ def test_receive_load_balancing(connstr_senders, uamqp_transport):
 
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 def test_receive_batch_no_max_wait_time(connstr_senders, uamqp_transport):
     '''Test whether callback is called when max_wait_time is None and max_batch_size has reached
     '''
@@ -165,13 +168,11 @@ def test_receive_batch_no_max_wait_time(connstr_senders, uamqp_transport):
     worker.join()
 
 
-@pytest.mark.parametrize("max_wait_time, sleep_time, expected_result, uamqp_transport",
-                         [(3, 10, [], True),
-                          (3, 2, None, True),
-                          (3, 10, [], False),
-                          (3, 2, None, False),
-                          ])
-def test_receive_batch_empty_with_max_wait_time(connection_str, max_wait_time, sleep_time, expected_result, uamqp_transport):
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
+@pytest.mark.parametrize("max_wait_time, sleep_time, expected_result",
+                         [(3, 10, []),
+                          (3, 2, None)])
+def test_receive_batch_empty_with_max_wait_time(uamqp_transport, connection_str, max_wait_time, sleep_time, expected_result):
     '''Test whether event handler is called when max_wait_time > 0 and no event is received
     '''
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default', uamqp_transport=uamqp_transport)
@@ -190,7 +191,7 @@ def test_receive_batch_empty_with_max_wait_time(connection_str, max_wait_time, s
 
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 def test_receive_batch_early_callback(connstr_senders, uamqp_transport):
     ''' Test whether the callback is called once max_batch_size reaches and before max_wait_time reaches.
     '''

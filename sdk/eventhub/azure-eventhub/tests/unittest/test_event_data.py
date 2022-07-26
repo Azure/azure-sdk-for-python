@@ -1,11 +1,25 @@
+# -- coding: utf-8 --
+#-------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+#--------------------------------------------------------------------------
+
 import platform
 import pytest
-import uamqp
-from azure.eventhub._transport._uamqp_transport import UamqpTransport 
+try:
+    import uamqp
+    from azure.eventhub._transport._uamqp_transport import UamqpTransport 
+except ImportError:
+    UamqpTransport = None
+    pass
 from azure.eventhub._transport._pyamqp_transport import PyamqpTransport
 from azure.eventhub.amqp import AmqpAnnotatedMessage
 from azure.eventhub import _common
 from azure.eventhub._pyamqp.message import Message, Properties
+from .._test_case import get_decorator
+
+uamqp_transport_vals = get_decorator()
 
 pytestmark = pytest.mark.skipif(platform.python_implementation() == "PyPy", reason="This is ignored for PyPy")
 
@@ -57,41 +71,44 @@ def test_app_properties():
     assert event_data.properties["a"] == "b"
 
 
-# TODO: fix and add uamqp
-def test_sys_properties():
-    #properties = uamqp.message.MessageProperties()
-    #properties.message_id = "message_id"
-    #properties.user_id = "user_id"
-    #properties.to = "to"
-    #properties.subject = "subject"
-    #properties.reply_to = "reply_to"
-    #properties.correlation_id = "correlation_id"
-    #properties.content_type = "content_type"
-    #properties.content_encoding = "content_encoding"
-    #properties.absolute_expiry_time = 1
-    #properties.creation_time = 1
-    #properties.group_id = "group_id"
-    #properties.group_sequence = 1
-    #properties.reply_to_group_id = "reply_to_group_id"
-    #message = uamqp.message.Message(properties=properties)
-    #message.annotations = {_common.PROP_OFFSET: "@latest"}
-    properties = Properties(
-        message_id="message_id",
-        user_id="user_id",
-        to="to",
-        subject="subject",
-        reply_to="reply_to",
-        correlation_id="correlation_id",
-        content_type="content_type",
-        content_encoding="content_encoding",
-        absolute_expiry_time=1,
-        creation_time=1,
-        group_id="group_id",
-        group_sequence=1,
-        reply_to_group_id="reply_to_group_id"
-    )
-    message_annotations = {_common.PROP_OFFSET: "@latest"}
-    message = Message(properties=properties, message_annotations=message_annotations)
+@pytest.mark.parametrize("uamqp_transport",
+                         uamqp_transport_vals)
+def test_sys_properties(uamqp_transport):
+    if uamqp_transport:
+        properties = uamqp.message.MessageProperties()
+        properties.message_id = "message_id"
+        properties.user_id = "user_id"
+        properties.to = "to"
+        properties.subject = "subject"
+        properties.reply_to = "reply_to"
+        properties.correlation_id = "correlation_id"
+        properties.content_type = "content_type"
+        properties.content_encoding = "content_encoding"
+        properties.absolute_expiry_time = 1
+        properties.creation_time = 1
+        properties.group_id = "group_id"
+        properties.group_sequence = 1
+        properties.reply_to_group_id = "reply_to_group_id"
+        message = uamqp.message.Message(properties=properties)
+        message.annotations = {_common.PROP_OFFSET: "@latest"}
+    else:
+        properties = Properties(
+            message_id="message_id",
+            user_id="user_id",
+            to="to",
+            subject="subject",
+            reply_to="reply_to",
+            correlation_id="correlation_id",
+            content_type="content_type",
+            content_encoding="content_encoding",
+            absolute_expiry_time=1,
+            creation_time=1,
+            group_id="group_id",
+            group_sequence=1,
+            reply_to_group_id="reply_to_group_id"
+        )
+        message_annotations = {_common.PROP_OFFSET: "@latest"}
+        message = Message(properties=properties, message_annotations=message_annotations)
     ed = EventData._from_message(message)  # type: EventData
 
     assert ed.system_properties[_common.PROP_OFFSET] == "@latest"
@@ -111,9 +128,15 @@ def test_sys_properties():
 
 
 # TODO: see why pyamqp went from 99 to 87
-@pytest.mark.parametrize("amqp_transport, expected_result",
-                         [(UamqpTransport(), 101), (PyamqpTransport(), 87)])
-def test_event_data_batch(amqp_transport, expected_result):
+@pytest.mark.parametrize("uamqp_transport",
+                         uamqp_transport_vals)
+def test_event_data_batch(uamqp_transport):
+    if uamqp_transport:
+        amqp_transport = UamqpTransport()
+        expected_result = 101
+    else:
+        amqp_transport = PyamqpTransport()
+        expected_result = 87
     batch = EventDataBatch(max_size_in_bytes=110, partition_key="par", amqp_transport=amqp_transport)
     batch.add(EventData("A"))
     assert str(batch) == "EventDataBatch(max_size_in_bytes=110, partition_id=None, partition_key='par', event_count=1)"
@@ -127,9 +150,14 @@ def test_event_data_batch(amqp_transport, expected_result):
         batch.add(EventData("A"))
 
 
-@pytest.mark.parametrize("message, expected_result",
-                         [(uamqp.Message('A'), [b'A']), (Message(data=b'A'), [65])])
-def test_event_data_from_message(message, expected_result):
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
+def test_event_data_from_message(uamqp_transport):
+    if uamqp_transport:
+        message = uamqp.Message('A')
+        expected_result = [b'A']
+    else:
+        message = Message(data=b'A')
+        expected_result = [65]
     event = EventData._from_message(message)
     assert event.content_type is None
     assert event.correlation_id is None

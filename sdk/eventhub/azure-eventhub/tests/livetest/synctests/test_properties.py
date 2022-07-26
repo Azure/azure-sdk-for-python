@@ -9,9 +9,12 @@ import pytest
 from azure.eventhub import EventHubSharedKeyCredential
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub.exceptions import AuthenticationError, ConnectError, EventHubError
+from ..._test_case import get_decorator
+
+uamqp_transport_vals = get_decorator()
 
 
-@pytest.mark.parametrize("uamqp_transport", [True, False])
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_get_properties(live_eventhub, uamqp_transport):
     client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'], '$default',
@@ -22,7 +25,7 @@ def test_get_properties(live_eventhub, uamqp_transport):
         properties = client.get_eventhub_properties()
         assert properties['eventhub_name'] == live_eventhub['event_hub'] and properties['partition_ids'] == ['0', '1']
 
-@pytest.mark.parametrize("uamqp_transport", [True, False])
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_get_properties_with_auth_error_sync(live_eventhub, uamqp_transport):
     client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'], '$default',
@@ -40,7 +43,7 @@ def test_get_properties_with_auth_error_sync(live_eventhub, uamqp_transport):
         with pytest.raises(AuthenticationError) as e:
             client.get_eventhub_properties()
 
-@pytest.mark.parametrize("uamqp_transport", [True, False])
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_get_properties_with_connect_error(live_eventhub, uamqp_transport):
     client = EventHubConsumerClient(live_eventhub['hostname'], "invalid", '$default',
@@ -59,7 +62,7 @@ def test_get_properties_with_connect_error(live_eventhub, uamqp_transport):
         with pytest.raises(EventHubError) as e:  # This can be either ConnectError or ConnectionLostError
             client.get_eventhub_properties()
 
-@pytest.mark.parametrize("uamqp_transport", [True, False])
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_get_partition_ids(live_eventhub, uamqp_transport):
     client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'], '$default',
@@ -71,7 +74,7 @@ def test_get_partition_ids(live_eventhub, uamqp_transport):
         assert partition_ids == ['0', '1']
 
 
-@pytest.mark.parametrize("uamqp_transport", [True, False])
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_get_partition_properties(live_eventhub, uamqp_transport):
     client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'], '$default',

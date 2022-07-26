@@ -12,10 +12,13 @@ import datetime
 
 from azure.eventhub import EventData, TransportType, EventHubConsumerClient
 from azure.eventhub.exceptions import EventHubError
+from ..._test_case import get_decorator
+
+uamqp_transport_vals = get_decorator()
 
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_receive_end_of_stream(connstr_senders, uamqp_transport):
     def on_event(partition_context, event):
@@ -47,20 +50,15 @@ def test_receive_end_of_stream(connstr_senders, uamqp_transport):
     thread.join()
 
 
-@pytest.mark.parametrize("position, inclusive, expected_result, uamqp_transport",
-                         [("offset", False, "Exclusive", True),
-                          ("offset", True, "Inclusive", True),
-                          ("sequence", False, "Exclusive", True),
-                          ("sequence", True, "Inclusive", True),
-                          ("enqueued_time", False, "Exclusive", True),
-                          ("offset", False, "Exclusive", False),
-                          ("offset", True, "Inclusive", False),
-                          ("sequence", False, "Exclusive", False),
-                          ("sequence", True, "Inclusive", False),
-                          ("enqueued_time", False, "Exclusive", False)
-                          ])
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
+@pytest.mark.parametrize("position, inclusive, expected_result",
+                         [("offset", False, "Exclusive"),
+                          ("offset", True, "Inclusive"),
+                          ("sequence", False, "Exclusive"),
+                          ("sequence", True, "Inclusive"),
+                          ("enqueued_time", False, "Exclusive")])
 @pytest.mark.liveTest
-def test_receive_with_event_position_sync(connstr_senders, position, inclusive, expected_result, uamqp_transport):
+def test_receive_with_event_position_sync(uamqp_transport, connstr_senders, position, inclusive, expected_result):
     def on_event(partition_context, event):
         assert partition_context.last_enqueued_event_properties.get('sequence_number') == event.sequence_number
         assert partition_context.last_enqueued_event_properties.get('offset') == event.offset
@@ -110,7 +108,7 @@ def test_receive_with_event_position_sync(connstr_senders, position, inclusive, 
     thread.join()
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_receive_owner_level(connstr_senders, uamqp_transport):
     def on_event(partition_context, event):
@@ -144,7 +142,7 @@ def test_receive_owner_level(connstr_senders, uamqp_transport):
 
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_receive_over_websocket_sync(connstr_senders, uamqp_transport):
     app_prop = {"raw_prop": "raw_value"}

@@ -20,11 +20,17 @@ from azure.eventhub.amqp import (
     AmqpAnnotatedMessage,
     AmqpMessageProperties,
 )
-from azure.eventhub._transport._uamqp_transport import UamqpTransport
+try:
+    from azure.eventhub._transport._uamqp_transport import UamqpTransport
+except (ImportError, ModuleNotFoundError):
+    UamqpTransport = None
 from azure.eventhub._transport._pyamqp_transport import PyamqpTransport
+from ..._test_case import get_decorator
+
+uamqp_transport_vals = get_decorator()
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_send_with_partition_key(connstr_receivers, uamqp_transport):
     connection_str, receivers = connstr_receivers
@@ -54,7 +60,7 @@ def test_send_with_partition_key(connstr_receivers, uamqp_transport):
 
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_send_and_receive_large_body_size(connstr_receivers, uamqp_transport):
     if sys.platform.startswith('darwin'):
@@ -76,7 +82,7 @@ def test_send_and_receive_large_body_size(connstr_receivers, uamqp_transport):
 
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_send_amqp_annotated_message(connstr_receivers, uamqp_transport):
     connection_str, receivers = connstr_receivers
@@ -195,8 +201,9 @@ def test_send_amqp_annotated_message(connstr_receivers, uamqp_transport):
     assert received_count["normal_msg"] == 2
 
 
-@pytest.mark.parametrize("payload, uamqp_transport",
-                         [(b"", True), (b"", False), (b"A single event", True), (b"A single event", False)])
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
+@pytest.mark.parametrize("payload",
+                         [(b""), (b"A single event")])
 @pytest.mark.liveTest
 def test_send_and_receive_small_body(connstr_receivers, payload, uamqp_transport):
     connection_str, receivers = connstr_receivers
@@ -214,7 +221,7 @@ def test_send_and_receive_small_body(connstr_receivers, payload, uamqp_transport
 
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_send_partition(connstr_receivers, uamqp_transport):
     connection_str, receivers = connstr_receivers
@@ -250,7 +257,7 @@ def test_send_partition(connstr_receivers, uamqp_transport):
 
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_send_non_ascii(connstr_receivers, uamqp_transport):
     connection_str, receivers = connstr_receivers
@@ -272,7 +279,7 @@ def test_send_non_ascii(connstr_receivers, uamqp_transport):
 
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_send_multiple_partitions_with_app_prop(connstr_receivers, uamqp_transport):
     connection_str, receivers = connstr_receivers
@@ -302,7 +309,7 @@ def test_send_multiple_partitions_with_app_prop(connstr_receivers, uamqp_transpo
 
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_send_over_websocket_sync(connstr_receivers, uamqp_transport):
     connection_str, receivers = connstr_receivers
@@ -322,7 +329,7 @@ def test_send_over_websocket_sync(connstr_receivers, uamqp_transport):
 
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_send_with_create_event_batch_with_app_prop_sync(connstr_receivers, uamqp_transport):
     connection_str, receivers = connstr_receivers
@@ -350,7 +357,7 @@ def test_send_with_create_event_batch_with_app_prop_sync(connstr_receivers, uamq
 
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_send_list(connstr_receivers, uamqp_transport):
     connection_str, receivers = connstr_receivers
@@ -367,7 +374,7 @@ def test_send_list(connstr_receivers, uamqp_transport):
 
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_send_list_partition(connstr_receivers, uamqp_transport):
     connection_str, receivers = connstr_receivers
@@ -380,12 +387,10 @@ def test_send_list_partition(connstr_receivers, uamqp_transport):
     assert received.body_as_str() == payload
 
 
-@pytest.mark.parametrize("to_send, exception_type, uamqp_transport",
-                         [([EventData("A"*1024)]*1100, ValueError, True),
-                          ("any str", AttributeError, True),
-                          ([EventData("A"*1024)]*1100, ValueError, False),
-                          ("any str", AttributeError, False)
-                          ])
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
+@pytest.mark.parametrize("to_send, exception_type",
+                         [([EventData("A"*1024)]*1100, ValueError),
+                          ("any str", AttributeError)])
 @pytest.mark.liveTest
 def test_send_list_wrong_data(connection_str, to_send, exception_type, uamqp_transport):
     client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
@@ -394,12 +399,8 @@ def test_send_list_wrong_data(connection_str, to_send, exception_type, uamqp_tra
             client.send_batch(to_send)
 
 
-@pytest.mark.parametrize("partition_id, partition_key, uamqp_transport", [
-    ("0", None, True),
-    (None, "pk", True),
-    ("0", None, False),
-    (None, "pk", False)]
-)
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
+@pytest.mark.parametrize("partition_id, partition_key", [("0", None), (None, "pk")])
 def test_send_batch_pid_pk(invalid_hostname, partition_id, partition_key, uamqp_transport):
     # Use invalid_hostname because this is not a live test.
     amqp_transport = UamqpTransport() if uamqp_transport else PyamqpTransport()

@@ -11,9 +11,6 @@ from azure.eventhub._pyamqp.authentication import SASTokenAuth
 from azure.eventhub._pyamqp.client import ReceiveClient
 from azure.eventhub._pyamqp import error, constants
 
-import uamqp
-from uamqp import compat
-
 from azure.eventhub import (
     EventData,
     EventHubSharedKeyCredential,
@@ -22,12 +19,19 @@ from azure.eventhub import (
 )
 from azure.eventhub.exceptions import OperationTimeoutError
 from azure.eventhub._utils import transform_outbound_single_message
-from azure.eventhub._transport._uamqp_transport import UamqpTransport
+try:
+    import uamqp
+    from uamqp import compat
+    from azure.eventhub._transport._uamqp_transport import UamqpTransport
+except (ImportError, ModuleNotFoundError):
+    UamqpTransport = None
 from azure.eventhub._transport._pyamqp_transport import PyamqpTransport
+from ..._test_case import get_decorator
 
+uamqp_transport_vals = get_decorator()
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_send_with_long_interval_sync(live_eventhub, sleep, uamqp_transport):
     test_partition = "0"
@@ -72,9 +76,8 @@ def test_send_with_long_interval_sync(live_eventhub, sleep, uamqp_transport):
     assert list(received[0].body)[0] == b"A single event"
 
 
-# TODO: fix and add pyamqp transport
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_send_connection_idle_timeout_and_reconnect_sync(connstr_receivers, uamqp_transport):
     connection_str, receivers = connstr_receivers
@@ -136,7 +139,7 @@ def test_send_connection_idle_timeout_and_reconnect_sync(connstr_receivers, uamq
 
 
 @pytest.mark.parametrize("uamqp_transport",
-                         [True, False])
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_receive_connection_idle_timeout_and_reconnect_sync(connstr_senders, uamqp_transport):
     connection_str, senders = connstr_senders

@@ -3,7 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import six
-from uamqp import errors, compat
+try:
+    from uamqp import errors, compat
+except ImportError:
+    errors = None
+    compat = None
 
 class EventHubError(Exception):
     """Represents an error occurred in the client.

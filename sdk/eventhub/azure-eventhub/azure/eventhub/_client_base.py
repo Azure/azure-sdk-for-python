@@ -23,7 +23,10 @@ from azure.core.utils import parse_connection_string as core_parse_connection_st
 from azure.core.pipeline.policies import RetryMode
 
 
-from ._transport._uamqp_transport import UamqpTransport
+try:
+    from ._transport._uamqp_transport import UamqpTransport
+except ImportError:
+    UamqpTransport = None
 from ._transport._pyamqp_transport import PyamqpTransport
 from .exceptions import ClientClosedError
 from ._configuration import Configuration
@@ -294,7 +297,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         else:
             try:
                 self._amqp_transport = UamqpTransport()
-            except ImportError:
+            except TypeError:
                 raise ImportError("uamqp package is not installed")
 
         self.eventhub_name = eventhub_name

@@ -19,11 +19,17 @@ from azure.eventhub.exceptions import (
 )
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub import EventHubProducerClient
-from azure.eventhub._transport._uamqp_transport import UamqpTransport
+try:
+    from azure.eventhub._transport._uamqp_transport import UamqpTransport
+except (ImportError, ModuleNotFoundError):
+    UamqpTransport = None
 from azure.eventhub._transport._pyamqp_transport import PyamqpTransport
+from ..._test_case import get_decorator
+
+uamqp_transport_vals = get_decorator()
 
 
-@pytest.mark.parametrize("uamqp_transport", [True, False])
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_send_batch_with_invalid_hostname(invalid_hostname, uamqp_transport):
     amqp_transport = UamqpTransport() if uamqp_transport else PyamqpTransport()
@@ -38,7 +44,7 @@ def test_send_batch_with_invalid_hostname(invalid_hostname, uamqp_transport):
             client.send_batch(batch)
 
 
-@pytest.mark.parametrize("uamqp_transport", [True, False])
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_receive_with_invalid_hostname_sync(invalid_hostname, uamqp_transport):
     def on_event(partition_context, event):
@@ -56,7 +62,7 @@ def test_receive_with_invalid_hostname_sync(invalid_hostname, uamqp_transport):
     thread.join()
 
 
-@pytest.mark.parametrize("uamqp_transport", [True, False])
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_send_batch_with_invalid_key(invalid_key, uamqp_transport):
     client = EventHubProducerClient.from_connection_string(invalid_key, uamqp_transport=uamqp_transport)
@@ -70,7 +76,7 @@ def test_send_batch_with_invalid_key(invalid_key, uamqp_transport):
         client.close()
 
 
-@pytest.mark.parametrize("uamqp_transport", [True, False])
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_send_batch_to_invalid_partitions(connection_str, uamqp_transport):
     partitions = ["XYZ", "-1", "1000", "-"]
@@ -85,7 +91,7 @@ def test_send_batch_to_invalid_partitions(connection_str, uamqp_transport):
             client.close()
 
 
-@pytest.mark.parametrize("uamqp_transport", [True, False])
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_send_batch_too_large_message(connection_str, uamqp_transport):
     if sys.platform.startswith('darwin'):
@@ -100,7 +106,7 @@ def test_send_batch_too_large_message(connection_str, uamqp_transport):
         client.close()
 
 
-@pytest.mark.parametrize("uamqp_transport", [True, False])
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_send_batch_null_body(connection_str, uamqp_transport):
     client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
@@ -114,7 +120,7 @@ def test_send_batch_null_body(connection_str, uamqp_transport):
         client.close()
 
 
-@pytest.mark.parametrize("uamqp_transport", [True, False])
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_create_batch_with_invalid_hostname_sync(invalid_hostname, uamqp_transport):
     if sys.platform.startswith('darwin'):
@@ -126,7 +132,7 @@ def test_create_batch_with_invalid_hostname_sync(invalid_hostname, uamqp_transpo
             client.create_batch(max_size_in_bytes=300)
 
 
-@pytest.mark.parametrize("uamqp_transport", [True, False])
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_create_batch_with_too_large_size_sync(connection_str, uamqp_transport):
     client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)

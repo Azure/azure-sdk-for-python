@@ -30,10 +30,15 @@ from ._constants import (
     PROP_PARTITION_KEY
 )
 
-from uamqp import types
-from uamqp.message import MessageHeader
+try:
+    from uamqp import types
+    from uamqp.message import MessageHeader
+    PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(PROP_PARTITION_KEY)
+except (ImportError, ModuleNotFoundError):
+    types = None
+    MessageHeader = None
+    PROP_PARTITION_KEY_AMQP_SYMBOL = None
 
-PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(PROP_PARTITION_KEY)
 
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
