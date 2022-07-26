@@ -5,23 +5,23 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.10.2 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.8.8 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://myservice.azure.com/appcomponents?api-version=2022-06-01-preview&testId=a011890b-0201-004d-020d
+    uri: https://myservice.azure.com/appcomponents?api-version=2022-06-01-preview&testId=TEST_ID
   response:
     body:
-      string: '{"resourceId":"/subscriptions/fake-subs-id/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk","testId":"a011890b-0201-004d-020d","testRunId":null,"name":"01730263-6671-4212-b283","value":{"/subscriptions/fake-subs-id/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo":{"resourceId":"/subscriptions/fake-subs-id/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo","resourceName":"App-Service-Sample-Demo","resourceType":"Microsoft.Web/sites","displayName":null,"resourceGroup":"App-Service-Sample-Demo-rg","subscriptionId":"fake-subs-id","kind":null}}}'
+      string: '{"resourceId":"/subscriptions/SUBSCRIPTION_ID/resourcegroups/python-sdk-test/providers/microsoft.loadtestservice/loadtests/loadtest-jf","testId":"TEST_ID","testRunId":null,"name":"APP_COMPONENT","value":{"/subscriptions/SUBSCRIPTION_ID/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo":{"resourceId":"/subscriptions/SUBSCRIPTION_ID/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo","resourceName":"App-Service-Sample-Demo","resourceType":"Microsoft.Web/sites","displayName":null,"resourceGroup":"App-Service-Sample-Demo-rg","subscriptionId":"SUBSCRIPTION_ID","kind":null}}}'
     headers:
       api-supported-versions: 2021-07-01-preview, 2022-06-01-preview
       connection: keep-alive
-      content-length: '772'
+      content-length: '777'
       content-type: application/json; charset=utf-8
-      date: Mon, 25 Jul 2022 11:25:14 GMT
-      mise-correlation-id: 08734605-3ede-4520-9975-eb29d95d0373
+      date: Tue, 26 Jul 2022 08:29:00 GMT
+      mise-correlation-id: 9c7f9122-5984-4a98-b35c-d478f198d112
       strict-transport-security: max-age=15724800; includeSubDomains
       x-content-type-options: nosniff
     status:
       code: 200
       message: OK
-    url: https://eccdc9b7-7603-402b-879d-bde2b637db56.eus.cnt-prod.loadtesting.azure.com/appcomponents?api-version=2022-06-01-preview&testId=a011890b-0201-004d-020d
+    url: https://946598fc-b4a7-4e07-8fbb-a68ca02a9f10.eus.cnt-prod.loadtesting.azure.com/appcomponents?api-version=2022-06-01-preview&testId=a011890b-0201-004d-010d
 version: 1

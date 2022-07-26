@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"resourceId": "/subscriptions/fake-subs-id/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
+    body: '{"resourceId": "/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
       "description": "", "displayName": "new_name", "loadTestConfig": {"engineSize":
       "m", "engineInstances": 1, "splitAllCSVs": false}, "secrets": {}, "environmentVariables":
       {}, "passFailCriteria": {"passFailMetrics": {}}, "keyvaultReferenceIdentityType":
@@ -13,23 +13,23 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       User-Agent:
-      - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.10.2 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.8.8 (Windows-10-10.0.19041-SP0)
     method: PATCH
-    uri: https://myservice.azure.com/loadtests/a011890b-0201-004d-020d?api-version=2022-06-01-preview
+    uri: https://myservice.azure.com/loadtests/TEST_ID?api-version=2022-06-01-preview
   response:
     body:
-      string: '{"testId":"a011890b-0201-004d-020d","description":"","displayName":"new_name","resourceId":"/subscriptions/fake-subs-id/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk","loadTestConfig":{"engineInstances":1,"splitAllCSVs":false},"passFailCriteria":{"passFailMetrics":{}},"createdDateTime":"2022-07-25T11:12:35.941Z","createdBy":null,"lastModifiedDateTime":"2022-07-25T11:12:35.941Z","lastModifiedBy":null,"inputArtifacts":{"configUrl":null,"testScriptUrl":null,"userPropUrl":null,"inputArtifactsZipFileurl":null,"additionalUrls":[]},"secrets":null,"environmentVariables":null,"subnetId":null,"keyvaultReferenceIdentityType":"SystemAssigned","keyvaultReferenceIdentityId":null}'
+      string: '{"testId":"TEST_ID","description":"","displayName":"new_name","resourceId":"/subscriptions/SUBSCRIPTION_ID/resourcegroups/python-sdk-test/providers/microsoft.loadtestservice/loadtests/loadtest-jf","loadTestConfig":{"engineInstances":1,"splitAllCSVs":false},"passFailCriteria":{"passFailMetrics":{}},"createdDateTime":"2022-07-26T02:38:46.669Z","createdBy":null,"lastModifiedDateTime":"2022-07-26T02:38:46.669Z","lastModifiedBy":null,"inputArtifacts":{"configUrl":null,"testScriptUrl":{"url":"https://stcntproddataeus.blob.core.windows.net/041c60a4-d25f-4102-b324-4f30261785e3/FILE_ID?sv=2020-04-08&se=2022-07-26T09%3A29%3A02Z&sr=b&sp=r&sig=oErRRoas%2Fcs%2F4ZelMY5HVeMqlgSsplk8KK6lIZFSF68%3D","fileId":"FILE_ID","filename":"sample.jmx","fileType":0,"expireTime":"2022-07-26T08:39:02.5748714+00:00","validationStatus":"VALIDATION_INITIATED"},"userPropUrl":null,"inputArtifactsZipFileurl":null,"additionalUrls":[]},"secrets":null,"environmentVariables":null,"subnetId":null,"keyvaultReferenceIdentityType":"SystemAssigned","keyvaultReferenceIdentityId":null}'
     headers:
       api-supported-versions: 2021-07-01-preview, 2022-06-01-preview
       connection: keep-alive
-      content-length: '736'
+      content-length: '1124'
       content-type: application/json; charset=utf-8
-      date: Mon, 25 Jul 2022 13:14:33 GMT
-      mise-correlation-id: 9e5ee545-5588-4951-8835-4369cc5384a7
+      date: Tue, 26 Jul 2022 08:29:02 GMT
+      mise-correlation-id: fa28fd08-5b4b-4e8f-9ce9-e16e987d620e
       strict-transport-security: max-age=15724800; includeSubDomains
       x-content-type-options: nosniff
     status:
       code: 200
       message: OK
-    url: https://eccdc9b7-7603-402b-879d-bde2b637db56.eus.cnt-prod.loadtesting.azure.com/loadtests/a011890b-0201-004d-020d?api-version=2022-06-01-preview
+    url: https://946598fc-b4a7-4e07-8fbb-a68ca02a9f10.eus.cnt-prod.loadtesting.azure.com/loadtests/a011890b-0201-004d-010d?api-version=2022-06-01-preview
 version: 1
