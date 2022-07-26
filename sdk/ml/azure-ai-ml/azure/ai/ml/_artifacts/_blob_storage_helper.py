@@ -194,7 +194,7 @@ class BlobStorageClient:
         """
 
         # Metadata isn't always a populated field, and may need to be explicitly
-        # requested from whatever function generates the blobproperies object
+        # requested from whatever function generates the blobproperties object
         #
         # e.g self.container_client.list_blobs(..., include='metadata')
         return bool(blob.metadata and blob.metadata.get(BLOB_DATASTORE_IS_HDI_FOLDER_KEY, None))
