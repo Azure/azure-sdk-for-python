@@ -536,7 +536,18 @@
         "kwonlyargcount",
         "dcid",
         "startf",
-        "dpkg"
+        "dpkg",
+        "isreused",
+        "reusedrunid",
+        "strictyaml",
+        "funcs",
+        "Fsubscriptions",
+        "Fresource",
+        "Fproviders",
+        "Fdeployments",
+        "isfolder",
+        "mylist",
+        "unioned"
       ]
     },
     {

@@ -8,7 +8,7 @@ import pytest
 import uuid
 import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
-from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModelInfo
+from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModelDetails, DocumentModelAdministrationLROPoller
 from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -66,7 +66,7 @@ class TestTraining(FormRecognizerTest):
         def callback(response, _, headers):
             op_response = client._deserialize(GetOperationResponse, response)
             model_info = client._deserialize(ModelInfo, op_response.result)
-            document_model = DocumentModelInfo._from_generated(model_info)
+            document_model = DocumentModelDetails._from_generated(model_info)
             raw_response.append(model_info)
             raw_response.append(document_model)
 
@@ -78,7 +78,7 @@ class TestTraining(FormRecognizerTest):
         self.assertModelTransformCorrect(document_model, generated)
 
         document_model_dict = document_model.to_dict()
-        document_model_from_dict = DocumentModelInfo.from_dict(document_model_dict)
+        document_model_from_dict = DocumentModelDetails.from_dict(document_model_dict)
         self.assertModelTransformCorrect(document_model_from_dict, generated)
 
     @pytest.mark.live_test_only
@@ -114,11 +114,13 @@ class TestTraining(FormRecognizerTest):
         model_2 = poller.result()
 
         poller = client.begin_compose_model([model_1.model_id, model_2.model_id])
-        assert poller.operation_id
-        assert poller.percent_completed is not None
         poller.result()
-        assert poller.operation_kind == "documentModelCompose"
-        assert poller.percent_completed == 100
-        assert poller.resource_location_url
-        assert poller.created_on
-        assert poller.last_updated_on
+        assert isinstance(poller, DocumentModelAdministrationLROPoller)
+        details = poller.details
+        assert details["operation_id"]
+        assert details["percent_completed"] is not None
+        assert details["operation_kind"] == "documentModelCompose"
+        assert details["percent_completed"] == 100
+        assert details["resource_location_url"]
+        assert details["created_on"]
+        assert details["last_updated_on"]
