@@ -48,10 +48,10 @@ endpoint = os.environ["LOADTESTSERVICE_ENDPOINT"]
 # Build a client through AAD
 client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=endpoint)
 
-TEST_ID = "a011890b-0201-004d-010d"  # ID to be assigned to a test
-FILE_ID = "a012b234-1230-ab00-0040"  # ID to be assigned to file uploaded
-TEST_RUN_ID = "08673e89-3285-46a1-9c6b"  # ID to be assigned to a test run
-APP_COMPONENT = "01730263-6671-4216-b283"  # ID of the APP Component
+TEST_ID = "some-test-id"  # ID to be assigned to a test
+FILE_ID = "some-file-id"  # ID to be assigned to file uploaded
+TEST_RUN_ID = "some-testrun-id"  # ID to be assigned to a test run
+APP_COMPONENT = "some-appcomponent-id"  # ID of the APP Component
 DISPLAY_NAME = "new_namespace-new-namespace"  # display name
 SUBSCRIPTION_ID = os.environ["SUBSCRIPTION_ID"]
 
@@ -82,10 +82,8 @@ except HttpResponseError as e:
 # uploading .jmx file to a test
 try:
     # opening .jmx file
-    body = {}
-    body["file"] = open("sample.jmx", "rb")
 
-    result = client.load_test_administration.upload_test_file(TEST_ID, FILE_ID, body)
+    result = client.load_test_administration.upload_test_file(TEST_ID, FILE_ID, open("sample.jmx", "rb"))
     print(result)
 except HttpResponseError as e:
     print("Failed to send JSON message: {}".format(e.response.json()))

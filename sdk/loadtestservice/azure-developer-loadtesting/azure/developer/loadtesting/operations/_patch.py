@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, IO, Optional, Union, cast, overload, List
+from typing import Any, IO, Optional, Union, cast, overload, List, BinaryIO
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -32,7 +32,7 @@ _SERIALIZER.client_side_validation = False
 def build_upload_test_file_request(
         test_id: str,
         file_id: str,
-        file_content,
+        file: BinaryIO,
         **kwargs,
 ) -> HttpRequest:
     """
@@ -40,8 +40,10 @@ def build_upload_test_file_request(
     """
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-06-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+
+    # content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/loadtests/{testId}/files/{fileId}"
@@ -58,7 +60,9 @@ def build_upload_test_file_request(
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, files=file_content, params=_params, headers=_headers, **kwargs)
+    files_json = {"file": file}
+
+    return HttpRequest(method="PUT", url=_url, files=files_json, params=_params, headers=_headers, **kwargs)
 
 
 class TestOperations(TestOperationsGenerated):
@@ -69,7 +73,7 @@ class TestOperations(TestOperationsGenerated):
     def __init__(self, *args, **kwargs):
         super(TestOperations, self).__init__(*args, **kwargs)
 
-    def upload_test_file(self, test_id: str, file_id: str, file_content: JSON, **kwargs) -> JSON:
+    def upload_test_file(self, test_id: str, file_id: str, file: BinaryIO, **kwargs) -> JSON:
         """Upload test file and link it to a test.
 
         Upload a test file to an existing test.
@@ -79,7 +83,7 @@ class TestOperations(TestOperationsGenerated):
         :param file_id: Unique id for the file
         :type file_id: str
         :param file_content: dictionary containing file contet
-        :type file_id: str
+        :type file: BinaryIO (file opened in Binary read mode)
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -88,18 +92,18 @@ class TestOperations(TestOperationsGenerated):
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-06-01-preview"))
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        _content = file_content
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+
+        _content = file
 
         request = build_upload_test_file_request(
-            test_id,
-            file_id,
-            _content,
-            api_version=api_version,
+            test_id=test_id,
+            file_id=file_id,
+            file=file,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )

@@ -4,14 +4,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
-from pathlib import Path
 import os
+from pathlib import Path
 
-TEST_ID = "a011890b-0201-004d-010d"  # ID to be assigned to a test
-FILE_ID = "a012b234-1230-ab00-0040"  # ID to be assigned to file uploaded
-TEST_RUN_ID = "08673e89-3285-46a1-9c6b"  # ID to be assigned to a test run
-APP_COMPONENT = "01730263-6671-4216-b283"  # ID of the APP Component
+from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
+
+TEST_ID = "some-test-id"  # ID to be assigned to a test
+FILE_ID = "some-file-id"  # ID to be assigned to file uploaded
+TEST_RUN_ID = "some-testrun-id"  # ID to be assigned to a test run
+APP_COMPONENT = "some-appcomponent-id"  # ID of the APP Component
 DISPLAY_NAME = "new_namespace-new-namespace"  # display name
 SUBSCRIPTION_ID = "fake-subs-id"
 
@@ -44,8 +45,8 @@ class LoadtestingSmokeTest(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     def test_upload_test_file(self, loadtesting_endpoint):
         client = self.create_client(endpoint=loadtesting_endpoint)
-        body = {"file": open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb")}
-        result = client.load_test_administration.upload_test_file(TEST_ID, FILE_ID, body)
+        result = client.load_test_administration.upload_test_file(TEST_ID, FILE_ID, open(
+            os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb"))
         assert result is not None
 
     @LoadtestingPowerShellPreparer()

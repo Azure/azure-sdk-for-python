@@ -45,7 +45,7 @@ from azure.developer.loadtesting import LoadTestClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
-TEST_ID = "a011890b-0201-004d-010d"  
+TEST_ID = "some-test-id"  
 DISPLAY_NAME = "new_namespace-new-namespace"  
 SUBSCRIPTION_ID = os.environ["SUBSCRIPTION_ID"]  
 
@@ -81,8 +81,8 @@ from azure.developer.loadtesting import LoadTestClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
-TEST_ID = "a011890b-0201-004d-010d"  
-FILE_ID = "a012b234-1230-ab00-0040"  
+TEST_ID = "some-test-id"  
+FILE_ID = "some-file-id"  
 
 try:
     # opening .jmx file
@@ -101,8 +101,8 @@ from azure.developer.loadtesting import LoadTestClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
-TEST_ID = "a011890b-0201-004d-010d"  
-TEST_RUN_ID = "08673e89-3285-46a1-9c6b" 
+TEST_ID = "some-test-id"  
+TEST_RUN_ID = "some-testrun-id" 
 DISPLAY_NAME = "new_namespace-new-namespace"  
 
 try:
