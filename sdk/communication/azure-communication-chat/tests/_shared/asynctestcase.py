@@ -9,7 +9,6 @@ import asyncio
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from .testcase import CommunicationTestCase
 
-
 class AsyncCommunicationTestCase(CommunicationTestCase):
 
     @staticmethod

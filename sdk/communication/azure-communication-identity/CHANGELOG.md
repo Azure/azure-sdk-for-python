@@ -1,22 +1,29 @@
 # Release History
 
-## 1.2.0 (Unreleased)
+## 1.1.0 (Unreleased)
 
 ### Features Added
+
+- Added support to build a custom Teams endpoint using Microsoft 365 Teams identities:
+    - Added `get_token_for_teams_user(aad_token, client_id, user_object_id)` method that provides the ability to exchange an Azure AD access token of a Teams user for a Communication Identity access token to `CommunicationIdentityClient`.
+- Removed `ApiVersion.V2021_10_31_preview` from API versions.
+- Added a new API version `ApiVersion.V2022_06_01` that is now the deafult API version
+- Exported types `MicrosoftTeamsUserIdentifier`, `PhoneNumberIdentifier`, `UnknownIdentifier` for non Azure Communication Services `CommunicationIdentifier` identities.
+- Added `identifier_from_raw_id` and ensured that `CommunicationIdentifier.raw_id` is populated on creation. Together, these can be used to translate between a `CommunicationIdentifier` and its underlying canonical raw ID representation. Developers can now use the raw ID as an encoded format for identifiers to store in their databases or as stable keys in general.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
-- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+- Python 2.7 is no longer supported. Please use Python version 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 
 ## 1.1.0b1 (2021-11-09)
 
 ### Features Added
 
 - Added support for Microsoft 365 Teams identities
-  - `CommunicationIdentityClient` added a new method `get_token_for_teams_user` that provides the ability to exchange an AAD access token of a Teams user for a Communication Identity access token
+  - `CommunicationIdentityClient` added a new method `get_token_for_teams_user` that provides the ability to exchange an Azure AD access token of a Teams user for a Communication Identity access token
 
 ## 1.0.1 (2021-06-08)
 

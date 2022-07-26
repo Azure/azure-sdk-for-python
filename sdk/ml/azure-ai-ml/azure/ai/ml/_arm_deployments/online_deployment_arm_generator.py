@@ -19,7 +19,7 @@ from azure.ai.ml._restclient.v2021_10_01.models import (
     ResourceIdentity,
 )
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-from azure.ai.ml._operations.operation_orchestrator import OperationOrchestrator
+from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
 from azure.ai.ml.constants import ArmConstants, AzureMLResourceType
 from azure.ai.ml._arm_deployments.online_endpoint_assets import OnlineEndpointAssets
 from azure.ai.ml._utils.utils import initialize_logger_info

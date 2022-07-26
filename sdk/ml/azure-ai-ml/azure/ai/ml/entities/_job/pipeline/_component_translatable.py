@@ -9,7 +9,6 @@ from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml._ml_exceptions import JobException, ErrorTarget
 from azure.ai.ml.constants import ComponentJobConstants, AssetTypes
-from azure.ai.ml.entities._component.input_output import ComponentInput, ComponentOutput
 from azure.ai.ml.entities._job.sweep.search_space import Choice, Randint, SweepDistribution
 
 
@@ -25,7 +24,7 @@ class ComponentTranslatableMixin:
     def _find_source_input_output_type(cls, input: str, pipeline_job_dict: dict):
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
         from azure.ai.ml.entities import CommandJob, ParallelJob
-        from azure.ai.ml.entities._builders import Command, Parallel
+        from azure.ai.ml.entities._builders import BaseNode
 
         pipeline_job_inputs = pipeline_job_dict.get("inputs", {})
         pipeline_job_outputs = pipeline_job_dict.get("outputs", {})
@@ -77,8 +76,8 @@ class ComponentTranslatableMixin:
                     )
                 _input_job_name, _io_type, _name = m.groups()
                 _input_job = jobs_dict[_input_job_name]
-                if isinstance(_input_job, (Command, Parallel)):
-                    # If source is Command, get type from io builder
+                if isinstance(_input_job, BaseNode):
+                    # If source is base node, get type from io builder
                     _source = _input_job[_io_type][_name]
                     try:
                         return _source.type
@@ -122,9 +121,7 @@ class ComponentTranslatableMixin:
             raise JobException(message=msg, no_personal_data_message=msg, target=ErrorTarget.PIPELINE)
 
     @classmethod
-    def _to_component_input(
-        cls, input: Union[Input, str, bool, int, float], pipeline_job_dict=None, **kwargs
-    ) -> ComponentInput:
+    def _to_component_input(cls, input: Union[Input, str, bool, int, float], pipeline_job_dict=None, **kwargs) -> Input:
         pipeline_job_dict = pipeline_job_dict or {}
         input_variable = {}
 
@@ -133,7 +130,7 @@ class ComponentTranslatableMixin:
             input_variable["type"] = cls._find_source_input_output_type(input, pipeline_job_dict)
 
         elif isinstance(input, Input):
-            input_variable["type"] = input.type
+            input_variable = input._to_dict()
         elif isinstance(input, SweepDistribution):
             if isinstance(input, Choice):
                 input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input.values[0])]
@@ -142,11 +139,10 @@ class ComponentTranslatableMixin:
             else:
                 input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[float]
 
-            input_variable["required"] = True
+            input_variable["optional"] = False
         elif type(input) in cls.PYTHON_SDK_TYPE_MAPPING.keys():
             input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input)]
             input_variable["default"] = input
-            input_variable["required"] = False
         else:
             msg = "'{}' is not supported as component input, supported types are '{}'.".format(
                 type(input), cls.PYTHON_SDK_TYPE_MAPPING.keys()
@@ -156,14 +152,14 @@ class ComponentTranslatableMixin:
                 no_personal_data_message=msg,
                 target=ErrorTarget.PIPELINE,
             )
-        return ComponentInput(input_variable)
+        return Input(**input_variable)
 
     @classmethod
-    def _to_component_input_builder_function(cls, input: Union[Input, str, bool, int, float]) -> ComponentInput:
+    def _to_component_input_builder_function(cls, input: Union[Input, str, bool, int, float]) -> Input:
         input_variable = {}
 
         if isinstance(input, Input):
-            input_variable["type"] = input.type
+            input_variable = input._to_dict()
         elif isinstance(input, SweepDistribution):
             if isinstance(input, Choice):
                 input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input.values[0])]
@@ -172,19 +168,18 @@ class ComponentTranslatableMixin:
             else:
                 input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[float]
 
-            input_variable["required"] = True
+            input_variable["optional"] = False
         else:
             input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input)]
             input_variable["default"] = input
-            input_variable["required"] = False
-        return ComponentInput(input_variable)
+        return Input(**input_variable)
 
     @classmethod
     def _to_component_output(
         cls, output: Union[Output, str, bool, int, float], pipeline_job_dict=None, **kwargs
-    ) -> ComponentOutput:
+    ) -> Output:
         """
-        Translate outputs to ComponentOutputs and infer component output type from linked pipeline output, its original
+        Translate outputs to Outputs and infer component output type from linked pipeline output, its original
         type or default type
         """
         pipeline_job_dict = pipeline_job_dict or {}
@@ -195,7 +190,7 @@ class ComponentTranslatableMixin:
                 # default to url_folder if failed to get type
                 output_type = AssetTypes.URI_FOLDER
             output_variable = {"type": output_type}
-            return ComponentOutput(output_variable)
+            return Output(**output_variable)
         else:
             output_variable = {}
 
@@ -204,12 +199,11 @@ class ComponentTranslatableMixin:
                 output_variable["type"] = cls._find_source_input_output_type(output, pipeline_job_dict)
 
             elif isinstance(output, Output):
-                output_variable["type"] = output.type
+                output_variable = output._to_dict()
 
             elif type(output) in cls.PYTHON_SDK_TYPE_MAPPING.keys():
                 output_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(output)]
                 output_variable["default"] = output
-                output_variable["required"] = False
             else:
                 msg = "'{}' is not supported as component output, supported types are '{}'.".format(
                     type(output), cls.PYTHON_SDK_TYPE_MAPPING.keys()
@@ -219,12 +213,12 @@ class ComponentTranslatableMixin:
                     no_personal_data_message=msg,
                     target=ErrorTarget.PIPELINE,
                 )
-            return ComponentOutput(output_variable)
+            return Output(**output_variable)
 
     def _to_component_inputs(
         self, inputs: Dict[str, Union[Input, str, bool, int, float]], **kwargs
-    ) -> Dict[str, ComponentInput]:
-        """Translate inputs to ComponentInputs.
+    ) -> Dict[str, Input]:
+        """Translate inputs to Inputs.
 
         :param inputs: mapping from input name to input object.
         :return: mapping from input name to translated component input.
@@ -235,13 +229,13 @@ class ComponentTranslatableMixin:
             translated_component_inputs[io_name] = self._to_component_input(io_value, pipeline_job_dict)
         return translated_component_inputs
 
-    def _to_component_outputs(self, outputs: Dict[str, Output], **kwargs) -> Dict[str, ComponentOutput]:
-        """Translate outputs to ComponentOutputs
+    def _to_component_outputs(self, outputs: Dict[str, Output], **kwargs) -> Dict[str, Output]:
+        """Translate outputs to Outputs
 
         :param outputs: mapping from output name to output object.
         :return: mapping from output name to translated component output.
         """
-        # Translate outputs to ComponentOutputs.
+        # Translate outputs to Outputs.
         pipeline_job_dict = kwargs.get("pipeline_job_dict", {})
         translated_component_outputs = {}
         for output_name, output_value in outputs.items():

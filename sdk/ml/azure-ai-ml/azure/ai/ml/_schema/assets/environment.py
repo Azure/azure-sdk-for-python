@@ -97,7 +97,13 @@ class _BaseEnvironmentSchema(AssetSchema):
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._assets import Environment
 
-        return Environment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
+        try:
+            obj = Environment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
+        except FileNotFoundError as e:
+            # Environment.__init__() will raise FileNotFoundError if build.path is not found when trying to calculate
+            # the hash for anonymous. Raise ValidationError instead to collect all errors in schema validation.
+            raise ValidationError("Environment file not found: {}".format(e))
+        return obj
 
 
 class EnvironmentSchema(_BaseEnvironmentSchema):

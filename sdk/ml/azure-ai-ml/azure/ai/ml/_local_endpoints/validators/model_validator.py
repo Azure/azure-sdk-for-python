@@ -7,7 +7,7 @@ from pathlib import Path
 from azure.ai.ml.entities import OnlineDeployment
 from azure.ai.ml.entities._assets import Model
 
-from azure.ai.ml._operations.model_operations import ModelOperations
+from azure.ai.ml.operations._model_operations import ModelOperations
 
 from azure.ai.ml._local_endpoints.errors import RequiredLocalArtifactsNotFoundError
 from azure.ai.ml._artifacts._artifact_utilities import download_artifact

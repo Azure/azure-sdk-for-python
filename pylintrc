@@ -3,8 +3,8 @@ ignore-patterns=test_*,conftest,setup
 reports=no
 
 # PYLINT DIRECTORY BLACKLIST.
-ignore=_vendor,_generated,samples,examples,test,tests,doc,.tox
-ignore-paths=azure\\mixedreality\\remoterendering\\_api_version.py,azure/mixedreality/remoterendering/_api_version.py,azure/cosmos/aio/cosmos_client.py,azure\\cosmos\\aio\\cosmos_client.py,azure/cosmos/cosmos_client.py,azure\\cosmos\\cosmos_client.py 
+ignore=_vendor,_generated,_restclient,samples,examples,test,tests,doc,.tox
+ignore-paths=azure\\mixedreality\\remoterendering\\_api_version.py,azure/mixedreality/remoterendering/_api_version.py
 
 load-plugins=pylint_guidelines_checker
 
@@ -16,7 +16,7 @@ load-plugins=pylint_guidelines_checker
 # Let's black deal with bad-continuation
 
 # Added disables from super-with-arguments
-disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods,bad-continuation,check-docstrings,import-outside-toplevel,super-with-arguments,raise-missing-from,inconsistent-return-statements,deprecated-module,use-a-generator,consider-using-max-builtin,consider-using-min-builtin,simplifiable-condition,condition-evals-to-constant,consider-using-dict-items,assigning-non-slot,consider-using-with,consider-using-generator,unused-private-member,deprecated-class,consider-using-from-import,ungrouped-imports,nan-comparison,ignored-arguments-name,empty-comment,deprecated-argument,deprecated-decorator,consider-using-dict-items,use-maxsplit-arg,unnecessary-dict-index-lookup,unused-private-member,invalid-class-object,invalid-all-format,await-outside-async
+disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods,bad-continuation,check-docstrings,import-outside-toplevel,super-with-arguments,raise-missing-from,inconsistent-return-statements,deprecated-module,use-a-generator,consider-using-max-builtin,consider-using-min-builtin,simplifiable-condition,condition-evals-to-constant,consider-using-dict-items,assigning-non-slot,consider-using-with,consider-using-generator,unused-private-member,deprecated-class,consider-using-from-import,ungrouped-imports,nan-comparison,ignored-arguments-name,empty-comment,deprecated-argument,deprecated-decorator,consider-using-dict-items,use-maxsplit-arg,unnecessary-dict-index-lookup,unused-private-member,invalid-class-object,invalid-all-format,await-outside-async,client-list-methods-use-paging
 
 [FORMAT]
 max-line-length=120

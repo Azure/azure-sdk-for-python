@@ -37,7 +37,7 @@ deployment_message_mapping = {
     AzureMLResourceType.DEPLOYMENT: "Creating or updating deployment: {0}",
     ArmConstants.UPDATE_ONLINE_ENDPOINT_TYPE: "Updating traffic",
     ArmConstants.KEY_VAULT_PARAMETER_NAME: "Creating KeyVault: ({0})",
-    ArmConstants.APP_INSIGHTS_PARAMTER_NAME: "Creating AppInsights: ({0})",
+    ArmConstants.APP_INSIGHTS_PARAMETER_NAME: "Creating AppInsights: ({0})",
     ArmConstants.CONTAINER_REGISTRY_PARAMETER_NAME: "Creating Container Registry: ({0})",
     ArmConstants.STORAGE_ACCOUNT_PARAMETER_NAME: "Creating Storage Account: ({0})",
     AzureMLResourceType.WORKSPACE: "Creating workspace: ({0})",

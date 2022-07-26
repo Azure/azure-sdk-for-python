@@ -25,9 +25,6 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
-    def teardown(self):
-        self.sleep(4)
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -457,7 +454,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
         async with client:
             poller = await client.begin_analyze_document(
-                model="prebuilt-invoice",
+                model_id="prebuilt-invoice",
                 document=my_file,
                 cls=callback
             )

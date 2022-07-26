@@ -1,8 +1,11 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict
+from typing import Dict, Union
 
+from marshmallow import Schema
+
+from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.constants import COMPONENT_TYPE, ComponentSource
@@ -15,9 +18,9 @@ class _PipelineComponent(Component):
     :param components: Id to components dict inside pipeline definition.
     :type components: OrderedDict[str, Component]
     :param inputs: Inputs of the component.
-    :type inputs: ComponentInputs
+    :type inputs: Component inputs
     :param outputs: Outputs of the component.
-    :type outputs: ComponentOutputs
+    :type outputs: Component outputs
     """
 
     def __init__(self, components: Dict[str, BaseNode], **kwargs):
@@ -45,6 +48,10 @@ class _PipelineComponent(Component):
             components={},
             _source=ComponentSource.REST,
         )
+
+    @classmethod
+    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+        raise NotImplementedError(f"{cls.__name__} do not support schema validation.")
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "Component":

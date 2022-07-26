@@ -63,10 +63,14 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         An optional share snapshot on which to operate. This can be the snapshot ID string
         or the response returned from :func:`ShareClient.create_snapshot`.
     :param credential:
-        The credential with which to authenticate. This is optional if the
+        The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials or an account
-        shared access key.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -82,7 +86,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             share_name, # type: str
             directory_path, # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None, # type: Optional[Any]
+            credential=None, # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs # type: Optional[Any]
         ):
         # type: (...) -> None
@@ -123,7 +127,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
     @classmethod
     def from_directory_url(cls, directory_url,  # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None, # type: Optional[Any]
+            credential=None, # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs # type: Optional[Any]
         ):
         # type: (...) -> ShareDirectoryClient
@@ -135,10 +139,14 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             An optional share snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`ShareClient.create_snapshot`.
         :param credential:
-            The credential with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials or an account
-            shared access key.
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
         :returns: A directory client.
         :rtype: ~azure.storage.fileshare.ShareDirectoryClient
         """
@@ -185,7 +193,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             cls, conn_str,  # type: str
             share_name,  # type: str
             directory_path,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):
         # type: (...) -> ShareDirectoryClient
@@ -198,10 +206,14 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         :param str directory_path:
             The directory path.
         :param credential:
-            The credential with which to authenticate. This is optional if the
+            The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials or an account
-            shared access key.
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
         :returns: A directory client.
         :rtype: ~azure.storage.fileshare.ShareDirectoryClient
         """
@@ -441,8 +453,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             '{}://{}'.format(self.scheme, self.primary_hostname), self.share_name, new_dir_path,
             credential=new_dir_sas or self.credential, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function
+            _location_mode=self._location_mode
         )
 
         kwargs.update(get_rename_smb_properties(kwargs))
@@ -846,6 +857,11 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             file.
         :keyword int max_concurrency:
             Maximum number of parallel connections to use.
+        :keyword progress_hook:
+            A callback to track the progress of a long running upload. The signature is
+            function(current: int, total: Optional[int]) where current is the number of bytes transferred
+            so far, and total is the size of the blob or None if the size is unknown.
+        :paramtype progress_hook: Callable[[int, Optional[int]], None]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword str encoding:

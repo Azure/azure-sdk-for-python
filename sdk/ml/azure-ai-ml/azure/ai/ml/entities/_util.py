@@ -12,6 +12,7 @@ from azure.ai.ml.constants import (
     REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT,
     YAMLRefDocLinks,
     YAMLRefDocSchemaNames,
+    EndpointYamlFields,
 )
 from azure.ai.ml._schema.assets.data import DataSchema
 from azure.ai.ml._schema.assets.dataset import DatasetSchema
@@ -131,6 +132,10 @@ def find_type_in_override(params_override: list = None) -> Optional[str]:
         if CommonYamlFields.TYPE in override:
             return override[CommonYamlFields.TYPE]
     return None
+
+
+def is_compute_in_override(params_override: list = None) -> bool:
+    return any([EndpointYamlFields.COMPUTE in param for param in params_override])
 
 
 def load_from_dict(schema: Any, data: Dict, context: Dict, additional_message: str = "", **kwargs):

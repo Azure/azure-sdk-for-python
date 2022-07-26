@@ -1,12 +1,26 @@
 # Release History
 
-## 12.8.0b1 (Unreleased)
+## 12.9.0b1 (Unreleased)
+
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
 
 ### Features Added
-- Added support for service version 2021-08-06
-- Added support for `owner`, `group`, `acl`, `lease_id`, `lease_duration` to both file and directory `create` APIs
-- Added support for `expiry_options`, `expires_on` to file `create` APIs
-- Added `delete_files()` API
+- Added support for `AzureNamedKeyCredential` as a valid `credential` type.
+
+### Bugs Fixed
+
+## 12.8.0 (2022-07-07)
+
+### Features Added
+- Stable release of features from 12.8.0b1.
+- Removed support for `expiry_options` from file `create` APIs. With this change, `expires_on` now covers all functionality `expiry_options` offered.
+
+## 12.8.0b1 (2022-06-15)
+
+### Features Added
+- Added support for service version 2021-08-06.
+- Added support for `owner`, `group`, `acl`, `lease_id`, `lease_duration` to both file and directory `create` APIs.
+- Added support for `expiry_options`, `expires_on` to file `create` APIs.
 
 ## 12.7.0 (2022-05-09)
 

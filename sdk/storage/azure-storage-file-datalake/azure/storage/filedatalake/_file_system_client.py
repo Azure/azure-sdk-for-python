@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines
 import functools
-from typing import Any, Dict, List, Optional, Type, TypeVar, Union, TYPE_CHECKING
+from typing import Any, Dict, Optional, Type, TypeVar, Union, TYPE_CHECKING
 
 try:
     from urllib.parse import urlparse, quote, unquote
@@ -28,7 +28,7 @@ from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._generated import AzureDataLakeStorageRESTAPI
 from ._generated.models import ListBlobsIncludeItem
-from ._deserialize import _decode_error, process_storage_error, is_file_path
+from ._deserialize import process_storage_error, is_file_path
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -58,10 +58,12 @@ class FileSystemClient(StorageAccountHostsMixin):
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -78,7 +80,7 @@ class FileSystemClient(StorageAccountHostsMixin):
     def __init__(
         self, account_url,  # type: str
         file_system_name,  # type: str
-        credential=None,  # type: Optional[Any]
+        credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -150,7 +152,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             cls,  # type: Type[ClassType]
             conn_str,  # type: str
             file_system_name,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):  # type: (...) -> ClassType
         """
@@ -164,9 +166,11 @@ class FileSystemClient(StorageAccountHostsMixin):
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
         :return a FileSystemClient
         :rtype ~azure.storage.filedatalake.FileSystemClient
 
@@ -304,9 +308,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         renamed_file_system = FileSystemClient(
                 "{}://{}".format(self.scheme, self.primary_hostname), file_system_name=new_name,
                 credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
-                _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-                require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-                key_resolver_function=self.key_resolver_function)
+                _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts)
         return renamed_file_system
 
     def delete_file_system(self, **kwargs):
@@ -865,61 +867,6 @@ class FileSystemClient(StorageAccountHostsMixin):
         """
         return self.get_directory_client('/')
 
-    def delete_files(
-        self,
-        *files: str,
-        **kwargs) -> List[Optional[HttpResponseError]]:
-        """Marks the specified files or empty directories for deletion.
-
-        The files/empty directories are later deleted during garbage collection.
-
-        If a delete retention policy is enabled for the service, then this operation soft deletes the
-        files/empty directories and retains the files or snapshots for specified number of days.
-        After specified number of days, files' data is removed from the service during garbage collection.
-        Soft deleted files/empty directories are accessible through :func:`list_deleted_paths()`.
-
-        :param str files:
-            The files/empty directories to delete. This can be a single file/empty directory, or multiple values can
-            be supplied, where each value is the name of the file/directory (str).
-
-        :keyword ~datetime.datetime if_modified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only
-            if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only if
-            the resource has not been modified since the specified date/time.
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
-        :return: A list containing None for successful operations and
-        HttpResponseError objects for unsuccessful operations.
-        :rtype: List[Optional[HttpResponseError]]
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
-                :start-after: [START batch_delete_files_or_empty_directories]
-                :end-before: [END batch_delete_files_or_empty_directories]
-                :language: python
-                :dedent: 4
-                :caption: Deleting multiple files or empty directories.
-        """
-        results = self._container_client.delete_blobs(raise_on_any_failure=False, *files, **kwargs)
-
-        errors = []
-        for result in results:
-            if not 200 <= result.status_code < 300:
-                errors.append(_decode_error(result, result.reason))
-            else:
-                errors.append(None)
-
-        return errors
-
     def get_directory_client(self, directory  # type: Union[DirectoryProperties, str]
                              ):
         # type: (...) -> DataLakeDirectoryClient
@@ -955,11 +902,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                                        credential=self._raw_credential,
                                        api_version=self.api_version,
                                        _configuration=self._config, _pipeline=_pipeline,
-                                       _hosts=self._hosts,
-                                       require_encryption=self.require_encryption,
-                                       key_encryption_key=self.key_encryption_key,
-                                       key_resolver_function=self.key_resolver_function
-                                       )
+                                       _hosts=self._hosts)
 
     def get_file_client(self, file_path  # type: Union[FileProperties, str]
                         ):
@@ -995,10 +938,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
             api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)
 
     def list_deleted_paths(self, **kwargs):
         # type: (Any) -> ItemPaged[DeletedPathProperties]
