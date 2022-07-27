@@ -15,7 +15,7 @@ import sys
 from ci_tools.versioning.version_shared import get_packages, get_version_py
 from ci_tools.variables import discover_repo_root
 
-if __name__ == "__main__":
+def find_invalid_versions_main():
     parser = argparse.ArgumentParser(description="")
     parser.add_argument(
         "--always-succeed",
@@ -111,3 +111,7 @@ if __name__ == "__main__":
             exit(1)
     else:
         print("No invalid packages found")
+
+
+if __name__ == "__main__":
+    find_invalid_versions_main()
