@@ -62,7 +62,9 @@ def authentication_with_azure_active_directory_document_analysis_client():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     credential = DefaultAzureCredential()
 
-    document_analysis_client = DocumentAnalysisClient(endpoint, credential)
+    form_recognizer_endpoint_suffix = os.environ.get("FORMRECOGNIZER_ENDPOINT_SUFFIX",".cognitiveservices.azure.com")
+    credential_scopes = ["https://{}/.default".format(form_recognizer_endpoint_suffix[1:])]
+    document_analysis_client = DocumentAnalysisClient(endpoint, credential, credential_scopes=credential_scopes)
     # [END create_da_client_with_aad]
     poller = document_analysis_client.begin_analyze_document_from_url(
         "prebuilt-layout", url
@@ -94,7 +96,9 @@ def authentication_with_azure_active_directory_document_model_admin_client():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     credential = DefaultAzureCredential()
 
-    document_model_admin_client = DocumentModelAdministrationClient(endpoint, credential)
+    form_recognizer_endpoint_suffix = os.environ.get("FORMRECOGNIZER_ENDPOINT_SUFFIX",".cognitiveservices.azure.com")
+    credential_scopes = ["https://{}/.default".format(form_recognizer_endpoint_suffix[1:])]
+    document_model_admin_client = DocumentModelAdministrationClient(endpoint, credential, credential_scopes=credential_scopes)
     # [END create_dt_client_with_aad]
     info = document_model_admin_client.get_resource_details()
 

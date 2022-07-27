@@ -15,6 +15,7 @@ from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import Analyz
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
+import os
 
 
 DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
@@ -162,7 +163,9 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     def test_active_directory_auth(self):
         token = self.generate_oauth_token()
         endpoint = self.get_oauth_endpoint()
-        client = DocumentAnalysisClient(endpoint, token)
+        form_recognizer_endpoint_suffix = os.environ.get("FORMRECOGNIZER_ENDPOINT_SUFFIX",".cognitiveservices.azure.com")
+        credential_scopes = ["https://{}/.default".format(form_recognizer_endpoint_suffix[1:])]
+        client = DocumentAnalysisClient(endpoint, token, credential_scopes=credential_scopes)
         poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
         result = poller.result()
         assert result is not None

@@ -12,7 +12,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer import FormTrainingClient
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, is_public_cloud
 
 FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
@@ -92,6 +92,14 @@ class TestCopyModel(FormRecognizerTest):
     @recorded_by_proxy
     def test_copy_model_fail_v21(self, client, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
         
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
+        if (not is_public_cloud() and self.is_live):
+            pytest.skip("This test is skipped in usgov/china region. Follow up with service team.")
+
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
         model = poller.result()
 

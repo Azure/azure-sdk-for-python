@@ -14,6 +14,8 @@ from azure.core.credentials import AzureKeyCredential
 ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
 REGION = os.getenv('FORMRECOGNIZER_LOCATION', None)
 
+def is_public_cloud():
+    return (".microsoftonline.com" in os.getenv('AZURE_AUTHORITY_HOST', ''))
 
 FormRecognizerPreparer = functools.partial(
     PowerShellPreparer,

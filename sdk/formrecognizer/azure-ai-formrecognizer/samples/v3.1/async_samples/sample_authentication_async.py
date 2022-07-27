@@ -62,7 +62,9 @@ class AuthenticationSampleAsync(object):
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         credential = DefaultAzureCredential()
 
-        form_recognizer_client = FormRecognizerClient(endpoint, credential)
+        form_recognizer_endpoint_suffix = os.environ.get("FORMRECOGNIZER_ENDPOINT_SUFFIX",".cognitiveservices.azure.com")
+        credential_scopes = ["https://{}/.default".format(form_recognizer_endpoint_suffix[1:])]
+        form_recognizer_client = FormRecognizerClient(endpoint, credential, credential_scopes=credential_scopes)
         # [END create_fr_client_with_aad_async]
         async with form_recognizer_client:
             poller = await form_recognizer_client.begin_recognize_content_from_url(self.url)
@@ -91,7 +93,9 @@ class AuthenticationSampleAsync(object):
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         credential = DefaultAzureCredential()
 
-        form_training_client = FormTrainingClient(endpoint, credential)
+        form_recognizer_endpoint_suffix = os.environ.get("FORMRECOGNIZER_ENDPOINT_SUFFIX",".cognitiveservices.azure.com")
+        credential_scopes = ["https://{}/.default".format(form_recognizer_endpoint_suffix[1:])]
+        form_training_client = FormTrainingClient(endpoint, credential, credential_scopes=credential_scopes)
         # [END create_ft_client_with_aad_async]
         async with form_training_client:
             properties = await form_training_client.get_account_properties()
