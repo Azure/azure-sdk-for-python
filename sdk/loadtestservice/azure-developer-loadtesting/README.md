@@ -32,16 +32,16 @@ Set the values of the client ID, tenant ID, and client secret of the AAD applica
 Use the returned token credential to authenticate the client:
 
 ```python
-from azure.developer.loadtesting import LoadTestClient
+from azure.developer.loadtesting import LoadTestingClient
 from azure.identity import DefaultAzureCredential
-client = LoadTestClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+client = LoadTestingClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
 
 ## Examples
 
 ### Creating a load test 
 ```python
-from azure.developer.loadtesting import LoadTestClient
+from azure.developer.loadtesting import LoadTestingClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -49,7 +49,8 @@ TEST_ID = "some-test-id"
 DISPLAY_NAME = "new_namespace-new-namespace"  
 SUBSCRIPTION_ID = os.environ["SUBSCRIPTION_ID"]  
 
-client = LoadTestClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+client = LoadTestingClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+
 try:
     result = client.load_test_administration.create_or_update_test(
         TEST_ID,
@@ -77,19 +78,18 @@ except HttpResponseError as e:
 
 ### Uploading .jmx file to a Test
 ```python
-from azure.developer.loadtesting import LoadTestClient
+from azure.developer.loadtesting import LoadTestingClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
 TEST_ID = "some-test-id"  
 FILE_ID = "some-file-id"  
 
-try:
-    # opening .jmx file
-    body = {}
-    body["file"] = open("sample.jmx", "rb")
+client = LoadTestingClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 
-    result = client.load_test_administration.upload_test_file(TEST_ID, FILE_ID, body)
+try:
+
+    result = client.load_test_administration.upload_test_file(TEST_ID, FILE_ID, open("sample.jmx", "rb"))
     print(result)
 except HttpResponseError as e:
     print("Failed to send JSON message: {}".format(e.response.json()))
@@ -97,13 +97,15 @@ except HttpResponseError as e:
 
 ### Running a Test
 ```python
-from azure.developer.loadtesting import LoadTestClient
+from azure.developer.loadtesting import LoadTestingClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
 TEST_ID = "some-test-id"  
 TEST_RUN_ID = "some-testrun-id" 
 DISPLAY_NAME = "new_namespace-new-namespace"  
+
+client = LoadTestingClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 
 try:
     result = client.load_test_runs.create_and_update_test(
