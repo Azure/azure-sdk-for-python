@@ -2,7 +2,7 @@
   "meta": {
     "autorest_options": {
       "version": "3.8.1",
-      "use": ["@autorest/python@6.0.0", "@autorest/modelerfour@4.23.5"]
+      "use": ["@autorest/python@6.1.0", "@autorest/modelerfour@4.23.5"]
     },
     "advanced_options": {
       "create_sdk_pull_requests": true,
