@@ -426,6 +426,8 @@ def _get_request_args(**kwargs: "Any") -> dict:
         request_args["regex"] = kwargs.get("regex")
     if "reset_after_first" in kwargs:
         request_args["resetAfterFirst"] = kwargs.get("reset_after_first")
+    if "target" in kwargs:
+        request_args["target"] = kwargs.get("target")
     if "value" in kwargs:
         request_args["value"] = kwargs.get("value")
     return request_args
