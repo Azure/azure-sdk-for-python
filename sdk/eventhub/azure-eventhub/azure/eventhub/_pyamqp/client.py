@@ -627,7 +627,7 @@ class ReceiveClient(AMQPClient):
         self._max_message_size = kwargs.pop('max_message_size', None) or MAX_FRAME_SIZE_BYTES
         self._link_properties = kwargs.pop('link_properties', None)
         self._link_credit = kwargs.pop('link_credit', 300)
-        super(ReceiveClient, self).__init__(target, auth=auth, **kwargs)
+        super(ReceiveClient, self).__init__(source, auth=auth, **kwargs)
 
     def _client_ready(self):
         """Determine whether the client is ready to start receiving messages.
