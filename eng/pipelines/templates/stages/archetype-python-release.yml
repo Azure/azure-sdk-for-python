@@ -171,7 +171,6 @@ stages:
                         steps:
                           - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
                             parameters:
-                              SkipDefaultCheckout: true
                               Paths:
                                 - sdk/**/*.md
                                 - .github/CODEOWNERS
@@ -281,7 +280,6 @@ stages:
       steps:
         - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
           parameters:
-            SkipDefaultCheckout: true 
             Paths:
               - sdk/**/*.md
               - .github/CODEOWNERS
