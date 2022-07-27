@@ -1,5 +1,26 @@
 # Release History
 
+## 10.2.0b2 (2022-07-27)
+
+**Features**
+
+  - Added operation group PostgreSQLManagementClientOperationsMixin
+  - Model CapabilityProperties has a new parameter supported_ha_mode
+  - Model Configuration has a new parameter documentation_link
+  - Model Configuration has a new parameter is_config_pending_restart
+  - Model Configuration has a new parameter is_dynamic_config
+  - Model Configuration has a new parameter is_read_only
+  - Model Configuration has a new parameter unit
+  - Model NameAvailability has a new parameter reason
+  - Model VirtualNetworkSubnetUsageResult has a new parameter location
+  - Model VirtualNetworkSubnetUsageResult has a new parameter subscription_id
+
+**Breaking changes**
+
+  - Model Server no longer has parameter tags_properties_tags
+  - Removed operation BackupsOperations.list_by_server
+  - Removed operation BackupsOperations.put
+
 ## 10.2.0b1 (2022-07-13)
 
 **Features**
