@@ -530,7 +530,7 @@ class SSLTransport(_AbstractTransport):
             #'ssl_version': ssl_version
         }
 
-        sock = ssl.wrap_socket(**opts)
+        sock = ssl.SSLContext.wrap_socket(**opts)
         # Set SNI headers if supported
         if (server_hostname is not None) and (
                 hasattr(ssl, 'HAS_SNI') and ssl.HAS_SNI) and (
