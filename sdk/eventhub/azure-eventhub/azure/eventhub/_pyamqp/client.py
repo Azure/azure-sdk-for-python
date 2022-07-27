@@ -337,7 +337,7 @@ class AMQPClient(object):
         to be shut down.
 
         :rtype: bool
-        :raises: TimeoutError or ~uamqp.errors.ClientTimeout if CBS authentication timeout reached.
+        :raises: TimeoutError if CBS authentication timeout reached.
         """
         if self._shutdown:
             return False
@@ -348,7 +348,7 @@ class AMQPClient(object):
     def mgmt_request(self, message, **kwargs):
         """
         :param message: The message to send in the management request.
-        :type message: ~uamqp.message.Message
+        :type message: ~pyamqp.message.Message
         :keyword str operation: The type of operation to be performed. This value will
          be service-specific, but common values include READ, CREATE and UPDATE.
          This value will be added as an application property on the message.
@@ -358,7 +358,7 @@ class AMQPClient(object):
         :keyword str node: The target node. Default node is `$management`.
         :keyword float timeout: Provide an optional timeout in seconds within which a response
          to the management request must be received.
-        :rtype: ~uamqp.message.Message
+        :rtype: ~pyamqp.message.Message
         """
 
         # The method also takes "status_code_field" and "status_description_field"
@@ -524,7 +524,7 @@ class SendClient(AMQPClient):
 
     def send_message(self, message, **kwargs):
         """
-        :param ~uamqp.message.Message message:
+        :param ~pyamqp.message.Message message:
         :keyword float timeout: timeout in seconds. If set to
          0, the client will continue to wait until the message is sent or error happens. The
          default is 0.
@@ -544,7 +544,8 @@ class ReceiveClient(AMQPClient):
         - pyamqp.authentication.SASLPlain
         - pyamqp.authentication.SASTokenAuth
      If no authentication is supplied, SASLAnnoymous will be used by default.
-    :type auth: ~uamqp.authentication.common.AMQPAuth
+    :type auth: ~pyamqp.authentication.SASLAnonymous or pyamqp.authentication.SASLPlain
+     or pyamqp.authentication.SASTokenAuth
     :param client_name: The name for the client, also known as the Container ID.
      If no name is provided, a random GUID will be used.
     :type client_name: str or bytes
@@ -610,7 +611,7 @@ class ReceiveClient(AMQPClient):
     :type handle_max: int
     :param on_attach: A callback function to be run on receipt of an ATTACH frame.
      The function must take 4 arguments: source, target, properties and error.
-    :type on_attach: func[~uamqp.address.Source, ~uamqp.address.Target, dict, ~pyamqp.errors.AMQPConnectionError]
+    :type on_attach: func[~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.errors.AMQPConnectionError]
     :param encoding: The encoding to use for parameters supplied as strings.
      Default is 'UTF-8'
     :type encoding: str
@@ -678,7 +679,7 @@ class ReceiveClient(AMQPClient):
         or iterator, the message will be added to an internal queue.
 
         :param message: Received message.
-        :type message: ~uamqp.message.Message
+        :type message: ~pyamqp.message.Message
         """
         if self._message_received_callback:
             self._message_received_callback(message)
@@ -753,8 +754,8 @@ class ReceiveClient(AMQPClient):
          the prefetch value will be used.
         :type max_batch_size: int
         :param on_message_received: A callback to process messages as they arrive from the
-         service. It takes a single argument, a ~uamqp.message.Message object.
-        :type on_message_received: callable[~uamqp.message.Message]
+         service. It takes a single argument, a ~pyamqp.message.Message object.
+        :type on_message_received: callable[~pyamqp.message.Message]
         :param timeout: I timeout in milliseconds for which to wait to receive any messages.
          If no messages are received in this time, an empty list will be returned. If set to
          0, the client will continue to wait until at least one message is received. The
