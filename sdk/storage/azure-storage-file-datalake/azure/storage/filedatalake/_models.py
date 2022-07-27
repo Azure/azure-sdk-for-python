@@ -47,7 +47,7 @@ class FileSystemProperties(DictMixin):
         Represents whether the file system has a legal hold.
     :ivar dict metadata: A dict with name-value pairs to associate with the
         file system as metadata.
-    :ivar ~azure.storage.filedatalake.FileSystemEncryptionScope encryption_scope:
+    :ivar ~azure.storage.filedatalake.EncryptionScopeOptions encryption_scope:
         The default encryption scope configuration for the file system.
     :ivar bool deleted:
         Whether this file system was deleted.
@@ -72,7 +72,7 @@ class FileSystemProperties(DictMixin):
         self.deleted_version = None
         default_encryption_scope = kwargs.get('x-ms-default-encryption-scope')
         if default_encryption_scope:
-            self.encryption_scope = FileSystemEncryptionScope(
+            self.encryption_scope = EncryptionScopeOptions(
                 default_encryption_scope=default_encryption_scope,
                 prevent_encryption_scope_override=kwargs.get('x-ms-deny-encryption-scope-override', False)
             )
@@ -91,7 +91,7 @@ class FileSystemProperties(DictMixin):
         props.has_immutability_policy = generated.properties.has_immutability_policy
         props.has_legal_hold = generated.properties.has_legal_hold
         props.metadata = generated.metadata
-        props.encryption_scope = FileSystemEncryptionScope._from_generated(generated)  #pylint: disable=protected-access
+        props.encryption_scope = EncryptionScopeOptions._from_generated(generated)  #pylint: disable=protected-access
         return props
 
     @classmethod
@@ -804,7 +804,7 @@ class CustomerProvidedEncryptionKey(BlobCustomerProvidedEncryptionKey):
         Specifies the algorithm to use when encrypting data using the given key. Must be AES256.
     """
 
-class FileSystemEncryptionScope(BlobContainerEncryptionScope):
+class EncryptionScopeOptions(BlobContainerEncryptionScope):
     """The default encryption scope configuration for a file system.
 
     This scope is used implicitly for all future writes within the file system,

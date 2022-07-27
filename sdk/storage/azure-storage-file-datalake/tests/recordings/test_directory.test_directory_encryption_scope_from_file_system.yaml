@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Sat, 16 Jul 2022 00:21:44 GMT
+      - Wed, 27 Jul 2022 00:24:36 GMT
       x-ms-default-encryption-scope:
       - hnstestscope1
       x-ms-deny-encryption-scope-override:
@@ -29,11 +29,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sat, 16 Jul 2022 00:21:44 GMT
+      - Wed, 27 Jul 2022 00:24:37 GMT
       etag:
-      - '"0x8DA66C12A2FCE05"'
+      - '"0x8DA6F6663CBDDF1"'
       last-modified:
-      - Sat, 16 Jul 2022 00:21:44 GMT
+      - Wed, 27 Jul 2022 00:24:37 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -55,7 +55,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Sat, 16 Jul 2022 00:21:44 GMT
+      - Wed, 27 Jul 2022 00:24:37 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
@@ -67,11 +67,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sat, 16 Jul 2022 00:21:44 GMT
+      - Wed, 27 Jul 2022 00:24:38 GMT
       etag:
-      - '"0x8DA66C12A9BBF52"'
+      - '"0x8DA6F666465CB30"'
       last-modified:
-      - Sat, 16 Jul 2022 00:21:45 GMT
+      - Wed, 27 Jul 2022 00:24:38 GMT
       server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-encryption-scope:
@@ -95,7 +95,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Sat, 16 Jul 2022 00:21:45 GMT
+      - Wed, 27 Jul 2022 00:24:38 GMT
       x-ms-version:
       - '2021-08-06'
     method: HEAD
@@ -111,11 +111,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Sat, 16 Jul 2022 00:21:45 GMT
+      - Wed, 27 Jul 2022 00:24:38 GMT
       etag:
-      - '"0x8DA66C12A9BBF52"'
+      - '"0x8DA6F666465CB30"'
       last-modified:
-      - Sat, 16 Jul 2022 00:21:45 GMT
+      - Wed, 27 Jul 2022 00:24:38 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-access-tier:
@@ -125,7 +125,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Sat, 16 Jul 2022 00:21:45 GMT
+      - Wed, 27 Jul 2022 00:24:38 GMT
       x-ms-encryption-scope:
       - hnstestscope1
       x-ms-group:
@@ -163,7 +163,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Sat, 16 Jul 2022 00:21:45 GMT
+      - Wed, 27 Jul 2022 00:24:38 GMT
       x-ms-version:
       - '2021-08-06'
     method: DELETE
@@ -175,7 +175,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sat, 16 Jul 2022 00:21:45 GMT
+      - Wed, 27 Jul 2022 00:24:38 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -195,7 +195,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Sat, 16 Jul 2022 00:21:45 GMT
+      - Wed, 27 Jul 2022 00:24:38 GMT
       x-ms-version:
       - '2021-08-06'
     method: GET
@@ -209,7 +209,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Sat, 16 Jul 2022 00:21:45 GMT
+      - Wed, 27 Jul 2022 00:24:38 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

@@ -19,6 +19,7 @@ from azure.storage.filedatalake import (
     AccessPolicy,
     AccountSasPermissions,
     DirectorySasPermissions,
+    EncryptionScopeOptions,
     FileSystemSasPermissions,
     generate_account_sas,
     generate_directory_sas,
@@ -28,7 +29,7 @@ from azure.storage.filedatalake import (
     ResourceTypes
 )
 from azure.storage.filedatalake.aio import DataLakeDirectoryClient, DataLakeFileClient, DataLakeServiceClient, FileSystemClient
-from azure.storage.filedatalake._models import FileSasPermissions, FileSystemEncryptionScope
+from azure.storage.filedatalake._models import FileSasPermissions
 from multidict import CIMultiDict, CIMultiDictProxy
 
 from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
@@ -118,11 +119,11 @@ class FileSystemTest(StorageTestCase):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system_name = self._get_file_system_reference()
-        encryption_scope = FileSystemEncryptionScope(default_encryption_scope="hnstestscope1")
+        encryption_scope = EncryptionScopeOptions(default_encryption_scope="hnstestscope1")
 
         # Act
         file_system_client = self.dsc.get_file_system_client(file_system_name)
-        await file_system_client.create_file_system(file_system_encryption_scope=encryption_scope)
+        await file_system_client.create_file_system(encryption_scope_options=encryption_scope)
         props = await file_system_client.get_file_system_properties()
 
         # Assert
@@ -144,11 +145,11 @@ class FileSystemTest(StorageTestCase):
             expiry=datetime.utcnow() + timedelta(hours=5),
             encryption_scope="hnstestscope1")
         file_system_name = self._get_file_system_reference()
-        encryption_scope = FileSystemEncryptionScope(default_encryption_scope="hnstestscope1")
+        encryption_scope = EncryptionScopeOptions(default_encryption_scope="hnstestscope1")
 
         # Act
         file_system_client = self.dsc.get_file_system_client(file_system_name)
-        await file_system_client.create_file_system(file_system_encryption_scope=encryption_scope)
+        await file_system_client.create_file_system(encryption_scope_options=encryption_scope)
 
         fsc_sas = FileSystemClient(url, file_system_name, token)
         await fsc_sas.create_file('file1')
@@ -178,11 +179,11 @@ class FileSystemTest(StorageTestCase):
             permission=FileSystemSasPermissions(write=True, read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=5),
             encryption_scope="hnstestscope1")
-        encryption_scope = FileSystemEncryptionScope(default_encryption_scope="hnstestscope1")
+        encryption_scope = EncryptionScopeOptions(default_encryption_scope="hnstestscope1")
 
         # Act
         file_system_client = self.dsc.get_file_system_client(file_system_name)
-        await file_system_client.create_file_system(file_system_encryption_scope=encryption_scope)
+        await file_system_client.create_file_system(encryption_scope_options=encryption_scope)
 
         fsc_sas = FileSystemClient(url, file_system_name, token)
         await fsc_sas.create_file('file1')
@@ -213,11 +214,11 @@ class FileSystemTest(StorageTestCase):
             permission=FileSasPermissions(write=True, read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=5),
             encryption_scope="hnstestscope1")
-        encryption_scope = FileSystemEncryptionScope(default_encryption_scope="hnstestscope1")
+        encryption_scope = EncryptionScopeOptions(default_encryption_scope="hnstestscope1")
 
         # Act
         file_system_client = self.dsc.get_file_system_client(file_system_name)
-        await file_system_client.create_file_system(file_system_encryption_scope=encryption_scope)
+        await file_system_client.create_file_system(encryption_scope_options=encryption_scope)
 
         dir_client = DataLakeDirectoryClient(url, file_system_name, 'dir1', credential=token)
         await dir_client.create_directory()
@@ -244,11 +245,11 @@ class FileSystemTest(StorageTestCase):
             permission=FileSasPermissions(write=True, read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=5),
             encryption_scope="hnstestscope1")
-        encryption_scope = FileSystemEncryptionScope(default_encryption_scope="hnstestscope1")
+        encryption_scope = EncryptionScopeOptions(default_encryption_scope="hnstestscope1")
 
         # Act
         file_system_client = self.dsc.get_file_system_client(file_system_name)
-        await file_system_client.create_file_system(file_system_encryption_scope=encryption_scope)
+        await file_system_client.create_file_system(encryption_scope_options=encryption_scope)
         await file_system_client.create_directory('dir1')
 
         file_client = DataLakeFileClient(url, file_system_name, 'dir1/file1', token)
@@ -844,12 +845,12 @@ class FileSystemTest(StorageTestCase):
     async def test_path_properties_encryption_scope_async(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
-        encryption_scope = FileSystemEncryptionScope(default_encryption_scope="hnstestscope1")
+        encryption_scope = EncryptionScopeOptions(default_encryption_scope="hnstestscope1")
         file_system_name = self._get_file_system_reference()
 
         # Act
         file_system_client = self.dsc.get_file_system_client(file_system_name)
-        await file_system_client.create_file_system(file_system_encryption_scope=encryption_scope)
+        await file_system_client.create_file_system(encryption_scope_options=encryption_scope)
         await file_system_client.create_directory('dir1')
         await file_system_client.create_file('dir1/file1')
 
