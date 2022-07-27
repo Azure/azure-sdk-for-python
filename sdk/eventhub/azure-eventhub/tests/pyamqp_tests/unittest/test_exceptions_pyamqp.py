@@ -12,7 +12,7 @@ def test_client_creation_exceptions():
         sender = SendClient(
             "fake.host.com",
         )
-        assert sender._hostname == "fake.host.com"
+        assert sender._remote_address == "fake.host.com"
 
 def test_connection_endpoint_exceptions():
     with pytest.raises(AMQPConnectionError):
