@@ -80,7 +80,6 @@ class AsyncStorageTestCase(StorageTestCase):
 
 
 class AsyncStorageRecordedTestCase(StorageRecordedTestCase):
-    
     @staticmethod
     def await_prepared_test(test_fn):
         """Synchronous wrapper for async test methods. Used to avoid making changes

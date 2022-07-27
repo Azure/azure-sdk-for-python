@@ -42,6 +42,7 @@ def is_in_service(sdk_path: str, setup_py_location: str, service_name: str) -> b
 
     return normalized_setup.startswith(path.join(sdk_prefix, service_name))
 
+
 def version_set_dev_main() -> None:
     parser = argparse.ArgumentParser(
         description="Increments version for a given package name based on the released version"

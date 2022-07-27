@@ -56,7 +56,9 @@ def get_setup_py_paths(glob_string, base_path, additional_excludes):
     return filtered_paths
 
 
-def get_packages(args: Namespace, package_name: str = "", additional_excludes: List[str] = [], root_dir: str = None) -> List[ParsedSetup]:
+def get_packages(
+    args: Namespace, package_name: str = "", additional_excludes: List[str] = [], root_dir: str = None
+) -> List[ParsedSetup]:
     if root_dir is None:
         root_dir = discover_repo_root()
     # This function returns list of path to setup.py and setup info like install requires, version for all packages discovered using glob

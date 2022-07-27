@@ -21,6 +21,7 @@ _SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
 DEFAULT_DEST_FOLDER = "./dist"
 _DPG_README = "README.md"
 
+
 def get_package_names(sdk_folder):
     files = get_add_diff_file_list(sdk_folder)
     matches = {_SDK_FOLDER_RE.search(f) for f in files}
@@ -106,7 +107,7 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
 def all_files(path: str, files: List[str]):
     all_folder = os.listdir(path)
     for item in all_folder:
-        folder = str(Path(f'{path}/{item}'))
+        folder = str(Path(f"{path}/{item}"))
         if os.path.isdir(folder):
             all_files(folder, files)
         else:
@@ -116,40 +117,40 @@ def all_files(path: str, files: List[str]):
 def judge_tag_preview(path: str) -> bool:
     files = []
     all_files(path, files)
-    default_api_version = ''  # for multi-api
-    api_version = ''  # for single-api
+    default_api_version = ""  # for multi-api
+    api_version = ""  # for single-api
     for file in files:
-        if '.py' not in file or '.pyc' in file:
+        if ".py" not in file or ".pyc" in file:
             continue
         try:
-            with open(file, 'r') as file_in:
+            with open(file, "r") as file_in:
                 list_in = file_in.readlines()
         except:
-            _LOGGER.info(f'can not open {file}')
+            _LOGGER.info(f"can not open {file}")
             continue
 
         for line in list_in:
-            if line.find('DEFAULT_API_VERSION = ') > -1:
-                default_api_version += line.split('=')[-1].strip('\n')  # collect all default api version
-            if default_api_version == '' and line.find('api_version = ') > -1:
-                api_version += line.split('=')[-1].strip('\n')  # collect all single api version
-    if default_api_version != '':
-        _LOGGER.info(f'find default api version:{default_api_version}')
-        return 'preview' in default_api_version
+            if line.find("DEFAULT_API_VERSION = ") > -1:
+                default_api_version += line.split("=")[-1].strip("\n")  # collect all default api version
+            if default_api_version == "" and line.find("api_version = ") > -1:
+                api_version += line.split("=")[-1].strip("\n")  # collect all single api version
+    if default_api_version != "":
+        _LOGGER.info(f"find default api version:{default_api_version}")
+        return "preview" in default_api_version
 
-    _LOGGER.info(f'find single api version:{api_version}')
-    return 'preview' in api_version
+    _LOGGER.info(f"find single api version:{api_version}")
+    return "preview" in api_version
 
 
 def extract_yaml_content(autorest_config: str) -> str:
     num = []
-    content = autorest_config.split('\r\n')
+    content = autorest_config.split("\r\n")
     for i in range(len(content)):
         if "```" in content[i]:
             num.append(i)
     if len(num) != 2:
         raise Exception(f"autorestConfig content is not valid: {autorest_config}")
-    return '\n'.join(content[num[0] + 1: num[1]])
+    return "\n".join(content[num[0] + 1 : num[1]])
 
 
 def add_config_title(content: str) -> str:
@@ -177,15 +178,17 @@ def gen_basic_config(origin_config: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def gen_general_namespace(package_name: str) -> str:
-    return package_name.replace('-', '.')
+    return package_name.replace("-", ".")
 
 
 def gen_dpg_config_single_client(origin_config: Dict[str, Any]) -> str:
     package_name = Path(origin_config["output-folder"]).parts[-1]
     readme_config = gen_basic_config(origin_config)
-    readme_config.update({
-        "namespace": gen_general_namespace(package_name),
-    })
+    readme_config.update(
+        {
+            "namespace": gen_general_namespace(package_name),
+        }
+    )
     readme_content = yaml_block(yaml.safe_dump(readme_config), "### Settings")
     return add_config_title(readme_content)
 
@@ -257,9 +260,9 @@ def gen_dpg_config(autorest_config: str) -> str:
 
 
 def lookup_swagger_readme(rest_readme_path: str) -> str:
-    all_swagger_readme = glob(str(Path(f'sdk/*/*/swagger/{_DPG_README}')))
+    all_swagger_readme = glob(str(Path(f"sdk/*/*/swagger/{_DPG_README}")))
     for readme in all_swagger_readme:
-        with open(readme, 'r') as file:
+        with open(readme, "r") as file:
             content = file.read()
             if rest_readme_path in content:
                 _LOGGER.info(f"find swagger readme: {readme}")
@@ -278,7 +281,7 @@ def gen_dpg(rest_readme_path: str, autorest_config: str) -> Dict[str, Any]:
         return
 
     # extract global config
-    global_config = read_config('.', CONFIG_FILE_DPG)
+    global_config = read_config(".", CONFIG_FILE_DPG)
 
     # generate code
     current_path = os.getcwd()
@@ -290,28 +293,28 @@ def gen_dpg(rest_readme_path: str, autorest_config: str) -> Dict[str, Any]:
 
 
 def format_samples(sdk_code_path) -> None:
-    generate_sample_path = Path(sdk_code_path) / 'generated_samples'
+    generate_sample_path = Path(sdk_code_path) / "generated_samples"
     if not generate_sample_path.exists():
-        _LOGGER.info(f'not find generated_samples')
+        _LOGGER.info(f"not find generated_samples")
         return
 
     try:
         import black
     except Exception as e:
-        check_call('pip install black', shell=True)
+        check_call("pip install black", shell=True)
         import black
 
     _BLACK_MODE = black.Mode()
     _BLACK_MODE.line_length = 120
-    files = generate_sample_path.glob('**/*.py')
+    files = generate_sample_path.glob("**/*.py")
     for path in files:
-        with open(path, 'r') as fr:
+        with open(path, "r") as fr:
             file_content = fr.read()
 
         with suppress(black.NothingChanged):
             file_content = black.format_file_contents(file_content, fast=True, mode=_BLACK_MODE)
 
-        with open(path, 'w') as fw:
+        with open(path, "w") as fw:
             fw.write(file_content)
 
-    _LOGGER.info(f'format generated_samples successfully')
+    _LOGGER.info(f"format generated_samples successfully")

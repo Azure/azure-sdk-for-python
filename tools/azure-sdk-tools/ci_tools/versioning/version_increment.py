@@ -33,6 +33,7 @@ def increment_version(old_version):
 
     return "{0}.{1}.{2}".format(release[0], release[1], release[2] + 1)
 
+
 def version_increment_main():
     parser = argparse.ArgumentParser(
         description="Increments version for a given package name based on the released version"
@@ -83,4 +84,6 @@ def version_increment_main():
 
     set_version_py(target_package.setup_filename, new_version)
     set_dev_classifier(target_package.setup_filename, new_version)
-    update_change_log(target_package.setup_filename, new_version, args.service, args.package_name, True, False, root_dir=root_dir)
+    update_change_log(
+        target_package.setup_filename, new_version, args.service, args.package_name, True, False, root_dir=root_dir
+    )

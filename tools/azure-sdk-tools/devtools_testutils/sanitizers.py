@@ -110,7 +110,7 @@ def set_headerless_matcher() -> None:
 # - Uri
 # - Header
 # - Body
-# 
+#
 # For example, A sanitizer prefixed with Body will only ever operate on the request/response body. The target URI and
 # request/response headers will be left unaffected.
 #
@@ -447,11 +447,7 @@ def _send_matcher_request(matcher: str, headers: dict, parameters: "Optional[dic
 
     headers_to_send = {"x-abstraction-identifier": matcher}
     headers_to_send.update(headers)
-    response = requests.post(
-        f"{PROXY_URL}/Admin/SetMatcher",
-        headers=headers_to_send,
-        json=parameters
-    )
+    response = requests.post(f"{PROXY_URL}/Admin/SetMatcher", headers=headers_to_send, json=parameters)
     response.raise_for_status()
 
 
@@ -467,10 +463,7 @@ def _send_reset_request(headers: dict) -> None:
     if is_live_and_not_recording():
         return
 
-    response = requests.post(
-        f"{PROXY_URL}/Admin/Reset",
-        headers=headers
-    )
+    response = requests.post(f"{PROXY_URL}/Admin/Reset", headers=headers)
     response.raise_for_status()
 
 
@@ -513,6 +506,6 @@ def _send_transform_request(transform: str, parameters: dict) -> None:
     response = requests.post(
         f"{PROXY_URL}/Admin/AddTransform",
         headers={"x-abstraction-identifier": transform, "Content-Type": "application/json"},
-        json=parameters
+        json=parameters,
     )
     response.raise_for_status()

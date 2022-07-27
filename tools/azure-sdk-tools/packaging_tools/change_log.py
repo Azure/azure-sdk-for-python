@@ -33,7 +33,9 @@ class ChangeLog:
         if self.features:
             _build_md(sorted(set(self.features), key=self.features.index), "**Features**", buffer)
         if self.breaking_changes:
-            _build_md(sorted(set(self.breaking_changes), key=self.breaking_changes.index), "**Breaking changes**", buffer)
+            _build_md(
+                sorted(set(self.breaking_changes), key=self.breaking_changes.index), "**Breaking changes**", buffer
+            )
         if not (self.features or self.breaking_changes) and self.optional_features:
             _build_md(sorted(set(self.optional_features), key=self.optional_features.index), "**Features**", buffer)
 
@@ -80,20 +82,33 @@ class ChangeLog:
             return
 
         if remaining_path[0] == "parameters":
-            old_parameters_list = self._old_report["operations"][operation_name]["functions"][function_name]['parameters']
-            new_parameters_list = self._new_report["operations"][operation_name]["functions"][function_name]['parameters']
-            old_parameters = {param_name['name']: param_name for param_name in old_parameters_list}
-            new_parameters = {param_name['name']: param_name for param_name in new_parameters_list}
+            old_parameters_list = self._old_report["operations"][operation_name]["functions"][function_name][
+                "parameters"
+            ]
+            new_parameters_list = self._new_report["operations"][operation_name]["functions"][function_name][
+                "parameters"
+            ]
+            old_parameters = {param_name["name"]: param_name for param_name in old_parameters_list}
+            new_parameters = {param_name["name"]: param_name for param_name in new_parameters_list}
             old_parameters_set = set(old_parameters.keys())
             new_parameters_set = set(new_parameters.keys())
             # The new parameter is optional or not. Be breaking change for now.
-            for removed_parameter in (old_parameters_set - new_parameters_set):
-                self.breaking_changes.append(_REMOVE_OPERATION_PARAM.format(operation_name, function_name, removed_parameter))
-            for added_parameter in (new_parameters_set - old_parameters_set):
-                if new_parameters[added_parameter]['type'] == 'KEYWORD_ONLY' and new_parameters[added_parameter]['has_default_value']:
-                    self.features.append(_ADD_OPERATION_PARAM_FEATURE.format(operation_name, function_name, added_parameter))
+            for removed_parameter in old_parameters_set - new_parameters_set:
+                self.breaking_changes.append(
+                    _REMOVE_OPERATION_PARAM.format(operation_name, function_name, removed_parameter)
+                )
+            for added_parameter in new_parameters_set - old_parameters_set:
+                if (
+                    new_parameters[added_parameter]["type"] == "KEYWORD_ONLY"
+                    and new_parameters[added_parameter]["has_default_value"]
+                ):
+                    self.features.append(
+                        _ADD_OPERATION_PARAM_FEATURE.format(operation_name, function_name, added_parameter)
+                    )
                 else:
-                    self.breaking_changes.append(_ADD_OPERATION_PARAM.format(operation_name, function_name, added_parameter))
+                    self.breaking_changes.append(
+                        _ADD_OPERATION_PARAM.format(operation_name, function_name, added_parameter)
+                    )
             return
         raise NotImplementedError(f"Other situations. Be err for now: {str(remaining_path)}")
 
@@ -153,6 +168,7 @@ class ChangeLog:
         self.breaking_changes.append(_CLIENT_SIGNATURE_CHANGE)
         return
 
+
 ## Features
 _ADD_OPERATION_GROUP = "Added operation group {}"
 _ADD_OPERATION = "Added operation {}.{}"
@@ -184,7 +200,7 @@ def build_change_log(old_report, new_report):
             change_log.operation(diff_line)
         elif diff_line[0][0] == "models":
             change_log.models(diff_line)
-        elif diff_line[0][0] == 'client':
+        elif diff_line[0][0] == "client":
             change_log.client()
 
     return change_log

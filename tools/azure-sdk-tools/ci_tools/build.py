@@ -139,7 +139,9 @@ def build_packages(
         create_package(package_root, dist_dir)
 
 
-def create_package(setup_directory_or_file: str, dest_folder: str = None, enable_wheel: bool = True, enable_sdist: bool = True):
+def create_package(
+    setup_directory_or_file: str, dest_folder: str = None, enable_wheel: bool = True, enable_sdist: bool = True
+):
     """
     Uses the invoking python executable to build a wheel and sdist file given a setup.py or setup.py directory. Outputs
     into a distribution directory and defaults to the value of get_artifiact_directory().

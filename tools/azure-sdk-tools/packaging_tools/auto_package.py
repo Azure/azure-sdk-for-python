@@ -44,7 +44,7 @@ def main(generate_input, generate_output):
             "lite": f"pip install {package_name}",
         }
         # to distinguish with track1
-        if 'azure-mgmt-' in package_name:
+        if "azure-mgmt-" in package_name:
             package["packageName"] = "track2_" + package["packageName"]
         for artifact in package["artifacts"]:
             if ".whl" in artifact:

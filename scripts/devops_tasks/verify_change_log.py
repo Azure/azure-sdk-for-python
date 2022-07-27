@@ -57,8 +57,6 @@ def verify_packages(targeted_packages):
     change_log_missing = {}
 
     for package in targeted_packages:
-        # Parse setup.py using common helper method to get version and package name
-        # pkg_name, version, _, _ = parse_setup(package)
         parsed_pkg = ParsedSetup.from_path(package)
 
         # Skip management packages and any explicitly excluded packages

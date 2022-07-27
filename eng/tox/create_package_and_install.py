@@ -18,7 +18,9 @@ import glob
 import shutil
 from pkg_resources import parse_version
 
-from tox_helper_tasks import find_whl, find_sdist, get_package_details, get_pip_list_output, parse_req
+from tox_helper_tasks import find_whl, find_sdist, get_pip_list_output
+from ci_tools.parsing import ParsedSetup, parse_require
+from ci_tools.build import create_package
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -54,16 +56,16 @@ def discover_packages(setuppy_path, args):
 
 def discover_prebuilt_package(dist_directory, setuppy_path, package_type):
     packages = []
-    pkg_name, _, version, _, _ = get_package_details(setuppy_path)
+    pkg = ParsedSetup.from_path(setuppy_path)
     if package_type == "wheel":
-        prebuilt_package = find_whl(dist_directory, pkg_name, version)
+        prebuilt_package = find_whl(dist_directory, pkg.name, pkg.version)
     else:
-        prebuilt_package = find_sdist(dist_directory, pkg_name, version)
+        prebuilt_package = find_sdist(dist_directory, pkg.name, pkg.version)
 
     if prebuilt_package is None:
         logging.error(
             "Package is missing in prebuilt directory {0} for package {1} and version {2}".format(
-                dist_directory, pkg_name, version
+                dist_directory, pkg.name, pkg.version
             )
         )
         exit(1)
@@ -77,29 +79,9 @@ def in_ci():
 
 def build_and_discover_package(setuppy_path, dist_dir, target_setup, package_type):
     if package_type == "wheel":
-        check_call(
-            [
-                sys.executable,
-                setuppy_path,
-                "bdist_wheel",
-                "-d",
-                dist_dir,
-            ],
-            cwd = os.path.dirname(setuppy_path)
-        )
+        create_package(setuppy_path, dist_dir, enable_sdist=False)
     else:
-        check_call(
-            [
-                sys.executable,
-                setuppy_path,
-                "sdist",
-                "--format",
-                "zip",
-                "-d",
-                dist_dir,
-            ],
-            cwd = os.path.dirname(setuppy_path)
-        )
+        create_package(setuppy_path, dist_dir, enable_whl=False)
 
     prebuilt_packages = [
         f for f in os.listdir(args.distribution_directory) if f.endswith(".whl" if package_type == "wheel" else ".zip")
@@ -242,7 +224,7 @@ if __name__ == "__main__":
                         installed_pkgs = get_pip_list_output()
 
                         # parse the specifier
-                        req_name, req_specifier = parse_req(req)
+                        req_name, req_specifier = parse_require(req)
 
                         # if we have the package already present...
                         if req_name in installed_pkgs:

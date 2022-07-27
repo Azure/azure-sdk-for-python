@@ -73,7 +73,7 @@ def variable_recorder(recorded_test: "Dict[str, Any]") -> "Dict[str, str]":
 # ----------HELPERS----------
 
 
-class VariableRecorder():
+class VariableRecorder:
     def __init__(self, variables: "Dict[str, str]") -> None:
         self.variables = variables
 

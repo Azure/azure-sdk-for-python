@@ -35,6 +35,10 @@ class ParsedSetup:
         requires: List[str],
         is_new_sdk: bool,
         setup_filename: str,
+        name_space: str,
+        package_data: Dict,
+        include_package_data,
+        bool,
     ):
         self.name: str = name
         self.version: str = version
@@ -42,6 +46,9 @@ class ParsedSetup:
         self.requires: List[str] = requires
         self.is_new_sdk: bool = is_new_sdk
         self.setup_filename: str = setup_filename
+        self.namespace = name_space
+        self.package_data = package_data
+        self.include_package_data = include_package_data
 
     @classmethod
     def from_path(cls, parse_directory_or_file: str):
@@ -52,9 +59,22 @@ class ParsedSetup:
             requires,
             is_new_sdk,
             setup_filename,
+            name_space,
+            package_data,
+            include_package_data,
         ) = parse_setup(parse_directory_or_file)
 
-        return cls(name, version, python_requires, requires, is_new_sdk, setup_filename)
+        return cls(
+            name,
+            version,
+            python_requires,
+            requires,
+            is_new_sdk,
+            setup_filename,
+            name_space,
+            package_data,
+            include_package_data,
+        )
 
 
 def read_setup_py_content(setup_filename: str) -> str:
@@ -69,7 +89,17 @@ def read_setup_py_content(setup_filename: str) -> str:
 def parse_setup(setup_filename: str) -> Tuple[str, str, List[str], List[str], bool, str]:
     """
     Used to evaluate a setup.py (or a directory containing a setup.py) and return a tuple containing:
-    (<package-name>, <package_version>, <python_requires>, <requires>, <boolean indicating track1 vs track2>, <parsed setup.py location>)
+    (
+        <package-name>,
+        <package_version>,
+        <python_requires>,
+        <requires>,
+        <boolean indicating track1 vs track2>,
+        <parsed setup.py location>,
+        <namespace>,
+        <package_data dict>,
+        <include_package_data bool>
+    )
     """
     if not setup_filename.endswith("setup.py"):
         setup_filename = os.path.join(setup_filename, "setup.py")
@@ -116,14 +146,45 @@ def parse_setup(setup_filename: str) -> Tuple[str, str, List[str], List[str], bo
 
     version = kwargs["version"]
     name = kwargs["name"]
+    name_space = name.replace("-", ".")
+
+    if "packages" in kwargs.keys():
+        packages = kwargs["packages"]
+        if packages:
+            name_space = packages[0]
 
     requires = []
     if "install_requires" in kwargs:
         requires = kwargs["install_requires"]
 
+    package_data = None
+    if "package_data" in kwargs:
+        package_data = kwargs["package_data"]
+
+    include_package_data = None
+    if "include_package_data" in kwargs:
+        include_package_data = kwargs["include_package_data"]
+
     is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
 
-    return name, version, python_requires, requires, is_new_sdk, setup_filename
+    return (
+        name,
+        version,
+        python_requires,
+        requires,
+        is_new_sdk,
+        setup_filename,
+        name_space,
+        package_data,
+        include_package_data,
+    )
+
+
+def get_install_requires(setup_path: str) -> List[str]:
+    """
+    Simple helper function to just directly get the installation requirements given a python package.
+    """
+    return ParsedSetup.from_path(setup_path).requires
 
 
 def parse_require(req: str) -> Tuple[str, SpecifierSet]:

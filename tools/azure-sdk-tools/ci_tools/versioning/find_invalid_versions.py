@@ -15,6 +15,7 @@ import sys
 from ci_tools.versioning.version_shared import get_packages, get_version_py
 from ci_tools.variables import discover_repo_root
 
+
 def find_invalid_versions_main():
     parser = argparse.ArgumentParser(description="")
     parser.add_argument(

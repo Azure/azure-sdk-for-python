@@ -148,6 +148,7 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
                 print(f"[Autorest] {output_buffer[i]}")
             raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
         return output
+
     try:
         return run_command()
     except subprocess.CalledProcessError as ex:

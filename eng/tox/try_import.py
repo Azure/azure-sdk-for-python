@@ -15,9 +15,7 @@ import os
 import sys
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
-common_task_path = os.path.abspath(os.path.join(root_dir, "scripts", "devops_tasks"))
-sys.path.append(common_task_path)
-from common_tasks import parse_setup, get_name_from_specifier
+from ci_tools.parsing import ParsedSetup, get_name_from_specifier
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -45,7 +43,8 @@ if __name__ == "__main__":
 
     acceptable_to_import = []
     if args.target_setup:
-        _, _, _, reqs = parse_setup(args.target_setup)
+
+        reqs = ParsedSetup.from_path(args.target_setup).requires
         acceptable_to_import = [get_name_from_specifier(req).strip() for req in reqs]
 
     importable_packages = []

@@ -8,6 +8,7 @@ from ci_tools.versioning.version_shared import (
     update_change_log,
 )
 
+
 def version_set_main():
     parser = argparse.ArgumentParser(
         description="Increments version for a given package name based on the released version"

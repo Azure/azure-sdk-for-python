@@ -8,8 +8,14 @@ from .swaggertosdk.SwaggerToSdkCore import (
     CONFIG_FILE,
 )
 from .generate_sdk import generate
-from .generate_utils import (get_package_names, init_new_service, update_servicemetadata, judge_tag_preview,
-                             format_samples, gen_dpg)
+from .generate_utils import (
+    get_package_names,
+    init_new_service,
+    update_servicemetadata,
+    judge_tag_preview,
+    format_samples,
+    gen_dpg,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -21,7 +27,7 @@ def main(generate_input, generate_output):
     spec_folder = data["specFolder"]
     sdk_folder = "."
     result = {}
-    python_tag = data.get('python_tag')
+    python_tag = data.get("python_tag")
     package_total = set()
     for input_readme in data["relatedReadmeMdFiles"]:
         # skip codegen for data-plane temporarily since it is useless now and may block PR

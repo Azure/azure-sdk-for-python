@@ -1,5 +1,6 @@
 import os
 
+
 def discover_repo_root(input_repo: str = None):
     """
     Resolves the root of the repository given a current working directory. This function should be used if a target repo argument is not provided.
