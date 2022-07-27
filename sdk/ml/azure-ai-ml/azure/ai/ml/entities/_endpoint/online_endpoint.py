@@ -50,7 +50,7 @@ class OnlineEndpoint(Endpoint):
     :type location: str, optional
     :param traffic:  Traffic rules on how the traffic will be routed across deployments, defaults to {}
     :type traffic: Dict[str, int], optional
-    :param mirror_traffic: Duplicated life traffic used to train a single deployment, defaults to {}
+    :param mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to {}
     :type mirror_traffic: Dict[str, int], optional
     :param provisioning_state: str, provisioning state, readonly
     :type provisioning_state: str, optional
