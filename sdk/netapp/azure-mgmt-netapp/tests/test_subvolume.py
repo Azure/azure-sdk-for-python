@@ -1,6 +1,7 @@
 from azure.mgmt.netapp.models import SubvolumeInfo, SubvolumePatchRequest
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
-from test_volume import create_volume, delete_volume, delete_pool, delete_account
+from test_volume import create_volume, delete_volume, delete_pool, delete_account, create_virtual_network
+from azure.mgmt.network import NetworkManagementClient
 from setup import *
 import azure.mgmt.netapp.models
 import time
@@ -20,17 +21,21 @@ class TestNetAppSubvolume(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)
+        self.network_client = self.create_mgmt_client(NetworkManagementClient)  
 
     # Before tests are run live a resource group needs to be created along with vnet and subnet
     # Note that when tests are run in live mode it is best to run one test at a time.
     @recorded_by_proxy
     def test_crud_subvolumes(self):
         set_bodiless_matcher()
-        create_volume(self.client, enable_subvolumes="Enabled")
-
+        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
+        volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
+        VNETNAME = self.get_resource_name(VNET+"-")
+        SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')
+        create_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, LOCATION, vnet=VNETNAME, enable_subvolumes="Enabled")
         path = "/sub_vol_1.txt"
         size = 1000000
-        parent_path = "/parent_sub_vol_1.txt"
+        parent_path = "/parent_sub_vol_1.txt"        
         subvolume_body = SubvolumeInfo(
             path=path,
             size=size
@@ -38,8 +43,8 @@ class TestNetAppSubvolume(AzureMgmtRecordedTestCase):
 
         # create
         subvolume_info = self.client.subvolumes.begin_create(
-            TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SUBVOLUME_1, subvolume_body).result()
-        assert subvolume_info.name == TEST_ACC_1 + "/" + TEST_POOL_1 + "/" + TEST_VOL_1 + "/" + TEST_SUBVOLUME_1
+            TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, TEST_SUBVOLUME_1, subvolume_body).result()
+        assert subvolume_info.name == ACCOUNT1 + "/" + TEST_POOL_1 + "/" + volumeName1 + "/" + TEST_SUBVOLUME_1
         assert subvolume_info.path == path
 
         # update
@@ -50,29 +55,35 @@ class TestNetAppSubvolume(AzureMgmtRecordedTestCase):
             size=size,
         )
         subvolume_info = self.client.subvolumes.begin_update(
-            TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SUBVOLUME_1, subvolume_patch).result()
-        assert subvolume_info.name == TEST_ACC_1 + "/" + TEST_POOL_1 + "/" + TEST_VOL_1 + "/" + TEST_SUBVOLUME_1
+            TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, TEST_SUBVOLUME_1, subvolume_patch).result()
+        assert subvolume_info.name == ACCOUNT1 + "/" + TEST_POOL_1 + "/" + volumeName1 + "/" + TEST_SUBVOLUME_1
         assert subvolume_info.path, path
 
         # get
-        subvolume_info = self.client.subvolumes.get(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SUBVOLUME_1)
-        assert subvolume_info.name == TEST_ACC_1 + "/" + TEST_POOL_1 + "/" + TEST_VOL_1 + "/" + TEST_SUBVOLUME_1
+        subvolume_info = self.client.subvolumes.get(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, TEST_SUBVOLUME_1)
+        assert subvolume_info.name == ACCOUNT1 + "/" + TEST_POOL_1 + "/" + volumeName1 + "/" + TEST_SUBVOLUME_1
         assert subvolume_info.path == path
 
         # delete
-        self.client.subvolumes.begin_delete(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SUBVOLUME_1).wait()
-        subvolume_list = self.client.subvolumes.list_by_volume(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
+        self.client.subvolumes.begin_delete(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, TEST_SUBVOLUME_1).wait()
+        subvolume_list = self.client.subvolumes.list_by_volume(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1)
         assert len(list(subvolume_list)) == 0
 
         # clean up
-        delete_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
-        delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
-        delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
+        delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, live=self.is_live)
+        delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, live=self.is_live)
+        delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)
+        self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
+
 
     @recorded_by_proxy
     def test_list_by_volume(self):
         set_bodiless_matcher()
-        create_volume(self.client, enable_subvolumes="Enabled")
+        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
+        volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
+        VNETNAME = self.get_resource_name(VNET+"-")
+        SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')
+        create_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, LOCATION, vnet=VNETNAME, enable_subvolumes="Enabled")
 
         path1 = "/sub_vol_1.txt"
         size1 = 1000000
@@ -89,31 +100,36 @@ class TestNetAppSubvolume(AzureMgmtRecordedTestCase):
         )
 
         # create
-        self.client.subvolumes.begin_create(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SUBVOLUME_1, subvolume_body1)
-        wait_for_subvolume_created(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SUBVOLUME_1)
-        self.client.subvolumes.begin_create(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SUBVOLUME_2, subvolume_body2)
+        self.client.subvolumes.begin_create(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, TEST_SUBVOLUME_1, subvolume_body1)
+        wait_for_subvolume_created(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, TEST_SUBVOLUME_1)
+        self.client.subvolumes.begin_create(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, TEST_SUBVOLUME_2, subvolume_body2)
 
         # list_by_volume
-        subvolume_list = self.client.subvolumes.list_by_volume(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
+        subvolume_list = self.client.subvolumes.list_by_volume(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1)
         assert len(list(subvolume_list)) == 2
 
-        self.client.subvolumes.begin_delete(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SUBVOLUME_1).wait()
-        subvolume_list = self.client.subvolumes.list_by_volume(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
+        self.client.subvolumes.begin_delete(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, TEST_SUBVOLUME_1).wait()
+        subvolume_list = self.client.subvolumes.list_by_volume(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1)
         assert len(list(subvolume_list)) == 1
 
-        self.client.subvolumes.begin_delete(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SUBVOLUME_2).wait()
-        subvolume_list = self.client.subvolumes.list_by_volume(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
+        self.client.subvolumes.begin_delete(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, TEST_SUBVOLUME_2).wait()
+        subvolume_list = self.client.subvolumes.list_by_volume(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1)
         assert len(list(subvolume_list)) == 0
 
         # clean up
-        delete_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
-        delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
-        delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
+        delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, live=self.is_live)
+        delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, live=self.is_live)
+        delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)
+        self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
 
     @recorded_by_proxy
     def test_get_metadata(self):
         set_bodiless_matcher()
-        create_volume(self.client, enable_subvolumes="Enabled")
+        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
+        volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
+        VNETNAME = self.get_resource_name(VNET+"-")
+        SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')
+        create_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, LOCATION, vnet=VNETNAME, enable_subvolumes="Enabled")
 
         path = "/sub_vol_1.txt"
         size = 123
@@ -124,17 +140,18 @@ class TestNetAppSubvolume(AzureMgmtRecordedTestCase):
 
         # create
         subvolume_info = self.client.subvolumes.begin_create(
-            TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SUBVOLUME_1, subvolume_body).result()
-        assert subvolume_info.name == TEST_ACC_1 + "/" + TEST_POOL_1 + "/" + TEST_VOL_1 + "/" + TEST_SUBVOLUME_1
+            TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, TEST_SUBVOLUME_1, subvolume_body).result()
+        assert subvolume_info.name == ACCOUNT1 + "/" + TEST_POOL_1 + "/" + volumeName1 + "/" + TEST_SUBVOLUME_1
         assert subvolume_info.path == path
 
         # get metadata
         metadata = self.client.subvolumes.begin_get_metadata(
-            TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SUBVOLUME_1).result()
+            TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, TEST_SUBVOLUME_1).result()
         assert metadata is not None
 
         # clean up
-        self.client.subvolumes.begin_delete(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SUBVOLUME_1).wait()
-        delete_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
-        delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
-        delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
+        self.client.subvolumes.begin_delete(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, TEST_SUBVOLUME_1).wait()
+        delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, live=self.is_live)
+        delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, live=self.is_live)
+        delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)
+        self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
