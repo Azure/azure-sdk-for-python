@@ -8,7 +8,8 @@ from testcase import LoadtestingPowerShellPreparer, TEST_ID, FILE_ID, TEST_RUN_I
 from testcase_async import LoadtestingAsyncTest
 import os
 
-DISPLAY_NAME = "TestingResource" # display name
+DISPLAY_NAME = "TestingResource"  # display name
+
 
 class LoadtestingSmokeAsyncTest(LoadtestingAsyncTest):
     @LoadtestingPowerShellPreparer()

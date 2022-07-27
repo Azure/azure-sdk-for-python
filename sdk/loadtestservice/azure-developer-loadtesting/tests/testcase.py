@@ -9,11 +9,12 @@ import functools
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.developer.loadtesting import LoadTestingClient
 
-TEST_ID = os.getenv("TEST_ID")  # ID to be assigned to a test
-FILE_ID = os.getenv("FILE_ID")  # ID to be assigned to file uploaded
-TEST_RUN_ID = os.getenv("TEST_RUN_ID")  # ID to be assigned to a test run
-APP_COMPONENT = os.getenv("APP_COMPONENT")  # ID of the APP Component
-SUBSCRIPTION_ID = os.getenv("SUBSCRIPTION_ID")
+TEST_ID = os.getenv("TEST_ID", "TEST_ID")  # ID to be assigned to a test
+FILE_ID = os.getenv("FILE_ID", "FILE_ID")  # ID to be assigned to file uploaded
+TEST_RUN_ID = os.getenv("TEST_RUN_ID", "TEST_RUN_ID")  # ID to be assigned to a test run
+APP_COMPONENT = os.getenv("APP_COMPONENT", "APP_COMPONENT")  # ID of the APP Component
+SUBSCRIPTION_ID = os.getenv("SUBSCRIPTION_ID", "SUBSCRIPTION_ID")
+
 
 class LoadtestingTest(AzureTestCase):
     def __init__(self, method_name, **kwargs):
