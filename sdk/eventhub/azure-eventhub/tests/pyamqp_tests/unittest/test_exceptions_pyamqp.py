@@ -34,7 +34,7 @@ def test_connection_sas_authentication_exception():
         password=""
     )
     with pytest.raises(AttributeError):
-        sender = SendClient("fake.host.com", target, auth=sas_auth)
+        sender = SendClient(target, auth=sas_auth)
         sender.client_ready()
     
 def test_connection_sasl_annon_authentication_exception():
@@ -45,5 +45,5 @@ def test_connection_sasl_annon_authentication_exception():
 
     sas_auth = authentication.SASLAnonymousCredential()
     with pytest.raises(AttributeError):
-        sender = SendClient("fake.host.com", target, auth=sas_auth)
+        sender = SendClient(target, auth=sas_auth)
         sender.client_ready()
