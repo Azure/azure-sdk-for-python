@@ -19,7 +19,7 @@ from .session import Session
 from .sender import SenderLink
 from .receiver import ReceiverLink
 from .sasl import SASLAnonymousCredential, SASLTransport
-from .endpoints import Source, Target
+from .endpoints import Sopurce, Source, Target
 from .error import (
     AMQPConnectionError,
     AMQPException,
@@ -59,7 +59,7 @@ class AMQPClient(object):
 
     :param remote_address: The AMQP endpoint to connect to. This could be a send target
      or a receive source.
-    :type remote_address: str, bytes or ~uamqp.address.Address
+    :type remote_address: str, bytes or ~pyamqp.endpoint.Target or ~pyamqp.endpoint.Source
     :param auth: Authentication for the connection. This should be one of the following:
         - pyamqp.authentication.SASLAnonymous
         - pyamqp.authentication.SASLPlain
@@ -105,7 +105,7 @@ class AMQPClient(object):
     :type handle_max: int
     :param on_attach: A callback function to be run on receipt of an ATTACH frame.
      The function must take 4 arguments: source, target, properties and error.
-    :type on_attach: func[~uamqp.address.Source, ~uamqp.address.Target, dict, ~pyamqp.error.AMQPConnectionError]
+    :type on_attach: func[~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.error.AMQPConnectionError]
     :param send_settle_mode: The mode by which to settle message send
      operations. If set to `Unsettled`, the client will wait for a confirmation
      from the service that the message was successfully sent. If set to 'Settled',
@@ -124,7 +124,7 @@ class AMQPClient(object):
 
     def __init__(self, remote_address, auth=None, client_name=None, debug=False, retry_policy=None, 
     keep_alive_interval=None, **kwargs):
-        self._remote_address = remote_address
+        self._remote_address = remote_address.address if (isinstance(remote_address, Source) or isinstance(remote_address, Target)) else remote_address
         self._auth = auth
         self._name = client_name if client_name else str(uuid.uuid4())
 
@@ -535,9 +535,9 @@ class SendClient(AMQPClient):
 class ReceiveClient(AMQPClient):
     """An AMQP client for receiving messages.
 
-    :param target: The source AMQP service endpoint. This can either be the URI as
-     a string or a ~uamqp.address.Source object.
-    :type target: str, bytes or ~uamqp.address.Source
+    :param source: The source AMQP service endpoint. This can either be the URI as
+     a string or a ~pyamqp.endpoint.Source object.
+    :type source: str, bytes or ~pyamqp.endpoint.Source
     :param auth: Authentication for the connection. This should be one of the subclasses of
      pyamqp.authentication.AMQPAuth. Currently this includes:
         - pyamqp.authentication.SASLAnonymous
@@ -616,7 +616,7 @@ class ReceiveClient(AMQPClient):
     :type encoding: str
     """
 
-    def __init__(self, target, source, auth=None, **kwargs):
+    def __init__(self, source, auth=None, **kwargs):
         self.source = source
         self._streaming_receive = kwargs.pop("streaming_receive", False)  # TODO: whether public?
         self._received_messages = queue.Queue()
