@@ -198,7 +198,7 @@ class CodegenTestPR:
 
     def get_package_name_with_autorest_result(self):
         generate_result = self.get_autorest_result()
-        self.package_name = generate_result["packages"][0]["packageName"].split('-')[-1]
+        self.package_name = generate_result["packages"][0]["packageName"].split('-', 2)[-1]
 
     def prepare_branch_with_readme(self):
         self.generate_code()
