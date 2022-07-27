@@ -203,7 +203,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
 
             .. versionadded:: 12.9.0
 
-        :paramtype file_system_encryption_scope: dict or ~azure.storage.filedatalake.FileSystemEncryptionScope
+        :paramtype encryption_scope_options: dict or ~azure.storage.filedatalake.EncryptionScopeOptions
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A dictionary of response headers.
@@ -218,10 +218,10 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :dedent: 16
                 :caption: Creating a file system in the datalake service.
         """
-        file_system_encryption_scope = kwargs.pop('file_system_encryption_scope', None)
+        encryption_scope_options = kwargs.pop('encryption_scope_options', None)
         return await self._container_client.create_container(metadata=metadata,
                                                              public_access=public_access,
-                                                             container_encryption_scope=file_system_encryption_scope,
+                                                             container_encryption_scope=encryption_scope_options,
                                                              **kwargs)
 
     @distributed_trace_async
