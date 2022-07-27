@@ -2,13 +2,7 @@
 
 ## 1.0.0b3 (Unreleased)
 
-## 1.0.0b2 (2022-03-11)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.0.0b2 (Unreleased)
 
 ### Other Changes
 
