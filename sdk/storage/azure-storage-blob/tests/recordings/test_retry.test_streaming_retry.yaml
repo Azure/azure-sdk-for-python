@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.7.13 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
       x-ms-date:
-      - Tue, 26 Jul 2022 19:56:29 GMT
+      - Wed, 27 Jul 2022 20:01:25 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:27 GMT
       etag:
-      - '"0x8DA6F40EEFFD3EE"'
+      - '"0x8DA700ACAF9DF12"'
       last-modified:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -49,7 +49,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.7.13 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
       x-ms-date:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:25 GMT
       x-ms-version:
       - '2021-08-06'
     method: GET
@@ -58,18 +58,14 @@ interactions:
     body:
       string: ''
     headers:
-      access-control-allow-origin:
-      - '*'
-      access-control-expose-headers:
-      - x-ms-request-id,x-ms-client-request-id,x-ms-version,x-ms-lease-status,x-ms-lease-state,x-ms-has-immutability-policy,x-ms-has-legal-hold,x-ms-immutable-storage-with-versioning-enabled,x-ms-default-encryption-scope,x-ms-deny-encryption-scope-override,Server,Content-Range,ETag,Last-Modified,Accept-Ranges
       content-length:
       - '0'
       date:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:27 GMT
       etag:
-      - '"0x8DA6F40EEFFD3EE"'
+      - '"0x8DA700ACAF9DF12"'
       last-modified:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-default-encryption-scope:
@@ -111,7 +107,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:25 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
@@ -125,11 +121,11 @@ interactions:
       content-md5:
       - q1a02StAcTrMWviZhdS3hg==
       date:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:27 GMT
       etag:
-      - '"0x8DA6F40EF1AFCE8"'
+      - '"0x8DA700ACB03C6C7"'
       last-modified:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -153,7 +149,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.7.13 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
       x-ms-date:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:25 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -166,10 +162,6 @@ interactions:
     headers:
       accept-ranges:
       - bytes
-      access-control-allow-origin:
-      - '*'
-      access-control-expose-headers:
-      - x-ms-request-id,x-ms-client-request-id,x-ms-version,x-ms-creation-time,x-ms-blob-content-md5,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,Server,Content-Range,ETag,Last-Modified,Accept-Ranges
       content-length:
       - '5'
       content-range:
@@ -177,11 +169,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:27 GMT
       etag:
-      - '"0x8DA6F40EF1AFCE8"'
+      - '"0x8DA700ACB03C6C7"'
       last-modified:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-content-md5:
@@ -189,7 +181,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -213,7 +205,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.7.13 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
       x-ms-date:
-      - Tue, 26 Jul 2022 19:56:31 GMT
+      - Wed, 27 Jul 2022 20:01:26 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -226,10 +218,6 @@ interactions:
     headers:
       accept-ranges:
       - bytes
-      access-control-allow-origin:
-      - '*'
-      access-control-expose-headers:
-      - x-ms-request-id,x-ms-client-request-id,x-ms-version,x-ms-creation-time,x-ms-blob-content-md5,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,Server,Content-Range,ETag,Last-Modified,Accept-Ranges
       content-length:
       - '5'
       content-range:
@@ -237,11 +225,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 26 Jul 2022 19:56:31 GMT
+      - Wed, 27 Jul 2022 20:01:29 GMT
       etag:
-      - '"0x8DA6F40EF1AFCE8"'
+      - '"0x8DA700ACB03C6C7"'
       last-modified:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-content-md5:
@@ -249,7 +237,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -273,7 +261,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.7.13 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
       x-ms-date:
-      - Tue, 26 Jul 2022 19:56:32 GMT
+      - Wed, 27 Jul 2022 20:01:27 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -286,10 +274,6 @@ interactions:
     headers:
       accept-ranges:
       - bytes
-      access-control-allow-origin:
-      - '*'
-      access-control-expose-headers:
-      - x-ms-request-id,x-ms-client-request-id,x-ms-version,x-ms-creation-time,x-ms-blob-content-md5,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,Server,Content-Range,ETag,Last-Modified,Accept-Ranges
       content-length:
       - '5'
       content-range:
@@ -297,11 +281,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 26 Jul 2022 19:56:33 GMT
+      - Wed, 27 Jul 2022 20:01:30 GMT
       etag:
-      - '"0x8DA6F40EF1AFCE8"'
+      - '"0x8DA700ACB03C6C7"'
       last-modified:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-content-md5:
@@ -309,7 +293,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -333,7 +317,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.7.13 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
       x-ms-date:
-      - Tue, 26 Jul 2022 19:56:33 GMT
+      - Wed, 27 Jul 2022 20:01:27 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -346,10 +330,6 @@ interactions:
     headers:
       accept-ranges:
       - bytes
-      access-control-allow-origin:
-      - '*'
-      access-control-expose-headers:
-      - x-ms-request-id,x-ms-client-request-id,x-ms-version,x-ms-creation-time,x-ms-blob-content-md5,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,Server,Content-Range,ETag,Last-Modified,Accept-Ranges
       content-length:
       - '5'
       content-range:
@@ -357,11 +337,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 26 Jul 2022 19:56:33 GMT
+      - Wed, 27 Jul 2022 20:01:29 GMT
       etag:
-      - '"0x8DA6F40EF1AFCE8"'
+      - '"0x8DA700ACB03C6C7"'
       last-modified:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-content-md5:
@@ -369,7 +349,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -393,7 +373,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.7.13 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
       x-ms-date:
-      - Tue, 26 Jul 2022 19:56:34 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -406,10 +386,6 @@ interactions:
     headers:
       accept-ranges:
       - bytes
-      access-control-allow-origin:
-      - '*'
-      access-control-expose-headers:
-      - x-ms-request-id,x-ms-client-request-id,x-ms-version,x-ms-creation-time,x-ms-blob-content-md5,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,Server,Content-Range,ETag,Last-Modified,Accept-Ranges
       content-length:
       - '5'
       content-range:
@@ -417,11 +393,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 26 Jul 2022 19:56:34 GMT
+      - Wed, 27 Jul 2022 20:01:31 GMT
       etag:
-      - '"0x8DA6F40EF1AFCE8"'
+      - '"0x8DA700ACB03C6C7"'
       last-modified:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-content-md5:
@@ -429,7 +405,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -453,7 +429,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.7.13 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
       x-ms-date:
-      - Tue, 26 Jul 2022 19:56:35 GMT
+      - Wed, 27 Jul 2022 20:01:29 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -466,10 +442,6 @@ interactions:
     headers:
       accept-ranges:
       - bytes
-      access-control-allow-origin:
-      - '*'
-      access-control-expose-headers:
-      - x-ms-request-id,x-ms-client-request-id,x-ms-version,x-ms-creation-time,x-ms-blob-content-md5,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,Server,Content-Range,ETag,Last-Modified,Accept-Ranges
       content-length:
       - '5'
       content-range:
@@ -477,11 +449,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 26 Jul 2022 19:56:35 GMT
+      - Wed, 27 Jul 2022 20:01:32 GMT
       etag:
-      - '"0x8DA6F40EF1AFCE8"'
+      - '"0x8DA700ACB03C6C7"'
       last-modified:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-content-md5:
@@ -489,7 +461,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -513,7 +485,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.7.13 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
       x-ms-date:
-      - Tue, 26 Jul 2022 19:56:36 GMT
+      - Wed, 27 Jul 2022 20:01:29 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -526,10 +498,6 @@ interactions:
     headers:
       accept-ranges:
       - bytes
-      access-control-allow-origin:
-      - '*'
-      access-control-expose-headers:
-      - x-ms-request-id,x-ms-client-request-id,x-ms-version,x-ms-creation-time,x-ms-blob-content-md5,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,Server,Content-Range,ETag,Last-Modified,Accept-Ranges
       content-length:
       - '5'
       content-range:
@@ -537,11 +505,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 26 Jul 2022 19:56:35 GMT
+      - Wed, 27 Jul 2022 20:01:32 GMT
       etag:
-      - '"0x8DA6F40EF1AFCE8"'
+      - '"0x8DA700ACB03C6C7"'
       last-modified:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-content-md5:
@@ -549,7 +517,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -573,7 +541,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.7.13 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
       x-ms-date:
-      - Tue, 26 Jul 2022 19:56:37 GMT
+      - Wed, 27 Jul 2022 20:01:30 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -586,10 +554,6 @@ interactions:
     headers:
       accept-ranges:
       - bytes
-      access-control-allow-origin:
-      - '*'
-      access-control-expose-headers:
-      - x-ms-request-id,x-ms-client-request-id,x-ms-version,x-ms-creation-time,x-ms-blob-content-md5,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,Server,Content-Range,ETag,Last-Modified,Accept-Ranges
       content-length:
       - '5'
       content-range:
@@ -597,11 +561,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 26 Jul 2022 19:56:37 GMT
+      - Wed, 27 Jul 2022 20:01:33 GMT
       etag:
-      - '"0x8DA6F40EF1AFCE8"'
+      - '"0x8DA700ACB03C6C7"'
       last-modified:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-content-md5:
@@ -609,7 +573,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -633,7 +597,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.7.13 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
       x-ms-date:
-      - Tue, 26 Jul 2022 19:56:39 GMT
+      - Wed, 27 Jul 2022 20:01:31 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -646,10 +610,6 @@ interactions:
     headers:
       accept-ranges:
       - bytes
-      access-control-allow-origin:
-      - '*'
-      access-control-expose-headers:
-      - x-ms-request-id,x-ms-client-request-id,x-ms-version,x-ms-creation-time,x-ms-blob-content-md5,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,Server,Content-Range,ETag,Last-Modified,Accept-Ranges
       content-length:
       - '5'
       content-range:
@@ -657,11 +617,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 26 Jul 2022 19:56:39 GMT
+      - Wed, 27 Jul 2022 20:01:34 GMT
       etag:
-      - '"0x8DA6F40EF1AFCE8"'
+      - '"0x8DA700ACB03C6C7"'
       last-modified:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-content-md5:
@@ -669,7 +629,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 26 Jul 2022 19:56:30 GMT
+      - Wed, 27 Jul 2022 20:01:28 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
