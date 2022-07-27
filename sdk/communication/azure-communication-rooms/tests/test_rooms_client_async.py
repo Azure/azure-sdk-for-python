@@ -11,7 +11,7 @@ from azure.communication.rooms.aio import RoomsClient
 from azure.communication.rooms import (
     RoomParticipant,
     RoomJoinPolicy,
-    RoleType
+    ParticipantRole
 )
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier, UnknownIdentifier
 from unittest_helpers import mock_response
@@ -28,7 +28,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
         communication_identifier=CommunicationUserIdentifier(
             id=raw_id
         ),
-        role=RoleType.ATTENDEE
+        role=ParticipantRole.ATTENDEE
     )
     json_participant = {
         "communicationIdentifier": {
@@ -179,17 +179,10 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertListEqual(response.participants, [self.room_participant, additional_participant])
+        self.assertEqual(None, response)
 
     async def test_update_participants(self):
         raised = False
-        updated_participant_json = {
-            "communicationIdentifier": {
-                "rawId": self.raw_id,
-                "communicationUser": {"id": self.raw_id}
-            },
-            "role": ""
-        }
         updated_participant = RoomParticipant(
             communication_identifier=CommunicationUserIdentifier(
                 id=self.raw_id
@@ -198,9 +191,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
         )
 
         async def mock_send(*_, **__):
-            return mock_response(status_code=200, json_payload={
-                "participants": [updated_participant_json]
-            })
+            return mock_response(status_code=200)
 
         rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
 
@@ -212,7 +203,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertListEqual(response.participants, [updated_participant])
+        self.assertEqual(None, response)
 
     async def test_remove_participants(self):
         raised = False
@@ -233,7 +224,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertListEqual(response.participants, [])
+        self.assertEqual(None, response)
 
     async def test_get_participants(self):
         raised = False

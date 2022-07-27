@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 import uuid
 from azure.core.tracing.decorator import distributed_trace
 from azure.communication.rooms._models import (
-    RoomModel,
+    CommunicationRoom,
     RoomParticipant,
     ParticipantsCollection
 )
@@ -104,7 +104,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         participants=None, # type: Optional[List[RoomParticipant]]
         **kwargs
     ):
-        # type: (...) -> RoomModel
+        # type: (...) -> CommunicationRoom
         """Create a new room.
 
         :param valid_from: The timestamp from when the room is open for joining. The timestamp is in
@@ -113,12 +113,12 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :param valid_until: The timestamp from when the room can no longer be joined. The timestamp
          is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :type valid_until: ~datetime
-        :keyword room_join_policy: (Optional)The join policy of the room.
-        :paramtype room_join_policy: (Optional)RoomJoinPolicy
-        :keyword participants: (Optional) Collection of identities invited to the room.
-        :paramtype participants: (Optional)list[RoomParticipant]
+        :param room_join_policy: (Optional)The join policy of the room.
+        :type room_join_policy: (Optional)RoomJoinPolicy
+        :param participants: (Optional) Collection of identities invited to the room.
+        :type participants: (Optional)List[RoomParticipant]
         :returns: Created room.
-        :rtype: ~azure.communication.rooms.RoomModel
+        :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         create_room_request = CreateRoomRequest(
@@ -136,7 +136,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
             repeatability_request_id=repeatability_request_id,
             repeatability_first_sent=repeatability_first_sent,
             **kwargs)
-        return RoomModel.from_room_response(create_room_response)
+        return CommunicationRoom.from_room_response(create_room_response)
 
     @distributed_trace
     def delete_room(
@@ -166,7 +166,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         participants=None, #type: Optional[List[RoomParticipant]]
         **kwargs
     ):
-        # type: (...) -> RoomModel
+        # type: (...) -> CommunicationRoom
         """Update a valid room's attributes
 
         :param room_id: Required. Id of room to be updated
@@ -182,7 +182,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :param participants: (Optional) Collection of identities invited to the room.
         :type participants: (Optional)list[RoomParticipant]
         :returns: Updated room.
-        :rtype: ~azure.communication.rooms.RoomModel
+        :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         """
@@ -195,7 +195,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         )
         update_room_response = self._rooms_service_client.rooms.update_room(
             room_id=room_id, patch_room_request=update_room_request, **kwargs)
-        return RoomModel.from_room_response(update_room_response)
+        return CommunicationRoom.from_room_response(update_room_response)
 
     @distributed_trace
     def get_room(
@@ -203,18 +203,18 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         room_id, # type: str
         **kwargs
     ):
-        # type: (...) -> RoomModel
+        # type: (...) -> CommunicationRoom
         """Get a valid room
 
         :param room_id: Required. Id of room to be fetched
         :type room_id: str
         :returns: Room with current attributes.
-        :rtype: ~azure.communication.rooms.RoomModel
+        :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
         get_room_response = self._rooms_service_client.rooms.get_room(room_id=room_id, **kwargs)
-        return RoomModel.from_room_response(get_room_response)
+        return CommunicationRoom.from_room_response(get_room_response)
 
     @distributed_trace
     def add_participants(
@@ -223,7 +223,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         participants, # type: List[RoomParticipant]
         **kwargs
     ):
-        # type: (...) -> ParticipantsCollection
+        # type: (...) -> None
         """Add participants to a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
@@ -236,9 +236,8 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         add_participants_request = AddParticipantsRequest(
             participants=[p.to_room_participant_internal() for p in participants]
         )
-        add_participants_response = self._rooms_service_client.rooms.add_participants(
+        self._rooms_service_client.rooms.add_participants(
             room_id=room_id, add_participants_request=add_participants_request, **kwargs)
-        return ParticipantsCollection(participants=add_participants_response.participants)
 
     @distributed_trace
     def update_participants(
@@ -247,7 +246,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         participants, # type: List[RoomParticipant]
         **kwargs
     ):
-        # type: (...) -> ParticipantsCollection
+        # type: (...) -> None
         """Update participants to a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
@@ -260,9 +259,8 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         update_participants_request = UpdateParticipantsRequest(
             participants=[p.to_room_participant_internal() for p in participants]
         )
-        update_participants_response = self._rooms_service_client.rooms.update_participants(
+        self._rooms_service_client.rooms.update_participants(
             room_id=room_id, update_participants_request=update_participants_request, **kwargs)
-        return ParticipantsCollection(participants=update_participants_response.participants)
 
     @distributed_trace
     def remove_participants(
@@ -271,7 +269,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         communication_identifiers, # type: List[CommunicationIdentifier]
         **kwargs
     ):
-        # type: (...) -> ParticipantsCollection
+        # type: (...) -> None
         """Remove participants from a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
@@ -289,9 +287,8 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         remove_participants_request = RemoveParticipantsRequest(
             participants=participants
         )
-        remove_participants_response = self._rooms_service_client.rooms.remove_participants(
+        self._rooms_service_client.rooms.remove_participants(
             room_id=room_id, remove_participants_request=remove_participants_request, **kwargs)
-        return ParticipantsCollection(participants=remove_participants_response.participants)
 
     @distributed_trace
     def get_participants(

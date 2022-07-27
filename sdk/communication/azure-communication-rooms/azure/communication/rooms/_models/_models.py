@@ -11,7 +11,7 @@ from .._generated.models import (
     CommunicationIdentifierModel,
     CommunicationUserIdentifierModel,
     RoomJoinPolicy,
-    RoleType
+    RoleType as ParticipantRole
 )
 from .._generated import _serialization
 from .._shared.models import (
@@ -22,14 +22,14 @@ from .._shared.models import (
 )
 
 
-class RoomModel(_serialization.Model):
+class CommunicationRoom(_serialization.Model):
     """The response object from rooms service.
 
     :ivar id: Unique identifier of a room. This id is server generated.
     :vartype id: str
-    :ivar created_date_time: The timestamp when the room was created at the server. The timestamp
+    :ivar created_on: The timestamp when the room was created at the server. The timestamp
      is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-    :vartype created_date_time: ~datetime
+    :vartype created_on: ~datetime
     :ivar valid_from: The timestamp from when the room is open for joining. The timestamp is in
      RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype valid_from: ~datetime
@@ -44,7 +44,7 @@ class RoomModel(_serialization.Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
         'valid_from': {'key': 'validFrom', 'type': 'iso-8601'},
         'valid_until': {'key': 'validUntil', 'type': 'iso-8601'},
         'participants': {'key': 'participants', 'type': '[RoomParticipant]'},
@@ -54,7 +54,7 @@ class RoomModel(_serialization.Model):
         self,
         *,
         id=None, # type: Optional[str] pylint: disable=redefined-builtin
-        created_date_time=None, # type: Optional[datetime]
+        created_on=None, # type: Optional[datetime]
         valid_from=None, # type: Optional[datetime]
         valid_until=None, # type: Optional[datetime]
         room_join_policy=None, # type: Optional[RoomJoinPolicy]
@@ -64,9 +64,9 @@ class RoomModel(_serialization.Model):
         """
         :keyword id: Unique identifier of a room. This id is server generated.
         :paramtype id: str
-        :keyword created_date_time: The timestamp when the room was created at the server. The
+        :keyword created_on: The timestamp when the room was created at the server. The
          timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-        :paramtype created_date_time: ~datetime
+        :paramtype created_on: ~datetime
         :keyword valid_from: The timestamp from when the room is open for joining. The timestamp is in
          RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :paramtype valid_from: ~datetime
@@ -78,9 +78,9 @@ class RoomModel(_serialization.Model):
         :keyword participants: Collection of room participants.
         :paramtype participants: list[~azure.communication.rooms.RoomParticipant]
         """
-        super(RoomModel, self).__init__(**kwargs)
+        super(CommunicationRoom, self).__init__(**kwargs)
         self.id = id
-        self.created_date_time = created_date_time
+        self.created_on = created_on
         self.valid_from = valid_from
         self.valid_until = valid_until
         self.room_join_policy = room_join_policy
@@ -90,17 +90,17 @@ class RoomModel(_serialization.Model):
     def from_room_response(cls, get_room_response,  # type: RoomModel
             **kwargs  # type: Any
     ):
-        # type: (...) -> RoomModel
-        """Create RoomModel from the internal RoomModel.
+        # type: (...) -> CommunicationRoom
+        """Create CommunicationRoom from the internal RoomModel.
         :param RoomModel get_room_response:
             Response from get_room API.
-        :returns: Instance of RoomModel.
-        :rtype: ~azure.communication.rooms.RoomModel
+        :returns: Instance of CommunicationRoom.
+        :rtype: ~azure.communication.rooms.CommunicationRoom
         """
 
         return cls(
             id=get_room_response.id,
-            created_date_time=get_room_response.created_date_time,
+            created_on=get_room_response.created_date_time,
             valid_from=get_room_response.valid_from,
             valid_until=get_room_response.valid_until,
             room_join_policy=get_room_response.room_join_policy,
@@ -119,7 +119,7 @@ class RoomParticipant(_serialization.Model):
     :vartype communication_identifier:
     ~azure.communication.rooms._shared.models.CommunicationIdentifier
     :ivar role: Role Name.
-    :vartype role: str or ~azure.communication.rooms.RoleType
+    :vartype role: str or ~azure.communication.rooms.ParticipantRole
     """
 
     _validation = {
@@ -128,21 +128,21 @@ class RoomParticipant(_serialization.Model):
 
     _attribute_map = {
         "communication_identifier": {"key": "communicationIdentifier", "type": "CommunicationIdentifier"},
-        "role": {"key": "role", "type": "Union[str, RoleType]"},
+        "role": {"key": "role", "type": "Optional[Union[str, ParticipantRole]"},
     }
 
     def __init__(
-        self, communication_identifier: CommunicationIdentifier, role: Optional[Union[str, RoleType]] = None, **kwargs
+        self, communication_identifier: CommunicationIdentifier, role: Optional[Union[str, ParticipantRole]] = None, **kwargs
     ):
         """
-        :keyword communication_identifier: Identifies a participant in Azure Communication services. A
+        :param communication_identifier: Identifies a participant in Azure Communication services. A
          participant is, for example, an Azure communication user. This model must be interpreted as a
          union: Apart from rawId, at most one further property may be set. Required.
-        :paramtype communication_identifier:
+        :type communication_identifier:
          ~azure.communication.rooms._shared.models.CommunicationIdentifier
-        :keyword role: The Role of a room participant. Known values are: "Presenter", "Attendee", and
+        :param role: The Role of a room participant. Known values are: "Presenter", "Attendee", and
          "Consumer".
-        :paramtype role: str or ~azure.communication.rooms.RoleType
+        :type role: str or ~azure.communication.rooms.ParticipantRole
         """
         super().__init__(**kwargs)
         self.communication_identifier = communication_identifier
