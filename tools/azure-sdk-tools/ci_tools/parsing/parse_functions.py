@@ -37,8 +37,7 @@ class ParsedSetup:
         setup_filename: str,
         name_space: str,
         package_data: Dict,
-        include_package_data,
-        bool,
+        include_package_data: bool,
     ):
         self.name: str = name
         self.version: str = version
