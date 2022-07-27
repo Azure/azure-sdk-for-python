@@ -15,6 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
@@ -24,26 +25,24 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class PrivateLinkResourceOperations:
-    """PrivateLinkResourceOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.batch.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.batch.aio.BatchManagementClient`'s
+        :attr:`private_link_resource` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def list_by_batch_account(
@@ -52,7 +51,7 @@ class PrivateLinkResourceOperations:
         account_name: str,
         maxresults: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ListPrivateLinkResourcesResult"]:
+    ) -> AsyncIterable[_models.ListPrivateLinkResourcesResult]:
         """Lists all of the private link resources in the specified account.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -69,13 +68,16 @@ class PrivateLinkResourceOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.batch.models.ListPrivateLinkResourcesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-06-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListPrivateLinkResourcesResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ListPrivateLinkResourcesResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -86,9 +88,11 @@ class PrivateLinkResourceOperations:
                     api_version=api_version,
                     maxresults=maxresults,
                     template_url=self.list_by_batch_account.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -99,9 +103,11 @@ class PrivateLinkResourceOperations:
                     api_version=api_version,
                     maxresults=maxresults,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -141,7 +147,7 @@ class PrivateLinkResourceOperations:
         account_name: str,
         private_link_resource_name: str,
         **kwargs: Any
-    ) -> "_models.PrivateLinkResource":
+    ) -> _models.PrivateLinkResource:
         """Gets information about the specified private link resource.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -156,13 +162,16 @@ class PrivateLinkResourceOperations:
         :rtype: ~azure.mgmt.batch.models.PrivateLinkResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-06-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PrivateLinkResource]
 
         
         request = build_get_request(
@@ -172,11 +181,13 @@ class PrivateLinkResourceOperations:
             private_link_resource_name=private_link_resource_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs

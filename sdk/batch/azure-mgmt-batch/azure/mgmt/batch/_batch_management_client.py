@@ -72,15 +72,33 @@ class BatchManagementClient:    # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.batch_account = BatchAccountOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.application_package = ApplicationPackageOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.application = ApplicationOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.location = LocationOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.certificate = CertificateOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_link_resource = PrivateLinkResourceOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connection = PrivateEndpointConnectionOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.pool = PoolOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.batch_account = BatchAccountOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.application_package = ApplicationPackageOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.application = ApplicationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.location = LocationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.certificate = CertificateOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_resource = PrivateLinkResourceOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_endpoint_connection = PrivateEndpointConnectionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.pool = PoolOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(
