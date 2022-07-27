@@ -9,7 +9,7 @@ import sys
 import os
 
 import pytest
-from devtools_testutils import add_general_regex_sanitizer, add_body_key_sanitizer, test_proxy
+from devtools_testutils import add_general_regex_sanitizer, add_body_key_sanitizer, add_uri_regex_sanitizer, test_proxy
 
 # Fixture
 from testcase import load_registry
@@ -44,6 +44,7 @@ def add_sanitizers(test_proxy):
     # sanitizes access and refresh tokens in JSON-formatted request or response bodies
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
     add_body_key_sanitizer(json_path="$..refresh_token", value="refresh_token")
+    add_uri_regex_sanitizer(regex="sha256%3A(.*)", value="sha256_encoded_stream")
 
     client_id = os.environ.get("CONTAINERREGISTRY_CLIENT_ID", "client-id")
     add_general_regex_sanitizer(regex=client_id, value="client-id")
