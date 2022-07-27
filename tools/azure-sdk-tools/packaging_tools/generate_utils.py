@@ -19,6 +19,7 @@ _LOGGER = logging.getLogger(__name__)
 _SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
 
 DEFAULT_DEST_FOLDER = "./dist"
+DEFAULT_SPEC_FOLDER = "../../../../../azure-rest-api-specs/"
 _DPG_README = "README.md"
 
 def get_package_names(sdk_folder):
@@ -162,7 +163,7 @@ def gen_package_name(origin_config: Dict[str, Any]) -> str:
     return Path(origin_config["output-folder"]).parts[-1]
 
 
-def gen_basic_config(origin_config: Dict[str, Any], spec_folder: str = "../../../../../azure-rest-api-specs/") -> Dict[str, Any]:
+def gen_basic_config(origin_config: Dict[str, Any], spec_folder: str = DEFAULT_SPEC_FOLDER) -> Dict[str, Any]:
     spec_root = re.sub('specification', '', spec_folder)
     return {
         "package-name": gen_package_name(origin_config),

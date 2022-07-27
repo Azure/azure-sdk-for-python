@@ -7,11 +7,9 @@ from subprocess import check_call
 from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE
 from .generate_sdk import generate
 from .generate_utils import (get_package_names, init_new_service, update_servicemetadata, judge_tag_preview,
-                             format_samples, gen_dpg)
+                             format_samples, gen_dpg, DEFAULT_SPEC_FOLDER)
 
 _LOGGER = logging.getLogger(__name__)
-
-DEFAULT_SPEC_FOLDER = "../../../../../azure-rest-api-specs/"
 
 def main(generate_input, generate_output):
     with open(generate_input, "r") as reader:
