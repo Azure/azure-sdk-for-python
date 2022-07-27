@@ -6,13 +6,12 @@
 import unittest
 import datetime
 
-from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
 from azure.communication.rooms import (
     RoomsClient,
     RoomParticipant,
     RoomJoinPolicy,
-    RoleType
+    ParticipantRole
 )
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier, UnknownIdentifier
 from unittest_helpers import mock_response
@@ -29,7 +28,7 @@ class TestRoomsClient(unittest.TestCase):
         communication_identifier=CommunicationUserIdentifier(
             id=raw_id
         ),
-        role=RoleType.PRESENTER
+        role=ParticipantRole.PRESENTER
     )
     json_participant = {
         "communicationIdentifier": {
@@ -174,7 +173,7 @@ class TestRoomsClient(unittest.TestCase):
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertListEqual(response.participants, [self.room_participant, additional_participant])
+        self.assertEqual(None, response)
 
     def test_update_participants(self):
         raised = False
@@ -198,8 +197,6 @@ class TestRoomsClient(unittest.TestCase):
             })
 
         rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
-
-        response = None
         try:
             response = rooms_client.update_participants(room_id=self.room_id, participants=[updated_participant])
         except:
@@ -207,7 +204,7 @@ class TestRoomsClient(unittest.TestCase):
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertListEqual(response.participants, [updated_participant])
+        self.assertEqual(None, response)
 
     def test_remove_participants(self):
         raised = False
@@ -228,7 +225,7 @@ class TestRoomsClient(unittest.TestCase):
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertListEqual(response.participants, [])
+        self.assertEqual(None, response)
 
     def test_get_participants(self):
         raised = False
