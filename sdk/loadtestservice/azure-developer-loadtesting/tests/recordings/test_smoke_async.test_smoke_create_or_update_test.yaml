@@ -18,7 +18,7 @@ interactions:
     uri: https://myservice.azure.com/loadtests/TEST_ID?api-version=2022-06-01-preview
   response:
     body:
-      string: '{"testId":"TEST_ID","description":"","displayName":"TestingResource","resourceId":"/subscriptions/SUBSCRIPTION_ID/resourcegroups/python-sdk-test/providers/microsoft.loadtestservice/loadtests/loadtest-jf","loadTestConfig":{"engineInstances":1,"splitAllCSVs":false},"passFailCriteria":{"passFailMetrics":{}},"createdDateTime":"2022-07-26T02:38:46.669Z","createdBy":null,"lastModifiedDateTime":"2022-07-26T02:38:46.669Z","lastModifiedBy":null,"inputArtifacts":{"configUrl":null,"testScriptUrl":{"url":"https://stcntproddataeus.blob.core.windows.net/041c60a4-d25f-4102-b324-4f30261785e3/FILE_ID?sv=2020-04-08&se=2022-07-27T09%3A20%3A40Z&sr=b&sp=r&sig=a%2BrD%2FM458gOdTO6yn1O6uU%2B46VAoEwnr%2BvxP8CbwO6k%3D","fileId":"FILE_ID","filename":"sample.jmx","fileType":0,"expireTime":"2022-07-27T08:30:40.2220875+00:00","validationStatus":"VALIDATION_INITIATED"},"userPropUrl":null,"inputArtifactsZipFileurl":null,"additionalUrls":[]},"secrets":null,"environmentVariables":null,"subnetId":null,"keyvaultReferenceIdentityType":"SystemAssigned","keyvaultReferenceIdentityId":null}'
+      string: '{}'
     headers:
       api-supported-versions: 2021-07-01-preview, 2022-06-01-preview
       connection: keep-alive
