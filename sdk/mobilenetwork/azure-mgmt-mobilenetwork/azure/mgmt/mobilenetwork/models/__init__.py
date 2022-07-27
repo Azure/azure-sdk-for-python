@@ -59,12 +59,12 @@ from ._models_py3 import SliceListResult
 from ._models_py3 import SliceResourceId
 from ._models_py3 import Snssai
 from ._models_py3 import SubResource
+from ._models_py3 import SystemData
 from ._models_py3 import TagsObject
 from ._models_py3 import TrackedResource
 
 
 from ._mobile_network_management_client_enums import (
-    ConfigurationState,
     CoreNetworkType,
     CreatedByType,
     NaptEnabled,
@@ -73,6 +73,7 @@ from ._mobile_network_management_client_enums import (
     PreemptionVulnerability,
     ProvisioningState,
     SdfDirection,
+    SimState,
     TrafficControlPermission,
 )
 
@@ -130,9 +131,9 @@ __all__ = [
     'SliceResourceId',
     'Snssai',
     'SubResource',
+    'SystemData',
     'TagsObject',
     'TrackedResource',
-    'ConfigurationState',
     'CoreNetworkType',
     'CreatedByType',
     'NaptEnabled',
@@ -141,5 +142,6 @@ __all__ = [
     'PreemptionVulnerability',
     'ProvisioningState',
     'SdfDirection',
+    'SimState',
     'TrafficControlPermission',
 ]

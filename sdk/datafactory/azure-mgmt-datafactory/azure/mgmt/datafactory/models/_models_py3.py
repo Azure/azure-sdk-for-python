@@ -7,11 +7,13 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._data_factory_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AccessPolicyResponse(msrest.serialization.Model):
@@ -34,7 +36,7 @@ class AccessPolicyResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        policy: Optional["UserAccessPolicy"] = None,
+        policy: Optional["_models.UserAccessPolicy"] = None,
         access_token: Optional[str] = None,
         data_plane_url: Optional[str] = None,
         **kwargs
@@ -100,8 +102,8 @@ class Activity(msrest.serialization.Model):
         name: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
         **kwargs
     ):
         """
@@ -155,7 +157,7 @@ class ActivityDependency(msrest.serialization.Model):
         self,
         *,
         activity: str,
-        dependency_conditions: List[Union[str, "DependencyCondition"]],
+        dependency_conditions: List[Union[str, "_models.DependencyCondition"]],
         additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
@@ -374,7 +376,7 @@ class ActivityRunsQueryResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["ActivityRun"],
+        value: List["_models.ActivityRun"],
         continuation_token: Optional[str] = None,
         **kwargs
     ):
@@ -451,7 +453,7 @@ class LinkedService(msrest.serialization.Model):
     """The Azure Data Factory nested object which contains the information and credential which can be used to connect with related store or compute resource.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AmazonMWSLinkedService, AmazonRdsForOracleLinkedService, AmazonRdsForSqlServerLinkedService, AmazonRedshiftLinkedService, AmazonS3LinkedService, AmazonS3CompatibleLinkedService, AzureBatchLinkedService, AzureBlobFSLinkedService, AzureBlobStorageLinkedService, AzureDataExplorerLinkedService, AzureDataLakeAnalyticsLinkedService, AzureDataLakeStoreLinkedService, AzureDatabricksLinkedService, AzureDatabricksDeltaLakeLinkedService, AzureFileStorageLinkedService, AzureFunctionLinkedService, AzureKeyVaultLinkedService, AzureMLLinkedService, AzureMLServiceLinkedService, AzureMariaDBLinkedService, AzureMySqlLinkedService, AzurePostgreSqlLinkedService, AzureSearchLinkedService, AzureSqlDWLinkedService, AzureSqlDatabaseLinkedService, AzureSqlMILinkedService, AzureStorageLinkedService, AzureTableStorageLinkedService, CassandraLinkedService, CommonDataServiceForAppsLinkedService, ConcurLinkedService, CosmosDbLinkedService, CosmosDbMongoDbApiLinkedService, CouchbaseLinkedService, CustomDataSourceLinkedService, Db2LinkedService, DrillLinkedService, DynamicsLinkedService, DynamicsAXLinkedService, DynamicsCrmLinkedService, EloquaLinkedService, FileServerLinkedService, FtpServerLinkedService, GoogleAdWordsLinkedService, GoogleBigQueryLinkedService, GoogleCloudStorageLinkedService, GreenplumLinkedService, HBaseLinkedService, HDInsightLinkedService, HDInsightOnDemandLinkedService, HdfsLinkedService, HiveLinkedService, HttpLinkedService, HubspotLinkedService, ImpalaLinkedService, InformixLinkedService, JiraLinkedService, MagentoLinkedService, MariaDBLinkedService, MarketoLinkedService, MicrosoftAccessLinkedService, MongoDbLinkedService, MongoDbAtlasLinkedService, MongoDbV2LinkedService, MySqlLinkedService, NetezzaLinkedService, ODataLinkedService, OdbcLinkedService, Office365LinkedService, OracleLinkedService, OracleCloudStorageLinkedService, OracleServiceCloudLinkedService, PaypalLinkedService, PhoenixLinkedService, PostgreSqlLinkedService, PrestoLinkedService, QuickBooksLinkedService, QuickbaseLinkedService, ResponsysLinkedService, RestServiceLinkedService, SalesforceLinkedService, SalesforceMarketingCloudLinkedService, SalesforceServiceCloudLinkedService, SapBWLinkedService, SapCloudForCustomerLinkedService, SapEccLinkedService, SapHanaLinkedService, SapOpenHubLinkedService, SapTableLinkedService, ServiceNowLinkedService, SftpServerLinkedService, SharePointOnlineListLinkedService, ShopifyLinkedService, SmartsheetLinkedService, SnowflakeLinkedService, SparkLinkedService, SqlServerLinkedService, SquareLinkedService, SybaseLinkedService, TeamDeskLinkedService, TeradataLinkedService, VerticaLinkedService, WebLinkedService, XeroLinkedService, ZendeskLinkedService, ZohoLinkedService.
+    sub-classes are: AmazonMWSLinkedService, AmazonRdsForOracleLinkedService, AmazonRdsForSqlServerLinkedService, AmazonRedshiftLinkedService, AmazonS3LinkedService, AmazonS3CompatibleLinkedService, AppFiguresLinkedService, AsanaLinkedService, AzureBatchLinkedService, AzureBlobFSLinkedService, AzureBlobStorageLinkedService, AzureDataExplorerLinkedService, AzureDataLakeAnalyticsLinkedService, AzureDataLakeStoreLinkedService, AzureDatabricksLinkedService, AzureDatabricksDeltaLakeLinkedService, AzureFileStorageLinkedService, AzureFunctionLinkedService, AzureKeyVaultLinkedService, AzureMLLinkedService, AzureMLServiceLinkedService, AzureMariaDBLinkedService, AzureMySqlLinkedService, AzurePostgreSqlLinkedService, AzureSearchLinkedService, AzureSqlDWLinkedService, AzureSqlDatabaseLinkedService, AzureSqlMILinkedService, AzureStorageLinkedService, AzureTableStorageLinkedService, CassandraLinkedService, CommonDataServiceForAppsLinkedService, ConcurLinkedService, CosmosDbLinkedService, CosmosDbMongoDbApiLinkedService, CouchbaseLinkedService, CustomDataSourceLinkedService, DataworldLinkedService, Db2LinkedService, DrillLinkedService, DynamicsLinkedService, DynamicsAXLinkedService, DynamicsCrmLinkedService, EloquaLinkedService, FileServerLinkedService, FtpServerLinkedService, GoogleAdWordsLinkedService, GoogleBigQueryLinkedService, GoogleCloudStorageLinkedService, GreenplumLinkedService, HBaseLinkedService, HDInsightLinkedService, HDInsightOnDemandLinkedService, HdfsLinkedService, HiveLinkedService, HttpLinkedService, HubspotLinkedService, ImpalaLinkedService, InformixLinkedService, JiraLinkedService, MagentoLinkedService, MariaDBLinkedService, MarketoLinkedService, MicrosoftAccessLinkedService, MongoDbLinkedService, MongoDbAtlasLinkedService, MongoDbV2LinkedService, MySqlLinkedService, NetezzaLinkedService, ODataLinkedService, OdbcLinkedService, Office365LinkedService, OracleLinkedService, OracleCloudStorageLinkedService, OracleServiceCloudLinkedService, PaypalLinkedService, PhoenixLinkedService, PostgreSqlLinkedService, PrestoLinkedService, QuickBooksLinkedService, QuickbaseLinkedService, ResponsysLinkedService, RestServiceLinkedService, SalesforceLinkedService, SalesforceMarketingCloudLinkedService, SalesforceServiceCloudLinkedService, SapBWLinkedService, SapCloudForCustomerLinkedService, SapEccLinkedService, SapHanaLinkedService, SapOdpLinkedService, SapOpenHubLinkedService, SapTableLinkedService, ServiceNowLinkedService, SftpServerLinkedService, SharePointOnlineListLinkedService, ShopifyLinkedService, SmartsheetLinkedService, SnowflakeLinkedService, SparkLinkedService, SqlServerLinkedService, SquareLinkedService, SybaseLinkedService, TeamDeskLinkedService, TeradataLinkedService, TwilioLinkedService, VerticaLinkedService, WebLinkedService, XeroLinkedService, ZendeskLinkedService, ZohoLinkedService.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -484,16 +486,16 @@ class LinkedService(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'type': {'AmazonMWS': 'AmazonMWSLinkedService', 'AmazonRdsForOracle': 'AmazonRdsForOracleLinkedService', 'AmazonRdsForSqlServer': 'AmazonRdsForSqlServerLinkedService', 'AmazonRedshift': 'AmazonRedshiftLinkedService', 'AmazonS3': 'AmazonS3LinkedService', 'AmazonS3Compatible': 'AmazonS3CompatibleLinkedService', 'AzureBatch': 'AzureBatchLinkedService', 'AzureBlobFS': 'AzureBlobFSLinkedService', 'AzureBlobStorage': 'AzureBlobStorageLinkedService', 'AzureDataExplorer': 'AzureDataExplorerLinkedService', 'AzureDataLakeAnalytics': 'AzureDataLakeAnalyticsLinkedService', 'AzureDataLakeStore': 'AzureDataLakeStoreLinkedService', 'AzureDatabricks': 'AzureDatabricksLinkedService', 'AzureDatabricksDeltaLake': 'AzureDatabricksDeltaLakeLinkedService', 'AzureFileStorage': 'AzureFileStorageLinkedService', 'AzureFunction': 'AzureFunctionLinkedService', 'AzureKeyVault': 'AzureKeyVaultLinkedService', 'AzureML': 'AzureMLLinkedService', 'AzureMLService': 'AzureMLServiceLinkedService', 'AzureMariaDB': 'AzureMariaDBLinkedService', 'AzureMySql': 'AzureMySqlLinkedService', 'AzurePostgreSql': 'AzurePostgreSqlLinkedService', 'AzureSearch': 'AzureSearchLinkedService', 'AzureSqlDW': 'AzureSqlDWLinkedService', 'AzureSqlDatabase': 'AzureSqlDatabaseLinkedService', 'AzureSqlMI': 'AzureSqlMILinkedService', 'AzureStorage': 'AzureStorageLinkedService', 'AzureTableStorage': 'AzureTableStorageLinkedService', 'Cassandra': 'CassandraLinkedService', 'CommonDataServiceForApps': 'CommonDataServiceForAppsLinkedService', 'Concur': 'ConcurLinkedService', 'CosmosDb': 'CosmosDbLinkedService', 'CosmosDbMongoDbApi': 'CosmosDbMongoDbApiLinkedService', 'Couchbase': 'CouchbaseLinkedService', 'CustomDataSource': 'CustomDataSourceLinkedService', 'Db2': 'Db2LinkedService', 'Drill': 'DrillLinkedService', 'Dynamics': 'DynamicsLinkedService', 'DynamicsAX': 'DynamicsAXLinkedService', 'DynamicsCrm': 'DynamicsCrmLinkedService', 'Eloqua': 'EloquaLinkedService', 'FileServer': 'FileServerLinkedService', 'FtpServer': 'FtpServerLinkedService', 'GoogleAdWords': 'GoogleAdWordsLinkedService', 'GoogleBigQuery': 'GoogleBigQueryLinkedService', 'GoogleCloudStorage': 'GoogleCloudStorageLinkedService', 'Greenplum': 'GreenplumLinkedService', 'HBase': 'HBaseLinkedService', 'HDInsight': 'HDInsightLinkedService', 'HDInsightOnDemand': 'HDInsightOnDemandLinkedService', 'Hdfs': 'HdfsLinkedService', 'Hive': 'HiveLinkedService', 'HttpServer': 'HttpLinkedService', 'Hubspot': 'HubspotLinkedService', 'Impala': 'ImpalaLinkedService', 'Informix': 'InformixLinkedService', 'Jira': 'JiraLinkedService', 'Magento': 'MagentoLinkedService', 'MariaDB': 'MariaDBLinkedService', 'Marketo': 'MarketoLinkedService', 'MicrosoftAccess': 'MicrosoftAccessLinkedService', 'MongoDb': 'MongoDbLinkedService', 'MongoDbAtlas': 'MongoDbAtlasLinkedService', 'MongoDbV2': 'MongoDbV2LinkedService', 'MySql': 'MySqlLinkedService', 'Netezza': 'NetezzaLinkedService', 'OData': 'ODataLinkedService', 'Odbc': 'OdbcLinkedService', 'Office365': 'Office365LinkedService', 'Oracle': 'OracleLinkedService', 'OracleCloudStorage': 'OracleCloudStorageLinkedService', 'OracleServiceCloud': 'OracleServiceCloudLinkedService', 'Paypal': 'PaypalLinkedService', 'Phoenix': 'PhoenixLinkedService', 'PostgreSql': 'PostgreSqlLinkedService', 'Presto': 'PrestoLinkedService', 'QuickBooks': 'QuickBooksLinkedService', 'Quickbase': 'QuickbaseLinkedService', 'Responsys': 'ResponsysLinkedService', 'RestService': 'RestServiceLinkedService', 'Salesforce': 'SalesforceLinkedService', 'SalesforceMarketingCloud': 'SalesforceMarketingCloudLinkedService', 'SalesforceServiceCloud': 'SalesforceServiceCloudLinkedService', 'SapBW': 'SapBWLinkedService', 'SapCloudForCustomer': 'SapCloudForCustomerLinkedService', 'SapEcc': 'SapEccLinkedService', 'SapHana': 'SapHanaLinkedService', 'SapOpenHub': 'SapOpenHubLinkedService', 'SapTable': 'SapTableLinkedService', 'ServiceNow': 'ServiceNowLinkedService', 'Sftp': 'SftpServerLinkedService', 'SharePointOnlineList': 'SharePointOnlineListLinkedService', 'Shopify': 'ShopifyLinkedService', 'Smartsheet': 'SmartsheetLinkedService', 'Snowflake': 'SnowflakeLinkedService', 'Spark': 'SparkLinkedService', 'SqlServer': 'SqlServerLinkedService', 'Square': 'SquareLinkedService', 'Sybase': 'SybaseLinkedService', 'TeamDesk': 'TeamDeskLinkedService', 'Teradata': 'TeradataLinkedService', 'Vertica': 'VerticaLinkedService', 'Web': 'WebLinkedService', 'Xero': 'XeroLinkedService', 'Zendesk': 'ZendeskLinkedService', 'Zoho': 'ZohoLinkedService'}
+        'type': {'AmazonMWS': 'AmazonMWSLinkedService', 'AmazonRdsForOracle': 'AmazonRdsForOracleLinkedService', 'AmazonRdsForSqlServer': 'AmazonRdsForSqlServerLinkedService', 'AmazonRedshift': 'AmazonRedshiftLinkedService', 'AmazonS3': 'AmazonS3LinkedService', 'AmazonS3Compatible': 'AmazonS3CompatibleLinkedService', 'AppFigures': 'AppFiguresLinkedService', 'Asana': 'AsanaLinkedService', 'AzureBatch': 'AzureBatchLinkedService', 'AzureBlobFS': 'AzureBlobFSLinkedService', 'AzureBlobStorage': 'AzureBlobStorageLinkedService', 'AzureDataExplorer': 'AzureDataExplorerLinkedService', 'AzureDataLakeAnalytics': 'AzureDataLakeAnalyticsLinkedService', 'AzureDataLakeStore': 'AzureDataLakeStoreLinkedService', 'AzureDatabricks': 'AzureDatabricksLinkedService', 'AzureDatabricksDeltaLake': 'AzureDatabricksDeltaLakeLinkedService', 'AzureFileStorage': 'AzureFileStorageLinkedService', 'AzureFunction': 'AzureFunctionLinkedService', 'AzureKeyVault': 'AzureKeyVaultLinkedService', 'AzureML': 'AzureMLLinkedService', 'AzureMLService': 'AzureMLServiceLinkedService', 'AzureMariaDB': 'AzureMariaDBLinkedService', 'AzureMySql': 'AzureMySqlLinkedService', 'AzurePostgreSql': 'AzurePostgreSqlLinkedService', 'AzureSearch': 'AzureSearchLinkedService', 'AzureSqlDW': 'AzureSqlDWLinkedService', 'AzureSqlDatabase': 'AzureSqlDatabaseLinkedService', 'AzureSqlMI': 'AzureSqlMILinkedService', 'AzureStorage': 'AzureStorageLinkedService', 'AzureTableStorage': 'AzureTableStorageLinkedService', 'Cassandra': 'CassandraLinkedService', 'CommonDataServiceForApps': 'CommonDataServiceForAppsLinkedService', 'Concur': 'ConcurLinkedService', 'CosmosDb': 'CosmosDbLinkedService', 'CosmosDbMongoDbApi': 'CosmosDbMongoDbApiLinkedService', 'Couchbase': 'CouchbaseLinkedService', 'CustomDataSource': 'CustomDataSourceLinkedService', 'Dataworld': 'DataworldLinkedService', 'Db2': 'Db2LinkedService', 'Drill': 'DrillLinkedService', 'Dynamics': 'DynamicsLinkedService', 'DynamicsAX': 'DynamicsAXLinkedService', 'DynamicsCrm': 'DynamicsCrmLinkedService', 'Eloqua': 'EloquaLinkedService', 'FileServer': 'FileServerLinkedService', 'FtpServer': 'FtpServerLinkedService', 'GoogleAdWords': 'GoogleAdWordsLinkedService', 'GoogleBigQuery': 'GoogleBigQueryLinkedService', 'GoogleCloudStorage': 'GoogleCloudStorageLinkedService', 'Greenplum': 'GreenplumLinkedService', 'HBase': 'HBaseLinkedService', 'HDInsight': 'HDInsightLinkedService', 'HDInsightOnDemand': 'HDInsightOnDemandLinkedService', 'Hdfs': 'HdfsLinkedService', 'Hive': 'HiveLinkedService', 'HttpServer': 'HttpLinkedService', 'Hubspot': 'HubspotLinkedService', 'Impala': 'ImpalaLinkedService', 'Informix': 'InformixLinkedService', 'Jira': 'JiraLinkedService', 'Magento': 'MagentoLinkedService', 'MariaDB': 'MariaDBLinkedService', 'Marketo': 'MarketoLinkedService', 'MicrosoftAccess': 'MicrosoftAccessLinkedService', 'MongoDb': 'MongoDbLinkedService', 'MongoDbAtlas': 'MongoDbAtlasLinkedService', 'MongoDbV2': 'MongoDbV2LinkedService', 'MySql': 'MySqlLinkedService', 'Netezza': 'NetezzaLinkedService', 'OData': 'ODataLinkedService', 'Odbc': 'OdbcLinkedService', 'Office365': 'Office365LinkedService', 'Oracle': 'OracleLinkedService', 'OracleCloudStorage': 'OracleCloudStorageLinkedService', 'OracleServiceCloud': 'OracleServiceCloudLinkedService', 'Paypal': 'PaypalLinkedService', 'Phoenix': 'PhoenixLinkedService', 'PostgreSql': 'PostgreSqlLinkedService', 'Presto': 'PrestoLinkedService', 'QuickBooks': 'QuickBooksLinkedService', 'Quickbase': 'QuickbaseLinkedService', 'Responsys': 'ResponsysLinkedService', 'RestService': 'RestServiceLinkedService', 'Salesforce': 'SalesforceLinkedService', 'SalesforceMarketingCloud': 'SalesforceMarketingCloudLinkedService', 'SalesforceServiceCloud': 'SalesforceServiceCloudLinkedService', 'SapBW': 'SapBWLinkedService', 'SapCloudForCustomer': 'SapCloudForCustomerLinkedService', 'SapEcc': 'SapEccLinkedService', 'SapHana': 'SapHanaLinkedService', 'SapOdp': 'SapOdpLinkedService', 'SapOpenHub': 'SapOpenHubLinkedService', 'SapTable': 'SapTableLinkedService', 'ServiceNow': 'ServiceNowLinkedService', 'Sftp': 'SftpServerLinkedService', 'SharePointOnlineList': 'SharePointOnlineListLinkedService', 'Shopify': 'ShopifyLinkedService', 'Smartsheet': 'SmartsheetLinkedService', 'Snowflake': 'SnowflakeLinkedService', 'Spark': 'SparkLinkedService', 'SqlServer': 'SqlServerLinkedService', 'Square': 'SquareLinkedService', 'Sybase': 'SybaseLinkedService', 'TeamDesk': 'TeamDeskLinkedService', 'Teradata': 'TeradataLinkedService', 'Twilio': 'TwilioLinkedService', 'Vertica': 'VerticaLinkedService', 'Web': 'WebLinkedService', 'Xero': 'XeroLinkedService', 'Zendesk': 'ZendeskLinkedService', 'Zoho': 'ZohoLinkedService'}
     }
 
     def __init__(
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         **kwargs
     ):
@@ -602,12 +604,12 @@ class AmazonMWSLinkedService(LinkedService):
         seller_id: Any,
         access_key_id: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        mws_auth_token: Optional["SecretBase"] = None,
-        secret_key: Optional["SecretBase"] = None,
+        mws_auth_token: Optional["_models.SecretBase"] = None,
+        secret_key: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[Any] = None,
         use_host_verification: Optional[Any] = None,
         use_peer_verification: Optional[Any] = None,
@@ -674,7 +676,7 @@ class Dataset(msrest.serialization.Model):
     """The Azure Data Factory nested object which identifies data within different data stores, such as tables, files, folders, and documents.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AmazonMWSObjectDataset, AmazonRdsForOracleTableDataset, AmazonRdsForSqlServerTableDataset, AmazonRedshiftTableDataset, AmazonS3Dataset, AvroDataset, AzureBlobDataset, AzureBlobFSDataset, AzureDataExplorerTableDataset, AzureDataLakeStoreDataset, AzureDatabricksDeltaLakeDataset, AzureMariaDBTableDataset, AzureMySqlTableDataset, AzurePostgreSqlTableDataset, AzureSearchIndexDataset, AzureSqlDWTableDataset, AzureSqlMITableDataset, AzureSqlTableDataset, AzureTableDataset, BinaryDataset, CassandraTableDataset, CommonDataServiceForAppsEntityDataset, ConcurObjectDataset, CosmosDbMongoDbApiCollectionDataset, CosmosDbSqlApiCollectionDataset, CouchbaseTableDataset, CustomDataset, Db2TableDataset, DelimitedTextDataset, DocumentDbCollectionDataset, DrillTableDataset, DynamicsAXResourceDataset, DynamicsCrmEntityDataset, DynamicsEntityDataset, EloquaObjectDataset, ExcelDataset, FileShareDataset, GoogleAdWordsObjectDataset, GoogleBigQueryObjectDataset, GreenplumTableDataset, HBaseObjectDataset, HiveObjectDataset, HttpDataset, HubspotObjectDataset, ImpalaObjectDataset, InformixTableDataset, JiraObjectDataset, JsonDataset, MagentoObjectDataset, MariaDBTableDataset, MarketoObjectDataset, MicrosoftAccessTableDataset, MongoDbAtlasCollectionDataset, MongoDbCollectionDataset, MongoDbV2CollectionDataset, MySqlTableDataset, NetezzaTableDataset, ODataResourceDataset, OdbcTableDataset, Office365Dataset, OracleServiceCloudObjectDataset, OracleTableDataset, OrcDataset, ParquetDataset, PaypalObjectDataset, PhoenixObjectDataset, PostgreSqlTableDataset, PrestoObjectDataset, QuickBooksObjectDataset, RelationalTableDataset, ResponsysObjectDataset, RestResourceDataset, SalesforceMarketingCloudObjectDataset, SalesforceObjectDataset, SalesforceServiceCloudObjectDataset, SapBwCubeDataset, SapCloudForCustomerResourceDataset, SapEccResourceDataset, SapHanaTableDataset, SapOpenHubTableDataset, SapTableResourceDataset, ServiceNowObjectDataset, SharePointOnlineListResourceDataset, ShopifyObjectDataset, SnowflakeDataset, SparkObjectDataset, SqlServerTableDataset, SquareObjectDataset, SybaseTableDataset, TeradataTableDataset, VerticaTableDataset, WebTableDataset, XeroObjectDataset, XmlDataset, ZohoObjectDataset.
+    sub-classes are: AmazonMWSObjectDataset, AmazonRdsForOracleTableDataset, AmazonRdsForSqlServerTableDataset, AmazonRedshiftTableDataset, AmazonS3Dataset, AvroDataset, AzureBlobDataset, AzureBlobFSDataset, AzureDataExplorerTableDataset, AzureDataLakeStoreDataset, AzureDatabricksDeltaLakeDataset, AzureMariaDBTableDataset, AzureMySqlTableDataset, AzurePostgreSqlTableDataset, AzureSearchIndexDataset, AzureSqlDWTableDataset, AzureSqlMITableDataset, AzureSqlTableDataset, AzureTableDataset, BinaryDataset, CassandraTableDataset, CommonDataServiceForAppsEntityDataset, ConcurObjectDataset, CosmosDbMongoDbApiCollectionDataset, CosmosDbSqlApiCollectionDataset, CouchbaseTableDataset, CustomDataset, Db2TableDataset, DelimitedTextDataset, DocumentDbCollectionDataset, DrillTableDataset, DynamicsAXResourceDataset, DynamicsCrmEntityDataset, DynamicsEntityDataset, EloquaObjectDataset, ExcelDataset, FileShareDataset, GoogleAdWordsObjectDataset, GoogleBigQueryObjectDataset, GreenplumTableDataset, HBaseObjectDataset, HiveObjectDataset, HttpDataset, HubspotObjectDataset, ImpalaObjectDataset, InformixTableDataset, JiraObjectDataset, JsonDataset, MagentoObjectDataset, MariaDBTableDataset, MarketoObjectDataset, MicrosoftAccessTableDataset, MongoDbAtlasCollectionDataset, MongoDbCollectionDataset, MongoDbV2CollectionDataset, MySqlTableDataset, NetezzaTableDataset, ODataResourceDataset, OdbcTableDataset, Office365Dataset, OracleServiceCloudObjectDataset, OracleTableDataset, OrcDataset, ParquetDataset, PaypalObjectDataset, PhoenixObjectDataset, PostgreSqlTableDataset, PrestoObjectDataset, QuickBooksObjectDataset, RelationalTableDataset, ResponsysObjectDataset, RestResourceDataset, SalesforceMarketingCloudObjectDataset, SalesforceObjectDataset, SalesforceServiceCloudObjectDataset, SapBwCubeDataset, SapCloudForCustomerResourceDataset, SapEccResourceDataset, SapHanaTableDataset, SapOdpResourceDataset, SapOpenHubTableDataset, SapTableResourceDataset, ServiceNowObjectDataset, SharePointOnlineListResourceDataset, ShopifyObjectDataset, SnowflakeDataset, SparkObjectDataset, SqlServerTableDataset, SquareObjectDataset, SybaseTableDataset, TeradataTableDataset, VerticaTableDataset, WebTableDataset, XeroObjectDataset, XmlDataset, ZohoObjectDataset.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -720,20 +722,20 @@ class Dataset(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'type': {'AmazonMWSObject': 'AmazonMWSObjectDataset', 'AmazonRdsForOracleTable': 'AmazonRdsForOracleTableDataset', 'AmazonRdsForSqlServerTable': 'AmazonRdsForSqlServerTableDataset', 'AmazonRedshiftTable': 'AmazonRedshiftTableDataset', 'AmazonS3Object': 'AmazonS3Dataset', 'Avro': 'AvroDataset', 'AzureBlob': 'AzureBlobDataset', 'AzureBlobFSFile': 'AzureBlobFSDataset', 'AzureDataExplorerTable': 'AzureDataExplorerTableDataset', 'AzureDataLakeStoreFile': 'AzureDataLakeStoreDataset', 'AzureDatabricksDeltaLakeDataset': 'AzureDatabricksDeltaLakeDataset', 'AzureMariaDBTable': 'AzureMariaDBTableDataset', 'AzureMySqlTable': 'AzureMySqlTableDataset', 'AzurePostgreSqlTable': 'AzurePostgreSqlTableDataset', 'AzureSearchIndex': 'AzureSearchIndexDataset', 'AzureSqlDWTable': 'AzureSqlDWTableDataset', 'AzureSqlMITable': 'AzureSqlMITableDataset', 'AzureSqlTable': 'AzureSqlTableDataset', 'AzureTable': 'AzureTableDataset', 'Binary': 'BinaryDataset', 'CassandraTable': 'CassandraTableDataset', 'CommonDataServiceForAppsEntity': 'CommonDataServiceForAppsEntityDataset', 'ConcurObject': 'ConcurObjectDataset', 'CosmosDbMongoDbApiCollection': 'CosmosDbMongoDbApiCollectionDataset', 'CosmosDbSqlApiCollection': 'CosmosDbSqlApiCollectionDataset', 'CouchbaseTable': 'CouchbaseTableDataset', 'CustomDataset': 'CustomDataset', 'Db2Table': 'Db2TableDataset', 'DelimitedText': 'DelimitedTextDataset', 'DocumentDbCollection': 'DocumentDbCollectionDataset', 'DrillTable': 'DrillTableDataset', 'DynamicsAXResource': 'DynamicsAXResourceDataset', 'DynamicsCrmEntity': 'DynamicsCrmEntityDataset', 'DynamicsEntity': 'DynamicsEntityDataset', 'EloquaObject': 'EloquaObjectDataset', 'Excel': 'ExcelDataset', 'FileShare': 'FileShareDataset', 'GoogleAdWordsObject': 'GoogleAdWordsObjectDataset', 'GoogleBigQueryObject': 'GoogleBigQueryObjectDataset', 'GreenplumTable': 'GreenplumTableDataset', 'HBaseObject': 'HBaseObjectDataset', 'HiveObject': 'HiveObjectDataset', 'HttpFile': 'HttpDataset', 'HubspotObject': 'HubspotObjectDataset', 'ImpalaObject': 'ImpalaObjectDataset', 'InformixTable': 'InformixTableDataset', 'JiraObject': 'JiraObjectDataset', 'Json': 'JsonDataset', 'MagentoObject': 'MagentoObjectDataset', 'MariaDBTable': 'MariaDBTableDataset', 'MarketoObject': 'MarketoObjectDataset', 'MicrosoftAccessTable': 'MicrosoftAccessTableDataset', 'MongoDbAtlasCollection': 'MongoDbAtlasCollectionDataset', 'MongoDbCollection': 'MongoDbCollectionDataset', 'MongoDbV2Collection': 'MongoDbV2CollectionDataset', 'MySqlTable': 'MySqlTableDataset', 'NetezzaTable': 'NetezzaTableDataset', 'ODataResource': 'ODataResourceDataset', 'OdbcTable': 'OdbcTableDataset', 'Office365Table': 'Office365Dataset', 'OracleServiceCloudObject': 'OracleServiceCloudObjectDataset', 'OracleTable': 'OracleTableDataset', 'Orc': 'OrcDataset', 'Parquet': 'ParquetDataset', 'PaypalObject': 'PaypalObjectDataset', 'PhoenixObject': 'PhoenixObjectDataset', 'PostgreSqlTable': 'PostgreSqlTableDataset', 'PrestoObject': 'PrestoObjectDataset', 'QuickBooksObject': 'QuickBooksObjectDataset', 'RelationalTable': 'RelationalTableDataset', 'ResponsysObject': 'ResponsysObjectDataset', 'RestResource': 'RestResourceDataset', 'SalesforceMarketingCloudObject': 'SalesforceMarketingCloudObjectDataset', 'SalesforceObject': 'SalesforceObjectDataset', 'SalesforceServiceCloudObject': 'SalesforceServiceCloudObjectDataset', 'SapBwCube': 'SapBwCubeDataset', 'SapCloudForCustomerResource': 'SapCloudForCustomerResourceDataset', 'SapEccResource': 'SapEccResourceDataset', 'SapHanaTable': 'SapHanaTableDataset', 'SapOpenHubTable': 'SapOpenHubTableDataset', 'SapTableResource': 'SapTableResourceDataset', 'ServiceNowObject': 'ServiceNowObjectDataset', 'SharePointOnlineListResource': 'SharePointOnlineListResourceDataset', 'ShopifyObject': 'ShopifyObjectDataset', 'SnowflakeTable': 'SnowflakeDataset', 'SparkObject': 'SparkObjectDataset', 'SqlServerTable': 'SqlServerTableDataset', 'SquareObject': 'SquareObjectDataset', 'SybaseTable': 'SybaseTableDataset', 'TeradataTable': 'TeradataTableDataset', 'VerticaTable': 'VerticaTableDataset', 'WebTable': 'WebTableDataset', 'XeroObject': 'XeroObjectDataset', 'Xml': 'XmlDataset', 'ZohoObject': 'ZohoObjectDataset'}
+        'type': {'AmazonMWSObject': 'AmazonMWSObjectDataset', 'AmazonRdsForOracleTable': 'AmazonRdsForOracleTableDataset', 'AmazonRdsForSqlServerTable': 'AmazonRdsForSqlServerTableDataset', 'AmazonRedshiftTable': 'AmazonRedshiftTableDataset', 'AmazonS3Object': 'AmazonS3Dataset', 'Avro': 'AvroDataset', 'AzureBlob': 'AzureBlobDataset', 'AzureBlobFSFile': 'AzureBlobFSDataset', 'AzureDataExplorerTable': 'AzureDataExplorerTableDataset', 'AzureDataLakeStoreFile': 'AzureDataLakeStoreDataset', 'AzureDatabricksDeltaLakeDataset': 'AzureDatabricksDeltaLakeDataset', 'AzureMariaDBTable': 'AzureMariaDBTableDataset', 'AzureMySqlTable': 'AzureMySqlTableDataset', 'AzurePostgreSqlTable': 'AzurePostgreSqlTableDataset', 'AzureSearchIndex': 'AzureSearchIndexDataset', 'AzureSqlDWTable': 'AzureSqlDWTableDataset', 'AzureSqlMITable': 'AzureSqlMITableDataset', 'AzureSqlTable': 'AzureSqlTableDataset', 'AzureTable': 'AzureTableDataset', 'Binary': 'BinaryDataset', 'CassandraTable': 'CassandraTableDataset', 'CommonDataServiceForAppsEntity': 'CommonDataServiceForAppsEntityDataset', 'ConcurObject': 'ConcurObjectDataset', 'CosmosDbMongoDbApiCollection': 'CosmosDbMongoDbApiCollectionDataset', 'CosmosDbSqlApiCollection': 'CosmosDbSqlApiCollectionDataset', 'CouchbaseTable': 'CouchbaseTableDataset', 'CustomDataset': 'CustomDataset', 'Db2Table': 'Db2TableDataset', 'DelimitedText': 'DelimitedTextDataset', 'DocumentDbCollection': 'DocumentDbCollectionDataset', 'DrillTable': 'DrillTableDataset', 'DynamicsAXResource': 'DynamicsAXResourceDataset', 'DynamicsCrmEntity': 'DynamicsCrmEntityDataset', 'DynamicsEntity': 'DynamicsEntityDataset', 'EloquaObject': 'EloquaObjectDataset', 'Excel': 'ExcelDataset', 'FileShare': 'FileShareDataset', 'GoogleAdWordsObject': 'GoogleAdWordsObjectDataset', 'GoogleBigQueryObject': 'GoogleBigQueryObjectDataset', 'GreenplumTable': 'GreenplumTableDataset', 'HBaseObject': 'HBaseObjectDataset', 'HiveObject': 'HiveObjectDataset', 'HttpFile': 'HttpDataset', 'HubspotObject': 'HubspotObjectDataset', 'ImpalaObject': 'ImpalaObjectDataset', 'InformixTable': 'InformixTableDataset', 'JiraObject': 'JiraObjectDataset', 'Json': 'JsonDataset', 'MagentoObject': 'MagentoObjectDataset', 'MariaDBTable': 'MariaDBTableDataset', 'MarketoObject': 'MarketoObjectDataset', 'MicrosoftAccessTable': 'MicrosoftAccessTableDataset', 'MongoDbAtlasCollection': 'MongoDbAtlasCollectionDataset', 'MongoDbCollection': 'MongoDbCollectionDataset', 'MongoDbV2Collection': 'MongoDbV2CollectionDataset', 'MySqlTable': 'MySqlTableDataset', 'NetezzaTable': 'NetezzaTableDataset', 'ODataResource': 'ODataResourceDataset', 'OdbcTable': 'OdbcTableDataset', 'Office365Table': 'Office365Dataset', 'OracleServiceCloudObject': 'OracleServiceCloudObjectDataset', 'OracleTable': 'OracleTableDataset', 'Orc': 'OrcDataset', 'Parquet': 'ParquetDataset', 'PaypalObject': 'PaypalObjectDataset', 'PhoenixObject': 'PhoenixObjectDataset', 'PostgreSqlTable': 'PostgreSqlTableDataset', 'PrestoObject': 'PrestoObjectDataset', 'QuickBooksObject': 'QuickBooksObjectDataset', 'RelationalTable': 'RelationalTableDataset', 'ResponsysObject': 'ResponsysObjectDataset', 'RestResource': 'RestResourceDataset', 'SalesforceMarketingCloudObject': 'SalesforceMarketingCloudObjectDataset', 'SalesforceObject': 'SalesforceObjectDataset', 'SalesforceServiceCloudObject': 'SalesforceServiceCloudObjectDataset', 'SapBwCube': 'SapBwCubeDataset', 'SapCloudForCustomerResource': 'SapCloudForCustomerResourceDataset', 'SapEccResource': 'SapEccResourceDataset', 'SapHanaTable': 'SapHanaTableDataset', 'SapOdpResource': 'SapOdpResourceDataset', 'SapOpenHubTable': 'SapOpenHubTableDataset', 'SapTableResource': 'SapTableResourceDataset', 'ServiceNowObject': 'ServiceNowObjectDataset', 'SharePointOnlineListResource': 'SharePointOnlineListResourceDataset', 'ShopifyObject': 'ShopifyObjectDataset', 'SnowflakeTable': 'SnowflakeDataset', 'SparkObject': 'SparkObjectDataset', 'SqlServerTable': 'SqlServerTableDataset', 'SquareObject': 'SquareObjectDataset', 'SybaseTable': 'SybaseTableDataset', 'TeradataTable': 'TeradataTableDataset', 'VerticaTable': 'VerticaTableDataset', 'WebTable': 'WebTableDataset', 'XeroObject': 'XeroObjectDataset', 'Xml': 'XmlDataset', 'ZohoObject': 'ZohoObjectDataset'}
     }
 
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         **kwargs
     ):
         """
@@ -822,14 +824,14 @@ class AmazonMWSObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -946,7 +948,7 @@ class TabularSource(CopySource):
     """Copy activity sources of tabular type.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AmazonMWSSource, AmazonRdsForSqlServerSource, AmazonRedshiftSource, AzureMariaDBSource, AzureMySqlSource, AzurePostgreSqlSource, AzureSqlSource, AzureTableSource, CassandraSource, ConcurSource, CouchbaseSource, Db2Source, DrillSource, DynamicsAXSource, EloquaSource, GoogleAdWordsSource, GoogleBigQuerySource, GreenplumSource, HBaseSource, HiveSource, HubspotSource, ImpalaSource, InformixSource, JiraSource, MagentoSource, MariaDBSource, MarketoSource, MySqlSource, NetezzaSource, OdbcSource, OracleServiceCloudSource, PaypalSource, PhoenixSource, PostgreSqlSource, PrestoSource, QuickBooksSource, ResponsysSource, SalesforceMarketingCloudSource, SalesforceSource, SapBwSource, SapCloudForCustomerSource, SapEccSource, SapHanaSource, SapOpenHubSource, SapTableSource, ServiceNowSource, ShopifySource, SparkSource, SqlDWSource, SqlMISource, SqlServerSource, SqlSource, SquareSource, SybaseSource, TeradataSource, VerticaSource, XeroSource, ZohoSource.
+    sub-classes are: AmazonMWSSource, AmazonRdsForSqlServerSource, AmazonRedshiftSource, AzureMariaDBSource, AzureMySqlSource, AzurePostgreSqlSource, AzureSqlSource, AzureTableSource, CassandraSource, ConcurSource, CouchbaseSource, Db2Source, DrillSource, DynamicsAXSource, EloquaSource, GoogleAdWordsSource, GoogleBigQuerySource, GreenplumSource, HBaseSource, HiveSource, HubspotSource, ImpalaSource, InformixSource, JiraSource, MagentoSource, MariaDBSource, MarketoSource, MySqlSource, NetezzaSource, OdbcSource, OracleServiceCloudSource, PaypalSource, PhoenixSource, PostgreSqlSource, PrestoSource, QuickBooksSource, ResponsysSource, SalesforceMarketingCloudSource, SalesforceSource, SapBwSource, SapCloudForCustomerSource, SapEccSource, SapHanaSource, SapOdpSource, SapOpenHubSource, SapTableSource, ServiceNowSource, ShopifySource, SparkSource, SqlDWSource, SqlMISource, SqlServerSource, SqlSource, SquareSource, SybaseSource, TeradataSource, VerticaSource, XeroSource, ZohoSource.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -991,7 +993,7 @@ class TabularSource(CopySource):
     }
 
     _subtype_map = {
-        'type': {'AmazonMWSSource': 'AmazonMWSSource', 'AmazonRdsForSqlServerSource': 'AmazonRdsForSqlServerSource', 'AmazonRedshiftSource': 'AmazonRedshiftSource', 'AzureMariaDBSource': 'AzureMariaDBSource', 'AzureMySqlSource': 'AzureMySqlSource', 'AzurePostgreSqlSource': 'AzurePostgreSqlSource', 'AzureSqlSource': 'AzureSqlSource', 'AzureTableSource': 'AzureTableSource', 'CassandraSource': 'CassandraSource', 'ConcurSource': 'ConcurSource', 'CouchbaseSource': 'CouchbaseSource', 'Db2Source': 'Db2Source', 'DrillSource': 'DrillSource', 'DynamicsAXSource': 'DynamicsAXSource', 'EloquaSource': 'EloquaSource', 'GoogleAdWordsSource': 'GoogleAdWordsSource', 'GoogleBigQuerySource': 'GoogleBigQuerySource', 'GreenplumSource': 'GreenplumSource', 'HBaseSource': 'HBaseSource', 'HiveSource': 'HiveSource', 'HubspotSource': 'HubspotSource', 'ImpalaSource': 'ImpalaSource', 'InformixSource': 'InformixSource', 'JiraSource': 'JiraSource', 'MagentoSource': 'MagentoSource', 'MariaDBSource': 'MariaDBSource', 'MarketoSource': 'MarketoSource', 'MySqlSource': 'MySqlSource', 'NetezzaSource': 'NetezzaSource', 'OdbcSource': 'OdbcSource', 'OracleServiceCloudSource': 'OracleServiceCloudSource', 'PaypalSource': 'PaypalSource', 'PhoenixSource': 'PhoenixSource', 'PostgreSqlSource': 'PostgreSqlSource', 'PrestoSource': 'PrestoSource', 'QuickBooksSource': 'QuickBooksSource', 'ResponsysSource': 'ResponsysSource', 'SalesforceMarketingCloudSource': 'SalesforceMarketingCloudSource', 'SalesforceSource': 'SalesforceSource', 'SapBwSource': 'SapBwSource', 'SapCloudForCustomerSource': 'SapCloudForCustomerSource', 'SapEccSource': 'SapEccSource', 'SapHanaSource': 'SapHanaSource', 'SapOpenHubSource': 'SapOpenHubSource', 'SapTableSource': 'SapTableSource', 'ServiceNowSource': 'ServiceNowSource', 'ShopifySource': 'ShopifySource', 'SparkSource': 'SparkSource', 'SqlDWSource': 'SqlDWSource', 'SqlMISource': 'SqlMISource', 'SqlServerSource': 'SqlServerSource', 'SqlSource': 'SqlSource', 'SquareSource': 'SquareSource', 'SybaseSource': 'SybaseSource', 'TeradataSource': 'TeradataSource', 'VerticaSource': 'VerticaSource', 'XeroSource': 'XeroSource', 'ZohoSource': 'ZohoSource'}
+        'type': {'AmazonMWSSource': 'AmazonMWSSource', 'AmazonRdsForSqlServerSource': 'AmazonRdsForSqlServerSource', 'AmazonRedshiftSource': 'AmazonRedshiftSource', 'AzureMariaDBSource': 'AzureMariaDBSource', 'AzureMySqlSource': 'AzureMySqlSource', 'AzurePostgreSqlSource': 'AzurePostgreSqlSource', 'AzureSqlSource': 'AzureSqlSource', 'AzureTableSource': 'AzureTableSource', 'CassandraSource': 'CassandraSource', 'ConcurSource': 'ConcurSource', 'CouchbaseSource': 'CouchbaseSource', 'Db2Source': 'Db2Source', 'DrillSource': 'DrillSource', 'DynamicsAXSource': 'DynamicsAXSource', 'EloquaSource': 'EloquaSource', 'GoogleAdWordsSource': 'GoogleAdWordsSource', 'GoogleBigQuerySource': 'GoogleBigQuerySource', 'GreenplumSource': 'GreenplumSource', 'HBaseSource': 'HBaseSource', 'HiveSource': 'HiveSource', 'HubspotSource': 'HubspotSource', 'ImpalaSource': 'ImpalaSource', 'InformixSource': 'InformixSource', 'JiraSource': 'JiraSource', 'MagentoSource': 'MagentoSource', 'MariaDBSource': 'MariaDBSource', 'MarketoSource': 'MarketoSource', 'MySqlSource': 'MySqlSource', 'NetezzaSource': 'NetezzaSource', 'OdbcSource': 'OdbcSource', 'OracleServiceCloudSource': 'OracleServiceCloudSource', 'PaypalSource': 'PaypalSource', 'PhoenixSource': 'PhoenixSource', 'PostgreSqlSource': 'PostgreSqlSource', 'PrestoSource': 'PrestoSource', 'QuickBooksSource': 'QuickBooksSource', 'ResponsysSource': 'ResponsysSource', 'SalesforceMarketingCloudSource': 'SalesforceMarketingCloudSource', 'SalesforceSource': 'SalesforceSource', 'SapBwSource': 'SapBwSource', 'SapCloudForCustomerSource': 'SapCloudForCustomerSource', 'SapEccSource': 'SapEccSource', 'SapHanaSource': 'SapHanaSource', 'SapOdpSource': 'SapOdpSource', 'SapOpenHubSource': 'SapOpenHubSource', 'SapTableSource': 'SapTableSource', 'ServiceNowSource': 'ServiceNowSource', 'ShopifySource': 'ShopifySource', 'SparkSource': 'SparkSource', 'SqlDWSource': 'SqlDWSource', 'SqlMISource': 'SqlMISource', 'SqlServerSource': 'SqlServerSource', 'SqlSource': 'SqlSource', 'SquareSource': 'SquareSource', 'SybaseSource': 'SybaseSource', 'TeradataSource': 'TeradataSource', 'VerticaSource': 'VerticaSource', 'XeroSource': 'XeroSource', 'ZohoSource': 'ZohoSource'}
     }
 
     def __init__(
@@ -1179,11 +1181,11 @@ class AmazonRdsForOracleLinkedService(LinkedService):
         *,
         connection_string: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -1340,7 +1342,7 @@ class AmazonRdsForOracleSource(CopySource):
         oracle_reader_query: Optional[Any] = None,
         query_timeout: Optional[Any] = None,
         partition_option: Optional[Any] = None,
-        partition_settings: Optional["AmazonRdsForOraclePartitionSettings"] = None,
+        partition_settings: Optional["_models.AmazonRdsForOraclePartitionSettings"] = None,
         additional_columns: Optional[Any] = None,
         **kwargs
     ):
@@ -1443,14 +1445,14 @@ class AmazonRdsForOracleTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         schema_type_properties_schema: Optional[Any] = None,
         table: Optional[Any] = None,
         **kwargs
@@ -1547,14 +1549,14 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):
         *,
         connection_string: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         user_name: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
-        always_encrypted_settings: Optional["SqlAlwaysEncryptedProperties"] = None,
+        always_encrypted_settings: Optional["_models.SqlAlwaysEncryptedProperties"] = None,
         **kwargs
     ):
         """
@@ -1674,10 +1676,10 @@ class AmazonRdsForSqlServerSource(TabularSource):
         additional_columns: Optional[Any] = None,
         sql_reader_query: Optional[Any] = None,
         sql_reader_stored_procedure_name: Optional[Any] = None,
-        stored_procedure_parameters: Optional[Dict[str, "StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
         produce_additional_types: Optional[Any] = None,
         partition_option: Optional[Any] = None,
-        partition_settings: Optional["SqlPartitionSettings"] = None,
+        partition_settings: Optional["_models.SqlPartitionSettings"] = None,
         **kwargs
     ):
         """
@@ -1788,14 +1790,14 @@ class AmazonRdsForSqlServerTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         schema_type_properties_schema: Optional[Any] = None,
         table: Optional[Any] = None,
         **kwargs
@@ -1899,12 +1901,12 @@ class AmazonRedshiftLinkedService(LinkedService):
         server: Any,
         database: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         port: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
@@ -2014,7 +2016,7 @@ class AmazonRedshiftSource(TabularSource):
         query_timeout: Optional[Any] = None,
         additional_columns: Optional[Any] = None,
         query: Optional[Any] = None,
-        redshift_unload_settings: Optional["RedshiftUnloadSettings"] = None,
+        redshift_unload_settings: Optional["_models.RedshiftUnloadSettings"] = None,
         **kwargs
     ):
         """
@@ -2113,14 +2115,14 @@ class AmazonRedshiftTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         table: Optional[Any] = None,
         schema_type_properties_schema: Optional[Any] = None,
@@ -2224,12 +2226,12 @@ class AmazonS3CompatibleLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         access_key_id: Optional[Any] = None,
-        secret_access_key: Optional["SecretBase"] = None,
+        secret_access_key: Optional["_models.SecretBase"] = None,
         service_url: Optional[Any] = None,
         force_path_style: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
@@ -2691,22 +2693,22 @@ class AmazonS3Dataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         bucket_name: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         key: Optional[Any] = None,
         prefix: Optional[Any] = None,
         version: Optional[Any] = None,
         modified_datetime_start: Optional[Any] = None,
         modified_datetime_end: Optional[Any] = None,
-        format: Optional["DatasetStorageFormat"] = None,
-        compression: Optional["DatasetCompression"] = None,
+        format: Optional["_models.DatasetStorageFormat"] = None,
+        compression: Optional["_models.DatasetCompression"] = None,
         **kwargs
     ):
         """
@@ -2827,15 +2829,15 @@ class AmazonS3LinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         authentication_type: Optional[Any] = None,
         access_key_id: Optional[Any] = None,
-        secret_access_key: Optional["SecretBase"] = None,
+        secret_access_key: Optional["_models.SecretBase"] = None,
         service_url: Optional[Any] = None,
-        session_token: Optional["SecretBase"] = None,
+        session_token: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -3140,8 +3142,8 @@ class ControlActivity(Activity):
         name: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
         **kwargs
     ):
         """
@@ -3207,8 +3209,8 @@ class AppendVariableActivity(ControlActivity):
         name: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
         variable_name: Optional[str] = None,
         value: Optional[Any] = None,
         **kwargs
@@ -3236,6 +3238,90 @@ class AppendVariableActivity(ControlActivity):
         self.value = value
 
 
+class AppFiguresLinkedService(LinkedService):
+    """Linked service for AppFigures.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, any]
+    :ivar type: Required. Type of linked service.Constant filled by server.
+    :vartype type: str
+    :ivar connect_via: The integration runtime reference.
+    :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar description: Linked service description.
+    :vartype description: str
+    :ivar parameters: Parameters for linked service.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the linked service.
+    :vartype annotations: list[any]
+    :ivar user_name: Required. The username of the Appfigures source.
+    :vartype user_name: any
+    :ivar password: Required. The password of the AppFigures source.
+    :vartype password: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar client_key: Required. The client key for the AppFigures source.
+    :vartype client_key: ~azure.mgmt.datafactory.models.SecretBase
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'user_name': {'required': True},
+        'password': {'required': True},
+        'client_key': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
+        'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'client_key': {'key': 'typeProperties.clientKey', 'type': 'SecretBase'},
+    }
+
+    def __init__(
+        self,
+        *,
+        user_name: Any,
+        password: "_models.SecretBase",
+        client_key: "_models.SecretBase",
+        additional_properties: Optional[Dict[str, Any]] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
+        description: Optional[str] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[Any]] = None,
+        **kwargs
+    ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword connect_via: The integration runtime reference.
+        :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword description: Linked service description.
+        :paramtype description: str
+        :keyword parameters: Parameters for linked service.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the linked service.
+        :paramtype annotations: list[any]
+        :keyword user_name: Required. The username of the Appfigures source.
+        :paramtype user_name: any
+        :keyword password: Required. The password of the AppFigures source.
+        :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword client_key: Required. The client key for the AppFigures source.
+        :paramtype client_key: ~azure.mgmt.datafactory.models.SecretBase
+        """
+        super(AppFiguresLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
+        self.type = 'AppFigures'  # type: str
+        self.user_name = user_name
+        self.password = password
+        self.client_key = client_key
+
+
 class ArmIdWrapper(msrest.serialization.Model):
     """A wrapper for an ARM resource id.
 
@@ -3261,6 +3347,85 @@ class ArmIdWrapper(msrest.serialization.Model):
         """
         super(ArmIdWrapper, self).__init__(**kwargs)
         self.id = None
+
+
+class AsanaLinkedService(LinkedService):
+    """Linked service for Asana.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, any]
+    :ivar type: Required. Type of linked service.Constant filled by server.
+    :vartype type: str
+    :ivar connect_via: The integration runtime reference.
+    :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar description: Linked service description.
+    :vartype description: str
+    :ivar parameters: Parameters for linked service.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the linked service.
+    :vartype annotations: list[any]
+    :ivar api_token: Required. The api token for the Asana source.
+    :vartype api_token: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
+     encrypted using the integration runtime credential manager. Type: string (or Expression with
+     resultType string).
+    :vartype encrypted_credential: any
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'api_token': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
+        'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'api_token': {'key': 'typeProperties.apiToken', 'type': 'SecretBase'},
+        'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        *,
+        api_token: "_models.SecretBase",
+        additional_properties: Optional[Dict[str, Any]] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
+        description: Optional[str] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[Any]] = None,
+        encrypted_credential: Optional[Any] = None,
+        **kwargs
+    ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword connect_via: The integration runtime reference.
+        :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword description: Linked service description.
+        :paramtype description: str
+        :keyword parameters: Parameters for linked service.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the linked service.
+        :paramtype annotations: list[any]
+        :keyword api_token: Required. The api token for the Asana source.
+        :paramtype api_token: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
+         are encrypted using the integration runtime credential manager. Type: string (or Expression
+         with resultType string).
+        :paramtype encrypted_credential: any
+        """
+        super(AsanaLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
+        self.type = 'Asana'  # type: str
+        self.api_token = api_token
+        self.encrypted_credential = encrypted_credential
 
 
 class AvroDataset(Dataset):
@@ -3323,15 +3488,15 @@ class AvroDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
-        location: Optional["DatasetLocation"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
+        location: Optional["_models.DatasetLocation"] = None,
         avro_compression_codec: Optional[Any] = None,
         avro_compression_level: Optional[int] = None,
         **kwargs
@@ -3637,8 +3802,8 @@ class AvroSink(CopySink):
         sink_retry_wait: Optional[Any] = None,
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
-        store_settings: Optional["StoreWriteSettings"] = None,
-        format_settings: Optional["AvroWriteSettings"] = None,
+        store_settings: Optional["_models.StoreWriteSettings"] = None,
+        format_settings: Optional["_models.AvroWriteSettings"] = None,
         **kwargs
     ):
         """
@@ -3726,7 +3891,7 @@ class AvroSource(CopySource):
         source_retry_wait: Optional[Any] = None,
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
-        store_settings: Optional["StoreReadSettings"] = None,
+        store_settings: Optional["_models.StoreReadSettings"] = None,
         additional_columns: Optional[Any] = None,
         **kwargs
     ):
@@ -4011,15 +4176,15 @@ class AzureBatchLinkedService(LinkedService):
         account_name: Any,
         batch_uri: Any,
         pool_name: Any,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        access_key: Optional["SecretBase"] = None,
+        access_key: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
-        credential: Optional["CredentialReference"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs
     ):
         """
@@ -4140,21 +4305,21 @@ class AzureBlobDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         folder_path: Optional[Any] = None,
         table_root_location: Optional[Any] = None,
         file_name: Optional[Any] = None,
         modified_datetime_start: Optional[Any] = None,
         modified_datetime_end: Optional[Any] = None,
-        format: Optional["DatasetStorageFormat"] = None,
-        compression: Optional["DatasetCompression"] = None,
+        format: Optional["_models.DatasetStorageFormat"] = None,
+        compression: Optional["_models.DatasetCompression"] = None,
         **kwargs
     ):
         """
@@ -4272,18 +4437,18 @@ class AzureBlobFSDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         folder_path: Optional[Any] = None,
         file_name: Optional[Any] = None,
-        format: Optional["DatasetStorageFormat"] = None,
-        compression: Optional["DatasetCompression"] = None,
+        format: Optional["_models.DatasetStorageFormat"] = None,
+        compression: Optional["_models.DatasetCompression"] = None,
         **kwargs
     ):
         """
@@ -4410,19 +4575,19 @@ class AzureBlobFSLinkedService(LinkedService):
         *,
         url: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         account_key: Optional[Any] = None,
         service_principal_id: Optional[Any] = None,
-        service_principal_key: Optional["SecretBase"] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[Any] = None,
         azure_cloud_type: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
-        credential: Optional["CredentialReference"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         service_principal_credential_type: Optional[Any] = None,
-        service_principal_credential: Optional["SecretBase"] = None,
+        service_principal_credential: Optional["_models.SecretBase"] = None,
         **kwargs
     ):
         """
@@ -4744,7 +4909,7 @@ class AzureBlobFSSink(CopySink):
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
         copy_behavior: Optional[Any] = None,
-        metadata: Optional[List["MetadataItem"]] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
         **kwargs
     ):
         """
@@ -5098,22 +5263,22 @@ class AzureBlobStorageLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_string: Optional[Any] = None,
-        account_key: Optional["AzureKeyVaultSecretReference"] = None,
+        account_key: Optional["_models.AzureKeyVaultSecretReference"] = None,
         sas_uri: Optional[Any] = None,
-        sas_token: Optional["AzureKeyVaultSecretReference"] = None,
+        sas_token: Optional["_models.AzureKeyVaultSecretReference"] = None,
         service_endpoint: Optional[str] = None,
         service_principal_id: Optional[Any] = None,
-        service_principal_key: Optional["SecretBase"] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[Any] = None,
         azure_cloud_type: Optional[Any] = None,
         account_kind: Optional[str] = None,
         encrypted_credential: Optional[str] = None,
-        credential: Optional["CredentialReference"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs
     ):
         """
@@ -5508,14 +5673,14 @@ class AzureDatabricksDeltaLakeDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table: Optional[Any] = None,
         database: Optional[Any] = None,
         **kwargs
@@ -5813,14 +5978,14 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):
         *,
         domain: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        access_token: Optional["SecretBase"] = None,
+        access_token: Optional["_models.SecretBase"] = None,
         cluster_id: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
-        credential: Optional["CredentialReference"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         workspace_resource_id: Optional[Any] = None,
         **kwargs
     ):
@@ -5929,7 +6094,7 @@ class AzureDatabricksDeltaLakeSink(CopySink):
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
         pre_copy_script: Optional[Any] = None,
-        import_settings: Optional["AzureDatabricksDeltaLakeImportCommand"] = None,
+        import_settings: Optional["_models.AzureDatabricksDeltaLakeImportCommand"] = None,
         **kwargs
     ):
         """
@@ -6020,7 +6185,7 @@ class AzureDatabricksDeltaLakeSource(CopySource):
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
         query: Optional[Any] = None,
-        export_settings: Optional["AzureDatabricksDeltaLakeExportCommand"] = None,
+        export_settings: Optional["_models.AzureDatabricksDeltaLakeExportCommand"] = None,
         **kwargs
     ):
         """
@@ -6177,11 +6342,11 @@ class AzureDatabricksLinkedService(LinkedService):
         *,
         domain: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        access_token: Optional["SecretBase"] = None,
+        access_token: Optional["_models.SecretBase"] = None,
         authentication: Optional[Any] = None,
         workspace_resource_id: Optional[Any] = None,
         existing_cluster_id: Optional[Any] = None,
@@ -6198,7 +6363,7 @@ class AzureDatabricksLinkedService(LinkedService):
         new_cluster_enable_elastic_disk: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
         policy_id: Optional[Any] = None,
-        credential: Optional["CredentialReference"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs
     ):
         """
@@ -6357,10 +6522,10 @@ class ExecutionActivity(Activity):
         name: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
         **kwargs
     ):
         """
@@ -6442,10 +6607,10 @@ class AzureDataExplorerCommandActivity(ExecutionActivity):
         command: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
         command_timeout: Optional[Any] = None,
         **kwargs
     ):
@@ -6543,14 +6708,14 @@ class AzureDataExplorerLinkedService(LinkedService):
         endpoint: Any,
         database: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         service_principal_id: Optional[Any] = None,
-        service_principal_key: Optional["SecretBase"] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[Any] = None,
-        credential: Optional["CredentialReference"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs
     ):
         """
@@ -6863,14 +7028,14 @@ class AzureDataExplorerTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table: Optional[Any] = None,
         **kwargs
     ):
@@ -6978,12 +7143,12 @@ class AzureDataLakeAnalyticsLinkedService(LinkedService):
         account_name: Any,
         tenant: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         service_principal_id: Optional[Any] = None,
-        service_principal_key: Optional["SecretBase"] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
         subscription_id: Optional[Any] = None,
         resource_group_name: Optional[Any] = None,
         data_lake_analytics_uri: Optional[Any] = None,
@@ -7104,18 +7269,18 @@ class AzureDataLakeStoreDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         folder_path: Optional[Any] = None,
         file_name: Optional[Any] = None,
-        format: Optional["DatasetStorageFormat"] = None,
-        compression: Optional["DatasetCompression"] = None,
+        format: Optional["_models.DatasetStorageFormat"] = None,
+        compression: Optional["_models.DatasetCompression"] = None,
         **kwargs
     ):
         """
@@ -7239,19 +7404,19 @@ class AzureDataLakeStoreLinkedService(LinkedService):
         *,
         data_lake_store_uri: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         service_principal_id: Optional[Any] = None,
-        service_principal_key: Optional["SecretBase"] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[Any] = None,
         azure_cloud_type: Optional[Any] = None,
         account_name: Optional[Any] = None,
         subscription_id: Optional[Any] = None,
         resource_group_name: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
-        credential: Optional["CredentialReference"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs
     ):
         """
@@ -7837,17 +8002,17 @@ class AzureFileStorageLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         host: Optional[Any] = None,
         user_id: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         connection_string: Optional[Any] = None,
-        account_key: Optional["AzureKeyVaultSecretReference"] = None,
+        account_key: Optional["_models.AzureKeyVaultSecretReference"] = None,
         sas_uri: Optional[Any] = None,
-        sas_token: Optional["AzureKeyVaultSecretReference"] = None,
+        sas_token: Optional["_models.AzureKeyVaultSecretReference"] = None,
         file_share: Optional[Any] = None,
         snapshot: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
@@ -8181,8 +8346,8 @@ class AzureFunctionActivity(ExecutionActivity):
     :vartype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
     :ivar policy: Activity policy.
     :vartype policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-    :ivar method: Required. Rest API method for target endpoint. Possible values include: "GET",
-     "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE".
+    :ivar method: Required. Rest API method for target endpoint. Known values are: "GET", "POST",
+     "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE".
     :vartype method: str or ~azure.mgmt.datafactory.models.AzureFunctionActivityMethod
     :ivar function_name: Required. Name of the Function that the Azure Function Activity will call.
      Type: string (or Expression with resultType string).
@@ -8222,14 +8387,14 @@ class AzureFunctionActivity(ExecutionActivity):
         self,
         *,
         name: str,
-        method: Union[str, "AzureFunctionActivityMethod"],
+        method: Union[str, "_models.AzureFunctionActivityMethod"],
         function_name: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
         headers: Optional[Any] = None,
         body: Optional[Any] = None,
         **kwargs
@@ -8250,7 +8415,7 @@ class AzureFunctionActivity(ExecutionActivity):
         :paramtype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
         :keyword policy: Activity policy.
         :paramtype policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-        :keyword method: Required. Rest API method for target endpoint. Possible values include: "GET",
+        :keyword method: Required. Rest API method for target endpoint. Known values are: "GET",
          "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE".
         :paramtype method: str or ~azure.mgmt.datafactory.models.AzureFunctionActivityMethod
         :keyword function_name: Required. Name of the Function that the Azure Function Activity will
@@ -8333,13 +8498,13 @@ class AzureFunctionLinkedService(LinkedService):
         *,
         function_app_url: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        function_key: Optional["SecretBase"] = None,
+        function_key: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
-        credential: Optional["CredentialReference"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         resource_id: Optional[Any] = None,
         authentication: Optional[Any] = None,
         **kwargs
@@ -8429,11 +8594,11 @@ class AzureKeyVaultLinkedService(LinkedService):
         *,
         base_url: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        credential: Optional["CredentialReference"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs
     ):
         """
@@ -8527,7 +8692,7 @@ class AzureKeyVaultSecretReference(SecretBase):
     def __init__(
         self,
         *,
-        store: "LinkedServiceReference",
+        store: "_models.LinkedServiceReference",
         secret_name: Any,
         secret_version: Optional[Any] = None,
         **kwargs
@@ -8598,12 +8763,12 @@ class AzureMariaDBLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_string: Optional[Any] = None,
-        pwd: Optional["AzureKeyVaultSecretReference"] = None,
+        pwd: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -8781,14 +8946,14 @@ class AzureMariaDBTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -8884,13 +9049,13 @@ class AzureMLBatchExecutionActivity(ExecutionActivity):
         name: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
         global_parameters: Optional[Dict[str, Any]] = None,
-        web_service_outputs: Optional[Dict[str, "AzureMLWebServiceFile"]] = None,
-        web_service_inputs: Optional[Dict[str, "AzureMLWebServiceFile"]] = None,
+        web_service_outputs: Optional[Dict[str, "_models.AzureMLWebServiceFile"]] = None,
+        web_service_inputs: Optional[Dict[str, "_models.AzureMLWebServiceFile"]] = None,
         **kwargs
     ):
         """
@@ -9016,10 +9181,10 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):
         name: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
         ml_pipeline_id: Optional[Any] = None,
         ml_pipeline_endpoint_id: Optional[Any] = None,
         version: Optional[Any] = None,
@@ -9162,15 +9327,15 @@ class AzureMLLinkedService(LinkedService):
         self,
         *,
         ml_endpoint: Any,
-        api_key: "SecretBase",
+        api_key: "_models.SecretBase",
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         update_resource_endpoint: Optional[Any] = None,
         service_principal_id: Optional[Any] = None,
-        service_principal_key: Optional["SecretBase"] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
         authentication: Optional[Any] = None,
@@ -9299,12 +9464,12 @@ class AzureMLServiceLinkedService(LinkedService):
         resource_group_name: Any,
         ml_workspace_name: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         service_principal_id: Optional[Any] = None,
-        service_principal_key: Optional["SecretBase"] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
@@ -9418,14 +9583,14 @@ class AzureMLUpdateResourceActivity(ExecutionActivity):
         *,
         name: str,
         trained_model_name: Any,
-        trained_model_linked_service_name: "LinkedServiceReference",
+        trained_model_linked_service_name: "_models.LinkedServiceReference",
         trained_model_file_path: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
         **kwargs
     ):
         """
@@ -9490,7 +9655,7 @@ class AzureMLWebServiceFile(msrest.serialization.Model):
         self,
         *,
         file_path: Any,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         **kwargs
     ):
         """
@@ -9558,11 +9723,11 @@ class AzureMySqlLinkedService(LinkedService):
         *,
         connection_string: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        password: Optional["AzureKeyVaultSecretReference"] = None,
+        password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -9836,14 +10001,14 @@ class AzureMySqlTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         table: Optional[Any] = None,
         **kwargs
@@ -9931,12 +10096,12 @@ class AzurePostgreSqlLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_string: Optional[Any] = None,
-        password: Optional["AzureKeyVaultSecretReference"] = None,
+        password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -10216,14 +10381,14 @@ class AzurePostgreSqlTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         table: Optional[Any] = None,
         schema_type_properties_schema: Optional[Any] = None,
@@ -10405,15 +10570,15 @@ class AzureSearchIndexDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         index_name: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         **kwargs
     ):
         """
@@ -10475,7 +10640,7 @@ class AzureSearchIndexSink(CopySink):
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: any
     :ivar write_behavior: Specify the write behavior when upserting documents into Azure Search
-     Index. Possible values include: "Merge", "Upload".
+     Index. Known values are: "Merge", "Upload".
     :vartype write_behavior: str or
      ~azure.mgmt.datafactory.models.AzureSearchIndexWriteBehaviorType
     """
@@ -10506,7 +10671,7 @@ class AzureSearchIndexSink(CopySink):
         sink_retry_wait: Optional[Any] = None,
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
-        write_behavior: Optional[Union[str, "AzureSearchIndexWriteBehaviorType"]] = None,
+        write_behavior: Optional[Union[str, "_models.AzureSearchIndexWriteBehaviorType"]] = None,
         **kwargs
     ):
         """
@@ -10532,7 +10697,7 @@ class AzureSearchIndexSink(CopySink):
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: any
         :keyword write_behavior: Specify the write behavior when upserting documents into Azure Search
-         Index. Possible values include: "Merge", "Upload".
+         Index. Known values are: "Merge", "Upload".
         :paramtype write_behavior: str or
          ~azure.mgmt.datafactory.models.AzureSearchIndexWriteBehaviorType
         """
@@ -10592,11 +10757,11 @@ class AzureSearchLinkedService(LinkedService):
         *,
         url: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        key: Optional["SecretBase"] = None,
+        key: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -10703,18 +10868,18 @@ class AzureSqlDatabaseLinkedService(LinkedService):
         *,
         connection_string: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        password: Optional["AzureKeyVaultSecretReference"] = None,
+        password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         service_principal_id: Optional[Any] = None,
-        service_principal_key: Optional["SecretBase"] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[Any] = None,
         azure_cloud_type: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
-        always_encrypted_settings: Optional["SqlAlwaysEncryptedProperties"] = None,
-        credential: Optional["CredentialReference"] = None,
+        always_encrypted_settings: Optional["_models.SqlAlwaysEncryptedProperties"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs
     ):
         """
@@ -10841,17 +11006,17 @@ class AzureSqlDWLinkedService(LinkedService):
         *,
         connection_string: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        password: Optional["AzureKeyVaultSecretReference"] = None,
+        password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         service_principal_id: Optional[Any] = None,
-        service_principal_key: Optional["SecretBase"] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[Any] = None,
         azure_cloud_type: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
-        credential: Optional["CredentialReference"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs
     ):
         """
@@ -10964,14 +11129,14 @@ class AzureSqlDWTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         schema_type_properties_schema: Optional[Any] = None,
         table: Optional[Any] = None,
@@ -11089,18 +11254,18 @@ class AzureSqlMILinkedService(LinkedService):
         *,
         connection_string: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        password: Optional["AzureKeyVaultSecretReference"] = None,
+        password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         service_principal_id: Optional[Any] = None,
-        service_principal_key: Optional["SecretBase"] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[Any] = None,
         azure_cloud_type: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
-        always_encrypted_settings: Optional["SqlAlwaysEncryptedProperties"] = None,
-        credential: Optional["CredentialReference"] = None,
+        always_encrypted_settings: Optional["_models.SqlAlwaysEncryptedProperties"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs
     ):
         """
@@ -11217,14 +11382,14 @@ class AzureSqlMITableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         schema_type_properties_schema: Optional[Any] = None,
         table: Optional[Any] = None,
@@ -11361,12 +11526,12 @@ class AzureSqlSink(CopySink):
         sql_writer_stored_procedure_name: Optional[Any] = None,
         sql_writer_table_type: Optional[Any] = None,
         pre_copy_script: Optional[Any] = None,
-        stored_procedure_parameters: Optional[Dict[str, "StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
         stored_procedure_table_type_parameter_name: Optional[Any] = None,
         table_option: Optional[Any] = None,
         sql_writer_use_table_lock: Optional[Any] = None,
         write_behavior: Optional[Any] = None,
-        upsert_settings: Optional["SqlUpsertSettings"] = None,
+        upsert_settings: Optional["_models.SqlUpsertSettings"] = None,
         **kwargs
     ):
         """
@@ -11511,10 +11676,10 @@ class AzureSqlSource(TabularSource):
         additional_columns: Optional[Any] = None,
         sql_reader_query: Optional[Any] = None,
         sql_reader_stored_procedure_name: Optional[Any] = None,
-        stored_procedure_parameters: Optional[Dict[str, "StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
         produce_additional_types: Optional[Any] = None,
         partition_option: Optional[Any] = None,
-        partition_settings: Optional["SqlPartitionSettings"] = None,
+        partition_settings: Optional["_models.SqlPartitionSettings"] = None,
         **kwargs
     ):
         """
@@ -11629,14 +11794,14 @@ class AzureSqlTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         schema_type_properties_schema: Optional[Any] = None,
         table: Optional[Any] = None,
@@ -11736,14 +11901,14 @@ class AzureStorageLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_string: Optional[Any] = None,
-        account_key: Optional["AzureKeyVaultSecretReference"] = None,
+        account_key: Optional["_models.AzureKeyVaultSecretReference"] = None,
         sas_uri: Optional[Any] = None,
-        sas_token: Optional["AzureKeyVaultSecretReference"] = None,
+        sas_token: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs
     ):
@@ -11837,15 +12002,15 @@ class AzureTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         table_name: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         **kwargs
     ):
         """
@@ -12156,14 +12321,14 @@ class AzureTableStorageLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_string: Optional[Any] = None,
-        account_key: Optional["AzureKeyVaultSecretReference"] = None,
+        account_key: Optional["_models.AzureKeyVaultSecretReference"] = None,
         sas_uri: Optional[Any] = None,
-        sas_token: Optional["AzureKeyVaultSecretReference"] = None,
+        sas_token: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs
     ):
@@ -12258,16 +12423,16 @@ class BinaryDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
-        location: Optional["DatasetLocation"] = None,
-        compression: Optional["DatasetCompression"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
+        location: Optional["_models.DatasetLocation"] = None,
+        compression: Optional["_models.DatasetCompression"] = None,
         **kwargs
     ):
         """
@@ -12374,7 +12539,7 @@ class BinaryReadSettings(FormatReadSettings):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        compression_properties: Optional["CompressionReadSettings"] = None,
+        compression_properties: Optional["_models.CompressionReadSettings"] = None,
         **kwargs
     ):
         """
@@ -12447,7 +12612,7 @@ class BinarySink(CopySink):
         sink_retry_wait: Optional[Any] = None,
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
-        store_settings: Optional["StoreWriteSettings"] = None,
+        store_settings: Optional["_models.StoreWriteSettings"] = None,
         **kwargs
     ):
         """
@@ -12531,8 +12696,8 @@ class BinarySource(CopySource):
         source_retry_wait: Optional[Any] = None,
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
-        store_settings: Optional["StoreReadSettings"] = None,
-        format_settings: Optional["BinaryReadSettings"] = None,
+        store_settings: Optional["_models.StoreReadSettings"] = None,
+        format_settings: Optional["_models.BinaryReadSettings"] = None,
         **kwargs
     ):
         """
@@ -12580,7 +12745,7 @@ class Trigger(msrest.serialization.Model):
     :ivar description: Trigger description.
     :vartype description: str
     :ivar runtime_state: Indicates if trigger is running or not. Updated when Start/Stop APIs are
-     called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
+     called on the Trigger. Known values are: "Started", "Stopped", "Disabled".
     :vartype runtime_state: str or ~azure.mgmt.datafactory.models.TriggerRuntimeState
     :ivar annotations: List of tags that can be used for describing the trigger.
     :vartype annotations: list[any]
@@ -12646,7 +12811,7 @@ class MultiplePipelineTrigger(Trigger):
     :ivar description: Trigger description.
     :vartype description: str
     :ivar runtime_state: Indicates if trigger is running or not. Updated when Start/Stop APIs are
-     called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
+     called on the Trigger. Known values are: "Started", "Stopped", "Disabled".
     :vartype runtime_state: str or ~azure.mgmt.datafactory.models.TriggerRuntimeState
     :ivar annotations: List of tags that can be used for describing the trigger.
     :vartype annotations: list[any]
@@ -12678,7 +12843,7 @@ class MultiplePipelineTrigger(Trigger):
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         annotations: Optional[List[Any]] = None,
-        pipelines: Optional[List["TriggerPipelineReference"]] = None,
+        pipelines: Optional[List["_models.TriggerPipelineReference"]] = None,
         **kwargs
     ):
         """
@@ -12712,7 +12877,7 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
     :ivar description: Trigger description.
     :vartype description: str
     :ivar runtime_state: Indicates if trigger is running or not. Updated when Start/Stop APIs are
-     called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
+     called on the Trigger. Known values are: "Started", "Stopped", "Disabled".
     :vartype runtime_state: str or ~azure.mgmt.datafactory.models.TriggerRuntimeState
     :ivar annotations: List of tags that can be used for describing the trigger.
     :vartype annotations: list[any]
@@ -12759,12 +12924,12 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
     def __init__(
         self,
         *,
-        events: List[Union[str, "BlobEventTypes"]],
+        events: List[Union[str, "_models.BlobEventTypes"]],
         scope: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         annotations: Optional[List[Any]] = None,
-        pipelines: Optional[List["TriggerPipelineReference"]] = None,
+        pipelines: Optional[List["_models.TriggerPipelineReference"]] = None,
         blob_path_begins_with: Optional[str] = None,
         blob_path_ends_with: Optional[str] = None,
         ignore_empty_blobs: Optional[bool] = None,
@@ -12883,7 +13048,7 @@ class BlobSink(CopySink):
         blob_writer_date_time_format: Optional[Any] = None,
         blob_writer_add_header: Optional[Any] = None,
         copy_behavior: Optional[Any] = None,
-        metadata: Optional[List["MetadataItem"]] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
         **kwargs
     ):
         """
@@ -13042,7 +13207,7 @@ class BlobTrigger(MultiplePipelineTrigger):
     :ivar description: Trigger description.
     :vartype description: str
     :ivar runtime_state: Indicates if trigger is running or not. Updated when Start/Stop APIs are
-     called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
+     called on the Trigger. Known values are: "Started", "Stopped", "Disabled".
     :vartype runtime_state: str or ~azure.mgmt.datafactory.models.TriggerRuntimeState
     :ivar annotations: List of tags that can be used for describing the trigger.
     :vartype annotations: list[any]
@@ -13082,11 +13247,11 @@ class BlobTrigger(MultiplePipelineTrigger):
         *,
         folder_path: str,
         max_concurrency: int,
-        linked_service: "LinkedServiceReference",
+        linked_service: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         annotations: Optional[List[Any]] = None,
-        pipelines: Optional[List["TriggerPipelineReference"]] = None,
+        pipelines: Optional[List["_models.TriggerPipelineReference"]] = None,
         **kwargs
     ):
         """
@@ -13177,14 +13342,14 @@ class CassandraLinkedService(LinkedService):
         *,
         host: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         authentication_type: Optional[Any] = None,
         port: Optional[Any] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -13263,9 +13428,9 @@ class CassandraSource(TabularSource):
     :ivar consistency_level: The consistency level specifies how many Cassandra servers must
      respond to a read request before returning data to the client application. Cassandra checks the
      specified number of Cassandra servers for data to satisfy the read request. Must be one of
-     cassandraSourceReadConsistencyLevels. The default value is 'ONE'. It is case-insensitive.
-     Possible values include: "ALL", "EACH_QUORUM", "QUORUM", "LOCAL_QUORUM", "ONE", "TWO", "THREE",
-     "LOCAL_ONE", "SERIAL", "LOCAL_SERIAL".
+     cassandraSourceReadConsistencyLevels. The default value is 'ONE'. It is case-insensitive. Known
+     values are: "ALL", "EACH_QUORUM", "QUORUM", "LOCAL_QUORUM", "ONE", "TWO", "THREE", "LOCAL_ONE",
+     "SERIAL", "LOCAL_SERIAL".
     :vartype consistency_level: str or
      ~azure.mgmt.datafactory.models.CassandraSourceReadConsistencyLevels
     """
@@ -13298,7 +13463,7 @@ class CassandraSource(TabularSource):
         query_timeout: Optional[Any] = None,
         additional_columns: Optional[Any] = None,
         query: Optional[Any] = None,
-        consistency_level: Optional[Union[str, "CassandraSourceReadConsistencyLevels"]] = None,
+        consistency_level: Optional[Union[str, "_models.CassandraSourceReadConsistencyLevels"]] = None,
         **kwargs
     ):
         """
@@ -13329,9 +13494,9 @@ class CassandraSource(TabularSource):
         :keyword consistency_level: The consistency level specifies how many Cassandra servers must
          respond to a read request before returning data to the client application. Cassandra checks the
          specified number of Cassandra servers for data to satisfy the read request. Must be one of
-         cassandraSourceReadConsistencyLevels. The default value is 'ONE'. It is case-insensitive.
-         Possible values include: "ALL", "EACH_QUORUM", "QUORUM", "LOCAL_QUORUM", "ONE", "TWO", "THREE",
-         "LOCAL_ONE", "SERIAL", "LOCAL_SERIAL".
+         cassandraSourceReadConsistencyLevels. The default value is 'ONE'. It is case-insensitive. Known
+         values are: "ALL", "EACH_QUORUM", "QUORUM", "LOCAL_QUORUM", "ONE", "TWO", "THREE", "LOCAL_ONE",
+         "SERIAL", "LOCAL_SERIAL".
         :paramtype consistency_level: str or
          ~azure.mgmt.datafactory.models.CassandraSourceReadConsistencyLevels
         """
@@ -13398,14 +13563,14 @@ class CassandraTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         keyspace: Optional[Any] = None,
         **kwargs
@@ -13459,7 +13624,7 @@ class ChainingTrigger(Trigger):
     :ivar description: Trigger description.
     :vartype description: str
     :ivar runtime_state: Indicates if trigger is running or not. Updated when Start/Stop APIs are
-     called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
+     called on the Trigger. Known values are: "Started", "Stopped", "Disabled".
     :vartype runtime_state: str or ~azure.mgmt.datafactory.models.TriggerRuntimeState
     :ivar annotations: List of tags that can be used for describing the trigger.
     :vartype annotations: list[any]
@@ -13495,8 +13660,8 @@ class ChainingTrigger(Trigger):
     def __init__(
         self,
         *,
-        pipeline: "TriggerPipelineReference",
-        depends_on: List["PipelineReference"],
+        pipeline: "_models.TriggerPipelineReference",
+        depends_on: List["_models.PipelineReference"],
         run_dimension: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
@@ -13560,7 +13725,7 @@ class CloudError(msrest.serialization.Model):
         code: str,
         message: str,
         target: Optional[str] = None,
-        details: Optional[List["CloudError"]] = None,
+        details: Optional[List["_models.CloudError"]] = None,
         **kwargs
     ):
         """
@@ -13614,7 +13779,7 @@ class CmdkeySetup(CustomSetupBase):
         *,
         target_name: Any,
         user_name: Any,
-        password: "SecretBase",
+        password: "_models.SecretBase",
         **kwargs
     ):
         """
@@ -13712,14 +13877,14 @@ class CommonDataServiceForAppsEntityDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         entity_name: Optional[Any] = None,
         **kwargs
     ):
@@ -13855,19 +14020,19 @@ class CommonDataServiceForAppsLinkedService(LinkedService):
         deployment_type: Any,
         authentication_type: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         host_name: Optional[Any] = None,
         port: Optional[Any] = None,
         service_uri: Optional[Any] = None,
         organization_name: Optional[Any] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         service_principal_id: Optional[Any] = None,
         service_principal_credential_type: Optional[Any] = None,
-        service_principal_credential: Optional["SecretBase"] = None,
+        service_principal_credential: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -13977,7 +14142,7 @@ class CommonDataServiceForAppsSink(CopySink):
     :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: any
-    :ivar write_behavior: Required. The write behavior for the operation. Possible values include:
+    :ivar write_behavior: Required. The write behavior for the operation. Known values are:
      "Upsert".
     :vartype write_behavior: str or ~azure.mgmt.datafactory.models.DynamicsSinkWriteBehavior
     :ivar ignore_null_values: The flag indicating whether to ignore null values from input dataset
@@ -14011,7 +14176,7 @@ class CommonDataServiceForAppsSink(CopySink):
     def __init__(
         self,
         *,
-        write_behavior: Union[str, "DynamicsSinkWriteBehavior"],
+        write_behavior: Union[str, "_models.DynamicsSinkWriteBehavior"],
         additional_properties: Optional[Dict[str, Any]] = None,
         write_batch_size: Optional[Any] = None,
         write_batch_timeout: Optional[Any] = None,
@@ -14045,8 +14210,8 @@ class CommonDataServiceForAppsSink(CopySink):
         :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: any
-        :keyword write_behavior: Required. The write behavior for the operation. Possible values
-         include: "Upsert".
+        :keyword write_behavior: Required. The write behavior for the operation. Known values are:
+         "Upsert".
         :paramtype write_behavior: str or ~azure.mgmt.datafactory.models.DynamicsSinkWriteBehavior
         :keyword ignore_null_values: The flag indicating whether to ignore null values from input
          dataset (except key fields) during write operation. Default is false. Type: boolean (or
@@ -14177,7 +14342,7 @@ class ComponentSetup(CustomSetupBase):
         self,
         *,
         component_name: str,
-        license_key: Optional["SecretBase"] = None,
+        license_key: Optional["_models.SecretBase"] = None,
         **kwargs
     ):
         """
@@ -14309,12 +14474,12 @@ class ConcurLinkedService(LinkedService):
         client_id: Any,
         username: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_properties: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[Any] = None,
         use_host_verification: Optional[Any] = None,
         use_peer_verification: Optional[Any] = None,
@@ -14422,14 +14587,14 @@ class ConcurObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -14698,29 +14863,29 @@ class CopyActivity(ExecutionActivity):
         self,
         *,
         name: str,
-        source: "CopySource",
-        sink: "CopySink",
+        source: "_models.CopySource",
+        sink: "_models.CopySink",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
-        inputs: Optional[List["DatasetReference"]] = None,
-        outputs: Optional[List["DatasetReference"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
+        inputs: Optional[List["_models.DatasetReference"]] = None,
+        outputs: Optional[List["_models.DatasetReference"]] = None,
         translator: Optional[Any] = None,
         enable_staging: Optional[Any] = None,
-        staging_settings: Optional["StagingSettings"] = None,
+        staging_settings: Optional["_models.StagingSettings"] = None,
         parallel_copies: Optional[Any] = None,
         data_integration_units: Optional[Any] = None,
         enable_skip_incompatible_row: Optional[Any] = None,
-        redirect_incompatible_row_settings: Optional["RedirectIncompatibleRowSettings"] = None,
-        log_storage_settings: Optional["LogStorageSettings"] = None,
-        log_settings: Optional["LogSettings"] = None,
+        redirect_incompatible_row_settings: Optional["_models.RedirectIncompatibleRowSettings"] = None,
+        log_storage_settings: Optional["_models.LogStorageSettings"] = None,
+        log_settings: Optional["_models.LogSettings"] = None,
         preserve_rules: Optional[List[Any]] = None,
         preserve: Optional[List[Any]] = None,
         validate_data_consistency: Optional[Any] = None,
-        skip_error_file: Optional["SkipErrorFile"] = None,
+        skip_error_file: Optional["_models.SkipErrorFile"] = None,
         **kwargs
     ):
         """
@@ -14918,7 +15083,7 @@ class CosmosDbLinkedService(LinkedService):
     :vartype service_principal_id: any
     :ivar service_principal_credential_type: The service principal credential type to use in
      Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
-     for certificate. Type: string (or Expression with resultType string). Possible values include:
+     for certificate. Type: string (or Expression with resultType string). Known values are:
      "ServicePrincipalKey", "ServicePrincipalCert".
     :vartype service_principal_credential_type: str or
      ~azure.mgmt.datafactory.models.CosmosDbServicePrincipalCredentialType
@@ -14936,7 +15101,7 @@ class CosmosDbLinkedService(LinkedService):
      factory regions’ cloud type. Type: string (or Expression with resultType string).
     :vartype azure_cloud_type: any
     :ivar connection_mode: The connection mode used to access CosmosDB account. Type: string (or
-     Expression with resultType string). Possible values include: "Gateway", "Direct".
+     Expression with resultType string). Known values are: "Gateway", "Direct".
     :vartype connection_mode: str or ~azure.mgmt.datafactory.models.CosmosDbConnectionMode
     :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
@@ -14975,22 +15140,22 @@ class CosmosDbLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_string: Optional[Any] = None,
         account_endpoint: Optional[Any] = None,
         database: Optional[Any] = None,
-        account_key: Optional["SecretBase"] = None,
+        account_key: Optional["_models.SecretBase"] = None,
         service_principal_id: Optional[Any] = None,
-        service_principal_credential_type: Optional[Union[str, "CosmosDbServicePrincipalCredentialType"]] = None,
-        service_principal_credential: Optional["SecretBase"] = None,
+        service_principal_credential_type: Optional[Union[str, "_models.CosmosDbServicePrincipalCredentialType"]] = None,
+        service_principal_credential: Optional["_models.SecretBase"] = None,
         tenant: Optional[Any] = None,
         azure_cloud_type: Optional[Any] = None,
-        connection_mode: Optional[Union[str, "CosmosDbConnectionMode"]] = None,
+        connection_mode: Optional[Union[str, "_models.CosmosDbConnectionMode"]] = None,
         encrypted_credential: Optional[Any] = None,
-        credential: Optional["CredentialReference"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs
     ):
         """
@@ -15022,7 +15187,7 @@ class CosmosDbLinkedService(LinkedService):
         :paramtype service_principal_id: any
         :keyword service_principal_credential_type: The service principal credential type to use in
          Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
-         for certificate. Type: string (or Expression with resultType string). Possible values include:
+         for certificate. Type: string (or Expression with resultType string). Known values are:
          "ServicePrincipalKey", "ServicePrincipalCert".
         :paramtype service_principal_credential_type: str or
          ~azure.mgmt.datafactory.models.CosmosDbServicePrincipalCredentialType
@@ -15040,7 +15205,7 @@ class CosmosDbLinkedService(LinkedService):
          the data factory regions’ cloud type. Type: string (or Expression with resultType string).
         :paramtype azure_cloud_type: any
         :keyword connection_mode: The connection mode used to access CosmosDB account. Type: string (or
-         Expression with resultType string). Possible values include: "Gateway", "Direct".
+         Expression with resultType string). Known values are: "Gateway", "Direct".
         :paramtype connection_mode: str or ~azure.mgmt.datafactory.models.CosmosDbConnectionMode
         :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
          are encrypted using the integration runtime credential manager. Type: string (or Expression
@@ -15119,15 +15284,15 @@ class CosmosDbMongoDbApiCollectionDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         collection: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         **kwargs
     ):
         """
@@ -15214,9 +15379,9 @@ class CosmosDbMongoDbApiLinkedService(LinkedService):
         connection_string: Any,
         database: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         is_server_version_above32: Optional[Any] = None,
         **kwargs
@@ -15414,7 +15579,7 @@ class CosmosDbMongoDbApiSource(CopySource):
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
         filter: Optional[Any] = None,
-        cursor_methods: Optional["MongoDbCursorMethodsProperties"] = None,
+        cursor_methods: Optional["_models.MongoDbCursorMethodsProperties"] = None,
         batch_size: Optional[Any] = None,
         query_timeout: Optional[Any] = None,
         additional_columns: Optional[Any] = None,
@@ -15517,15 +15682,15 @@ class CosmosDbSqlApiCollectionDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         collection_name: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         **kwargs
     ):
         """
@@ -15811,12 +15976,12 @@ class CouchbaseLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_string: Optional[Any] = None,
-        cred_string: Optional["AzureKeyVaultSecretReference"] = None,
+        cred_string: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -15994,14 +16159,14 @@ class CouchbaseTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -16062,7 +16227,7 @@ class CreateDataFlowDebugSessionRequest(msrest.serialization.Model):
         compute_type: Optional[str] = None,
         core_count: Optional[int] = None,
         time_to_live: Optional[int] = None,
-        integration_runtime: Optional["IntegrationRuntimeDebugResource"] = None,
+        integration_runtime: Optional["_models.IntegrationRuntimeDebugResource"] = None,
         **kwargs
     ):
         """
@@ -16261,21 +16426,19 @@ class Credential(msrest.serialization.Model):
 class CredentialReference(msrest.serialization.Model):
     """Credential reference type.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, any]
-    :ivar type: Credential reference type. Has constant value: "CredentialReference".
-    :vartype type: str
+    :ivar type: Required. Credential reference type. Known values are: "CredentialReference".
+    :vartype type: str or ~azure.mgmt.datafactory.models.CredentialReferenceType
     :ivar reference_name: Required. Reference credential name.
     :vartype reference_name: str
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'reference_name': {'required': True},
     }
 
@@ -16285,11 +16448,10 @@ class CredentialReference(msrest.serialization.Model):
         'reference_name': {'key': 'referenceName', 'type': 'str'},
     }
 
-    type = "CredentialReference"
-
     def __init__(
         self,
         *,
+        type: Union[str, "_models.CredentialReferenceType"],
         reference_name: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
@@ -16298,11 +16460,14 @@ class CredentialReference(msrest.serialization.Model):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, any]
+        :keyword type: Required. Credential reference type. Known values are: "CredentialReference".
+        :paramtype type: str or ~azure.mgmt.datafactory.models.CredentialReferenceType
         :keyword reference_name: Required. Reference credential name.
         :paramtype reference_name: str
         """
         super(CredentialReference, self).__init__(**kwargs)
         self.additional_properties = additional_properties
+        self.type = type
         self.reference_name = reference_name
 
 
@@ -16386,7 +16551,7 @@ class CredentialResource(SubResource):
     def __init__(
         self,
         *,
-        properties: "Credential",
+        properties: "_models.Credential",
         **kwargs
     ):
         """
@@ -16472,13 +16637,13 @@ class CustomActivity(ExecutionActivity):
         command: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
-        resource_linked_service: Optional["LinkedServiceReference"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
+        resource_linked_service: Optional["_models.LinkedServiceReference"] = None,
         folder_path: Optional[Any] = None,
-        reference_objects: Optional["CustomActivityReferenceObject"] = None,
+        reference_objects: Optional["_models.CustomActivityReferenceObject"] = None,
         extended_properties: Optional[Dict[str, Any]] = None,
         retention_time_in_days: Optional[Any] = None,
         auto_user_specification: Optional[Any] = None,
@@ -16549,8 +16714,8 @@ class CustomActivityReferenceObject(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        linked_services: Optional[List["LinkedServiceReference"]] = None,
-        datasets: Optional[List["DatasetReference"]] = None,
+        linked_services: Optional[List["_models.LinkedServiceReference"]] = None,
+        datasets: Optional[List["_models.DatasetReference"]] = None,
         **kwargs
     ):
         """
@@ -16616,14 +16781,14 @@ class CustomDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         type_properties: Optional[Any] = None,
         **kwargs
     ):
@@ -16698,9 +16863,9 @@ class CustomDataSourceLinkedService(LinkedService):
         *,
         type_properties: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         **kwargs
     ):
@@ -16739,7 +16904,7 @@ class CustomEventsTrigger(MultiplePipelineTrigger):
     :ivar description: Trigger description.
     :vartype description: str
     :ivar runtime_state: Indicates if trigger is running or not. Updated when Start/Stop APIs are
-     called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
+     called on the Trigger. Known values are: "Started", "Stopped", "Disabled".
     :vartype runtime_state: str or ~azure.mgmt.datafactory.models.TriggerRuntimeState
     :ivar annotations: List of tags that can be used for describing the trigger.
     :vartype annotations: list[any]
@@ -16785,7 +16950,7 @@ class CustomEventsTrigger(MultiplePipelineTrigger):
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         annotations: Optional[List[Any]] = None,
-        pipelines: Optional[List["TriggerPipelineReference"]] = None,
+        pipelines: Optional[List["_models.TriggerPipelineReference"]] = None,
         subject_begins_with: Optional[str] = None,
         subject_ends_with: Optional[str] = None,
         **kwargs
@@ -16879,10 +17044,10 @@ class DatabricksNotebookActivity(ExecutionActivity):
         notebook_path: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
         base_parameters: Optional[Dict[str, Any]] = None,
         libraries: Optional[List[Dict[str, Any]]] = None,
         **kwargs
@@ -16980,10 +17145,10 @@ class DatabricksSparkJarActivity(ExecutionActivity):
         main_class_name: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
         parameters: Optional[List[Any]] = None,
         libraries: Optional[List[Dict[str, Any]]] = None,
         **kwargs
@@ -17079,10 +17244,10 @@ class DatabricksSparkPythonActivity(ExecutionActivity):
         python_file: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
         parameters: Optional[List[Any]] = None,
         libraries: Optional[List[Dict[str, Any]]] = None,
         **kwargs
@@ -17158,7 +17323,7 @@ class DataFlow(msrest.serialization.Model):
         *,
         description: Optional[str] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DataFlowFolder"] = None,
+        folder: Optional["_models.DataFlowFolder"] = None,
         **kwargs
     ):
         """
@@ -17234,7 +17399,7 @@ class DataFlowDebugCommandRequest(msrest.serialization.Model):
 
     :ivar session_id: The ID of data flow debug session.
     :vartype session_id: str
-    :ivar command: The command type. Possible values include: "executePreviewQuery",
+    :ivar command: The command type. Known values are: "executePreviewQuery",
      "executeStatisticsQuery", "executeExpressionQuery".
     :vartype command: str or ~azure.mgmt.datafactory.models.DataFlowDebugCommandType
     :ivar command_payload: The command payload object.
@@ -17251,14 +17416,14 @@ class DataFlowDebugCommandRequest(msrest.serialization.Model):
         self,
         *,
         session_id: Optional[str] = None,
-        command: Optional[Union[str, "DataFlowDebugCommandType"]] = None,
-        command_payload: Optional["DataFlowDebugCommandPayload"] = None,
+        command: Optional[Union[str, "_models.DataFlowDebugCommandType"]] = None,
+        command_payload: Optional["_models.DataFlowDebugCommandPayload"] = None,
         **kwargs
     ):
         """
         :keyword session_id: The ID of data flow debug session.
         :paramtype session_id: str
-        :keyword command: The command type. Possible values include: "executePreviewQuery",
+        :keyword command: The command type. Known values are: "executePreviewQuery",
          "executeStatisticsQuery", "executeExpressionQuery".
         :paramtype command: str or ~azure.mgmt.datafactory.models.DataFlowDebugCommandType
         :keyword command_payload: The command payload object.
@@ -17340,12 +17505,12 @@ class DataFlowDebugPackage(msrest.serialization.Model):
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
         session_id: Optional[str] = None,
-        data_flow: Optional["DataFlowDebugResource"] = None,
-        data_flows: Optional[List["DataFlowDebugResource"]] = None,
-        datasets: Optional[List["DatasetDebugResource"]] = None,
-        linked_services: Optional[List["LinkedServiceDebugResource"]] = None,
-        staging: Optional["DataFlowStagingInfo"] = None,
-        debug_settings: Optional["DataFlowDebugPackageDebugSettings"] = None,
+        data_flow: Optional["_models.DataFlowDebugResource"] = None,
+        data_flows: Optional[List["_models.DataFlowDebugResource"]] = None,
+        datasets: Optional[List["_models.DatasetDebugResource"]] = None,
+        linked_services: Optional[List["_models.LinkedServiceDebugResource"]] = None,
+        staging: Optional["_models.DataFlowStagingInfo"] = None,
+        debug_settings: Optional["_models.DataFlowDebugPackageDebugSettings"] = None,
         **kwargs
     ):
         """
@@ -17398,7 +17563,7 @@ class DataFlowDebugPackageDebugSettings(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        source_settings: Optional[List["DataFlowSourceSetting"]] = None,
+        source_settings: Optional[List["_models.DataFlowSourceSetting"]] = None,
         parameters: Optional[Dict[str, Any]] = None,
         dataset_parameters: Optional[Any] = None,
         **kwargs
@@ -17465,7 +17630,7 @@ class DataFlowDebugResource(SubResourceDebugResource):
     def __init__(
         self,
         *,
-        properties: "DataFlow",
+        properties: "_models.DataFlow",
         name: Optional[str] = None,
         **kwargs
     ):
@@ -17618,7 +17783,7 @@ class DataFlowListResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["DataFlowResource"],
+        value: List["_models.DataFlowResource"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -17636,15 +17801,13 @@ class DataFlowListResponse(msrest.serialization.Model):
 class DataFlowReference(msrest.serialization.Model):
     """Data flow reference type.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, any]
-    :ivar type: Data flow reference type. Has constant value: "DataFlowReference".
-    :vartype type: str
+    :ivar type: Required. Data flow reference type. Known values are: "DataFlowReference".
+    :vartype type: str or ~azure.mgmt.datafactory.models.DataFlowReferenceType
     :ivar reference_name: Required. Reference data flow name.
     :vartype reference_name: str
     :ivar dataset_parameters: Reference data flow parameters from dataset.
@@ -17654,7 +17817,7 @@ class DataFlowReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'reference_name': {'required': True},
     }
 
@@ -17666,11 +17829,10 @@ class DataFlowReference(msrest.serialization.Model):
         'parameters': {'key': 'parameters', 'type': '{object}'},
     }
 
-    type = "DataFlowReference"
-
     def __init__(
         self,
         *,
+        type: Union[str, "_models.DataFlowReferenceType"],
         reference_name: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         dataset_parameters: Optional[Any] = None,
@@ -17681,6 +17843,8 @@ class DataFlowReference(msrest.serialization.Model):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, any]
+        :keyword type: Required. Data flow reference type. Known values are: "DataFlowReference".
+        :paramtype type: str or ~azure.mgmt.datafactory.models.DataFlowReferenceType
         :keyword reference_name: Required. Reference data flow name.
         :paramtype reference_name: str
         :keyword dataset_parameters: Reference data flow parameters from dataset.
@@ -17690,6 +17854,7 @@ class DataFlowReference(msrest.serialization.Model):
         """
         super(DataFlowReference, self).__init__(**kwargs)
         self.additional_properties = additional_properties
+        self.type = type
         self.reference_name = reference_name
         self.dataset_parameters = dataset_parameters
         self.parameters = parameters
@@ -17733,7 +17898,7 @@ class DataFlowResource(SubResource):
     def __init__(
         self,
         *,
-        properties: "DataFlow",
+        properties: "_models.DataFlow",
         **kwargs
     ):
         """
@@ -17778,9 +17943,9 @@ class Transformation(msrest.serialization.Model):
         *,
         name: str,
         description: Optional[str] = None,
-        dataset: Optional["DatasetReference"] = None,
-        linked_service: Optional["LinkedServiceReference"] = None,
-        flowlet: Optional["DataFlowReference"] = None,
+        dataset: Optional["_models.DatasetReference"] = None,
+        linked_service: Optional["_models.LinkedServiceReference"] = None,
+        flowlet: Optional["_models.DataFlowReference"] = None,
         **kwargs
     ):
         """
@@ -17820,6 +17985,8 @@ class DataFlowSink(Transformation):
     :vartype flowlet: ~azure.mgmt.datafactory.models.DataFlowReference
     :ivar schema_linked_service: Schema linked service reference.
     :vartype schema_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :ivar rejected_data_linked_service: Rejected data linked service reference.
+    :vartype rejected_data_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
     """
 
     _validation = {
@@ -17833,6 +18000,7 @@ class DataFlowSink(Transformation):
         'linked_service': {'key': 'linkedService', 'type': 'LinkedServiceReference'},
         'flowlet': {'key': 'flowlet', 'type': 'DataFlowReference'},
         'schema_linked_service': {'key': 'schemaLinkedService', 'type': 'LinkedServiceReference'},
+        'rejected_data_linked_service': {'key': 'rejectedDataLinkedService', 'type': 'LinkedServiceReference'},
     }
 
     def __init__(
@@ -17840,10 +18008,11 @@ class DataFlowSink(Transformation):
         *,
         name: str,
         description: Optional[str] = None,
-        dataset: Optional["DatasetReference"] = None,
-        linked_service: Optional["LinkedServiceReference"] = None,
-        flowlet: Optional["DataFlowReference"] = None,
-        schema_linked_service: Optional["LinkedServiceReference"] = None,
+        dataset: Optional["_models.DatasetReference"] = None,
+        linked_service: Optional["_models.LinkedServiceReference"] = None,
+        flowlet: Optional["_models.DataFlowReference"] = None,
+        schema_linked_service: Optional["_models.LinkedServiceReference"] = None,
+        rejected_data_linked_service: Optional["_models.LinkedServiceReference"] = None,
         **kwargs
     ):
         """
@@ -17859,9 +18028,12 @@ class DataFlowSink(Transformation):
         :paramtype flowlet: ~azure.mgmt.datafactory.models.DataFlowReference
         :keyword schema_linked_service: Schema linked service reference.
         :paramtype schema_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
+        :keyword rejected_data_linked_service: Rejected data linked service reference.
+        :paramtype rejected_data_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
         """
         super(DataFlowSink, self).__init__(name=name, description=description, dataset=dataset, linked_service=linked_service, flowlet=flowlet, **kwargs)
         self.schema_linked_service = schema_linked_service
+        self.rejected_data_linked_service = rejected_data_linked_service
 
 
 class DataFlowSource(Transformation):
@@ -17901,10 +18073,10 @@ class DataFlowSource(Transformation):
         *,
         name: str,
         description: Optional[str] = None,
-        dataset: Optional["DatasetReference"] = None,
-        linked_service: Optional["LinkedServiceReference"] = None,
-        flowlet: Optional["DataFlowReference"] = None,
-        schema_linked_service: Optional["LinkedServiceReference"] = None,
+        dataset: Optional["_models.DatasetReference"] = None,
+        linked_service: Optional["_models.LinkedServiceReference"] = None,
+        flowlet: Optional["_models.DataFlowReference"] = None,
+        schema_linked_service: Optional["_models.LinkedServiceReference"] = None,
         **kwargs
     ):
         """
@@ -17984,7 +18156,7 @@ class DataFlowStagingInfo(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        linked_service: Optional["LinkedServiceReference"] = None,
+        linked_service: Optional["_models.LinkedServiceReference"] = None,
         folder_path: Optional[Any] = None,
         **kwargs
     ):
@@ -18074,13 +18246,13 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
         *,
         name: str,
         script_path: Any,
-        script_linked_service: "LinkedServiceReference",
+        script_linked_service: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
         degree_of_parallelism: Optional[Any] = None,
         priority: Optional[Any] = None,
         parameters: Optional[Dict[str, Any]] = None,
@@ -18242,7 +18414,7 @@ class DatasetDebugResource(SubResourceDebugResource):
     def __init__(
         self,
         *,
-        properties: "Dataset",
+        properties: "_models.Dataset",
         name: Optional[str] = None,
         **kwargs
     ):
@@ -18304,7 +18476,7 @@ class DatasetListResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["DatasetResource"],
+        value: List["_models.DatasetResource"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -18403,7 +18575,7 @@ class DatasetResource(SubResource):
     def __init__(
         self,
         *,
-        properties: "Dataset",
+        properties: "_models.Dataset",
         **kwargs
     ):
         """
@@ -18455,6 +18627,85 @@ class DatasetSchemaDataElement(msrest.serialization.Model):
         self.type = type
 
 
+class DataworldLinkedService(LinkedService):
+    """Linked service for Dataworld.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, any]
+    :ivar type: Required. Type of linked service.Constant filled by server.
+    :vartype type: str
+    :ivar connect_via: The integration runtime reference.
+    :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar description: Linked service description.
+    :vartype description: str
+    :ivar parameters: Parameters for linked service.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the linked service.
+    :vartype annotations: list[any]
+    :ivar api_token: Required. The api token for the Dataworld source.
+    :vartype api_token: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
+     encrypted using the integration runtime credential manager. Type: string (or Expression with
+     resultType string).
+    :vartype encrypted_credential: any
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'api_token': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
+        'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'api_token': {'key': 'typeProperties.apiToken', 'type': 'SecretBase'},
+        'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        *,
+        api_token: "_models.SecretBase",
+        additional_properties: Optional[Dict[str, Any]] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
+        description: Optional[str] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[Any]] = None,
+        encrypted_credential: Optional[Any] = None,
+        **kwargs
+    ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword connect_via: The integration runtime reference.
+        :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword description: Linked service description.
+        :paramtype description: str
+        :keyword parameters: Parameters for linked service.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the linked service.
+        :paramtype annotations: list[any]
+        :keyword api_token: Required. The api token for the Dataworld source.
+        :paramtype api_token: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
+         are encrypted using the integration runtime credential manager. Type: string (or Expression
+         with resultType string).
+        :paramtype encrypted_credential: any
+        """
+        super(DataworldLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
+        self.type = 'Dataworld'  # type: str
+        self.api_token = api_token
+        self.encrypted_credential = encrypted_credential
+
+
 class Db2LinkedService(LinkedService):
     """Linked service for DB2 data source.
 
@@ -18484,7 +18735,7 @@ class Db2LinkedService(LinkedService):
      property. Type: string (or Expression with resultType string).
     :vartype database: any
     :ivar authentication_type: AuthenticationType to be used for connection. It is mutually
-     exclusive with connectionString property. Possible values include: "Basic".
+     exclusive with connectionString property. Known values are: "Basic".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.Db2AuthenticationType
     :ivar username: Username for authentication. It is mutually exclusive with connectionString
      property. Type: string (or Expression with resultType string).
@@ -18530,16 +18781,16 @@ class Db2LinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_string: Optional[Any] = None,
         server: Optional[Any] = None,
         database: Optional[Any] = None,
-        authentication_type: Optional[Union[str, "Db2AuthenticationType"]] = None,
+        authentication_type: Optional[Union[str, "_models.Db2AuthenticationType"]] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         package_collection: Optional[Any] = None,
         certificate_common_name: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
@@ -18568,7 +18819,7 @@ class Db2LinkedService(LinkedService):
          property. Type: string (or Expression with resultType string).
         :paramtype database: any
         :keyword authentication_type: AuthenticationType to be used for connection. It is mutually
-         exclusive with connectionString property. Possible values include: "Basic".
+         exclusive with connectionString property. Known values are: "Basic".
         :paramtype authentication_type: str or ~azure.mgmt.datafactory.models.Db2AuthenticationType
         :keyword username: Username for authentication. It is mutually exclusive with connectionString
          property. Type: string (or Expression with resultType string).
@@ -18751,14 +19002,14 @@ class Db2TableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         schema_type_properties_schema: Optional[Any] = None,
         table: Optional[Any] = None,
@@ -18869,18 +19120,18 @@ class DeleteActivity(ExecutionActivity):
         self,
         *,
         name: str,
-        dataset: "DatasetReference",
+        dataset: "_models.DatasetReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
         recursive: Optional[Any] = None,
         max_concurrent_connections: Optional[int] = None,
         enable_logging: Optional[Any] = None,
-        log_storage_settings: Optional["LogStorageSettings"] = None,
-        store_settings: Optional["StoreReadSettings"] = None,
+        log_storage_settings: Optional["_models.LogStorageSettings"] = None,
+        store_settings: Optional["_models.StoreReadSettings"] = None,
         **kwargs
     ):
         """
@@ -19038,15 +19289,15 @@ class DelimitedTextDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
-        location: Optional["DatasetLocation"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
+        location: Optional["_models.DatasetLocation"] = None,
         column_delimiter: Optional[Any] = None,
         row_delimiter: Optional[Any] = None,
         encoding_name: Optional[Any] = None,
@@ -19157,7 +19408,7 @@ class DelimitedTextReadSettings(FormatReadSettings):
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
         skip_line_count: Optional[Any] = None,
-        compression_properties: Optional["CompressionReadSettings"] = None,
+        compression_properties: Optional["_models.CompressionReadSettings"] = None,
         **kwargs
     ):
         """
@@ -19237,8 +19488,8 @@ class DelimitedTextSink(CopySink):
         sink_retry_wait: Optional[Any] = None,
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
-        store_settings: Optional["StoreWriteSettings"] = None,
-        format_settings: Optional["DelimitedTextWriteSettings"] = None,
+        store_settings: Optional["_models.StoreWriteSettings"] = None,
+        format_settings: Optional["_models.DelimitedTextWriteSettings"] = None,
         **kwargs
     ):
         """
@@ -19329,8 +19580,8 @@ class DelimitedTextSource(CopySource):
         source_retry_wait: Optional[Any] = None,
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
-        store_settings: Optional["StoreReadSettings"] = None,
-        format_settings: Optional["DelimitedTextReadSettings"] = None,
+        store_settings: Optional["_models.StoreReadSettings"] = None,
+        format_settings: Optional["_models.DelimitedTextReadSettings"] = None,
         additional_columns: Optional[Any] = None,
         **kwargs
     ):
@@ -19582,15 +19833,15 @@ class DocumentDbCollectionDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         collection_name: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         **kwargs
     ):
         """
@@ -19876,12 +20127,12 @@ class DrillLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_string: Optional[Any] = None,
-        pwd: Optional["AzureKeyVaultSecretReference"] = None,
+        pwd: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -20067,14 +20318,14 @@ class DrillTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         table: Optional[Any] = None,
         schema_type_properties_schema: Optional[Any] = None,
@@ -20174,7 +20425,7 @@ class DWCopyCommandSettings(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        default_values: Optional[List["DWCopyCommandDefaultValue"]] = None,
+        default_values: Optional[List["_models.DWCopyCommandDefaultValue"]] = None,
         additional_options: Optional[Dict[str, str]] = None,
         **kwargs
     ):
@@ -20264,13 +20515,13 @@ class DynamicsAXLinkedService(LinkedService):
         *,
         url: Any,
         service_principal_id: Any,
-        service_principal_key: "SecretBase",
+        service_principal_key: "_models.SecretBase",
         tenant: Any,
         aad_resource_id: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
@@ -20373,15 +20624,15 @@ class DynamicsAXResourceDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         path: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         **kwargs
     ):
         """
@@ -20573,14 +20824,14 @@ class DynamicsCrmEntityDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         entity_name: Optional[Any] = None,
         **kwargs
     ):
@@ -20712,19 +20963,19 @@ class DynamicsCrmLinkedService(LinkedService):
         deployment_type: Any,
         authentication_type: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         host_name: Optional[Any] = None,
         port: Optional[Any] = None,
         service_uri: Optional[Any] = None,
         organization_name: Optional[Any] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         service_principal_id: Optional[Any] = None,
         service_principal_credential_type: Optional[Any] = None,
-        service_principal_credential: Optional["SecretBase"] = None,
+        service_principal_credential: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -20831,7 +21082,7 @@ class DynamicsCrmSink(CopySink):
     :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: any
-    :ivar write_behavior: Required. The write behavior for the operation. Possible values include:
+    :ivar write_behavior: Required. The write behavior for the operation. Known values are:
      "Upsert".
     :vartype write_behavior: str or ~azure.mgmt.datafactory.models.DynamicsSinkWriteBehavior
     :ivar ignore_null_values: The flag indicating whether to ignore null values from input dataset
@@ -20865,7 +21116,7 @@ class DynamicsCrmSink(CopySink):
     def __init__(
         self,
         *,
-        write_behavior: Union[str, "DynamicsSinkWriteBehavior"],
+        write_behavior: Union[str, "_models.DynamicsSinkWriteBehavior"],
         additional_properties: Optional[Dict[str, Any]] = None,
         write_batch_size: Optional[Any] = None,
         write_batch_timeout: Optional[Any] = None,
@@ -20899,8 +21150,8 @@ class DynamicsCrmSink(CopySink):
         :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: any
-        :keyword write_behavior: Required. The write behavior for the operation. Possible values
-         include: "Upsert".
+        :keyword write_behavior: Required. The write behavior for the operation. Known values are:
+         "Upsert".
         :paramtype write_behavior: str or ~azure.mgmt.datafactory.models.DynamicsSinkWriteBehavior
         :keyword ignore_null_values: The flag indicating whether to ignore null values from input
          dataset (except key fields) during write operation. Default is false. Type: boolean (or
@@ -21056,14 +21307,14 @@ class DynamicsEntityDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         entity_name: Optional[Any] = None,
         **kwargs
     ):
@@ -21149,7 +21400,7 @@ class DynamicsLinkedService(LinkedService):
     :ivar service_principal_credential_type: The service principal credential type to use in
      Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
      for certificate. Type: string (or Expression with resultType string).
-    :vartype service_principal_credential_type: str
+    :vartype service_principal_credential_type: any
     :ivar service_principal_credential: The credential of the service principal object in Azure
      Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
      servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
@@ -21186,7 +21437,7 @@ class DynamicsLinkedService(LinkedService):
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
-        'service_principal_credential_type': {'key': 'typeProperties.servicePrincipalCredentialType', 'type': 'str'},
+        'service_principal_credential_type': {'key': 'typeProperties.servicePrincipalCredentialType', 'type': 'object'},
         'service_principal_credential': {'key': 'typeProperties.servicePrincipalCredential', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
         'credential': {'key': 'typeProperties.credential', 'type': 'CredentialReference'},
@@ -21198,21 +21449,21 @@ class DynamicsLinkedService(LinkedService):
         deployment_type: Any,
         authentication_type: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         host_name: Optional[Any] = None,
         port: Optional[Any] = None,
         service_uri: Optional[Any] = None,
         organization_name: Optional[Any] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         service_principal_id: Optional[Any] = None,
-        service_principal_credential_type: Optional[str] = None,
-        service_principal_credential: Optional["SecretBase"] = None,
+        service_principal_credential_type: Optional[Any] = None,
+        service_principal_credential: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
-        credential: Optional["CredentialReference"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs
     ):
         """
@@ -21261,7 +21512,7 @@ class DynamicsLinkedService(LinkedService):
         :keyword service_principal_credential_type: The service principal credential type to use in
          Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
          for certificate. Type: string (or Expression with resultType string).
-        :paramtype service_principal_credential_type: str
+        :paramtype service_principal_credential_type: any
         :keyword service_principal_credential: The credential of the service principal object in Azure
          Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
          servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
@@ -21320,7 +21571,7 @@ class DynamicsSink(CopySink):
     :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: any
-    :ivar write_behavior: Required. The write behavior for the operation. Possible values include:
+    :ivar write_behavior: Required. The write behavior for the operation. Known values are:
      "Upsert".
     :vartype write_behavior: str or ~azure.mgmt.datafactory.models.DynamicsSinkWriteBehavior
     :ivar ignore_null_values: The flag indicating whether ignore null values from input dataset
@@ -21354,7 +21605,7 @@ class DynamicsSink(CopySink):
     def __init__(
         self,
         *,
-        write_behavior: Union[str, "DynamicsSinkWriteBehavior"],
+        write_behavior: Union[str, "_models.DynamicsSinkWriteBehavior"],
         additional_properties: Optional[Dict[str, Any]] = None,
         write_batch_size: Optional[Any] = None,
         write_batch_timeout: Optional[Any] = None,
@@ -21388,8 +21639,8 @@ class DynamicsSink(CopySink):
         :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: any
-        :keyword write_behavior: Required. The write behavior for the operation. Possible values
-         include: "Upsert".
+        :keyword write_behavior: Required. The write behavior for the operation. Known values are:
+         "Upsert".
         :paramtype write_behavior: str or ~azure.mgmt.datafactory.models.DynamicsSinkWriteBehavior
         :keyword ignore_null_values: The flag indicating whether ignore null values from input dataset
          (except key fields) during write operation. Default is false. Type: boolean (or Expression with
@@ -21561,11 +21812,11 @@ class EloquaLinkedService(LinkedService):
         endpoint: Any,
         username: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[Any] = None,
         use_host_verification: Optional[Any] = None,
         use_peer_verification: Optional[Any] = None,
@@ -21669,14 +21920,14 @@ class EloquaObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -21838,7 +22089,7 @@ class EncryptionConfiguration(msrest.serialization.Model):
         key_name: str,
         vault_base_url: str,
         key_version: Optional[str] = None,
-        identity: Optional["CMKIdentityDefinition"] = None,
+        identity: Optional["_models.CMKIdentityDefinition"] = None,
         **kwargs
     ):
         """
@@ -21864,7 +22115,7 @@ class EncryptionConfiguration(msrest.serialization.Model):
 class EntityReference(msrest.serialization.Model):
     """The entity reference.
 
-    :ivar type: The type of this referenced entity. Possible values include:
+    :ivar type: The type of this referenced entity. Known values are:
      "IntegrationRuntimeReference", "LinkedServiceReference".
     :vartype type: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeEntityReferenceType
     :ivar reference_name: The name of this referenced entity.
@@ -21879,12 +22130,12 @@ class EntityReference(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "IntegrationRuntimeEntityReferenceType"]] = None,
+        type: Optional[Union[str, "_models.IntegrationRuntimeEntityReferenceType"]] = None,
         reference_name: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword type: The type of this referenced entity. Possible values include:
+        :keyword type: The type of this referenced entity. Known values are:
          "IntegrationRuntimeReference", "LinkedServiceReference".
         :paramtype type: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeEntityReferenceType
         :keyword reference_name: The name of this referenced entity.
@@ -22014,20 +22265,20 @@ class ExcelDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
-        location: Optional["DatasetLocation"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
+        location: Optional["_models.DatasetLocation"] = None,
         sheet_name: Optional[Any] = None,
         sheet_index: Optional[Any] = None,
         range: Optional[Any] = None,
         first_row_as_header: Optional[Any] = None,
-        compression: Optional["DatasetCompression"] = None,
+        compression: Optional["_models.DatasetCompression"] = None,
         null_value: Optional[Any] = None,
         **kwargs
     ):
@@ -22136,7 +22387,7 @@ class ExcelSource(CopySource):
         source_retry_wait: Optional[Any] = None,
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
-        store_settings: Optional["StoreReadSettings"] = None,
+        store_settings: Optional["_models.StoreReadSettings"] = None,
         additional_columns: Optional[Any] = None,
         **kwargs
     ):
@@ -22208,6 +22459,9 @@ class ExecuteDataFlowActivity(ExecutionActivity):
      the same save order to be processed concurrently. Type: boolean (or Expression with resultType
      boolean).
     :vartype run_concurrently: any
+    :ivar source_staging_concurrency: Specify number of parallel staging for sources applicable to
+     the sink. Type: integer (or Expression with resultType integer).
+    :vartype source_staging_concurrency: any
     """
 
     _validation = {
@@ -22232,25 +22486,27 @@ class ExecuteDataFlowActivity(ExecutionActivity):
         'trace_level': {'key': 'typeProperties.traceLevel', 'type': 'object'},
         'continue_on_error': {'key': 'typeProperties.continueOnError', 'type': 'object'},
         'run_concurrently': {'key': 'typeProperties.runConcurrently', 'type': 'object'},
+        'source_staging_concurrency': {'key': 'typeProperties.sourceStagingConcurrency', 'type': 'object'},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        data_flow: "DataFlowReference",
+        data_flow: "_models.DataFlowReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
-        staging: Optional["DataFlowStagingInfo"] = None,
-        integration_runtime: Optional["IntegrationRuntimeReference"] = None,
-        compute: Optional["ExecuteDataFlowActivityTypePropertiesCompute"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
+        staging: Optional["_models.DataFlowStagingInfo"] = None,
+        integration_runtime: Optional["_models.IntegrationRuntimeReference"] = None,
+        compute: Optional["_models.ExecuteDataFlowActivityTypePropertiesCompute"] = None,
         trace_level: Optional[Any] = None,
         continue_on_error: Optional[Any] = None,
         run_concurrently: Optional[Any] = None,
+        source_staging_concurrency: Optional[Any] = None,
         **kwargs
     ):
         """
@@ -22287,6 +22543,9 @@ class ExecuteDataFlowActivity(ExecutionActivity):
          with the same save order to be processed concurrently. Type: boolean (or Expression with
          resultType boolean).
         :paramtype run_concurrently: any
+        :keyword source_staging_concurrency: Specify number of parallel staging for sources applicable
+         to the sink. Type: integer (or Expression with resultType integer).
+        :paramtype source_staging_concurrency: any
         """
         super(ExecuteDataFlowActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.type = 'ExecuteDataFlow'  # type: str
@@ -22297,6 +22556,7 @@ class ExecuteDataFlowActivity(ExecutionActivity):
         self.trace_level = trace_level
         self.continue_on_error = continue_on_error
         self.run_concurrently = run_concurrently
+        self.source_staging_concurrency = source_staging_concurrency
 
 
 class ExecuteDataFlowActivityTypeProperties(msrest.serialization.Model):
@@ -22322,6 +22582,9 @@ class ExecuteDataFlowActivityTypeProperties(msrest.serialization.Model):
      the same save order to be processed concurrently. Type: boolean (or Expression with resultType
      boolean).
     :vartype run_concurrently: any
+    :ivar source_staging_concurrency: Specify number of parallel staging for sources applicable to
+     the sink. Type: integer (or Expression with resultType integer).
+    :vartype source_staging_concurrency: any
     """
 
     _validation = {
@@ -22336,18 +22599,20 @@ class ExecuteDataFlowActivityTypeProperties(msrest.serialization.Model):
         'trace_level': {'key': 'traceLevel', 'type': 'object'},
         'continue_on_error': {'key': 'continueOnError', 'type': 'object'},
         'run_concurrently': {'key': 'runConcurrently', 'type': 'object'},
+        'source_staging_concurrency': {'key': 'sourceStagingConcurrency', 'type': 'object'},
     }
 
     def __init__(
         self,
         *,
-        data_flow: "DataFlowReference",
-        staging: Optional["DataFlowStagingInfo"] = None,
-        integration_runtime: Optional["IntegrationRuntimeReference"] = None,
-        compute: Optional["ExecuteDataFlowActivityTypePropertiesCompute"] = None,
+        data_flow: "_models.DataFlowReference",
+        staging: Optional["_models.DataFlowStagingInfo"] = None,
+        integration_runtime: Optional["_models.IntegrationRuntimeReference"] = None,
+        compute: Optional["_models.ExecuteDataFlowActivityTypePropertiesCompute"] = None,
         trace_level: Optional[Any] = None,
         continue_on_error: Optional[Any] = None,
         run_concurrently: Optional[Any] = None,
+        source_staging_concurrency: Optional[Any] = None,
         **kwargs
     ):
         """
@@ -22369,6 +22634,9 @@ class ExecuteDataFlowActivityTypeProperties(msrest.serialization.Model):
          with the same save order to be processed concurrently. Type: boolean (or Expression with
          resultType boolean).
         :paramtype run_concurrently: any
+        :keyword source_staging_concurrency: Specify number of parallel staging for sources applicable
+         to the sink. Type: integer (or Expression with resultType integer).
+        :paramtype source_staging_concurrency: any
         """
         super(ExecuteDataFlowActivityTypeProperties, self).__init__(**kwargs)
         self.data_flow = data_flow
@@ -22378,6 +22646,7 @@ class ExecuteDataFlowActivityTypeProperties(msrest.serialization.Model):
         self.trace_level = trace_level
         self.continue_on_error = continue_on_error
         self.run_concurrently = run_concurrently
+        self.source_staging_concurrency = source_staging_concurrency
 
 
 class ExecuteDataFlowActivityTypePropertiesCompute(msrest.serialization.Model):
@@ -22437,6 +22706,8 @@ class ExecutePipelineActivity(ControlActivity):
     :vartype depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
     :vartype user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
+    :ivar policy: Execute pipeline activity policy.
+    :vartype policy: ~azure.mgmt.datafactory.models.ExecutePipelineActivityPolicy
     :ivar pipeline: Required. Pipeline reference.
     :vartype pipeline: ~azure.mgmt.datafactory.models.PipelineReference
     :ivar parameters: Pipeline parameters.
@@ -22459,6 +22730,7 @@ class ExecutePipelineActivity(ControlActivity):
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
         'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
+        'policy': {'key': 'policy', 'type': 'ExecutePipelineActivityPolicy'},
         'pipeline': {'key': 'typeProperties.pipeline', 'type': 'PipelineReference'},
         'parameters': {'key': 'typeProperties.parameters', 'type': '{object}'},
         'wait_on_completion': {'key': 'typeProperties.waitOnCompletion', 'type': 'bool'},
@@ -22468,11 +22740,12 @@ class ExecutePipelineActivity(ControlActivity):
         self,
         *,
         name: str,
-        pipeline: "PipelineReference",
+        pipeline: "_models.PipelineReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        policy: Optional["_models.ExecutePipelineActivityPolicy"] = None,
         parameters: Optional[Dict[str, Any]] = None,
         wait_on_completion: Optional[bool] = None,
         **kwargs
@@ -22489,6 +22762,8 @@ class ExecutePipelineActivity(ControlActivity):
         :paramtype depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
         :paramtype user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
+        :keyword policy: Execute pipeline activity policy.
+        :paramtype policy: ~azure.mgmt.datafactory.models.ExecutePipelineActivityPolicy
         :keyword pipeline: Required. Pipeline reference.
         :paramtype pipeline: ~azure.mgmt.datafactory.models.PipelineReference
         :keyword parameters: Pipeline parameters.
@@ -22499,9 +22774,46 @@ class ExecutePipelineActivity(ControlActivity):
         """
         super(ExecutePipelineActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
         self.type = 'ExecutePipeline'  # type: str
+        self.policy = policy
         self.pipeline = pipeline
         self.parameters = parameters
         self.wait_on_completion = wait_on_completion
+
+
+class ExecutePipelineActivityPolicy(msrest.serialization.Model):
+    """Execution policy for an execute pipeline activity.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, any]
+    :ivar secure_input: When set to true, Input from activity is considered as secure and will not
+     be logged to monitoring.
+    :vartype secure_input: bool
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'secure_input': {'key': 'secureInput', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, Any]] = None,
+        secure_input: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword secure_input: When set to true, Input from activity is considered as secure and will
+         not be logged to monitoring.
+        :paramtype secure_input: bool
+        """
+        super(ExecutePipelineActivityPolicy, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.secure_input = secure_input
 
 
 class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypeProperties):
@@ -22527,6 +22839,9 @@ class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypePropert
      the same save order to be processed concurrently. Type: boolean (or Expression with resultType
      boolean).
     :vartype run_concurrently: any
+    :ivar source_staging_concurrency: Specify number of parallel staging for sources applicable to
+     the sink. Type: integer (or Expression with resultType integer).
+    :vartype source_staging_concurrency: any
     :ivar sinks: (Deprecated. Please use Queries). List of Power Query activity sinks mapped to a
      queryName.
     :vartype sinks: dict[str, ~azure.mgmt.datafactory.models.PowerQuerySink]
@@ -22546,6 +22861,7 @@ class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypePropert
         'trace_level': {'key': 'traceLevel', 'type': 'object'},
         'continue_on_error': {'key': 'continueOnError', 'type': 'object'},
         'run_concurrently': {'key': 'runConcurrently', 'type': 'object'},
+        'source_staging_concurrency': {'key': 'sourceStagingConcurrency', 'type': 'object'},
         'sinks': {'key': 'sinks', 'type': '{PowerQuerySink}'},
         'queries': {'key': 'queries', 'type': '[PowerQuerySinkMapping]'},
     }
@@ -22553,15 +22869,16 @@ class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypePropert
     def __init__(
         self,
         *,
-        data_flow: "DataFlowReference",
-        staging: Optional["DataFlowStagingInfo"] = None,
-        integration_runtime: Optional["IntegrationRuntimeReference"] = None,
-        compute: Optional["ExecuteDataFlowActivityTypePropertiesCompute"] = None,
+        data_flow: "_models.DataFlowReference",
+        staging: Optional["_models.DataFlowStagingInfo"] = None,
+        integration_runtime: Optional["_models.IntegrationRuntimeReference"] = None,
+        compute: Optional["_models.ExecuteDataFlowActivityTypePropertiesCompute"] = None,
         trace_level: Optional[Any] = None,
         continue_on_error: Optional[Any] = None,
         run_concurrently: Optional[Any] = None,
-        sinks: Optional[Dict[str, "PowerQuerySink"]] = None,
-        queries: Optional[List["PowerQuerySinkMapping"]] = None,
+        source_staging_concurrency: Optional[Any] = None,
+        sinks: Optional[Dict[str, "_models.PowerQuerySink"]] = None,
+        queries: Optional[List["_models.PowerQuerySinkMapping"]] = None,
         **kwargs
     ):
         """
@@ -22583,13 +22900,16 @@ class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypePropert
          with the same save order to be processed concurrently. Type: boolean (or Expression with
          resultType boolean).
         :paramtype run_concurrently: any
+        :keyword source_staging_concurrency: Specify number of parallel staging for sources applicable
+         to the sink. Type: integer (or Expression with resultType integer).
+        :paramtype source_staging_concurrency: any
         :keyword sinks: (Deprecated. Please use Queries). List of Power Query activity sinks mapped to
          a queryName.
         :paramtype sinks: dict[str, ~azure.mgmt.datafactory.models.PowerQuerySink]
         :keyword queries: List of mapping for Power Query mashup query to sink dataset(s).
         :paramtype queries: list[~azure.mgmt.datafactory.models.PowerQuerySinkMapping]
         """
-        super(ExecutePowerQueryActivityTypeProperties, self).__init__(data_flow=data_flow, staging=staging, integration_runtime=integration_runtime, compute=compute, trace_level=trace_level, continue_on_error=continue_on_error, run_concurrently=run_concurrently, **kwargs)
+        super(ExecutePowerQueryActivityTypeProperties, self).__init__(data_flow=data_flow, staging=staging, integration_runtime=integration_runtime, compute=compute, trace_level=trace_level, continue_on_error=continue_on_error, run_concurrently=run_concurrently, source_staging_concurrency=source_staging_concurrency, **kwargs)
         self.sinks = sinks
         self.queries = queries
 
@@ -22683,24 +23003,24 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
         self,
         *,
         name: str,
-        package_location: "SSISPackageLocation",
-        connect_via: "IntegrationRuntimeReference",
+        package_location: "_models.SSISPackageLocation",
+        connect_via: "_models.IntegrationRuntimeReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
         runtime: Optional[Any] = None,
         logging_level: Optional[Any] = None,
         environment_path: Optional[Any] = None,
-        execution_credential: Optional["SSISExecutionCredential"] = None,
-        project_parameters: Optional[Dict[str, "SSISExecutionParameter"]] = None,
-        package_parameters: Optional[Dict[str, "SSISExecutionParameter"]] = None,
-        project_connection_managers: Optional[Dict[str, Dict[str, "SSISExecutionParameter"]]] = None,
-        package_connection_managers: Optional[Dict[str, Dict[str, "SSISExecutionParameter"]]] = None,
-        property_overrides: Optional[Dict[str, "SSISPropertyOverride"]] = None,
-        log_location: Optional["SSISLogLocation"] = None,
+        execution_credential: Optional["_models.SSISExecutionCredential"] = None,
+        project_parameters: Optional[Dict[str, "_models.SSISExecutionParameter"]] = None,
+        package_parameters: Optional[Dict[str, "_models.SSISExecutionParameter"]] = None,
+        project_connection_managers: Optional[Dict[str, Dict[str, "_models.SSISExecutionParameter"]]] = None,
+        package_connection_managers: Optional[Dict[str, Dict[str, "_models.SSISExecutionParameter"]]] = None,
+        property_overrides: Optional[Dict[str, "_models.SSISPropertyOverride"]] = None,
+        log_location: Optional["_models.SSISLogLocation"] = None,
         **kwargs
     ):
         """
@@ -22805,6 +23125,9 @@ class ExecuteWranglingDataflowActivity(Activity):
      the same save order to be processed concurrently. Type: boolean (or Expression with resultType
      boolean).
     :vartype run_concurrently: any
+    :ivar source_staging_concurrency: Specify number of parallel staging for sources applicable to
+     the sink. Type: integer (or Expression with resultType integer).
+    :vartype source_staging_concurrency: any
     :ivar sinks: (Deprecated. Please use Queries). List of Power Query activity sinks mapped to a
      queryName.
     :vartype sinks: dict[str, ~azure.mgmt.datafactory.models.PowerQuerySink]
@@ -22833,6 +23156,7 @@ class ExecuteWranglingDataflowActivity(Activity):
         'trace_level': {'key': 'typeProperties.traceLevel', 'type': 'object'},
         'continue_on_error': {'key': 'typeProperties.continueOnError', 'type': 'object'},
         'run_concurrently': {'key': 'typeProperties.runConcurrently', 'type': 'object'},
+        'source_staging_concurrency': {'key': 'typeProperties.sourceStagingConcurrency', 'type': 'object'},
         'sinks': {'key': 'typeProperties.sinks', 'type': '{PowerQuerySink}'},
         'queries': {'key': 'typeProperties.queries', 'type': '[PowerQuerySinkMapping]'},
     }
@@ -22841,20 +23165,21 @@ class ExecuteWranglingDataflowActivity(Activity):
         self,
         *,
         name: str,
-        data_flow: "DataFlowReference",
+        data_flow: "_models.DataFlowReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        policy: Optional["ActivityPolicy"] = None,
-        staging: Optional["DataFlowStagingInfo"] = None,
-        integration_runtime: Optional["IntegrationRuntimeReference"] = None,
-        compute: Optional["ExecuteDataFlowActivityTypePropertiesCompute"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
+        staging: Optional["_models.DataFlowStagingInfo"] = None,
+        integration_runtime: Optional["_models.IntegrationRuntimeReference"] = None,
+        compute: Optional["_models.ExecuteDataFlowActivityTypePropertiesCompute"] = None,
         trace_level: Optional[Any] = None,
         continue_on_error: Optional[Any] = None,
         run_concurrently: Optional[Any] = None,
-        sinks: Optional[Dict[str, "PowerQuerySink"]] = None,
-        queries: Optional[List["PowerQuerySinkMapping"]] = None,
+        source_staging_concurrency: Optional[Any] = None,
+        sinks: Optional[Dict[str, "_models.PowerQuerySink"]] = None,
+        queries: Optional[List["_models.PowerQuerySinkMapping"]] = None,
         **kwargs
     ):
         """
@@ -22889,6 +23214,9 @@ class ExecuteWranglingDataflowActivity(Activity):
          with the same save order to be processed concurrently. Type: boolean (or Expression with
          resultType boolean).
         :paramtype run_concurrently: any
+        :keyword source_staging_concurrency: Specify number of parallel staging for sources applicable
+         to the sink. Type: integer (or Expression with resultType integer).
+        :paramtype source_staging_concurrency: any
         :keyword sinks: (Deprecated. Please use Queries). List of Power Query activity sinks mapped to
          a queryName.
         :paramtype sinks: dict[str, ~azure.mgmt.datafactory.models.PowerQuerySink]
@@ -22905,6 +23233,7 @@ class ExecuteWranglingDataflowActivity(Activity):
         self.trace_level = trace_level
         self.continue_on_error = continue_on_error
         self.run_concurrently = run_concurrently
+        self.source_staging_concurrency = source_staging_concurrency
         self.sinks = sinks
         self.queries = queries
 
@@ -22929,7 +23258,7 @@ class ExposureControlBatchRequest(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        exposure_control_requests: List["ExposureControlRequest"],
+        exposure_control_requests: List["_models.ExposureControlRequest"],
         **kwargs
     ):
         """
@@ -22962,7 +23291,7 @@ class ExposureControlBatchResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        exposure_control_responses: List["ExposureControlResponse"],
+        exposure_control_responses: List["_models.ExposureControlResponse"],
         **kwargs
     ):
         """
@@ -23162,6 +23491,8 @@ class Factory(Resource):
     :vartype create_time: ~datetime.datetime
     :ivar version: Version of the factory.
     :vartype version: str
+    :ivar purview_configuration: Purview information of the factory.
+    :vartype purview_configuration: ~azure.mgmt.datafactory.models.PurviewConfiguration
     :ivar repo_configuration: Git repo information of the factory.
     :vartype repo_configuration: ~azure.mgmt.datafactory.models.FactoryRepoConfiguration
     :ivar global_parameters: List of parameters for factory.
@@ -23170,7 +23501,7 @@ class Factory(Resource):
     :ivar encryption: Properties to enable Customer Managed Key for the factory.
     :vartype encryption: ~azure.mgmt.datafactory.models.EncryptionConfiguration
     :ivar public_network_access: Whether or not public network access is allowed for the data
-     factory. Possible values include: "Enabled", "Disabled".
+     factory. Known values are: "Enabled", "Disabled".
     :vartype public_network_access: str or ~azure.mgmt.datafactory.models.PublicNetworkAccess
     """
 
@@ -23196,6 +23527,7 @@ class Factory(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'create_time': {'key': 'properties.createTime', 'type': 'iso-8601'},
         'version': {'key': 'properties.version', 'type': 'str'},
+        'purview_configuration': {'key': 'properties.purviewConfiguration', 'type': 'PurviewConfiguration'},
         'repo_configuration': {'key': 'properties.repoConfiguration', 'type': 'FactoryRepoConfiguration'},
         'global_parameters': {'key': 'properties.globalParameters', 'type': '{GlobalParameterSpecification}'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionConfiguration'},
@@ -23208,11 +23540,12 @@ class Factory(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         additional_properties: Optional[Dict[str, Any]] = None,
-        identity: Optional["FactoryIdentity"] = None,
-        repo_configuration: Optional["FactoryRepoConfiguration"] = None,
-        global_parameters: Optional[Dict[str, "GlobalParameterSpecification"]] = None,
-        encryption: Optional["EncryptionConfiguration"] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
+        identity: Optional["_models.FactoryIdentity"] = None,
+        purview_configuration: Optional["_models.PurviewConfiguration"] = None,
+        repo_configuration: Optional["_models.FactoryRepoConfiguration"] = None,
+        global_parameters: Optional[Dict[str, "_models.GlobalParameterSpecification"]] = None,
+        encryption: Optional["_models.EncryptionConfiguration"] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         **kwargs
     ):
         """
@@ -23225,6 +23558,8 @@ class Factory(Resource):
         :paramtype additional_properties: dict[str, any]
         :keyword identity: Managed service identity of the factory.
         :paramtype identity: ~azure.mgmt.datafactory.models.FactoryIdentity
+        :keyword purview_configuration: Purview information of the factory.
+        :paramtype purview_configuration: ~azure.mgmt.datafactory.models.PurviewConfiguration
         :keyword repo_configuration: Git repo information of the factory.
         :paramtype repo_configuration: ~azure.mgmt.datafactory.models.FactoryRepoConfiguration
         :keyword global_parameters: List of parameters for factory.
@@ -23233,7 +23568,7 @@ class Factory(Resource):
         :keyword encryption: Properties to enable Customer Managed Key for the factory.
         :paramtype encryption: ~azure.mgmt.datafactory.models.EncryptionConfiguration
         :keyword public_network_access: Whether or not public network access is allowed for the data
-         factory. Possible values include: "Enabled", "Disabled".
+         factory. Known values are: "Enabled", "Disabled".
         :paramtype public_network_access: str or ~azure.mgmt.datafactory.models.PublicNetworkAccess
         """
         super(Factory, self).__init__(location=location, tags=tags, **kwargs)
@@ -23242,6 +23577,7 @@ class Factory(Resource):
         self.provisioning_state = None
         self.create_time = None
         self.version = None
+        self.purview_configuration = purview_configuration
         self.repo_configuration = repo_configuration
         self.global_parameters = global_parameters
         self.encryption = encryption
@@ -23339,7 +23675,7 @@ class FactoryGitHubConfiguration(FactoryRepoConfiguration):
     :vartype root_folder: str
     :ivar last_commit_id: Last commit id.
     :vartype last_commit_id: str
-    :ivar host_name: GitHub Enterprise host name. For example: https://github.mydomain.com.
+    :ivar host_name: GitHub Enterprise host name. For example: ``https://github.mydomain.com``.
     :vartype host_name: str
     :ivar client_id: GitHub bring your own app client id.
     :vartype client_id: str
@@ -23377,7 +23713,7 @@ class FactoryGitHubConfiguration(FactoryRepoConfiguration):
         last_commit_id: Optional[str] = None,
         host_name: Optional[str] = None,
         client_id: Optional[str] = None,
-        client_secret: Optional["GitHubClientSecret"] = None,
+        client_secret: Optional["_models.GitHubClientSecret"] = None,
         **kwargs
     ):
         """
@@ -23391,7 +23727,7 @@ class FactoryGitHubConfiguration(FactoryRepoConfiguration):
         :paramtype root_folder: str
         :keyword last_commit_id: Last commit id.
         :paramtype last_commit_id: str
-        :keyword host_name: GitHub Enterprise host name. For example: https://github.mydomain.com.
+        :keyword host_name: GitHub Enterprise host name. For example: ``https://github.mydomain.com``.
         :paramtype host_name: str
         :keyword client_id: GitHub bring your own app client id.
         :paramtype client_id: str
@@ -23412,8 +23748,8 @@ class FactoryIdentity(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The identity type. Possible values include: "SystemAssigned",
-     "UserAssigned", "SystemAssigned,UserAssigned".
+    :ivar type: Required. The identity type. Known values are: "SystemAssigned", "UserAssigned",
+     "SystemAssigned,UserAssigned".
     :vartype type: str or ~azure.mgmt.datafactory.models.FactoryIdentityType
     :ivar principal_id: The principal id of the identity.
     :vartype principal_id: str
@@ -23439,13 +23775,13 @@ class FactoryIdentity(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "FactoryIdentityType"],
+        type: Union[str, "_models.FactoryIdentityType"],
         user_assigned_identities: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         """
-        :keyword type: Required. The identity type. Possible values include: "SystemAssigned",
-         "UserAssigned", "SystemAssigned,UserAssigned".
+        :keyword type: Required. The identity type. Known values are: "SystemAssigned", "UserAssigned",
+         "SystemAssigned,UserAssigned".
         :paramtype type: str or ~azure.mgmt.datafactory.models.FactoryIdentityType
         :keyword user_assigned_identities: List of user assigned identities for the factory.
         :paramtype user_assigned_identities: dict[str, any]
@@ -23480,7 +23816,7 @@ class FactoryListResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["Factory"],
+        value: List["_models.Factory"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -23513,7 +23849,7 @@ class FactoryRepoUpdate(msrest.serialization.Model):
         self,
         *,
         factory_resource_id: Optional[str] = None,
-        repo_configuration: Optional["FactoryRepoConfiguration"] = None,
+        repo_configuration: Optional["_models.FactoryRepoConfiguration"] = None,
         **kwargs
     ):
         """
@@ -23535,7 +23871,7 @@ class FactoryUpdateParameters(msrest.serialization.Model):
     :ivar identity: Managed service identity of the factory.
     :vartype identity: ~azure.mgmt.datafactory.models.FactoryIdentity
     :ivar public_network_access: Whether or not public network access is allowed for the data
-     factory. Possible values include: "Enabled", "Disabled".
+     factory. Known values are: "Enabled", "Disabled".
     :vartype public_network_access: str or ~azure.mgmt.datafactory.models.PublicNetworkAccess
     """
 
@@ -23549,8 +23885,8 @@ class FactoryUpdateParameters(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["FactoryIdentity"] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
+        identity: Optional["_models.FactoryIdentity"] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         **kwargs
     ):
         """
@@ -23559,7 +23895,7 @@ class FactoryUpdateParameters(msrest.serialization.Model):
         :keyword identity: Managed service identity of the factory.
         :paramtype identity: ~azure.mgmt.datafactory.models.FactoryIdentity
         :keyword public_network_access: Whether or not public network access is allowed for the data
-         factory. Possible values include: "Enabled", "Disabled".
+         factory. Known values are: "Enabled", "Disabled".
         :paramtype public_network_access: str or ~azure.mgmt.datafactory.models.PublicNetworkAccess
         """
         super(FactoryUpdateParameters, self).__init__(**kwargs)
@@ -23699,8 +24035,8 @@ class FailActivity(ControlActivity):
         error_code: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
         **kwargs
     ):
         """
@@ -23785,12 +24121,12 @@ class FileServerLinkedService(LinkedService):
         *,
         host: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         user_id: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -24154,21 +24490,21 @@ class FileShareDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         folder_path: Optional[Any] = None,
         file_name: Optional[Any] = None,
         modified_datetime_start: Optional[Any] = None,
         modified_datetime_end: Optional[Any] = None,
-        format: Optional["DatasetStorageFormat"] = None,
+        format: Optional["_models.DatasetStorageFormat"] = None,
         file_filter: Optional[Any] = None,
-        compression: Optional["DatasetCompression"] = None,
+        compression: Optional["_models.DatasetCompression"] = None,
         **kwargs
     ):
         """
@@ -24446,12 +24782,12 @@ class FilterActivity(ControlActivity):
         self,
         *,
         name: str,
-        items: "Expression",
-        condition: "Expression",
+        items: "_models.Expression",
+        condition: "_models.Expression",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
         **kwargs
     ):
         """
@@ -24524,10 +24860,10 @@ class Flowlet(DataFlow):
         *,
         description: Optional[str] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DataFlowFolder"] = None,
-        sources: Optional[List["DataFlowSource"]] = None,
-        sinks: Optional[List["DataFlowSink"]] = None,
-        transformations: Optional[List["Transformation"]] = None,
+        folder: Optional["_models.DataFlowFolder"] = None,
+        sources: Optional[List["_models.DataFlowSource"]] = None,
+        sinks: Optional[List["_models.DataFlowSink"]] = None,
+        transformations: Optional[List["_models.Transformation"]] = None,
         script: Optional[str] = None,
         script_lines: Optional[List[str]] = None,
         **kwargs
@@ -24614,12 +24950,12 @@ class ForEachActivity(ControlActivity):
         self,
         *,
         name: str,
-        items: "Expression",
-        activities: List["Activity"],
+        items: "_models.Expression",
+        activities: List["_models.Activity"],
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
         is_sequential: Optional[bool] = None,
         batch_count: Optional[int] = None,
         **kwargs
@@ -24810,7 +25146,7 @@ class FtpServerLinkedService(LinkedService):
      Default value is 21. Type: integer (or Expression with resultType integer), minimum: 0.
     :vartype port: any
     :ivar authentication_type: The authentication type to be used to connect to the FTP server.
-     Possible values include: "Basic", "Anonymous".
+     Known values are: "Basic", "Anonymous".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.FtpAuthenticationType
     :ivar user_name: Username to logon the FTP server. Type: string (or Expression with resultType
      string).
@@ -24857,14 +25193,14 @@ class FtpServerLinkedService(LinkedService):
         *,
         host: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         port: Optional[Any] = None,
-        authentication_type: Optional[Union[str, "FtpAuthenticationType"]] = None,
+        authentication_type: Optional[Union[str, "_models.FtpAuthenticationType"]] = None,
         user_name: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         enable_ssl: Optional[Any] = None,
         enable_server_certificate_validation: Optional[Any] = None,
@@ -24889,7 +25225,7 @@ class FtpServerLinkedService(LinkedService):
          Default value is 21. Type: integer (or Expression with resultType integer), minimum: 0.
         :paramtype port: any
         :keyword authentication_type: The authentication type to be used to connect to the FTP server.
-         Possible values include: "Basic", "Anonymous".
+         Known values are: "Basic", "Anonymous".
         :paramtype authentication_type: str or ~azure.mgmt.datafactory.models.FtpAuthenticationType
         :keyword user_name: Username to logon the FTP server. Type: string (or Expression with
          resultType string).
@@ -25063,16 +25399,16 @@ class GetMetadataActivity(ExecutionActivity):
         self,
         *,
         name: str,
-        dataset: "DatasetReference",
+        dataset: "_models.DatasetReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
         field_list: Optional[List[Any]] = None,
-        store_settings: Optional["StoreReadSettings"] = None,
-        format_settings: Optional["FormatReadSettings"] = None,
+        store_settings: Optional["_models.StoreReadSettings"] = None,
+        format_settings: Optional["_models.FormatReadSettings"] = None,
         **kwargs
     ):
         """
@@ -25166,7 +25502,7 @@ class GitHubAccessTokenRequest(msrest.serialization.Model):
         git_hub_access_code: str,
         git_hub_access_token_base_url: str,
         git_hub_client_id: Optional[str] = None,
-        git_hub_client_secret: Optional["GitHubClientSecret"] = None,
+        git_hub_client_secret: Optional["_models.GitHubClientSecret"] = None,
         **kwargs
     ):
         """
@@ -25243,13 +25579,100 @@ class GitHubClientSecret(msrest.serialization.Model):
         self.byoa_secret_name = byoa_secret_name
 
 
+class GlobalParameterListResponse(msrest.serialization.Model):
+    """A list of Global parameters.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. List of global parameters.
+    :vartype value: list[~azure.mgmt.datafactory.models.GlobalParameterResource]
+    :ivar next_link: The link to the next page of results, if any remaining results exist.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[GlobalParameterResource]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["_models.GlobalParameterResource"],
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: Required. List of global parameters.
+        :paramtype value: list[~azure.mgmt.datafactory.models.GlobalParameterResource]
+        :keyword next_link: The link to the next page of results, if any remaining results exist.
+        :paramtype next_link: str
+        """
+        super(GlobalParameterListResponse, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class GlobalParameterResource(SubResource):
+    """Global parameters resource type.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource identifier.
+    :vartype id: str
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar etag: Etag identifies change in the resource.
+    :vartype etag: str
+    :ivar properties: Required. Properties of the global parameter.
+    :vartype properties: dict[str, ~azure.mgmt.datafactory.models.GlobalParameterSpecification]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '{GlobalParameterSpecification}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: Dict[str, "_models.GlobalParameterSpecification"],
+        **kwargs
+    ):
+        """
+        :keyword properties: Required. Properties of the global parameter.
+        :paramtype properties: dict[str, ~azure.mgmt.datafactory.models.GlobalParameterSpecification]
+        """
+        super(GlobalParameterResource, self).__init__(**kwargs)
+        self.properties = properties
+
+
 class GlobalParameterSpecification(msrest.serialization.Model):
     """Definition of a single parameter for an entity.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Global Parameter type. Possible values include: "Object", "String",
-     "Int", "Float", "Bool", "Array".
+    :ivar type: Required. Global Parameter type. Known values are: "Object", "String", "Int",
+     "Float", "Bool", "Array".
     :vartype type: str or ~azure.mgmt.datafactory.models.GlobalParameterType
     :ivar value: Required. Value of parameter.
     :vartype value: any
@@ -25268,13 +25691,13 @@ class GlobalParameterSpecification(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "GlobalParameterType"],
+        type: Union[str, "_models.GlobalParameterType"],
         value: Any,
         **kwargs
     ):
         """
-        :keyword type: Required. Global Parameter type. Possible values include: "Object", "String",
-         "Int", "Float", "Bool", "Array".
+        :keyword type: Required. Global Parameter type. Known values are: "Object", "String", "Int",
+         "Float", "Bool", "Array".
         :paramtype type: str or ~azure.mgmt.datafactory.models.GlobalParameterType
         :keyword value: Required. Value of parameter.
         :paramtype value: any
@@ -25312,7 +25735,7 @@ class GoogleAdWordsLinkedService(LinkedService):
      grant access to the AdWords API.
     :vartype developer_token: ~azure.mgmt.datafactory.models.SecretBase
     :ivar authentication_type: The OAuth 2.0 authentication mechanism used for authentication.
-     ServiceAuthentication can only be used on self-hosted IR. Possible values include:
+     ServiceAuthentication can only be used on self-hosted IR. Known values are:
      "ServiceAuthentication", "UserAuthentication".
     :vartype authentication_type: str or
      ~azure.mgmt.datafactory.models.GoogleAdWordsAuthenticationType
@@ -25373,17 +25796,17 @@ class GoogleAdWordsLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_properties: Optional[Any] = None,
         client_customer_id: Optional[Any] = None,
-        developer_token: Optional["SecretBase"] = None,
-        authentication_type: Optional[Union[str, "GoogleAdWordsAuthenticationType"]] = None,
-        refresh_token: Optional["SecretBase"] = None,
+        developer_token: Optional["_models.SecretBase"] = None,
+        authentication_type: Optional[Union[str, "_models.GoogleAdWordsAuthenticationType"]] = None,
+        refresh_token: Optional["_models.SecretBase"] = None,
         client_id: Optional[Any] = None,
-        client_secret: Optional["SecretBase"] = None,
+        client_secret: Optional["_models.SecretBase"] = None,
         email: Optional[Any] = None,
         key_file_path: Optional[Any] = None,
         trusted_cert_path: Optional[Any] = None,
@@ -25413,7 +25836,7 @@ class GoogleAdWordsLinkedService(LinkedService):
          to grant access to the AdWords API.
         :paramtype developer_token: ~azure.mgmt.datafactory.models.SecretBase
         :keyword authentication_type: The OAuth 2.0 authentication mechanism used for authentication.
-         ServiceAuthentication can only be used on self-hosted IR. Possible values include:
+         ServiceAuthentication can only be used on self-hosted IR. Known values are:
          "ServiceAuthentication", "UserAuthentication".
         :paramtype authentication_type: str or
          ~azure.mgmt.datafactory.models.GoogleAdWordsAuthenticationType
@@ -25512,14 +25935,14 @@ class GoogleAdWordsObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -25672,8 +26095,8 @@ class GoogleBigQueryLinkedService(LinkedService):
      Google Drive. The default value is false.
     :vartype request_google_drive_scope: any
     :ivar authentication_type: Required. The OAuth 2.0 authentication mechanism used for
-     authentication. ServiceAuthentication can only be used on self-hosted IR. Possible values
-     include: "ServiceAuthentication", "UserAuthentication".
+     authentication. ServiceAuthentication can only be used on self-hosted IR. Known values are:
+     "ServiceAuthentication", "UserAuthentication".
     :vartype authentication_type: str or
      ~azure.mgmt.datafactory.models.GoogleBigQueryAuthenticationType
     :ivar refresh_token: The refresh token obtained from Google for authorizing access to BigQuery
@@ -25735,17 +26158,17 @@ class GoogleBigQueryLinkedService(LinkedService):
         self,
         *,
         project: Any,
-        authentication_type: Union[str, "GoogleBigQueryAuthenticationType"],
+        authentication_type: Union[str, "_models.GoogleBigQueryAuthenticationType"],
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         additional_projects: Optional[Any] = None,
         request_google_drive_scope: Optional[Any] = None,
-        refresh_token: Optional["SecretBase"] = None,
+        refresh_token: Optional["_models.SecretBase"] = None,
         client_id: Optional[Any] = None,
-        client_secret: Optional["SecretBase"] = None,
+        client_secret: Optional["_models.SecretBase"] = None,
         email: Optional[Any] = None,
         key_file_path: Optional[Any] = None,
         trusted_cert_path: Optional[Any] = None,
@@ -25774,8 +26197,8 @@ class GoogleBigQueryLinkedService(LinkedService):
          Google Drive. The default value is false.
         :paramtype request_google_drive_scope: any
         :keyword authentication_type: Required. The OAuth 2.0 authentication mechanism used for
-         authentication. ServiceAuthentication can only be used on self-hosted IR. Possible values
-         include: "ServiceAuthentication", "UserAuthentication".
+         authentication. ServiceAuthentication can only be used on self-hosted IR. Known values are:
+         "ServiceAuthentication", "UserAuthentication".
         :paramtype authentication_type: str or
          ~azure.mgmt.datafactory.models.GoogleBigQueryAuthenticationType
         :keyword refresh_token: The refresh token obtained from Google for authorizing access to
@@ -25882,14 +26305,14 @@ class GoogleBigQueryObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         table: Optional[Any] = None,
         dataset: Optional[Any] = None,
@@ -26082,12 +26505,12 @@ class GoogleCloudStorageLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         access_key_id: Optional[Any] = None,
-        secret_access_key: Optional["SecretBase"] = None,
+        secret_access_key: Optional["_models.SecretBase"] = None,
         service_url: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
@@ -26389,12 +26812,12 @@ class GreenplumLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_string: Optional[Any] = None,
-        pwd: Optional["AzureKeyVaultSecretReference"] = None,
+        pwd: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -26580,14 +27003,14 @@ class GreenplumTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         table: Optional[Any] = None,
         schema_type_properties_schema: Optional[Any] = None,
@@ -26658,7 +27081,7 @@ class HBaseLinkedService(LinkedService):
      /gateway/sandbox/hbase/version).
     :vartype http_path: any
     :ivar authentication_type: Required. The authentication mechanism to use to connect to the
-     HBase server. Possible values include: "Anonymous", "Basic".
+     HBase server. Known values are: "Anonymous", "Basic".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.HBaseAuthenticationType
     :ivar username: The user name used to connect to the HBase instance.
     :vartype username: any
@@ -26713,16 +27136,16 @@ class HBaseLinkedService(LinkedService):
         self,
         *,
         host: Any,
-        authentication_type: Union[str, "HBaseAuthenticationType"],
+        authentication_type: Union[str, "_models.HBaseAuthenticationType"],
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         port: Optional[Any] = None,
         http_path: Optional[Any] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         enable_ssl: Optional[Any] = None,
         trusted_cert_path: Optional[Any] = None,
         allow_host_name_cn_mismatch: Optional[Any] = None,
@@ -26752,7 +27175,7 @@ class HBaseLinkedService(LinkedService):
          /gateway/sandbox/hbase/version).
         :paramtype http_path: any
         :keyword authentication_type: Required. The authentication mechanism to use to connect to the
-         HBase server. Possible values include: "Anonymous", "Basic".
+         HBase server. Known values are: "Anonymous", "Basic".
         :paramtype authentication_type: str or ~azure.mgmt.datafactory.models.HBaseAuthenticationType
         :keyword username: The user name used to connect to the HBase instance.
         :paramtype username: any
@@ -26843,14 +27266,14 @@ class HBaseObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -27035,14 +27458,14 @@ class HdfsLinkedService(LinkedService):
         *,
         url: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         authentication_type: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
         user_name: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         **kwargs
     ):
         """
@@ -27216,7 +27639,7 @@ class HdfsReadSettings(StoreReadSettings):
         partition_root_path: Optional[Any] = None,
         modified_datetime_start: Optional[Any] = None,
         modified_datetime_end: Optional[Any] = None,
-        distcp_settings: Optional["DistcpSettings"] = None,
+        distcp_settings: Optional["_models.DistcpSettings"] = None,
         delete_files_after_completion: Optional[Any] = None,
         **kwargs
     ):
@@ -27327,7 +27750,7 @@ class HdfsSource(CopySource):
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
         recursive: Optional[Any] = None,
-        distcp_settings: Optional["DistcpSettings"] = None,
+        distcp_settings: Optional["_models.DistcpSettings"] = None,
         **kwargs
     ):
         """
@@ -27384,7 +27807,7 @@ class HDInsightHiveActivity(ExecutionActivity):
     :vartype storage_linked_services: list[~azure.mgmt.datafactory.models.LinkedServiceReference]
     :ivar arguments: User specified arguments to HDInsightActivity.
     :vartype arguments: list[any]
-    :ivar get_debug_info: Debug info option. Possible values include: "None", "Always", "Failure".
+    :ivar get_debug_info: Debug info option. Known values are: "None", "Always", "Failure".
     :vartype get_debug_info: str or ~azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption
     :ivar script_path: Script path. Type: string (or Expression with resultType string).
     :vartype script_path: any
@@ -27429,15 +27852,15 @@ class HDInsightHiveActivity(ExecutionActivity):
         name: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
-        storage_linked_services: Optional[List["LinkedServiceReference"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
+        storage_linked_services: Optional[List["_models.LinkedServiceReference"]] = None,
         arguments: Optional[List[Any]] = None,
-        get_debug_info: Optional[Union[str, "HDInsightActivityDebugInfoOption"]] = None,
+        get_debug_info: Optional[Union[str, "_models.HDInsightActivityDebugInfoOption"]] = None,
         script_path: Optional[Any] = None,
-        script_linked_service: Optional["LinkedServiceReference"] = None,
+        script_linked_service: Optional["_models.LinkedServiceReference"] = None,
         defines: Optional[Dict[str, Any]] = None,
         variables: Optional[List[Any]] = None,
         query_timeout: Optional[int] = None,
@@ -27463,8 +27886,7 @@ class HDInsightHiveActivity(ExecutionActivity):
         :paramtype storage_linked_services: list[~azure.mgmt.datafactory.models.LinkedServiceReference]
         :keyword arguments: User specified arguments to HDInsightActivity.
         :paramtype arguments: list[any]
-        :keyword get_debug_info: Debug info option. Possible values include: "None", "Always",
-         "Failure".
+        :keyword get_debug_info: Debug info option. Known values are: "None", "Always", "Failure".
         :paramtype get_debug_info: str or
          ~azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption
         :keyword script_path: Script path. Type: string (or Expression with resultType string).
@@ -27561,14 +27983,14 @@ class HDInsightLinkedService(LinkedService):
         *,
         cluster_uri: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         user_name: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        hcatalog_linked_service_name: Optional["LinkedServiceReference"] = None,
+        password: Optional["_models.SecretBase"] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        hcatalog_linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         encrypted_credential: Optional[Any] = None,
         is_esp_enabled: Optional[Any] = None,
         file_system: Optional[Any] = None,
@@ -27648,7 +28070,7 @@ class HDInsightMapReduceActivity(ExecutionActivity):
     :vartype storage_linked_services: list[~azure.mgmt.datafactory.models.LinkedServiceReference]
     :ivar arguments: User specified arguments to HDInsightActivity.
     :vartype arguments: list[any]
-    :ivar get_debug_info: Debug info option. Possible values include: "None", "Always", "Failure".
+    :ivar get_debug_info: Debug info option. Known values are: "None", "Always", "Failure".
     :vartype get_debug_info: str or ~azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption
     :ivar class_name: Required. Class name. Type: string (or Expression with resultType string).
     :vartype class_name: any
@@ -27696,14 +28118,14 @@ class HDInsightMapReduceActivity(ExecutionActivity):
         jar_file_path: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
-        storage_linked_services: Optional[List["LinkedServiceReference"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
+        storage_linked_services: Optional[List["_models.LinkedServiceReference"]] = None,
         arguments: Optional[List[Any]] = None,
-        get_debug_info: Optional[Union[str, "HDInsightActivityDebugInfoOption"]] = None,
-        jar_linked_service: Optional["LinkedServiceReference"] = None,
+        get_debug_info: Optional[Union[str, "_models.HDInsightActivityDebugInfoOption"]] = None,
+        jar_linked_service: Optional["_models.LinkedServiceReference"] = None,
         jar_libs: Optional[List[Any]] = None,
         defines: Optional[Dict[str, Any]] = None,
         **kwargs
@@ -27728,8 +28150,7 @@ class HDInsightMapReduceActivity(ExecutionActivity):
         :paramtype storage_linked_services: list[~azure.mgmt.datafactory.models.LinkedServiceReference]
         :keyword arguments: User specified arguments to HDInsightActivity.
         :paramtype arguments: list[any]
-        :keyword get_debug_info: Debug info option. Possible values include: "None", "Always",
-         "Failure".
+        :keyword get_debug_info: Debug info option. Known values are: "None", "Always", "Failure".
         :paramtype get_debug_info: str or
          ~azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption
         :keyword class_name: Required. Class name. Type: string (or Expression with resultType string).
@@ -27936,24 +28357,24 @@ class HDInsightOnDemandLinkedService(LinkedService):
         cluster_size: Any,
         time_to_live: Any,
         version: Any,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         host_subscription_id: Any,
         tenant: Any,
         cluster_resource_group: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         service_principal_id: Optional[Any] = None,
-        service_principal_key: Optional["SecretBase"] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
         cluster_name_prefix: Optional[Any] = None,
         cluster_user_name: Optional[Any] = None,
-        cluster_password: Optional["SecretBase"] = None,
+        cluster_password: Optional["_models.SecretBase"] = None,
         cluster_ssh_user_name: Optional[Any] = None,
-        cluster_ssh_password: Optional["SecretBase"] = None,
-        additional_linked_service_names: Optional[List["LinkedServiceReference"]] = None,
-        hcatalog_linked_service_name: Optional["LinkedServiceReference"] = None,
+        cluster_ssh_password: Optional["_models.SecretBase"] = None,
+        additional_linked_service_names: Optional[List["_models.LinkedServiceReference"]] = None,
+        hcatalog_linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         cluster_type: Optional[Any] = None,
         spark_version: Optional[Any] = None,
         core_configuration: Optional[Any] = None,
@@ -27968,10 +28389,10 @@ class HDInsightOnDemandLinkedService(LinkedService):
         head_node_size: Optional[Any] = None,
         data_node_size: Optional[Any] = None,
         zookeeper_node_size: Optional[Any] = None,
-        script_actions: Optional[List["ScriptAction"]] = None,
+        script_actions: Optional[List["_models.ScriptAction"]] = None,
         virtual_network_id: Optional[Any] = None,
         subnet_name: Optional[Any] = None,
-        credential: Optional["CredentialReference"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs
     ):
         """
@@ -28153,7 +28574,7 @@ class HDInsightPigActivity(ExecutionActivity):
     :ivar arguments: User specified arguments to HDInsightActivity. Type: array (or Expression with
      resultType array).
     :vartype arguments: any
-    :ivar get_debug_info: Debug info option. Possible values include: "None", "Always", "Failure".
+    :ivar get_debug_info: Debug info option. Known values are: "None", "Always", "Failure".
     :vartype get_debug_info: str or ~azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption
     :ivar script_path: Script path. Type: string (or Expression with resultType string).
     :vartype script_path: any
@@ -28191,15 +28612,15 @@ class HDInsightPigActivity(ExecutionActivity):
         name: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
-        storage_linked_services: Optional[List["LinkedServiceReference"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
+        storage_linked_services: Optional[List["_models.LinkedServiceReference"]] = None,
         arguments: Optional[Any] = None,
-        get_debug_info: Optional[Union[str, "HDInsightActivityDebugInfoOption"]] = None,
+        get_debug_info: Optional[Union[str, "_models.HDInsightActivityDebugInfoOption"]] = None,
         script_path: Optional[Any] = None,
-        script_linked_service: Optional["LinkedServiceReference"] = None,
+        script_linked_service: Optional["_models.LinkedServiceReference"] = None,
         defines: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
@@ -28224,8 +28645,7 @@ class HDInsightPigActivity(ExecutionActivity):
         :keyword arguments: User specified arguments to HDInsightActivity. Type: array (or Expression
          with resultType array).
         :paramtype arguments: any
-        :keyword get_debug_info: Debug info option. Possible values include: "None", "Always",
-         "Failure".
+        :keyword get_debug_info: Debug info option. Known values are: "None", "Always", "Failure".
         :paramtype get_debug_info: str or
          ~azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption
         :keyword script_path: Script path. Type: string (or Expression with resultType string).
@@ -28275,7 +28695,7 @@ class HDInsightSparkActivity(ExecutionActivity):
     :vartype entry_file_path: any
     :ivar arguments: The user-specified arguments to HDInsightSparkActivity.
     :vartype arguments: list[any]
-    :ivar get_debug_info: Debug info option. Possible values include: "None", "Always", "Failure".
+    :ivar get_debug_info: Debug info option. Known values are: "None", "Always", "Failure".
     :vartype get_debug_info: str or ~azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption
     :ivar spark_job_linked_service: The storage linked service for uploading the entry file and
      dependencies, and for receiving logs.
@@ -28323,13 +28743,13 @@ class HDInsightSparkActivity(ExecutionActivity):
         entry_file_path: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
         arguments: Optional[List[Any]] = None,
-        get_debug_info: Optional[Union[str, "HDInsightActivityDebugInfoOption"]] = None,
-        spark_job_linked_service: Optional["LinkedServiceReference"] = None,
+        get_debug_info: Optional[Union[str, "_models.HDInsightActivityDebugInfoOption"]] = None,
+        spark_job_linked_service: Optional["_models.LinkedServiceReference"] = None,
         class_name: Optional[str] = None,
         proxy_user: Optional[Any] = None,
         spark_config: Optional[Dict[str, Any]] = None,
@@ -28359,8 +28779,7 @@ class HDInsightSparkActivity(ExecutionActivity):
         :paramtype entry_file_path: any
         :keyword arguments: The user-specified arguments to HDInsightSparkActivity.
         :paramtype arguments: list[any]
-        :keyword get_debug_info: Debug info option. Possible values include: "None", "Always",
-         "Failure".
+        :keyword get_debug_info: Debug info option. Known values are: "None", "Always", "Failure".
         :paramtype get_debug_info: str or
          ~azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption
         :keyword spark_job_linked_service: The storage linked service for uploading the entry file and
@@ -28412,7 +28831,7 @@ class HDInsightStreamingActivity(ExecutionActivity):
     :vartype storage_linked_services: list[~azure.mgmt.datafactory.models.LinkedServiceReference]
     :ivar arguments: User specified arguments to HDInsightActivity.
     :vartype arguments: list[any]
-    :ivar get_debug_info: Debug info option. Possible values include: "None", "Always", "Failure".
+    :ivar get_debug_info: Debug info option. Known values are: "None", "Always", "Failure".
     :vartype get_debug_info: str or ~azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption
     :ivar mapper: Required. Mapper executable name. Type: string (or Expression with resultType
      string).
@@ -28480,14 +28899,14 @@ class HDInsightStreamingActivity(ExecutionActivity):
         file_paths: List[Any],
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
-        storage_linked_services: Optional[List["LinkedServiceReference"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
+        storage_linked_services: Optional[List["_models.LinkedServiceReference"]] = None,
         arguments: Optional[List[Any]] = None,
-        get_debug_info: Optional[Union[str, "HDInsightActivityDebugInfoOption"]] = None,
-        file_linked_service: Optional["LinkedServiceReference"] = None,
+        get_debug_info: Optional[Union[str, "_models.HDInsightActivityDebugInfoOption"]] = None,
+        file_linked_service: Optional["_models.LinkedServiceReference"] = None,
         combiner: Optional[Any] = None,
         command_environment: Optional[List[Any]] = None,
         defines: Optional[Dict[str, Any]] = None,
@@ -28513,8 +28932,7 @@ class HDInsightStreamingActivity(ExecutionActivity):
         :paramtype storage_linked_services: list[~azure.mgmt.datafactory.models.LinkedServiceReference]
         :keyword arguments: User specified arguments to HDInsightActivity.
         :paramtype arguments: list[any]
-        :keyword get_debug_info: Debug info option. Possible values include: "None", "Always",
-         "Failure".
+        :keyword get_debug_info: Debug info option. Known values are: "None", "Always", "Failure".
         :paramtype get_debug_info: str or
          ~azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption
         :keyword mapper: Required. Mapper executable name. Type: string (or Expression with resultType
@@ -28579,15 +28997,15 @@ class HiveLinkedService(LinkedService):
     :vartype host: any
     :ivar port: The TCP port that the Hive server uses to listen for client connections.
     :vartype port: any
-    :ivar server_type: The type of Hive server. Possible values include: "HiveServer1",
-     "HiveServer2", "HiveThriftServer".
+    :ivar server_type: The type of Hive server. Known values are: "HiveServer1", "HiveServer2",
+     "HiveThriftServer".
     :vartype server_type: str or ~azure.mgmt.datafactory.models.HiveServerType
-    :ivar thrift_transport_protocol: The transport protocol to use in the Thrift layer. Possible
-     values include: "Binary", "SASL", "HTTP ".
+    :ivar thrift_transport_protocol: The transport protocol to use in the Thrift layer. Known
+     values are: "Binary", "SASL", "HTTP ".
     :vartype thrift_transport_protocol: str or
      ~azure.mgmt.datafactory.models.HiveThriftTransportProtocol
     :ivar authentication_type: Required. The authentication method used to access the Hive server.
-     Possible values include: "Anonymous", "Username", "UsernameAndPassword",
+     Known values are: "Anonymous", "Username", "UsernameAndPassword",
      "WindowsAzureHDInsightService".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.HiveAuthenticationType
     :ivar service_discovery_mode: true to indicate using the ZooKeeper service, false not.
@@ -28663,20 +29081,20 @@ class HiveLinkedService(LinkedService):
         self,
         *,
         host: Any,
-        authentication_type: Union[str, "HiveAuthenticationType"],
+        authentication_type: Union[str, "_models.HiveAuthenticationType"],
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         port: Optional[Any] = None,
-        server_type: Optional[Union[str, "HiveServerType"]] = None,
-        thrift_transport_protocol: Optional[Union[str, "HiveThriftTransportProtocol"]] = None,
+        server_type: Optional[Union[str, "_models.HiveServerType"]] = None,
+        thrift_transport_protocol: Optional[Union[str, "_models.HiveThriftTransportProtocol"]] = None,
         service_discovery_mode: Optional[Any] = None,
         zoo_keeper_name_space: Optional[Any] = None,
         use_native_query: Optional[Any] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         http_path: Optional[Any] = None,
         enable_ssl: Optional[Any] = None,
         trusted_cert_path: Optional[Any] = None,
@@ -28703,15 +29121,15 @@ class HiveLinkedService(LinkedService):
         :paramtype host: any
         :keyword port: The TCP port that the Hive server uses to listen for client connections.
         :paramtype port: any
-        :keyword server_type: The type of Hive server. Possible values include: "HiveServer1",
-         "HiveServer2", "HiveThriftServer".
+        :keyword server_type: The type of Hive server. Known values are: "HiveServer1", "HiveServer2",
+         "HiveThriftServer".
         :paramtype server_type: str or ~azure.mgmt.datafactory.models.HiveServerType
-        :keyword thrift_transport_protocol: The transport protocol to use in the Thrift layer. Possible
-         values include: "Binary", "SASL", "HTTP ".
+        :keyword thrift_transport_protocol: The transport protocol to use in the Thrift layer. Known
+         values are: "Binary", "SASL", "HTTP ".
         :paramtype thrift_transport_protocol: str or
          ~azure.mgmt.datafactory.models.HiveThriftTransportProtocol
         :keyword authentication_type: Required. The authentication method used to access the Hive
-         server. Possible values include: "Anonymous", "Username", "UsernameAndPassword",
+         server. Known values are: "Anonymous", "Username", "UsernameAndPassword",
          "WindowsAzureHDInsightService".
         :paramtype authentication_type: str or ~azure.mgmt.datafactory.models.HiveAuthenticationType
         :keyword service_discovery_mode: true to indicate using the ZooKeeper service, false not.
@@ -28831,14 +29249,14 @@ class HiveObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         table: Optional[Any] = None,
         schema_type_properties_schema: Optional[Any] = None,
@@ -29049,20 +29467,20 @@ class HttpDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         relative_url: Optional[Any] = None,
         request_method: Optional[Any] = None,
         request_body: Optional[Any] = None,
         additional_headers: Optional[Any] = None,
-        format: Optional["DatasetStorageFormat"] = None,
-        compression: Optional["DatasetCompression"] = None,
+        format: Optional["_models.DatasetStorageFormat"] = None,
+        compression: Optional["_models.DatasetCompression"] = None,
         **kwargs
     ):
         """
@@ -29138,7 +29556,7 @@ class HttpLinkedService(LinkedService):
      string (or Expression with resultType string).
     :vartype url: any
     :ivar authentication_type: The authentication type to be used to connect to the HTTP server.
-     Possible values include: "Basic", "Anonymous", "Digest", "Windows", "ClientCertificate".
+     Known values are: "Basic", "Anonymous", "Digest", "Windows", "ClientCertificate".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.HttpAuthenticationType
     :ivar user_name: User name for Basic, Digest, or Windows authentication. Type: string (or
      Expression with resultType string).
@@ -29196,13 +29614,13 @@ class HttpLinkedService(LinkedService):
         *,
         url: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        authentication_type: Optional[Union[str, "HttpAuthenticationType"]] = None,
+        authentication_type: Optional[Union[str, "_models.HttpAuthenticationType"]] = None,
         user_name: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         auth_headers: Optional[Any] = None,
         embedded_cert_data: Optional[Any] = None,
         cert_thumbprint: Optional[Any] = None,
@@ -29226,7 +29644,7 @@ class HttpLinkedService(LinkedService):
          string (or Expression with resultType string).
         :paramtype url: any
         :keyword authentication_type: The authentication type to be used to connect to the HTTP server.
-         Possible values include: "Basic", "Anonymous", "Digest", "Windows", "ClientCertificate".
+         Known values are: "Basic", "Anonymous", "Digest", "Windows", "ClientCertificate".
         :paramtype authentication_type: str or ~azure.mgmt.datafactory.models.HttpAuthenticationType
         :keyword user_name: User name for Basic, Digest, or Windows authentication. Type: string (or
          Expression with resultType string).
@@ -29585,13 +30003,13 @@ class HubspotLinkedService(LinkedService):
         *,
         client_id: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        client_secret: Optional["SecretBase"] = None,
-        access_token: Optional["SecretBase"] = None,
-        refresh_token: Optional["SecretBase"] = None,
+        client_secret: Optional["_models.SecretBase"] = None,
+        access_token: Optional["_models.SecretBase"] = None,
+        refresh_token: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[Any] = None,
         use_host_verification: Optional[Any] = None,
         use_peer_verification: Optional[Any] = None,
@@ -29699,14 +30117,14 @@ class HubspotObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -29884,13 +30302,13 @@ class IfConditionActivity(ControlActivity):
         self,
         *,
         name: str,
-        expression: "Expression",
+        expression: "_models.Expression",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        if_true_activities: Optional[List["Activity"]] = None,
-        if_false_activities: Optional[List["Activity"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        if_true_activities: Optional[List["_models.Activity"]] = None,
+        if_false_activities: Optional[List["_models.Activity"]] = None,
         **kwargs
     ):
         """
@@ -29947,7 +30365,7 @@ class ImpalaLinkedService(LinkedService):
     :ivar port: The TCP port that the Impala server uses to listen for client connections. The
      default value is 21050.
     :vartype port: any
-    :ivar authentication_type: Required. The authentication type to use. Possible values include:
+    :ivar authentication_type: Required. The authentication type to use. Known values are:
      "Anonymous", "SASLUsername", "UsernameAndPassword".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.ImpalaAuthenticationType
     :ivar username: The user name used to access the Impala server. The default value is anonymous
@@ -30007,15 +30425,15 @@ class ImpalaLinkedService(LinkedService):
         self,
         *,
         host: Any,
-        authentication_type: Union[str, "ImpalaAuthenticationType"],
+        authentication_type: Union[str, "_models.ImpalaAuthenticationType"],
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         port: Optional[Any] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         enable_ssl: Optional[Any] = None,
         trusted_cert_path: Optional[Any] = None,
         use_system_trust_store: Optional[Any] = None,
@@ -30042,8 +30460,8 @@ class ImpalaLinkedService(LinkedService):
         :keyword port: The TCP port that the Impala server uses to listen for client connections. The
          default value is 21050.
         :paramtype port: any
-        :keyword authentication_type: Required. The authentication type to use. Possible values
-         include: "Anonymous", "SASLUsername", "UsernameAndPassword".
+        :keyword authentication_type: Required. The authentication type to use. Known values are:
+         "Anonymous", "SASLUsername", "UsernameAndPassword".
         :paramtype authentication_type: str or ~azure.mgmt.datafactory.models.ImpalaAuthenticationType
         :keyword username: The user name used to access the Impala server. The default value is
          anonymous when using SASLUsername.
@@ -30146,14 +30564,14 @@ class ImpalaObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         table: Optional[Any] = None,
         schema_type_properties_schema: Optional[Any] = None,
@@ -30355,14 +30773,14 @@ class InformixLinkedService(LinkedService):
         *,
         connection_string: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         authentication_type: Optional[Any] = None,
-        credential: Optional["SecretBase"] = None,
+        credential: Optional["_models.SecretBase"] = None,
         user_name: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -30645,14 +31063,14 @@ class InformixTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -30697,8 +31115,8 @@ class IntegrationRuntime(msrest.serialization.Model):
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, any]
-    :ivar type: Required. Type of integration runtime.Constant filled by server. Possible values
-     include: "Managed", "SelfHosted".
+    :ivar type: Required. Type of integration runtime.Constant filled by server. Known values are:
+     "Managed", "SelfHosted".
     :vartype type: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeType
     :ivar description: Integration runtime description.
     :vartype description: str
@@ -30817,8 +31235,8 @@ class IntegrationRuntimeComputeProperties(msrest.serialization.Model):
         node_size: Optional[str] = None,
         number_of_nodes: Optional[int] = None,
         max_parallel_executions_per_node: Optional[int] = None,
-        data_flow_properties: Optional["IntegrationRuntimeDataFlowProperties"] = None,
-        v_net_properties: Optional["IntegrationRuntimeVNetProperties"] = None,
+        data_flow_properties: Optional["_models.IntegrationRuntimeDataFlowProperties"] = None,
+        v_net_properties: Optional["_models.IntegrationRuntimeVNetProperties"] = None,
         **kwargs
     ):
         """
@@ -30961,7 +31379,7 @@ class IntegrationRuntimeCustomSetupScriptProperties(msrest.serialization.Model):
         self,
         *,
         blob_container_uri: Optional[str] = None,
-        sas_token: Optional["SecureString"] = None,
+        sas_token: Optional["_models.SecureString"] = None,
         **kwargs
     ):
         """
@@ -30982,8 +31400,8 @@ class IntegrationRuntimeDataFlowProperties(msrest.serialization.Model):
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, any]
-    :ivar compute_type: Compute type of the cluster which will execute data flow job. Possible
-     values include: "General", "MemoryOptimized", "ComputeOptimized".
+    :ivar compute_type: Compute type of the cluster which will execute data flow job. Known values
+     are: "General", "MemoryOptimized", "ComputeOptimized".
     :vartype compute_type: str or ~azure.mgmt.datafactory.models.DataFlowComputeType
     :ivar core_count: Core count of the cluster which will execute data flow job. Supported values
      are: 8, 16, 32, 48, 80, 144 and 272.
@@ -31012,7 +31430,7 @@ class IntegrationRuntimeDataFlowProperties(msrest.serialization.Model):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        compute_type: Optional[Union[str, "DataFlowComputeType"]] = None,
+        compute_type: Optional[Union[str, "_models.DataFlowComputeType"]] = None,
         core_count: Optional[int] = None,
         time_to_live: Optional[int] = None,
         cleanup: Optional[bool] = None,
@@ -31022,8 +31440,8 @@ class IntegrationRuntimeDataFlowProperties(msrest.serialization.Model):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, any]
-        :keyword compute_type: Compute type of the cluster which will execute data flow job. Possible
-         values include: "General", "MemoryOptimized", "ComputeOptimized".
+        :keyword compute_type: Compute type of the cluster which will execute data flow job. Known
+         values are: "General", "MemoryOptimized", "ComputeOptimized".
         :paramtype compute_type: str or ~azure.mgmt.datafactory.models.DataFlowComputeType
         :keyword core_count: Core count of the cluster which will execute data flow job. Supported
          values are: 8, 16, 32, 48, 80, 144 and 272.
@@ -31063,8 +31481,8 @@ class IntegrationRuntimeDataProxyProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        connect_via: Optional["EntityReference"] = None,
-        staging_linked_service: Optional["EntityReference"] = None,
+        connect_via: Optional["_models.EntityReference"] = None,
+        staging_linked_service: Optional["_models.EntityReference"] = None,
         path: Optional[str] = None,
         **kwargs
     ):
@@ -31105,7 +31523,7 @@ class IntegrationRuntimeDebugResource(SubResourceDebugResource):
     def __init__(
         self,
         *,
-        properties: "IntegrationRuntime",
+        properties: "_models.IntegrationRuntime",
         name: Optional[str] = None,
         **kwargs
     ):
@@ -31142,7 +31560,7 @@ class IntegrationRuntimeListResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["IntegrationRuntimeResource"],
+        value: List["_models.IntegrationRuntimeResource"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -31175,7 +31593,7 @@ class IntegrationRuntimeMonitoringData(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        nodes: Optional[List["IntegrationRuntimeNodeMonitoringData"]] = None,
+        nodes: Optional[List["_models.IntegrationRuntimeNodeMonitoringData"]] = None,
         **kwargs
     ):
         """
@@ -31308,7 +31726,7 @@ class IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint(msrest.seria
         self,
         *,
         category: Optional[str] = None,
-        endpoints: Optional[List["IntegrationRuntimeOutboundNetworkDependenciesEndpoint"]] = None,
+        endpoints: Optional[List["_models.IntegrationRuntimeOutboundNetworkDependenciesEndpoint"]] = None,
         **kwargs
     ):
         """
@@ -31342,7 +31760,7 @@ class IntegrationRuntimeOutboundNetworkDependenciesEndpoint(msrest.serialization
         self,
         *,
         domain_name: Optional[str] = None,
-        endpoint_details: Optional[List["IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails"]] = None,
+        endpoint_details: Optional[List["_models.IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails"]] = None,
         **kwargs
     ):
         """
@@ -31397,7 +31815,7 @@ class IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse(msrest.seri
     def __init__(
         self,
         *,
-        value: Optional[List["IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint"]] = None,
+        value: Optional[List["_models.IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint"]] = None,
         **kwargs
     ):
         """
@@ -31458,8 +31876,8 @@ class IntegrationRuntimeReference(msrest.serialization.Model):
 class IntegrationRuntimeRegenerateKeyParameters(msrest.serialization.Model):
     """Parameters to regenerate the authentication key.
 
-    :ivar key_name: The name of the authentication key to regenerate. Possible values include:
-     "authKey1", "authKey2".
+    :ivar key_name: The name of the authentication key to regenerate. Known values are: "authKey1",
+     "authKey2".
     :vartype key_name: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeyName
     """
 
@@ -31470,11 +31888,11 @@ class IntegrationRuntimeRegenerateKeyParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        key_name: Optional[Union[str, "IntegrationRuntimeAuthKeyName"]] = None,
+        key_name: Optional[Union[str, "_models.IntegrationRuntimeAuthKeyName"]] = None,
         **kwargs
     ):
         """
-        :keyword key_name: The name of the authentication key to regenerate. Possible values include:
+        :keyword key_name: The name of the authentication key to regenerate. Known values are:
          "authKey1", "authKey2".
         :paramtype key_name: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeyName
         """
@@ -31520,7 +31938,7 @@ class IntegrationRuntimeResource(SubResource):
     def __init__(
         self,
         *,
-        properties: "IntegrationRuntime",
+        properties: "_models.IntegrationRuntime",
         **kwargs
     ):
         """
@@ -31545,8 +31963,8 @@ class IntegrationRuntimeSsisCatalogInfo(msrest.serialization.Model):
      database.
     :vartype catalog_admin_password: ~azure.mgmt.datafactory.models.SecureString
     :ivar catalog_pricing_tier: The pricing tier for the catalog database. The valid values could
-     be found in https://azure.microsoft.com/en-us/pricing/details/sql-database/. Possible values
-     include: "Basic", "Standard", "Premium", "PremiumRS".
+     be found in https://azure.microsoft.com/en-us/pricing/details/sql-database/. Known values are:
+     "Basic", "Standard", "Premium", "PremiumRS".
     :vartype catalog_pricing_tier: str or
      ~azure.mgmt.datafactory.models.IntegrationRuntimeSsisCatalogPricingTier
     :ivar dual_standby_pair_name: The dual standby pair name of Azure-SSIS Integration Runtimes to
@@ -31573,8 +31991,8 @@ class IntegrationRuntimeSsisCatalogInfo(msrest.serialization.Model):
         additional_properties: Optional[Dict[str, Any]] = None,
         catalog_server_endpoint: Optional[str] = None,
         catalog_admin_user_name: Optional[str] = None,
-        catalog_admin_password: Optional["SecureString"] = None,
-        catalog_pricing_tier: Optional[Union[str, "IntegrationRuntimeSsisCatalogPricingTier"]] = None,
+        catalog_admin_password: Optional["_models.SecureString"] = None,
+        catalog_pricing_tier: Optional[Union[str, "_models.IntegrationRuntimeSsisCatalogPricingTier"]] = None,
         dual_standby_pair_name: Optional[str] = None,
         **kwargs
     ):
@@ -31590,8 +32008,8 @@ class IntegrationRuntimeSsisCatalogInfo(msrest.serialization.Model):
          database.
         :paramtype catalog_admin_password: ~azure.mgmt.datafactory.models.SecureString
         :keyword catalog_pricing_tier: The pricing tier for the catalog database. The valid values
-         could be found in https://azure.microsoft.com/en-us/pricing/details/sql-database/. Possible
-         values include: "Basic", "Standard", "Premium", "PremiumRS".
+         could be found in https://azure.microsoft.com/en-us/pricing/details/sql-database/. Known values
+         are: "Basic", "Standard", "Premium", "PremiumRS".
         :paramtype catalog_pricing_tier: str or
          ~azure.mgmt.datafactory.models.IntegrationRuntimeSsisCatalogPricingTier
         :keyword dual_standby_pair_name: The dual standby pair name of Azure-SSIS Integration Runtimes
@@ -31615,8 +32033,8 @@ class IntegrationRuntimeSsisProperties(msrest.serialization.Model):
     :vartype additional_properties: dict[str, any]
     :ivar catalog_info: Catalog information for managed dedicated integration runtime.
     :vartype catalog_info: ~azure.mgmt.datafactory.models.IntegrationRuntimeSsisCatalogInfo
-    :ivar license_type: License type for bringing your own license scenario. Possible values
-     include: "BasePrice", "LicenseIncluded".
+    :ivar license_type: License type for bringing your own license scenario. Known values are:
+     "BasePrice", "LicenseIncluded".
     :vartype license_type: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeLicenseType
     :ivar custom_setup_script_properties: Custom setup script properties for a managed dedicated
      integration runtime.
@@ -31625,8 +32043,8 @@ class IntegrationRuntimeSsisProperties(msrest.serialization.Model):
     :ivar data_proxy_properties: Data proxy properties for a managed dedicated integration runtime.
     :vartype data_proxy_properties:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeDataProxyProperties
-    :ivar edition: The edition for the SSIS Integration Runtime. Possible values include:
-     "Standard", "Enterprise".
+    :ivar edition: The edition for the SSIS Integration Runtime. Known values are: "Standard",
+     "Enterprise".
     :vartype edition: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeEdition
     :ivar express_custom_setup_properties: Custom setup without script properties for a SSIS
      integration runtime.
@@ -31653,14 +32071,14 @@ class IntegrationRuntimeSsisProperties(msrest.serialization.Model):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        catalog_info: Optional["IntegrationRuntimeSsisCatalogInfo"] = None,
-        license_type: Optional[Union[str, "IntegrationRuntimeLicenseType"]] = None,
-        custom_setup_script_properties: Optional["IntegrationRuntimeCustomSetupScriptProperties"] = None,
-        data_proxy_properties: Optional["IntegrationRuntimeDataProxyProperties"] = None,
-        edition: Optional[Union[str, "IntegrationRuntimeEdition"]] = None,
-        express_custom_setup_properties: Optional[List["CustomSetupBase"]] = None,
-        package_stores: Optional[List["PackageStore"]] = None,
-        credential: Optional["CredentialReference"] = None,
+        catalog_info: Optional["_models.IntegrationRuntimeSsisCatalogInfo"] = None,
+        license_type: Optional[Union[str, "_models.IntegrationRuntimeLicenseType"]] = None,
+        custom_setup_script_properties: Optional["_models.IntegrationRuntimeCustomSetupScriptProperties"] = None,
+        data_proxy_properties: Optional["_models.IntegrationRuntimeDataProxyProperties"] = None,
+        edition: Optional[Union[str, "_models.IntegrationRuntimeEdition"]] = None,
+        express_custom_setup_properties: Optional[List["_models.CustomSetupBase"]] = None,
+        package_stores: Optional[List["_models.PackageStore"]] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs
     ):
         """
@@ -31669,8 +32087,8 @@ class IntegrationRuntimeSsisProperties(msrest.serialization.Model):
         :paramtype additional_properties: dict[str, any]
         :keyword catalog_info: Catalog information for managed dedicated integration runtime.
         :paramtype catalog_info: ~azure.mgmt.datafactory.models.IntegrationRuntimeSsisCatalogInfo
-        :keyword license_type: License type for bringing your own license scenario. Possible values
-         include: "BasePrice", "LicenseIncluded".
+        :keyword license_type: License type for bringing your own license scenario. Known values are:
+         "BasePrice", "LicenseIncluded".
         :paramtype license_type: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeLicenseType
         :keyword custom_setup_script_properties: Custom setup script properties for a managed dedicated
          integration runtime.
@@ -31680,8 +32098,8 @@ class IntegrationRuntimeSsisProperties(msrest.serialization.Model):
          runtime.
         :paramtype data_proxy_properties:
          ~azure.mgmt.datafactory.models.IntegrationRuntimeDataProxyProperties
-        :keyword edition: The edition for the SSIS Integration Runtime. Possible values include:
-         "Standard", "Enterprise".
+        :keyword edition: The edition for the SSIS Integration Runtime. Known values are: "Standard",
+         "Enterprise".
         :paramtype edition: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeEdition
         :keyword express_custom_setup_properties: Custom setup without script properties for a SSIS
          integration runtime.
@@ -31717,12 +32135,12 @@ class IntegrationRuntimeStatus(msrest.serialization.Model):
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, any]
-    :ivar type: Required. Type of integration runtime.Constant filled by server. Possible values
-     include: "Managed", "SelfHosted".
+    :ivar type: Required. Type of integration runtime.Constant filled by server. Known values are:
+     "Managed", "SelfHosted".
     :vartype type: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeType
     :ivar data_factory_name: The data factory name which the integration runtime belong to.
     :vartype data_factory_name: str
-    :ivar state: The state of integration runtime. Possible values include: "Initial", "Stopped",
+    :ivar state: The state of integration runtime. Known values are: "Initial", "Stopped",
      "Started", "Starting", "Stopping", "NeedRegistration", "Online", "Limited", "Offline",
      "AccessDenied".
     :vartype state: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeState
@@ -31786,7 +32204,7 @@ class IntegrationRuntimeStatusListResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["IntegrationRuntimeStatusResponse"],
+        value: List["_models.IntegrationRuntimeStatusResponse"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -31827,7 +32245,7 @@ class IntegrationRuntimeStatusResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: "IntegrationRuntimeStatus",
+        properties: "_models.IntegrationRuntimeStatus",
         **kwargs
     ):
         """
@@ -31970,12 +32388,12 @@ class JiraLinkedService(LinkedService):
         host: Any,
         username: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         port: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[Any] = None,
         use_host_verification: Optional[Any] = None,
         use_peer_verification: Optional[Any] = None,
@@ -32084,14 +32502,14 @@ class JiraObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -32279,17 +32697,17 @@ class JsonDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
-        location: Optional["DatasetLocation"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
+        location: Optional["_models.DatasetLocation"] = None,
         encoding_name: Optional[Any] = None,
-        compression: Optional["DatasetCompression"] = None,
+        compression: Optional["_models.DatasetCompression"] = None,
         **kwargs
     ):
         """
@@ -32464,7 +32882,7 @@ class JsonReadSettings(FormatReadSettings):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        compression_properties: Optional["CompressionReadSettings"] = None,
+        compression_properties: Optional["_models.CompressionReadSettings"] = None,
         **kwargs
     ):
         """
@@ -32540,8 +32958,8 @@ class JsonSink(CopySink):
         sink_retry_wait: Optional[Any] = None,
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
-        store_settings: Optional["StoreWriteSettings"] = None,
-        format_settings: Optional["JsonWriteSettings"] = None,
+        store_settings: Optional["_models.StoreWriteSettings"] = None,
+        format_settings: Optional["_models.JsonWriteSettings"] = None,
         **kwargs
     ):
         """
@@ -32632,8 +33050,8 @@ class JsonSource(CopySource):
         source_retry_wait: Optional[Any] = None,
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
-        store_settings: Optional["StoreReadSettings"] = None,
-        format_settings: Optional["JsonReadSettings"] = None,
+        store_settings: Optional["_models.StoreReadSettings"] = None,
+        format_settings: Optional["_models.JsonReadSettings"] = None,
         additional_columns: Optional[Any] = None,
         **kwargs
     ):
@@ -32822,7 +33240,7 @@ class LinkedIntegrationRuntimeKeyAuthorization(LinkedIntegrationRuntimeType):
     def __init__(
         self,
         *,
-        key: "SecureString",
+        key: "_models.SecureString",
         **kwargs
     ):
         """
@@ -32863,7 +33281,7 @@ class LinkedIntegrationRuntimeRbacAuthorization(LinkedIntegrationRuntimeType):
         self,
         *,
         resource_id: str,
-        credential: Optional["CredentialReference"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs
     ):
         """
@@ -32933,7 +33351,7 @@ class LinkedServiceDebugResource(SubResourceDebugResource):
     def __init__(
         self,
         *,
-        properties: "LinkedService",
+        properties: "_models.LinkedService",
         name: Optional[str] = None,
         **kwargs
     ):
@@ -32970,7 +33388,7 @@ class LinkedServiceListResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["LinkedServiceResource"],
+        value: List["_models.LinkedServiceResource"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -33069,7 +33487,7 @@ class LinkedServiceResource(SubResource):
     def __init__(
         self,
         *,
-        properties: "LinkedService",
+        properties: "_models.LinkedService",
         **kwargs
     ):
         """
@@ -33104,7 +33522,7 @@ class LogLocationSettings(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         path: Optional[Any] = None,
         **kwargs
     ):
@@ -33148,9 +33566,9 @@ class LogSettings(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        log_location_settings: "LogLocationSettings",
+        log_location_settings: "_models.LogLocationSettings",
         enable_copy_activity_log: Optional[Any] = None,
-        copy_activity_log_settings: Optional["CopyActivityLogSettings"] = None,
+        copy_activity_log_settings: Optional["_models.CopyActivityLogSettings"] = None,
         **kwargs
     ):
         """
@@ -33205,7 +33623,7 @@ class LogStorageSettings(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         path: Optional[Any] = None,
         log_level: Optional[Any] = None,
@@ -33292,14 +33710,14 @@ class LookupActivity(ExecutionActivity):
         self,
         *,
         name: str,
-        source: "CopySource",
-        dataset: "DatasetReference",
+        source: "_models.CopySource",
+        dataset: "_models.DatasetReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
         first_row_only: Optional[Any] = None,
         **kwargs
     ):
@@ -33397,11 +33815,11 @@ class MagentoLinkedService(LinkedService):
         *,
         host: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        access_token: Optional["SecretBase"] = None,
+        access_token: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[Any] = None,
         use_host_verification: Optional[Any] = None,
         use_peer_verification: Optional[Any] = None,
@@ -33501,14 +33919,14 @@ class MagentoObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -33699,14 +34117,14 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, any]
-    :ivar type: Required. Type of integration runtime.Constant filled by server. Possible values
-     include: "Managed", "SelfHosted".
+    :ivar type: Required. Type of integration runtime.Constant filled by server. Known values are:
+     "Managed", "SelfHosted".
     :vartype type: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeType
     :ivar description: Integration runtime description.
     :vartype description: str
     :ivar state: Integration runtime state, only valid for managed dedicated integration runtime.
-     Possible values include: "Initial", "Stopped", "Started", "Starting", "Stopping",
-     "NeedRegistration", "Online", "Limited", "Offline", "AccessDenied".
+     Known values are: "Initial", "Stopped", "Started", "Starting", "Stopping", "NeedRegistration",
+     "Online", "Limited", "Offline", "AccessDenied".
     :vartype state: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeState
     :ivar managed_virtual_network: Managed Virtual Network reference.
     :vartype managed_virtual_network: ~azure.mgmt.datafactory.models.ManagedVirtualNetworkReference
@@ -33741,10 +34159,10 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        managed_virtual_network: Optional["ManagedVirtualNetworkReference"] = None,
-        compute_properties: Optional["IntegrationRuntimeComputeProperties"] = None,
-        ssis_properties: Optional["IntegrationRuntimeSsisProperties"] = None,
-        customer_virtual_network: Optional["IntegrationRuntimeCustomerVirtualNetwork"] = None,
+        managed_virtual_network: Optional["_models.ManagedVirtualNetworkReference"] = None,
+        compute_properties: Optional["_models.IntegrationRuntimeComputeProperties"] = None,
+        ssis_properties: Optional["_models.IntegrationRuntimeSsisProperties"] = None,
+        customer_virtual_network: Optional["_models.IntegrationRuntimeCustomerVirtualNetwork"] = None,
         **kwargs
     ):
         """
@@ -33837,7 +34255,7 @@ class ManagedIntegrationRuntimeNode(msrest.serialization.Model):
     :vartype additional_properties: dict[str, any]
     :ivar node_id: The managed integration runtime node id.
     :vartype node_id: str
-    :ivar status: The managed integration runtime node status. Possible values include: "Starting",
+    :ivar status: The managed integration runtime node status. Known values are: "Starting",
      "Available", "Recycling", "Unavailable".
     :vartype status: str or ~azure.mgmt.datafactory.models.ManagedIntegrationRuntimeNodeStatus
     :ivar errors: The errors that occurred on this integration runtime node.
@@ -33860,7 +34278,7 @@ class ManagedIntegrationRuntimeNode(msrest.serialization.Model):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        errors: Optional[List["ManagedIntegrationRuntimeError"]] = None,
+        errors: Optional[List["_models.ManagedIntegrationRuntimeError"]] = None,
         **kwargs
     ):
         """
@@ -33949,12 +34367,12 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, any]
-    :ivar type: Required. Type of integration runtime.Constant filled by server. Possible values
-     include: "Managed", "SelfHosted".
+    :ivar type: Required. Type of integration runtime.Constant filled by server. Known values are:
+     "Managed", "SelfHosted".
     :vartype type: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeType
     :ivar data_factory_name: The data factory name which the integration runtime belong to.
     :vartype data_factory_name: str
-    :ivar state: The state of integration runtime. Possible values include: "Initial", "Stopped",
+    :ivar state: The state of integration runtime. Known values are: "Initial", "Stopped",
      "Started", "Starting", "Stopping", "NeedRegistration", "Online", "Limited", "Offline",
      "AccessDenied".
     :vartype state: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeState
@@ -34051,7 +34469,7 @@ class ManagedPrivateEndpoint(msrest.serialization.Model):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connection_state: Optional["ConnectionStateProperties"] = None,
+        connection_state: Optional["_models.ConnectionStateProperties"] = None,
         fqdns: Optional[List[str]] = None,
         group_id: Optional[str] = None,
         private_link_resource_id: Optional[str] = None,
@@ -34104,7 +34522,7 @@ class ManagedPrivateEndpointListResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["ManagedPrivateEndpointResource"],
+        value: List["_models.ManagedPrivateEndpointResource"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -34157,7 +34575,7 @@ class ManagedPrivateEndpointResource(SubResource):
     def __init__(
         self,
         *,
-        properties: "ManagedPrivateEndpoint",
+        properties: "_models.ManagedPrivateEndpoint",
         **kwargs
     ):
         """
@@ -34233,7 +34651,7 @@ class ManagedVirtualNetworkListResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["ManagedVirtualNetworkResource"],
+        value: List["_models.ManagedVirtualNetworkResource"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -34251,19 +34669,17 @@ class ManagedVirtualNetworkListResponse(msrest.serialization.Model):
 class ManagedVirtualNetworkReference(msrest.serialization.Model):
     """Managed Virtual Network reference type.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Managed Virtual Network reference type. Has constant value:
+    :ivar type: Required. Managed Virtual Network reference type. Known values are:
      "ManagedVirtualNetworkReference".
-    :vartype type: str
+    :vartype type: str or ~azure.mgmt.datafactory.models.ManagedVirtualNetworkReferenceType
     :ivar reference_name: Required. Reference ManagedVirtualNetwork name.
     :vartype reference_name: str
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'reference_name': {'required': True},
     }
 
@@ -34272,19 +34688,22 @@ class ManagedVirtualNetworkReference(msrest.serialization.Model):
         'reference_name': {'key': 'referenceName', 'type': 'str'},
     }
 
-    type = "ManagedVirtualNetworkReference"
-
     def __init__(
         self,
         *,
+        type: Union[str, "_models.ManagedVirtualNetworkReferenceType"],
         reference_name: str,
         **kwargs
     ):
         """
+        :keyword type: Required. Managed Virtual Network reference type. Known values are:
+         "ManagedVirtualNetworkReference".
+        :paramtype type: str or ~azure.mgmt.datafactory.models.ManagedVirtualNetworkReferenceType
         :keyword reference_name: Required. Reference ManagedVirtualNetwork name.
         :paramtype reference_name: str
         """
         super(ManagedVirtualNetworkReference, self).__init__(**kwargs)
+        self.type = type
         self.reference_name = reference_name
 
 
@@ -34326,7 +34745,7 @@ class ManagedVirtualNetworkResource(SubResource):
     def __init__(
         self,
         *,
-        properties: "ManagedVirtualNetwork",
+        properties: "_models.ManagedVirtualNetwork",
         **kwargs
     ):
         """
@@ -34384,10 +34803,10 @@ class MappingDataFlow(DataFlow):
         *,
         description: Optional[str] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DataFlowFolder"] = None,
-        sources: Optional[List["DataFlowSource"]] = None,
-        sinks: Optional[List["DataFlowSink"]] = None,
-        transformations: Optional[List["Transformation"]] = None,
+        folder: Optional["_models.DataFlowFolder"] = None,
+        sources: Optional[List["_models.DataFlowSource"]] = None,
+        sinks: Optional[List["_models.DataFlowSink"]] = None,
+        transformations: Optional[List["_models.Transformation"]] = None,
         script: Optional[str] = None,
         script_lines: Optional[List[str]] = None,
         **kwargs
@@ -34469,12 +34888,12 @@ class MariaDBLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_string: Optional[Any] = None,
-        pwd: Optional["AzureKeyVaultSecretReference"] = None,
+        pwd: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -34652,14 +35071,14 @@ class MariaDBTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -34760,11 +35179,11 @@ class MarketoLinkedService(LinkedService):
         endpoint: Any,
         client_id: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        client_secret: Optional["SecretBase"] = None,
+        client_secret: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[Any] = None,
         use_host_verification: Optional[Any] = None,
         use_peer_verification: Optional[Any] = None,
@@ -34868,14 +35287,14 @@ class MarketoObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -35098,14 +35517,14 @@ class MicrosoftAccessLinkedService(LinkedService):
         *,
         connection_string: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         authentication_type: Optional[Any] = None,
-        credential: Optional["SecretBase"] = None,
+        credential: Optional["_models.SecretBase"] = None,
         user_name: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -35382,14 +35801,14 @@ class MicrosoftAccessTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -35477,15 +35896,15 @@ class MongoDbAtlasCollectionDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         collection: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         **kwargs
     ):
         """
@@ -35568,9 +35987,9 @@ class MongoDbAtlasLinkedService(LinkedService):
         connection_string: Any,
         database: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         **kwargs
     ):
@@ -35763,7 +36182,7 @@ class MongoDbAtlasSource(CopySource):
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
         filter: Optional[Any] = None,
-        cursor_methods: Optional["MongoDbCursorMethodsProperties"] = None,
+        cursor_methods: Optional["_models.MongoDbCursorMethodsProperties"] = None,
         batch_size: Optional[Any] = None,
         query_timeout: Optional[Any] = None,
         additional_columns: Optional[Any] = None,
@@ -35866,15 +36285,15 @@ class MongoDbCollectionDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         collection_name: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         **kwargs
     ):
         """
@@ -35998,7 +36417,7 @@ class MongoDbLinkedService(LinkedService):
      Expression with resultType string).
     :vartype server: any
     :ivar authentication_type: The authentication type to be used to connect to the MongoDB
-     database. Possible values include: "Basic", "Anonymous".
+     database. Known values are: "Basic", "Anonymous".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.MongoDbAuthenticationType
     :ivar database_name: Required. The name of the MongoDB database that you want to access. Type:
      string (or Expression with resultType string).
@@ -36057,13 +36476,13 @@ class MongoDbLinkedService(LinkedService):
         server: Any,
         database_name: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        authentication_type: Optional[Union[str, "MongoDbAuthenticationType"]] = None,
+        authentication_type: Optional[Union[str, "_models.MongoDbAuthenticationType"]] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         auth_source: Optional[Any] = None,
         port: Optional[Any] = None,
         enable_ssl: Optional[Any] = None,
@@ -36087,7 +36506,7 @@ class MongoDbLinkedService(LinkedService):
          (or Expression with resultType string).
         :paramtype server: any
         :keyword authentication_type: The authentication type to be used to connect to the MongoDB
-         database. Possible values include: "Basic", "Anonymous".
+         database. Known values are: "Basic", "Anonymous".
         :paramtype authentication_type: str or ~azure.mgmt.datafactory.models.MongoDbAuthenticationType
         :keyword database_name: Required. The name of the MongoDB database that you want to access.
          Type: string (or Expression with resultType string).
@@ -36270,15 +36689,15 @@ class MongoDbV2CollectionDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         collection: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         **kwargs
     ):
         """
@@ -36360,9 +36779,9 @@ class MongoDbV2LinkedService(LinkedService):
         connection_string: Any,
         database: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         **kwargs
     ):
@@ -36554,7 +36973,7 @@ class MongoDbV2Source(CopySource):
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
         filter: Optional[Any] = None,
-        cursor_methods: Optional["MongoDbCursorMethodsProperties"] = None,
+        cursor_methods: Optional["_models.MongoDbCursorMethodsProperties"] = None,
         batch_size: Optional[Any] = None,
         query_timeout: Optional[Any] = None,
         additional_columns: Optional[Any] = None,
@@ -36653,11 +37072,11 @@ class MySqlLinkedService(LinkedService):
         *,
         connection_string: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        password: Optional["AzureKeyVaultSecretReference"] = None,
+        password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -36832,14 +37251,14 @@ class MySqlTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -36921,12 +37340,12 @@ class NetezzaLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_string: Optional[Any] = None,
-        pwd: Optional["AzureKeyVaultSecretReference"] = None,
+        pwd: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -37076,7 +37495,7 @@ class NetezzaSource(TabularSource):
         additional_columns: Optional[Any] = None,
         query: Optional[Any] = None,
         partition_option: Optional[Any] = None,
-        partition_settings: Optional["NetezzaPartitionSettings"] = None,
+        partition_settings: Optional["_models.NetezzaPartitionSettings"] = None,
         **kwargs
     ):
         """
@@ -37179,14 +37598,14 @@ class NetezzaTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         table: Optional[Any] = None,
         schema_type_properties_schema: Optional[Any] = None,
@@ -37251,9 +37670,8 @@ class ODataLinkedService(LinkedService):
     :ivar url: Required. The URL of the OData service endpoint. Type: string (or Expression with
      resultType string).
     :vartype url: any
-    :ivar authentication_type: Type of authentication used to connect to the OData service.
-     Possible values include: "Basic", "Anonymous", "Windows", "AadServicePrincipal",
-     "ManagedServiceIdentity".
+    :ivar authentication_type: Type of authentication used to connect to the OData service. Known
+     values are: "Basic", "Anonymous", "Windows", "AadServicePrincipal", "ManagedServiceIdentity".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.ODataAuthenticationType
     :ivar user_name: User name of the OData service. Type: string (or Expression with resultType
      string).
@@ -37277,7 +37695,7 @@ class ODataLinkedService(LinkedService):
      Type: string (or Expression with resultType string).
     :vartype aad_resource_id: any
     :ivar aad_service_principal_credential_type: Specify the credential type (key or cert) is used
-     for service principal. Possible values include: "ServicePrincipalKey", "ServicePrincipalCert".
+     for service principal. Known values are: "ServicePrincipalKey", "ServicePrincipalCert".
     :vartype aad_service_principal_credential_type: str or
      ~azure.mgmt.datafactory.models.ODataAadServicePrincipalCredentialType
     :ivar service_principal_key: Specify the secret of your application registered in Azure Active
@@ -37330,22 +37748,22 @@ class ODataLinkedService(LinkedService):
         *,
         url: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        authentication_type: Optional[Union[str, "ODataAuthenticationType"]] = None,
+        authentication_type: Optional[Union[str, "_models.ODataAuthenticationType"]] = None,
         user_name: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         auth_headers: Optional[Any] = None,
         tenant: Optional[Any] = None,
         service_principal_id: Optional[Any] = None,
         azure_cloud_type: Optional[Any] = None,
         aad_resource_id: Optional[Any] = None,
-        aad_service_principal_credential_type: Optional[Union[str, "ODataAadServicePrincipalCredentialType"]] = None,
-        service_principal_key: Optional["SecretBase"] = None,
-        service_principal_embedded_cert: Optional["SecretBase"] = None,
-        service_principal_embedded_cert_password: Optional["SecretBase"] = None,
+        aad_service_principal_credential_type: Optional[Union[str, "_models.ODataAadServicePrincipalCredentialType"]] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
+        service_principal_embedded_cert: Optional["_models.SecretBase"] = None,
+        service_principal_embedded_cert_password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -37365,7 +37783,7 @@ class ODataLinkedService(LinkedService):
          resultType string).
         :paramtype url: any
         :keyword authentication_type: Type of authentication used to connect to the OData service.
-         Possible values include: "Basic", "Anonymous", "Windows", "AadServicePrincipal",
+         Known values are: "Basic", "Anonymous", "Windows", "AadServicePrincipal",
          "ManagedServiceIdentity".
         :paramtype authentication_type: str or ~azure.mgmt.datafactory.models.ODataAuthenticationType
         :keyword user_name: User name of the OData service. Type: string (or Expression with resultType
@@ -37390,8 +37808,7 @@ class ODataLinkedService(LinkedService):
          Directory. Type: string (or Expression with resultType string).
         :paramtype aad_resource_id: any
         :keyword aad_service_principal_credential_type: Specify the credential type (key or cert) is
-         used for service principal. Possible values include: "ServicePrincipalKey",
-         "ServicePrincipalCert".
+         used for service principal. Known values are: "ServicePrincipalKey", "ServicePrincipalCert".
         :paramtype aad_service_principal_credential_type: str or
          ~azure.mgmt.datafactory.models.ODataAadServicePrincipalCredentialType
         :keyword service_principal_key: Specify the secret of your application registered in Azure
@@ -37480,14 +37897,14 @@ class ODataResourceDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         path: Optional[Any] = None,
         **kwargs
     ):
@@ -37683,14 +38100,14 @@ class OdbcLinkedService(LinkedService):
         *,
         connection_string: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         authentication_type: Optional[Any] = None,
-        credential: Optional["SecretBase"] = None,
+        credential: Optional["_models.SecretBase"] = None,
         user_name: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -37972,14 +38389,14 @@ class OdbcTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -38070,15 +38487,15 @@ class Office365Dataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         table_name: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         predicate: Optional[Any] = None,
         **kwargs
     ):
@@ -38179,11 +38596,11 @@ class Office365LinkedService(LinkedService):
         office365_tenant_id: Any,
         service_principal_tenant_id: Any,
         service_principal_id: Any,
-        service_principal_key: "SecretBase",
+        service_principal_key: "_models.SecretBase",
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
@@ -38374,8 +38791,8 @@ class Operation(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         origin: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
-        service_specification: Optional["OperationServiceSpecification"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
+        service_specification: Optional["_models.OperationServiceSpecification"] = None,
         **kwargs
     ):
         """
@@ -38458,7 +38875,7 @@ class OperationListResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Operation"]] = None,
+        value: Optional[List["_models.Operation"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -38633,8 +39050,8 @@ class OperationMetricSpecification(msrest.serialization.Model):
         enable_regional_mdm_account: Optional[str] = None,
         source_mdm_account: Optional[str] = None,
         source_mdm_namespace: Optional[str] = None,
-        availabilities: Optional[List["OperationMetricAvailability"]] = None,
-        dimensions: Optional[List["OperationMetricDimension"]] = None,
+        availabilities: Optional[List["_models.OperationMetricAvailability"]] = None,
+        dimensions: Optional[List["_models.OperationMetricDimension"]] = None,
         **kwargs
     ):
         """
@@ -38691,8 +39108,8 @@ class OperationServiceSpecification(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        log_specifications: Optional[List["OperationLogSpecification"]] = None,
-        metric_specifications: Optional[List["OperationMetricSpecification"]] = None,
+        log_specifications: Optional[List["_models.OperationLogSpecification"]] = None,
+        metric_specifications: Optional[List["_models.OperationMetricSpecification"]] = None,
         **kwargs
     ):
         """
@@ -38763,12 +39180,12 @@ class OracleCloudStorageLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         access_key_id: Optional[Any] = None,
-        secret_access_key: Optional["SecretBase"] = None,
+        secret_access_key: Optional["_models.SecretBase"] = None,
         service_url: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
@@ -39072,11 +39489,11 @@ class OracleLinkedService(LinkedService):
         *,
         connection_string: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        password: Optional["AzureKeyVaultSecretReference"] = None,
+        password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -39235,11 +39652,11 @@ class OracleServiceCloudLinkedService(LinkedService):
         *,
         host: Any,
         username: Any,
-        password: "SecretBase",
+        password: "_models.SecretBase",
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         use_encrypted_endpoints: Optional[Any] = None,
         use_host_verification: Optional[Any] = None,
@@ -39345,14 +39762,14 @@ class OracleServiceCloudObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -39638,7 +40055,7 @@ class OracleSource(CopySource):
         oracle_reader_query: Optional[Any] = None,
         query_timeout: Optional[Any] = None,
         partition_option: Optional[Any] = None,
-        partition_settings: Optional["OraclePartitionSettings"] = None,
+        partition_settings: Optional["_models.OraclePartitionSettings"] = None,
         additional_columns: Optional[Any] = None,
         **kwargs
     ):
@@ -39744,14 +40161,14 @@ class OracleTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         schema_type_properties_schema: Optional[Any] = None,
         table: Optional[Any] = None,
@@ -39851,15 +40268,15 @@ class OrcDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
-        location: Optional["DatasetLocation"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
+        location: Optional["_models.DatasetLocation"] = None,
         orc_compression_codec: Optional[Any] = None,
         **kwargs
     ):
@@ -40005,8 +40422,8 @@ class OrcSink(CopySink):
         sink_retry_wait: Optional[Any] = None,
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
-        store_settings: Optional["StoreWriteSettings"] = None,
-        format_settings: Optional["OrcWriteSettings"] = None,
+        store_settings: Optional["_models.StoreWriteSettings"] = None,
+        format_settings: Optional["_models.OrcWriteSettings"] = None,
         **kwargs
     ):
         """
@@ -40094,7 +40511,7 @@ class OrcSource(CopySource):
         source_retry_wait: Optional[Any] = None,
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
-        store_settings: Optional["StoreReadSettings"] = None,
+        store_settings: Optional["_models.StoreReadSettings"] = None,
         additional_columns: Optional[Any] = None,
         **kwargs
     ):
@@ -40207,7 +40624,7 @@ class PackageStore(msrest.serialization.Model):
         self,
         *,
         name: str,
-        package_store_linked_service: "EntityReference",
+        package_store_linked_service: "_models.EntityReference",
         **kwargs
     ):
         """
@@ -40226,8 +40643,8 @@ class ParameterSpecification(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Parameter type. Possible values include: "Object", "String", "Int",
-     "Float", "Bool", "Array", "SecureString".
+    :ivar type: Required. Parameter type. Known values are: "Object", "String", "Int", "Float",
+     "Bool", "Array", "SecureString".
     :vartype type: str or ~azure.mgmt.datafactory.models.ParameterType
     :ivar default_value: Default value of parameter.
     :vartype default_value: any
@@ -40245,13 +40662,13 @@ class ParameterSpecification(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "ParameterType"],
+        type: Union[str, "_models.ParameterType"],
         default_value: Optional[Any] = None,
         **kwargs
     ):
         """
-        :keyword type: Required. Parameter type. Possible values include: "Object", "String", "Int",
-         "Float", "Bool", "Array", "SecureString".
+        :keyword type: Required. Parameter type. Known values are: "Object", "String", "Int", "Float",
+         "Bool", "Array", "SecureString".
         :paramtype type: str or ~azure.mgmt.datafactory.models.ParameterType
         :keyword default_value: Default value of parameter.
         :paramtype default_value: any
@@ -40317,15 +40734,15 @@ class ParquetDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
-        location: Optional["DatasetLocation"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
+        location: Optional["_models.DatasetLocation"] = None,
         compression_codec: Optional[Any] = None,
         **kwargs
     ):
@@ -40471,8 +40888,8 @@ class ParquetSink(CopySink):
         sink_retry_wait: Optional[Any] = None,
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
-        store_settings: Optional["StoreWriteSettings"] = None,
-        format_settings: Optional["ParquetWriteSettings"] = None,
+        store_settings: Optional["_models.StoreWriteSettings"] = None,
+        format_settings: Optional["_models.ParquetWriteSettings"] = None,
         **kwargs
     ):
         """
@@ -40560,7 +40977,7 @@ class ParquetSource(CopySource):
         source_retry_wait: Optional[Any] = None,
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
-        store_settings: Optional["StoreReadSettings"] = None,
+        store_settings: Optional["_models.StoreReadSettings"] = None,
         additional_columns: Optional[Any] = None,
         **kwargs
     ):
@@ -40716,11 +41133,11 @@ class PaypalLinkedService(LinkedService):
         host: Any,
         client_id: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        client_secret: Optional["SecretBase"] = None,
+        client_secret: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[Any] = None,
         use_host_verification: Optional[Any] = None,
         use_peer_verification: Optional[Any] = None,
@@ -40823,14 +41240,14 @@ class PaypalObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -40985,7 +41402,7 @@ class PhoenixLinkedService(LinkedService):
      WindowsAzureHDInsightService.
     :vartype http_path: any
     :ivar authentication_type: Required. The authentication mechanism used to connect to the
-     Phoenix server. Possible values include: "Anonymous", "UsernameAndPassword",
+     Phoenix server. Known values are: "Anonymous", "UsernameAndPassword",
      "WindowsAzureHDInsightService".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.PhoenixAuthenticationType
     :ivar username: The user name used to connect to the Phoenix server.
@@ -41045,16 +41462,16 @@ class PhoenixLinkedService(LinkedService):
         self,
         *,
         host: Any,
-        authentication_type: Union[str, "PhoenixAuthenticationType"],
+        authentication_type: Union[str, "_models.PhoenixAuthenticationType"],
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         port: Optional[Any] = None,
         http_path: Optional[Any] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         enable_ssl: Optional[Any] = None,
         trusted_cert_path: Optional[Any] = None,
         use_system_trust_store: Optional[Any] = None,
@@ -41086,7 +41503,7 @@ class PhoenixLinkedService(LinkedService):
          WindowsAzureHDInsightService.
         :paramtype http_path: any
         :keyword authentication_type: Required. The authentication mechanism used to connect to the
-         Phoenix server. Possible values include: "Anonymous", "UsernameAndPassword",
+         Phoenix server. Known values are: "Anonymous", "UsernameAndPassword",
          "WindowsAzureHDInsightService".
         :paramtype authentication_type: str or ~azure.mgmt.datafactory.models.PhoenixAuthenticationType
         :keyword username: The user name used to connect to the Phoenix server.
@@ -41191,14 +41608,14 @@ class PhoenixObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         table: Optional[Any] = None,
         schema_type_properties_schema: Optional[Any] = None,
@@ -41408,7 +41825,7 @@ class PipelineListResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["PipelineResource"],
+        value: List["_models.PipelineResource"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -41437,7 +41854,7 @@ class PipelinePolicy(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        elapsed_time_metric: Optional["PipelineElapsedTimeMetricPolicy"] = None,
+        elapsed_time_metric: Optional["_models.PipelineElapsedTimeMetricPolicy"] = None,
         **kwargs
     ):
         """
@@ -41561,14 +41978,14 @@ class PipelineResource(SubResource):
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        activities: Optional[List["Activity"]] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
-        variables: Optional[Dict[str, "VariableSpecification"]] = None,
+        activities: Optional[List["_models.Activity"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        variables: Optional[Dict[str, "_models.VariableSpecification"]] = None,
         concurrency: Optional[int] = None,
         annotations: Optional[List[Any]] = None,
         run_dimensions: Optional[Dict[str, Any]] = None,
-        folder: Optional["PipelineFolder"] = None,
-        policy: Optional["PipelinePolicy"] = None,
+        folder: Optional["_models.PipelineFolder"] = None,
+        policy: Optional["_models.PipelinePolicy"] = None,
         **kwargs
     ):
         """
@@ -41778,7 +42195,7 @@ class PipelineRunsQueryResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["PipelineRun"],
+        value: List["_models.PipelineRun"],
         continuation_token: Optional[str] = None,
         **kwargs
     ):
@@ -41800,7 +42217,7 @@ class PolybaseSettings(msrest.serialization.Model):
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, any]
-    :ivar reject_type: Reject type. Possible values include: "value", "percentage".
+    :ivar reject_type: Reject type. Known values are: "value", "percentage".
     :vartype reject_type: str or ~azure.mgmt.datafactory.models.PolybaseSettingsRejectType
     :ivar reject_value: Specifies the value or the percentage of rows that can be rejected before
      the query fails. Type: number (or Expression with resultType number), minimum: 0.
@@ -41827,7 +42244,7 @@ class PolybaseSettings(msrest.serialization.Model):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        reject_type: Optional[Union[str, "PolybaseSettingsRejectType"]] = None,
+        reject_type: Optional[Union[str, "_models.PolybaseSettingsRejectType"]] = None,
         reject_value: Optional[Any] = None,
         reject_sample_value: Optional[Any] = None,
         use_type_default: Optional[Any] = None,
@@ -41837,7 +42254,7 @@ class PolybaseSettings(msrest.serialization.Model):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, any]
-        :keyword reject_type: Reject type. Possible values include: "value", "percentage".
+        :keyword reject_type: Reject type. Known values are: "value", "percentage".
         :paramtype reject_type: str or ~azure.mgmt.datafactory.models.PolybaseSettingsRejectType
         :keyword reject_value: Specifies the value or the percentage of rows that can be rejected
          before the query fails. Type: number (or Expression with resultType number), minimum: 0.
@@ -41909,11 +42326,11 @@ class PostgreSqlLinkedService(LinkedService):
         *,
         connection_string: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        password: Optional["AzureKeyVaultSecretReference"] = None,
+        password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -42096,14 +42513,14 @@ class PostgreSqlTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         table: Optional[Any] = None,
         schema_type_properties_schema: Optional[Any] = None,
@@ -42163,6 +42580,8 @@ class PowerQuerySink(DataFlowSink):
     :vartype flowlet: ~azure.mgmt.datafactory.models.DataFlowReference
     :ivar schema_linked_service: Schema linked service reference.
     :vartype schema_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :ivar rejected_data_linked_service: Rejected data linked service reference.
+    :vartype rejected_data_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
     :ivar script: sink script.
     :vartype script: str
     """
@@ -42178,6 +42597,7 @@ class PowerQuerySink(DataFlowSink):
         'linked_service': {'key': 'linkedService', 'type': 'LinkedServiceReference'},
         'flowlet': {'key': 'flowlet', 'type': 'DataFlowReference'},
         'schema_linked_service': {'key': 'schemaLinkedService', 'type': 'LinkedServiceReference'},
+        'rejected_data_linked_service': {'key': 'rejectedDataLinkedService', 'type': 'LinkedServiceReference'},
         'script': {'key': 'script', 'type': 'str'},
     }
 
@@ -42186,10 +42606,11 @@ class PowerQuerySink(DataFlowSink):
         *,
         name: str,
         description: Optional[str] = None,
-        dataset: Optional["DatasetReference"] = None,
-        linked_service: Optional["LinkedServiceReference"] = None,
-        flowlet: Optional["DataFlowReference"] = None,
-        schema_linked_service: Optional["LinkedServiceReference"] = None,
+        dataset: Optional["_models.DatasetReference"] = None,
+        linked_service: Optional["_models.LinkedServiceReference"] = None,
+        flowlet: Optional["_models.DataFlowReference"] = None,
+        schema_linked_service: Optional["_models.LinkedServiceReference"] = None,
+        rejected_data_linked_service: Optional["_models.LinkedServiceReference"] = None,
         script: Optional[str] = None,
         **kwargs
     ):
@@ -42206,10 +42627,12 @@ class PowerQuerySink(DataFlowSink):
         :paramtype flowlet: ~azure.mgmt.datafactory.models.DataFlowReference
         :keyword schema_linked_service: Schema linked service reference.
         :paramtype schema_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
+        :keyword rejected_data_linked_service: Rejected data linked service reference.
+        :paramtype rejected_data_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
         :keyword script: sink script.
         :paramtype script: str
         """
-        super(PowerQuerySink, self).__init__(name=name, description=description, dataset=dataset, linked_service=linked_service, flowlet=flowlet, schema_linked_service=schema_linked_service, **kwargs)
+        super(PowerQuerySink, self).__init__(name=name, description=description, dataset=dataset, linked_service=linked_service, flowlet=flowlet, schema_linked_service=schema_linked_service, rejected_data_linked_service=rejected_data_linked_service, **kwargs)
         self.script = script
 
 
@@ -42231,7 +42654,7 @@ class PowerQuerySinkMapping(msrest.serialization.Model):
         self,
         *,
         query_name: Optional[str] = None,
-        dataflow_sinks: Optional[List["PowerQuerySink"]] = None,
+        dataflow_sinks: Optional[List["_models.PowerQuerySink"]] = None,
         **kwargs
     ):
         """
@@ -42285,10 +42708,10 @@ class PowerQuerySource(DataFlowSource):
         *,
         name: str,
         description: Optional[str] = None,
-        dataset: Optional["DatasetReference"] = None,
-        linked_service: Optional["LinkedServiceReference"] = None,
-        flowlet: Optional["DataFlowReference"] = None,
-        schema_linked_service: Optional["LinkedServiceReference"] = None,
+        dataset: Optional["_models.DatasetReference"] = None,
+        linked_service: Optional["_models.LinkedServiceReference"] = None,
+        flowlet: Optional["_models.DataFlowReference"] = None,
+        schema_linked_service: Optional["_models.LinkedServiceReference"] = None,
         script: Optional[str] = None,
         **kwargs
     ):
@@ -42340,7 +42763,7 @@ class PrestoLinkedService(LinkedService):
      default value is 8080.
     :vartype port: any
     :ivar authentication_type: Required. The authentication mechanism used to connect to the Presto
-     server. Possible values include: "Anonymous", "LDAP".
+     server. Known values are: "Anonymous", "LDAP".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.PrestoAuthenticationType
     :ivar username: The user name used to connect to the Presto server.
     :vartype username: any
@@ -42408,15 +42831,15 @@ class PrestoLinkedService(LinkedService):
         host: Any,
         server_version: Any,
         catalog: Any,
-        authentication_type: Union[str, "PrestoAuthenticationType"],
+        authentication_type: Union[str, "_models.PrestoAuthenticationType"],
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         port: Optional[Any] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         enable_ssl: Optional[Any] = None,
         trusted_cert_path: Optional[Any] = None,
         use_system_trust_store: Optional[Any] = None,
@@ -42449,7 +42872,7 @@ class PrestoLinkedService(LinkedService):
          default value is 8080.
         :paramtype port: any
         :keyword authentication_type: Required. The authentication mechanism used to connect to the
-         Presto server. Possible values include: "Anonymous", "LDAP".
+         Presto server. Known values are: "Anonymous", "LDAP".
         :paramtype authentication_type: str or ~azure.mgmt.datafactory.models.PrestoAuthenticationType
         :keyword username: The user name used to connect to the Presto server.
         :paramtype username: any
@@ -42557,14 +42980,14 @@ class PrestoObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         table: Optional[Any] = None,
         schema_type_properties_schema: Optional[Any] = None,
@@ -42701,6 +43124,31 @@ class PrestoSource(TabularSource):
         self.query = query
 
 
+class PrivateEndpoint(msrest.serialization.Model):
+    """Private endpoint which a connection belongs to.
+
+    :ivar id: The resource Id for private endpoint.
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: The resource Id for private endpoint.
+        :paramtype id: str
+        """
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = id
+
+
 class PrivateEndpointConnectionListResponse(msrest.serialization.Model):
     """A list of linked service resources.
 
@@ -42724,7 +43172,7 @@ class PrivateEndpointConnectionListResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["PrivateEndpointConnectionResource"],
+        value: List["_models.PrivateEndpointConnectionResource"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -42774,7 +43222,7 @@ class PrivateEndpointConnectionResource(SubResource):
     def __init__(
         self,
         *,
-        properties: Optional["RemotePrivateEndpointConnection"] = None,
+        properties: Optional["_models.RemotePrivateEndpointConnection"] = None,
         **kwargs
     ):
         """
@@ -42791,25 +43239,32 @@ class PrivateLinkConnectionApprovalRequest(msrest.serialization.Model):
     :ivar private_link_service_connection_state: The state of a private link connection.
     :vartype private_link_service_connection_state:
      ~azure.mgmt.datafactory.models.PrivateLinkConnectionState
+    :ivar private_endpoint: The resource of private endpoint.
+    :vartype private_endpoint: ~azure.mgmt.datafactory.models.PrivateEndpoint
     """
 
     _attribute_map = {
         'private_link_service_connection_state': {'key': 'privateLinkServiceConnectionState', 'type': 'PrivateLinkConnectionState'},
+        'private_endpoint': {'key': 'privateEndpoint', 'type': 'PrivateEndpoint'},
     }
 
     def __init__(
         self,
         *,
-        private_link_service_connection_state: Optional["PrivateLinkConnectionState"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkConnectionState"] = None,
+        private_endpoint: Optional["_models.PrivateEndpoint"] = None,
         **kwargs
     ):
         """
         :keyword private_link_service_connection_state: The state of a private link connection.
         :paramtype private_link_service_connection_state:
          ~azure.mgmt.datafactory.models.PrivateLinkConnectionState
+        :keyword private_endpoint: The resource of private endpoint.
+        :paramtype private_endpoint: ~azure.mgmt.datafactory.models.PrivateEndpoint
         """
         super(PrivateLinkConnectionApprovalRequest, self).__init__(**kwargs)
         self.private_link_service_connection_state = private_link_service_connection_state
+        self.private_endpoint = private_endpoint
 
 
 class PrivateLinkConnectionApprovalRequestResource(SubResource):
@@ -42847,7 +43302,7 @@ class PrivateLinkConnectionApprovalRequestResource(SubResource):
     def __init__(
         self,
         *,
-        properties: Optional["PrivateLinkConnectionApprovalRequest"] = None,
+        properties: Optional["_models.PrivateLinkConnectionApprovalRequest"] = None,
         **kwargs
     ):
         """
@@ -42932,7 +43387,7 @@ class PrivateLinkResource(SubResource):
     def __init__(
         self,
         *,
-        properties: Optional["PrivateLinkResourceProperties"] = None,
+        properties: Optional["_models.PrivateLinkResourceProperties"] = None,
         **kwargs
     ):
         """
@@ -43000,7 +43455,7 @@ class PrivateLinkResourcesWrapper(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["PrivateLinkResource"],
+        value: List["_models.PrivateLinkResource"],
         **kwargs
     ):
         """
@@ -43009,6 +43464,31 @@ class PrivateLinkResourcesWrapper(msrest.serialization.Model):
         """
         super(PrivateLinkResourcesWrapper, self).__init__(**kwargs)
         self.value = value
+
+
+class PurviewConfiguration(msrest.serialization.Model):
+    """Purview configuration.
+
+    :ivar purview_resource_id: Purview resource id.
+    :vartype purview_resource_id: str
+    """
+
+    _attribute_map = {
+        'purview_resource_id': {'key': 'purviewResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        purview_resource_id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword purview_resource_id: Purview resource id.
+        :paramtype purview_resource_id: str
+        """
+        super(PurviewConfiguration, self).__init__(**kwargs)
+        self.purview_resource_id = purview_resource_id
 
 
 class QueryDataFlowDebugSessionsResponse(msrest.serialization.Model):
@@ -43028,7 +43508,7 @@ class QueryDataFlowDebugSessionsResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["DataFlowDebugSessionInfo"]] = None,
+        value: Optional[List["_models.DataFlowDebugSessionInfo"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -43094,11 +43574,11 @@ class QuickbaseLinkedService(LinkedService):
         self,
         *,
         url: Any,
-        user_token: "SecretBase",
+        user_token: "_models.SecretBase",
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
@@ -43200,17 +43680,17 @@ class QuickBooksLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_properties: Optional[Any] = None,
         endpoint: Optional[Any] = None,
         company_id: Optional[Any] = None,
         consumer_key: Optional[Any] = None,
-        consumer_secret: Optional["SecretBase"] = None,
-        access_token: Optional["SecretBase"] = None,
-        access_token_secret: Optional["SecretBase"] = None,
+        consumer_secret: Optional["_models.SecretBase"] = None,
+        access_token: Optional["_models.SecretBase"] = None,
+        access_token_secret: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
@@ -43315,14 +43795,14 @@ class QuickBooksObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -43481,9 +43961,9 @@ class RecurrenceSchedule(msrest.serialization.Model):
         additional_properties: Optional[Dict[str, Any]] = None,
         minutes: Optional[List[int]] = None,
         hours: Optional[List[int]] = None,
-        week_days: Optional[List[Union[str, "DaysOfWeek"]]] = None,
+        week_days: Optional[List[Union[str, "_models.DaysOfWeek"]]] = None,
         month_days: Optional[List[int]] = None,
-        monthly_occurrences: Optional[List["RecurrenceScheduleOccurrence"]] = None,
+        monthly_occurrences: Optional[List["_models.RecurrenceScheduleOccurrence"]] = None,
         **kwargs
     ):
         """
@@ -43517,8 +43997,8 @@ class RecurrenceScheduleOccurrence(msrest.serialization.Model):
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, any]
-    :ivar day: The day of the week. Possible values include: "Sunday", "Monday", "Tuesday",
-     "Wednesday", "Thursday", "Friday", "Saturday".
+    :ivar day: The day of the week. Known values are: "Sunday", "Monday", "Tuesday", "Wednesday",
+     "Thursday", "Friday", "Saturday".
     :vartype day: str or ~azure.mgmt.datafactory.models.DayOfWeek
     :ivar occurrence: The occurrence.
     :vartype occurrence: int
@@ -43534,7 +44014,7 @@ class RecurrenceScheduleOccurrence(msrest.serialization.Model):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        day: Optional[Union[str, "DayOfWeek"]] = None,
+        day: Optional[Union[str, "_models.DayOfWeek"]] = None,
         occurrence: Optional[int] = None,
         **kwargs
     ):
@@ -43542,7 +44022,7 @@ class RecurrenceScheduleOccurrence(msrest.serialization.Model):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, any]
-        :keyword day: The day of the week. Possible values include: "Sunday", "Monday", "Tuesday",
+        :keyword day: The day of the week. Known values are: "Sunday", "Monday", "Tuesday",
          "Wednesday", "Thursday", "Friday", "Saturday".
         :paramtype day: str or ~azure.mgmt.datafactory.models.DayOfWeek
         :keyword occurrence: The occurrence.
@@ -43636,7 +44116,7 @@ class RedshiftUnloadSettings(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        s3_linked_service_name: "LinkedServiceReference",
+        s3_linked_service_name: "_models.LinkedServiceReference",
         bucket_name: Any,
         **kwargs
     ):
@@ -43791,14 +44271,14 @@ class RelationalTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -43859,8 +44339,8 @@ class RemotePrivateEndpointConnection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        private_endpoint: Optional["ArmIdWrapper"] = None,
-        private_link_service_connection_state: Optional["PrivateLinkConnectionState"] = None,
+        private_endpoint: Optional["_models.ArmIdWrapper"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkConnectionState"] = None,
         **kwargs
     ):
         """
@@ -43891,7 +44371,7 @@ class RerunTumblingWindowTrigger(Trigger):
     :ivar description: Trigger description.
     :vartype description: str
     :ivar runtime_state: Indicates if trigger is running or not. Updated when Start/Stop APIs are
-     called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
+     called on the Trigger. Known values are: "Started", "Stopped", "Disabled".
     :vartype runtime_state: str or ~azure.mgmt.datafactory.models.TriggerRuntimeState
     :ivar annotations: List of tags that can be used for describing the trigger.
     :vartype annotations: list[any]
@@ -44040,11 +44520,11 @@ class ResponsysLinkedService(LinkedService):
         endpoint: Any,
         client_id: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        client_secret: Optional["SecretBase"] = None,
+        client_secret: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[Any] = None,
         use_host_verification: Optional[Any] = None,
         use_peer_verification: Optional[Any] = None,
@@ -44150,14 +44630,14 @@ class ResponsysObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -44352,14 +44832,14 @@ class RestResourceDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         relative_url: Optional[Any] = None,
         request_method: Optional[Any] = None,
         request_body: Optional[Any] = None,
@@ -44438,8 +44918,8 @@ class RestServiceLinkedService(LinkedService):
      resultType boolean).
     :vartype enable_server_certificate_validation: any
     :ivar authentication_type: Required. Type of authentication used to connect to the REST
-     service. Possible values include: "Anonymous", "Basic", "AadServicePrincipal",
-     "ManagedServiceIdentity".
+     service. Known values are: "Anonymous", "Basic", "AadServicePrincipal",
+     "ManagedServiceIdentity", "OAuth2ClientCredential".
     :vartype authentication_type: str or
      ~azure.mgmt.datafactory.models.RestServiceAuthenticationType
     :ivar user_name: The user name used in Basic authentication type.
@@ -44470,6 +44950,20 @@ class RestServiceLinkedService(LinkedService):
     :vartype encrypted_credential: any
     :ivar credential: The credential reference containing authentication information.
     :vartype credential: ~azure.mgmt.datafactory.models.CredentialReference
+    :ivar client_id: The client ID associated with your application. Type: string (or Expression
+     with resultType string).
+    :vartype client_id: any
+    :ivar client_secret: The client secret associated with your application.
+    :vartype client_secret: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar token_endpoint: The token endpoint of the authorization server to acquire access token.
+     Type: string (or Expression with resultType string).
+    :vartype token_endpoint: any
+    :ivar resource: The target service or resource to which the access will be requested. Type:
+     string (or Expression with resultType string).
+    :vartype resource: any
+    :ivar scope: The scope of the access required. It describes what kind of access will be
+     requested. Type: string (or Expression with resultType string).
+    :vartype scope: any
     """
 
     _validation = {
@@ -44498,29 +44992,39 @@ class RestServiceLinkedService(LinkedService):
         'aad_resource_id': {'key': 'typeProperties.aadResourceId', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
         'credential': {'key': 'typeProperties.credential', 'type': 'CredentialReference'},
+        'client_id': {'key': 'typeProperties.clientId', 'type': 'object'},
+        'client_secret': {'key': 'typeProperties.clientSecret', 'type': 'SecretBase'},
+        'token_endpoint': {'key': 'typeProperties.tokenEndpoint', 'type': 'object'},
+        'resource': {'key': 'typeProperties.resource', 'type': 'object'},
+        'scope': {'key': 'typeProperties.scope', 'type': 'object'},
     }
 
     def __init__(
         self,
         *,
         url: Any,
-        authentication_type: Union[str, "RestServiceAuthenticationType"],
+        authentication_type: Union[str, "_models.RestServiceAuthenticationType"],
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         enable_server_certificate_validation: Optional[Any] = None,
         user_name: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         auth_headers: Optional[Any] = None,
         service_principal_id: Optional[Any] = None,
-        service_principal_key: Optional["SecretBase"] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[Any] = None,
         azure_cloud_type: Optional[Any] = None,
         aad_resource_id: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
-        credential: Optional["CredentialReference"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
+        client_id: Optional[Any] = None,
+        client_secret: Optional["_models.SecretBase"] = None,
+        token_endpoint: Optional[Any] = None,
+        resource: Optional[Any] = None,
+        scope: Optional[Any] = None,
         **kwargs
     ):
         """
@@ -44542,8 +45046,8 @@ class RestServiceLinkedService(LinkedService):
          resultType boolean).
         :paramtype enable_server_certificate_validation: any
         :keyword authentication_type: Required. Type of authentication used to connect to the REST
-         service. Possible values include: "Anonymous", "Basic", "AadServicePrincipal",
-         "ManagedServiceIdentity".
+         service. Known values are: "Anonymous", "Basic", "AadServicePrincipal",
+         "ManagedServiceIdentity", "OAuth2ClientCredential".
         :paramtype authentication_type: str or
          ~azure.mgmt.datafactory.models.RestServiceAuthenticationType
         :keyword user_name: The user name used in Basic authentication type.
@@ -44574,6 +45078,20 @@ class RestServiceLinkedService(LinkedService):
         :paramtype encrypted_credential: any
         :keyword credential: The credential reference containing authentication information.
         :paramtype credential: ~azure.mgmt.datafactory.models.CredentialReference
+        :keyword client_id: The client ID associated with your application. Type: string (or Expression
+         with resultType string).
+        :paramtype client_id: any
+        :keyword client_secret: The client secret associated with your application.
+        :paramtype client_secret: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword token_endpoint: The token endpoint of the authorization server to acquire access
+         token. Type: string (or Expression with resultType string).
+        :paramtype token_endpoint: any
+        :keyword resource: The target service or resource to which the access will be requested. Type:
+         string (or Expression with resultType string).
+        :paramtype resource: any
+        :keyword scope: The scope of the access required. It describes what kind of access will be
+         requested. Type: string (or Expression with resultType string).
+        :paramtype scope: any
         """
         super(RestServiceLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.type = 'RestService'  # type: str
@@ -44590,6 +45108,11 @@ class RestServiceLinkedService(LinkedService):
         self.aad_resource_id = aad_resource_id
         self.encrypted_credential = encrypted_credential
         self.credential = credential
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.token_endpoint = token_endpoint
+        self.resource = resource
+        self.scope = scope
 
 
 class RestSink(CopySink):
@@ -44933,8 +45456,8 @@ class RunFilterParameters(msrest.serialization.Model):
         last_updated_after: datetime.datetime,
         last_updated_before: datetime.datetime,
         continuation_token: Optional[str] = None,
-        filters: Optional[List["RunQueryFilter"]] = None,
-        order_by: Optional[List["RunQueryOrderBy"]] = None,
+        filters: Optional[List["_models.RunQueryFilter"]] = None,
+        order_by: Optional[List["_models.RunQueryOrderBy"]] = None,
         **kwargs
     ):
         """
@@ -44968,11 +45491,11 @@ class RunQueryFilter(msrest.serialization.Model):
     :ivar operand: Required. Parameter name to be used for filter. The allowed operands to query
      pipeline runs are PipelineName, RunStart, RunEnd and Status; to query activity runs are
      ActivityName, ActivityRunStart, ActivityRunEnd, ActivityType and Status, and to query trigger
-     runs are TriggerName, TriggerRunTimestamp and Status. Possible values include: "PipelineName",
+     runs are TriggerName, TriggerRunTimestamp and Status. Known values are: "PipelineName",
      "Status", "RunStart", "RunEnd", "ActivityName", "ActivityRunStart", "ActivityRunEnd",
      "ActivityType", "TriggerName", "TriggerRunTimestamp", "RunGroupId", "LatestOnly".
     :vartype operand: str or ~azure.mgmt.datafactory.models.RunQueryFilterOperand
-    :ivar operator: Required. Operator to be used for filter. Possible values include: "Equals",
+    :ivar operator: Required. Operator to be used for filter. Known values are: "Equals",
      "NotEquals", "In", "NotIn".
     :vartype operator: str or ~azure.mgmt.datafactory.models.RunQueryFilterOperator
     :ivar values: Required. List of filter values.
@@ -44994,8 +45517,8 @@ class RunQueryFilter(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        operand: Union[str, "RunQueryFilterOperand"],
-        operator: Union[str, "RunQueryFilterOperator"],
+        operand: Union[str, "_models.RunQueryFilterOperand"],
+        operator: Union[str, "_models.RunQueryFilterOperator"],
         values: List[str],
         **kwargs
     ):
@@ -45003,11 +45526,11 @@ class RunQueryFilter(msrest.serialization.Model):
         :keyword operand: Required. Parameter name to be used for filter. The allowed operands to query
          pipeline runs are PipelineName, RunStart, RunEnd and Status; to query activity runs are
          ActivityName, ActivityRunStart, ActivityRunEnd, ActivityType and Status, and to query trigger
-         runs are TriggerName, TriggerRunTimestamp and Status. Possible values include: "PipelineName",
+         runs are TriggerName, TriggerRunTimestamp and Status. Known values are: "PipelineName",
          "Status", "RunStart", "RunEnd", "ActivityName", "ActivityRunStart", "ActivityRunEnd",
          "ActivityType", "TriggerName", "TriggerRunTimestamp", "RunGroupId", "LatestOnly".
         :paramtype operand: str or ~azure.mgmt.datafactory.models.RunQueryFilterOperand
-        :keyword operator: Required. Operator to be used for filter. Possible values include: "Equals",
+        :keyword operator: Required. Operator to be used for filter. Known values are: "Equals",
          "NotEquals", "In", "NotIn".
         :paramtype operator: str or ~azure.mgmt.datafactory.models.RunQueryFilterOperator
         :keyword values: Required. List of filter values.
@@ -45027,11 +45550,11 @@ class RunQueryOrderBy(msrest.serialization.Model):
     :ivar order_by: Required. Parameter name to be used for order by. The allowed parameters to
      order by for pipeline runs are PipelineName, RunStart, RunEnd and Status; for activity runs are
      ActivityName, ActivityRunStart, ActivityRunEnd and Status; for trigger runs are TriggerName,
-     TriggerRunTimestamp and Status. Possible values include: "RunStart", "RunEnd", "PipelineName",
+     TriggerRunTimestamp and Status. Known values are: "RunStart", "RunEnd", "PipelineName",
      "Status", "ActivityName", "ActivityRunStart", "ActivityRunEnd", "TriggerName",
      "TriggerRunTimestamp".
     :vartype order_by: str or ~azure.mgmt.datafactory.models.RunQueryOrderByField
-    :ivar order: Required. Sorting order of the parameter. Possible values include: "ASC", "DESC".
+    :ivar order: Required. Sorting order of the parameter. Known values are: "ASC", "DESC".
     :vartype order: str or ~azure.mgmt.datafactory.models.RunQueryOrder
     """
 
@@ -45048,20 +45571,19 @@ class RunQueryOrderBy(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        order_by: Union[str, "RunQueryOrderByField"],
-        order: Union[str, "RunQueryOrder"],
+        order_by: Union[str, "_models.RunQueryOrderByField"],
+        order: Union[str, "_models.RunQueryOrder"],
         **kwargs
     ):
         """
         :keyword order_by: Required. Parameter name to be used for order by. The allowed parameters to
          order by for pipeline runs are PipelineName, RunStart, RunEnd and Status; for activity runs are
          ActivityName, ActivityRunStart, ActivityRunEnd and Status; for trigger runs are TriggerName,
-         TriggerRunTimestamp and Status. Possible values include: "RunStart", "RunEnd", "PipelineName",
+         TriggerRunTimestamp and Status. Known values are: "RunStart", "RunEnd", "PipelineName",
          "Status", "ActivityName", "ActivityRunStart", "ActivityRunEnd", "TriggerName",
          "TriggerRunTimestamp".
         :paramtype order_by: str or ~azure.mgmt.datafactory.models.RunQueryOrderByField
-        :keyword order: Required. Sorting order of the parameter. Possible values include: "ASC",
-         "DESC".
+        :keyword order: Required. Sorting order of the parameter. Known values are: "ASC", "DESC".
         :paramtype order: str or ~azure.mgmt.datafactory.models.RunQueryOrder
         """
         super(RunQueryOrderBy, self).__init__(**kwargs)
@@ -45131,14 +45653,14 @@ class SalesforceLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         environment_url: Optional[Any] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
-        security_token: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
+        security_token: Optional["_models.SecretBase"] = None,
         api_version: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
@@ -45253,13 +45775,13 @@ class SalesforceMarketingCloudLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_properties: Optional[Any] = None,
         client_id: Optional[Any] = None,
-        client_secret: Optional["SecretBase"] = None,
+        client_secret: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[Any] = None,
         use_host_verification: Optional[Any] = None,
         use_peer_verification: Optional[Any] = None,
@@ -45366,14 +45888,14 @@ class SalesforceMarketingCloudObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -45552,14 +46074,14 @@ class SalesforceObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         object_api_name: Optional[Any] = None,
         **kwargs
     ):
@@ -45659,14 +46181,14 @@ class SalesforceServiceCloudLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         environment_url: Optional[Any] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
-        security_token: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
+        security_token: Optional["_models.SecretBase"] = None,
         api_version: Optional[Any] = None,
         extended_properties: Optional[Any] = None,
         encrypted_credential: Optional[Any] = None,
@@ -45771,14 +46293,14 @@ class SalesforceServiceCloudObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         object_api_name: Optional[Any] = None,
         **kwargs
     ):
@@ -45840,8 +46362,8 @@ class SalesforceServiceCloudSink(CopySink):
     :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: any
-    :ivar write_behavior: The write behavior for the operation. Default is Insert. Possible values
-     include: "Insert", "Upsert".
+    :ivar write_behavior: The write behavior for the operation. Default is Insert. Known values
+     are: "Insert", "Upsert".
     :vartype write_behavior: str or ~azure.mgmt.datafactory.models.SalesforceSinkWriteBehavior
     :ivar external_id_field_name: The name of the external ID field for upsert operation. Default
      value is 'Id' column. Type: string (or Expression with resultType string).
@@ -45883,7 +46405,7 @@ class SalesforceServiceCloudSink(CopySink):
         sink_retry_wait: Optional[Any] = None,
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
-        write_behavior: Optional[Union[str, "SalesforceSinkWriteBehavior"]] = None,
+        write_behavior: Optional[Union[str, "_models.SalesforceSinkWriteBehavior"]] = None,
         external_id_field_name: Optional[Any] = None,
         ignore_null_values: Optional[Any] = None,
         **kwargs
@@ -45910,8 +46432,8 @@ class SalesforceServiceCloudSink(CopySink):
         :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: any
-        :keyword write_behavior: The write behavior for the operation. Default is Insert. Possible
-         values include: "Insert", "Upsert".
+        :keyword write_behavior: The write behavior for the operation. Default is Insert. Known values
+         are: "Insert", "Upsert".
         :paramtype write_behavior: str or ~azure.mgmt.datafactory.models.SalesforceSinkWriteBehavior
         :keyword external_id_field_name: The name of the external ID field for upsert operation.
          Default value is 'Id' column. Type: string (or Expression with resultType string).
@@ -45956,8 +46478,8 @@ class SalesforceServiceCloudSource(CopySource):
     :vartype disable_metrics_collection: any
     :ivar query: Database query. Type: string (or Expression with resultType string).
     :vartype query: any
-    :ivar read_behavior: The read behavior for the operation. Default is Query. Possible values
-     include: "Query", "QueryAll".
+    :ivar read_behavior: The read behavior for the operation. Default is Query. Known values are:
+     "Query", "QueryAll".
     :vartype read_behavior: str or ~azure.mgmt.datafactory.models.SalesforceSourceReadBehavior
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -45989,7 +46511,7 @@ class SalesforceServiceCloudSource(CopySource):
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
         query: Optional[Any] = None,
-        read_behavior: Optional[Union[str, "SalesforceSourceReadBehavior"]] = None,
+        read_behavior: Optional[Union[str, "_models.SalesforceSourceReadBehavior"]] = None,
         additional_columns: Optional[Any] = None,
         **kwargs
     ):
@@ -46011,8 +46533,8 @@ class SalesforceServiceCloudSource(CopySource):
         :paramtype disable_metrics_collection: any
         :keyword query: Database query. Type: string (or Expression with resultType string).
         :paramtype query: any
-        :keyword read_behavior: The read behavior for the operation. Default is Query. Possible values
-         include: "Query", "QueryAll".
+        :keyword read_behavior: The read behavior for the operation. Default is Query. Known values
+         are: "Query", "QueryAll".
         :paramtype read_behavior: str or ~azure.mgmt.datafactory.models.SalesforceSourceReadBehavior
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
@@ -46053,8 +46575,8 @@ class SalesforceSink(CopySink):
     :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: any
-    :ivar write_behavior: The write behavior for the operation. Default is Insert. Possible values
-     include: "Insert", "Upsert".
+    :ivar write_behavior: The write behavior for the operation. Default is Insert. Known values
+     are: "Insert", "Upsert".
     :vartype write_behavior: str or ~azure.mgmt.datafactory.models.SalesforceSinkWriteBehavior
     :ivar external_id_field_name: The name of the external ID field for upsert operation. Default
      value is 'Id' column. Type: string (or Expression with resultType string).
@@ -46096,7 +46618,7 @@ class SalesforceSink(CopySink):
         sink_retry_wait: Optional[Any] = None,
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
-        write_behavior: Optional[Union[str, "SalesforceSinkWriteBehavior"]] = None,
+        write_behavior: Optional[Union[str, "_models.SalesforceSinkWriteBehavior"]] = None,
         external_id_field_name: Optional[Any] = None,
         ignore_null_values: Optional[Any] = None,
         **kwargs
@@ -46123,8 +46645,8 @@ class SalesforceSink(CopySink):
         :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: any
-        :keyword write_behavior: The write behavior for the operation. Default is Insert. Possible
-         values include: "Insert", "Upsert".
+        :keyword write_behavior: The write behavior for the operation. Default is Insert. Known values
+         are: "Insert", "Upsert".
         :paramtype write_behavior: str or ~azure.mgmt.datafactory.models.SalesforceSinkWriteBehavior
         :keyword external_id_field_name: The name of the external ID field for upsert operation.
          Default value is 'Id' column. Type: string (or Expression with resultType string).
@@ -46175,8 +46697,8 @@ class SalesforceSource(TabularSource):
     :vartype additional_columns: any
     :ivar query: Database query. Type: string (or Expression with resultType string).
     :vartype query: any
-    :ivar read_behavior: The read behavior for the operation. Default is Query. Possible values
-     include: "Query", "QueryAll".
+    :ivar read_behavior: The read behavior for the operation. Default is Query. Known values are:
+     "Query", "QueryAll".
     :vartype read_behavior: str or ~azure.mgmt.datafactory.models.SalesforceSourceReadBehavior
     """
 
@@ -46208,7 +46730,7 @@ class SalesforceSource(TabularSource):
         query_timeout: Optional[Any] = None,
         additional_columns: Optional[Any] = None,
         query: Optional[Any] = None,
-        read_behavior: Optional[Union[str, "SalesforceSourceReadBehavior"]] = None,
+        read_behavior: Optional[Union[str, "_models.SalesforceSourceReadBehavior"]] = None,
         **kwargs
     ):
         """
@@ -46235,8 +46757,8 @@ class SalesforceSource(TabularSource):
         :paramtype additional_columns: any
         :keyword query: Database query. Type: string (or Expression with resultType string).
         :paramtype query: any
-        :keyword read_behavior: The read behavior for the operation. Default is Query. Possible values
-         include: "Query", "QueryAll".
+        :keyword read_behavior: The read behavior for the operation. Default is Query. Known values
+         are: "Query", "QueryAll".
         :paramtype read_behavior: str or ~azure.mgmt.datafactory.models.SalesforceSourceReadBehavior
         """
         super(SalesforceSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, disable_metrics_collection=disable_metrics_collection, query_timeout=query_timeout, additional_columns=additional_columns, **kwargs)
@@ -46294,14 +46816,14 @@ class SapBwCubeDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         **kwargs
     ):
         """
@@ -46397,12 +46919,12 @@ class SapBWLinkedService(LinkedService):
         system_number: Any,
         client_id: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         user_name: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -46594,12 +47116,12 @@ class SapCloudForCustomerLinkedService(LinkedService):
         *,
         url: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -46691,15 +47213,15 @@ class SapCloudForCustomerResourceDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         path: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         **kwargs
     ):
         """
@@ -46760,8 +47282,8 @@ class SapCloudForCustomerSink(CopySink):
     :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
      false. Type: boolean (or Expression with resultType boolean).
     :vartype disable_metrics_collection: any
-    :ivar write_behavior: The write behavior for the operation. Default is 'Insert'. Possible
-     values include: "Insert", "Update".
+    :ivar write_behavior: The write behavior for the operation. Default is 'Insert'. Known values
+     are: "Insert", "Update".
     :vartype write_behavior: str or
      ~azure.mgmt.datafactory.models.SapCloudForCustomerSinkWriteBehavior
     :ivar http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the timeout
@@ -46798,7 +47320,7 @@ class SapCloudForCustomerSink(CopySink):
         sink_retry_wait: Optional[Any] = None,
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
-        write_behavior: Optional[Union[str, "SapCloudForCustomerSinkWriteBehavior"]] = None,
+        write_behavior: Optional[Union[str, "_models.SapCloudForCustomerSinkWriteBehavior"]] = None,
         http_request_timeout: Optional[Any] = None,
         **kwargs
     ):
@@ -46824,8 +47346,8 @@ class SapCloudForCustomerSink(CopySink):
         :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_metrics_collection: any
-        :keyword write_behavior: The write behavior for the operation. Default is 'Insert'. Possible
-         values include: "Insert", "Update".
+        :keyword write_behavior: The write behavior for the operation. Default is 'Insert'. Known
+         values are: "Insert", "Update".
         :paramtype write_behavior: str or
          ~azure.mgmt.datafactory.models.SapCloudForCustomerSinkWriteBehavior
         :keyword http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the
@@ -47002,12 +47524,12 @@ class SapEccLinkedService(LinkedService):
         *,
         url: str,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         username: Optional[str] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs
     ):
@@ -47099,15 +47621,15 @@ class SapEccResourceDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         path: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         **kwargs
     ):
         """
@@ -47271,7 +47793,7 @@ class SapHanaLinkedService(LinkedService):
      string).
     :vartype server: any
     :ivar authentication_type: The authentication type to be used to connect to the SAP HANA
-     server. Possible values include: "Basic", "Windows".
+     server. Known values are: "Basic", "Windows".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.SapHanaAuthenticationType
     :ivar user_name: Username to access the SAP HANA server. Type: string (or Expression with
      resultType string).
@@ -47307,15 +47829,15 @@ class SapHanaLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_string: Optional[Any] = None,
         server: Optional[Any] = None,
-        authentication_type: Optional[Union[str, "SapHanaAuthenticationType"]] = None,
+        authentication_type: Optional[Union[str, "_models.SapHanaAuthenticationType"]] = None,
         user_name: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -47338,7 +47860,7 @@ class SapHanaLinkedService(LinkedService):
          string).
         :paramtype server: any
         :keyword authentication_type: The authentication type to be used to connect to the SAP HANA
-         server. Possible values include: "Basic", "Windows".
+         server. Known values are: "Basic", "Windows".
         :paramtype authentication_type: str or ~azure.mgmt.datafactory.models.SapHanaAuthenticationType
         :keyword user_name: Username to access the SAP HANA server. Type: string (or Expression with
          resultType string).
@@ -47459,7 +47981,7 @@ class SapHanaSource(TabularSource):
         query: Optional[Any] = None,
         packet_size: Optional[Any] = None,
         partition_option: Optional[Any] = None,
-        partition_settings: Optional["SapHanaPartitionSettings"] = None,
+        partition_settings: Optional["_models.SapHanaPartitionSettings"] = None,
         **kwargs
     ):
         """
@@ -47560,14 +48082,14 @@ class SapHanaTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         schema_type_properties_schema: Optional[Any] = None,
         table: Optional[Any] = None,
         **kwargs
@@ -47604,6 +48126,457 @@ class SapHanaTableDataset(Dataset):
         self.type = 'SapHanaTable'  # type: str
         self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
+
+
+class SapOdpLinkedService(LinkedService):
+    """SAP ODP Linked Service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, any]
+    :ivar type: Required. Type of linked service.Constant filled by server.
+    :vartype type: str
+    :ivar connect_via: The integration runtime reference.
+    :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar description: Linked service description.
+    :vartype description: str
+    :ivar parameters: Parameters for linked service.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the linked service.
+    :vartype annotations: list[any]
+    :ivar server: Host name of the SAP instance where the table is located. Type: string (or
+     Expression with resultType string).
+    :vartype server: any
+    :ivar system_number: System number of the SAP system where the table is located. (Usually a
+     two-digit decimal number represented as a string.) Type: string (or Expression with resultType
+     string).
+    :vartype system_number: any
+    :ivar client_id: Client ID of the client on the SAP system where the table is located. (Usually
+     a three-digit decimal number represented as a string) Type: string (or Expression with
+     resultType string).
+    :vartype client_id: any
+    :ivar language: Language of the SAP system where the table is located. The default value is EN.
+     Type: string (or Expression with resultType string).
+    :vartype language: any
+    :ivar system_id: SystemID of the SAP system where the table is located. Type: string (or
+     Expression with resultType string).
+    :vartype system_id: any
+    :ivar user_name: Username to access the SAP server where the table is located. Type: string (or
+     Expression with resultType string).
+    :vartype user_name: any
+    :ivar password: Password to access the SAP server where the table is located.
+    :vartype password: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar message_server: The hostname of the SAP Message Server. Type: string (or Expression with
+     resultType string).
+    :vartype message_server: any
+    :ivar message_server_service: The service name or port number of the Message Server. Type:
+     string (or Expression with resultType string).
+    :vartype message_server_service: any
+    :ivar snc_mode: SNC activation indicator to access the SAP server where the table is located.
+     Must be either 0 (off) or 1 (on). Type: string (or Expression with resultType string).
+    :vartype snc_mode: any
+    :ivar snc_my_name: Initiator's SNC name to access the SAP server where the table is located.
+     Type: string (or Expression with resultType string).
+    :vartype snc_my_name: any
+    :ivar snc_partner_name: Communication partner's SNC name to access the SAP server where the
+     table is located. Type: string (or Expression with resultType string).
+    :vartype snc_partner_name: any
+    :ivar snc_library_path: External security product's library to access the SAP server where the
+     table is located. Type: string (or Expression with resultType string).
+    :vartype snc_library_path: any
+    :ivar snc_qop: SNC Quality of Protection. Allowed value include: 1, 2, 3, 8, 9. Type: string
+     (or Expression with resultType string).
+    :vartype snc_qop: any
+    :ivar x509_certificate_path: SNC X509 certificate file path. Type: string (or Expression with
+     resultType string).
+    :vartype x509_certificate_path: any
+    :ivar logon_group: The Logon Group for the SAP System. Type: string (or Expression with
+     resultType string).
+    :vartype logon_group: any
+    :ivar subscriber_name: The subscriber name. Type: string (or Expression with resultType
+     string).
+    :vartype subscriber_name: any
+    :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
+     encrypted using the integration runtime credential manager. Type: string (or Expression with
+     resultType string).
+    :vartype encrypted_credential: any
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
+        'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'server': {'key': 'typeProperties.server', 'type': 'object'},
+        'system_number': {'key': 'typeProperties.systemNumber', 'type': 'object'},
+        'client_id': {'key': 'typeProperties.clientId', 'type': 'object'},
+        'language': {'key': 'typeProperties.language', 'type': 'object'},
+        'system_id': {'key': 'typeProperties.systemId', 'type': 'object'},
+        'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'message_server': {'key': 'typeProperties.messageServer', 'type': 'object'},
+        'message_server_service': {'key': 'typeProperties.messageServerService', 'type': 'object'},
+        'snc_mode': {'key': 'typeProperties.sncMode', 'type': 'object'},
+        'snc_my_name': {'key': 'typeProperties.sncMyName', 'type': 'object'},
+        'snc_partner_name': {'key': 'typeProperties.sncPartnerName', 'type': 'object'},
+        'snc_library_path': {'key': 'typeProperties.sncLibraryPath', 'type': 'object'},
+        'snc_qop': {'key': 'typeProperties.sncQop', 'type': 'object'},
+        'x509_certificate_path': {'key': 'typeProperties.x509CertificatePath', 'type': 'object'},
+        'logon_group': {'key': 'typeProperties.logonGroup', 'type': 'object'},
+        'subscriber_name': {'key': 'typeProperties.subscriberName', 'type': 'object'},
+        'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, Any]] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
+        description: Optional[str] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[Any]] = None,
+        server: Optional[Any] = None,
+        system_number: Optional[Any] = None,
+        client_id: Optional[Any] = None,
+        language: Optional[Any] = None,
+        system_id: Optional[Any] = None,
+        user_name: Optional[Any] = None,
+        password: Optional["_models.SecretBase"] = None,
+        message_server: Optional[Any] = None,
+        message_server_service: Optional[Any] = None,
+        snc_mode: Optional[Any] = None,
+        snc_my_name: Optional[Any] = None,
+        snc_partner_name: Optional[Any] = None,
+        snc_library_path: Optional[Any] = None,
+        snc_qop: Optional[Any] = None,
+        x509_certificate_path: Optional[Any] = None,
+        logon_group: Optional[Any] = None,
+        subscriber_name: Optional[Any] = None,
+        encrypted_credential: Optional[Any] = None,
+        **kwargs
+    ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword connect_via: The integration runtime reference.
+        :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword description: Linked service description.
+        :paramtype description: str
+        :keyword parameters: Parameters for linked service.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the linked service.
+        :paramtype annotations: list[any]
+        :keyword server: Host name of the SAP instance where the table is located. Type: string (or
+         Expression with resultType string).
+        :paramtype server: any
+        :keyword system_number: System number of the SAP system where the table is located. (Usually a
+         two-digit decimal number represented as a string.) Type: string (or Expression with resultType
+         string).
+        :paramtype system_number: any
+        :keyword client_id: Client ID of the client on the SAP system where the table is located.
+         (Usually a three-digit decimal number represented as a string) Type: string (or Expression with
+         resultType string).
+        :paramtype client_id: any
+        :keyword language: Language of the SAP system where the table is located. The default value is
+         EN. Type: string (or Expression with resultType string).
+        :paramtype language: any
+        :keyword system_id: SystemID of the SAP system where the table is located. Type: string (or
+         Expression with resultType string).
+        :paramtype system_id: any
+        :keyword user_name: Username to access the SAP server where the table is located. Type: string
+         (or Expression with resultType string).
+        :paramtype user_name: any
+        :keyword password: Password to access the SAP server where the table is located.
+        :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword message_server: The hostname of the SAP Message Server. Type: string (or Expression
+         with resultType string).
+        :paramtype message_server: any
+        :keyword message_server_service: The service name or port number of the Message Server. Type:
+         string (or Expression with resultType string).
+        :paramtype message_server_service: any
+        :keyword snc_mode: SNC activation indicator to access the SAP server where the table is
+         located. Must be either 0 (off) or 1 (on). Type: string (or Expression with resultType string).
+        :paramtype snc_mode: any
+        :keyword snc_my_name: Initiator's SNC name to access the SAP server where the table is located.
+         Type: string (or Expression with resultType string).
+        :paramtype snc_my_name: any
+        :keyword snc_partner_name: Communication partner's SNC name to access the SAP server where the
+         table is located. Type: string (or Expression with resultType string).
+        :paramtype snc_partner_name: any
+        :keyword snc_library_path: External security product's library to access the SAP server where
+         the table is located. Type: string (or Expression with resultType string).
+        :paramtype snc_library_path: any
+        :keyword snc_qop: SNC Quality of Protection. Allowed value include: 1, 2, 3, 8, 9. Type: string
+         (or Expression with resultType string).
+        :paramtype snc_qop: any
+        :keyword x509_certificate_path: SNC X509 certificate file path. Type: string (or Expression
+         with resultType string).
+        :paramtype x509_certificate_path: any
+        :keyword logon_group: The Logon Group for the SAP System. Type: string (or Expression with
+         resultType string).
+        :paramtype logon_group: any
+        :keyword subscriber_name: The subscriber name. Type: string (or Expression with resultType
+         string).
+        :paramtype subscriber_name: any
+        :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
+         are encrypted using the integration runtime credential manager. Type: string (or Expression
+         with resultType string).
+        :paramtype encrypted_credential: any
+        """
+        super(SapOdpLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
+        self.type = 'SapOdp'  # type: str
+        self.server = server
+        self.system_number = system_number
+        self.client_id = client_id
+        self.language = language
+        self.system_id = system_id
+        self.user_name = user_name
+        self.password = password
+        self.message_server = message_server
+        self.message_server_service = message_server_service
+        self.snc_mode = snc_mode
+        self.snc_my_name = snc_my_name
+        self.snc_partner_name = snc_partner_name
+        self.snc_library_path = snc_library_path
+        self.snc_qop = snc_qop
+        self.x509_certificate_path = x509_certificate_path
+        self.logon_group = logon_group
+        self.subscriber_name = subscriber_name
+        self.encrypted_credential = encrypted_credential
+
+
+class SapOdpResourceDataset(Dataset):
+    """SAP ODP Resource properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, any]
+    :ivar type: Required. Type of dataset.Constant filled by server.
+    :vartype type: str
+    :ivar description: Dataset description.
+    :vartype description: str
+    :ivar structure: Columns that define the structure of the dataset. Type: array (or Expression
+     with resultType array), itemType: DatasetDataElement.
+    :vartype structure: any
+    :ivar schema: Columns that define the physical type schema of the dataset. Type: array (or
+     Expression with resultType array), itemType: DatasetSchemaDataElement.
+    :vartype schema: any
+    :ivar linked_service_name: Required. Linked service reference.
+    :vartype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :ivar parameters: Parameters for dataset.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the Dataset.
+    :vartype annotations: list[any]
+    :ivar folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
+     root level.
+    :vartype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+    :ivar context: Required. The context of the SAP ODP Object. Type: string (or Expression with
+     resultType string).
+    :vartype context: any
+    :ivar object_name: Required. The name of the SAP ODP Object. Type: string (or Expression with
+     resultType string).
+    :vartype object_name: any
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'linked_service_name': {'required': True},
+        'context': {'required': True},
+        'object_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'structure': {'key': 'structure', 'type': 'object'},
+        'schema': {'key': 'schema', 'type': 'object'},
+        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'folder': {'key': 'folder', 'type': 'DatasetFolder'},
+        'context': {'key': 'typeProperties.context', 'type': 'object'},
+        'object_name': {'key': 'typeProperties.objectName', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        *,
+        linked_service_name: "_models.LinkedServiceReference",
+        context: Any,
+        object_name: Any,
+        additional_properties: Optional[Dict[str, Any]] = None,
+        description: Optional[str] = None,
+        structure: Optional[Any] = None,
+        schema: Optional[Any] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[Any]] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
+        **kwargs
+    ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword description: Dataset description.
+        :paramtype description: str
+        :keyword structure: Columns that define the structure of the dataset. Type: array (or
+         Expression with resultType array), itemType: DatasetDataElement.
+        :paramtype structure: any
+        :keyword schema: Columns that define the physical type schema of the dataset. Type: array (or
+         Expression with resultType array), itemType: DatasetSchemaDataElement.
+        :paramtype schema: any
+        :keyword linked_service_name: Required. Linked service reference.
+        :paramtype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
+        :keyword parameters: Parameters for dataset.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the Dataset.
+        :paramtype annotations: list[any]
+        :keyword folder: The folder that this Dataset is in. If not specified, Dataset will appear at
+         the root level.
+        :paramtype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+        :keyword context: Required. The context of the SAP ODP Object. Type: string (or Expression with
+         resultType string).
+        :paramtype context: any
+        :keyword object_name: Required. The name of the SAP ODP Object. Type: string (or Expression
+         with resultType string).
+        :paramtype object_name: any
+        """
+        super(SapOdpResourceDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
+        self.type = 'SapOdpResource'  # type: str
+        self.context = context
+        self.object_name = object_name
+
+
+class SapOdpSource(TabularSource):
+    """A copy activity source for SAP ODP source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, any]
+    :ivar type: Required. Copy source type.Constant filled by server.
+    :vartype type: str
+    :ivar source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :vartype source_retry_count: any
+    :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype source_retry_wait: any
+    :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :vartype max_concurrent_connections: any
+    :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
+     false. Type: boolean (or Expression with resultType boolean).
+    :vartype disable_metrics_collection: any
+    :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype query_timeout: any
+    :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
+     array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+    :vartype additional_columns: any
+    :ivar extraction_mode: The extraction mode. Allowed value include: Full, Delta and Recovery.
+     The default value is Full. Type: string (or Expression with resultType string).
+    :vartype extraction_mode: any
+    :ivar subscriber_process: The subscriber process to manage the delta process. Type: string (or
+     Expression with resultType string).
+    :vartype subscriber_process: any
+    :ivar selection: Specifies the selection conditions from source data. Type: array of
+     objects(selection) (or Expression with resultType array of objects).
+    :vartype selection: any
+    :ivar projection: Specifies the columns to be selected from source data. Type: array of
+     objects(projection) (or Expression with resultType array of objects).
+    :vartype projection: any
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'disable_metrics_collection': {'key': 'disableMetricsCollection', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': 'object'},
+        'extraction_mode': {'key': 'extractionMode', 'type': 'object'},
+        'subscriber_process': {'key': 'subscriberProcess', 'type': 'object'},
+        'selection': {'key': 'selection', 'type': 'object'},
+        'projection': {'key': 'projection', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, Any]] = None,
+        source_retry_count: Optional[Any] = None,
+        source_retry_wait: Optional[Any] = None,
+        max_concurrent_connections: Optional[Any] = None,
+        disable_metrics_collection: Optional[Any] = None,
+        query_timeout: Optional[Any] = None,
+        additional_columns: Optional[Any] = None,
+        extraction_mode: Optional[Any] = None,
+        subscriber_process: Optional[Any] = None,
+        selection: Optional[Any] = None,
+        projection: Optional[Any] = None,
+        **kwargs
+    ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword source_retry_count: Source retry count. Type: integer (or Expression with resultType
+         integer).
+        :paramtype source_retry_count: any
+        :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype source_retry_wait: any
+        :keyword max_concurrent_connections: The maximum concurrent connection count for the source
+         data store. Type: integer (or Expression with resultType integer).
+        :paramtype max_concurrent_connections: any
+        :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
+         false. Type: boolean (or Expression with resultType boolean).
+        :paramtype disable_metrics_collection: any
+        :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
+         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype query_timeout: any
+        :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
+         array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+        :paramtype additional_columns: any
+        :keyword extraction_mode: The extraction mode. Allowed value include: Full, Delta and Recovery.
+         The default value is Full. Type: string (or Expression with resultType string).
+        :paramtype extraction_mode: any
+        :keyword subscriber_process: The subscriber process to manage the delta process. Type: string
+         (or Expression with resultType string).
+        :paramtype subscriber_process: any
+        :keyword selection: Specifies the selection conditions from source data. Type: array of
+         objects(selection) (or Expression with resultType array of objects).
+        :paramtype selection: any
+        :keyword projection: Specifies the columns to be selected from source data. Type: array of
+         objects(projection) (or Expression with resultType array of objects).
+        :paramtype projection: any
+        """
+        super(SapOdpSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, disable_metrics_collection=disable_metrics_collection, query_timeout=query_timeout, additional_columns=additional_columns, **kwargs)
+        self.type = 'SapOdpSource'  # type: str
+        self.extraction_mode = extraction_mode
+        self.subscriber_process = subscriber_process
+        self.selection = selection
+        self.projection = projection
 
 
 class SapOpenHubLinkedService(LinkedService):
@@ -47689,9 +48662,9 @@ class SapOpenHubLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         server: Optional[Any] = None,
         system_number: Optional[Any] = None,
@@ -47699,7 +48672,7 @@ class SapOpenHubLinkedService(LinkedService):
         language: Optional[Any] = None,
         system_id: Optional[Any] = None,
         user_name: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         message_server: Optional[Any] = None,
         message_server_service: Optional[Any] = None,
         logon_group: Optional[Any] = None,
@@ -47957,15 +48930,15 @@ class SapOpenHubTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         open_hub_destination_name: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         exclude_last_request: Optional[Any] = None,
         base_request_id: Optional[Any] = None,
         **kwargs
@@ -48112,9 +49085,9 @@ class SapTableLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         server: Optional[Any] = None,
         system_number: Optional[Any] = None,
@@ -48122,7 +49095,7 @@ class SapTableLinkedService(LinkedService):
         language: Optional[Any] = None,
         system_id: Optional[Any] = None,
         user_name: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         message_server: Optional[Any] = None,
         message_server_service: Optional[Any] = None,
         snc_mode: Optional[Any] = None,
@@ -48329,15 +49302,15 @@ class SapTableResourceDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         table_name: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         **kwargs
     ):
         """
@@ -48471,7 +49444,7 @@ class SapTableSource(TabularSource):
         custom_rfc_read_table_function_module: Optional[Any] = None,
         sap_data_column_delimiter: Optional[Any] = None,
         partition_option: Optional[Any] = None,
-        partition_settings: Optional["SapTablePartitionSettings"] = None,
+        partition_settings: Optional["_models.SapTablePartitionSettings"] = None,
         **kwargs
     ):
         """
@@ -48554,7 +49527,7 @@ class ScheduleTrigger(MultiplePipelineTrigger):
     :ivar description: Trigger description.
     :vartype description: str
     :ivar runtime_state: Indicates if trigger is running or not. Updated when Start/Stop APIs are
-     called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
+     called on the Trigger. Known values are: "Started", "Stopped", "Disabled".
     :vartype runtime_state: str or ~azure.mgmt.datafactory.models.TriggerRuntimeState
     :ivar annotations: List of tags that can be used for describing the trigger.
     :vartype annotations: list[any]
@@ -48583,11 +49556,11 @@ class ScheduleTrigger(MultiplePipelineTrigger):
     def __init__(
         self,
         *,
-        recurrence: "ScheduleTriggerRecurrence",
+        recurrence: "_models.ScheduleTriggerRecurrence",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         annotations: Optional[List[Any]] = None,
-        pipelines: Optional[List["TriggerPipelineReference"]] = None,
+        pipelines: Optional[List["_models.TriggerPipelineReference"]] = None,
         **kwargs
     ):
         """
@@ -48614,8 +49587,8 @@ class ScheduleTriggerRecurrence(msrest.serialization.Model):
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, any]
-    :ivar frequency: The frequency. Possible values include: "NotSpecified", "Minute", "Hour",
-     "Day", "Week", "Month", "Year".
+    :ivar frequency: The frequency. Known values are: "NotSpecified", "Minute", "Hour", "Day",
+     "Week", "Month", "Year".
     :vartype frequency: str or ~azure.mgmt.datafactory.models.RecurrenceFrequency
     :ivar interval: The interval.
     :vartype interval: int
@@ -48643,20 +49616,20 @@ class ScheduleTriggerRecurrence(msrest.serialization.Model):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        frequency: Optional[Union[str, "RecurrenceFrequency"]] = None,
+        frequency: Optional[Union[str, "_models.RecurrenceFrequency"]] = None,
         interval: Optional[int] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         time_zone: Optional[str] = None,
-        schedule: Optional["RecurrenceSchedule"] = None,
+        schedule: Optional["_models.RecurrenceSchedule"] = None,
         **kwargs
     ):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, any]
-        :keyword frequency: The frequency. Possible values include: "NotSpecified", "Minute", "Hour",
-         "Day", "Week", "Month", "Year".
+        :keyword frequency: The frequency. Known values are: "NotSpecified", "Minute", "Hour", "Day",
+         "Week", "Month", "Year".
         :paramtype frequency: str or ~azure.mgmt.datafactory.models.RecurrenceFrequency
         :keyword interval: The interval.
         :paramtype interval: int
@@ -48689,7 +49662,7 @@ class ScriptAction(msrest.serialization.Model):
     :ivar uri: Required. The URI for the script action.
     :vartype uri: str
     :ivar roles: Required. The node types on which the script action should be executed.
-    :vartype roles: str
+    :vartype roles: any
     :ivar parameters: The parameters for the script action.
     :vartype parameters: str
     """
@@ -48703,7 +49676,7 @@ class ScriptAction(msrest.serialization.Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
-        'roles': {'key': 'roles', 'type': 'str'},
+        'roles': {'key': 'roles', 'type': 'object'},
         'parameters': {'key': 'parameters', 'type': 'str'},
     }
 
@@ -48712,7 +49685,7 @@ class ScriptAction(msrest.serialization.Model):
         *,
         name: str,
         uri: str,
-        roles: str,
+        roles: Any,
         parameters: Optional[str] = None,
         **kwargs
     ):
@@ -48722,7 +49695,7 @@ class ScriptAction(msrest.serialization.Model):
         :keyword uri: Required. The URI for the script action.
         :paramtype uri: str
         :keyword roles: Required. The node types on which the script action should be executed.
-        :paramtype roles: str
+        :paramtype roles: any
         :keyword parameters: The parameters for the script action.
         :paramtype parameters: str
         """
@@ -48785,12 +49758,12 @@ class ScriptActivity(ExecutionActivity):
         name: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
-        scripts: Optional[List["ScriptActivityScriptBlock"]] = None,
-        log_settings: Optional["ScriptActivityTypePropertiesLogSettings"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
+        scripts: Optional[List["_models.ScriptActivityScriptBlock"]] = None,
+        log_settings: Optional["_models.ScriptActivityTypePropertiesLogSettings"] = None,
         **kwargs
     ):
         """
@@ -48825,13 +49798,13 @@ class ScriptActivityParameter(msrest.serialization.Model):
 
     :ivar name: The name of the parameter. Type: string (or Expression with resultType string).
     :vartype name: any
-    :ivar type: The type of the parameter. Possible values include: "Boolean", "DateTime",
+    :ivar type: The type of the parameter. Known values are: "Boolean", "DateTime",
      "DateTimeOffset", "Decimal", "Double", "Guid", "Int16", "Int32", "Int64", "Single", "String",
      "Timespan".
     :vartype type: str or ~azure.mgmt.datafactory.models.ScriptActivityParameterType
     :ivar value: The value of the parameter.
     :vartype value: any
-    :ivar direction: The direction of the parameter. Possible values include: "Input", "Output",
+    :ivar direction: The direction of the parameter. Known values are: "Input", "Output",
      "InputOutput".
     :vartype direction: str or ~azure.mgmt.datafactory.models.ScriptActivityParameterDirection
     :ivar size: The size of the output direction parameter.
@@ -48850,22 +49823,22 @@ class ScriptActivityParameter(msrest.serialization.Model):
         self,
         *,
         name: Optional[Any] = None,
-        type: Optional[Union[str, "ScriptActivityParameterType"]] = None,
+        type: Optional[Union[str, "_models.ScriptActivityParameterType"]] = None,
         value: Optional[Any] = None,
-        direction: Optional[Union[str, "ScriptActivityParameterDirection"]] = None,
+        direction: Optional[Union[str, "_models.ScriptActivityParameterDirection"]] = None,
         size: Optional[int] = None,
         **kwargs
     ):
         """
         :keyword name: The name of the parameter. Type: string (or Expression with resultType string).
         :paramtype name: any
-        :keyword type: The type of the parameter. Possible values include: "Boolean", "DateTime",
+        :keyword type: The type of the parameter. Known values are: "Boolean", "DateTime",
          "DateTimeOffset", "Decimal", "Double", "Guid", "Int16", "Int32", "Int64", "Single", "String",
          "Timespan".
         :paramtype type: str or ~azure.mgmt.datafactory.models.ScriptActivityParameterType
         :keyword value: The value of the parameter.
         :paramtype value: any
-        :keyword direction: The direction of the parameter. Possible values include: "Input", "Output",
+        :keyword direction: The direction of the parameter. Known values are: "Input", "Output",
          "InputOutput".
         :paramtype direction: str or ~azure.mgmt.datafactory.models.ScriptActivityParameterDirection
         :keyword size: The size of the output direction parameter.
@@ -48886,7 +49859,7 @@ class ScriptActivityScriptBlock(msrest.serialization.Model):
 
     :ivar text: Required. The query text. Type: string (or Expression with resultType string).
     :vartype text: any
-    :ivar type: Required. The type of the query. Type: string. Possible values include: "Query",
+    :ivar type: Required. The type of the query. Type: string. Known values are: "Query",
      "NonQuery".
     :vartype type: str or ~azure.mgmt.datafactory.models.ScriptType
     :ivar parameters: Array of script parameters. Type: array.
@@ -48908,14 +49881,14 @@ class ScriptActivityScriptBlock(msrest.serialization.Model):
         self,
         *,
         text: Any,
-        type: Union[str, "ScriptType"],
-        parameters: Optional[List["ScriptActivityParameter"]] = None,
+        type: Union[str, "_models.ScriptType"],
+        parameters: Optional[List["_models.ScriptActivityParameter"]] = None,
         **kwargs
     ):
         """
         :keyword text: Required. The query text. Type: string (or Expression with resultType string).
         :paramtype text: any
-        :keyword type: Required. The type of the query. Type: string. Possible values include: "Query",
+        :keyword type: Required. The type of the query. Type: string. Known values are: "Query",
          "NonQuery".
         :paramtype type: str or ~azure.mgmt.datafactory.models.ScriptType
         :keyword parameters: Array of script parameters. Type: array.
@@ -48932,8 +49905,8 @@ class ScriptActivityTypePropertiesLogSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar log_destination: Required. The destination of logs. Type: string. Possible values
-     include: "ActivityOutput", "ExternalStore".
+    :ivar log_destination: Required. The destination of logs. Type: string. Known values are:
+     "ActivityOutput", "ExternalStore".
     :vartype log_destination: str or ~azure.mgmt.datafactory.models.ScriptActivityLogDestination
     :ivar log_location_settings: Log location settings customer needs to provide when enabling log.
     :vartype log_location_settings: ~azure.mgmt.datafactory.models.LogLocationSettings
@@ -48951,13 +49924,13 @@ class ScriptActivityTypePropertiesLogSettings(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        log_destination: Union[str, "ScriptActivityLogDestination"],
-        log_location_settings: Optional["LogLocationSettings"] = None,
+        log_destination: Union[str, "_models.ScriptActivityLogDestination"],
+        log_location_settings: Optional["_models.LogLocationSettings"] = None,
         **kwargs
     ):
         """
-        :keyword log_destination: Required. The destination of logs. Type: string. Possible values
-         include: "ActivityOutput", "ExternalStore".
+        :keyword log_destination: Required. The destination of logs. Type: string. Known values are:
+         "ActivityOutput", "ExternalStore".
         :paramtype log_destination: str or ~azure.mgmt.datafactory.models.ScriptActivityLogDestination
         :keyword log_location_settings: Log location settings customer needs to provide when enabling
          log.
@@ -49060,8 +50033,8 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, any]
-    :ivar type: Required. Type of integration runtime.Constant filled by server. Possible values
-     include: "Managed", "SelfHosted".
+    :ivar type: Required. Type of integration runtime.Constant filled by server. Known values are:
+     "Managed", "SelfHosted".
     :vartype type: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeType
     :ivar description: Integration runtime description.
     :vartype description: str
@@ -49085,7 +50058,7 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        linked_info: Optional["LinkedIntegrationRuntimeType"] = None,
+        linked_info: Optional["_models.LinkedIntegrationRuntimeType"] = None,
         **kwargs
     ):
         """
@@ -49116,9 +50089,8 @@ class SelfHostedIntegrationRuntimeNode(msrest.serialization.Model):
     :vartype machine_name: str
     :ivar host_service_uri: URI for the host machine of the integration runtime.
     :vartype host_service_uri: str
-    :ivar status: Status of the integration runtime node. Possible values include:
-     "NeedRegistration", "Online", "Limited", "Offline", "Upgrading", "Initializing",
-     "InitializeFailed".
+    :ivar status: Status of the integration runtime node. Known values are: "NeedRegistration",
+     "Online", "Limited", "Offline", "Upgrading", "Initializing", "InitializeFailed".
     :vartype status: str or ~azure.mgmt.datafactory.models.SelfHostedIntegrationRuntimeNodeStatus
     :ivar capabilities: The integration runtime capabilities dictionary.
     :vartype capabilities: dict[str, str]
@@ -49138,8 +50110,8 @@ class SelfHostedIntegrationRuntimeNode(msrest.serialization.Model):
     :vartype last_start_time: ~datetime.datetime
     :ivar last_stop_time: The integration runtime node last stop time.
     :vartype last_stop_time: ~datetime.datetime
-    :ivar last_update_result: The result of the last integration runtime node update. Possible
-     values include: "None", "Succeed", "Fail".
+    :ivar last_update_result: The result of the last integration runtime node update. Known values
+     are: "None", "Succeed", "Fail".
     :vartype last_update_result: str or
      ~azure.mgmt.datafactory.models.IntegrationRuntimeUpdateResult
     :ivar last_start_update_time: The last time for the integration runtime node update start.
@@ -49241,12 +50213,12 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, any]
-    :ivar type: Required. Type of integration runtime.Constant filled by server. Possible values
-     include: "Managed", "SelfHosted".
+    :ivar type: Required. Type of integration runtime.Constant filled by server. Known values are:
+     "Managed", "SelfHosted".
     :vartype type: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeType
     :ivar data_factory_name: The data factory name which the integration runtime belong to.
     :vartype data_factory_name: str
-    :ivar state: The state of integration runtime. Possible values include: "Initial", "Stopped",
+    :ivar state: The state of integration runtime. Known values are: "Initial", "Stopped",
      "Started", "Starting", "Stopping", "NeedRegistration", "Online", "Limited", "Offline",
      "AccessDenied".
     :vartype state: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeState
@@ -49255,8 +50227,8 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     :ivar task_queue_id: The task queue id of the integration runtime.
     :vartype task_queue_id: str
     :ivar internal_channel_encryption: It is used to set the encryption mode for node-node
-     communication channel (when more than 2 self-hosted integration runtime nodes exist). Possible
-     values include: "NotSet", "SslEncrypted", "NotEncrypted".
+     communication channel (when more than 2 self-hosted integration runtime nodes exist). Known
+     values are: "NotSet", "SslEncrypted", "NotEncrypted".
     :vartype internal_channel_encryption: str or
      ~azure.mgmt.datafactory.models.IntegrationRuntimeInternalChannelEncryptionMode
     :ivar version: Version of the integration runtime.
@@ -49276,7 +50248,7 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     :ivar service_urls: The URLs for the services used in integration runtime backend service.
     :vartype service_urls: list[str]
     :ivar auto_update: Whether Self-hosted integration runtime auto update has been turned on.
-     Possible values include: "On", "Off".
+     Known values are: "On", "Off".
     :vartype auto_update: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeAutoUpdate
     :ivar version_status: Status of the integration runtime version.
     :vartype version_status: str
@@ -49339,8 +50311,8 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        nodes: Optional[List["SelfHostedIntegrationRuntimeNode"]] = None,
-        links: Optional[List["LinkedIntegrationRuntime"]] = None,
+        nodes: Optional[List["_models.SelfHostedIntegrationRuntimeNode"]] = None,
+        links: Optional[List["_models.LinkedIntegrationRuntime"]] = None,
         **kwargs
     ):
         """
@@ -49394,8 +50366,8 @@ class ServiceNowLinkedService(LinkedService):
     :ivar endpoint: Required. The endpoint of the ServiceNow server. (i.e.
      :code:`<instance>`.service-now.com).
     :vartype endpoint: any
-    :ivar authentication_type: Required. The authentication type to use. Possible values include:
-     "Basic", "OAuth2".
+    :ivar authentication_type: Required. The authentication type to use. Known values are: "Basic",
+     "OAuth2".
     :vartype authentication_type: str or
      ~azure.mgmt.datafactory.models.ServiceNowAuthenticationType
     :ivar username: The user name used to connect to the ServiceNow server for Basic and OAuth2
@@ -49453,16 +50425,16 @@ class ServiceNowLinkedService(LinkedService):
         self,
         *,
         endpoint: Any,
-        authentication_type: Union[str, "ServiceNowAuthenticationType"],
+        authentication_type: Union[str, "_models.ServiceNowAuthenticationType"],
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         client_id: Optional[Any] = None,
-        client_secret: Optional["SecretBase"] = None,
+        client_secret: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[Any] = None,
         use_host_verification: Optional[Any] = None,
         use_peer_verification: Optional[Any] = None,
@@ -49484,8 +50456,8 @@ class ServiceNowLinkedService(LinkedService):
         :keyword endpoint: Required. The endpoint of the ServiceNow server. (i.e.
          :code:`<instance>`.service-now.com).
         :paramtype endpoint: any
-        :keyword authentication_type: Required. The authentication type to use. Possible values
-         include: "Basic", "OAuth2".
+        :keyword authentication_type: Required. The authentication type to use. Known values are:
+         "Basic", "OAuth2".
         :paramtype authentication_type: str or
          ~azure.mgmt.datafactory.models.ServiceNowAuthenticationType
         :keyword username: The user name used to connect to the ServiceNow server for Basic and OAuth2
@@ -49579,14 +50551,14 @@ class ServiceNowObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -49755,7 +50727,7 @@ class ServicePrincipalCredential(Credential):
         description: Optional[str] = None,
         annotations: Optional[List[Any]] = None,
         service_principal_id: Optional[Any] = None,
-        service_principal_key: Optional["AzureKeyVaultSecretReference"] = None,
+        service_principal_key: Optional["_models.AzureKeyVaultSecretReference"] = None,
         tenant: Optional[Any] = None,
         **kwargs
     ):
@@ -49827,8 +50799,8 @@ class SetVariableActivity(ControlActivity):
         name: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
         variable_name: Optional[str] = None,
         value: Optional[Any] = None,
         **kwargs
@@ -50075,7 +51047,7 @@ class SftpServerLinkedService(LinkedService):
      Default value is 22. Type: integer (or Expression with resultType integer), minimum: 0.
     :vartype port: any
     :ivar authentication_type: The authentication type to be used to connect to the FTP server.
-     Possible values include: "Basic", "SshPublicKey", "MultiFactor".
+     Known values are: "Basic", "SshPublicKey", "MultiFactor".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.SftpAuthenticationType
     :ivar user_name: The username used to log on to the SFTP server. Type: string (or Expression
      with resultType string).
@@ -50137,18 +51109,18 @@ class SftpServerLinkedService(LinkedService):
         *,
         host: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         port: Optional[Any] = None,
-        authentication_type: Optional[Union[str, "SftpAuthenticationType"]] = None,
+        authentication_type: Optional[Union[str, "_models.SftpAuthenticationType"]] = None,
         user_name: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         private_key_path: Optional[Any] = None,
-        private_key_content: Optional["SecretBase"] = None,
-        pass_phrase: Optional["SecretBase"] = None,
+        private_key_content: Optional["_models.SecretBase"] = None,
+        pass_phrase: Optional["_models.SecretBase"] = None,
         skip_host_key_validation: Optional[Any] = None,
         host_key_fingerprint: Optional[Any] = None,
         **kwargs
@@ -50172,7 +51144,7 @@ class SftpServerLinkedService(LinkedService):
          Default value is 22. Type: integer (or Expression with resultType integer), minimum: 0.
         :paramtype port: any
         :keyword authentication_type: The authentication type to be used to connect to the FTP server.
-         Possible values include: "Basic", "SshPublicKey", "MultiFactor".
+         Known values are: "Basic", "SshPublicKey", "MultiFactor".
         :paramtype authentication_type: str or ~azure.mgmt.datafactory.models.SftpAuthenticationType
         :keyword user_name: The username used to log on to the SFTP server. Type: string (or Expression
          with resultType string).
@@ -50363,11 +51335,11 @@ class SharePointOnlineListLinkedService(LinkedService):
         site_url: Any,
         tenant_id: Any,
         service_principal_id: Any,
-        service_principal_key: "SecretBase",
+        service_principal_key: "_models.SecretBase",
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
@@ -50466,14 +51438,14 @@ class SharePointOnlineListResourceDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         list_name: Optional[Any] = None,
         **kwargs
     ):
@@ -50659,11 +51631,11 @@ class ShopifyLinkedService(LinkedService):
         *,
         host: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        access_token: Optional["SecretBase"] = None,
+        access_token: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[Any] = None,
         use_host_verification: Optional[Any] = None,
         use_peer_verification: Optional[Any] = None,
@@ -50764,14 +51736,14 @@ class ShopifyObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -50978,11 +51950,11 @@ class SmartsheetLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        api_token: "SecretBase",
+        api_token: "_models.SecretBase",
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
@@ -51069,14 +52041,14 @@ class SnowflakeDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         schema_type_properties_schema: Optional[Any] = None,
         table: Optional[Any] = None,
         **kwargs
@@ -51290,11 +52262,11 @@ class SnowflakeLinkedService(LinkedService):
         *,
         connection_string: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        password: Optional["AzureKeyVaultSecretReference"] = None,
+        password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -51390,7 +52362,7 @@ class SnowflakeSink(CopySink):
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
         pre_copy_script: Optional[Any] = None,
-        import_settings: Optional["SnowflakeImportCopyCommand"] = None,
+        import_settings: Optional["_models.SnowflakeImportCopyCommand"] = None,
         **kwargs
     ):
         """
@@ -51479,7 +52451,7 @@ class SnowflakeSource(CopySource):
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
         query: Optional[Any] = None,
-        export_settings: Optional["SnowflakeExportCopyCommand"] = None,
+        export_settings: Optional["_models.SnowflakeExportCopyCommand"] = None,
         **kwargs
     ):
         """
@@ -51531,15 +52503,15 @@ class SparkLinkedService(LinkedService):
     :vartype host: any
     :ivar port: Required. The TCP port that the Spark server uses to listen for client connections.
     :vartype port: any
-    :ivar server_type: The type of Spark server. Possible values include: "SharkServer",
-     "SharkServer2", "SparkThriftServer".
+    :ivar server_type: The type of Spark server. Known values are: "SharkServer", "SharkServer2",
+     "SparkThriftServer".
     :vartype server_type: str or ~azure.mgmt.datafactory.models.SparkServerType
-    :ivar thrift_transport_protocol: The transport protocol to use in the Thrift layer. Possible
-     values include: "Binary", "SASL", "HTTP ".
+    :ivar thrift_transport_protocol: The transport protocol to use in the Thrift layer. Known
+     values are: "Binary", "SASL", "HTTP ".
     :vartype thrift_transport_protocol: str or
      ~azure.mgmt.datafactory.models.SparkThriftTransportProtocol
     :ivar authentication_type: Required. The authentication method used to access the Spark server.
-     Possible values include: "Anonymous", "Username", "UsernameAndPassword",
+     Known values are: "Anonymous", "Username", "UsernameAndPassword",
      "WindowsAzureHDInsightService".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.SparkAuthenticationType
     :ivar username: The user name that you use to access Spark Server.
@@ -51606,16 +52578,16 @@ class SparkLinkedService(LinkedService):
         *,
         host: Any,
         port: Any,
-        authentication_type: Union[str, "SparkAuthenticationType"],
+        authentication_type: Union[str, "_models.SparkAuthenticationType"],
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        server_type: Optional[Union[str, "SparkServerType"]] = None,
-        thrift_transport_protocol: Optional[Union[str, "SparkThriftTransportProtocol"]] = None,
+        server_type: Optional[Union[str, "_models.SparkServerType"]] = None,
+        thrift_transport_protocol: Optional[Union[str, "_models.SparkThriftTransportProtocol"]] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         http_path: Optional[Any] = None,
         enable_ssl: Optional[Any] = None,
         trusted_cert_path: Optional[Any] = None,
@@ -51642,15 +52614,15 @@ class SparkLinkedService(LinkedService):
         :keyword port: Required. The TCP port that the Spark server uses to listen for client
          connections.
         :paramtype port: any
-        :keyword server_type: The type of Spark server. Possible values include: "SharkServer",
+        :keyword server_type: The type of Spark server. Known values are: "SharkServer",
          "SharkServer2", "SparkThriftServer".
         :paramtype server_type: str or ~azure.mgmt.datafactory.models.SparkServerType
-        :keyword thrift_transport_protocol: The transport protocol to use in the Thrift layer. Possible
-         values include: "Binary", "SASL", "HTTP ".
+        :keyword thrift_transport_protocol: The transport protocol to use in the Thrift layer. Known
+         values are: "Binary", "SASL", "HTTP ".
         :paramtype thrift_transport_protocol: str or
          ~azure.mgmt.datafactory.models.SparkThriftTransportProtocol
         :keyword authentication_type: Required. The authentication method used to access the Spark
-         server. Possible values include: "Anonymous", "Username", "UsernameAndPassword",
+         server. Known values are: "Anonymous", "Username", "UsernameAndPassword",
          "WindowsAzureHDInsightService".
         :paramtype authentication_type: str or ~azure.mgmt.datafactory.models.SparkAuthenticationType
         :keyword username: The user name that you use to access Spark Server.
@@ -51759,14 +52731,14 @@ class SparkObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         table: Optional[Any] = None,
         schema_type_properties_schema: Optional[Any] = None,
@@ -51909,8 +52881,8 @@ class SqlAlwaysEncryptedProperties(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar always_encrypted_akv_auth_type: Required. Sql always encrypted AKV authentication type.
-     Type: string (or Expression with resultType string). Possible values include:
-     "ServicePrincipal", "ManagedIdentity", "UserAssignedManagedIdentity".
+     Type: string (or Expression with resultType string). Known values are: "ServicePrincipal",
+     "ManagedIdentity", "UserAssignedManagedIdentity".
     :vartype always_encrypted_akv_auth_type: str or
      ~azure.mgmt.datafactory.models.SqlAlwaysEncryptedAkvAuthType
     :ivar service_principal_id: The client ID of the application in Azure Active Directory used for
@@ -51937,15 +52909,15 @@ class SqlAlwaysEncryptedProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        always_encrypted_akv_auth_type: Union[str, "SqlAlwaysEncryptedAkvAuthType"],
+        always_encrypted_akv_auth_type: Union[str, "_models.SqlAlwaysEncryptedAkvAuthType"],
         service_principal_id: Optional[Any] = None,
-        service_principal_key: Optional["SecretBase"] = None,
-        credential: Optional["CredentialReference"] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs
     ):
         """
         :keyword always_encrypted_akv_auth_type: Required. Sql always encrypted AKV authentication
-         type. Type: string (or Expression with resultType string). Possible values include:
+         type. Type: string (or Expression with resultType string). Known values are:
          "ServicePrincipal", "ManagedIdentity", "UserAssignedManagedIdentity".
         :paramtype always_encrypted_akv_auth_type: str or
          ~azure.mgmt.datafactory.models.SqlAlwaysEncryptedAkvAuthType
@@ -52056,13 +53028,13 @@ class SqlDWSink(CopySink):
         disable_metrics_collection: Optional[Any] = None,
         pre_copy_script: Optional[Any] = None,
         allow_poly_base: Optional[Any] = None,
-        poly_base_settings: Optional["PolybaseSettings"] = None,
+        poly_base_settings: Optional["_models.PolybaseSettings"] = None,
         allow_copy_command: Optional[Any] = None,
-        copy_command_settings: Optional["DWCopyCommandSettings"] = None,
+        copy_command_settings: Optional["_models.DWCopyCommandSettings"] = None,
         table_option: Optional[Any] = None,
         sql_writer_use_table_lock: Optional[Any] = None,
         write_behavior: Optional[Any] = None,
-        upsert_settings: Optional["SqlDWUpsertSettings"] = None,
+        upsert_settings: Optional["_models.SqlDWUpsertSettings"] = None,
         **kwargs
     ):
         """
@@ -52206,7 +53178,7 @@ class SqlDWSource(TabularSource):
         sql_reader_stored_procedure_name: Optional[Any] = None,
         stored_procedure_parameters: Optional[Any] = None,
         partition_option: Optional[Any] = None,
-        partition_settings: Optional["SqlPartitionSettings"] = None,
+        partition_settings: Optional["_models.SqlPartitionSettings"] = None,
         **kwargs
     ):
         """
@@ -52386,12 +53358,12 @@ class SqlMISink(CopySink):
         sql_writer_stored_procedure_name: Optional[Any] = None,
         sql_writer_table_type: Optional[Any] = None,
         pre_copy_script: Optional[Any] = None,
-        stored_procedure_parameters: Optional[Dict[str, "StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
         stored_procedure_table_type_parameter_name: Optional[Any] = None,
         table_option: Optional[Any] = None,
         sql_writer_use_table_lock: Optional[Any] = None,
         write_behavior: Optional[Any] = None,
-        upsert_settings: Optional["SqlUpsertSettings"] = None,
+        upsert_settings: Optional["_models.SqlUpsertSettings"] = None,
         **kwargs
     ):
         """
@@ -52536,10 +53508,10 @@ class SqlMISource(TabularSource):
         additional_columns: Optional[Any] = None,
         sql_reader_query: Optional[Any] = None,
         sql_reader_stored_procedure_name: Optional[Any] = None,
-        stored_procedure_parameters: Optional[Dict[str, "StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
         produce_additional_types: Optional[Any] = None,
         partition_option: Optional[Any] = None,
-        partition_settings: Optional["SqlPartitionSettings"] = None,
+        partition_settings: Optional["_models.SqlPartitionSettings"] = None,
         **kwargs
     ):
         """
@@ -52708,14 +53680,14 @@ class SqlServerLinkedService(LinkedService):
         *,
         connection_string: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         user_name: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
-        always_encrypted_settings: Optional["SqlAlwaysEncryptedProperties"] = None,
+        always_encrypted_settings: Optional["_models.SqlAlwaysEncryptedProperties"] = None,
         **kwargs
     ):
         """
@@ -52848,12 +53820,12 @@ class SqlServerSink(CopySink):
         sql_writer_stored_procedure_name: Optional[Any] = None,
         sql_writer_table_type: Optional[Any] = None,
         pre_copy_script: Optional[Any] = None,
-        stored_procedure_parameters: Optional[Dict[str, "StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
         stored_procedure_table_type_parameter_name: Optional[Any] = None,
         table_option: Optional[Any] = None,
         sql_writer_use_table_lock: Optional[Any] = None,
         write_behavior: Optional[Any] = None,
-        upsert_settings: Optional["SqlUpsertSettings"] = None,
+        upsert_settings: Optional["_models.SqlUpsertSettings"] = None,
         **kwargs
     ):
         """
@@ -52998,10 +53970,10 @@ class SqlServerSource(TabularSource):
         additional_columns: Optional[Any] = None,
         sql_reader_query: Optional[Any] = None,
         sql_reader_stored_procedure_name: Optional[Any] = None,
-        stored_procedure_parameters: Optional[Dict[str, "StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
         produce_additional_types: Optional[Any] = None,
         partition_option: Optional[Any] = None,
-        partition_settings: Optional["SqlPartitionSettings"] = None,
+        partition_settings: Optional["_models.SqlPartitionSettings"] = None,
         **kwargs
     ):
         """
@@ -53082,8 +54054,7 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
     :vartype stored_procedure_name: any
     :ivar stored_procedure_parameters: Value and type setting for stored procedure parameters.
      Example: "{Parameter1: {value: "1", type: "int"}}".
-    :vartype stored_procedure_parameters: dict[str,
-     ~azure.mgmt.datafactory.models.StoredProcedureParameter]
+    :vartype stored_procedure_parameters: any
     """
 
     _validation = {
@@ -53102,7 +54073,7 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'stored_procedure_name': {'key': 'typeProperties.storedProcedureName', 'type': 'object'},
-        'stored_procedure_parameters': {'key': 'typeProperties.storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
+        'stored_procedure_parameters': {'key': 'typeProperties.storedProcedureParameters', 'type': 'object'},
     }
 
     def __init__(
@@ -53112,11 +54083,11 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
         stored_procedure_name: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
-        stored_procedure_parameters: Optional[Dict[str, "StoredProcedureParameter"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
+        stored_procedure_parameters: Optional[Any] = None,
         **kwargs
     ):
         """
@@ -53140,8 +54111,7 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
         :paramtype stored_procedure_name: any
         :keyword stored_procedure_parameters: Value and type setting for stored procedure parameters.
          Example: "{Parameter1: {value: "1", type: "int"}}".
-        :paramtype stored_procedure_parameters: dict[str,
-         ~azure.mgmt.datafactory.models.StoredProcedureParameter]
+        :paramtype stored_procedure_parameters: any
         """
         super(SqlServerStoredProcedureActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.type = 'SqlServerStoredProcedure'  # type: str
@@ -53210,14 +54180,14 @@ class SqlServerTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         schema_type_properties_schema: Optional[Any] = None,
         table: Optional[Any] = None,
@@ -53354,12 +54324,12 @@ class SqlSink(CopySink):
         sql_writer_stored_procedure_name: Optional[Any] = None,
         sql_writer_table_type: Optional[Any] = None,
         pre_copy_script: Optional[Any] = None,
-        stored_procedure_parameters: Optional[Dict[str, "StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
         stored_procedure_table_type_parameter_name: Optional[Any] = None,
         table_option: Optional[Any] = None,
         sql_writer_use_table_lock: Optional[Any] = None,
         write_behavior: Optional[Any] = None,
-        upsert_settings: Optional["SqlUpsertSettings"] = None,
+        upsert_settings: Optional["_models.SqlUpsertSettings"] = None,
         **kwargs
     ):
         """
@@ -53506,10 +54476,10 @@ class SqlSource(TabularSource):
         additional_columns: Optional[Any] = None,
         sql_reader_query: Optional[Any] = None,
         sql_reader_stored_procedure_name: Optional[Any] = None,
-        stored_procedure_parameters: Optional[Dict[str, "StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
         isolation_level: Optional[Any] = None,
         partition_option: Optional[Any] = None,
-        partition_settings: Optional["SqlPartitionSettings"] = None,
+        partition_settings: Optional["_models.SqlPartitionSettings"] = None,
         **kwargs
     ):
         """
@@ -53682,14 +54652,14 @@ class SquareLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_properties: Optional[Any] = None,
         host: Optional[Any] = None,
         client_id: Optional[Any] = None,
-        client_secret: Optional["SecretBase"] = None,
+        client_secret: Optional["_models.SecretBase"] = None,
         redirect_uri: Optional[Any] = None,
         use_encrypted_endpoints: Optional[Any] = None,
         use_host_verification: Optional[Any] = None,
@@ -53801,14 +54771,14 @@ class SquareObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -53964,7 +54934,7 @@ class SSISAccessCredential(msrest.serialization.Model):
         *,
         domain: Any,
         user_name: Any,
-        password: "SecretBase",
+        password: "_models.SecretBase",
         **kwargs
     ):
         """
@@ -54046,8 +55016,8 @@ class SsisObjectMetadata(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Type of metadata.Constant filled by server. Possible values include:
-     "Folder", "Project", "Package", "Environment".
+    :ivar type: Required. Type of metadata.Constant filled by server. Known values are: "Folder",
+     "Project", "Package", "Environment".
     :vartype type: str or ~azure.mgmt.datafactory.models.SsisObjectMetadataType
     :ivar id: Metadata id.
     :vartype id: long
@@ -54100,8 +55070,8 @@ class SsisEnvironment(SsisObjectMetadata):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Type of metadata.Constant filled by server. Possible values include:
-     "Folder", "Project", "Package", "Environment".
+    :ivar type: Required. Type of metadata.Constant filled by server. Known values are: "Folder",
+     "Project", "Package", "Environment".
     :vartype type: str or ~azure.mgmt.datafactory.models.SsisObjectMetadataType
     :ivar id: Metadata id.
     :vartype id: long
@@ -54135,7 +55105,7 @@ class SsisEnvironment(SsisObjectMetadata):
         name: Optional[str] = None,
         description: Optional[str] = None,
         folder_id: Optional[int] = None,
-        variables: Optional[List["SsisVariable"]] = None,
+        variables: Optional[List["_models.SsisVariable"]] = None,
         **kwargs
     ):
         """
@@ -54232,7 +55202,7 @@ class SSISExecutionCredential(msrest.serialization.Model):
         *,
         domain: Any,
         user_name: Any,
-        password: "SecureString",
+        password: "_models.SecureString",
         **kwargs
     ):
         """
@@ -54287,8 +55257,8 @@ class SsisFolder(SsisObjectMetadata):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Type of metadata.Constant filled by server. Possible values include:
-     "Folder", "Project", "Package", "Environment".
+    :ivar type: Required. Type of metadata.Constant filled by server. Known values are: "Folder",
+     "Project", "Package", "Environment".
     :vartype type: str or ~azure.mgmt.datafactory.models.SsisObjectMetadataType
     :ivar id: Metadata id.
     :vartype id: long
@@ -54337,7 +55307,7 @@ class SSISLogLocation(msrest.serialization.Model):
     :ivar log_path: Required. The SSIS package execution log path. Type: string (or Expression with
      resultType string).
     :vartype log_path: any
-    :ivar type: Required. The type of SSIS log location. Possible values include: "File".
+    :ivar type: Required. The type of SSIS log location. Known values are: "File".
     :vartype type: str or ~azure.mgmt.datafactory.models.SsisLogLocationType
     :ivar access_credential: The package execution log access credential.
     :vartype access_credential: ~azure.mgmt.datafactory.models.SSISAccessCredential
@@ -54363,8 +55333,8 @@ class SSISLogLocation(msrest.serialization.Model):
         self,
         *,
         log_path: Any,
-        type: Union[str, "SsisLogLocationType"],
-        access_credential: Optional["SSISAccessCredential"] = None,
+        type: Union[str, "_models.SsisLogLocationType"],
+        access_credential: Optional["_models.SSISAccessCredential"] = None,
         log_refresh_interval: Optional[Any] = None,
         **kwargs
     ):
@@ -54372,7 +55342,7 @@ class SSISLogLocation(msrest.serialization.Model):
         :keyword log_path: Required. The SSIS package execution log path. Type: string (or Expression
          with resultType string).
         :paramtype log_path: any
-        :keyword type: Required. The type of SSIS log location. Possible values include: "File".
+        :keyword type: Required. The type of SSIS log location. Known values are: "File".
         :paramtype type: str or ~azure.mgmt.datafactory.models.SsisLogLocationType
         :keyword access_credential: The package execution log access credential.
         :paramtype access_credential: ~azure.mgmt.datafactory.models.SSISAccessCredential
@@ -54405,7 +55375,7 @@ class SsisObjectMetadataListResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["SsisObjectMetadata"]] = None,
+        value: Optional[List["_models.SsisObjectMetadata"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -54471,8 +55441,8 @@ class SsisPackage(SsisObjectMetadata):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Type of metadata.Constant filled by server. Possible values include:
-     "Folder", "Project", "Package", "Environment".
+    :ivar type: Required. Type of metadata.Constant filled by server. Known values are: "Folder",
+     "Project", "Package", "Environment".
     :vartype type: str or ~azure.mgmt.datafactory.models.SsisObjectMetadataType
     :ivar id: Metadata id.
     :vartype id: long
@@ -54514,7 +55484,7 @@ class SsisPackage(SsisObjectMetadata):
         folder_id: Optional[int] = None,
         project_version: Optional[int] = None,
         project_id: Optional[int] = None,
-        parameters: Optional[List["SsisParameter"]] = None,
+        parameters: Optional[List["_models.SsisParameter"]] = None,
         **kwargs
     ):
         """
@@ -54546,7 +55516,7 @@ class SSISPackageLocation(msrest.serialization.Model):
 
     :ivar package_path: The SSIS package path. Type: string (or Expression with resultType string).
     :vartype package_path: any
-    :ivar type: The type of SSIS package location. Possible values include: "SSISDB", "File",
+    :ivar type: The type of SSIS package location. Known values are: "SSISDB", "File",
      "InlinePackage", "PackageStore".
     :vartype type: str or ~azure.mgmt.datafactory.models.SsisPackageLocationType
     :ivar package_password: Password of the package.
@@ -54586,22 +55556,22 @@ class SSISPackageLocation(msrest.serialization.Model):
         self,
         *,
         package_path: Optional[Any] = None,
-        type: Optional[Union[str, "SsisPackageLocationType"]] = None,
-        package_password: Optional["SecretBase"] = None,
-        access_credential: Optional["SSISAccessCredential"] = None,
+        type: Optional[Union[str, "_models.SsisPackageLocationType"]] = None,
+        package_password: Optional["_models.SecretBase"] = None,
+        access_credential: Optional["_models.SSISAccessCredential"] = None,
         configuration_path: Optional[Any] = None,
-        configuration_access_credential: Optional["SSISAccessCredential"] = None,
+        configuration_access_credential: Optional["_models.SSISAccessCredential"] = None,
         package_name: Optional[str] = None,
         package_content: Optional[Any] = None,
         package_last_modified_date: Optional[str] = None,
-        child_packages: Optional[List["SSISChildPackage"]] = None,
+        child_packages: Optional[List["_models.SSISChildPackage"]] = None,
         **kwargs
     ):
         """
         :keyword package_path: The SSIS package path. Type: string (or Expression with resultType
          string).
         :paramtype package_path: any
-        :keyword type: The type of SSIS package location. Possible values include: "SSISDB", "File",
+        :keyword type: The type of SSIS package location. Known values are: "SSISDB", "File",
          "InlinePackage", "PackageStore".
         :paramtype type: str or ~azure.mgmt.datafactory.models.SsisPackageLocationType
         :keyword package_password: Password of the package.
@@ -54743,8 +55713,8 @@ class SsisProject(SsisObjectMetadata):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Type of metadata.Constant filled by server. Possible values include:
-     "Folder", "Project", "Package", "Environment".
+    :ivar type: Required. Type of metadata.Constant filled by server. Known values are: "Folder",
+     "Project", "Package", "Environment".
     :vartype type: str or ~azure.mgmt.datafactory.models.SsisObjectMetadataType
     :ivar id: Metadata id.
     :vartype id: long
@@ -54785,8 +55755,8 @@ class SsisProject(SsisObjectMetadata):
         description: Optional[str] = None,
         folder_id: Optional[int] = None,
         version: Optional[int] = None,
-        environment_refs: Optional[List["SsisEnvironmentReference"]] = None,
-        parameters: Optional[List["SsisParameter"]] = None,
+        environment_refs: Optional[List["_models.SsisEnvironmentReference"]] = None,
+        parameters: Optional[List["_models.SsisParameter"]] = None,
         **kwargs
     ):
         """
@@ -54954,7 +55924,7 @@ class StagingSettings(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         path: Optional[Any] = None,
         enable_compression: Optional[Any] = None,
@@ -54986,7 +55956,7 @@ class StoredProcedureParameter(msrest.serialization.Model):
     :ivar value: Stored procedure parameter value. Type: string (or Expression with resultType
      string).
     :vartype value: any
-    :ivar type: Stored procedure parameter type. Possible values include: "String", "Int", "Int64",
+    :ivar type: Stored procedure parameter type. Known values are: "String", "Int", "Int64",
      "Decimal", "Guid", "Boolean", "Date".
     :vartype type: str or ~azure.mgmt.datafactory.models.StoredProcedureParameterType
     """
@@ -55000,15 +55970,15 @@ class StoredProcedureParameter(msrest.serialization.Model):
         self,
         *,
         value: Optional[Any] = None,
-        type: Optional[Union[str, "StoredProcedureParameterType"]] = None,
+        type: Optional[Union[str, "_models.StoredProcedureParameterType"]] = None,
         **kwargs
     ):
         """
         :keyword value: Stored procedure parameter value. Type: string (or Expression with resultType
          string).
         :paramtype value: any
-        :keyword type: Stored procedure parameter type. Possible values include: "String", "Int",
-         "Int64", "Decimal", "Guid", "Boolean", "Date".
+        :keyword type: Stored procedure parameter type. Known values are: "String", "Int", "Int64",
+         "Decimal", "Guid", "Boolean", "Date".
         :paramtype type: str or ~azure.mgmt.datafactory.models.StoredProcedureParameterType
         """
         super(StoredProcedureParameter, self).__init__(**kwargs)
@@ -55068,13 +56038,13 @@ class SwitchActivity(ControlActivity):
         self,
         *,
         name: str,
-        on: "Expression",
+        on: "_models.Expression",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        cases: Optional[List["SwitchCase"]] = None,
-        default_activities: Optional[List["Activity"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        cases: Optional[List["_models.SwitchCase"]] = None,
+        default_activities: Optional[List["_models.Activity"]] = None,
         **kwargs
     ):
         """
@@ -55125,7 +56095,7 @@ class SwitchCase(msrest.serialization.Model):
         self,
         *,
         value: Optional[str] = None,
-        activities: Optional[List["Activity"]] = None,
+        activities: Optional[List["_models.Activity"]] = None,
         **kwargs
     ):
         """
@@ -55165,8 +56135,8 @@ class SybaseLinkedService(LinkedService):
     :vartype database: any
     :ivar schema: Schema name for connection. Type: string (or Expression with resultType string).
     :vartype schema: any
-    :ivar authentication_type: AuthenticationType to be used for connection. Possible values
-     include: "Basic", "Windows".
+    :ivar authentication_type: AuthenticationType to be used for connection. Known values are:
+     "Basic", "Windows".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.SybaseAuthenticationType
     :ivar username: Username for authentication. Type: string (or Expression with resultType
      string).
@@ -55207,14 +56177,14 @@ class SybaseLinkedService(LinkedService):
         server: Any,
         database: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         schema: Optional[Any] = None,
-        authentication_type: Optional[Union[str, "SybaseAuthenticationType"]] = None,
+        authentication_type: Optional[Union[str, "_models.SybaseAuthenticationType"]] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -55239,8 +56209,8 @@ class SybaseLinkedService(LinkedService):
         :keyword schema: Schema name for connection. Type: string (or Expression with resultType
          string).
         :paramtype schema: any
-        :keyword authentication_type: AuthenticationType to be used for connection. Possible values
-         include: "Basic", "Windows".
+        :keyword authentication_type: AuthenticationType to be used for connection. Known values are:
+         "Basic", "Windows".
         :paramtype authentication_type: str or ~azure.mgmt.datafactory.models.SybaseAuthenticationType
         :keyword username: Username for authentication. Type: string (or Expression with resultType
          string).
@@ -55406,14 +56376,14 @@ class SybaseTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -55511,7 +56481,7 @@ class TabularTranslator(CopyTranslator):
         map_complex_values_to_string: Optional[Any] = None,
         mappings: Optional[Any] = None,
         type_conversion: Optional[Any] = None,
-        type_conversion_settings: Optional["TypeConversionSettings"] = None,
+        type_conversion_settings: Optional["_models.TypeConversionSettings"] = None,
         **kwargs
     ):
         """
@@ -55664,8 +56634,8 @@ class TeamDeskLinkedService(LinkedService):
     :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
     :ivar annotations: List of tags that can be used for describing the linked service.
     :vartype annotations: list[any]
-    :ivar authentication_type: Required. The authentication type to use. Possible values include:
-     "Basic", "Token".
+    :ivar authentication_type: Required. The authentication type to use. Known values are: "Basic",
+     "Token".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.TeamDeskAuthenticationType
     :ivar url: Required. The url to connect TeamDesk source. Type: string (or Expression with
      resultType string).
@@ -55707,16 +56677,16 @@ class TeamDeskLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        authentication_type: Union[str, "TeamDeskAuthenticationType"],
+        authentication_type: Union[str, "_models.TeamDeskAuthenticationType"],
         url: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         user_name: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
-        api_token: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
+        api_token: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -55732,8 +56702,8 @@ class TeamDeskLinkedService(LinkedService):
         :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
         :keyword annotations: List of tags that can be used for describing the linked service.
         :paramtype annotations: list[any]
-        :keyword authentication_type: Required. The authentication type to use. Possible values
-         include: "Basic", "Token".
+        :keyword authentication_type: Required. The authentication type to use. Known values are:
+         "Basic", "Token".
         :paramtype authentication_type: str or
          ~azure.mgmt.datafactory.models.TeamDeskAuthenticationType
         :keyword url: Required. The url to connect TeamDesk source. Type: string (or Expression with
@@ -55784,8 +56754,8 @@ class TeradataLinkedService(LinkedService):
     :vartype connection_string: any
     :ivar server: Server name for connection. Type: string (or Expression with resultType string).
     :vartype server: any
-    :ivar authentication_type: AuthenticationType to be used for connection. Possible values
-     include: "Basic", "Windows".
+    :ivar authentication_type: AuthenticationType to be used for connection. Known values are:
+     "Basic", "Windows".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.TeradataAuthenticationType
     :ivar username: Username for authentication. Type: string (or Expression with resultType
      string).
@@ -55821,15 +56791,15 @@ class TeradataLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_string: Optional[Any] = None,
         server: Optional[Any] = None,
-        authentication_type: Optional[Union[str, "TeradataAuthenticationType"]] = None,
+        authentication_type: Optional[Union[str, "_models.TeradataAuthenticationType"]] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -55851,8 +56821,8 @@ class TeradataLinkedService(LinkedService):
         :keyword server: Server name for connection. Type: string (or Expression with resultType
          string).
         :paramtype server: any
-        :keyword authentication_type: AuthenticationType to be used for connection. Possible values
-         include: "Basic", "Windows".
+        :keyword authentication_type: AuthenticationType to be used for connection. Known values are:
+         "Basic", "Windows".
         :paramtype authentication_type: str or
          ~azure.mgmt.datafactory.models.TeradataAuthenticationType
         :keyword username: Username for authentication. Type: string (or Expression with resultType
@@ -55991,7 +56961,7 @@ class TeradataSource(TabularSource):
         additional_columns: Optional[Any] = None,
         query: Optional[Any] = None,
         partition_option: Optional[Any] = None,
-        partition_settings: Optional["TeradataPartitionSettings"] = None,
+        partition_settings: Optional["_models.TeradataPartitionSettings"] = None,
         **kwargs
     ):
         """
@@ -56088,14 +57058,14 @@ class TeradataTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         database: Optional[Any] = None,
         table: Optional[Any] = None,
         **kwargs
@@ -56296,7 +57266,7 @@ class TriggerDependencyReference(DependencyReference):
     def __init__(
         self,
         *,
-        reference_trigger: "TriggerReference",
+        reference_trigger: "_models.TriggerReference",
         **kwargs
     ):
         """
@@ -56367,7 +57337,7 @@ class TriggerListResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["TriggerResource"],
+        value: List["_models.TriggerResource"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -56399,7 +57369,7 @@ class TriggerPipelineReference(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        pipeline_reference: Optional["PipelineReference"] = None,
+        pipeline_reference: Optional["_models.PipelineReference"] = None,
         parameters: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
@@ -56438,7 +57408,7 @@ class TriggerQueryResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["TriggerResource"],
+        value: List["_models.TriggerResource"],
         continuation_token: Optional[str] = None,
         **kwargs
     ):
@@ -56457,18 +57427,16 @@ class TriggerQueryResponse(msrest.serialization.Model):
 class TriggerReference(msrest.serialization.Model):
     """Trigger reference type.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Trigger reference type. Has constant value: "TriggerReference".
-    :vartype type: str
+    :ivar type: Required. Trigger reference type. Known values are: "TriggerReference".
+    :vartype type: str or ~azure.mgmt.datafactory.models.TriggerReferenceType
     :ivar reference_name: Required. Reference trigger name.
     :vartype reference_name: str
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'reference_name': {'required': True},
     }
 
@@ -56477,19 +57445,21 @@ class TriggerReference(msrest.serialization.Model):
         'reference_name': {'key': 'referenceName', 'type': 'str'},
     }
 
-    type = "TriggerReference"
-
     def __init__(
         self,
         *,
+        type: Union[str, "_models.TriggerReferenceType"],
         reference_name: str,
         **kwargs
     ):
         """
+        :keyword type: Required. Trigger reference type. Known values are: "TriggerReference".
+        :paramtype type: str or ~azure.mgmt.datafactory.models.TriggerReferenceType
         :keyword reference_name: Required. Reference trigger name.
         :paramtype reference_name: str
         """
         super(TriggerReference, self).__init__(**kwargs)
+        self.type = type
         self.reference_name = reference_name
 
 
@@ -56531,7 +57501,7 @@ class TriggerResource(SubResource):
     def __init__(
         self,
         *,
-        properties: "Trigger",
+        properties: "_models.Trigger",
         **kwargs
     ):
         """
@@ -56558,7 +57528,7 @@ class TriggerRun(msrest.serialization.Model):
     :vartype trigger_type: str
     :ivar trigger_run_timestamp: Trigger run start time.
     :vartype trigger_run_timestamp: ~datetime.datetime
-    :ivar status: Trigger run status. Possible values include: "Succeeded", "Failed", "Inprogress".
+    :ivar status: Trigger run status. Known values are: "Succeeded", "Failed", "Inprogress".
     :vartype status: str or ~azure.mgmt.datafactory.models.TriggerRunStatus
     :ivar message: Trigger error message.
     :vartype message: str
@@ -56649,7 +57619,7 @@ class TriggerRunsQueryResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["TriggerRun"],
+        value: List["_models.TriggerRun"],
         continuation_token: Optional[str] = None,
         **kwargs
     ):
@@ -56672,7 +57642,7 @@ class TriggerSubscriptionOperationStatus(msrest.serialization.Model):
 
     :ivar trigger_name: Trigger name.
     :vartype trigger_name: str
-    :ivar status: Event Subscription Status. Possible values include: "Enabled", "Provisioning",
+    :ivar status: Event Subscription Status. Known values are: "Enabled", "Provisioning",
      "Deprovisioning", "Disabled", "Unknown".
     :vartype status: str or ~azure.mgmt.datafactory.models.EventSubscriptionStatus
     """
@@ -56713,15 +57683,15 @@ class TumblingWindowTrigger(Trigger):
     :ivar description: Trigger description.
     :vartype description: str
     :ivar runtime_state: Indicates if trigger is running or not. Updated when Start/Stop APIs are
-     called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
+     called on the Trigger. Known values are: "Started", "Stopped", "Disabled".
     :vartype runtime_state: str or ~azure.mgmt.datafactory.models.TriggerRuntimeState
     :ivar annotations: List of tags that can be used for describing the trigger.
     :vartype annotations: list[any]
     :ivar pipeline: Required. Pipeline for which runs are created when an event is fired for
      trigger window that is ready.
     :vartype pipeline: ~azure.mgmt.datafactory.models.TriggerPipelineReference
-    :ivar frequency: Required. The frequency of the time windows. Possible values include:
-     "Minute", "Hour", "Month".
+    :ivar frequency: Required. The frequency of the time windows. Known values are: "Minute",
+     "Hour", "Month".
     :vartype frequency: str or ~azure.mgmt.datafactory.models.TumblingWindowFrequency
     :ivar interval: Required. The interval of the time windows. The minimum interval allowed is 15
      Minutes.
@@ -56776,8 +57746,8 @@ class TumblingWindowTrigger(Trigger):
     def __init__(
         self,
         *,
-        pipeline: "TriggerPipelineReference",
-        frequency: Union[str, "TumblingWindowFrequency"],
+        pipeline: "_models.TriggerPipelineReference",
+        frequency: Union[str, "_models.TumblingWindowFrequency"],
         interval: int,
         start_time: datetime.datetime,
         max_concurrency: int,
@@ -56786,8 +57756,8 @@ class TumblingWindowTrigger(Trigger):
         annotations: Optional[List[Any]] = None,
         end_time: Optional[datetime.datetime] = None,
         delay: Optional[Any] = None,
-        retry_policy: Optional["RetryPolicy"] = None,
-        depends_on: Optional[List["DependencyReference"]] = None,
+        retry_policy: Optional["_models.RetryPolicy"] = None,
+        depends_on: Optional[List["_models.DependencyReference"]] = None,
         **kwargs
     ):
         """
@@ -56801,8 +57771,8 @@ class TumblingWindowTrigger(Trigger):
         :keyword pipeline: Required. Pipeline for which runs are created when an event is fired for
          trigger window that is ready.
         :paramtype pipeline: ~azure.mgmt.datafactory.models.TriggerPipelineReference
-        :keyword frequency: Required. The frequency of the time windows. Possible values include:
-         "Minute", "Hour", "Month".
+        :keyword frequency: Required. The frequency of the time windows. Known values are: "Minute",
+         "Hour", "Month".
         :paramtype frequency: str or ~azure.mgmt.datafactory.models.TumblingWindowFrequency
         :keyword interval: Required. The interval of the time windows. The minimum interval allowed is
          15 Minutes.
@@ -56873,7 +57843,7 @@ class TumblingWindowTriggerDependencyReference(TriggerDependencyReference):
     def __init__(
         self,
         *,
-        reference_trigger: "TriggerReference",
+        reference_trigger: "_models.TriggerReference",
         offset: Optional[str] = None,
         size: Optional[str] = None,
         **kwargs
@@ -56892,6 +57862,82 @@ class TumblingWindowTriggerDependencyReference(TriggerDependencyReference):
         self.type = 'TumblingWindowTriggerDependencyReference'  # type: str
         self.offset = offset
         self.size = size
+
+
+class TwilioLinkedService(LinkedService):
+    """Linked service for Twilio.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, any]
+    :ivar type: Required. Type of linked service.Constant filled by server.
+    :vartype type: str
+    :ivar connect_via: The integration runtime reference.
+    :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar description: Linked service description.
+    :vartype description: str
+    :ivar parameters: Parameters for linked service.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the linked service.
+    :vartype annotations: list[any]
+    :ivar user_name: Required. The Account SID of Twilio service.
+    :vartype user_name: any
+    :ivar password: Required. The auth token of Twilio service.
+    :vartype password: ~azure.mgmt.datafactory.models.SecretBase
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'user_name': {'required': True},
+        'password': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
+        'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+    }
+
+    def __init__(
+        self,
+        *,
+        user_name: Any,
+        password: "_models.SecretBase",
+        additional_properties: Optional[Dict[str, Any]] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
+        description: Optional[str] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[Any]] = None,
+        **kwargs
+    ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword connect_via: The integration runtime reference.
+        :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword description: Linked service description.
+        :paramtype description: str
+        :keyword parameters: Parameters for linked service.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the linked service.
+        :paramtype annotations: list[any]
+        :keyword user_name: Required. The Account SID of Twilio service.
+        :paramtype user_name: any
+        :keyword password: Required. The auth token of Twilio service.
+        :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
+        """
+        super(TwilioLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
+        self.type = 'Twilio'  # type: str
+        self.user_name = user_name
+        self.password = password
 
 
 class TypeConversionSettings(msrest.serialization.Model):
@@ -57020,12 +58066,12 @@ class UntilActivity(ControlActivity):
         self,
         *,
         name: str,
-        expression: "Expression",
-        activities: List["Activity"],
+        expression: "_models.Expression",
+        activities: List["_models.Activity"],
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
         timeout: Optional[Any] = None,
         **kwargs
     ):
@@ -57095,8 +58141,7 @@ class UpdateIntegrationRuntimeRequest(msrest.serialization.Model):
     """Update integration runtime request.
 
     :ivar auto_update: Enables or disables the auto-update feature of the self-hosted integration
-     runtime. See https://go.microsoft.com/fwlink/?linkid=854189. Possible values include: "On",
-     "Off".
+     runtime. See https://go.microsoft.com/fwlink/?linkid=854189. Known values are: "On", "Off".
     :vartype auto_update: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeAutoUpdate
     :ivar update_delay_offset: The time offset (in hours) in the day, e.g., PT03H is 3 hours. The
      integration runtime auto update will happen on that time.
@@ -57111,14 +58156,14 @@ class UpdateIntegrationRuntimeRequest(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        auto_update: Optional[Union[str, "IntegrationRuntimeAutoUpdate"]] = None,
+        auto_update: Optional[Union[str, "_models.IntegrationRuntimeAutoUpdate"]] = None,
         update_delay_offset: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword auto_update: Enables or disables the auto-update feature of the self-hosted
-         integration runtime. See https://go.microsoft.com/fwlink/?linkid=854189. Possible values
-         include: "On", "Off".
+         integration runtime. See https://go.microsoft.com/fwlink/?linkid=854189. Known values are:
+         "On", "Off".
         :paramtype auto_update: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeAutoUpdate
         :keyword update_delay_offset: The time offset (in hours) in the day, e.g., PT03H is 3 hours.
          The integration runtime auto update will happen on that time.
@@ -57292,11 +58337,11 @@ class ValidationActivity(ControlActivity):
         self,
         *,
         name: str,
-        dataset: "DatasetReference",
+        dataset: "_models.DatasetReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
         timeout: Optional[Any] = None,
         sleep: Optional[Any] = None,
         minimum_size: Optional[Any] = None,
@@ -57347,7 +58392,7 @@ class VariableSpecification(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Variable type. Possible values include: "String", "Bool", "Array".
+    :ivar type: Required. Variable type. Known values are: "String", "Bool", "Array".
     :vartype type: str or ~azure.mgmt.datafactory.models.VariableType
     :ivar default_value: Default value of variable.
     :vartype default_value: any
@@ -57365,12 +58410,12 @@ class VariableSpecification(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "VariableType"],
+        type: Union[str, "_models.VariableType"],
         default_value: Optional[Any] = None,
         **kwargs
     ):
         """
-        :keyword type: Required. Variable type. Possible values include: "String", "Bool", "Array".
+        :keyword type: Required. Variable type. Known values are: "String", "Bool", "Array".
         :paramtype type: str or ~azure.mgmt.datafactory.models.VariableType
         :keyword default_value: Default value of variable.
         :paramtype default_value: any
@@ -57429,12 +58474,12 @@ class VerticaLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_string: Optional[Any] = None,
-        pwd: Optional["AzureKeyVaultSecretReference"] = None,
+        pwd: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -57621,14 +58666,14 @@ class VerticaTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         table: Optional[Any] = None,
         schema_type_properties_schema: Optional[Any] = None,
@@ -57717,8 +58762,8 @@ class WaitActivity(ControlActivity):
         wait_time_in_seconds: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
         **kwargs
     ):
         """
@@ -57763,8 +58808,8 @@ class WebActivity(ExecutionActivity):
     :vartype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
     :ivar policy: Activity policy.
     :vartype policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-    :ivar method: Required. Rest API method for target endpoint. Possible values include: "GET",
-     "POST", "PUT", "DELETE".
+    :ivar method: Required. Rest API method for target endpoint. Known values are: "GET", "POST",
+     "PUT", "DELETE".
     :vartype method: str or ~azure.mgmt.datafactory.models.WebActivityMethod
     :ivar url: Required. Web activity target endpoint and path. Type: string (or Expression with
      resultType string).
@@ -57778,6 +58823,8 @@ class WebActivity(ExecutionActivity):
     :vartype body: any
     :ivar authentication: Authentication method used for calling the endpoint.
     :vartype authentication: ~azure.mgmt.datafactory.models.WebActivityAuthentication
+    :ivar disable_cert_validation: When set to true, Certificate validation will be disabled.
+    :vartype disable_cert_validation: bool
     :ivar datasets: List of datasets passed to web endpoint.
     :vartype datasets: list[~azure.mgmt.datafactory.models.DatasetReference]
     :ivar linked_services: List of linked services passed to web endpoint.
@@ -57807,6 +58854,7 @@ class WebActivity(ExecutionActivity):
         'headers': {'key': 'typeProperties.headers', 'type': 'object'},
         'body': {'key': 'typeProperties.body', 'type': 'object'},
         'authentication': {'key': 'typeProperties.authentication', 'type': 'WebActivityAuthentication'},
+        'disable_cert_validation': {'key': 'typeProperties.disableCertValidation', 'type': 'bool'},
         'datasets': {'key': 'typeProperties.datasets', 'type': '[DatasetReference]'},
         'linked_services': {'key': 'typeProperties.linkedServices', 'type': '[LinkedServiceReference]'},
         'connect_via': {'key': 'typeProperties.connectVia', 'type': 'IntegrationRuntimeReference'},
@@ -57816,20 +58864,21 @@ class WebActivity(ExecutionActivity):
         self,
         *,
         name: str,
-        method: Union[str, "WebActivityMethod"],
+        method: Union[str, "_models.WebActivityMethod"],
         url: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
-        linked_service_name: Optional["LinkedServiceReference"] = None,
-        policy: Optional["ActivityPolicy"] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
         headers: Optional[Any] = None,
         body: Optional[Any] = None,
-        authentication: Optional["WebActivityAuthentication"] = None,
-        datasets: Optional[List["DatasetReference"]] = None,
-        linked_services: Optional[List["LinkedServiceReference"]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        authentication: Optional["_models.WebActivityAuthentication"] = None,
+        disable_cert_validation: Optional[bool] = None,
+        datasets: Optional[List["_models.DatasetReference"]] = None,
+        linked_services: Optional[List["_models.LinkedServiceReference"]] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         **kwargs
     ):
         """
@@ -57848,7 +58897,7 @@ class WebActivity(ExecutionActivity):
         :paramtype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
         :keyword policy: Activity policy.
         :paramtype policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-        :keyword method: Required. Rest API method for target endpoint. Possible values include: "GET",
+        :keyword method: Required. Rest API method for target endpoint. Known values are: "GET",
          "POST", "PUT", "DELETE".
         :paramtype method: str or ~azure.mgmt.datafactory.models.WebActivityMethod
         :keyword url: Required. Web activity target endpoint and path. Type: string (or Expression with
@@ -57863,6 +58912,8 @@ class WebActivity(ExecutionActivity):
         :paramtype body: any
         :keyword authentication: Authentication method used for calling the endpoint.
         :paramtype authentication: ~azure.mgmt.datafactory.models.WebActivityAuthentication
+        :keyword disable_cert_validation: When set to true, Certificate validation will be disabled.
+        :paramtype disable_cert_validation: bool
         :keyword datasets: List of datasets passed to web endpoint.
         :paramtype datasets: list[~azure.mgmt.datafactory.models.DatasetReference]
         :keyword linked_services: List of linked services passed to web endpoint.
@@ -57877,6 +58928,7 @@ class WebActivity(ExecutionActivity):
         self.headers = headers
         self.body = body
         self.authentication = authentication
+        self.disable_cert_validation = disable_cert_validation
         self.datasets = datasets
         self.linked_services = linked_services
         self.connect_via = connect_via
@@ -57919,12 +58971,12 @@ class WebActivityAuthentication(msrest.serialization.Model):
         self,
         *,
         type: Optional[str] = None,
-        pfx: Optional["SecretBase"] = None,
+        pfx: Optional["_models.SecretBase"] = None,
         username: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
         resource: Optional[Any] = None,
         user_tenant: Optional[Any] = None,
-        credential: Optional["CredentialReference"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs
     ):
         """
@@ -57970,8 +59022,7 @@ class WebLinkedServiceTypeProperties(msrest.serialization.Model):
      string (or Expression with resultType string).
     :vartype url: any
     :ivar authentication_type: Required. Type of authentication used to connect to the web table
-     source.Constant filled by server. Possible values include: "Basic", "Anonymous",
-     "ClientCertificate".
+     source.Constant filled by server. Known values are: "Basic", "Anonymous", "ClientCertificate".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.WebAuthenticationType
     """
 
@@ -58014,8 +59065,7 @@ class WebAnonymousAuthentication(WebLinkedServiceTypeProperties):
      string (or Expression with resultType string).
     :vartype url: any
     :ivar authentication_type: Required. Type of authentication used to connect to the web table
-     source.Constant filled by server. Possible values include: "Basic", "Anonymous",
-     "ClientCertificate".
+     source.Constant filled by server. Known values are: "Basic", "Anonymous", "ClientCertificate".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.WebAuthenticationType
     """
 
@@ -58053,8 +59103,7 @@ class WebBasicAuthentication(WebLinkedServiceTypeProperties):
      string (or Expression with resultType string).
     :vartype url: any
     :ivar authentication_type: Required. Type of authentication used to connect to the web table
-     source.Constant filled by server. Possible values include: "Basic", "Anonymous",
-     "ClientCertificate".
+     source.Constant filled by server. Known values are: "Basic", "Anonymous", "ClientCertificate".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.WebAuthenticationType
     :ivar username: Required. User name for Basic authentication. Type: string (or Expression with
      resultType string).
@@ -58082,7 +59131,7 @@ class WebBasicAuthentication(WebLinkedServiceTypeProperties):
         *,
         url: Any,
         username: Any,
-        password: "SecretBase",
+        password: "_models.SecretBase",
         **kwargs
     ):
         """
@@ -58110,8 +59159,7 @@ class WebClientCertificateAuthentication(WebLinkedServiceTypeProperties):
      string (or Expression with resultType string).
     :vartype url: any
     :ivar authentication_type: Required. Type of authentication used to connect to the web table
-     source.Constant filled by server. Possible values include: "Basic", "Anonymous",
-     "ClientCertificate".
+     source.Constant filled by server. Known values are: "Basic", "Anonymous", "ClientCertificate".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.WebAuthenticationType
     :ivar pfx: Required. Base64-encoded contents of a PFX file.
     :vartype pfx: ~azure.mgmt.datafactory.models.SecretBase
@@ -58137,8 +59185,8 @@ class WebClientCertificateAuthentication(WebLinkedServiceTypeProperties):
         self,
         *,
         url: Any,
-        pfx: "SecretBase",
-        password: "SecretBase",
+        pfx: "_models.SecretBase",
+        password: "_models.SecretBase",
         **kwargs
     ):
         """
@@ -58174,7 +59222,7 @@ class WebHookActivity(ControlActivity):
     :vartype depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
     :vartype user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
-    :ivar method: Required. Rest API method for target endpoint. Possible values include: "POST".
+    :ivar method: Required. Rest API method for target endpoint. Known values are: "POST".
     :vartype method: str or ~azure.mgmt.datafactory.models.WebHookActivityMethod
     :ivar url: Required. WebHook activity target endpoint and path. Type: string (or Expression
      with resultType string).
@@ -58226,16 +59274,16 @@ class WebHookActivity(ControlActivity):
         self,
         *,
         name: str,
-        method: Union[str, "WebHookActivityMethod"],
+        method: Union[str, "_models.WebHookActivityMethod"],
         url: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        depends_on: Optional[List["ActivityDependency"]] = None,
-        user_properties: Optional[List["UserProperty"]] = None,
+        depends_on: Optional[List["_models.ActivityDependency"]] = None,
+        user_properties: Optional[List["_models.UserProperty"]] = None,
         timeout: Optional[str] = None,
         headers: Optional[Any] = None,
         body: Optional[Any] = None,
-        authentication: Optional["WebActivityAuthentication"] = None,
+        authentication: Optional["_models.WebActivityAuthentication"] = None,
         report_status_on_call_back: Optional[Any] = None,
         **kwargs
     ):
@@ -58251,8 +59299,7 @@ class WebHookActivity(ControlActivity):
         :paramtype depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
         :paramtype user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
-        :keyword method: Required. Rest API method for target endpoint. Possible values include:
-         "POST".
+        :keyword method: Required. Rest API method for target endpoint. Known values are: "POST".
         :paramtype method: str or ~azure.mgmt.datafactory.models.WebHookActivityMethod
         :keyword url: Required. WebHook activity target endpoint and path. Type: string (or Expression
          with resultType string).
@@ -58327,11 +59374,11 @@ class WebLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        type_properties: "WebLinkedServiceTypeProperties",
+        type_properties: "_models.WebLinkedServiceTypeProperties",
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         **kwargs
     ):
@@ -58490,15 +59537,15 @@ class WebTableDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         index: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         path: Optional[Any] = None,
         **kwargs
     ):
@@ -58577,8 +59624,8 @@ class WranglingDataFlow(DataFlow):
         *,
         description: Optional[str] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DataFlowFolder"] = None,
-        sources: Optional[List["PowerQuerySource"]] = None,
+        folder: Optional["_models.DataFlowFolder"] = None,
+        sources: Optional[List["_models.PowerQuerySource"]] = None,
         script: Optional[str] = None,
         document_locale: Optional[str] = None,
         **kwargs
@@ -58675,14 +59722,14 @@ class XeroLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_properties: Optional[Any] = None,
         host: Optional[Any] = None,
-        consumer_key: Optional["SecretBase"] = None,
-        private_key: Optional["SecretBase"] = None,
+        consumer_key: Optional["_models.SecretBase"] = None,
+        private_key: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[Any] = None,
         use_host_verification: Optional[Any] = None,
         use_peer_verification: Optional[Any] = None,
@@ -58792,14 +59839,14 @@ class XeroObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):
@@ -58990,18 +60037,18 @@ class XmlDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
-        location: Optional["DatasetLocation"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
+        location: Optional["_models.DatasetLocation"] = None,
         encoding_name: Optional[Any] = None,
         null_value: Optional[Any] = None,
-        compression: Optional["DatasetCompression"] = None,
+        compression: Optional["_models.DatasetCompression"] = None,
         **kwargs
     ):
         """
@@ -59093,7 +60140,7 @@ class XmlReadSettings(FormatReadSettings):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        compression_properties: Optional["CompressionReadSettings"] = None,
+        compression_properties: Optional["_models.CompressionReadSettings"] = None,
         validation_mode: Optional[Any] = None,
         detect_data_type: Optional[Any] = None,
         namespaces: Optional[Any] = None,
@@ -59185,8 +60232,8 @@ class XmlSource(CopySource):
         source_retry_wait: Optional[Any] = None,
         max_concurrent_connections: Optional[Any] = None,
         disable_metrics_collection: Optional[Any] = None,
-        store_settings: Optional["StoreReadSettings"] = None,
-        format_settings: Optional["XmlReadSettings"] = None,
+        store_settings: Optional["_models.StoreReadSettings"] = None,
+        format_settings: Optional["_models.XmlReadSettings"] = None,
         additional_columns: Optional[Any] = None,
         **kwargs
     ):
@@ -59239,8 +60286,8 @@ class ZendeskLinkedService(LinkedService):
     :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
     :ivar annotations: List of tags that can be used for describing the linked service.
     :vartype annotations: list[any]
-    :ivar authentication_type: Required. The authentication type to use. Possible values include:
-     "Basic", "Token".
+    :ivar authentication_type: Required. The authentication type to use. Known values are: "Basic",
+     "Token".
     :vartype authentication_type: str or ~azure.mgmt.datafactory.models.ZendeskAuthenticationType
     :ivar url: Required. The url to connect Zendesk source. Type: string (or Expression with
      resultType string).
@@ -59282,16 +60329,16 @@ class ZendeskLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        authentication_type: Union[str, "ZendeskAuthenticationType"],
+        authentication_type: Union[str, "_models.ZendeskAuthenticationType"],
         url: Any,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         user_name: Optional[Any] = None,
-        password: Optional["SecretBase"] = None,
-        api_token: Optional["SecretBase"] = None,
+        password: Optional["_models.SecretBase"] = None,
+        api_token: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -59307,8 +60354,8 @@ class ZendeskLinkedService(LinkedService):
         :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
         :keyword annotations: List of tags that can be used for describing the linked service.
         :paramtype annotations: list[any]
-        :keyword authentication_type: Required. The authentication type to use. Possible values
-         include: "Basic", "Token".
+        :keyword authentication_type: Required. The authentication type to use. Known values are:
+         "Basic", "Token".
         :paramtype authentication_type: str or ~azure.mgmt.datafactory.models.ZendeskAuthenticationType
         :keyword url: Required. The url to connect Zendesk source. Type: string (or Expression with
          resultType string).
@@ -59445,13 +60492,13 @@ class ZohoLinkedService(LinkedService):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
         connection_properties: Optional[Any] = None,
         endpoint: Optional[Any] = None,
-        access_token: Optional["SecretBase"] = None,
+        access_token: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[Any] = None,
         use_host_verification: Optional[Any] = None,
         use_peer_verification: Optional[Any] = None,
@@ -59555,14 +60602,14 @@ class ZohoObjectDataset(Dataset):
     def __init__(
         self,
         *,
-        linked_service_name: "LinkedServiceReference",
+        linked_service_name: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         structure: Optional[Any] = None,
         schema: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
-        folder: Optional["DatasetFolder"] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[Any] = None,
         **kwargs
     ):

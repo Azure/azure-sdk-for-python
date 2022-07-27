@@ -8,24 +8,22 @@ Question Answering is a cloud-based API service that lets you create a conversat
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
 ### Prerequisites
 
-- Python 2.7, or 3.6 or later is required to use this package.
+- Python 3.6 or later is required to use this package.
 - An [Azure subscription][azure_subscription]
-- An existing Question Answering resource
-
-> Note: the new unified Cognitive Language Services are not currently available for deployment.
+- A Language Service resource
 
 ### Install the package
 
 Install the Azure QuestionAnswering client library for Python with [pip][pip_link]:
 
 ```bash
-pip install azure-ai-language-questionanswering
+pip install azure-ai-language-questionanswering --pre
 ```
 
 ### Authenticate the client
@@ -67,6 +65,37 @@ endpoint = "https://{myaccount}.api.cognitive.microsoft.com"
 credential = AzureKeyCredential("{api-key}")
 
 client = QuestionAnsweringProjectsClient(endpoint, credential)
+```
+
+#### Create a client with an Azure Active Directory Credential
+
+To use an [Azure Active Directory (AAD) token credential][cognitive_authentication_aad],
+provide an instance of the desired credential type obtained from the
+[azure-identity][azure_identity_credentials] library.
+Note that regional endpoints do not support AAD authentication. Create a [custom subdomain][custom_subdomain]
+name for your resource in order to use this type of authentication.
+
+Authentication with AAD requires some initial setup:
+
+- [Install azure-identity][install_azure_identity]
+- [Register a new AAD application][register_aad_app]
+- [Grant access][grant_role_access] to the Language service by assigning the "Cognitive Services Language Reader" role to your service principal.
+
+After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
+As an example, [DefaultAzureCredential][default_azure_credential]
+can be used to authenticate the client:
+
+Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
+`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`
+
+Use the returned token credential to authenticate the client:
+
+```python
+from azure.ai.textanalytics import QuestionAnsweringClient
+from azure.identity import DefaultAzureCredential
+
+credential = DefaultAzureCredential()
+client = QuestionAnsweringClient(endpoint="https://<my-custom-subdomain>.cognitiveservices.azure.com/", credential=credential)
 ```
 
 ## Key concepts
@@ -317,5 +346,12 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [questionanswering_refdocs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-questionanswering/latest/azure.ai.language.questionanswering.html
 [questionanswering_rest_docs]: https://docs.microsoft.com/rest/api/cognitiveservices-qnamaker/
 [questionanswering_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/README.md
+[cognitive_authentication_aad]: https://docs.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
+[azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
+[custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
+[install_azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#install-the-package
+[register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
+[grant_role_access]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
+[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftemplate%2Fazure-template%2FREADME.png)

@@ -9,9 +9,9 @@ import uuid
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import set_bodiless_matcher
-from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
-from azure.ai.formrecognizer import DocumentModel
-from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import GetOperationResponse, ModelInfo
+from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, AsyncDocumentModelAdministrationLROPoller
+from azure.ai.formrecognizer import DocumentModelDetails
+from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
 from preparers import FormRecognizerPreparer
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from asynctestcase import AsyncFormRecognizerTest
@@ -19,9 +19,6 @@ from asynctestcase import AsyncFormRecognizerTest
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
 class TestTrainingAsync(AsyncFormRecognizerTest):
-
-    def teardown(self):
-        self.sleep(4)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -38,7 +35,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template", model_id=model_id_2, description="model2")
             model_2 = await poller.result()
 
-            poller = await client.begin_create_composed_model([model_1.model_id, model_2.model_id], model_id=composed_id, description="my composed model", tags={"testkey": "testvalue"})
+            poller = await client.begin_compose_model([model_1.model_id, model_2.model_id], model_id=composed_id, description="my composed model", tags={"testkey": "testvalue"})
 
             composed_model = await poller.result()
             if self.is_live:
@@ -65,7 +62,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         def callback(response, _, headers):
             op_response = client._deserialize(GetOperationResponse, response)
             model_info = client._deserialize(ModelInfo, op_response.result)
-            document_model = DocumentModel._from_generated(model_info)
+            document_model = DocumentModelDetails._from_generated(model_info)
             raw_response.append(model_info)
             raw_response.append(document_model)
 
@@ -76,7 +73,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template", description="model2")
             model_2 = await poller.result()
 
-            poller = await client.begin_create_composed_model([model_1.model_id, model_2.model_id], description="my composed model", cls=callback)
+            poller = await client.begin_compose_model([model_1.model_id, model_2.model_id], description="my composed model", cls=callback)
             model = await poller.result()
 
         generated = raw_response[0]
@@ -84,7 +81,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         self.assertModelTransformCorrect(document_model, generated)
 
         document_model_dict = document_model.to_dict()
-        document_model_from_dict = DocumentModel.from_dict(document_model_dict)
+        document_model_from_dict = DocumentModelDetails.from_dict(document_model_dict)
         self.assertModelTransformCorrect(document_model_from_dict, generated)
 
     @pytest.mark.live_test_only
@@ -100,10 +97,10 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
             model_2 = await poller.result()
 
-            initial_poller = await client.begin_create_composed_model([model_1.model_id, model_2.model_id])
+            initial_poller = await client.begin_compose_model([model_1.model_id, model_2.model_id])
             cont_token = initial_poller.continuation_token()
 
-            poller = await client.begin_create_composed_model(None, continuation_token=cont_token)
+            poller = await client.begin_compose_model(None, continuation_token=cont_token)
             result = await poller.result()
             assert result
 
@@ -121,12 +118,14 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
             model_2 = await poller.result()
 
-            poller = await client.begin_create_composed_model([model_1.model_id, model_2.model_id])
-            assert poller.operation_id
-            assert poller.percent_completed is not None
+            poller = await client.begin_compose_model([model_1.model_id, model_2.model_id])
             await poller.result()
-            assert poller.operation_kind == "documentModelCompose"
-            assert poller.percent_completed == 100
-            assert poller.resource_location_url
-            assert poller.created_on
-            assert poller.last_updated_on
+            assert isinstance(poller, AsyncDocumentModelAdministrationLROPoller)
+            details = poller.details
+            assert details["operation_id"]
+            assert details["percent_completed"] is not None
+            assert details["operation_kind"] == "documentModelCompose"
+            assert details["percent_completed"] == 100
+            assert details["resource_location_url"]
+            assert details["created_on"]
+            assert details["last_updated_on"]

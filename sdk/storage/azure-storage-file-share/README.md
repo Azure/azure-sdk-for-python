@@ -1,6 +1,3 @@
-## _Disclaimer_
-_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
-
 # Azure Storage File Share client library for Python
 Azure File Share storage offers fully managed file shares in the cloud that are accessible via the industry standard [Server Message Block (SMB) protocol](https://docs.microsoft.com/windows/desktop/FileIO/microsoft-smb-protocol-and-cifs-protocol-overview). Azure file shares can be mounted concurrently by cloud or on-premises deployments of Windows, Linux, and macOS. Additionally, Azure file shares can be cached on Windows Servers with Azure File Sync for fast access near where the data is being used.
 
@@ -15,7 +12,7 @@ Azure file shares can be used to:
 ## Getting started
 
 ### Prerequisites
-* Python 3.6 or later is required to use this package.
+* Python 3.7 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
 
@@ -284,7 +281,8 @@ Other optional configuration keyword arguments that can be specified on the clie
 
 **Client keyword arguments:**
 
-* __connection_timeout__ (int): Optionally sets the connect and read timeout value, in seconds.
+* __connection_timeout__ (int): The number of seconds the client will wait to establish a connection to the server.
+* __read_timeout__ (int): The number of seconds the client will wait, after the connections has been established, for the server to send a response.
 * __transport__ (Any): User-provided transport to send the HTTP request.
 
 **Per-operation keyword arguments:**

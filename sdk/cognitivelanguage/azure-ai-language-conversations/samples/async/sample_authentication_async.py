@@ -10,7 +10,8 @@ FILE: sample_authentication_async.py
 
 DESCRIPTION:
     This sample demonstrates how to authenticate to the Conversational Language Understanding service.
-    We authenticate using an AzureKeyCredential from azure.core.credentials.
+    We authenticate using an AzureKeyCredential from azure.core.credentials or a token credential from the
+    azure-identity client library.
 
     See more details about authentication here:
     https://docs.microsoft.com/azure/cognitive-services/authentication
@@ -42,8 +43,23 @@ async def sample_authentication_api_key_async():
     # [END create_clu_client_with_key_async]
 
 
+async def sample_authentication_with_azure_active_directory():
+    """DefaultAzureCredential will use the values from these environment
+    variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+    """
+    print("\n.. authentication_with_azure_active_directory")
+    from azure.ai.language.conversations.aio import ConversationAnalysisClient
+    from azure.identity.aio import DefaultAzureCredential
+
+    endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+    credential = DefaultAzureCredential()
+
+    clu_client = ConversationAnalysisClient(endpoint, credential=credential)
+
+
 async def main():
     await sample_authentication_api_key_async()
+    await sample_authentication_with_azure_active_directory()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

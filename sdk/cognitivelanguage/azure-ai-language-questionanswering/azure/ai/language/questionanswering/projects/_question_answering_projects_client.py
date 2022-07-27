@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
     from azure.core.rest import HttpRequest, HttpResponse
 
+
 class QuestionAnsweringProjectsClient(QuestionAnsweringProjectsClientOperationsMixin):
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
@@ -49,14 +50,13 @@ class QuestionAnsweringProjectsClient(QuestionAnsweringProjectsClientOperationsM
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        _endpoint = '{Endpoint}/language'
+        _endpoint = "{Endpoint}/language"
         self._config = QuestionAnsweringProjectsClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-
 
     def send_request(
         self,
@@ -83,7 +83,7 @@ class QuestionAnsweringProjectsClient(QuestionAnsweringProjectsClientOperationsM
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

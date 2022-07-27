@@ -1,0 +1,213 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "32",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Fri, 06 May 2022 01:00:16 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 06 May 2022 01:00:16 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "uttablee4e42e7f"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Fri, 06 May 2022 01:00:15 GMT",
+        "ETag": "W/\u0022datetime\u00272022-05-06T01%3A00%3A16.0269320Z\u0027\u0022",
+        "Location": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027uttablee4e42e7f\u0027)",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": {
+        "TableName": "uttablee4e42e7f",
+        "odata.metadata": "https://fakeendpoint.table.cosmos.azure.com/$metadata#Tables/@Element"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/uttablee4e42e7f(PartitionKey=\u0027pke4e42e7f\u0027,RowKey=\u0027rke4e42e7f\u0027)",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "584",
+        "Content-Type": "application/json",
+        "DataServiceVersion": "3.0",
+        "Date": "Fri, 06 May 2022 01:00:17 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "X-HTTP-Method": "MERGE",
+        "x-ms-date": "Fri, 06 May 2022 01:00:17 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "PartitionKey": "pke4e42e7f",
+        "PartitionKey@odata.type": "Edm.String",
+        "RowKey": "rke4e42e7f",
+        "RowKey@odata.type": "Edm.String",
+        "bool": "false",
+        "bool@odata.type": "Edm.Boolean",
+        "text": "42",
+        "text@odata.type": "Edm.String",
+        "number": 23,
+        "number@odata.type": "Edm.Int32",
+        "bigNumber": "64",
+        "bigNumber@odata.type": "Edm.Int64",
+        "bytes": "dGVzdA==",
+        "bytes@odata.type": "Edm.Binary",
+        "amount": "0",
+        "amount@odata.type": "Edm.Double",
+        "since": "2008-07-10T00:00:00",
+        "since@odata.type": "Edm.DateTime",
+        "guid": "3bd67b28-2155-4caf-b492-207172d4f183",
+        "guid@odata.type": "Edm.Guid"
+      },
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Fri, 06 May 2022 01:00:15 GMT",
+        "ETag": "W/\u0022datetime\u00272022-05-06T01%3A00%3A16.4141064Z\u0027\u0022"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/uttablee4e42e7f(PartitionKey=\u0027pke4e42e7f\u0027,RowKey=\u0027rke4e42e7f\u0027)",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "DataServiceVersion": "3.0",
+        "Date": "Fri, 06 May 2022 01:00:17 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 06 May 2022 01:00:17 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Fri, 06 May 2022 01:00:15 GMT",
+        "ETag": "W/\u0022datetime\u00272022-05-06T01%3A00%3A16.4141064Z\u0027\u0022",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://fakeendpoint.table.cosmos.azure.com/uttablee4e42e7f/$metadata#uttablee4e42e7f/@Element",
+        "odata.etag": "W/\u0022datetime\u00272022-05-06T01%3A00%3A16.4141064Z\u0027\u0022",
+        "PartitionKey": "pke4e42e7f",
+        "RowKey": "rke4e42e7f",
+        "bool": false,
+        "text": "42",
+        "number": 23,
+        "bigNumber@odata.type": "Edm.Int64",
+        "bigNumber": "64",
+        "bytes@odata.type": "Edm.Binary",
+        "bytes": "dGVzdA==",
+        "amount": 0.0,
+        "since@odata.type": "Edm.DateTime",
+        "since": "2008-07-10T00:00:00.0000000Z",
+        "guid@odata.type": "Edm.Guid",
+        "guid": "3bd67b28-2155-4caf-b492-207172d4f183",
+        "Timestamp": "2022-05-06T01:00:16.4141064Z"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/uttablee4e42e7f(PartitionKey=\u0027pke4e42e7f\u0027,RowKey=\u0027rke4e42e7f\u0027)",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "186",
+        "Content-Type": "application/json",
+        "DataServiceVersion": "3.0",
+        "Date": "Fri, 06 May 2022 01:00:17 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "X-HTTP-Method": "MERGE",
+        "x-ms-date": "Fri, 06 May 2022 01:00:17 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "PartitionKey": "pke4e42e7f",
+        "PartitionKey@odata.type": "Edm.String",
+        "RowKey": "rke4e42e7f",
+        "RowKey@odata.type": "Edm.String",
+        "bool": "not a bool",
+        "bool@odata.type": "Edm.Boolean"
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=fullmetadata",
+        "Date": "Fri, 06 May 2022 01:00:15 GMT",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InvalidInput",
+          "message": {
+            "lang": "en-us",
+            "value": "One of the input values is invalid.\r\nActivityId: 521a7b26-c551-427f-a4e6-7e8b3e6b9a71, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:521a7b26-c551-427f-a4e6-7e8b3e6b9a71\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "DataServiceVersion": "3.0",
+        "Date": "Fri, 06 May 2022 01:00:17 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 06 May 2022 01:00:17 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Fri, 06 May 2022 01:00:15 GMT",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "TableName": "uttablee4e42e7f"
+          }
+        ],
+        "odata.metadata": "https://fakeendpoint.table.cosmos.azure.com/$metadata#Tables"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027uttablee4e42e7f\u0027)",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Date": "Fri, 06 May 2022 01:00:17 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 06 May 2022 01:00:17 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Fri, 06 May 2022 01:00:15 GMT"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

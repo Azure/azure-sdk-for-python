@@ -30,7 +30,7 @@ class ContainerServiceClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     """
 

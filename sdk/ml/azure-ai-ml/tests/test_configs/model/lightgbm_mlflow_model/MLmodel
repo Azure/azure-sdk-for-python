@@ -1,0 +1,31 @@
+artifact_path: lightgbm_artifact
+flavors:
+  lightgbm:
+    data: model.lgb
+    lgb_version: 3.3.2
+    model_class: lightgbm.basic.Booster
+  python_function:
+    data: model.lgb
+    env: conda.yaml
+    loader_module: mlflow.lightgbm
+    python_version: 3.6.2
+model_uuid: 8ee6617efea94d9ea288a55d248c9357
+run_id: light_gbm_job_c5847d643deb458081dad89401499ee4
+saved_input_example_info:
+  artifact_path: input_example.json
+  pandas_orient: split
+  type: dataframe
+signature:
+  inputs: '[{"name": 1, "type": "double"}, {"name": 2, "type": "double"}, {"name":
+    3, "type": "double"}, {"name": 4, "type": "double"}, {"name": 5, "type": "double"},
+    {"name": 6, "type": "double"}, {"name": 7, "type": "double"}, {"name": 8, "type":
+    "double"}, {"name": 9, "type": "double"}, {"name": 10, "type": "double"}, {"name":
+    11, "type": "double"}, {"name": 12, "type": "double"}, {"name": 13, "type": "double"},
+    {"name": 14, "type": "double"}, {"name": 15, "type": "double"}, {"name": 16, "type":
+    "double"}, {"name": 17, "type": "double"}, {"name": 18, "type": "double"}, {"name":
+    19, "type": "double"}, {"name": 20, "type": "double"}, {"name": 21, "type": "double"},
+    {"name": 22, "type": "double"}, {"name": 23, "type": "double"}, {"name": 24, "type":
+    "double"}, {"name": 25, "type": "double"}, {"name": 26, "type": "double"}, {"name":
+    27, "type": "double"}, {"name": 28, "type": "double"}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "float64", "shape": [-1]}}]'
+utc_time_created: '2022-02-07 00:28:18.888542'

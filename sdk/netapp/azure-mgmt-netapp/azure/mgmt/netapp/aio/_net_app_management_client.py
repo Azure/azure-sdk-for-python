@@ -7,21 +7,22 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import NetAppManagementClientConfiguration
-from .operations import AccountBackupsOperations, AccountsOperations, BackupPoliciesOperations, BackupsOperations, NetAppResourceOperations, NetAppResourceQuotaLimitsOperations, Operations, PoolsOperations, SnapshotPoliciesOperations, SnapshotsOperations, VaultsOperations, VolumeGroupsOperations, VolumesOperations
+from .operations import AccountBackupsOperations, AccountsOperations, BackupPoliciesOperations, BackupsOperations, NetAppResourceOperations, NetAppResourceQuotaLimitsOperations, Operations, PoolsOperations, SnapshotPoliciesOperations, SnapshotsOperations, SubvolumesOperations, VaultsOperations, VolumeGroupsOperations, VolumeQuotaRulesOperations, VolumesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class NetAppManagementClient:
+class NetAppManagementClient:    # pylint: disable=too-many-instance-attributes
     """Microsoft NetApp Files Azure Resource Provider specification.
 
     :ivar operations: Operations operations
@@ -47,17 +48,24 @@ class NetAppManagementClient:
     :vartype account_backups: azure.mgmt.netapp.aio.operations.AccountBackupsOperations
     :ivar backup_policies: BackupPoliciesOperations operations
     :vartype backup_policies: azure.mgmt.netapp.aio.operations.BackupPoliciesOperations
+    :ivar volume_quota_rules: VolumeQuotaRulesOperations operations
+    :vartype volume_quota_rules: azure.mgmt.netapp.aio.operations.VolumeQuotaRulesOperations
     :ivar vaults: VaultsOperations operations
     :vartype vaults: azure.mgmt.netapp.aio.operations.VaultsOperations
     :ivar volume_groups: VolumeGroupsOperations operations
     :vartype volume_groups: azure.mgmt.netapp.aio.operations.VolumeGroupsOperations
+    :ivar subvolumes: SubvolumesOperations operations
+    :vartype subvolumes: azure.mgmt.netapp.aio.operations.SubvolumesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure
      subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-01-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -87,8 +95,10 @@ class NetAppManagementClient:
         self.backups = BackupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.account_backups = AccountBackupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.backup_policies = BackupPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.volume_quota_rules = VolumeQuotaRulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.vaults = VaultsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.volume_groups = VolumeGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.subvolumes = SubvolumesOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def _send_request(

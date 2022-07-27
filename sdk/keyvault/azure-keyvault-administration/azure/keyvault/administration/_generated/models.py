@@ -4,4 +4,4 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from .v7_2.models import *
+from .v7_3.models import *

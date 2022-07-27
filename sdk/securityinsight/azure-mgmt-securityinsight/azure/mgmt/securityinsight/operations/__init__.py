@@ -6,22 +6,43 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._incidents_operations import IncidentsOperations
+from ._incident_comments_operations import IncidentCommentsOperations
+from ._incident_relations_operations import IncidentRelationsOperations
+from ._threat_intelligence_indicator_operations import ThreatIntelligenceIndicatorOperations
+from ._threat_intelligence_indicators_operations import ThreatIntelligenceIndicatorsOperations
+from ._threat_intelligence_indicator_metrics_operations import ThreatIntelligenceIndicatorMetricsOperations
+from ._watchlists_operations import WatchlistsOperations
+from ._watchlist_items_operations import WatchlistItemsOperations
 from ._operations import Operations
+from ._sentinel_onboarding_states_operations import SentinelOnboardingStatesOperations
 from ._alert_rules_operations import AlertRulesOperations
 from ._actions_operations import ActionsOperations
 from ._alert_rule_templates_operations import AlertRuleTemplatesOperations
 from ._bookmarks_operations import BookmarksOperations
 from ._data_connectors_operations import DataConnectorsOperations
-from ._incidents_operations import IncidentsOperations
-from ._incident_comments_operations import IncidentCommentsOperations
+from ._automation_rules_operations import AutomationRulesOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
+    'IncidentsOperations',
+    'IncidentCommentsOperations',
+    'IncidentRelationsOperations',
+    'ThreatIntelligenceIndicatorOperations',
+    'ThreatIntelligenceIndicatorsOperations',
+    'ThreatIntelligenceIndicatorMetricsOperations',
+    'WatchlistsOperations',
+    'WatchlistItemsOperations',
     'Operations',
+    'SentinelOnboardingStatesOperations',
     'AlertRulesOperations',
     'ActionsOperations',
     'AlertRuleTemplatesOperations',
     'BookmarksOperations',
     'DataConnectorsOperations',
-    'IncidentsOperations',
-    'IncidentCommentsOperations',
+    'AutomationRulesOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

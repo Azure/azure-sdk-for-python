@@ -36,6 +36,8 @@ def generate(
     global_conf["autorest_options"] = solve_relative_path(global_conf.get("autorest_options", {}), sdk_folder)
     global_conf["envs"] = solve_relative_path(global_conf.get("envs", {}), sdk_folder)
     global_conf["advanced_options"] = solve_relative_path(global_conf.get("advanced_options", {}), sdk_folder)
+    if python_tag:
+        global_conf["autorest_options"]['tag'] = python_tag
     if restapi_git_folder:
         restapi_git_folder = Path(restapi_git_folder).expanduser()
 

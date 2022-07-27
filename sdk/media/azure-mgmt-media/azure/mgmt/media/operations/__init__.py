@@ -6,14 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._account_filters_operations import AccountFiltersOperations
 from ._operations import Operations
 from ._mediaservices_operations import MediaservicesOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._locations_operations import LocationsOperations
-from ._account_filters_operations import AccountFiltersOperations
+from ._media_services_operation_statuses_operations import MediaServicesOperationStatusesOperations
+from ._media_services_operation_results_operations import MediaServicesOperationResultsOperations
 from ._assets_operations import AssetsOperations
 from ._asset_filters_operations import AssetFiltersOperations
+from ._tracks_operations import TracksOperations
+from ._operation_statuses_operations import OperationStatusesOperations
+from ._operation_results_operations import OperationResultsOperations
 from ._content_key_policies_operations import ContentKeyPoliciesOperations
 from ._transforms_operations import TransformsOperations
 from ._jobs_operations import JobsOperations
@@ -23,15 +28,23 @@ from ._live_events_operations import LiveEventsOperations
 from ._live_outputs_operations import LiveOutputsOperations
 from ._streaming_endpoints_operations import StreamingEndpointsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
+    'AccountFiltersOperations',
     'Operations',
     'MediaservicesOperations',
     'PrivateLinkResourcesOperations',
     'PrivateEndpointConnectionsOperations',
     'LocationsOperations',
-    'AccountFiltersOperations',
+    'MediaServicesOperationStatusesOperations',
+    'MediaServicesOperationResultsOperations',
     'AssetsOperations',
     'AssetFiltersOperations',
+    'TracksOperations',
+    'OperationStatusesOperations',
+    'OperationResultsOperations',
     'ContentKeyPoliciesOperations',
     'TransformsOperations',
     'JobsOperations',
@@ -41,3 +54,5 @@ __all__ = [
     'LiveOutputsOperations',
     'StreamingEndpointsOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

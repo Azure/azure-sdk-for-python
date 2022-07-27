@@ -6,12 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 from ._question_answering_client_enums import *
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AnswersFromTextOptions(msrest.serialization.Model):
@@ -22,7 +26,7 @@ class AnswersFromTextOptions(msrest.serialization.Model):
     :ivar question: Required. User question to query against the given text records.
     :vartype question: str
     :ivar text_documents: Required. Text records to be searched for given question.
-    :vartype text_documents: list[str or ~azure.ai.language.questionanswering.models.TextDocument]
+    :vartype text_documents: list[~azure.ai.language.questionanswering.models.TextDocument]
     :ivar language: Language of the text records. This is BCP-47 representation of a language. For
      example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
      default.
@@ -38,22 +42,16 @@ class AnswersFromTextOptions(msrest.serialization.Model):
         "question": {"key": "question", "type": "str"},
         "text_documents": {"key": "records", "type": "[TextDocument]"},
         "language": {"key": "language", "type": "str"},
-        "string_index_type": {"key": "stringIndexType", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        question: str,
-        text_documents: List[Union[str, "TextDocument"]],
-        language: Optional[str] = None,
-        **kwargs
+        self, *, question: str, text_documents: List["_models.TextDocument"], language: Optional[str] = None, **kwargs
     ):
         """
         :keyword question: Required. User question to query against the given text records.
         :paramtype question: str
         :keyword text_documents: Required. Text records to be searched for given question.
-        :paramtype text_documents: list[str or ~azure.ai.language.questionanswering.models.TextDocument]
+        :paramtype text_documents: list[~azure.ai.language.questionanswering.models.TextDocument]
         :keyword language: Language of the text records. This is BCP-47 representation of a language.
          For example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
          default.
@@ -63,7 +61,6 @@ class AnswersFromTextOptions(msrest.serialization.Model):
         self.question = question
         self.text_documents = text_documents
         self.language = language
-        self.string_index_type = "UnicodeCodePoint"
 
 
 class AnswersFromTextResult(msrest.serialization.Model):
@@ -77,7 +74,7 @@ class AnswersFromTextResult(msrest.serialization.Model):
         "answers": {"key": "answers", "type": "[TextAnswer]"},
     }
 
-    def __init__(self, *, answers: Optional[List["TextAnswer"]] = None, **kwargs):
+    def __init__(self, *, answers: Optional[List["_models.TextAnswer"]] = None, **kwargs):
         """
         :keyword answers: Represents the answer results.
         :paramtype answers: list[~azure.ai.language.questionanswering.models.TextAnswer]
@@ -102,8 +99,7 @@ class AnswersOptions(msrest.serialization.Model):
     :vartype confidence_threshold: float
     :ivar answer_context: Context object with previous QnA's information.
     :vartype answer_context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
-    :ivar ranker_kind: Type of ranker to be used. Possible
-     values include: "Default", "QuestionOnly".
+    :ivar ranker_kind: Type of ranker to be used.
     :vartype ranker_kind: str
     :ivar filters: Filter QnAs based on given metadata list and knowledge base sources.
     :vartype filters: ~azure.ai.language.questionanswering.models.QueryFilters
@@ -138,10 +134,10 @@ class AnswersOptions(msrest.serialization.Model):
         top: Optional[int] = None,
         user_id: Optional[str] = None,
         confidence_threshold: Optional[float] = None,
-        answer_context: Optional["KnowledgeBaseAnswerContext"] = None,
+        answer_context: Optional["_models.KnowledgeBaseAnswerContext"] = None,
         ranker_kind: Optional[str] = None,
-        filters: Optional["QueryFilters"] = None,
-        short_answer_options: Optional["ShortAnswerOptions"] = None,
+        filters: Optional["_models.QueryFilters"] = None,
+        short_answer_options: Optional["_models.ShortAnswerOptions"] = None,
         include_unstructured_sources: Optional[bool] = None,
         **kwargs
     ):
@@ -158,9 +154,9 @@ class AnswersOptions(msrest.serialization.Model):
         :keyword confidence_threshold: Minimum threshold score for answers, value ranges from 0 to 1.
         :paramtype confidence_threshold: float
         :keyword answer_context: Context object with previous QnA's information.
-        :paramtype answer_context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
-        :keyword ranker_kind: Type of ranker to be used. Possible
-         values include: "Default", "QuestionOnly".
+        :paramtype answer_context:
+         ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
+        :keyword ranker_kind: Type of ranker to be used.
         :paramtype ranker_kind: str
         :keyword filters: Filter QnAs based on given metadata list and knowledge base sources.
         :paramtype filters: ~azure.ai.language.questionanswering.models.QueryFilters
@@ -244,7 +240,7 @@ class AnswersResult(msrest.serialization.Model):
         "answers": {"key": "answers", "type": "[KnowledgeBaseAnswer]"},
     }
 
-    def __init__(self, *, answers: Optional[List["KnowledgeBaseAnswer"]] = None, **kwargs):
+    def __init__(self, *, answers: Optional[List["_models.KnowledgeBaseAnswer"]] = None, **kwargs):
         """
         :keyword answers: Represents Answer Result list.
         :paramtype answers: list[~azure.ai.language.questionanswering.models.KnowledgeBaseAnswer]
@@ -291,11 +287,11 @@ class Error(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        code: Union[str, "ErrorCode"],
+        code: Union[str, "_models.ErrorCode"],
         message: str,
         target: Optional[str] = None,
-        details: Optional[List["Error"]] = None,
-        innererror: Optional["InnerErrorModel"] = None,
+        details: Optional[List["_models.Error"]] = None,
+        innererror: Optional["_models.InnerErrorModel"] = None,
         **kwargs
     ):
         """
@@ -334,7 +330,7 @@ class ErrorResponse(msrest.serialization.Model):
         "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(self, *, error: Optional["Error"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.Error"] = None, **kwargs):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.ai.language.questionanswering.models.Error
@@ -379,11 +375,11 @@ class InnerErrorModel(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        code: Union[str, "InnerErrorCode"],
+        code: Union[str, "_models.InnerErrorCode"],
         message: str,
         details: Optional[Dict[str, str]] = None,
         target: Optional[str] = None,
-        innererror: Optional["InnerErrorModel"] = None,
+        innererror: Optional["_models.InnerErrorModel"] = None,
         **kwargs
     ):
         """
@@ -455,8 +451,8 @@ class KnowledgeBaseAnswer(msrest.serialization.Model):
         qna_id: Optional[int] = None,
         source: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
-        dialog: Optional["KnowledgeBaseAnswerDialog"] = None,
-        short_answer: Optional["AnswerSpan"] = None,
+        dialog: Optional["_models.KnowledgeBaseAnswerDialog"] = None,
+        short_answer: Optional["_models.AnswerSpan"] = None,
         **kwargs
     ):
         """
@@ -545,7 +541,7 @@ class KnowledgeBaseAnswerDialog(msrest.serialization.Model):
         self,
         *,
         is_context_only: Optional[bool] = None,
-        prompts: Optional[List["KnowledgeBaseAnswerPrompt"]] = None,
+        prompts: Optional[List["_models.KnowledgeBaseAnswerPrompt"]] = None,
         **kwargs
     ):
         """
@@ -608,9 +604,8 @@ class MetadataFilter(msrest.serialization.Model):
     """Find QnAs that are associated with the given list of metadata.
 
     :ivar metadata:
-    :vartype metadata: list[tuple[str, str]]
-    :ivar logical_operation: Operation used to join metadata filters. Possible values include:
-     "AND", "OR".
+    :vartype metadata: list[any]
+    :ivar logical_operation: Operation used to join metadata filters.
     :vartype logical_operation: str
     """
 
@@ -619,14 +614,11 @@ class MetadataFilter(msrest.serialization.Model):
         "logical_operation": {"key": "logicalOperation", "type": "str"},
     }
 
-    def __init__(
-        self, *, metadata: Optional[List[Tuple[str, str]]] = None, logical_operation: Optional[str] = None, **kwargs
-    ):
+    def __init__(self, *, metadata: Optional[List[Any]] = None, logical_operation: Optional[str] = None, **kwargs):
         """
         :keyword metadata:
-        :paramtype metadata: list[tuple[str, str]]
-        :keyword logical_operation: Operation used to join metadata filters. Possible values include:
-         "AND", "OR".
+        :paramtype metadata: list[any]
+        :keyword logical_operation: Operation used to join metadata filters.
         :paramtype logical_operation: str
         """
         super(MetadataFilter, self).__init__(**kwargs)
@@ -643,7 +635,6 @@ class QueryFilters(msrest.serialization.Model):
      knowledge base.
     :vartype source_filter: list[str]
     :ivar logical_operation: Logical operation used to join metadata filter with source filter.
-     Possible values include: "AND", "OR".
     :vartype logical_operation: str
     """
 
@@ -656,7 +647,7 @@ class QueryFilters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        metadata_filter: Optional["MetadataFilter"] = None,
+        metadata_filter: Optional["_models.MetadataFilter"] = None,
         source_filter: Optional[List[str]] = None,
         logical_operation: Optional[str] = None,
         **kwargs
@@ -668,7 +659,6 @@ class QueryFilters(msrest.serialization.Model):
          knowledge base.
         :paramtype source_filter: list[str]
         :keyword logical_operation: Logical operation used to join metadata filter with source filter.
-         Possible values include: "AND", "OR".
         :paramtype logical_operation: str
         """
         super(QueryFilters, self).__init__(**kwargs)
@@ -756,7 +746,7 @@ class TextAnswer(msrest.serialization.Model):
         answer: Optional[str] = None,
         confidence: Optional[float] = None,
         id: Optional[str] = None,
-        short_answer: Optional["AnswerSpan"] = None,
+        short_answer: Optional["_models.AnswerSpan"] = None,
         offset: Optional[int] = None,
         length: Optional[int] = None,
         **kwargs

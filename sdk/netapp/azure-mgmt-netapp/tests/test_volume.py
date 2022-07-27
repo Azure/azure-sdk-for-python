@@ -1,6 +1,6 @@
 import time
 from azure.mgmt.resource import ResourceManagementClient
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
 from azure.mgmt.netapp.models import Volume, VolumePatch, ReplicationObject, VolumePropertiesDataProtection, AuthorizeRequest, PoolChangeRequest
 from test_pool import create_pool, delete_pool
 from test_account import delete_account
@@ -11,14 +11,15 @@ GIGABYTE = 1024 * 1024 * 1024
 SUBSID = '69a75bda-882e-44d5-8431-63421204132a'
 
 
-def create_volume_body(volume_name, location, rg=TEST_RG, vnet=VNET):
-    default_protocol_type = {"NFSv3"}
+def create_volume_body(volume_name, location, rg=TEST_RG, vnet=VNET, enable_subvolumes=None):
+    default_protocol_type = ["NFSv3"]
 
     volume_body = Volume(
         location=location,
         usage_threshold=100 * GIGABYTE,
         protocol_types=default_protocol_type,
         creation_token=volume_name,
+        enable_subvolumes=enable_subvolumes,
         service_level=SERVICE_LEVEL,
         subnet_id="/subscriptions/" + SUBSID + "/resourceGroups/" + rg + "/providers/Microsoft.Network/virtualNetworks/"
                   + vnet + "/subnets/default"
@@ -28,7 +29,7 @@ def create_volume_body(volume_name, location, rg=TEST_RG, vnet=VNET):
 
 
 def create_volume(client, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1, volume_name=TEST_VOL_1,
-                  location=LOCATION, vnet=VNET, volume_only=False, live=False):
+                  location=LOCATION, vnet=VNET, volume_only=False, live=False, enable_subvolumes=None):
     if not volume_only:
         create_pool(
             client,
@@ -40,7 +41,7 @@ def create_volume(client, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_PO
         if live:
             time.sleep(10)
 
-    volume_body = create_volume_body(volume_name, location, rg, vnet)
+    volume_body = create_volume_body(volume_name, location, rg, vnet, enable_subvolumes)
     volume = client.volumes.begin_create_or_update(
         rg,
         account_name,
@@ -76,7 +77,7 @@ def create_dp_volume(client, source_volume, rg=TEST_REPL_REMOTE_RG, account_name
         replication=replication
     )
 
-    default_protocol_type = {"NFSv3"}
+    default_protocol_type = ["NFSv3"]
 
     volume_body = Volume(
         location=location,
@@ -162,14 +163,16 @@ def wait_for_succeeded(client, live=False):
             time.sleep(1)
 
 
-class NetAppAccountTestCase(AzureMgmtTestCase):
-    def setUp(self):
-        super(NetAppAccountTestCase, self).setUp()
+class TestNetAppVolume(AzureMgmtRecordedTestCase):
+
+    def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)
 
     # Before tests are run live a resource group needs to be created along with vnet and subnet
     # Note that when tests are run in live mode it is best to run one test at a time.
+    @recorded_by_proxy
     def test_create_delete_list_volume(self):
+        set_bodiless_matcher()
         volume = create_volume(
             self.client,
             TEST_RG,
@@ -178,34 +181,36 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
             TEST_VOL_1,
             live=self.is_live
         )
-        self.assertEqual(volume.name, TEST_ACC_1 + '/' + TEST_POOL_1 + '/' + TEST_VOL_1)
+        assert volume.name == TEST_ACC_1 + '/' + TEST_POOL_1 + '/' + TEST_VOL_1
         # check default export policy and protocol
-        self.assertTrue(volume.export_policy.rules[0].nfsv3),
-        self.assertFalse(volume.export_policy.rules[0].nfsv41)
-        self.assertEqual("0.0.0.0/0", volume.export_policy.rules[0].allowed_clients)
-        self.assertEqual(volume.protocol_types[0], "NFSv3")
+        assert volume.export_policy.rules[0].nfsv3
+        assert not volume.export_policy.rules[0].nfsv41
+        assert "0.0.0.0/0" == volume.export_policy.rules[0].allowed_clients
+        assert volume.protocol_types[0] == "NFSv3"
 
         volume_list = self.client.volumes.list(TEST_RG, TEST_ACC_1, TEST_POOL_1)
-        self.assertEqual(len(list(volume_list)), 1)
+        assert len(list(volume_list)) == 1
 
         delete_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
         volume_list = self.client.volumes.list(TEST_RG, TEST_ACC_1, TEST_POOL_1)
-        self.assertEqual(len(list(volume_list)), 0)
+        assert len(list(volume_list)) == 0
 
         wait_for_no_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
+    @recorded_by_proxy
     def test_list_volumes(self):
+        set_bodiless_matcher()
         create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, LOCATION, live=self.is_live)
         create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_2, LOCATION, volume_only=True, live=self.is_live)
         volumes = [TEST_VOL_1, TEST_VOL_2]
 
         volume_list = self.client.volumes.list(TEST_RG, TEST_ACC_1, TEST_POOL_1)
-        self.assertEqual(len(list(volume_list)), 2)
+        assert len(list(volume_list)) == 2
         idx = 0
         for volume in volume_list:
-            self.assertEqual(volume.name, volumes[idx])
+            assert volume.name == volumes[idx]
             idx += 1
 
         delete_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
@@ -213,7 +218,9 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
+    @recorded_by_proxy
     def test_volume_replication(self):
+        set_bodiless_matcher()
         source_volume = create_volume(
             self.client,
             TEST_RG,
@@ -241,6 +248,10 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         if self.is_live:
             time.sleep(30)
         wait_for_replication_status(self.client, "Mirrored", self.is_live)
+
+        # list replications
+        replications = self.client.volumes.list_replications(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
+        assert len(list(replications)) == 1
 
         # break replication
         self.client.volumes.begin_break_replication(TEST_REPL_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
@@ -304,20 +315,24 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
+    @recorded_by_proxy
     def test_get_volume_by_name(self):
+        set_bodiless_matcher()
         create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, LOCATION, live=self.is_live)
 
         volume = self.client.volumes.get(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
-        self.assertEqual(volume.name, TEST_ACC_1 + '/' + TEST_POOL_1 + '/' + TEST_VOL_1)
+        assert volume.name == TEST_ACC_1 + '/' + TEST_POOL_1 + '/' + TEST_VOL_1
 
         delete_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
+    @recorded_by_proxy
     def test_update_volume(self):
+        set_bodiless_matcher()
         volume = create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
-        self.assertEqual("Premium", volume.service_level)
-        self.assertEqual(100 * GIGABYTE, volume.usage_threshold)
+        assert "Premium" == volume.service_level
+        assert 100 * GIGABYTE == volume.usage_threshold
 
         volume_body = Volume(
             usage_threshold=200 * GIGABYTE,
@@ -335,28 +350,32 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
             TEST_VOL_1,
             volume_body
         ).result()
-        self.assertEqual("Premium", volume.service_level)  # unchanged
-        self.assertEqual(200 * GIGABYTE, volume.usage_threshold)
+        assert "Premium" == volume.service_level  # unchanged
+        assert 200 * GIGABYTE == volume.usage_threshold
 
         delete_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
+    @recorded_by_proxy
     def test_patch_volume(self):
+        set_bodiless_matcher()
         volume = create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
-        self.assertEqual("Premium", volume.service_level)
-        self.assertEqual(100 * GIGABYTE, volume.usage_threshold)
+        assert "Premium" == volume.service_level
+        assert 100 * GIGABYTE == volume.usage_threshold
 
         volume_patch = VolumePatch(usage_threshold=200 * GIGABYTE)
         volume = self.client.volumes.begin_update(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, volume_patch).result()
-        self.assertEqual("Premium", volume.service_level)
-        self.assertEqual(200 * GIGABYTE, volume.usage_threshold)
+        assert "Premium" == volume.service_level
+        assert 200 * GIGABYTE == volume.usage_threshold
 
         delete_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
+    @recorded_by_proxy
     def test_pool_change(self):
+        set_bodiless_matcher()
         create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
         pool2 = create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_2, LOCATION, True)
         if self.is_live:
@@ -365,10 +384,10 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         body = PoolChangeRequest(new_pool_resource_id=pool2.id)
         self.client.volumes.begin_pool_change(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, body).wait()
         volume = self.client.volumes.get(TEST_RG, TEST_ACC_1, TEST_POOL_2, TEST_VOL_1)
-        self.assertEqual(volume.name, TEST_ACC_1 + "/" + TEST_POOL_2 + "/" + TEST_VOL_1)
+        assert volume.name == TEST_ACC_1 + "/" + TEST_POOL_2 + "/" + TEST_VOL_1
 
         volume_list = self.client.volumes.list(TEST_RG, TEST_ACC_1, TEST_POOL_1)
-        self.assertEqual(len(list(volume_list)), 0)
+        assert len(list(volume_list)) == 0
 
         delete_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_2, TEST_VOL_1, live=self.is_live)
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)

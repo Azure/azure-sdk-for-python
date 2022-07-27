@@ -40,6 +40,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -83,6 +85,8 @@ class ErrorDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -94,8 +98,8 @@ class ErrorDetail(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -108,6 +112,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ErrorDetail
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -143,6 +151,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -180,6 +190,8 @@ class ProxyResource(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
 
 
@@ -196,46 +208,46 @@ class Extension(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param identity: Identity of the Extension resource.
-    :type identity: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.Identity
+    :ivar identity: Identity of the Extension resource.
+    :vartype identity: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.Identity
     :ivar system_data: Top level metadata
      https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-contracts.md#system-metadata-for-all-azure-resources.
     :vartype system_data: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.SystemData
-    :param extension_type: Type of the Extension, of which this resource is an instance of.  It
-     must be one of the Extension Types registered with Microsoft.KubernetesConfiguration by the
+    :ivar extension_type: Type of the Extension, of which this resource is an instance of.  It must
+     be one of the Extension Types registered with Microsoft.KubernetesConfiguration by the
      Extension publisher.
-    :type extension_type: str
-    :param auto_upgrade_minor_version: Flag to note if this extension participates in auto upgrade
+    :vartype extension_type: str
+    :ivar auto_upgrade_minor_version: Flag to note if this extension participates in auto upgrade
      of minor version, or not.
-    :type auto_upgrade_minor_version: bool
-    :param release_train: ReleaseTrain this extension participates in for auto-upgrade (e.g.
-     Stable, Preview, etc.) - only if autoUpgradeMinorVersion is 'true'.
-    :type release_train: str
-    :param version: Version of the extension for this extension, if it is 'pinned' to a specific
+    :vartype auto_upgrade_minor_version: bool
+    :ivar release_train: ReleaseTrain this extension participates in for auto-upgrade (e.g. Stable,
+     Preview, etc.) - only if autoUpgradeMinorVersion is 'true'.
+    :vartype release_train: str
+    :ivar version: Version of the extension for this extension, if it is 'pinned' to a specific
      version. autoUpgradeMinorVersion must be 'false'.
-    :type version: str
-    :param scope: Scope at which the extension is installed.
-    :type scope: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.Scope
-    :param configuration_settings: Configuration settings, as name-value pairs for configuring this
+    :vartype version: str
+    :ivar scope: Scope at which the extension is installed.
+    :vartype scope: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.Scope
+    :ivar configuration_settings: Configuration settings, as name-value pairs for configuring this
      extension.
-    :type configuration_settings: dict[str, str]
-    :param configuration_protected_settings: Configuration settings that are sensitive, as
+    :vartype configuration_settings: dict[str, str]
+    :ivar configuration_protected_settings: Configuration settings that are sensitive, as
      name-value pairs for configuring this extension.
-    :type configuration_protected_settings: dict[str, str]
+    :vartype configuration_protected_settings: dict[str, str]
     :ivar provisioning_state: The provisioning state of the extension resource. Possible values
      include: "Succeeded", "Failed", "Canceled", "Creating", "Updating", "Deleting".
     :vartype provisioning_state: str or
      ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ProvisioningState
-    :param statuses: Status from this extension.
-    :type statuses: list[~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ExtensionStatus]
-    :param error_info: The error detail.
-    :type error_info: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ErrorDetail
+    :ivar statuses: Status from this extension.
+    :vartype statuses: list[~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ExtensionStatus]
+    :ivar error_info: The error detail.
+    :vartype error_info: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ErrorDetail
     :ivar custom_location_settings: Custom Location settings properties.
     :vartype custom_location_settings: dict[str, str]
     :ivar package_uri: Uri of the Helm package.
     :vartype package_uri: str
-    :param aks_assigned_identity: Identity of the Extension resource in an AKS cluster.
-    :type aks_assigned_identity:
+    :ivar aks_assigned_identity: Identity of the Extension resource in an AKS cluster.
+    :vartype aks_assigned_identity:
      ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ExtensionPropertiesAksAssignedIdentity
     """
 
@@ -286,6 +298,39 @@ class Extension(ProxyResource):
         aks_assigned_identity: Optional["ExtensionPropertiesAksAssignedIdentity"] = None,
         **kwargs
     ):
+        """
+        :keyword identity: Identity of the Extension resource.
+        :paramtype identity: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.Identity
+        :keyword extension_type: Type of the Extension, of which this resource is an instance of.  It
+         must be one of the Extension Types registered with Microsoft.KubernetesConfiguration by the
+         Extension publisher.
+        :paramtype extension_type: str
+        :keyword auto_upgrade_minor_version: Flag to note if this extension participates in auto
+         upgrade of minor version, or not.
+        :paramtype auto_upgrade_minor_version: bool
+        :keyword release_train: ReleaseTrain this extension participates in for auto-upgrade (e.g.
+         Stable, Preview, etc.) - only if autoUpgradeMinorVersion is 'true'.
+        :paramtype release_train: str
+        :keyword version: Version of the extension for this extension, if it is 'pinned' to a specific
+         version. autoUpgradeMinorVersion must be 'false'.
+        :paramtype version: str
+        :keyword scope: Scope at which the extension is installed.
+        :paramtype scope: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.Scope
+        :keyword configuration_settings: Configuration settings, as name-value pairs for configuring
+         this extension.
+        :paramtype configuration_settings: dict[str, str]
+        :keyword configuration_protected_settings: Configuration settings that are sensitive, as
+         name-value pairs for configuring this extension.
+        :paramtype configuration_protected_settings: dict[str, str]
+        :keyword statuses: Status from this extension.
+        :paramtype statuses:
+         list[~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ExtensionStatus]
+        :keyword error_info: The error detail.
+        :paramtype error_info: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ErrorDetail
+        :keyword aks_assigned_identity: Identity of the Extension resource in an AKS cluster.
+        :paramtype aks_assigned_identity:
+         ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ExtensionPropertiesAksAssignedIdentity
+        """
         super(Extension, self).__init__(**kwargs)
         self.identity = identity
         self.system_data = None
@@ -313,9 +358,9 @@ class ExtensionPropertiesAksAssignedIdentity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :param type: The identity type. The only acceptable values to pass in are None and
+    :ivar type: The identity type. The only acceptable values to pass in are None and
      "SystemAssigned". The default value is None.
-    :type type: str
+    :vartype type: str
     """
 
     _validation = {
@@ -335,6 +380,11 @@ class ExtensionPropertiesAksAssignedIdentity(msrest.serialization.Model):
         type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword type: The identity type. The only acceptable values to pass in are None and
+         "SystemAssigned". The default value is None.
+        :paramtype type: str
+        """
         super(ExtensionPropertiesAksAssignedIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
@@ -366,6 +416,8 @@ class ExtensionsList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ExtensionsList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -374,17 +426,17 @@ class ExtensionsList(msrest.serialization.Model):
 class ExtensionStatus(msrest.serialization.Model):
     """Status from the extension.
 
-    :param code: Status code provided by the Extension.
-    :type code: str
-    :param display_status: Short description of status of the extension.
-    :type display_status: str
-    :param level: Level of the status. Possible values include: "Error", "Warning", "Information".
+    :ivar code: Status code provided by the Extension.
+    :vartype code: str
+    :ivar display_status: Short description of status of the extension.
+    :vartype display_status: str
+    :ivar level: Level of the status. Possible values include: "Error", "Warning", "Information".
      Default value: "Information".
-    :type level: str or ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.LevelType
-    :param message: Detailed message of the status from the Extension.
-    :type message: str
-    :param time: DateLiteral (per ISO8601) noting the time of installation status.
-    :type time: str
+    :vartype level: str or ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.LevelType
+    :ivar message: Detailed message of the status from the Extension.
+    :vartype message: str
+    :ivar time: DateLiteral (per ISO8601) noting the time of installation status.
+    :vartype time: str
     """
 
     _attribute_map = {
@@ -405,6 +457,19 @@ class ExtensionStatus(msrest.serialization.Model):
         time: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword code: Status code provided by the Extension.
+        :paramtype code: str
+        :keyword display_status: Short description of status of the extension.
+        :paramtype display_status: str
+        :keyword level: Level of the status. Possible values include: "Error", "Warning",
+         "Information". Default value: "Information".
+        :paramtype level: str or ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.LevelType
+        :keyword message: Detailed message of the status from the Extension.
+        :paramtype message: str
+        :keyword time: DateLiteral (per ISO8601) noting the time of installation status.
+        :paramtype time: str
+        """
         super(ExtensionStatus, self).__init__(**kwargs)
         self.code = code
         self.display_status = display_status
@@ -422,9 +487,9 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :param type: The identity type. The only acceptable values to pass in are None and
+    :ivar type: The identity type. The only acceptable values to pass in are None and
      "SystemAssigned". The default value is None.
-    :type type: str
+    :vartype type: str
     """
 
     _validation = {
@@ -444,6 +509,11 @@ class Identity(msrest.serialization.Model):
         type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword type: The identity type. The only acceptable values to pass in are None and
+         "SystemAssigned". The default value is None.
+        :paramtype type: str
+        """
         super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
@@ -476,6 +546,8 @@ class OperationStatusList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationStatusList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -486,16 +558,16 @@ class OperationStatusResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Fully qualified ID for the async operation.
-    :type id: str
-    :param name: Name of the async operation.
-    :type name: str
-    :param status: Required. Operation status.
-    :type status: str
-    :param properties: Additional information, if available.
-    :type properties: dict[str, str]
-    :param error: The error detail.
-    :type error: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ErrorDetail
+    :ivar id: Fully qualified ID for the async operation.
+    :vartype id: str
+    :ivar name: Name of the async operation.
+    :vartype name: str
+    :ivar status: Required. Operation status.
+    :vartype status: str
+    :ivar properties: Additional information, if available.
+    :vartype properties: dict[str, str]
+    :ivar error: The error detail.
+    :vartype error: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ErrorDetail
     """
 
     _validation = {
@@ -520,6 +592,18 @@ class OperationStatusResult(msrest.serialization.Model):
         error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword id: Fully qualified ID for the async operation.
+        :paramtype id: str
+        :keyword name: Name of the async operation.
+        :paramtype name: str
+        :keyword status: Required. Operation status.
+        :paramtype status: str
+        :keyword properties: Additional information, if available.
+        :paramtype properties: dict[str, str]
+        :keyword error: The error detail.
+        :paramtype error: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ErrorDetail
+        """
         super(OperationStatusResult, self).__init__(**kwargs)
         self.id = id
         self.name = name
@@ -531,21 +615,21 @@ class OperationStatusResult(msrest.serialization.Model):
 class PatchExtension(msrest.serialization.Model):
     """The Extension Patch Request object.
 
-    :param auto_upgrade_minor_version: Flag to note if this extension participates in auto upgrade
+    :ivar auto_upgrade_minor_version: Flag to note if this extension participates in auto upgrade
      of minor version, or not.
-    :type auto_upgrade_minor_version: bool
-    :param release_train: ReleaseTrain this extension participates in for auto-upgrade (e.g.
-     Stable, Preview, etc.) - only if autoUpgradeMinorVersion is 'true'.
-    :type release_train: str
-    :param version: Version of the extension for this extension, if it is 'pinned' to a specific
+    :vartype auto_upgrade_minor_version: bool
+    :ivar release_train: ReleaseTrain this extension participates in for auto-upgrade (e.g. Stable,
+     Preview, etc.) - only if autoUpgradeMinorVersion is 'true'.
+    :vartype release_train: str
+    :ivar version: Version of the extension for this extension, if it is 'pinned' to a specific
      version. autoUpgradeMinorVersion must be 'false'.
-    :type version: str
-    :param configuration_settings: Configuration settings, as name-value pairs for configuring this
+    :vartype version: str
+    :ivar configuration_settings: Configuration settings, as name-value pairs for configuring this
      extension.
-    :type configuration_settings: dict[str, str]
-    :param configuration_protected_settings: Configuration settings that are sensitive, as
+    :vartype configuration_settings: dict[str, str]
+    :ivar configuration_protected_settings: Configuration settings that are sensitive, as
      name-value pairs for configuring this extension.
-    :type configuration_protected_settings: dict[str, str]
+    :vartype configuration_protected_settings: dict[str, str]
     """
 
     _attribute_map = {
@@ -566,6 +650,23 @@ class PatchExtension(msrest.serialization.Model):
         configuration_protected_settings: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword auto_upgrade_minor_version: Flag to note if this extension participates in auto
+         upgrade of minor version, or not.
+        :paramtype auto_upgrade_minor_version: bool
+        :keyword release_train: ReleaseTrain this extension participates in for auto-upgrade (e.g.
+         Stable, Preview, etc.) - only if autoUpgradeMinorVersion is 'true'.
+        :paramtype release_train: str
+        :keyword version: Version of the extension for this extension, if it is 'pinned' to a specific
+         version. autoUpgradeMinorVersion must be 'false'.
+        :paramtype version: str
+        :keyword configuration_settings: Configuration settings, as name-value pairs for configuring
+         this extension.
+        :paramtype configuration_settings: dict[str, str]
+        :keyword configuration_protected_settings: Configuration settings that are sensitive, as
+         name-value pairs for configuring this extension.
+        :paramtype configuration_protected_settings: dict[str, str]
+        """
         super(PatchExtension, self).__init__(**kwargs)
         self.auto_upgrade_minor_version = auto_upgrade_minor_version
         self.release_train = release_train
@@ -579,10 +680,10 @@ class ResourceProviderOperation(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param name: Operation name, in format of {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: Display metadata associated with the operation.
-    :type display:
+    :ivar name: Operation name, in format of {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: Display metadata associated with the operation.
+    :vartype display:
      ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ResourceProviderOperationDisplay
     :ivar is_data_action: The flag that indicates whether the operation applies to data plane.
     :vartype is_data_action: bool
@@ -609,6 +710,13 @@ class ResourceProviderOperation(msrest.serialization.Model):
         display: Optional["ResourceProviderOperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Operation name, in format of {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: Display metadata associated with the operation.
+        :paramtype display:
+         ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ResourceProviderOperationDisplay
+        """
         super(ResourceProviderOperation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -619,14 +727,14 @@ class ResourceProviderOperation(msrest.serialization.Model):
 class ResourceProviderOperationDisplay(msrest.serialization.Model):
     """Display metadata associated with the operation.
 
-    :param provider: Resource provider: Microsoft KubernetesConfiguration.
-    :type provider: str
-    :param resource: Resource on which the operation is performed.
-    :type resource: str
-    :param operation: Type of operation: get, read, delete, etc.
-    :type operation: str
-    :param description: Description of this operation.
-    :type description: str
+    :ivar provider: Resource provider: Microsoft KubernetesConfiguration.
+    :vartype provider: str
+    :ivar resource: Resource on which the operation is performed.
+    :vartype resource: str
+    :ivar operation: Type of operation: get, read, delete, etc.
+    :vartype operation: str
+    :ivar description: Description of this operation.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -645,6 +753,16 @@ class ResourceProviderOperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Resource provider: Microsoft KubernetesConfiguration.
+        :paramtype provider: str
+        :keyword resource: Resource on which the operation is performed.
+        :paramtype resource: str
+        :keyword operation: Type of operation: get, read, delete, etc.
+        :paramtype operation: str
+        :keyword description: Description of this operation.
+        :paramtype description: str
+        """
         super(ResourceProviderOperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -657,8 +775,8 @@ class ResourceProviderOperationList(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: List of operations supported by this resource provider.
-    :type value:
+    :ivar value: List of operations supported by this resource provider.
+    :vartype value:
      list[~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ResourceProviderOperation]
     :ivar next_link: URL to the next set of results, if any.
     :vartype next_link: str
@@ -679,6 +797,11 @@ class ResourceProviderOperationList(msrest.serialization.Model):
         value: Optional[List["ResourceProviderOperation"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of operations supported by this resource provider.
+        :paramtype value:
+         list[~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ResourceProviderOperation]
+        """
         super(ResourceProviderOperationList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -687,10 +810,10 @@ class ResourceProviderOperationList(msrest.serialization.Model):
 class Scope(msrest.serialization.Model):
     """Scope of the extension. It can be either Cluster or Namespace; but not both.
 
-    :param cluster: Specifies that the scope of the extension is Cluster.
-    :type cluster: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ScopeCluster
-    :param namespace: Specifies that the scope of the extension is Namespace.
-    :type namespace: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ScopeNamespace
+    :ivar cluster: Specifies that the scope of the extension is Cluster.
+    :vartype cluster: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ScopeCluster
+    :ivar namespace: Specifies that the scope of the extension is Namespace.
+    :vartype namespace: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ScopeNamespace
     """
 
     _attribute_map = {
@@ -705,6 +828,12 @@ class Scope(msrest.serialization.Model):
         namespace: Optional["ScopeNamespace"] = None,
         **kwargs
     ):
+        """
+        :keyword cluster: Specifies that the scope of the extension is Cluster.
+        :paramtype cluster: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ScopeCluster
+        :keyword namespace: Specifies that the scope of the extension is Namespace.
+        :paramtype namespace: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ScopeNamespace
+        """
         super(Scope, self).__init__(**kwargs)
         self.cluster = cluster
         self.namespace = namespace
@@ -713,9 +842,9 @@ class Scope(msrest.serialization.Model):
 class ScopeCluster(msrest.serialization.Model):
     """Specifies that the scope of the extension is Cluster.
 
-    :param release_namespace: Namespace where the extension Release must be placed, for a Cluster
+    :ivar release_namespace: Namespace where the extension Release must be placed, for a Cluster
      scoped extension.  If this namespace does not exist, it will be created.
-    :type release_namespace: str
+    :vartype release_namespace: str
     """
 
     _attribute_map = {
@@ -728,6 +857,11 @@ class ScopeCluster(msrest.serialization.Model):
         release_namespace: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword release_namespace: Namespace where the extension Release must be placed, for a Cluster
+         scoped extension.  If this namespace does not exist, it will be created.
+        :paramtype release_namespace: str
+        """
         super(ScopeCluster, self).__init__(**kwargs)
         self.release_namespace = release_namespace
 
@@ -735,9 +869,9 @@ class ScopeCluster(msrest.serialization.Model):
 class ScopeNamespace(msrest.serialization.Model):
     """Specifies that the scope of the extension is Namespace.
 
-    :param target_namespace: Namespace where the extension will be created for an Namespace scoped
+    :ivar target_namespace: Namespace where the extension will be created for an Namespace scoped
      extension.  If this namespace does not exist, it will be created.
-    :type target_namespace: str
+    :vartype target_namespace: str
     """
 
     _attribute_map = {
@@ -750,6 +884,11 @@ class ScopeNamespace(msrest.serialization.Model):
         target_namespace: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword target_namespace: Namespace where the extension will be created for an Namespace
+         scoped extension.  If this namespace does not exist, it will be created.
+        :paramtype target_namespace: str
+        """
         super(ScopeNamespace, self).__init__(**kwargs)
         self.target_namespace = target_namespace
 
@@ -757,22 +896,22 @@ class ScopeNamespace(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or
      ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or
+    :vartype last_modified_by_type: str or
      ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -795,6 +934,24 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or
+         ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or
+         ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type

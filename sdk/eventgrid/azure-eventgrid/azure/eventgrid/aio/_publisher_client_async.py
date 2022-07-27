@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Union, List, Dict, TYPE_CHECKING, cast
+from typing import Any, Union, List, Dict, TYPE_CHECKING, cast, Optional
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.messaging import CloudEvent
@@ -55,7 +55,7 @@ SendType = Union[
 ListEventType = Union[List[CloudEvent], List[EventGridEvent], List[Dict]]
 
 
-class EventGridPublisherClient:
+class EventGridPublisherClient: # pylint: disable=client-accepts-api-version-keyword
     """Asynchronous EventGridPublisherClient publishes events to an EventGrid topic or domain.
     It can be used to publish either an EventGridEvent, a CloudEvent or a Custom Schema.
 
@@ -125,7 +125,7 @@ class EventGridPublisherClient:
         return policies
 
     @distributed_trace_async
-    async def send(self, events: SendType, **kwargs: Any) -> None:
+    async def send(self, events: SendType, *, channel_name: Optional[str] = None, **kwargs: Any) -> None:
         """Sends events to a topic or a domain specified during the client initialization.
 
         A single instance or a list of dictionaries, CloudEvents or EventGridEvents are accepted.
@@ -187,12 +187,15 @@ class EventGridPublisherClient:
         :keyword str content_type: The type of content to be used to send the events.
          Has default value "application/json; charset=utf-8" for EventGridEvents,
          with "cloudevents-batch+json" for CloudEvents
+        :keyword channel_name: Optional. Used to specify the name of event channel when publishing to partner
+        :paramtype channel_name: str or None
+         namespaces with partner topic. For more details, visit
+         https://docs.microsoft.com/azure/event-grid/partner-events-overview
         :rtype: None
         """
         if not isinstance(events, list):
             events = cast(ListEventType, [events])
         content_type = kwargs.pop("content_type", "application/json; charset=utf-8")
-
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
                 events = [
@@ -209,7 +212,7 @@ class EventGridPublisherClient:
             for event in events:
                 _eventgrid_data_typecheck(event)
         response = await self._client.send_request(  # pylint: disable=protected-access
-            _build_request(self._endpoint, content_type, events), **kwargs
+            _build_request(self._endpoint, content_type, events, channel_name=channel_name), **kwargs
         )
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         if response.status_code != 200:

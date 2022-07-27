@@ -13,33 +13,49 @@ from azure.core.pipeline import policies
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Optional
 
 VERSION = "unknown"
 
-class AzureDataLakeStorageRESTAPIConfiguration(Configuration):
+class AzureDataLakeStorageRESTAPIConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for AzureDataLakeStorageRESTAPI.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param url: The URL of the service account, container, or blob that is the target of the desired operation.
+    :param url: The URL of the service account, container, or blob that is the target of the
+     desired operation.
     :type url: str
+    :param x_ms_lease_duration: The lease duration is required to acquire a lease, and specifies
+     the duration of the lease in seconds.  The lease duration must be between 15 and 60 seconds or
+     -1 for infinite lease. Default value is None.
+    :type x_ms_lease_duration: int
+    :keyword resource: The value must be "filesystem" for all filesystem operations. Default value
+     is "filesystem". Note that overriding this default value may result in unsupported behavior.
+    :paramtype resource: str
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2021-06-08". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
     """
 
     def __init__(
         self,
         url,  # type: str
+        x_ms_lease_duration=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        super(AzureDataLakeStorageRESTAPIConfiguration, self).__init__(**kwargs)
+        resource = kwargs.pop('resource', "filesystem")  # type: str
+        version = kwargs.pop('version', "2021-06-08")  # type: str
+
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
-        super(AzureDataLakeStorageRESTAPIConfiguration, self).__init__(**kwargs)
 
         self.url = url
-        self.resource = "filesystem"
-        self.version = "2020-10-02"
+        self.x_ms_lease_duration = x_ms_lease_duration
+        self.resource = resource
+        self.version = version
         kwargs.setdefault('sdk_moniker', 'azuredatalakestoragerestapi/{}'.format(VERSION))
         self._configure(**kwargs)
 

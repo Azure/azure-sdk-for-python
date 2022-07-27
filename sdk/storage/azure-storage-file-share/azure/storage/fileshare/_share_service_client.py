@@ -58,10 +58,14 @@ class ShareServiceClient(StorageAccountHostsMixin):
         in the URL path (e.g. share or file) will be discarded. This URL can be optionally
         authenticated with a SAS token.
     :param credential:
-        The credential with which to authenticate. This is optional if the
+        The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials or an account
-        shared access key.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -83,7 +87,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
     """
     def __init__(
             self, account_url,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -104,7 +108,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
                 'You need to provide either an account shared key or SAS token when creating a storage service.')
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ShareServiceClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
-        self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline)
+        self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
 
     def _format_url(self, hostname):
@@ -116,7 +120,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
-            credential=None, # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):  # type: (...) -> ShareServiceClient
         """Create ShareServiceClient from a Connection String.
@@ -124,10 +128,14 @@ class ShareServiceClient(StorageAccountHostsMixin):
         :param str conn_str:
             A connection string to an Azure Storage account.
         :param credential:
-            The credential with which to authenticate. This is optional if the
+            The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials or an account
-            shared access key.
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
         :returns: A File Share service client.
         :rtype: ~azure.storage.fileshare.ShareServiceClient
 

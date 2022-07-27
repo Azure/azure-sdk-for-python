@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._chaos_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class Action(msrest.serialization.Model):
@@ -23,10 +25,10 @@ class Action(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Enum that discriminates between action models.Constant filled by server.
-    :type type: str
-    :param name: Required. String that represents a Capability URN.
-    :type name: str
+    :ivar type: Required. Enum that discriminates between action models.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. String that represents a Capability URN.
+    :vartype name: str
     """
 
     _validation = {
@@ -49,6 +51,10 @@ class Action(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. String that represents a Capability URN.
+        :paramtype name: str
+        """
         super(Action, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
         self.name = name
@@ -59,28 +65,36 @@ class ActionStatus(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar name: The name of the action status.
-    :vartype name: str
-    :ivar id: The id of the action status.
-    :vartype id: str
+    :ivar action_name: The name of the action status.
+    :vartype action_name: str
+    :ivar action_id: The id of the action status.
+    :vartype action_id: str
     :ivar status: The status of the action.
     :vartype status: str
+    :ivar start_time: String that represents the start time of the action.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: String that represents the end time of the action.
+    :vartype end_time: ~datetime.datetime
     :ivar targets: The array of targets.
     :vartype targets:
-     list[~chaos_management_client.models.ExperimentExecutionActionTargetDetailsProperties]
+     list[~azure.mgmt.chaos.models.ExperimentExecutionActionTargetDetailsProperties]
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
+        'action_name': {'readonly': True},
+        'action_id': {'readonly': True},
         'status': {'readonly': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
         'targets': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
+        'action_name': {'key': 'actionName', 'type': 'str'},
+        'action_id': {'key': 'actionId', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'targets': {'key': 'targets', 'type': '[ExperimentExecutionActionTargetDetailsProperties]'},
     }
 
@@ -88,10 +102,14 @@ class ActionStatus(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ActionStatus, self).__init__(**kwargs)
-        self.name = None
-        self.id = None
+        self.action_name = None
+        self.action_id = None
         self.status = None
+        self.start_time = None
+        self.end_time = None
         self.targets = None
 
 
@@ -100,10 +118,10 @@ class Branch(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. String of the branch name.
-    :type name: str
-    :param actions: Required. List of actions.
-    :type actions: list[~chaos_management_client.models.Action]
+    :ivar name: Required. String of the branch name.
+    :vartype name: str
+    :ivar actions: Required. List of actions.
+    :vartype actions: list[~azure.mgmt.chaos.models.Action]
     """
 
     _validation = {
@@ -120,9 +138,15 @@ class Branch(msrest.serialization.Model):
         self,
         *,
         name: str,
-        actions: List["Action"],
+        actions: List["_models.Action"],
         **kwargs
     ):
+        """
+        :keyword name: Required. String of the branch name.
+        :paramtype name: str
+        :keyword actions: Required. List of actions.
+        :paramtype actions: list[~azure.mgmt.chaos.models.Action]
+        """
         super(Branch, self).__init__(**kwargs)
         self.name = name
         self.actions = actions
@@ -133,26 +157,26 @@ class BranchStatus(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar name: The name of the branch status.
-    :vartype name: str
-    :ivar id: The id of the branch status.
-    :vartype id: str
+    :ivar branch_name: The name of the branch status.
+    :vartype branch_name: str
+    :ivar branch_id: The id of the branch status.
+    :vartype branch_id: str
     :ivar status: The status of the branch.
     :vartype status: str
     :ivar actions: The array of actions.
-    :vartype actions: list[~chaos_management_client.models.ActionStatus]
+    :vartype actions: list[~azure.mgmt.chaos.models.ActionStatus]
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
+        'branch_name': {'readonly': True},
+        'branch_id': {'readonly': True},
         'status': {'readonly': True},
         'actions': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
+        'branch_name': {'key': 'branchName', 'type': 'str'},
+        'branch_id': {'key': 'branchId', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'actions': {'key': 'actions', 'type': '[ActionStatus]'},
     }
@@ -161,9 +185,11 @@ class BranchStatus(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(BranchStatus, self).__init__(**kwargs)
-        self.name = None
-        self.id = None
+        self.branch_name = None
+        self.branch_id = None
         self.status = None
         self.actions = None
 
@@ -199,6 +225,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -219,7 +247,7 @@ class Capability(Resource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The standard system metadata of a resource type.
-    :vartype system_data: ~chaos_management_client.models.SystemData
+    :vartype system_data: ~azure.mgmt.chaos.models.SystemData
     :ivar publisher: String of the Publisher that this Capability extends.
     :vartype publisher: str
     :ivar target_type: String of the Target Type that this Capability extends.
@@ -260,6 +288,8 @@ class Capability(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(Capability, self).__init__(**kwargs)
         self.system_data = None
         self.publisher = None
@@ -275,7 +305,7 @@ class CapabilityListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of Capability resources.
-    :vartype value: list[~chaos_management_client.models.Capability]
+    :vartype value: list[~azure.mgmt.chaos.models.Capability]
     :ivar next_link: URL to retrieve the next page of Capability resources.
     :vartype next_link: str
     """
@@ -294,6 +324,8 @@ class CapabilityListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CapabilityListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -313,9 +345,9 @@ class CapabilityType(Resource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system metadata properties of the capability type resource.
-    :vartype system_data: ~chaos_management_client.models.SystemData
-    :param location: Location of the Capability Type resource.
-    :type location: str
+    :vartype system_data: ~azure.mgmt.chaos.models.SystemData
+    :ivar location: Location of the Capability Type resource.
+    :vartype location: str
     :ivar publisher: String of the Publisher that this Capability Type extends.
     :vartype publisher: str
     :ivar target_type: String of the Target Type that this Capability Type extends.
@@ -363,6 +395,10 @@ class CapabilityType(Resource):
         location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Location of the Capability Type resource.
+        :paramtype location: str
+        """
         super(CapabilityType, self).__init__(**kwargs)
         self.system_data = None
         self.location = location
@@ -380,7 +416,7 @@ class CapabilityTypeListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of Capability Type resources.
-    :vartype value: list[~chaos_management_client.models.CapabilityType]
+    :vartype value: list[~azure.mgmt.chaos.models.CapabilityType]
     :ivar next_link: URL to retrieve the next page of Capability Type resources.
     :vartype next_link: str
     """
@@ -399,6 +435,8 @@ class CapabilityTypeListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CapabilityTypeListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -409,16 +447,16 @@ class ContinuousAction(Action):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Enum that discriminates between action models.Constant filled by server.
-    :type type: str
-    :param name: Required. String that represents a Capability URN.
-    :type name: str
-    :param duration: Required. ISO8601 formatted string that represents a duration.
-    :type duration: str
-    :param parameters: Required. List of key value pairs.
-    :type parameters: list[~chaos_management_client.models.KeyValuePair]
-    :param selector_id: Required. String that represents a selector.
-    :type selector_id: str
+    :ivar type: Required. Enum that discriminates between action models.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. String that represents a Capability URN.
+    :vartype name: str
+    :ivar duration: Required. ISO8601 formatted string that represents a duration.
+    :vartype duration: str
+    :ivar parameters: Required. List of key value pairs.
+    :vartype parameters: list[~azure.mgmt.chaos.models.KeyValuePair]
+    :ivar selector_id: Required. String that represents a selector.
+    :vartype selector_id: str
     """
 
     _validation = {
@@ -442,10 +480,20 @@ class ContinuousAction(Action):
         *,
         name: str,
         duration: str,
-        parameters: List["KeyValuePair"],
+        parameters: List["_models.KeyValuePair"],
         selector_id: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. String that represents a Capability URN.
+        :paramtype name: str
+        :keyword duration: Required. ISO8601 formatted string that represents a duration.
+        :paramtype duration: str
+        :keyword parameters: Required. List of key value pairs.
+        :paramtype parameters: list[~azure.mgmt.chaos.models.KeyValuePair]
+        :keyword selector_id: Required. String that represents a selector.
+        :paramtype selector_id: str
+        """
         super(ContinuousAction, self).__init__(name=name, **kwargs)
         self.type = 'continuous'  # type: str
         self.duration = duration
@@ -458,12 +506,12 @@ class DelayAction(Action):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Enum that discriminates between action models.Constant filled by server.
-    :type type: str
-    :param name: Required. String that represents a Capability URN.
-    :type name: str
-    :param duration: Required. ISO8601 formatted string that represents a duration.
-    :type duration: str
+    :ivar type: Required. Enum that discriminates between action models.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. String that represents a Capability URN.
+    :vartype name: str
+    :ivar duration: Required. ISO8601 formatted string that represents a duration.
+    :vartype duration: str
     """
 
     _validation = {
@@ -485,6 +533,12 @@ class DelayAction(Action):
         duration: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. String that represents a Capability URN.
+        :paramtype name: str
+        :keyword duration: Required. ISO8601 formatted string that represents a duration.
+        :paramtype duration: str
+        """
         super(DelayAction, self).__init__(name=name, **kwargs)
         self.type = 'delay'  # type: str
         self.duration = duration
@@ -495,14 +549,14 @@ class DiscreteAction(Action):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Enum that discriminates between action models.Constant filled by server.
-    :type type: str
-    :param name: Required. String that represents a Capability URN.
-    :type name: str
-    :param parameters: Required. List of key value pairs.
-    :type parameters: list[~chaos_management_client.models.KeyValuePair]
-    :param selector_id: Required. String that represents a selector.
-    :type selector_id: str
+    :ivar type: Required. Enum that discriminates between action models.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. String that represents a Capability URN.
+    :vartype name: str
+    :ivar parameters: Required. List of key value pairs.
+    :vartype parameters: list[~azure.mgmt.chaos.models.KeyValuePair]
+    :ivar selector_id: Required. String that represents a selector.
+    :vartype selector_id: str
     """
 
     _validation = {
@@ -523,10 +577,18 @@ class DiscreteAction(Action):
         self,
         *,
         name: str,
-        parameters: List["KeyValuePair"],
+        parameters: List["_models.KeyValuePair"],
         selector_id: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. String that represents a Capability URN.
+        :paramtype name: str
+        :keyword parameters: Required. List of key value pairs.
+        :paramtype parameters: list[~azure.mgmt.chaos.models.KeyValuePair]
+        :keyword selector_id: Required. String that represents a selector.
+        :paramtype selector_id: str
+        """
         super(DiscreteAction, self).__init__(name=name, **kwargs)
         self.type = 'discrete'  # type: str
         self.parameters = parameters
@@ -558,6 +620,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -575,9 +639,9 @@ class ErrorDetail(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~chaos_management_client.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.chaos.models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~chaos_management_client.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.chaos.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -600,6 +664,8 @@ class ErrorDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -611,8 +677,8 @@ class ErrorDetail(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~chaos_management_client.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.chaos.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -622,9 +688,13 @@ class ErrorResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["ErrorDetail"] = None,
+        error: Optional["_models.ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.chaos.models.ErrorDetail
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -644,10 +714,10 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
@@ -672,6 +742,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -692,21 +768,21 @@ class Experiment(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     :ivar system_data: The system metadata of the experiment resource.
-    :vartype system_data: ~chaos_management_client.models.SystemData
-    :param identity: The identity of the experiment resource.
-    :type identity: ~chaos_management_client.models.ResourceIdentity
-    :param steps: Required. List of steps.
-    :type steps: list[~chaos_management_client.models.Step]
-    :param selectors: Required. List of selectors.
-    :type selectors: list[~chaos_management_client.models.Selector]
-    :param start_on_creation: A boolean value that indicates if experiment should be started on
+    :vartype system_data: ~azure.mgmt.chaos.models.SystemData
+    :ivar identity: The identity of the experiment resource.
+    :vartype identity: ~azure.mgmt.chaos.models.ResourceIdentity
+    :ivar steps: Required. List of steps.
+    :vartype steps: list[~azure.mgmt.chaos.models.Step]
+    :ivar selectors: Required. List of selectors.
+    :vartype selectors: list[~azure.mgmt.chaos.models.Selector]
+    :ivar start_on_creation: A boolean value that indicates if experiment should be started on
      creation or not.
-    :type start_on_creation: bool
+    :vartype start_on_creation: bool
     """
 
     _validation = {
@@ -736,13 +812,28 @@ class Experiment(TrackedResource):
         self,
         *,
         location: str,
-        steps: List["Step"],
-        selectors: List["Selector"],
+        steps: List["_models.Step"],
+        selectors: List["_models.Selector"],
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["ResourceIdentity"] = None,
+        identity: Optional["_models.ResourceIdentity"] = None,
         start_on_creation: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword identity: The identity of the experiment resource.
+        :paramtype identity: ~azure.mgmt.chaos.models.ResourceIdentity
+        :keyword steps: Required. List of steps.
+        :paramtype steps: list[~azure.mgmt.chaos.models.Step]
+        :keyword selectors: Required. List of selectors.
+        :paramtype selectors: list[~azure.mgmt.chaos.models.Selector]
+        :keyword start_on_creation: A boolean value that indicates if experiment should be started on
+         creation or not.
+        :paramtype start_on_creation: bool
+        """
         super(Experiment, self).__init__(tags=tags, location=location, **kwargs)
         self.system_data = None
         self.identity = identity
@@ -776,6 +867,8 @@ class ExperimentCancelOperationResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ExperimentCancelOperationResult, self).__init__(**kwargs)
         self.name = None
         self.status_url = None
@@ -806,6 +899,8 @@ class ExperimentExecutionActionTargetDetailsError(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ExperimentExecutionActionTargetDetailsError, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -820,27 +915,27 @@ class ExperimentExecutionActionTargetDetailsProperties(msrest.serialization.Mode
     :vartype status: str
     :ivar target: The target for the action.
     :vartype target: str
-    :ivar failed_date_utc: String that represents the failed date time.
-    :vartype failed_date_utc: ~datetime.datetime
-    :ivar completed_date_utc: String that represents the completed date time.
-    :vartype completed_date_utc: ~datetime.datetime
+    :ivar target_failed_time: String that represents the failed date time.
+    :vartype target_failed_time: ~datetime.datetime
+    :ivar target_completed_time: String that represents the completed date time.
+    :vartype target_completed_time: ~datetime.datetime
     :ivar error: The error of the action.
-    :vartype error: ~chaos_management_client.models.ExperimentExecutionActionTargetDetailsError
+    :vartype error: ~azure.mgmt.chaos.models.ExperimentExecutionActionTargetDetailsError
     """
 
     _validation = {
         'status': {'readonly': True},
         'target': {'readonly': True},
-        'failed_date_utc': {'readonly': True},
-        'completed_date_utc': {'readonly': True},
+        'target_failed_time': {'readonly': True},
+        'target_completed_time': {'readonly': True},
         'error': {'readonly': True},
     }
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
-        'failed_date_utc': {'key': 'failedDateUtc', 'type': 'iso-8601'},
-        'completed_date_utc': {'key': 'completedDateUtc', 'type': 'iso-8601'},
+        'target_failed_time': {'key': 'targetFailedTime', 'type': 'iso-8601'},
+        'target_completed_time': {'key': 'targetCompletedTime', 'type': 'iso-8601'},
         'error': {'key': 'error', 'type': 'ExperimentExecutionActionTargetDetailsError'},
     }
 
@@ -848,11 +943,13 @@ class ExperimentExecutionActionTargetDetailsProperties(msrest.serialization.Mode
         self,
         **kwargs
     ):
+        """
+        """
         super(ExperimentExecutionActionTargetDetailsProperties, self).__init__(**kwargs)
         self.status = None
         self.target = None
-        self.failed_date_utc = None
-        self.completed_date_utc = None
+        self.target_failed_time = None
+        self.target_completed_time = None
         self.error = None
 
 
@@ -873,17 +970,17 @@ class ExperimentExecutionDetails(msrest.serialization.Model):
     :vartype status: str
     :ivar failure_reason: The reason why the execution failed.
     :vartype failure_reason: str
-    :ivar created_date_utc: String that represents the created date time.
-    :vartype created_date_utc: ~datetime.datetime
-    :ivar last_action_date_utc: String that represents the last action date time.
-    :vartype last_action_date_utc: ~datetime.datetime
-    :ivar start_date_utc: String that represents the start date time.
-    :vartype start_date_utc: ~datetime.datetime
-    :ivar stop_date_utc: String that represents the stop date time.
-    :vartype stop_date_utc: ~datetime.datetime
+    :ivar created_date_time: String that represents the created date time.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_action_date_time: String that represents the last action date time.
+    :vartype last_action_date_time: ~datetime.datetime
+    :ivar start_date_time: String that represents the start date time.
+    :vartype start_date_time: ~datetime.datetime
+    :ivar stop_date_time: String that represents the stop date time.
+    :vartype stop_date_time: ~datetime.datetime
     :ivar run_information: The information of the experiment run.
     :vartype run_information:
-     ~chaos_management_client.models.ExperimentExecutionDetailsPropertiesRunInformation
+     ~azure.mgmt.chaos.models.ExperimentExecutionDetailsPropertiesRunInformation
     """
 
     _validation = {
@@ -893,10 +990,10 @@ class ExperimentExecutionDetails(msrest.serialization.Model):
         'experiment_id': {'readonly': True},
         'status': {'readonly': True},
         'failure_reason': {'readonly': True},
-        'created_date_utc': {'readonly': True},
-        'last_action_date_utc': {'readonly': True},
-        'start_date_utc': {'readonly': True},
-        'stop_date_utc': {'readonly': True},
+        'created_date_time': {'readonly': True},
+        'last_action_date_time': {'readonly': True},
+        'start_date_time': {'readonly': True},
+        'stop_date_time': {'readonly': True},
         'run_information': {'readonly': True},
     }
 
@@ -907,10 +1004,10 @@ class ExperimentExecutionDetails(msrest.serialization.Model):
         'experiment_id': {'key': 'properties.experimentId', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'failure_reason': {'key': 'properties.failureReason', 'type': 'str'},
-        'created_date_utc': {'key': 'properties.createdDateUtc', 'type': 'iso-8601'},
-        'last_action_date_utc': {'key': 'properties.lastActionDateUtc', 'type': 'iso-8601'},
-        'start_date_utc': {'key': 'properties.startDateUtc', 'type': 'iso-8601'},
-        'stop_date_utc': {'key': 'properties.stopDateUtc', 'type': 'iso-8601'},
+        'created_date_time': {'key': 'properties.createdDateTime', 'type': 'iso-8601'},
+        'last_action_date_time': {'key': 'properties.lastActionDateTime', 'type': 'iso-8601'},
+        'start_date_time': {'key': 'properties.startDateTime', 'type': 'iso-8601'},
+        'stop_date_time': {'key': 'properties.stopDateTime', 'type': 'iso-8601'},
         'run_information': {'key': 'properties.runInformation', 'type': 'ExperimentExecutionDetailsPropertiesRunInformation'},
     }
 
@@ -918,6 +1015,8 @@ class ExperimentExecutionDetails(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ExperimentExecutionDetails, self).__init__(**kwargs)
         self.type = None
         self.id = None
@@ -925,10 +1024,10 @@ class ExperimentExecutionDetails(msrest.serialization.Model):
         self.experiment_id = None
         self.status = None
         self.failure_reason = None
-        self.created_date_utc = None
-        self.last_action_date_utc = None
-        self.start_date_utc = None
-        self.stop_date_utc = None
+        self.created_date_time = None
+        self.last_action_date_time = None
+        self.start_date_time = None
+        self.stop_date_time = None
         self.run_information = None
 
 
@@ -938,7 +1037,7 @@ class ExperimentExecutionDetailsListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of Experiment execution details.
-    :vartype value: list[~chaos_management_client.models.ExperimentExecutionDetails]
+    :vartype value: list[~azure.mgmt.chaos.models.ExperimentExecutionDetails]
     :ivar next_link: URL to retrieve the next page of Experiment execution details.
     :vartype next_link: str
     """
@@ -957,6 +1056,8 @@ class ExperimentExecutionDetailsListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ExperimentExecutionDetailsListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -968,7 +1069,7 @@ class ExperimentExecutionDetailsPropertiesRunInformation(msrest.serialization.Mo
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar steps: The steps of the experiment run.
-    :vartype steps: list[~chaos_management_client.models.StepStatus]
+    :vartype steps: list[~azure.mgmt.chaos.models.StepStatus]
     """
 
     _validation = {
@@ -983,6 +1084,8 @@ class ExperimentExecutionDetailsPropertiesRunInformation(msrest.serialization.Mo
         self,
         **kwargs
     ):
+        """
+        """
         super(ExperimentExecutionDetailsPropertiesRunInformation, self).__init__(**kwargs)
         self.steps = None
 
@@ -993,7 +1096,7 @@ class ExperimentListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of Experiment resources.
-    :vartype value: list[~chaos_management_client.models.Experiment]
+    :vartype value: list[~azure.mgmt.chaos.models.Experiment]
     :ivar next_link: URL to retrieve the next page of Experiment resources.
     :vartype next_link: str
     """
@@ -1012,6 +1115,8 @@ class ExperimentListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ExperimentListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1042,6 +1147,8 @@ class ExperimentStartOperationResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ExperimentStartOperationResult, self).__init__(**kwargs)
         self.name = None
         self.status_url = None
@@ -1088,6 +1195,8 @@ class ExperimentStatus(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ExperimentStatus, self).__init__(**kwargs)
         self.type = None
         self.id = None
@@ -1103,7 +1212,7 @@ class ExperimentStatusListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of Experiment statuses.
-    :vartype value: list[~chaos_management_client.models.ExperimentStatus]
+    :vartype value: list[~azure.mgmt.chaos.models.ExperimentStatus]
     :ivar next_link: URL to retrieve the next page of Experiment statuses.
     :vartype next_link: str
     """
@@ -1122,6 +1231,8 @@ class ExperimentStatusListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ExperimentStatusListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1132,10 +1243,10 @@ class KeyValuePair(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key: Required. The name of the setting for the action.
-    :type key: str
-    :param value: Required. The value of the setting for the action.
-    :type value: str
+    :ivar key: Required. The name of the setting for the action.
+    :vartype key: str
+    :ivar value: Required. The value of the setting for the action.
+    :vartype value: str
     """
 
     _validation = {
@@ -1155,6 +1266,12 @@ class KeyValuePair(msrest.serialization.Model):
         value: str,
         **kwargs
     ):
+        """
+        :keyword key: Required. The name of the setting for the action.
+        :paramtype key: str
+        :keyword value: Required. The value of the setting for the action.
+        :paramtype value: str
+        """
         super(KeyValuePair, self).__init__(**kwargs)
         self.key = key
         self.value = value
@@ -1171,15 +1288,15 @@ class Operation(msrest.serialization.Model):
     :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
      data-plane operations and "false" for ARM/control-plane operations.
     :vartype is_data_action: bool
-    :param display: Localized display information for this particular operation.
-    :type display: ~chaos_management_client.models.OperationDisplay
+    :ivar display: Localized display information for this particular operation.
+    :vartype display: ~azure.mgmt.chaos.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
-     (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
-     "system", "user,system".
-    :vartype origin: str or ~chaos_management_client.models.Origin
+     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
+     "user,system".
+    :vartype origin: str or ~azure.mgmt.chaos.models.Origin
     :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
-     internal only APIs. Possible values include: "Internal".
-    :vartype action_type: str or ~chaos_management_client.models.ActionType
+     internal only APIs. Known values are: "Internal".
+    :vartype action_type: str or ~azure.mgmt.chaos.models.ActionType
     """
 
     _validation = {
@@ -1200,9 +1317,13 @@ class Operation(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword display: Localized display information for this particular operation.
+        :paramtype display: ~azure.mgmt.chaos.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.is_data_action = None
@@ -1248,6 +1369,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -1261,7 +1384,7 @@ class OperationListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of operations supported by the resource provider.
-    :vartype value: list[~chaos_management_client.models.Operation]
+    :vartype value: list[~azure.mgmt.chaos.models.Operation]
     :ivar next_link: URL to get the next set of operation list results (if there are any).
     :vartype next_link: str
     """
@@ -1280,6 +1403,8 @@ class OperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1292,9 +1417,9 @@ class ResourceIdentity(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. String of the resource identity type. Possible values include: "None",
+    :ivar type: Required. String of the resource identity type. Known values are: "None",
      "SystemAssigned".
-    :type type: str or ~chaos_management_client.models.ResourceIdentityType
+    :vartype type: str or ~azure.mgmt.chaos.models.ResourceIdentityType
     :ivar principal_id: GUID that represents the principal ID of this resource identity.
     :vartype principal_id: str
     :ivar tenant_id: GUID that represents the tenant ID of this resource identity.
@@ -1316,9 +1441,14 @@ class ResourceIdentity(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "ResourceIdentityType"],
+        type: Union[str, "_models.ResourceIdentityType"],
         **kwargs
     ):
+        """
+        :keyword type: Required. String of the resource identity type. Known values are: "None",
+         "SystemAssigned".
+        :paramtype type: str or ~azure.mgmt.chaos.models.ResourceIdentityType
+        """
         super(ResourceIdentity, self).__init__(**kwargs)
         self.type = type
         self.principal_id = None
@@ -1330,13 +1460,13 @@ class Selector(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Enum of the selector type. Possible values include: "Percent", "Random",
-     "Tag", "List".
-    :type type: str or ~chaos_management_client.models.SelectorType
-    :param id: Required. String of the selector ID.
-    :type id: str
-    :param targets: Required. List of Target references.
-    :type targets: list[~chaos_management_client.models.TargetReference]
+    :ivar type: Required. Enum of the selector type. Known values are: "Percent", "Random", "Tag",
+     "List".
+    :vartype type: str or ~azure.mgmt.chaos.models.SelectorType
+    :ivar id: Required. String of the selector ID.
+    :vartype id: str
+    :ivar targets: Required. List of Target references.
+    :vartype targets: list[~azure.mgmt.chaos.models.TargetReference]
     """
 
     _validation = {
@@ -1354,11 +1484,20 @@ class Selector(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "SelectorType"],
+        type: Union[str, "_models.SelectorType"],
         id: str,
-        targets: List["TargetReference"],
+        targets: List["_models.TargetReference"],
         **kwargs
     ):
+        """
+        :keyword type: Required. Enum of the selector type. Known values are: "Percent", "Random",
+         "Tag", "List".
+        :paramtype type: str or ~azure.mgmt.chaos.models.SelectorType
+        :keyword id: Required. String of the selector ID.
+        :paramtype id: str
+        :keyword targets: Required. List of Target references.
+        :paramtype targets: list[~azure.mgmt.chaos.models.TargetReference]
+        """
         super(Selector, self).__init__(**kwargs)
         self.type = type
         self.id = id
@@ -1370,10 +1509,10 @@ class Step(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. String of the step name.
-    :type name: str
-    :param branches: Required. List of branches.
-    :type branches: list[~chaos_management_client.models.Branch]
+    :ivar name: Required. String of the step name.
+    :vartype name: str
+    :ivar branches: Required. List of branches.
+    :vartype branches: list[~azure.mgmt.chaos.models.Branch]
     """
 
     _validation = {
@@ -1390,9 +1529,15 @@ class Step(msrest.serialization.Model):
         self,
         *,
         name: str,
-        branches: List["Branch"],
+        branches: List["_models.Branch"],
         **kwargs
     ):
+        """
+        :keyword name: Required. String of the step name.
+        :paramtype name: str
+        :keyword branches: Required. List of branches.
+        :paramtype branches: list[~azure.mgmt.chaos.models.Branch]
+        """
         super(Step, self).__init__(**kwargs)
         self.name = name
         self.branches = branches
@@ -1403,26 +1548,26 @@ class StepStatus(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar name: The name of the step.
-    :vartype name: str
-    :ivar id: The id of the step.
-    :vartype id: str
+    :ivar step_name: The name of the step.
+    :vartype step_name: str
+    :ivar step_id: The id of the step.
+    :vartype step_id: str
     :ivar status: The value of the status of the step.
     :vartype status: str
     :ivar branches: The array of branches.
-    :vartype branches: list[~chaos_management_client.models.BranchStatus]
+    :vartype branches: list[~azure.mgmt.chaos.models.BranchStatus]
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
+        'step_name': {'readonly': True},
+        'step_id': {'readonly': True},
         'status': {'readonly': True},
         'branches': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
+        'step_name': {'key': 'stepName', 'type': 'str'},
+        'step_id': {'key': 'stepId', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'branches': {'key': 'branches', 'type': '[BranchStatus]'},
     }
@@ -1431,9 +1576,11 @@ class StepStatus(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(StepStatus, self).__init__(**kwargs)
-        self.name = None
-        self.id = None
+        self.step_name = None
+        self.step_id = None
         self.status = None
         self.branches = None
 
@@ -1441,20 +1588,20 @@ class StepStatus(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~chaos_management_client.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~chaos_management_client.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.chaos.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.chaos.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -1470,13 +1617,29 @@ class SystemData(msrest.serialization.Model):
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.chaos.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.chaos.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -1502,11 +1665,11 @@ class Target(Resource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system metadata of the target resource.
-    :vartype system_data: ~chaos_management_client.models.SystemData
-    :param location: Location of the target resource.
-    :type location: str
-    :param properties: Required. The properties of the target resource.
-    :type properties: dict[str, any]
+    :vartype system_data: ~azure.mgmt.chaos.models.SystemData
+    :ivar location: Location of the target resource.
+    :vartype location: str
+    :ivar properties: Required. The properties of the target resource.
+    :vartype properties: dict[str, any]
     """
 
     _validation = {
@@ -1533,6 +1696,12 @@ class Target(Resource):
         location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Location of the target resource.
+        :paramtype location: str
+        :keyword properties: Required. The properties of the target resource.
+        :paramtype properties: dict[str, any]
+        """
         super(Target, self).__init__(**kwargs)
         self.system_data = None
         self.location = location
@@ -1545,7 +1714,7 @@ class TargetListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of Target resources.
-    :vartype value: list[~chaos_management_client.models.Target]
+    :vartype value: list[~azure.mgmt.chaos.models.Target]
     :ivar next_link: URL to retrieve the next page of Target resources.
     :vartype next_link: str
     """
@@ -1564,6 +1733,8 @@ class TargetListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(TargetListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1578,8 +1749,8 @@ class TargetReference(msrest.serialization.Model):
 
     :ivar type: Enum of the Target reference type. Has constant value: "ChaosTarget".
     :vartype type: str
-    :param id: Required. String of the resource ID of a Target resource.
-    :type id: str
+    :ivar id: Required. String of the resource ID of a Target resource.
+    :vartype id: str
     """
 
     _validation = {
@@ -1600,6 +1771,10 @@ class TargetReference(msrest.serialization.Model):
         id: str,
         **kwargs
     ):
+        """
+        :keyword id: Required. String of the resource ID of a Target resource.
+        :paramtype id: str
+        """
         super(TargetReference, self).__init__(**kwargs)
         self.id = id
 
@@ -1618,9 +1793,9 @@ class TargetType(Resource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system metadata properties of the target type resource.
-    :vartype system_data: ~chaos_management_client.models.SystemData
-    :param location: Location of the Target Type resource.
-    :type location: str
+    :vartype system_data: ~azure.mgmt.chaos.models.SystemData
+    :ivar location: Location of the Target Type resource.
+    :vartype location: str
     :ivar display_name: Localized string of the display name.
     :vartype display_name: str
     :ivar description: Localized string of the description.
@@ -1660,6 +1835,10 @@ class TargetType(Resource):
         location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Location of the Target Type resource.
+        :paramtype location: str
+        """
         super(TargetType, self).__init__(**kwargs)
         self.system_data = None
         self.location = location
@@ -1675,7 +1854,7 @@ class TargetTypeListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of Target Type resources.
-    :vartype value: list[~chaos_management_client.models.TargetType]
+    :vartype value: list[~azure.mgmt.chaos.models.TargetType]
     :ivar next_link: URL to retrieve the next page of Target Type resources.
     :vartype next_link: str
     """
@@ -1694,6 +1873,8 @@ class TargetTypeListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(TargetTypeListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None

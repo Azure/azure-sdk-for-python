@@ -4,6 +4,10 @@ $PackageRepository = "PyPI"
 $packagePattern = "*.zip"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/main/_data/releases/latest/python-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=python%2F&delimiter=%2F"
+$GithubUri = "https://github.com/Azure/azure-sdk-for-python"
+$PackageRepositoryUri = "https://pypi.org/project"
+
+."$PSScriptRoot/docs/Docs-ToC.ps1"
 
 function Get-AllPackageInfoFromRepo ($serviceDirectory)
 {
@@ -297,6 +301,8 @@ $PackageExclusions = @{
   'azure-mgmt-netapp' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
   'azure-synapse-artifacts' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
   'azure-mgmt-streamanalytics' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+
+  'azure-keyvault' = 'Metapackages should not be documented';
 }
 
 function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata, $PackageSourceOverride, $DocValidationImageId) {
@@ -492,7 +498,7 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
   $whlDirectory = (Join-Path -Path $artifactDir -ChildPath $artifactName.Replace("_","-"))
 
   Write-Host "Searching for $($artifactName) wheel in artifact path $($whlDirectory)"
-  $files = Get-ChildItem $whlDirectory | ? {$_.Name.EndsWith(".whl")}
+  $files = @(Get-ChildItem $whlDirectory | ? {$_.Name.EndsWith(".whl")})
   if (!$files)
   {
     Write-Host "$whlDirectory does not have wheel package for $($artifactName)"
@@ -572,10 +578,15 @@ function Import-Dev-Cert-python
   python $pathToScript
 }
 
-function Validate-Python-DocMsPackages ($PackageInfo, $PackageSourceOverride, $DocValidationImageId)
+function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSourceOverride, $DocValidationImageId)
 {
-  $packageName = $packageInfo.Name
-  $packageVersion = $packageInfo.Version
-  ValidatePackage -packageName $packageName -packageVersion $packageVersion `
-      -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId
+  # While eng/common/scripts/Update-DocsMsMetadata.ps1 is still passing a single packageInfo, process as a batch
+  if (!$PackageInfos) {
+    $PackageInfos =  @($PackageInfo)
+  }
+
+  foreach ($package in $PackageInfos) {
+    ValidatePackage -packageName $package.Name -packageVersion $package.Version `
+        -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId
+  }
 }

@@ -10,9 +10,8 @@ import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import GetOperationResponse, ModelInfo
-from azure.ai.formrecognizer._models import CustomFormModel, DocumentModel
-from azure.ai.formrecognizer import DocumentModelAdministrationClient, _models
+from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
+from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModelDetails, DocumentModelAdministrationLROPoller
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
@@ -20,9 +19,6 @@ from preparers import FormRecognizerPreparer
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
 class TestDMACTraining(FormRecognizerTest):
-
-    def teardown(self):
-        self.sleep(4)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -47,7 +43,6 @@ class TestDMACTraining(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_build_model_encoded_url(self, client):
-        set_bodiless_matcher()
         with pytest.raises(HttpResponseError):
             poller = client.begin_build_model(
                 source="https://fakeuri.com/blank%20space", build_mode="template"
@@ -97,7 +92,7 @@ class TestDMACTraining(FormRecognizerTest):
     @recorded_by_proxy
     def test_build_model_multipage(self, client, formrecognizer_multipage_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
-        
+
         poller = client.begin_build_model(formrecognizer_multipage_storage_container_sas_url, "template")
         model = poller.result()
 
@@ -119,7 +114,7 @@ class TestDMACTraining(FormRecognizerTest):
     @recorded_by_proxy
     def test_build_model_nested_schema(self, client, formrecognizer_table_variable_rows_container_sas_url, **kwargs):
         set_bodiless_matcher()
-        
+
         poller = client.begin_build_model(formrecognizer_table_variable_rows_container_sas_url, "template")
         model = poller.result()
 
@@ -138,13 +133,13 @@ class TestDMACTraining(FormRecognizerTest):
     @recorded_by_proxy
     def test_build_model_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
-        
+
         raw_response = []
 
         def callback(response, _, headers):
             op_response = client._deserialize(GetOperationResponse, response)
             model_info = client._deserialize(ModelInfo, op_response.result)
-            document_model = DocumentModel._from_generated(model_info)
+            document_model = DocumentModelDetails._from_generated(model_info)
             raw_response.append(model_info)
             raw_response.append(document_model)
 
@@ -156,7 +151,7 @@ class TestDMACTraining(FormRecognizerTest):
         self.assertModelTransformCorrect(document_model, raw_model)
 
         document_model_dict = document_model.to_dict()
-        document_model_from_dict = _models.DocumentModel.from_dict(document_model_dict)
+        document_model_from_dict = DocumentModelDetails.from_dict(document_model_dict)
         assert document_model_from_dict.model_id == document_model.model_id
         self.assertModelTransformCorrect(document_model_from_dict, raw_model)
 
@@ -165,13 +160,13 @@ class TestDMACTraining(FormRecognizerTest):
     @recorded_by_proxy
     def test_build_model_multipage_transform(self, client, formrecognizer_multipage_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
-        
+
         raw_response = []
 
         def callback(response, _, headers):
             op_response = client._deserialize(GetOperationResponse, response)
             model_info = client._deserialize(ModelInfo, op_response.result)
-            document_model = DocumentModel._from_generated(model_info)
+            document_model = DocumentModelDetails._from_generated(model_info)
             raw_response.append(model_info)
             raw_response.append(document_model)
 
@@ -187,13 +182,13 @@ class TestDMACTraining(FormRecognizerTest):
     @recorded_by_proxy
     def test_build_model_nested_schema_transform(self, client, formrecognizer_table_variable_rows_container_sas_url, **kwargs):
         set_bodiless_matcher()
-        
+
         raw_response = []
 
         def callback(response, _, headers):
             op_response = client._deserialize(GetOperationResponse, response)
             model_info = client._deserialize(ModelInfo, op_response.result)
-            document_model = DocumentModel._from_generated(model_info)
+            document_model = DocumentModelDetails._from_generated(model_info)
             raw_response.append(model_info)
             raw_response.append(document_model)
 
@@ -206,7 +201,7 @@ class TestDMACTraining(FormRecognizerTest):
 
         document_model_dict = document_model.to_dict()
 
-        document_model_from_dict = _models.DocumentModel.from_dict(document_model_dict)
+        document_model_from_dict = DocumentModelDetails.from_dict(document_model_dict)
         assert document_model_from_dict.model_id == document_model.model_id
         self.assertModelTransformCorrect(document_model_from_dict, raw_model)
 
@@ -216,7 +211,7 @@ class TestDMACTraining(FormRecognizerTest):
     def test_build_model_azure_blob_path_filter(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
         with pytest.raises(HttpResponseError) as e:
-            poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", prefix="subfolder")
+            poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", prefix="testfolder")
             model = poller.result()
 
     @pytest.mark.live_test_only
@@ -238,11 +233,13 @@ class TestDMACTraining(FormRecognizerTest):
     def test_build_model_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
-        assert poller.operation_id
-        assert poller.percent_completed is not None
         poller.result()
-        assert poller.operation_kind == "documentModelBuild"
-        assert poller.percent_completed == 100
-        assert poller.resource_location_url
-        assert poller.created_on
-        assert poller.last_updated_on
+        assert isinstance(poller, DocumentModelAdministrationLROPoller)
+        details = poller.details
+        assert details["operation_id"]
+        assert details["percent_completed"] is not None
+        assert details["operation_kind"] == "documentModelBuild"
+        assert details["percent_completed"] == 100
+        assert details["resource_location_url"]
+        assert details["created_on"]
+        assert details["last_updated_on"]

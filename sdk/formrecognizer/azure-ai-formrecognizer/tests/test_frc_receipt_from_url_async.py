@@ -8,7 +8,6 @@ import pytest
 import functools
 from datetime import date, time
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import set_bodiless_matcher
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
 from azure.ai.formrecognizer import FormRecognizerApiVersion
@@ -21,14 +20,10 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
 
-    def teardown(self):
-        self.sleep(4)
-
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
     async def test_receipt_url_transform_png(self, client):
-        set_bodiless_matcher()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -66,7 +61,6 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
     async def test_receipt_url_include_field_elements(self, client):
-        set_bodiless_matcher()
         
         async with client:
             poller = await client.begin_recognize_receipts_from_url(

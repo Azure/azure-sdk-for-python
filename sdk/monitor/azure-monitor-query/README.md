@@ -24,6 +24,7 @@ _Azure SDK Python packages support for Python 2.7 has ended on 01 January 2022. 
 
 - Python 3.6 or later
 - An [Azure subscription][azure_subscription]
+- A [TokenCredential](https://docs.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential?view=azure-python) implementation, such as an [Azure Identity library credential type](https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#credential-classes).
 - To query Logs, you need an [Azure Log Analytics workspace][azure_monitor_create_using_portal].
 - To query Metrics, you need an Azure resource of any kind (Storage Account, Key Vault, Cosmos DB, etc.).
 
@@ -119,8 +120,9 @@ For example:
 import os
 import pandas as pd
 from datetime import datetime, timezone
-from azure.monitor.query import LogsQueryClient
+from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 from azure.identity import DefaultAzureCredential
+from azure.core.exceptions import HttpResponseError
 
 credential = DefaultAzureCredential()
 client = LogsQueryClient(credential)

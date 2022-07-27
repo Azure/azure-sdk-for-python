@@ -209,6 +209,7 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
     error.additional_info = additional_data
     # error.args is what's surfaced on the traceback - show error message in all cases
     error.args = (error.message,)
+
     try:
         # `from None` prevents us from double printing the exception (suppresses generated layer error context)
         exec("raise error from None")   # pylint: disable=exec-used # nosec

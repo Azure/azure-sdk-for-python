@@ -1,12 +1,21 @@
 # Release History
 
-## 4.1.0b4 (Unreleased)
+## 4.1.1 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 4.1.0 (2022-03-28)
+
+### Features Added
+- Key Vault API version 7.3 is now the default
+- Added support for multi-tenant authentication when using `azure-identity`
+  1.8.0 or newer ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
 
 ### Other Changes
 - (From 4.1.0b3) Python 2.7 is no longer supported. Please use Python version 3.6 or later.

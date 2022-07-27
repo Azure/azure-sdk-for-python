@@ -18,6 +18,7 @@ import subprocess
 
 from .config import PROXY_URL
 from .helpers import is_live_and_not_recording
+from .sanitizers import add_remove_header_sanitizer, set_custom_default_matcher
 
 if TYPE_CHECKING:
     from typing import Optional
@@ -36,8 +37,7 @@ PROXY_CHECK_URL = PROXY_URL.rstrip("/") + "/Info/Available"
 TOOL_ENV_VAR = "PROXY_PID"
 
 
-def get_image_tag():
-    # type: () -> str
+def get_image_tag() -> str:
     """Gets the test proxy Docker image tag from the target_version.txt file in /eng/common/testproxy"""
     version_file_location = os.path.relpath("eng/common/testproxy/target_version.txt")
     version_file_location_from_root = os.path.abspath(os.path.join(REPO_ROOT, version_file_location))
@@ -61,8 +61,7 @@ def get_image_tag():
     return image_tag
 
 
-def get_container_info():
-    # type: () -> Optional[dict]
+def get_container_info() -> "Optional[dict]":
     """Returns a dictionary containing the test proxy container's information, or None if the container isn't present"""
     proc = subprocess.Popen(
         shlex.split("docker container ls -a --format '{{json .}}' --filter name=" + CONTAINER_NAME),
@@ -81,23 +80,21 @@ def get_container_info():
         return None
 
 
-def check_availability():
-    # type: () -> None
+def check_availability() -> None:
     """Attempts request to /Info/Available. If a test-proxy instance is responding, we should get a response."""
     try:
         response = requests.get(PROXY_CHECK_URL, timeout=60)
         return response.status_code
     # We get an SSLError if the container is started but the endpoint isn't available yet
     except requests.exceptions.SSLError as sslError:
-        _LOGGER.error(sslError)
+        _LOGGER.debug(sslError)
         return 404
     except Exception as e:
         _LOGGER.error(e)
         return 404
 
 
-def check_proxy_availability():
-    # type: () -> None
+def check_proxy_availability() -> None:
     """Waits for the availability of the test-proxy."""
     start = time.time()
     now = time.time()
@@ -107,8 +104,7 @@ def check_proxy_availability():
         now = time.time()
 
 
-def create_container():
-    # type: () -> None
+def create_container() -> None:
     """Creates the test proxy Docker container"""
     # Most of the time, running this script on a Windows machine will work just fine, as Docker defaults to Linux
     # containers. However, in CI, Windows images default to _Windows_ containers. We cannot swap them. We can tell
@@ -138,8 +134,7 @@ def create_container():
     proc.communicate()
 
 
-def start_test_proxy():
-    # type: () -> None
+def start_test_proxy() -> None:
     """Starts the test proxy and returns when the proxy server is ready to receive requests. In regular use
     cases, this will auto-start the test-proxy docker container. In CI, or when environment variable TF_BUILD is set, this
     function will start the test-proxy .NET tool."""
@@ -181,12 +176,16 @@ def start_test_proxy():
             proc = subprocess.Popen(shlex.split("docker container start " + CONTAINER_NAME))
             proc.communicate()
 
-        # Wait for the proxy server to become available
-        check_proxy_availability()
+    # Wait for the proxy server to become available
+    check_proxy_availability()
+    # remove headers from recordings if we don't need them, and ignore them if present
+    # Authorization, for example, can contain sensitive info and can cause matching failures during challenge auth
+    headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id"
+    add_remove_header_sanitizer(headers=headers_to_ignore)
+    set_custom_default_matcher(excluded_headers=headers_to_ignore)
 
 
-def stop_test_proxy():
-    # type: () -> None
+def stop_test_proxy() -> None:
     """Stops any running instance of the test proxy"""
 
     if not PROXY_MANUALLY_STARTED:
@@ -212,7 +211,7 @@ def stop_test_proxy():
 
 
 @pytest.fixture(scope="session")
-def test_proxy():
+def test_proxy() -> None:
     """Pytest fixture to be used before running any tests that are recorded with the test proxy"""
     if is_live_and_not_recording():
         yield

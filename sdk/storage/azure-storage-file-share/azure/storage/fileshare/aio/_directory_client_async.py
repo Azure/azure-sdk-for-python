@@ -54,10 +54,14 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         An optional share snapshot on which to operate. This can be the snapshot ID string
         or the response returned from :func:`ShareClient.create_snapshot`.
     :param credential:
-        The credential with which to authenticate. This is optional if the
+        The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials or an account
-        shared access key.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -75,7 +79,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             share_name, # type: str
             directory_path, # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None, # type: Optional[Any]
+            credential=None, # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs # type: Optional[Any]
         ):
         # type: (...) -> None
@@ -89,7 +93,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             credential=credential,
             loop=loop,
             **kwargs)
-        self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline, loop=loop)
+        self._client = AzureFileStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
         self._loop = loop
 
@@ -152,6 +156,34 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         # type: (Any) -> Dict[str, Any]
         """Creates a new directory under the directory referenced by the client.
 
+        :keyword file_attributes:
+            The file system attributes for files and directories.
+            If not set, the default value would be "none" and the attributes will be set to "Archive".
+            Here is an example for when the var type is str: 'Temporary|Archive'.
+            file_attributes value is not case sensitive.
+        :paramtype file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
+        :keyword file_creation_time:
+            Creation time for the directory. Default value: "now".
+        :paramtype file_creation_time: str or ~datetime.datetime
+        :keyword file_last_write_time:
+            Last write time for the directory. Default value: "now".
+        :paramtype file_last_write_time: str or ~datetime.datetime
+        :keyword str file_permission:
+            If specified the permission (security descriptor) shall be set
+            for the directory/file. This header can be used if Permission size is
+            <= 8KB, else file-permission-key header shall be used.
+            Default value: Inherit. If SDDL is specified as input, it must have owner, group and dacl.
+            Note: Only one of the file-permission or file-permission-key should be specified.
+        :keyword str file_permission_key:
+            Key of the permission to be set for the directory/file.
+            Note: Only one of the file-permission or file-permission-key should be specified.
+        :keyword file_change_time:
+            Change time for the directory. If not specified, change time will be set to the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword dict(str,str) metadata:
             Name-value pairs associated with the directory as metadata.
         :keyword int timeout:
@@ -172,8 +204,23 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
+
+        file_attributes = kwargs.pop('file_attributes', 'none')
+        file_creation_time = kwargs.pop('file_creation_time', 'now')
+        file_last_write_time = kwargs.pop('file_last_write_time', 'now')
+        file_change_time = kwargs.pop('file_change_time', None)
+        file_permission = kwargs.pop('file_permission', None)
+        file_permission_key = kwargs.pop('file_permission_key', None)
+        file_permission = _get_file_permission(file_permission, file_permission_key, 'inherit')
+
         try:
             return await self._client.directory.create( # type: ignore
+                file_attributes=str(file_attributes),
+                file_creation_time=_datetime_to_str(file_creation_time),
+                file_last_write_time=_datetime_to_str(file_last_write_time),
+                file_change_time=_datetime_to_str(file_change_time),
+                file_permission=file_permission,
+                file_permission_key=file_permission_key,
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
@@ -247,12 +294,19 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :keyword file_last_write_time:
             Last write time for the file.
         :paramtype file_last_write_time:~datetime.datetime or str
+        :keyword file_change_time:
+            Change time for the directory. If not specified, change time will be set to the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword Dict[str,str] metadata:
             A name-value pair to associate with a file storage object.
-        :keyword lease:
+        :keyword destination_lease:
             Required if the destination file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :paramtype destination_lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: The new Directory Client.
         :rtype: ~azure.storage.fileshare.ShareDirectoryClient
         """
@@ -271,8 +325,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             '{}://{}'.format(self.scheme, self.primary_hostname), self.share_name, new_dir_path,
             credential=new_dir_sas or self.credential, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function
+            _location_mode=self._location_mode
         )
 
         kwargs.update(get_rename_smb_properties(kwargs))
@@ -283,14 +336,14 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
 
-        access_conditions = get_dest_access_conditions(kwargs.pop('lease', None))
+        destination_access_conditions = get_dest_access_conditions(kwargs.pop('destination_lease', None))
 
         try:
             await new_directory_client._client.directory.rename(  # pylint: disable=protected-access
                 self.url,
                 timeout=timeout,
                 replace_if_exists=overwrite,
-                destination_lease_access_conditions=access_conditions,
+                destination_lease_access_conditions=destination_access_conditions,
                 headers=headers,
                 **kwargs)
 
@@ -525,8 +578,8 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
 
     @distributed_trace_async
     async def set_http_headers(self, file_attributes="none",  # type: Union[str, NTFSAttributes]
-                               file_creation_time="preserve",  # type: Union[str, datetime]
-                               file_last_write_time="preserve",  # type: Union[str, datetime]
+                               file_creation_time="preserve",  # type: Optional[Union[str, datetime]]
+                               file_last_write_time="preserve",  # type: Optional[Union[str, datetime]]
                                file_permission=None,  # type: Optional[str]
                                permission_key=None,  # type: Optional[str]
                                **kwargs  # type: Any
@@ -556,6 +609,13 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
+        :keyword file_change_time:
+            Change time for the directory. If not specified, change time will be set to the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
@@ -563,11 +623,13 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         """
         timeout = kwargs.pop('timeout', None)
         file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
+        file_change_time = kwargs.pop('file_change_time', None)
         try:
             return await self._client.directory.set_properties(  # type: ignore
                 file_attributes=_str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
+                file_change_time=_datetime_to_str(file_change_time),
                 file_permission=file_permission,
                 file_permission_key=permission_key,
                 timeout=timeout,
@@ -667,6 +729,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             file.
         :keyword int max_concurrency:
             Maximum number of parallel connections to use.
+        :keyword progress_hook:
+            An async callback to track the progress of a long running upload. The signature is
+            function(current: int, total: Optional[int]) where current is the number of bytes transferred
+            so far, and total is the size of the blob or None if the size is unknown.
+        :paramtype progress_hook: Callable[[int, Optional[int]], Awaitable[None]]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword str encoding:

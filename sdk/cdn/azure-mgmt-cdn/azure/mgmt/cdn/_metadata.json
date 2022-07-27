@@ -1,15 +1,17 @@
 {
-    "chosen_version": "2020-09-01",
-    "total_api_version_list": ["2020-09-01"],
+    "chosen_version": "2021-06-01",
+    "total_api_version_list": ["2021-06-01"],
     "client": {
         "name": "CdnManagementClient",
         "filename": "_cdn_management_client",
         "description": "Cdn Management Client.",
-        "base_url": "\u0027https://management.azure.com\u0027",
-        "custom_base_url": null,
+        "host_value": "\"https://management.azure.com\"",
+        "parameterized_host_template": null,
         "azure_arm": true,
         "has_lro_operations": true,
-        "client_side_validation": false
+        "client_side_validation": false,
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"CdnManagementClientConfiguration\"], \"._operations_mixin\": [\"CdnManagementClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"CdnManagementClientConfiguration\"], \"._operations_mixin\": [\"CdnManagementClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -28,13 +30,13 @@
         },
         "async": {
             "credential": {
-                "signature": "credential,  # type: \"AsyncTokenCredential\"",
+                "signature": "credential: \"AsyncTokenCredential\",",
                 "description": "Credential needed for the client to connect to Azure.",
                 "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
                 "required": true
             },
             "subscription_id": {
-                "signature": "subscription_id,  # type: str",
+                "signature": "subscription_id: str,",
                 "description": "Azure Subscription ID.",
                 "docstring_type": "str",
                 "required": true
@@ -42,24 +44,59 @@
         },
         "constant": {
         },
-        "call": "credential, subscription_id"
+        "call": "credential, subscription_id",
+        "service_client_specific": {
+            "sync": {
+                "api_version": {
+                    "signature": "api_version=None, # type: Optional[str]",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url=\"https://management.azure.com\",  # type: str",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            },
+            "async": {
+                "api_version": {
+                    "signature": "api_version: Optional[str] = None,",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url: str = \"https://management.azure.com\",",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile: KnownProfiles = KnownProfiles.default,",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            }
+        }
     },
     "config": {
         "credential": true,
         "credential_scopes": ["https://management.azure.com/.default"],
-        "credential_default_policy_type": "BearerTokenCredentialPolicy",
-        "credential_default_policy_type_has_async_version": true,
-        "credential_key_header_name": null
+        "credential_call_sync": "ARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "credential_call_async": "AsyncARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMChallengeAuthenticationPolicy\", \"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
-        "profiles": "ProfilesOperations",
-        "endpoints": "EndpointsOperations",
-        "origins": "OriginsOperations",
-        "origin_groups": "OriginGroupsOperations",
-        "custom_domains": "CustomDomainsOperations",
-        "resource_usage": "ResourceUsageOperations",
-        "operations": "Operations",
-        "edge_nodes": "EdgeNodesOperations",
         "afd_profiles": "AFDProfilesOperations",
         "afd_custom_domains": "AFDCustomDomainsOperations",
         "afd_endpoints": "AFDEndpointsOperations",
@@ -72,47 +109,69 @@
         "secrets": "SecretsOperations",
         "validate": "ValidateOperations",
         "log_analytics": "LogAnalyticsOperations",
+        "profiles": "ProfilesOperations",
+        "endpoints": "EndpointsOperations",
+        "origins": "OriginsOperations",
+        "origin_groups": "OriginGroupsOperations",
+        "custom_domains": "CustomDomainsOperations",
+        "resource_usage": "ResourceUsageOperations",
+        "operations": "Operations",
+        "edge_nodes": "EdgeNodesOperations",
         "policies": "PoliciesOperations",
         "managed_rule_sets": "ManagedRuleSetsOperations"
     },
     "operation_mixins": {
-        "check_name_availability" : {
-            "sync": {
-                "signature": "def check_name_availability(\n    self,\n    check_name_availability_input,  # type: \"_models.CheckNameAvailabilityInput\"\n    **kwargs  # type: Any\n):\n",
-                "doc": "\"\"\"Check the availability of a resource name. This is needed for resources where name is globally\nunique, such as a CDN endpoint.\n\n:param check_name_availability_input: Input to check.\n:type check_name_availability_input: ~azure.mgmt.cdn.models.CheckNameAvailabilityInput\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckNameAvailabilityOutput, or the result of cls(response)\n:rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "operations": {
+            "check_endpoint_name_availability" : {
+                "sync": {
+                    "signature": "def check_endpoint_name_availability(\n    self,\n    resource_group_name,  # type: str\n    check_endpoint_name_availability_input,  # type: \"_models.CheckEndpointNameAvailabilityInput\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.CheckEndpointNameAvailabilityOutput\"\n",
+                    "doc": "\"\"\"Check the availability of a resource name. This is needed for resources where name is globally\nunique, such as a afdx endpoint.\n\n:param resource_group_name: Name of the Resource group within the Azure subscription.\n:type resource_group_name: str\n:param check_endpoint_name_availability_input: Input to check.\n:type check_endpoint_name_availability_input:\n ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityInput\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckEndpointNameAvailabilityOutput, or the result of cls(response)\n:rtype: ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityOutput\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def check_endpoint_name_availability(\n    self,\n    resource_group_name: str,\n    check_endpoint_name_availability_input: \"_models.CheckEndpointNameAvailabilityInput\",\n    **kwargs: Any\n) -\u003e \"_models.CheckEndpointNameAvailabilityOutput\":\n",
+                    "doc": "\"\"\"Check the availability of a resource name. This is needed for resources where name is globally\nunique, such as a afdx endpoint.\n\n:param resource_group_name: Name of the Resource group within the Azure subscription.\n:type resource_group_name: str\n:param check_endpoint_name_availability_input: Input to check.\n:type check_endpoint_name_availability_input:\n ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityInput\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckEndpointNameAvailabilityOutput, or the result of cls(response)\n:rtype: ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityOutput\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "resource_group_name, check_endpoint_name_availability_input"
             },
-            "async": {
-                "coroutine": true,
-                "signature": "async def check_name_availability(\n    self,\n    check_name_availability_input: \"_models.CheckNameAvailabilityInput\",\n    **kwargs\n) -\u003e \"_models.CheckNameAvailabilityOutput\":\n",
-                "doc": "\"\"\"Check the availability of a resource name. This is needed for resources where name is globally\nunique, such as a CDN endpoint.\n\n:param check_name_availability_input: Input to check.\n:type check_name_availability_input: ~azure.mgmt.cdn.models.CheckNameAvailabilityInput\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckNameAvailabilityOutput, or the result of cls(response)\n:rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            "check_name_availability" : {
+                "sync": {
+                    "signature": "def check_name_availability(\n    self,\n    check_name_availability_input,  # type: \"_models.CheckNameAvailabilityInput\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.CheckNameAvailabilityOutput\"\n",
+                    "doc": "\"\"\"Check the availability of a resource name. This is needed for resources where name is globally\nunique, such as a CDN endpoint.\n\n:param check_name_availability_input: Input to check.\n:type check_name_availability_input: ~azure.mgmt.cdn.models.CheckNameAvailabilityInput\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckNameAvailabilityOutput, or the result of cls(response)\n:rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def check_name_availability(\n    self,\n    check_name_availability_input: \"_models.CheckNameAvailabilityInput\",\n    **kwargs: Any\n) -\u003e \"_models.CheckNameAvailabilityOutput\":\n",
+                    "doc": "\"\"\"Check the availability of a resource name. This is needed for resources where name is globally\nunique, such as a CDN endpoint.\n\n:param check_name_availability_input: Input to check.\n:type check_name_availability_input: ~azure.mgmt.cdn.models.CheckNameAvailabilityInput\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckNameAvailabilityOutput, or the result of cls(response)\n:rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "check_name_availability_input"
             },
-            "call": "check_name_availability_input"
-        },
-        "check_name_availability_with_subscription" : {
-            "sync": {
-                "signature": "def check_name_availability_with_subscription(\n    self,\n    check_name_availability_input,  # type: \"_models.CheckNameAvailabilityInput\"\n    **kwargs  # type: Any\n):\n",
-                "doc": "\"\"\"Check the availability of a resource name. This is needed for resources where name is globally\nunique, such as a CDN endpoint.\n\n:param check_name_availability_input: Input to check.\n:type check_name_availability_input: ~azure.mgmt.cdn.models.CheckNameAvailabilityInput\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckNameAvailabilityOutput, or the result of cls(response)\n:rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            "check_name_availability_with_subscription" : {
+                "sync": {
+                    "signature": "def check_name_availability_with_subscription(\n    self,\n    check_name_availability_input,  # type: \"_models.CheckNameAvailabilityInput\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.CheckNameAvailabilityOutput\"\n",
+                    "doc": "\"\"\"Check the availability of a resource name. This is needed for resources where name is globally\nunique, such as a CDN endpoint.\n\n:param check_name_availability_input: Input to check.\n:type check_name_availability_input: ~azure.mgmt.cdn.models.CheckNameAvailabilityInput\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckNameAvailabilityOutput, or the result of cls(response)\n:rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def check_name_availability_with_subscription(\n    self,\n    check_name_availability_input: \"_models.CheckNameAvailabilityInput\",\n    **kwargs: Any\n) -\u003e \"_models.CheckNameAvailabilityOutput\":\n",
+                    "doc": "\"\"\"Check the availability of a resource name. This is needed for resources where name is globally\nunique, such as a CDN endpoint.\n\n:param check_name_availability_input: Input to check.\n:type check_name_availability_input: ~azure.mgmt.cdn.models.CheckNameAvailabilityInput\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckNameAvailabilityOutput, or the result of cls(response)\n:rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "check_name_availability_input"
             },
-            "async": {
-                "coroutine": true,
-                "signature": "async def check_name_availability_with_subscription(\n    self,\n    check_name_availability_input: \"_models.CheckNameAvailabilityInput\",\n    **kwargs\n) -\u003e \"_models.CheckNameAvailabilityOutput\":\n",
-                "doc": "\"\"\"Check the availability of a resource name. This is needed for resources where name is globally\nunique, such as a CDN endpoint.\n\n:param check_name_availability_input: Input to check.\n:type check_name_availability_input: ~azure.mgmt.cdn.models.CheckNameAvailabilityInput\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckNameAvailabilityOutput, or the result of cls(response)\n:rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-            },
-            "call": "check_name_availability_input"
-        },
-        "validate_probe" : {
-            "sync": {
-                "signature": "def validate_probe(\n    self,\n    validate_probe_input,  # type: \"_models.ValidateProbeInput\"\n    **kwargs  # type: Any\n):\n",
-                "doc": "\"\"\"Check if the probe path is a valid path and the file can be accessed. Probe path is the path to\na file hosted on the origin server to help accelerate the delivery of dynamic content via the\nCDN endpoint. This path is relative to the origin path specified in the endpoint configuration.\n\n:param validate_probe_input: Input to check.\n:type validate_probe_input: ~azure.mgmt.cdn.models.ValidateProbeInput\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ValidateProbeOutput, or the result of cls(response)\n:rtype: ~azure.mgmt.cdn.models.ValidateProbeOutput\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-            },
-            "async": {
-                "coroutine": true,
-                "signature": "async def validate_probe(\n    self,\n    validate_probe_input: \"_models.ValidateProbeInput\",\n    **kwargs\n) -\u003e \"_models.ValidateProbeOutput\":\n",
-                "doc": "\"\"\"Check if the probe path is a valid path and the file can be accessed. Probe path is the path to\na file hosted on the origin server to help accelerate the delivery of dynamic content via the\nCDN endpoint. This path is relative to the origin path specified in the endpoint configuration.\n\n:param validate_probe_input: Input to check.\n:type validate_probe_input: ~azure.mgmt.cdn.models.ValidateProbeInput\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ValidateProbeOutput, or the result of cls(response)\n:rtype: ~azure.mgmt.cdn.models.ValidateProbeOutput\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-            },
-            "call": "validate_probe_input"
+            "validate_probe" : {
+                "sync": {
+                    "signature": "def validate_probe(\n    self,\n    validate_probe_input,  # type: \"_models.ValidateProbeInput\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.ValidateProbeOutput\"\n",
+                    "doc": "\"\"\"Check if the probe path is a valid path and the file can be accessed. Probe path is the path to\na file hosted on the origin server to help accelerate the delivery of dynamic content via the\nCDN endpoint. This path is relative to the origin path specified in the endpoint configuration.\n\n:param validate_probe_input: Input to check.\n:type validate_probe_input: ~azure.mgmt.cdn.models.ValidateProbeInput\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ValidateProbeOutput, or the result of cls(response)\n:rtype: ~azure.mgmt.cdn.models.ValidateProbeOutput\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def validate_probe(\n    self,\n    validate_probe_input: \"_models.ValidateProbeInput\",\n    **kwargs: Any\n) -\u003e \"_models.ValidateProbeOutput\":\n",
+                    "doc": "\"\"\"Check if the probe path is a valid path and the file can be accessed. Probe path is the path to\na file hosted on the origin server to help accelerate the delivery of dynamic content via the\nCDN endpoint. This path is relative to the origin path specified in the endpoint configuration.\n\n:param validate_probe_input: Input to check.\n:type validate_probe_input: ~azure.mgmt.cdn.models.ValidateProbeInput\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ValidateProbeOutput, or the result of cls(response)\n:rtype: ~azure.mgmt.cdn.models.ValidateProbeOutput\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "validate_probe_input"
+            }
         }
-    },
-    "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\"]}}}",
-    "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\"]}}}"
+    }
 }

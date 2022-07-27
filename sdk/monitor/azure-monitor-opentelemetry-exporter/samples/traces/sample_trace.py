@@ -16,11 +16,6 @@ exporter = AzureMonitorTraceExporter.from_connection_string(
     os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
 
-# You can also instantiate the exporter via the constructor
-# The connection string will be automatically populated via the
-# APPLICATIONINSIGHTS_CONNECTION_STRING environment variable
-# exporter = AzureMonitorTraceExporter()
-
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 span_processor = BatchSpanProcessor(exporter)

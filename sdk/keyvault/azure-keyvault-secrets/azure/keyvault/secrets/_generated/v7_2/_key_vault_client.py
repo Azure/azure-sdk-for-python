@@ -6,25 +6,30 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from copy import deepcopy
 from typing import TYPE_CHECKING
 
-from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
+
+from azure.core import PipelineClient
+
+from . import models
+from ._configuration import KeyVaultClientConfiguration
+from .operations import KeyVaultClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
-
-from ._configuration import KeyVaultClientConfiguration
-from .operations import KeyVaultClientOperationsMixin
-from . import models
-
+    from azure.core.rest import HttpRequest, HttpResponse
 
 class KeyVaultClient(KeyVaultClientOperationsMixin):
-    """The key vault client performs cryptographic key operations and vault operations against the Key Vault service.
+    """The key vault client performs cryptographic key operations and vault operations against the Key
+    Vault service.
 
+    :keyword api_version: Api Version. Default value is "7.2". Note that overriding this default
+     value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -32,30 +37,42 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = '{vaultBaseUrl}'
+        _base_url = '{vaultBaseUrl}'
         self._config = KeyVaultClientConfiguration(**kwargs)
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = PipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
+        self._serialize.client_side_validation = False
 
 
-    def _send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+    def _send_request(
+        self,
+        request,  # type: HttpRequest
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> HttpResponse
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
-        http_request.url = self._client.format_url(http_request.url)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None

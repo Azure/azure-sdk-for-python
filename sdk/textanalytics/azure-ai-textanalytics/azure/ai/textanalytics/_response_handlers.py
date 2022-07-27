@@ -32,12 +32,10 @@ from ._models import (
     RecognizePiiEntitiesResult,
     PiiEntity,
     AnalyzeHealthcareEntitiesResult,
-    ExtractSummaryResult,
     _AnalyzeActionsType,
     RecognizeCustomEntitiesResult,
-    SingleCategoryClassifyResult,
-    MultiCategoryClassifyResult,
-    ActionPointerKind
+    ClassifyDocumentResult,
+    ActionPointerKind,
 )
 
 
@@ -69,7 +67,10 @@ def order_results(response, combined):
     :param combined: A combined list of the results | errors
     :return: In order list of results | errors (if any)
     """
-    request = json.loads(response.http_response.request.body)["documents"]
+    try:
+        request = json.loads(response.http_response.request.body)["documents"]
+    except KeyError:  # language API compat
+        request = json.loads(response.http_response.request.body)["analysisInput"]["documents"]
     mapping = {item.id: item for item in combined}
     ordered_response = [mapping[item["id"]] for item in request]
     return ordered_response
@@ -95,8 +96,11 @@ def order_lro_results(doc_id_order, combined):
 def prepare_result(func):
     def choose_wrapper(*args, **kwargs):
         def wrapper(
-            response, obj, response_headers, ordering_function
-        ):  # pylint: disable=unused-argument
+            response, obj, _, ordering_function
+        ):
+            if hasattr(obj, "results"):
+                obj = obj.results  # language API compat
+
             if obj.errors:
                 combined = obj.documents + obj.errors
                 results = ordering_function(response, combined)
@@ -258,15 +262,6 @@ def healthcare_result(
 
 
 @prepare_result
-def summary_result(
-    summary, results, *args, **kwargs
-):  # pylint: disable=unused-argument
-    return ExtractSummaryResult._from_generated(  # pylint: disable=protected-access
-        summary
-    )
-
-
-@prepare_result
 def custom_entities_result(
     custom_entities, results, *args, **kwargs
 ):  # pylint: disable=unused-argument
@@ -276,29 +271,26 @@ def custom_entities_result(
 
 
 @prepare_result
-def single_category_classify_result(
-    custom_category, results, *args, **kwargs
-):  # pylint: disable=unused-argument
-    return SingleCategoryClassifyResult._from_generated(  # pylint: disable=protected-access
-        custom_category
-    )
-
-@prepare_result
-def multi_category_classify_result(
+def classify_document_result(
     custom_categories, results, *args, **kwargs
 ):  # pylint: disable=unused-argument
-    return MultiCategoryClassifyResult._from_generated(  # pylint: disable=protected-access
+    return ClassifyDocumentResult._from_generated(  # pylint: disable=protected-access
         custom_categories
     )
 
 
 def healthcare_extract_page_data(
-    doc_id_order, obj, response_headers, health_job_state
+    doc_id_order, obj, health_job_state
 ):  # pylint: disable=unused-argument
     return (
         health_job_state.next_link,
         healthcare_result(
-            doc_id_order, health_job_state.results, response_headers, lro=True
+            doc_id_order,
+            health_job_state.results
+            if hasattr(health_job_state, "results")
+            else health_job_state.tasks.items[0].results,
+            {},
+            lro=True
         ),
     )
 
@@ -312,18 +304,19 @@ def _get_deserialization_callback_from_task_type(task_type):  # pylint: disable=
         return linked_entities_result
     if task_type == _AnalyzeActionsType.ANALYZE_SENTIMENT:
         return sentiment_result
-    if task_type == _AnalyzeActionsType.EXTRACT_SUMMARY:
-        return summary_result
     if task_type == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES:
         return custom_entities_result
-    if task_type == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY:
-        return single_category_classify_result
-    if task_type == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY:
-        return multi_category_classify_result
+    if task_type == _AnalyzeActionsType.SINGLE_LABEL_CLASSIFY:
+        return classify_document_result
+    if task_type == _AnalyzeActionsType.MULTI_LABEL_CLASSIFY:
+        return classify_document_result
+    if task_type == _AnalyzeActionsType.ANALYZE_HEALTHCARE_ENTITIES:
+        return healthcare_result
     return key_phrases_result
 
 
 def _get_property_name_from_task_type(task_type):  # pylint: disable=too-many-return-statements
+    """v3.1 only"""
     if task_type == _AnalyzeActionsType.RECOGNIZE_ENTITIES:
         return "entity_recognition_tasks"
     if task_type == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES:
@@ -332,18 +325,11 @@ def _get_property_name_from_task_type(task_type):  # pylint: disable=too-many-re
         return "entity_linking_tasks"
     if task_type == _AnalyzeActionsType.ANALYZE_SENTIMENT:
         return "sentiment_analysis_tasks"
-    if task_type == _AnalyzeActionsType.EXTRACT_SUMMARY:
-        return "extractive_summarization_tasks"
-    if task_type == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES:
-        return "custom_entity_recognition_tasks"
-    if task_type == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY:
-        return "custom_single_classification_tasks"
-    if task_type == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY:
-        return "custom_multi_classification_tasks"
     return "key_phrase_extraction_tasks"
 
 
 def get_task_from_pointer(task_type):  # pylint: disable=too-many-return-statements
+    """v3.1 only"""
     if task_type == ActionPointerKind.RECOGNIZE_ENTITIES:
         return "entity_recognition_tasks"
     if task_type == ActionPointerKind.RECOGNIZE_PII_ENTITIES:
@@ -352,14 +338,6 @@ def get_task_from_pointer(task_type):  # pylint: disable=too-many-return-stateme
         return "entity_linking_tasks"
     if task_type == ActionPointerKind.ANALYZE_SENTIMENT:
         return "sentiment_analysis_tasks"
-    if task_type == ActionPointerKind.EXTRACT_SUMMARY:
-        return "extractive_summarization_tasks"
-    if task_type == ActionPointerKind.RECOGNIZE_CUSTOM_ENTITIES:
-        return "custom_entity_recognition_tasks"
-    if task_type == ActionPointerKind.SINGLE_CATEGORY_CLASSIFY:
-        return "custom_single_classification_tasks"
-    if task_type == ActionPointerKind.MULTI_CATEGORY_CLASSIFY:
-        return "custom_multi_classification_tasks"
     return "key_phrase_extraction_tasks"
 
 
@@ -377,6 +355,15 @@ def resolve_action_pointer(pointer):
     )
 
 
+def pad_result(tasks_obj, doc_id_order):
+    return [
+        DocumentError(
+            id=doc_id,
+            error=TextAnalyticsError(message=f"No result for document. Action returned status '{tasks_obj.status}'.")
+        ) for doc_id in doc_id_order
+    ]
+
+
 def get_ordered_errors(tasks_obj, task_name, doc_id_order):
     # throw exception if error missing a target
     missing_target = any([error for error in tasks_obj.errors if error.target is None])
@@ -386,9 +373,13 @@ def get_ordered_errors(tasks_obj, task_name, doc_id_order):
 
     # create a DocumentError per input doc with the action error details
     for err in tasks_obj.errors:
-        property_name, index = resolve_action_pointer(err.target)
-        actions = getattr(tasks_obj.tasks, property_name)
-        action = actions[index]
+        # language API compat
+        if err.target.find("items") != -1:
+            action = tasks_obj.tasks.items[int(err.target.split("/")[-1])]
+        else:
+            property_name, index = resolve_action_pointer(err.target)
+            actions = getattr(tasks_obj.tasks, property_name)
+            action = actions[index]
         if action.task_name == task_name:
             errors = [
                 DocumentError(
@@ -400,13 +391,15 @@ def get_ordered_errors(tasks_obj, task_name, doc_id_order):
     raise ValueError("Unexpected response from service - no errors for missing action results.")
 
 
-def _get_doc_results(task, doc_id_order, response_headers, returned_tasks_object):
+def _get_doc_results(task, doc_id_order, returned_tasks_object):
     returned_tasks = returned_tasks_object.tasks
     current_task_type, task_name = task
     deserialization_callback = _get_deserialization_callback_from_task_type(
         current_task_type
     )
-    property_name = _get_property_name_from_task_type(current_task_type)
+    # language api compat
+    property_name = \
+        "items" if hasattr(returned_tasks, "items") else _get_property_name_from_task_type(current_task_type)
     try:
         response_task_to_deserialize = \
             next(task for task in getattr(returned_tasks, property_name) if task.task_name == task_name)
@@ -416,19 +409,29 @@ def _get_doc_results(task, doc_id_order, response_headers, returned_tasks_object
     # if no results present, check for action errors
     if response_task_to_deserialize.results is None:
         return get_ordered_errors(returned_tasks_object, task_name, doc_id_order)
+    # if results obj present, but no document results (likely a canceled scenario)
+    if not response_task_to_deserialize.results.documents:
+        return pad_result(returned_tasks_object, doc_id_order)
     return deserialization_callback(
-        doc_id_order, response_task_to_deserialize.results, response_headers, lro=True
+        doc_id_order, response_task_to_deserialize.results, {}, lro=True
     )
 
 
-def get_iter_items(doc_id_order, task_order, response_headers, analyze_job_state):
+def get_iter_items(doc_id_order, task_order, bespoke, analyze_job_state):
     iter_items = defaultdict(list)  # map doc id to action results
     returned_tasks_object = analyze_job_state
+
+    if bespoke:
+        return _get_doc_results(
+            task_order[0],
+            doc_id_order,
+            returned_tasks_object,
+        )
+
     for task in task_order:
         results = _get_doc_results(
             task,
             doc_id_order,
-            response_headers,
             returned_tasks_object,
         )
         for result in results:
@@ -438,11 +441,11 @@ def get_iter_items(doc_id_order, task_order, response_headers, analyze_job_state
 
 
 def analyze_extract_page_data(
-    doc_id_order, task_order, response_headers, analyze_job_state
+    doc_id_order, task_order, bespoke, analyze_job_state
 ):
     # return next link, list of
     iter_items = get_iter_items(
-        doc_id_order, task_order, response_headers, analyze_job_state
+        doc_id_order, task_order, bespoke, analyze_job_state
     )
     return analyze_job_state.next_link, iter_items
 
@@ -464,20 +467,22 @@ def lro_get_next_page(
     query_params = dict(parse_qsl(parsed_url.query.replace("$", "")))
     if "showStats" in query_params:
         query_params.pop("showStats")
+    if "api-version" in query_params:  # language api compat
+        query_params.pop("api-version")
     query_params["show_stats"] = show_stats
 
     return lro_status_callback(job_id, **query_params)
 
 
 def healthcare_paged_result(
-    doc_id_order, health_status_callback, _, obj, response_headers, show_stats=False
-):  # pylint: disable=unused-argument
+    doc_id_order, health_status_callback, _, obj, show_stats=False
+):
     return ItemPaged(
         functools.partial(
             lro_get_next_page, health_status_callback, obj, show_stats=show_stats
         ),
         functools.partial(
-            healthcare_extract_page_data, doc_id_order, obj, response_headers
+            healthcare_extract_page_data, doc_id_order, obj
         ),
     )
 
@@ -488,14 +493,38 @@ def analyze_paged_result(
     analyze_status_callback,
     _,
     obj,
-    response_headers,
     show_stats=False,
-):  # pylint: disable=unused-argument
+    bespoke=False
+):
     return ItemPaged(
         functools.partial(
             lro_get_next_page, analyze_status_callback, obj, show_stats=show_stats
         ),
         functools.partial(
-            analyze_extract_page_data, doc_id_order, task_order, response_headers
+            analyze_extract_page_data, doc_id_order, task_order, bespoke
         ),
     )
+
+
+def _get_result_from_continuation_token(
+    client, continuation_token, poller_type, polling_method, callback, bespoke=False
+):
+    def result_callback(initial_response, pipeline_response):
+        doc_id_order = initial_response.context.options["doc_id_order"]
+        show_stats = initial_response.context.options["show_stats"]
+        task_id_order = initial_response.context.options.get("task_id_order")
+        return callback(
+            pipeline_response,
+            None,
+            doc_id_order,
+            task_id_order=task_id_order,
+            show_stats=show_stats,
+            bespoke=bespoke
+        )
+
+    return poller_type.from_continuation_token(
+            polling_method=polling_method,
+            client=client,
+            deserialization_callback=result_callback,
+            continuation_token=continuation_token
+        )

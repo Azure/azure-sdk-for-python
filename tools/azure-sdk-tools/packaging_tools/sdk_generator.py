@@ -6,7 +6,7 @@ from subprocess import check_call
 
 from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE
 from .generate_sdk import generate
-from .generate_utils import get_package_names, init_new_service, update_servicemetadata
+from .generate_utils import get_package_names, init_new_service, update_servicemetadata, judge_tag_preview
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -14,6 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 def main(generate_input, generate_output):
     with open(generate_input, "r") as reader:
         data = json.load(reader)
+        _LOGGER.info(f"auto_package input: {data}")
 
     spec_folder = data["specFolder"]
     sdk_folder = "."
@@ -44,10 +45,12 @@ def main(generate_input, generate_output):
             continue
 
         package_total.add(package_name)
+        sdk_code_path = str(Path(sdk_folder, folder_name, package_name))
         if package_name not in result:
             package_entry = {}
             package_entry["packageName"] = package_name
             package_entry["path"] = [folder_name]
+            package_entry["tagIsStable"] = not judge_tag_preview(sdk_code_path)
             result[package_name] = package_entry
         else:
             result[package_name]["path"].append(folder_name)
@@ -71,7 +74,7 @@ def main(generate_input, generate_output):
 
         # Setup package locally
         check_call(
-            f"pip install --ignore-requires-python -e {str(Path(sdk_folder, folder_name, package_name))}",
+            f"pip install --ignore-requires-python -e {sdk_code_path}",
             shell=True,
         )
 

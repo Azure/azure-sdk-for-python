@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -12,8 +11,10 @@ from typing import (
     Dict,
     Union,
     List,
-    TYPE_CHECKING,
 )
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.pipeline import PipelineResponse
 from azure.core.polling import AsyncLROPoller
 from azure.core.pipeline import AsyncPipeline
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
@@ -26,11 +27,6 @@ from .._api_versions import FormRecognizerApiVersion
 from .._models import CustomFormModelInfo, AccountProperties, CustomFormModel
 from ._form_base_client_async import FormRecognizerClientBaseAsync
 from .._polling import FormTrainingPolling, CopyPolling
-
-if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential
-    from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.pipeline import PipelineResponse
 
 
 class FormTrainingClient(FormRecognizerClientBaseAsync):
@@ -76,11 +72,11 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
     def __init__(
         self,
         endpoint: str,
-        credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any
     ) -> None:
         api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
-        super(FormTrainingClient, self).__init__(
+        super().__init__(
             endpoint=endpoint,
             credential=credential,
             api_version=api_version,
@@ -94,13 +90,15 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
     ) -> AsyncLROPoller[CustomFormModel]:
         """Create and train a custom model. The request must include a `training_files_url` parameter that is an
         externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
-        a container URI (without SAS) is accepted only when the container is public.
+        a container URI (without SAS) is accepted only when the container is public or has a managed identity
+        configured, see more about configuring managed identities to work with Form Recognizer here:
+        https://docs.microsoft.com/azure/applied-ai-services/form-recognizer/managed-identities.
         Models are trained using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff', or 'image/bmp'. Other types of content in the container is ignored.
 
         :param str training_files_url: An Azure Storage blob container's SAS URI. A container URI (without SAS)
-            can be used if the container is public. For more information on setting up a training data set, see:
-            https://docs.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set
+            can be used if the container is public or has a managed identity configured. For more information on
+            setting up a training data set, see: https://aka.ms/azsdk/formrecognizer/buildtrainingset.
         :param bool use_training_labels: Whether to train with labels or not. Corresponding labeled files must
             exist in the blob container if set to `True`.
         :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
@@ -315,7 +313,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         )
         if (
             hasattr(response, "composed_train_results")
-            and response.composed_train_results
+            and response.composed_train_results  # type: ignore
         ):
             return CustomFormModel._from_generated_composed(response)
         return CustomFormModel._from_generated(response, api_version=self._api_version)
@@ -360,7 +358,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
     @distributed_trace_async
     async def begin_copy_model(
-        self, model_id: str, target: dict, **kwargs: Any
+        self, model_id: str, target: Dict[str, Union[str, int]], **kwargs: Any
     ) -> AsyncLROPoller[CustomFormModelInfo]:
         """Copy a custom model stored in this resource (the source) to the user specified
         target Form Recognizer resource. This should be called with the source Form Recognizer resource
@@ -368,7 +366,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         target resource's output from calling the :func:`~get_copy_authorization()` method.
 
         :param str model_id: Model identifier of the model to copy to target resource.
-        :param dict target:
+        :param Dict[str, Union[str, int]] target:
             The copy authorization generated from the target resource's call to
             :func:`~get_copy_authorization()`.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -482,7 +480,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
         try:
             return await self._client.begin_compose_custom_models_async(  # type: ignore
-                {"model_ids": model_ids, "model_name": model_name},
+                {"model_ids": model_ids, "model_name": model_name},  # type: ignore
                 cls=kwargs.pop("cls", _compose_callback),
                 polling=AsyncLROBasePolling(
                     timeout=polling_interval,

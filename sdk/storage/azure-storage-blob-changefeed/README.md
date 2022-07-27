@@ -1,6 +1,3 @@
-## _Disclaimer_
-_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
-
 # Azure Storage Blob ChangeFeed client library for Python
 
 This preview package for Python enables users to get blob change feed events. These events can be lazily generated, iterated by page, retrieved for a specific time interval, or iterated from a specific continuation token.
@@ -12,7 +9,7 @@ This preview package for Python enables users to get blob change feed events. Th
 ## Getting started
 
 ### Prerequisites
-* Python 3.6 or later is required to use this package.
+* Python 3.7 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account) to use this package.
 

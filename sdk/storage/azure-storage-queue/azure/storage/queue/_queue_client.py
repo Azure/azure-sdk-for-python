@@ -5,41 +5,36 @@
 # --------------------------------------------------------------------------
 
 import functools
+import warnings
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
+    Any, Dict, List, Optional,
     TYPE_CHECKING)
-try:
-    from urllib.parse import urlparse, quote, unquote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import quote, unquote # type: ignore
+from urllib.parse import urlparse, quote, unquote
 
 import six
-
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from ._serialize import get_api_version
+
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
     return_headers_and_deserialized)
-from ._message_encoding import NoEncodePolicy, NoDecodePolicy
-from ._deserialize import deserialize_queue_properties, deserialize_queue_creation
 from ._generated import AzureQueueStorage
-from ._generated.models import SignedIdentifier
-from ._generated.models import QueueMessage as GenQueueMessage
+from ._generated.models import SignedIdentifier, QueueMessage as GenQueueMessage
+from ._deserialize import deserialize_queue_properties, deserialize_queue_creation
+from ._encryption import StorageEncryptionMixin
+from ._message_encoding import NoEncodePolicy, NoDecodePolicy
 from ._models import QueueMessage, AccessPolicy, MessagesPaged
+from ._serialize import get_api_version
 
 if TYPE_CHECKING:
-    from datetime import datetime
-    from azure.core.pipeline.policies import HTTPPolicy
     from ._models import QueueProperties
 
 
-class QueueClient(StorageAccountHostsMixin):
+class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     """A client to interact with a specific Queue.
 
     For more optional configuration, please click
@@ -54,8 +49,12 @@ class QueueClient(StorageAccountHostsMixin):
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -80,7 +79,7 @@ class QueueClient(StorageAccountHostsMixin):
     def __init__(
             self, account_url,  # type: str
             queue_name,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -105,8 +104,9 @@ class QueueClient(StorageAccountHostsMixin):
 
         self._config.message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
         self._config.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
-        self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
+        self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._configure_encryption(kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -124,7 +124,7 @@ class QueueClient(StorageAccountHostsMixin):
     @classmethod
     def from_queue_url(cls,
                        queue_url,  # type: str
-                       credential=None,  # type: Optional[Any]
+                       credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
                        **kwargs  # type: Any
                        ):
         # type: (...) -> QueueClient
@@ -134,8 +134,12 @@ class QueueClient(StorageAccountHostsMixin):
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials, an account
-            shared access key, or an instance of a TokenCredentials class from azure.identity.
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
         """
@@ -167,7 +171,7 @@ class QueueClient(StorageAccountHostsMixin):
     def from_connection_string(
             cls, conn_str,  # type: str
             queue_name,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
      ):
         # type: (...) -> QueueClient
@@ -181,8 +185,11 @@ class QueueClient(StorageAccountHostsMixin):
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
 
@@ -477,10 +484,23 @@ class QueueClient(StorageAccountHostsMixin):
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         time_to_live = kwargs.pop('time_to_live', None)
         timeout = kwargs.pop('timeout', None)
-        self._config.message_encode_policy.configure(
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            resolver=self.key_resolver_function)
+        try:
+            self._config.message_encode_policy.configure(
+                require_encryption=self.require_encryption,
+                key_encryption_key=self.key_encryption_key,
+                resolver=self.key_resolver_function,
+                encryption_version=self.encryption_version)
+        except TypeError:
+            warnings.warn(
+                "TypeError when calling message_encode_policy.configure. \
+                It is likely missing the encryption_version parameter. \
+                Consider updating your encryption information/implementation. \
+                Retrying without encryption_version."
+            )
+            self._config.message_encode_policy.configure(
+                require_encryption=self.require_encryption,
+                key_encryption_key=self.key_encryption_key,
+                resolver=self.key_resolver_function)
         encoded_content = self._config.message_encode_policy(content)
         new_message = GenQueueMessage(message_text=encoded_content)
 
@@ -566,7 +586,9 @@ class QueueClient(StorageAccountHostsMixin):
         content and a pop_receipt value, which is required to delete the message.
         The message is not automatically deleted from the queue, but after it has
         been retrieved, it is not visible to other clients for the time interval
-        specified by the visibility_timeout parameter.
+        specified by the visibility_timeout parameter. The iterator will continuously
+        fetch messages until the queue is empty or max_messages is reached (if max_messages
+        is set).
 
         If the key-encryption-key or resolver field is set on the local service object, the messages will be
         decrypted before being returned.
@@ -588,14 +610,16 @@ class QueueClient(StorageAccountHostsMixin):
                 :caption: List pages and corresponding messages from the queue.
 
         :keyword int visibility_timeout:
-            If not specified, the default value is 0. Specifies the
+            If not specified, the default value is 30. Specifies the
             new visibility timeout value, in seconds, relative to server time.
-            The value must be larger than or equal to 0, and cannot be
+            The value must be larger than or equal to 1, and cannot be
             larger than 7 days. The visibility timeout of a message cannot be
             set to a value later than the expiry time. visibility_timeout
             should be set to a value smaller than the time-to-live value.
         :keyword int timeout:
             The server timeout, expressed in seconds.
+        :keyword int max_messages:
+            An integer that specifies the maximum number of messages to retrieve from the queue.
         :return:
             Returns a message iterator of dict-like Message objects.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.queue.QueueMessage]
@@ -612,6 +636,7 @@ class QueueClient(StorageAccountHostsMixin):
         messages_per_page = kwargs.pop('messages_per_page', None)
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         timeout = kwargs.pop('timeout', None)
+        max_messages = kwargs.pop('max_messages', None)
         self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
@@ -624,7 +649,11 @@ class QueueClient(StorageAccountHostsMixin):
                 cls=self._config.message_decode_policy,
                 **kwargs
             )
-            return ItemPaged(command, results_per_page=messages_per_page, page_iterator_class=MessagesPaged)
+            if max_messages is not None and messages_per_page is not None:
+                if max_messages < messages_per_page:
+                    raise ValueError("max_messages must be greater or equal to messages_per_page")
+            return ItemPaged(command, results_per_page=messages_per_page,
+                             page_iterator_class=MessagesPaged, max_messages=max_messages)
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -702,10 +731,23 @@ class QueueClient(StorageAccountHostsMixin):
         if receipt is None:
             raise ValueError("pop_receipt must be present")
         if message_text is not None:
-            self._config.message_encode_policy.configure(
-                self.require_encryption,
-                self.key_encryption_key,
-                self.key_resolver_function)
+            try:
+                self._config.message_encode_policy.configure(
+                    self.require_encryption,
+                    self.key_encryption_key,
+                    self.key_resolver_function,
+                    encryption_version=self.encryption_version)
+            except TypeError:
+                warnings.warn(
+                    "TypeError when calling message_encode_policy.configure. \
+                    It is likely missing the encryption_version parameter. \
+                    Consider updating your encryption information/implementation. \
+                    Retrying without encryption_version."
+                )
+                self._config.message_encode_policy.configure(
+                    self.require_encryption,
+                    self.key_encryption_key,
+                    self.key_resolver_function)
             encoded_message_text = self._config.message_encode_policy(message_text)
             updated = GenQueueMessage(message_text=encoded_message_text)
         else:

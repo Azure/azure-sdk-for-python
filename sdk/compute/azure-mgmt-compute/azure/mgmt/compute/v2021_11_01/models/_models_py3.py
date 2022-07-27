@@ -7,11 +7,13 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._compute_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AdditionalCapabilities(msrest.serialization.Model):
@@ -64,7 +66,7 @@ class AdditionalUnattendContent(msrest.serialization.Model):
      "Microsoft-Windows-Shell-Setup". The default value is None.
     :vartype component_name: str
     :ivar setting_name: Specifies the name of the setting to which the content applies. Possible
-     values are: FirstLogonCommands and AutoLogon. Possible values include: "AutoLogon",
+     values are: FirstLogonCommands and AutoLogon. Known values are: "AutoLogon",
      "FirstLogonCommands".
     :vartype setting_name: str or ~azure.mgmt.compute.v2021_11_01.models.SettingNames
     :ivar content: Specifies the XML formatted content that is added to the unattend.xml file for
@@ -85,7 +87,7 @@ class AdditionalUnattendContent(msrest.serialization.Model):
         *,
         pass_name: Optional[str] = None,
         component_name: Optional[str] = None,
-        setting_name: Optional[Union[str, "SettingNames"]] = None,
+        setting_name: Optional[Union[str, "_models.SettingNames"]] = None,
         content: Optional[str] = None,
         **kwargs
     ):
@@ -98,7 +100,7 @@ class AdditionalUnattendContent(msrest.serialization.Model):
          "Microsoft-Windows-Shell-Setup". The default value is None.
         :paramtype component_name: str
         :keyword setting_name: Specifies the name of the setting to which the content applies. Possible
-         values are: FirstLogonCommands and AutoLogon. Possible values include: "AutoLogon",
+         values are: FirstLogonCommands and AutoLogon. Known values are: "AutoLogon",
          "FirstLogonCommands".
         :paramtype setting_name: str or ~azure.mgmt.compute.v2021_11_01.models.SettingNames
         :keyword content: Specifies the XML formatted content that is added to the unattend.xml file
@@ -166,8 +168,8 @@ class ApiError(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        details: Optional[List["ApiErrorBase"]] = None,
-        innererror: Optional["InnerError"] = None,
+        details: Optional[List["_models.ApiErrorBase"]] = None,
+        innererror: Optional["_models.InnerError"] = None,
         code: Optional[str] = None,
         target: Optional[str] = None,
         message: Optional[str] = None,
@@ -248,7 +250,7 @@ class ApplicationProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        gallery_applications: Optional[List["VMGalleryApplication"]] = None,
+        gallery_applications: Optional[List["_models.VMGalleryApplication"]] = None,
         **kwargs
     ):
         """
@@ -351,8 +353,8 @@ class AutomaticRepairsPolicy(msrest.serialization.Model):
      maximum allowed grace period is 90 minutes (PT90M).
     :vartype grace_period: str
     :ivar repair_action: Type of repair action (replace, restart, reimage) that will be used for
-     repairing unhealthy virtual machines in the scale set. Default value is replace. Possible
-     values include: "Replace", "Restart", "Reimage".
+     repairing unhealthy virtual machines in the scale set. Default value is replace. Known values
+     are: "Replace", "Restart", "Reimage".
     :vartype repair_action: str or ~azure.mgmt.compute.v2021_11_01.models.RepairAction
     """
 
@@ -367,7 +369,7 @@ class AutomaticRepairsPolicy(msrest.serialization.Model):
         *,
         enabled: Optional[bool] = None,
         grace_period: Optional[str] = None,
-        repair_action: Optional[Union[str, "RepairAction"]] = None,
+        repair_action: Optional[Union[str, "_models.RepairAction"]] = None,
         **kwargs
     ):
         """
@@ -381,8 +383,8 @@ class AutomaticRepairsPolicy(msrest.serialization.Model):
          value. The maximum allowed grace period is 90 minutes (PT90M).
         :paramtype grace_period: str
         :keyword repair_action: Type of repair action (replace, restart, reimage) that will be used for
-         repairing unhealthy virtual machines in the scale set. Default value is replace. Possible
-         values include: "Replace", "Restart", "Reimage".
+         repairing unhealthy virtual machines in the scale set. Default value is replace. Known values
+         are: "Replace", "Restart", "Reimage".
         :paramtype repair_action: str or ~azure.mgmt.compute.v2021_11_01.models.RepairAction
         """
         super(AutomaticRepairsPolicy, self).__init__(**kwargs)
@@ -509,11 +511,11 @@ class AvailabilitySet(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         platform_update_domain_count: Optional[int] = None,
         platform_fault_domain_count: Optional[int] = None,
-        virtual_machines: Optional[List["SubResource"]] = None,
-        proximity_placement_group: Optional["SubResource"] = None,
+        virtual_machines: Optional[List["_models.SubResource"]] = None,
+        proximity_placement_group: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
@@ -571,7 +573,7 @@ class AvailabilitySetListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["AvailabilitySet"],
+        value: List["_models.AvailabilitySet"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -653,11 +655,11 @@ class AvailabilitySetUpdate(UpdateResource):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         platform_update_domain_count: Optional[int] = None,
         platform_fault_domain_count: Optional[int] = None,
-        virtual_machines: Optional[List["SubResource"]] = None,
-        proximity_placement_group: Optional["SubResource"] = None,
+        virtual_machines: Optional[List["_models.SubResource"]] = None,
+        proximity_placement_group: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
@@ -693,8 +695,8 @@ class AvailablePatchSummary(msrest.serialization.Model):
 
     :ivar status: The overall success or failure status of the operation. It remains "InProgress"
      until the operation completes. At that point it will become "Unknown", "Failed", "Succeeded",
-     or "CompletedWithWarnings.". Possible values include: "Unknown", "InProgress", "Failed",
-     "Succeeded", "CompletedWithWarnings".
+     or "CompletedWithWarnings.". Known values are: "Unknown", "InProgress", "Failed", "Succeeded",
+     "CompletedWithWarnings".
     :vartype status: str or ~azure.mgmt.compute.v2021_11_01.models.PatchOperationStatus
     :ivar assessment_activity_id: The activity ID of the operation that produced this result. It is
      used to correlate across CRP and extension logs.
@@ -962,7 +964,7 @@ class CapacityReservation(Resource):
         self,
         *,
         location: str,
-        sku: "Sku",
+        sku: "_models.Sku",
         tags: Optional[Dict[str, str]] = None,
         zones: Optional[List[str]] = None,
         **kwargs
@@ -1133,7 +1135,7 @@ class CapacityReservationGroupListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["CapacityReservationGroup"],
+        value: List["_models.CapacityReservationGroup"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1217,8 +1219,8 @@ class CapacityReservationInstanceView(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        utilization_info: Optional["CapacityReservationUtilization"] = None,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
+        utilization_info: Optional["_models.CapacityReservationUtilization"] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
         **kwargs
     ):
         """
@@ -1260,8 +1262,8 @@ class CapacityReservationInstanceViewWithName(CapacityReservationInstanceView):
     def __init__(
         self,
         *,
-        utilization_info: Optional["CapacityReservationUtilization"] = None,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
+        utilization_info: Optional["_models.CapacityReservationUtilization"] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
         **kwargs
     ):
         """
@@ -1299,7 +1301,7 @@ class CapacityReservationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["CapacityReservation"],
+        value: List["_models.CapacityReservation"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1332,7 +1334,7 @@ class CapacityReservationProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        capacity_reservation_group: Optional["SubResource"] = None,
+        capacity_reservation_group: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
@@ -1401,7 +1403,7 @@ class CapacityReservationUpdate(UpdateResource):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         **kwargs
     ):
         """
@@ -1554,8 +1556,7 @@ class DataDisk(msrest.serialization.Model):
     :ivar caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-     storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-     "ReadWrite".
+     storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
     :ivar write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
      disabled on the disk.
@@ -1566,7 +1567,7 @@ class DataDisk(msrest.serialization.Model):
      machine.:code:`<br>`:code:`<br>` **FromImage** \u2013 This value is used when you are using an
      image to create the virtual machine. If you are using a platform image, you also use the
      imageReference element described above. If you are using a marketplace image, you  also use the
-     plan element previously described. Possible values include: "FromImage", "Empty", "Attach".
+     plan element previously described. Known values are: "FromImage", "Empty", "Attach".
     :vartype create_option: str or ~azure.mgmt.compute.v2021_11_01.models.DiskCreateOptionTypes
     :ivar disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can be
      used to overwrite the size of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
@@ -1593,14 +1594,14 @@ class DataDisk(msrest.serialization.Model):
      force-detach as a last resort option to detach the disk forcibly from the VM. All writes might
      not have been flushed when using this detach behavior. :code:`<br>`:code:`<br>` This feature is
      still in preview mode and is not supported for VirtualMachineScaleSet. To force-detach a data
-     disk update toBeDetached to 'true' along with setting detachOption: 'ForceDetach'. Possible
-     values include: "ForceDetach".
+     disk update toBeDetached to 'true' along with setting detachOption: 'ForceDetach'. Known values
+     are: "ForceDetach".
     :vartype detach_option: str or ~azure.mgmt.compute.v2021_11_01.models.DiskDetachOptionTypes
     :ivar delete_option: Specifies whether data disk should be deleted or detached upon VM
      deletion.:code:`<br>`:code:`<br>` Possible values: :code:`<br>`:code:`<br>` **Delete** If this
      value is used, the data disk is deleted when VM is deleted.:code:`<br>`:code:`<br>` **Detach**
      If this value is used, the data disk is retained after VM is deleted.:code:`<br>`:code:`<br>`
-     The default value is set to **detach**. Possible values include: "Delete", "Detach".
+     The default value is set to **detach**. Known values are: "Delete", "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2021_11_01.models.DiskDeleteOptionTypes
     """
 
@@ -1632,17 +1633,17 @@ class DataDisk(msrest.serialization.Model):
         self,
         *,
         lun: int,
-        create_option: Union[str, "DiskCreateOptionTypes"],
+        create_option: Union[str, "_models.DiskCreateOptionTypes"],
         name: Optional[str] = None,
-        vhd: Optional["VirtualHardDisk"] = None,
-        image: Optional["VirtualHardDisk"] = None,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        vhd: Optional["_models.VirtualHardDisk"] = None,
+        image: Optional["_models.VirtualHardDisk"] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         write_accelerator_enabled: Optional[bool] = None,
         disk_size_gb: Optional[int] = None,
-        managed_disk: Optional["ManagedDiskParameters"] = None,
+        managed_disk: Optional["_models.ManagedDiskParameters"] = None,
         to_be_detached: Optional[bool] = None,
-        detach_option: Optional[Union[str, "DiskDetachOptionTypes"]] = None,
-        delete_option: Optional[Union[str, "DiskDeleteOptionTypes"]] = None,
+        detach_option: Optional[Union[str, "_models.DiskDetachOptionTypes"]] = None,
+        delete_option: Optional[Union[str, "_models.DiskDeleteOptionTypes"]] = None,
         **kwargs
     ):
         """
@@ -1661,8 +1662,7 @@ class DataDisk(msrest.serialization.Model):
         :keyword caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
          are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
          :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-         storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-         "ReadWrite".
+         storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
         :keyword write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
          disabled on the disk.
@@ -1673,7 +1673,7 @@ class DataDisk(msrest.serialization.Model):
          machine.:code:`<br>`:code:`<br>` **FromImage** \u2013 This value is used when you are using an
          image to create the virtual machine. If you are using a platform image, you also use the
          imageReference element described above. If you are using a marketplace image, you  also use the
-         plan element previously described. Possible values include: "FromImage", "Empty", "Attach".
+         plan element previously described. Known values are: "FromImage", "Empty", "Attach".
         :paramtype create_option: str or ~azure.mgmt.compute.v2021_11_01.models.DiskCreateOptionTypes
         :keyword disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can
          be used to overwrite the size of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
@@ -1692,14 +1692,14 @@ class DataDisk(msrest.serialization.Model):
          force-detach as a last resort option to detach the disk forcibly from the VM. All writes might
          not have been flushed when using this detach behavior. :code:`<br>`:code:`<br>` This feature is
          still in preview mode and is not supported for VirtualMachineScaleSet. To force-detach a data
-         disk update toBeDetached to 'true' along with setting detachOption: 'ForceDetach'. Possible
-         values include: "ForceDetach".
+         disk update toBeDetached to 'true' along with setting detachOption: 'ForceDetach'. Known values
+         are: "ForceDetach".
         :paramtype detach_option: str or ~azure.mgmt.compute.v2021_11_01.models.DiskDetachOptionTypes
         :keyword delete_option: Specifies whether data disk should be deleted or detached upon VM
          deletion.:code:`<br>`:code:`<br>` Possible values: :code:`<br>`:code:`<br>` **Delete** If this
          value is used, the data disk is deleted when VM is deleted.:code:`<br>`:code:`<br>` **Detach**
          If this value is used, the data disk is retained after VM is deleted.:code:`<br>`:code:`<br>`
-         The default value is set to **detach**. Possible values include: "Delete", "Detach".
+         The default value is set to **detach**. Known values are: "Delete", "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2021_11_01.models.DiskDeleteOptionTypes
         """
         super(DataDisk, self).__init__(**kwargs)
@@ -1781,7 +1781,7 @@ class DedicatedHost(Resource):
      deployed on the dedicated host. :code:`<br>`:code:`<br>` Possible values are:
      :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **Windows_Server_Hybrid**
      :code:`<br>`:code:`<br>` **Windows_Server_Perpetual** :code:`<br>`:code:`<br>` Default:
-     **None**. Possible values include: "None", "Windows_Server_Hybrid", "Windows_Server_Perpetual".
+     **None**. Known values are: "None", "Windows_Server_Hybrid", "Windows_Server_Perpetual".
     :vartype license_type: str or ~azure.mgmt.compute.v2021_11_01.models.DedicatedHostLicenseTypes
     :ivar provisioning_time: The date when the host was first provisioned.
     :vartype provisioning_time: ~datetime.datetime
@@ -1831,11 +1831,11 @@ class DedicatedHost(Resource):
         self,
         *,
         location: str,
-        sku: "Sku",
+        sku: "_models.Sku",
         tags: Optional[Dict[str, str]] = None,
         platform_fault_domain: Optional[int] = None,
         auto_replace_on_failure: Optional[bool] = None,
-        license_type: Optional[Union[str, "DedicatedHostLicenseTypes"]] = None,
+        license_type: Optional[Union[str, "_models.DedicatedHostLicenseTypes"]] = None,
         **kwargs
     ):
         """
@@ -1856,7 +1856,7 @@ class DedicatedHost(Resource):
          deployed on the dedicated host. :code:`<br>`:code:`<br>` Possible values are:
          :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **Windows_Server_Hybrid**
          :code:`<br>`:code:`<br>` **Windows_Server_Perpetual** :code:`<br>`:code:`<br>` Default:
-         **None**. Possible values include: "None", "Windows_Server_Hybrid", "Windows_Server_Perpetual".
+         **None**. Known values are: "None", "Windows_Server_Hybrid", "Windows_Server_Perpetual".
         :paramtype license_type: str or
          ~azure.mgmt.compute.v2021_11_01.models.DedicatedHostLicenseTypes
         """
@@ -1923,7 +1923,7 @@ class DedicatedHostAvailableCapacity(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        allocatable_v_ms: Optional[List["DedicatedHostAllocatableVM"]] = None,
+        allocatable_v_ms: Optional[List["_models.DedicatedHostAllocatableVM"]] = None,
         **kwargs
     ):
         """
@@ -2045,7 +2045,7 @@ class DedicatedHostGroupInstanceView(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        hosts: Optional[List["DedicatedHostInstanceViewWithName"]] = None,
+        hosts: Optional[List["_models.DedicatedHostInstanceViewWithName"]] = None,
         **kwargs
     ):
         """
@@ -2081,7 +2081,7 @@ class DedicatedHostGroupListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["DedicatedHostGroup"],
+        value: List["_models.DedicatedHostGroup"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -2199,8 +2199,8 @@ class DedicatedHostInstanceView(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        available_capacity: Optional["DedicatedHostAvailableCapacity"] = None,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
+        available_capacity: Optional["_models.DedicatedHostAvailableCapacity"] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
         **kwargs
     ):
         """
@@ -2248,8 +2248,8 @@ class DedicatedHostInstanceViewWithName(DedicatedHostInstanceView):
     def __init__(
         self,
         *,
-        available_capacity: Optional["DedicatedHostAvailableCapacity"] = None,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
+        available_capacity: Optional["_models.DedicatedHostAvailableCapacity"] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
         **kwargs
     ):
         """
@@ -2287,7 +2287,7 @@ class DedicatedHostListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["DedicatedHost"],
+        value: List["_models.DedicatedHost"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -2324,7 +2324,7 @@ class DedicatedHostUpdate(UpdateResource):
      deployed on the dedicated host. :code:`<br>`:code:`<br>` Possible values are:
      :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **Windows_Server_Hybrid**
      :code:`<br>`:code:`<br>` **Windows_Server_Perpetual** :code:`<br>`:code:`<br>` Default:
-     **None**. Possible values include: "None", "Windows_Server_Hybrid", "Windows_Server_Perpetual".
+     **None**. Known values are: "None", "Windows_Server_Hybrid", "Windows_Server_Perpetual".
     :vartype license_type: str or ~azure.mgmt.compute.v2021_11_01.models.DedicatedHostLicenseTypes
     :ivar provisioning_time: The date when the host was first provisioned.
     :vartype provisioning_time: ~datetime.datetime
@@ -2366,7 +2366,7 @@ class DedicatedHostUpdate(UpdateResource):
         tags: Optional[Dict[str, str]] = None,
         platform_fault_domain: Optional[int] = None,
         auto_replace_on_failure: Optional[bool] = None,
-        license_type: Optional[Union[str, "DedicatedHostLicenseTypes"]] = None,
+        license_type: Optional[Union[str, "_models.DedicatedHostLicenseTypes"]] = None,
         **kwargs
     ):
         """
@@ -2382,7 +2382,7 @@ class DedicatedHostUpdate(UpdateResource):
          deployed on the dedicated host. :code:`<br>`:code:`<br>` Possible values are:
          :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **Windows_Server_Hybrid**
          :code:`<br>`:code:`<br>` **Windows_Server_Perpetual** :code:`<br>`:code:`<br>` Default:
-         **None**. Possible values include: "None", "Windows_Server_Hybrid", "Windows_Server_Perpetual".
+         **None**. Known values are: "None", "Windows_Server_Hybrid", "Windows_Server_Perpetual".
         :paramtype license_type: str or
          ~azure.mgmt.compute.v2021_11_01.models.DedicatedHostLicenseTypes
         """
@@ -2417,7 +2417,7 @@ class DiagnosticsProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        boot_diagnostics: Optional["BootDiagnostics"] = None,
+        boot_diagnostics: Optional["_models.BootDiagnostics"] = None,
         **kwargs
     ):
         """
@@ -2436,8 +2436,8 @@ class DiagnosticsProfile(msrest.serialization.Model):
 class DiffDiskSettings(msrest.serialization.Model):
     """Describes the parameters of ephemeral disk settings that can be specified for operating system disk. :code:`<br>`:code:`<br>` NOTE: The ephemeral disk settings can only be specified for managed disk.
 
-    :ivar option: Specifies the ephemeral disk settings for operating system disk. Possible values
-     include: "Local".
+    :ivar option: Specifies the ephemeral disk settings for operating system disk. Known values
+     are: "Local".
     :vartype option: str or ~azure.mgmt.compute.v2021_11_01.models.DiffDiskOptions
     :ivar placement: Specifies the ephemeral disk placement for operating system
      disk.:code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **CacheDisk**
@@ -2446,7 +2446,7 @@ class DiffDiskSettings(msrest.serialization.Model):
      Refer to VM size documentation for Windows VM at
      https://docs.microsoft.com/azure/virtual-machines/windows/sizes and Linux VM at
      https://docs.microsoft.com/azure/virtual-machines/linux/sizes to check which VM sizes exposes a
-     cache disk. Possible values include: "CacheDisk", "ResourceDisk".
+     cache disk. Known values are: "CacheDisk", "ResourceDisk".
     :vartype placement: str or ~azure.mgmt.compute.v2021_11_01.models.DiffDiskPlacement
     """
 
@@ -2458,13 +2458,13 @@ class DiffDiskSettings(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        option: Optional[Union[str, "DiffDiskOptions"]] = None,
-        placement: Optional[Union[str, "DiffDiskPlacement"]] = None,
+        option: Optional[Union[str, "_models.DiffDiskOptions"]] = None,
+        placement: Optional[Union[str, "_models.DiffDiskPlacement"]] = None,
         **kwargs
     ):
         """
-        :keyword option: Specifies the ephemeral disk settings for operating system disk. Possible
-         values include: "Local".
+        :keyword option: Specifies the ephemeral disk settings for operating system disk. Known values
+         are: "Local".
         :paramtype option: str or ~azure.mgmt.compute.v2021_11_01.models.DiffDiskOptions
         :keyword placement: Specifies the ephemeral disk placement for operating system
          disk.:code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **CacheDisk**
@@ -2473,7 +2473,7 @@ class DiffDiskSettings(msrest.serialization.Model):
          Refer to VM size documentation for Windows VM at
          https://docs.microsoft.com/azure/virtual-machines/windows/sizes and Linux VM at
          https://docs.microsoft.com/azure/virtual-machines/linux/sizes to check which VM sizes exposes a
-         cache disk. Possible values include: "CacheDisk", "ResourceDisk".
+         cache disk. Known values are: "CacheDisk", "ResourceDisk".
         :paramtype placement: str or ~azure.mgmt.compute.v2021_11_01.models.DiffDiskPlacement
         """
         super(DiffDiskSettings, self).__init__(**kwargs)
@@ -2484,8 +2484,7 @@ class DiffDiskSettings(msrest.serialization.Model):
 class DisallowedConfiguration(msrest.serialization.Model):
     """Specifies the disallowed configuration for a virtual machine image.
 
-    :ivar vm_disk_type: VM disk types which are disallowed. Possible values include: "None",
-     "Unmanaged".
+    :ivar vm_disk_type: VM disk types which are disallowed. Known values are: "None", "Unmanaged".
     :vartype vm_disk_type: str or ~azure.mgmt.compute.v2021_11_01.models.VmDiskTypes
     """
 
@@ -2496,11 +2495,11 @@ class DisallowedConfiguration(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        vm_disk_type: Optional[Union[str, "VmDiskTypes"]] = None,
+        vm_disk_type: Optional[Union[str, "_models.VmDiskTypes"]] = None,
         **kwargs
     ):
         """
-        :keyword vm_disk_type: VM disk types which are disallowed. Possible values include: "None",
+        :keyword vm_disk_type: VM disk types which are disallowed. Known values are: "None",
          "Unmanaged".
         :paramtype vm_disk_type: str or ~azure.mgmt.compute.v2021_11_01.models.VmDiskTypes
         """
@@ -2578,8 +2577,8 @@ class DiskEncryptionSettings(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        disk_encryption_key: Optional["KeyVaultSecretReference"] = None,
-        key_encryption_key: Optional["KeyVaultKeyReference"] = None,
+        disk_encryption_key: Optional["_models.KeyVaultSecretReference"] = None,
+        key_encryption_key: Optional["_models.KeyVaultKeyReference"] = None,
         enabled: Optional[bool] = None,
         **kwargs
     ):
@@ -2621,8 +2620,8 @@ class DiskInstanceView(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        encryption_settings: Optional[List["DiskEncryptionSettings"]] = None,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
+        encryption_settings: Optional[List["_models.DiskEncryptionSettings"]] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
         **kwargs
     ):
         """
@@ -2703,7 +2702,7 @@ class ExtendedLocation(msrest.serialization.Model):
 
     :ivar name: The name of the extended location.
     :vartype name: str
-    :ivar type: The type of the extended location. Possible values include: "EdgeZone".
+    :ivar type: The type of the extended location. Known values are: "EdgeZone".
     :vartype type: str or ~azure.mgmt.compute.v2021_11_01.models.ExtendedLocationTypes
     """
 
@@ -2716,13 +2715,13 @@ class ExtendedLocation(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        type: Optional[Union[str, "ExtendedLocationTypes"]] = None,
+        type: Optional[Union[str, "_models.ExtendedLocationTypes"]] = None,
         **kwargs
     ):
         """
         :keyword name: The name of the extended location.
         :paramtype name: str
-        :keyword type: The type of the extended location. Possible values include: "EdgeZone".
+        :keyword type: The type of the extended location. Known values are: "EdgeZone".
         :paramtype type: str or ~azure.mgmt.compute.v2021_11_01.models.ExtendedLocationTypes
         """
         super(ExtendedLocation, self).__init__(**kwargs)
@@ -2744,7 +2743,7 @@ class HardwareProfile(msrest.serialization.Model):
      <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. For more
      information about virtual machine sizes, see `Sizes for virtual machines
      <https://docs.microsoft.com/azure/virtual-machines/sizes>`_. :code:`<br>`:code:`<br>` The
-     available VM sizes depend on region and availability set. Possible values include: "Basic_A0",
+     available VM sizes depend on region and availability set. Known values are: "Basic_A0",
      "Basic_A1", "Basic_A2", "Basic_A3", "Basic_A4", "Standard_A0", "Standard_A1", "Standard_A2",
      "Standard_A3", "Standard_A4", "Standard_A5", "Standard_A6", "Standard_A7", "Standard_A8",
      "Standard_A9", "Standard_A10", "Standard_A11", "Standard_A1_v2", "Standard_A2_v2",
@@ -2796,8 +2795,8 @@ class HardwareProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        vm_size: Optional[Union[str, "VirtualMachineSizeTypes"]] = None,
-        vm_size_properties: Optional["VMSizeProperties"] = None,
+        vm_size: Optional[Union[str, "_models.VirtualMachineSizeTypes"]] = None,
+        vm_size_properties: Optional["_models.VMSizeProperties"] = None,
         **kwargs
     ):
         """
@@ -2812,7 +2811,7 @@ class HardwareProfile(msrest.serialization.Model):
          <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. For more
          information about virtual machine sizes, see `Sizes for virtual machines
          <https://docs.microsoft.com/azure/virtual-machines/sizes>`_. :code:`<br>`:code:`<br>` The
-         available VM sizes depend on region and availability set. Possible values include: "Basic_A0",
+         available VM sizes depend on region and availability set. Known values are: "Basic_A0",
          "Basic_A1", "Basic_A2", "Basic_A3", "Basic_A4", "Standard_A0", "Standard_A1", "Standard_A2",
          "Standard_A3", "Standard_A4", "Standard_A5", "Standard_A6", "Standard_A7", "Standard_A8",
          "Standard_A9", "Standard_A10", "Standard_A11", "Standard_A1_v2", "Standard_A2_v2",
@@ -2888,8 +2887,8 @@ class Image(Resource):
     :ivar hyper_v_generation: Specifies the HyperVGenerationType of the VirtualMachine created from
      the image. From API Version 2019-03-01 if the image source is a blob, then we need the user to
      specify the value, if the source is managed resource like disk or snapshot, we may require the
-     user to specify the property if we cannot deduce it from the source managed resource. Possible
-     values include: "V1", "V2".
+     user to specify the property if we cannot deduce it from the source managed resource. Known
+     values are: "V1", "V2".
     :vartype hyper_v_generation: str or
      ~azure.mgmt.compute.v2021_11_01.models.HyperVGenerationTypes
     """
@@ -2920,10 +2919,10 @@ class Image(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        extended_location: Optional["ExtendedLocation"] = None,
-        source_virtual_machine: Optional["SubResource"] = None,
-        storage_profile: Optional["ImageStorageProfile"] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGenerationTypes"]] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        source_virtual_machine: Optional["_models.SubResource"] = None,
+        storage_profile: Optional["_models.ImageStorageProfile"] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGenerationTypes"]] = None,
         **kwargs
     ):
         """
@@ -2941,7 +2940,7 @@ class Image(Resource):
          from the image. From API Version 2019-03-01 if the image source is a blob, then we need the
          user to specify the value, if the source is managed resource like disk or snapshot, we may
          require the user to specify the property if we cannot deduce it from the source managed
-         resource. Possible values include: "V1", "V2".
+         resource. Known values are: "V1", "V2".
         :paramtype hyper_v_generation: str or
          ~azure.mgmt.compute.v2021_11_01.models.HyperVGenerationTypes
         """
@@ -2965,16 +2964,15 @@ class ImageDisk(msrest.serialization.Model):
     :ivar caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-     storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-     "ReadWrite".
+     storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
     :ivar disk_size_gb: Specifies the size of empty data disks in gigabytes. This element can be
      used to overwrite the name of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
      This value cannot be larger than 1023 GB.
     :vartype disk_size_gb: int
     :ivar storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
+     are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
      "StandardSSD_ZRS".
     :vartype storage_account_type: str or
      ~azure.mgmt.compute.v2021_11_01.models.StorageAccountTypes
@@ -2997,13 +2995,13 @@ class ImageDisk(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        snapshot: Optional["SubResource"] = None,
-        managed_disk: Optional["SubResource"] = None,
+        snapshot: Optional["_models.SubResource"] = None,
+        managed_disk: Optional["_models.SubResource"] = None,
         blob_uri: Optional[str] = None,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         disk_size_gb: Optional[int] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountTypes"]] = None,
-        disk_encryption_set: Optional["DiskEncryptionSetParameters"] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = None,
+        disk_encryption_set: Optional["_models.DiskEncryptionSetParameters"] = None,
         **kwargs
     ):
         """
@@ -3016,16 +3014,15 @@ class ImageDisk(msrest.serialization.Model):
         :keyword caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
          are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
          :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-         storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-         "ReadWrite".
+         storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
         :keyword disk_size_gb: Specifies the size of empty data disks in gigabytes. This element can be
          used to overwrite the name of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
          This value cannot be larger than 1023 GB.
         :paramtype disk_size_gb: int
         :keyword storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-         UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-         include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+         UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
+         are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
          "StandardSSD_ZRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2021_11_01.models.StorageAccountTypes
@@ -3058,16 +3055,15 @@ class ImageDataDisk(ImageDisk):
     :ivar caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-     storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-     "ReadWrite".
+     storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
     :ivar disk_size_gb: Specifies the size of empty data disks in gigabytes. This element can be
      used to overwrite the name of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
      This value cannot be larger than 1023 GB.
     :vartype disk_size_gb: int
     :ivar storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
+     are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
      "StandardSSD_ZRS".
     :vartype storage_account_type: str or
      ~azure.mgmt.compute.v2021_11_01.models.StorageAccountTypes
@@ -3100,13 +3096,13 @@ class ImageDataDisk(ImageDisk):
         self,
         *,
         lun: int,
-        snapshot: Optional["SubResource"] = None,
-        managed_disk: Optional["SubResource"] = None,
+        snapshot: Optional["_models.SubResource"] = None,
+        managed_disk: Optional["_models.SubResource"] = None,
         blob_uri: Optional[str] = None,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         disk_size_gb: Optional[int] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountTypes"]] = None,
-        disk_encryption_set: Optional["DiskEncryptionSetParameters"] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = None,
+        disk_encryption_set: Optional["_models.DiskEncryptionSetParameters"] = None,
         **kwargs
     ):
         """
@@ -3119,16 +3115,15 @@ class ImageDataDisk(ImageDisk):
         :keyword caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
          are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
          :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-         storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-         "ReadWrite".
+         storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
         :keyword disk_size_gb: Specifies the size of empty data disks in gigabytes. This element can be
          used to overwrite the name of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
          This value cannot be larger than 1023 GB.
         :paramtype disk_size_gb: int
         :keyword storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-         UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-         include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+         UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
+         are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
          "StandardSSD_ZRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2021_11_01.models.StorageAccountTypes
@@ -3169,7 +3164,7 @@ class ImageListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["Image"],
+        value: List["_models.Image"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -3199,16 +3194,15 @@ class ImageOSDisk(ImageDisk):
     :ivar caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-     storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-     "ReadWrite".
+     storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
     :ivar disk_size_gb: Specifies the size of empty data disks in gigabytes. This element can be
      used to overwrite the name of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
      This value cannot be larger than 1023 GB.
     :vartype disk_size_gb: int
     :ivar storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
+     are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
      "StandardSSD_ZRS".
     :vartype storage_account_type: str or
      ~azure.mgmt.compute.v2021_11_01.models.StorageAccountTypes
@@ -3218,10 +3212,10 @@ class ImageOSDisk(ImageDisk):
      ~azure.mgmt.compute.v2021_11_01.models.DiskEncryptionSetParameters
     :ivar os_type: Required. This property allows you to specify the type of the OS that is
      included in the disk if creating a VM from a custom image. :code:`<br>`:code:`<br>` Possible
-     values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible
-     values include: "Windows", "Linux".
+     values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known
+     values are: "Windows", "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2021_11_01.models.OperatingSystemTypes
-    :ivar os_state: Required. The OS State. Possible values include: "Generalized", "Specialized".
+    :ivar os_state: Required. The OS State. Known values are: "Generalized", "Specialized".
     :vartype os_state: str or ~azure.mgmt.compute.v2021_11_01.models.OperatingSystemStateTypes
     """
 
@@ -3245,15 +3239,15 @@ class ImageOSDisk(ImageDisk):
     def __init__(
         self,
         *,
-        os_type: Union[str, "OperatingSystemTypes"],
-        os_state: Union[str, "OperatingSystemStateTypes"],
-        snapshot: Optional["SubResource"] = None,
-        managed_disk: Optional["SubResource"] = None,
+        os_type: Union[str, "_models.OperatingSystemTypes"],
+        os_state: Union[str, "_models.OperatingSystemStateTypes"],
+        snapshot: Optional["_models.SubResource"] = None,
+        managed_disk: Optional["_models.SubResource"] = None,
         blob_uri: Optional[str] = None,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         disk_size_gb: Optional[int] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountTypes"]] = None,
-        disk_encryption_set: Optional["DiskEncryptionSetParameters"] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = None,
+        disk_encryption_set: Optional["_models.DiskEncryptionSetParameters"] = None,
         **kwargs
     ):
         """
@@ -3266,16 +3260,15 @@ class ImageOSDisk(ImageDisk):
         :keyword caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
          are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
          :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-         storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-         "ReadWrite".
+         storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
         :keyword disk_size_gb: Specifies the size of empty data disks in gigabytes. This element can be
          used to overwrite the name of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
          This value cannot be larger than 1023 GB.
         :paramtype disk_size_gb: int
         :keyword storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-         UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-         include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+         UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
+         are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
          "StandardSSD_ZRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2021_11_01.models.StorageAccountTypes
@@ -3285,11 +3278,10 @@ class ImageOSDisk(ImageDisk):
          ~azure.mgmt.compute.v2021_11_01.models.DiskEncryptionSetParameters
         :keyword os_type: Required. This property allows you to specify the type of the OS that is
          included in the disk if creating a VM from a custom image. :code:`<br>`:code:`<br>` Possible
-         values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible
-         values include: "Windows", "Linux".
+         values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known
+         values are: "Windows", "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2021_11_01.models.OperatingSystemTypes
-        :keyword os_state: Required. The OS State. Possible values include: "Generalized",
-         "Specialized".
+        :keyword os_state: Required. The OS State. Known values are: "Generalized", "Specialized".
         :paramtype os_state: str or ~azure.mgmt.compute.v2021_11_01.models.OperatingSystemStateTypes
         """
         super(ImageOSDisk, self).__init__(snapshot=snapshot, managed_disk=managed_disk, blob_uri=blob_uri, caching=caching, disk_size_gb=disk_size_gb, storage_account_type=storage_account_type, disk_encryption_set=disk_encryption_set, **kwargs)
@@ -3424,8 +3416,8 @@ class ImageStorageProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        os_disk: Optional["ImageOSDisk"] = None,
-        data_disks: Optional[List["ImageDataDisk"]] = None,
+        os_disk: Optional["_models.ImageOSDisk"] = None,
+        data_disks: Optional[List["_models.ImageDataDisk"]] = None,
         zone_resilient: Optional[bool] = None,
         **kwargs
     ):
@@ -3466,8 +3458,8 @@ class ImageUpdate(UpdateResource):
     :ivar hyper_v_generation: Specifies the HyperVGenerationType of the VirtualMachine created from
      the image. From API Version 2019-03-01 if the image source is a blob, then we need the user to
      specify the value, if the source is managed resource like disk or snapshot, we may require the
-     user to specify the property if we cannot deduce it from the source managed resource. Possible
-     values include: "V1", "V2".
+     user to specify the property if we cannot deduce it from the source managed resource. Known
+     values are: "V1", "V2".
     :vartype hyper_v_generation: str or
      ~azure.mgmt.compute.v2021_11_01.models.HyperVGenerationTypes
     """
@@ -3488,9 +3480,9 @@ class ImageUpdate(UpdateResource):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        source_virtual_machine: Optional["SubResource"] = None,
-        storage_profile: Optional["ImageStorageProfile"] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGenerationTypes"]] = None,
+        source_virtual_machine: Optional["_models.SubResource"] = None,
+        storage_profile: Optional["_models.ImageStorageProfile"] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGenerationTypes"]] = None,
         **kwargs
     ):
         """
@@ -3504,7 +3496,7 @@ class ImageUpdate(UpdateResource):
          from the image. From API Version 2019-03-01 if the image source is a blob, then we need the
          user to specify the value, if the source is managed resource like disk or snapshot, we may
          require the user to specify the property if we cannot deduce it from the source managed
-         resource. Possible values include: "V1", "V2".
+         resource. Known values are: "V1", "V2".
         :paramtype hyper_v_generation: str or
          ~azure.mgmt.compute.v2021_11_01.models.HyperVGenerationTypes
         """
@@ -3552,7 +3544,7 @@ class InstanceViewStatus(msrest.serialization.Model):
 
     :ivar code: The status code.
     :vartype code: str
-    :ivar level: The level code. Possible values include: "Info", "Warning", "Error".
+    :ivar level: The level code. Known values are: "Info", "Warning", "Error".
     :vartype level: str or ~azure.mgmt.compute.v2021_11_01.models.StatusLevelTypes
     :ivar display_status: The short localizable label for the status.
     :vartype display_status: str
@@ -3574,7 +3566,7 @@ class InstanceViewStatus(msrest.serialization.Model):
         self,
         *,
         code: Optional[str] = None,
-        level: Optional[Union[str, "StatusLevelTypes"]] = None,
+        level: Optional[Union[str, "_models.StatusLevelTypes"]] = None,
         display_status: Optional[str] = None,
         message: Optional[str] = None,
         time: Optional[datetime.datetime] = None,
@@ -3583,7 +3575,7 @@ class InstanceViewStatus(msrest.serialization.Model):
         """
         :keyword code: The status code.
         :paramtype code: str
-        :keyword level: The level code. Possible values include: "Info", "Warning", "Error".
+        :keyword level: The level code. Known values are: "Info", "Warning", "Error".
         :paramtype level: str or ~azure.mgmt.compute.v2021_11_01.models.StatusLevelTypes
         :keyword display_status: The short localizable label for the status.
         :paramtype display_status: str
@@ -3625,7 +3617,7 @@ class KeyVaultKeyReference(msrest.serialization.Model):
         self,
         *,
         key_url: str,
-        source_vault: "SubResource",
+        source_vault: "_models.SubResource",
         **kwargs
     ):
         """
@@ -3664,7 +3656,7 @@ class KeyVaultSecretReference(msrest.serialization.Model):
         self,
         *,
         secret_url: str,
-        source_vault: "SubResource",
+        source_vault: "_models.SubResource",
         **kwargs
     ):
         """
@@ -3685,8 +3677,8 @@ class LastPatchInstallationSummary(msrest.serialization.Model):
 
     :ivar status: The overall success or failure status of the operation. It remains "InProgress"
      until the operation completes. At that point it will become "Unknown", "Failed", "Succeeded",
-     or "CompletedWithWarnings.". Possible values include: "Unknown", "InProgress", "Failed",
-     "Succeeded", "CompletedWithWarnings".
+     or "CompletedWithWarnings.". Known values are: "Unknown", "InProgress", "Failed", "Succeeded",
+     "CompletedWithWarnings".
     :vartype status: str or ~azure.mgmt.compute.v2021_11_01.models.PatchOperationStatus
     :ivar installation_activity_id: The activity ID of the operation that produced this result. It
      is used to correlate across CRP and extension logs.
@@ -3793,9 +3785,9 @@ class LinuxConfiguration(msrest.serialization.Model):
         self,
         *,
         disable_password_authentication: Optional[bool] = None,
-        ssh: Optional["SshConfiguration"] = None,
+        ssh: Optional["_models.SshConfiguration"] = None,
         provision_vm_agent: Optional[bool] = None,
-        patch_settings: Optional["LinuxPatchSettings"] = None,
+        patch_settings: Optional["_models.LinuxPatchSettings"] = None,
         **kwargs
     ):
         """
@@ -3848,7 +3840,7 @@ class LinuxParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        classifications_to_include: Optional[List[Union[str, "VMGuestPatchClassificationLinux"]]] = None,
+        classifications_to_include: Optional[List[Union[str, "_models.VMGuestPatchClassificationLinux"]]] = None,
         package_name_masks_to_include: Optional[List[str]] = None,
         package_name_masks_to_exclude: Optional[List[str]] = None,
         maintenance_run_id: Optional[str] = None,
@@ -3884,15 +3876,15 @@ class LinuxPatchSettings(msrest.serialization.Model):
      />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **ImageDefault** - The
      virtual machine's default patching configuration is used. :code:`<br />`:code:`<br />`
      **AutomaticByPlatform** - The virtual machine will be automatically updated by the platform.
-     The property provisionVMAgent must be true. Possible values include: "ImageDefault",
+     The property provisionVMAgent must be true. Known values are: "ImageDefault",
      "AutomaticByPlatform".
     :vartype patch_mode: str or ~azure.mgmt.compute.v2021_11_01.models.LinuxVMGuestPatchMode
     :ivar assessment_mode: Specifies the mode of VM Guest Patch Assessment for the IaaS virtual
      machine.:code:`<br />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />`
      **ImageDefault** - You control the timing of patch assessments on a virtual machine. :code:`<br
      />`:code:`<br />` **AutomaticByPlatform** - The platform will trigger periodic patch
-     assessments. The property provisionVMAgent must be true. Possible values include:
-     "ImageDefault", "AutomaticByPlatform".
+     assessments. The property provisionVMAgent must be true. Known values are: "ImageDefault",
+     "AutomaticByPlatform".
     :vartype assessment_mode: str or
      ~azure.mgmt.compute.v2021_11_01.models.LinuxPatchAssessmentMode
     """
@@ -3905,8 +3897,8 @@ class LinuxPatchSettings(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        patch_mode: Optional[Union[str, "LinuxVMGuestPatchMode"]] = None,
-        assessment_mode: Optional[Union[str, "LinuxPatchAssessmentMode"]] = None,
+        patch_mode: Optional[Union[str, "_models.LinuxVMGuestPatchMode"]] = None,
+        assessment_mode: Optional[Union[str, "_models.LinuxPatchAssessmentMode"]] = None,
         **kwargs
     ):
         """
@@ -3915,15 +3907,15 @@ class LinuxPatchSettings(msrest.serialization.Model):
          />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **ImageDefault** - The
          virtual machine's default patching configuration is used. :code:`<br />`:code:`<br />`
          **AutomaticByPlatform** - The virtual machine will be automatically updated by the platform.
-         The property provisionVMAgent must be true. Possible values include: "ImageDefault",
+         The property provisionVMAgent must be true. Known values are: "ImageDefault",
          "AutomaticByPlatform".
         :paramtype patch_mode: str or ~azure.mgmt.compute.v2021_11_01.models.LinuxVMGuestPatchMode
         :keyword assessment_mode: Specifies the mode of VM Guest Patch Assessment for the IaaS virtual
          machine.:code:`<br />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />`
          **ImageDefault** - You control the timing of patch assessments on a virtual machine. :code:`<br
          />`:code:`<br />` **AutomaticByPlatform** - The platform will trigger periodic patch
-         assessments. The property provisionVMAgent must be true. Possible values include:
-         "ImageDefault", "AutomaticByPlatform".
+         assessments. The property provisionVMAgent must be true. Known values are: "ImageDefault",
+         "AutomaticByPlatform".
         :paramtype assessment_mode: str or
          ~azure.mgmt.compute.v2021_11_01.models.LinuxPatchAssessmentMode
         """
@@ -3956,7 +3948,7 @@ class ListUsagesResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["Usage"],
+        value: List["_models.Usage"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -4124,8 +4116,8 @@ class MaintenanceRedeployStatus(msrest.serialization.Model):
     :vartype maintenance_window_start_time: ~datetime.datetime
     :ivar maintenance_window_end_time: End Time for the Maintenance Window.
     :vartype maintenance_window_end_time: ~datetime.datetime
-    :ivar last_operation_result_code: The Last Maintenance Operation Result Code. Possible values
-     include: "None", "RetryLater", "MaintenanceAborted", "MaintenanceCompleted".
+    :ivar last_operation_result_code: The Last Maintenance Operation Result Code. Known values are:
+     "None", "RetryLater", "MaintenanceAborted", "MaintenanceCompleted".
     :vartype last_operation_result_code: str or
      ~azure.mgmt.compute.v2021_11_01.models.MaintenanceOperationResultCodeTypes
     :ivar last_operation_message: Message returned for the last Maintenance Operation.
@@ -4150,7 +4142,7 @@ class MaintenanceRedeployStatus(msrest.serialization.Model):
         pre_maintenance_window_end_time: Optional[datetime.datetime] = None,
         maintenance_window_start_time: Optional[datetime.datetime] = None,
         maintenance_window_end_time: Optional[datetime.datetime] = None,
-        last_operation_result_code: Optional[Union[str, "MaintenanceOperationResultCodeTypes"]] = None,
+        last_operation_result_code: Optional[Union[str, "_models.MaintenanceOperationResultCodeTypes"]] = None,
         last_operation_message: Optional[str] = None,
         **kwargs
     ):
@@ -4166,8 +4158,8 @@ class MaintenanceRedeployStatus(msrest.serialization.Model):
         :paramtype maintenance_window_start_time: ~datetime.datetime
         :keyword maintenance_window_end_time: End Time for the Maintenance Window.
         :paramtype maintenance_window_end_time: ~datetime.datetime
-        :keyword last_operation_result_code: The Last Maintenance Operation Result Code. Possible
-         values include: "None", "RetryLater", "MaintenanceAborted", "MaintenanceCompleted".
+        :keyword last_operation_result_code: The Last Maintenance Operation Result Code. Known values
+         are: "None", "RetryLater", "MaintenanceAborted", "MaintenanceCompleted".
         :paramtype last_operation_result_code: str or
          ~azure.mgmt.compute.v2021_11_01.models.MaintenanceOperationResultCodeTypes
         :keyword last_operation_message: Message returned for the last Maintenance Operation.
@@ -4189,8 +4181,8 @@ class ManagedDiskParameters(SubResource):
     :ivar id: Resource Id.
     :vartype id: str
     :ivar storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
+     are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
      "StandardSSD_ZRS".
     :vartype storage_account_type: str or
      ~azure.mgmt.compute.v2021_11_01.models.StorageAccountTypes
@@ -4213,17 +4205,17 @@ class ManagedDiskParameters(SubResource):
         self,
         *,
         id: Optional[str] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountTypes"]] = None,
-        disk_encryption_set: Optional["DiskEncryptionSetParameters"] = None,
-        security_profile: Optional["VMDiskSecurityProfile"] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = None,
+        disk_encryption_set: Optional["_models.DiskEncryptionSetParameters"] = None,
+        security_profile: Optional["_models.VMDiskSecurityProfile"] = None,
         **kwargs
     ):
         """
         :keyword id: Resource Id.
         :paramtype id: str
         :keyword storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-         UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-         include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+         UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
+         are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
          "StandardSSD_ZRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2021_11_01.models.StorageAccountTypes
@@ -4249,7 +4241,7 @@ class NetworkInterfaceReference(SubResource):
      than 1 network interface.
     :vartype primary: bool
     :ivar delete_option: Specify what happens to the network interface when the VM is deleted.
-     Possible values include: "Delete", "Detach".
+     Known values are: "Delete", "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2021_11_01.models.DeleteOptions
     """
 
@@ -4264,7 +4256,7 @@ class NetworkInterfaceReference(SubResource):
         *,
         id: Optional[str] = None,
         primary: Optional[bool] = None,
-        delete_option: Optional[Union[str, "DeleteOptions"]] = None,
+        delete_option: Optional[Union[str, "_models.DeleteOptions"]] = None,
         **kwargs
     ):
         """
@@ -4274,7 +4266,7 @@ class NetworkInterfaceReference(SubResource):
          than 1 network interface.
         :paramtype primary: bool
         :keyword delete_option: Specify what happens to the network interface when the VM is deleted.
-         Possible values include: "Delete", "Detach".
+         Known values are: "Delete", "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2021_11_01.models.DeleteOptions
         """
         super(NetworkInterfaceReference, self).__init__(id=id, **kwargs)
@@ -4290,8 +4282,7 @@ class NetworkProfile(msrest.serialization.Model):
     :vartype network_interfaces:
      list[~azure.mgmt.compute.v2021_11_01.models.NetworkInterfaceReference]
     :ivar network_api_version: specifies the Microsoft.Network API version used when creating
-     networking resources in the Network Interface Configurations. Possible values include:
-     "2020-11-01".
+     networking resources in the Network Interface Configurations. Known values are: "2020-11-01".
     :vartype network_api_version: str or ~azure.mgmt.compute.v2021_11_01.models.NetworkApiVersion
     :ivar network_interface_configurations: Specifies the networking configurations that will be
      used to create the virtual machine networking resources.
@@ -4308,9 +4299,9 @@ class NetworkProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        network_interfaces: Optional[List["NetworkInterfaceReference"]] = None,
-        network_api_version: Optional[Union[str, "NetworkApiVersion"]] = None,
-        network_interface_configurations: Optional[List["VirtualMachineNetworkInterfaceConfiguration"]] = None,
+        network_interfaces: Optional[List["_models.NetworkInterfaceReference"]] = None,
+        network_api_version: Optional[Union[str, "_models.NetworkApiVersion"]] = None,
+        network_interface_configurations: Optional[List["_models.VirtualMachineNetworkInterfaceConfiguration"]] = None,
         **kwargs
     ):
         """
@@ -4319,8 +4310,7 @@ class NetworkProfile(msrest.serialization.Model):
         :paramtype network_interfaces:
          list[~azure.mgmt.compute.v2021_11_01.models.NetworkInterfaceReference]
         :keyword network_api_version: specifies the Microsoft.Network API version used when creating
-         networking resources in the Network Interface Configurations. Possible values include:
-         "2020-11-01".
+         networking resources in the Network Interface Configurations. Known values are: "2020-11-01".
         :paramtype network_api_version: str or ~azure.mgmt.compute.v2021_11_01.models.NetworkApiVersion
         :keyword network_interface_configurations: Specifies the networking configurations that will be
          used to create the virtual machine networking resources.
@@ -4338,11 +4328,9 @@ class OrchestrationServiceStateInput(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar service_name: Required. The name of the service. Possible values include:
-     "AutomaticRepairs", "DummyOrchestrationServiceName".
+    :ivar service_name: Required. The name of the service. Known values are: "AutomaticRepairs".
     :vartype service_name: str or ~azure.mgmt.compute.v2021_11_01.models.OrchestrationServiceNames
-    :ivar action: Required. The action to be performed. Possible values include: "Resume",
-     "Suspend".
+    :ivar action: Required. The action to be performed. Known values are: "Resume", "Suspend".
     :vartype action: str or ~azure.mgmt.compute.v2021_11_01.models.OrchestrationServiceStateAction
     """
 
@@ -4359,17 +4347,15 @@ class OrchestrationServiceStateInput(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        service_name: Union[str, "OrchestrationServiceNames"],
-        action: Union[str, "OrchestrationServiceStateAction"],
+        service_name: Union[str, "_models.OrchestrationServiceNames"],
+        action: Union[str, "_models.OrchestrationServiceStateAction"],
         **kwargs
     ):
         """
-        :keyword service_name: Required. The name of the service. Possible values include:
-         "AutomaticRepairs", "DummyOrchestrationServiceName".
+        :keyword service_name: Required. The name of the service. Known values are: "AutomaticRepairs".
         :paramtype service_name: str or
          ~azure.mgmt.compute.v2021_11_01.models.OrchestrationServiceNames
-        :keyword action: Required. The action to be performed. Possible values include: "Resume",
-         "Suspend".
+        :keyword action: Required. The action to be performed. Known values are: "Resume", "Suspend".
         :paramtype action: str or
          ~azure.mgmt.compute.v2021_11_01.models.OrchestrationServiceStateAction
         """
@@ -4383,10 +4369,9 @@ class OrchestrationServiceSummary(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar service_name: The name of the service. Possible values include: "AutomaticRepairs",
-     "DummyOrchestrationServiceName".
+    :ivar service_name: The name of the service. Known values are: "AutomaticRepairs".
     :vartype service_name: str or ~azure.mgmt.compute.v2021_11_01.models.OrchestrationServiceNames
-    :ivar service_state: The current state of the service. Possible values include: "NotRunning",
+    :ivar service_state: The current state of the service. Known values are: "NotRunning",
      "Running", "Suspended".
     :vartype service_state: str or ~azure.mgmt.compute.v2021_11_01.models.OrchestrationServiceState
     """
@@ -4419,8 +4404,8 @@ class OSDisk(msrest.serialization.Model):
 
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk if creating a VM from user-image or a specialized VHD. :code:`<br>`:code:`<br>` Possible
-     values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible
-     values include: "Windows", "Linux".
+     values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known
+     values are: "Windows", "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2021_11_01.models.OperatingSystemTypes
     :ivar encryption_settings: Specifies the encryption settings for the OS Disk.
      :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
@@ -4436,8 +4421,7 @@ class OSDisk(msrest.serialization.Model):
     :ivar caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None** for Standard
-     storage. **ReadOnly** for Premium storage. Possible values include: "None", "ReadOnly",
-     "ReadWrite".
+     storage. **ReadOnly** for Premium storage. Known values are: "None", "ReadOnly", "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
     :ivar write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
      disabled on the disk.
@@ -4451,7 +4435,7 @@ class OSDisk(msrest.serialization.Model):
      machine.:code:`<br>`:code:`<br>` **FromImage** \u2013 This value is used when you are using an
      image to create the virtual machine. If you are using a platform image, you also use the
      imageReference element described above. If you are using a marketplace image, you  also use the
-     plan element previously described. Possible values include: "FromImage", "Empty", "Attach".
+     plan element previously described. Known values are: "FromImage", "Empty", "Attach".
     :vartype create_option: str or ~azure.mgmt.compute.v2021_11_01.models.DiskCreateOptionTypes
     :ivar disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can be
      used to overwrite the size of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
@@ -4464,8 +4448,8 @@ class OSDisk(msrest.serialization.Model):
      used, the OS disk is deleted when VM is deleted.:code:`<br>`:code:`<br>` **Detach** If this
      value is used, the os disk is retained after VM is deleted. :code:`<br>`:code:`<br>` The
      default value is set to **detach**. For an ephemeral OS Disk, the default value is set to
-     **Delete**. User cannot change the delete option for ephemeral OS Disk. Possible values
-     include: "Delete", "Detach".
+     **Delete**. User cannot change the delete option for ephemeral OS Disk. Known values are:
+     "Delete", "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2021_11_01.models.DiskDeleteOptionTypes
     """
 
@@ -4491,25 +4475,25 @@ class OSDisk(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        create_option: Union[str, "DiskCreateOptionTypes"],
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
-        encryption_settings: Optional["DiskEncryptionSettings"] = None,
+        create_option: Union[str, "_models.DiskCreateOptionTypes"],
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        encryption_settings: Optional["_models.DiskEncryptionSettings"] = None,
         name: Optional[str] = None,
-        vhd: Optional["VirtualHardDisk"] = None,
-        image: Optional["VirtualHardDisk"] = None,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        vhd: Optional["_models.VirtualHardDisk"] = None,
+        image: Optional["_models.VirtualHardDisk"] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         write_accelerator_enabled: Optional[bool] = None,
-        diff_disk_settings: Optional["DiffDiskSettings"] = None,
+        diff_disk_settings: Optional["_models.DiffDiskSettings"] = None,
         disk_size_gb: Optional[int] = None,
-        managed_disk: Optional["ManagedDiskParameters"] = None,
-        delete_option: Optional[Union[str, "DiskDeleteOptionTypes"]] = None,
+        managed_disk: Optional["_models.ManagedDiskParameters"] = None,
+        delete_option: Optional[Union[str, "_models.DiskDeleteOptionTypes"]] = None,
         **kwargs
     ):
         """
         :keyword os_type: This property allows you to specify the type of the OS that is included in
          the disk if creating a VM from user-image or a specialized VHD. :code:`<br>`:code:`<br>`
          Possible values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**.
-         Possible values include: "Windows", "Linux".
+         Known values are: "Windows", "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2021_11_01.models.OperatingSystemTypes
         :keyword encryption_settings: Specifies the encryption settings for the OS Disk.
          :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
@@ -4525,8 +4509,7 @@ class OSDisk(msrest.serialization.Model):
         :keyword caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
          are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
          :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None** for Standard
-         storage. **ReadOnly** for Premium storage. Possible values include: "None", "ReadOnly",
-         "ReadWrite".
+         storage. **ReadOnly** for Premium storage. Known values are: "None", "ReadOnly", "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
         :keyword write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
          disabled on the disk.
@@ -4540,7 +4523,7 @@ class OSDisk(msrest.serialization.Model):
          machine.:code:`<br>`:code:`<br>` **FromImage** \u2013 This value is used when you are using an
          image to create the virtual machine. If you are using a platform image, you also use the
          imageReference element described above. If you are using a marketplace image, you  also use the
-         plan element previously described. Possible values include: "FromImage", "Empty", "Attach".
+         plan element previously described. Known values are: "FromImage", "Empty", "Attach".
         :paramtype create_option: str or ~azure.mgmt.compute.v2021_11_01.models.DiskCreateOptionTypes
         :keyword disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can
          be used to overwrite the size of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
@@ -4553,8 +4536,8 @@ class OSDisk(msrest.serialization.Model):
          value is used, the OS disk is deleted when VM is deleted.:code:`<br>`:code:`<br>` **Detach** If
          this value is used, the os disk is retained after VM is deleted. :code:`<br>`:code:`<br>` The
          default value is set to **detach**. For an ephemeral OS Disk, the default value is set to
-         **Delete**. User cannot change the delete option for ephemeral OS Disk. Possible values
-         include: "Delete", "Detach".
+         **Delete**. User cannot change the delete option for ephemeral OS Disk. Known values are:
+         "Delete", "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2021_11_01.models.DiskDeleteOptionTypes
         """
         super(OSDisk, self).__init__(**kwargs)
@@ -4577,8 +4560,8 @@ class OSDiskImage(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar operating_system: Required. The operating system of the osDiskImage. Possible values
-     include: "Windows", "Linux".
+    :ivar operating_system: Required. The operating system of the osDiskImage. Known values are:
+     "Windows", "Linux".
     :vartype operating_system: str or ~azure.mgmt.compute.v2021_11_01.models.OperatingSystemTypes
     """
 
@@ -4593,12 +4576,12 @@ class OSDiskImage(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        operating_system: Union[str, "OperatingSystemTypes"],
+        operating_system: Union[str, "_models.OperatingSystemTypes"],
         **kwargs
     ):
         """
-        :keyword operating_system: Required. The operating system of the osDiskImage. Possible values
-         include: "Windows", "Linux".
+        :keyword operating_system: Required. The operating system of the osDiskImage. Known values are:
+         "Windows", "Linux".
         :paramtype operating_system: str or ~azure.mgmt.compute.v2021_11_01.models.OperatingSystemTypes
         """
         super(OSDiskImage, self).__init__(**kwargs)
@@ -4670,9 +4653,8 @@ class OSProfile(msrest.serialization.Model):
      the virtual machine. :code:`<br>`:code:`<br>`This may only be set to False when no extensions
      are present on the virtual machine.
     :vartype allow_extension_operations: bool
-    :ivar require_guest_provision_signal: Specifies whether the guest provision signal is required
-     to infer provision success of the virtual machine.  **Note: This property is for private
-     testing only, and all customers must not set the property to false.**.
+    :ivar require_guest_provision_signal: Optional property which must either be set to True or
+     omitted.
     :vartype require_guest_provision_signal: bool
     """
 
@@ -4695,9 +4677,9 @@ class OSProfile(msrest.serialization.Model):
         admin_username: Optional[str] = None,
         admin_password: Optional[str] = None,
         custom_data: Optional[str] = None,
-        windows_configuration: Optional["WindowsConfiguration"] = None,
-        linux_configuration: Optional["LinuxConfiguration"] = None,
-        secrets: Optional[List["VaultSecretGroup"]] = None,
+        windows_configuration: Optional["_models.WindowsConfiguration"] = None,
+        linux_configuration: Optional["_models.LinuxConfiguration"] = None,
+        secrets: Optional[List["_models.VaultSecretGroup"]] = None,
         allow_extension_operations: Optional[bool] = None,
         require_guest_provision_signal: Optional[bool] = None,
         **kwargs
@@ -4766,9 +4748,8 @@ class OSProfile(msrest.serialization.Model):
          on the virtual machine. :code:`<br>`:code:`<br>`This may only be set to False when no
          extensions are present on the virtual machine.
         :paramtype allow_extension_operations: bool
-        :keyword require_guest_provision_signal: Specifies whether the guest provision signal is
-         required to infer provision success of the virtual machine.  **Note: This property is for
-         private testing only, and all customers must not set the property to false.**.
+        :keyword require_guest_provision_signal: Optional property which must either be set to True or
+         omitted.
         :paramtype require_guest_provision_signal: bool
         """
         super(OSProfile, self).__init__(**kwargs)
@@ -4800,8 +4781,7 @@ class PatchInstallationDetail(msrest.serialization.Model):
     :ivar classifications: The classification(s) of the patch as provided by the patch publisher.
     :vartype classifications: list[str]
     :ivar installation_state: The state of the patch after the installation operation completed.
-     Possible values include: "Unknown", "Installed", "Failed", "Excluded", "NotSelected",
-     "Pending".
+     Known values are: "Unknown", "Installed", "Failed", "Excluded", "NotSelected", "Pending".
     :vartype installation_state: str or
      ~azure.mgmt.compute.v2021_11_01.models.PatchInstallationState
     """
@@ -4851,8 +4831,8 @@ class PatchSettings(msrest.serialization.Model):
      **AutomaticByOS** - The virtual machine will automatically be updated by the OS. The property
      WindowsConfiguration.enableAutomaticUpdates must be true. :code:`<br />`:code:`<br />`
      **AutomaticByPlatform** - the virtual machine will automatically updated by the platform. The
-     properties provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must be true.
-     Possible values include: "Manual", "AutomaticByOS", "AutomaticByPlatform".
+     properties provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must be true. Known
+     values are: "Manual", "AutomaticByOS", "AutomaticByPlatform".
     :vartype patch_mode: str or ~azure.mgmt.compute.v2021_11_01.models.WindowsVMGuestPatchMode
     :ivar enable_hotpatching: Enables customers to patch their Azure VMs without requiring a
      reboot. For enableHotpatching, the 'provisionVMAgent' must be set to true and 'patchMode' must
@@ -4862,8 +4842,8 @@ class PatchSettings(msrest.serialization.Model):
      machine.:code:`<br />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />`
      **ImageDefault** - You control the timing of patch assessments on a virtual machine.:code:`<br
      />`:code:`<br />` **AutomaticByPlatform** - The platform will trigger periodic patch
-     assessments. The property provisionVMAgent must be true. Possible values include:
-     "ImageDefault", "AutomaticByPlatform".
+     assessments. The property provisionVMAgent must be true. Known values are: "ImageDefault",
+     "AutomaticByPlatform".
     :vartype assessment_mode: str or
      ~azure.mgmt.compute.v2021_11_01.models.WindowsPatchAssessmentMode
     """
@@ -4877,9 +4857,9 @@ class PatchSettings(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        patch_mode: Optional[Union[str, "WindowsVMGuestPatchMode"]] = None,
+        patch_mode: Optional[Union[str, "_models.WindowsVMGuestPatchMode"]] = None,
         enable_hotpatching: Optional[bool] = None,
-        assessment_mode: Optional[Union[str, "WindowsPatchAssessmentMode"]] = None,
+        assessment_mode: Optional[Union[str, "_models.WindowsPatchAssessmentMode"]] = None,
         **kwargs
     ):
         """
@@ -4892,8 +4872,8 @@ class PatchSettings(msrest.serialization.Model):
          **AutomaticByOS** - The virtual machine will automatically be updated by the OS. The property
          WindowsConfiguration.enableAutomaticUpdates must be true. :code:`<br />`:code:`<br />`
          **AutomaticByPlatform** - the virtual machine will automatically updated by the platform. The
-         properties provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must be true.
-         Possible values include: "Manual", "AutomaticByOS", "AutomaticByPlatform".
+         properties provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must be true. Known
+         values are: "Manual", "AutomaticByOS", "AutomaticByPlatform".
         :paramtype patch_mode: str or ~azure.mgmt.compute.v2021_11_01.models.WindowsVMGuestPatchMode
         :keyword enable_hotpatching: Enables customers to patch their Azure VMs without requiring a
          reboot. For enableHotpatching, the 'provisionVMAgent' must be set to true and 'patchMode' must
@@ -4903,8 +4883,8 @@ class PatchSettings(msrest.serialization.Model):
          machine.:code:`<br />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />`
          **ImageDefault** - You control the timing of patch assessments on a virtual machine.:code:`<br
          />`:code:`<br />` **AutomaticByPlatform** - The platform will trigger periodic patch
-         assessments. The property provisionVMAgent must be true. Possible values include:
-         "ImageDefault", "AutomaticByPlatform".
+         assessments. The property provisionVMAgent must be true. Known values are: "ImageDefault",
+         "AutomaticByPlatform".
         :paramtype assessment_mode: str or
          ~azure.mgmt.compute.v2021_11_01.models.WindowsPatchAssessmentMode
         """
@@ -4982,7 +4962,7 @@ class ProximityPlacementGroup(Resource):
     :ivar proximity_placement_group_type: Specifies the type of the proximity placement group.
      :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Standard** : Co-locate
      resources within an Azure region or Availability Zone. :code:`<br>`:code:`<br>` **Ultra** : For
-     future use. Possible values include: "Standard", "Ultra".
+     future use. Known values are: "Standard", "Ultra".
     :vartype proximity_placement_group_type: str or
      ~azure.mgmt.compute.v2021_11_01.models.ProximityPlacementGroupType
     :ivar virtual_machines: A list of references to all virtual machines in the proximity placement
@@ -5029,8 +5009,8 @@ class ProximityPlacementGroup(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        proximity_placement_group_type: Optional[Union[str, "ProximityPlacementGroupType"]] = None,
-        colocation_status: Optional["InstanceViewStatus"] = None,
+        proximity_placement_group_type: Optional[Union[str, "_models.ProximityPlacementGroupType"]] = None,
+        colocation_status: Optional["_models.InstanceViewStatus"] = None,
         **kwargs
     ):
         """
@@ -5041,7 +5021,7 @@ class ProximityPlacementGroup(Resource):
         :keyword proximity_placement_group_type: Specifies the type of the proximity placement group.
          :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Standard** : Co-locate
          resources within an Azure region or Availability Zone. :code:`<br>`:code:`<br>` **Ultra** : For
-         future use. Possible values include: "Standard", "Ultra".
+         future use. Known values are: "Standard", "Ultra".
         :paramtype proximity_placement_group_type: str or
          ~azure.mgmt.compute.v2021_11_01.models.ProximityPlacementGroupType
         :keyword colocation_status: Describes colocation status of the Proximity Placement Group.
@@ -5078,7 +5058,7 @@ class ProximityPlacementGroupListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["ProximityPlacementGroup"],
+        value: List["_models.ProximityPlacementGroup"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -5157,9 +5137,9 @@ class ProxyResource(msrest.serialization.Model):
 class PublicIPAddressSku(msrest.serialization.Model):
     """Describes the public IP Sku. It can only be set with OrchestrationMode as Flexible.
 
-    :ivar name: Specify public IP sku name. Possible values include: "Basic", "Standard".
+    :ivar name: Specify public IP sku name. Known values are: "Basic", "Standard".
     :vartype name: str or ~azure.mgmt.compute.v2021_11_01.models.PublicIPAddressSkuName
-    :ivar tier: Specify public IP sku tier. Possible values include: "Regional", "Global".
+    :ivar tier: Specify public IP sku tier. Known values are: "Regional", "Global".
     :vartype tier: str or ~azure.mgmt.compute.v2021_11_01.models.PublicIPAddressSkuTier
     """
 
@@ -5171,14 +5151,14 @@ class PublicIPAddressSku(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: Optional[Union[str, "PublicIPAddressSkuName"]] = None,
-        tier: Optional[Union[str, "PublicIPAddressSkuTier"]] = None,
+        name: Optional[Union[str, "_models.PublicIPAddressSkuName"]] = None,
+        tier: Optional[Union[str, "_models.PublicIPAddressSkuTier"]] = None,
         **kwargs
     ):
         """
-        :keyword name: Specify public IP sku name. Possible values include: "Basic", "Standard".
+        :keyword name: Specify public IP sku name. Known values are: "Basic", "Standard".
         :paramtype name: str or ~azure.mgmt.compute.v2021_11_01.models.PublicIPAddressSkuName
-        :keyword tier: Specify public IP sku tier. Possible values include: "Regional", "Global".
+        :keyword tier: Specify public IP sku tier. Known values are: "Regional", "Global".
         :paramtype tier: str or ~azure.mgmt.compute.v2021_11_01.models.PublicIPAddressSkuTier
         """
         super(PublicIPAddressSku, self).__init__(**kwargs)
@@ -5291,7 +5271,7 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
     :ivar group_by_user_agent: Group query result by User Agent.
     :vartype group_by_user_agent: bool
     :ivar interval_length: Required. Interval value in minutes used to create LogAnalytics call
-     rate logs. Possible values include: "ThreeMins", "FiveMins", "ThirtyMins", "SixtyMins".
+     rate logs. Known values are: "ThreeMins", "FiveMins", "ThirtyMins", "SixtyMins".
     :vartype interval_length: str or ~azure.mgmt.compute.v2021_11_01.models.IntervalInMins
     """
 
@@ -5320,7 +5300,7 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
         blob_container_sas_uri: str,
         from_time: datetime.datetime,
         to_time: datetime.datetime,
-        interval_length: Union[str, "IntervalInMins"],
+        interval_length: Union[str, "_models.IntervalInMins"],
         group_by_throttle_policy: Optional[bool] = None,
         group_by_operation_name: Optional[bool] = None,
         group_by_resource_name: Optional[bool] = None,
@@ -5347,7 +5327,7 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
         :keyword group_by_user_agent: Group query result by User Agent.
         :paramtype group_by_user_agent: bool
         :keyword interval_length: Required. Interval value in minutes used to create LogAnalytics call
-         rate logs. Possible values include: "ThreeMins", "FiveMins", "ThirtyMins", "SixtyMins".
+         rate logs. Known values are: "ThreeMins", "FiveMins", "ThirtyMins", "SixtyMins".
         :paramtype interval_length: str or ~azure.mgmt.compute.v2021_11_01.models.IntervalInMins
         """
         super(RequestRateByIntervalInput, self).__init__(blob_container_sas_uri=blob_container_sas_uri, from_time=from_time, to_time=to_time, group_by_throttle_policy=group_by_throttle_policy, group_by_operation_name=group_by_operation_name, group_by_resource_name=group_by_resource_name, group_by_client_application_id=group_by_client_application_id, group_by_user_agent=group_by_user_agent, **kwargs)
@@ -5374,7 +5354,7 @@ class RestorePoint(ProxyResource):
     :ivar provisioning_state: Gets the provisioning state of the restore point.
     :vartype provisioning_state: str
     :ivar consistency_mode: Gets the consistency mode for the restore point. Please refer to
-     https://aka.ms/RestorePoints for more details. Possible values include: "CrashConsistent",
+     https://aka.ms/RestorePoints for more details. Known values are: "CrashConsistent",
      "FileSystemConsistent", "ApplicationConsistent".
     :vartype consistency_mode: str or ~azure.mgmt.compute.v2021_11_01.models.ConsistencyModeTypes
     :ivar time_created: Gets the creation time of the restore point.
@@ -5412,9 +5392,9 @@ class RestorePoint(ProxyResource):
     def __init__(
         self,
         *,
-        exclude_disks: Optional[List["ApiEntityReference"]] = None,
+        exclude_disks: Optional[List["_models.ApiEntityReference"]] = None,
         time_created: Optional[datetime.datetime] = None,
-        source_restore_point: Optional["ApiEntityReference"] = None,
+        source_restore_point: Optional["_models.ApiEntityReference"] = None,
         **kwargs
     ):
         """
@@ -5493,7 +5473,7 @@ class RestorePointCollection(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        source: Optional["RestorePointCollectionSourceProperties"] = None,
+        source: Optional["_models.RestorePointCollectionSourceProperties"] = None,
         **kwargs
     ):
         """
@@ -5531,7 +5511,7 @@ class RestorePointCollectionListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["RestorePointCollection"]] = None,
+        value: Optional[List["_models.RestorePointCollection"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -5619,7 +5599,7 @@ class RestorePointCollectionUpdate(UpdateResource):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        source: Optional["RestorePointCollectionSourceProperties"] = None,
+        source: Optional["_models.RestorePointCollectionSourceProperties"] = None,
         **kwargs
     ):
         """
@@ -5655,8 +5635,8 @@ class RestorePointInstanceView(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        disk_restore_points: Optional[List["DiskRestorePointInstanceView"]] = None,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
+        disk_restore_points: Optional[List["_models.DiskRestorePointInstanceView"]] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
         **kwargs
     ):
         """
@@ -5707,13 +5687,13 @@ class RestorePointSourceMetadata(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        hardware_profile: Optional["HardwareProfile"] = None,
-        storage_profile: Optional["RestorePointSourceVMStorageProfile"] = None,
-        os_profile: Optional["OSProfile"] = None,
-        diagnostics_profile: Optional["DiagnosticsProfile"] = None,
+        hardware_profile: Optional["_models.HardwareProfile"] = None,
+        storage_profile: Optional["_models.RestorePointSourceVMStorageProfile"] = None,
+        os_profile: Optional["_models.OSProfile"] = None,
+        diagnostics_profile: Optional["_models.DiagnosticsProfile"] = None,
         license_type: Optional[str] = None,
         vm_id: Optional[str] = None,
-        security_profile: Optional["SecurityProfile"] = None,
+        security_profile: Optional["_models.SecurityProfile"] = None,
         location: Optional[str] = None,
         **kwargs
     ):
@@ -5754,7 +5734,7 @@ class RestorePointSourceVMDataDisk(msrest.serialization.Model):
     :vartype lun: int
     :ivar name: Gets the disk name.
     :vartype name: str
-    :ivar caching: Gets the caching type. Possible values include: "None", "ReadOnly", "ReadWrite".
+    :ivar caching: Gets the caching type. Known values are: "None", "ReadOnly", "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
     :ivar disk_size_gb: Gets the initial disk size in GB for blank data disks, and the new desired
      size for existing OS and Data disks.
@@ -5779,10 +5759,10 @@ class RestorePointSourceVMDataDisk(msrest.serialization.Model):
         *,
         lun: Optional[int] = None,
         name: Optional[str] = None,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         disk_size_gb: Optional[int] = None,
-        managed_disk: Optional["ManagedDiskParameters"] = None,
-        disk_restore_point: Optional["ApiEntityReference"] = None,
+        managed_disk: Optional["_models.ManagedDiskParameters"] = None,
+        disk_restore_point: Optional["_models.ApiEntityReference"] = None,
         **kwargs
     ):
         """
@@ -5790,8 +5770,7 @@ class RestorePointSourceVMDataDisk(msrest.serialization.Model):
         :paramtype lun: int
         :keyword name: Gets the disk name.
         :paramtype name: str
-        :keyword caching: Gets the caching type. Possible values include: "None", "ReadOnly",
-         "ReadWrite".
+        :keyword caching: Gets the caching type. Known values are: "None", "ReadOnly", "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
         :keyword disk_size_gb: Gets the initial disk size in GB for blank data disks, and the new
          desired size for existing OS and Data disks.
@@ -5813,13 +5792,13 @@ class RestorePointSourceVMDataDisk(msrest.serialization.Model):
 class RestorePointSourceVMOSDisk(msrest.serialization.Model):
     """Describes an Operating System disk.
 
-    :ivar os_type: Gets the Operating System type. Possible values include: "Windows", "Linux".
+    :ivar os_type: Gets the Operating System type. Known values are: "Windows", "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2021_11_01.models.OperatingSystemType
     :ivar encryption_settings: Gets the disk encryption settings.
     :vartype encryption_settings: ~azure.mgmt.compute.v2021_11_01.models.DiskEncryptionSettings
     :ivar name: Gets the disk name.
     :vartype name: str
-    :ivar caching: Gets the caching type. Possible values include: "None", "ReadOnly", "ReadWrite".
+    :ivar caching: Gets the caching type. Known values are: "None", "ReadOnly", "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
     :ivar disk_size_gb: Gets the disk size in GB.
     :vartype disk_size_gb: int
@@ -5842,24 +5821,23 @@ class RestorePointSourceVMOSDisk(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        os_type: Optional[Union[str, "OperatingSystemType"]] = None,
-        encryption_settings: Optional["DiskEncryptionSettings"] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemType"]] = None,
+        encryption_settings: Optional["_models.DiskEncryptionSettings"] = None,
         name: Optional[str] = None,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         disk_size_gb: Optional[int] = None,
-        managed_disk: Optional["ManagedDiskParameters"] = None,
-        disk_restore_point: Optional["ApiEntityReference"] = None,
+        managed_disk: Optional["_models.ManagedDiskParameters"] = None,
+        disk_restore_point: Optional["_models.ApiEntityReference"] = None,
         **kwargs
     ):
         """
-        :keyword os_type: Gets the Operating System type. Possible values include: "Windows", "Linux".
+        :keyword os_type: Gets the Operating System type. Known values are: "Windows", "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2021_11_01.models.OperatingSystemType
         :keyword encryption_settings: Gets the disk encryption settings.
         :paramtype encryption_settings: ~azure.mgmt.compute.v2021_11_01.models.DiskEncryptionSettings
         :keyword name: Gets the disk name.
         :paramtype name: str
-        :keyword caching: Gets the caching type. Possible values include: "None", "ReadOnly",
-         "ReadWrite".
+        :keyword caching: Gets the caching type. Known values are: "None", "ReadOnly", "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
         :keyword disk_size_gb: Gets the disk size in GB.
         :paramtype disk_size_gb: int
@@ -5896,8 +5874,8 @@ class RestorePointSourceVMStorageProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        os_disk: Optional["RestorePointSourceVMOSDisk"] = None,
-        data_disks: Optional[List["RestorePointSourceVMDataDisk"]] = None,
+        os_disk: Optional["_models.RestorePointSourceVMOSDisk"] = None,
+        data_disks: Optional[List["_models.RestorePointSourceVMDataDisk"]] = None,
         **kwargs
     ):
         """
@@ -6128,13 +6106,13 @@ class RollingUpgradeRunningStatus(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar code: Code indicating the current status of the upgrade. Possible values include:
+    :ivar code: Code indicating the current status of the upgrade. Known values are:
      "RollingForward", "Cancelled", "Completed", "Faulted".
     :vartype code: str or ~azure.mgmt.compute.v2021_11_01.models.RollingUpgradeStatusCode
     :ivar start_time: Start time of the upgrade.
     :vartype start_time: ~datetime.datetime
-    :ivar last_action: The last action performed on the rolling upgrade. Possible values include:
-     "Start", "Cancel".
+    :ivar last_action: The last action performed on the rolling upgrade. Known values are: "Start",
+     "Cancel".
     :vartype last_action: str or ~azure.mgmt.compute.v2021_11_01.models.RollingUpgradeActionType
     :ivar last_action_time: Last action time of the upgrade.
     :vartype last_action_time: ~datetime.datetime
@@ -6247,8 +6225,7 @@ class RunCommandDocumentBase(msrest.serialization.Model):
     :vartype schema: str
     :ivar id: Required. The VM run command id.
     :vartype id: str
-    :ivar os_type: Required. The Operating System type. Possible values include: "Windows",
-     "Linux".
+    :ivar os_type: Required. The Operating System type. Known values are: "Windows", "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2021_11_01.models.OperatingSystemTypes
     :ivar label: Required. The VM run command label.
     :vartype label: str
@@ -6277,7 +6254,7 @@ class RunCommandDocumentBase(msrest.serialization.Model):
         *,
         schema: str,
         id: str,
-        os_type: Union[str, "OperatingSystemTypes"],
+        os_type: Union[str, "_models.OperatingSystemTypes"],
         label: str,
         description: str,
         **kwargs
@@ -6287,8 +6264,7 @@ class RunCommandDocumentBase(msrest.serialization.Model):
         :paramtype schema: str
         :keyword id: Required. The VM run command id.
         :paramtype id: str
-        :keyword os_type: Required. The Operating System type. Possible values include: "Windows",
-         "Linux".
+        :keyword os_type: Required. The Operating System type. Known values are: "Windows", "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2021_11_01.models.OperatingSystemTypes
         :keyword label: Required. The VM run command label.
         :paramtype label: str
@@ -6312,8 +6288,7 @@ class RunCommandDocument(RunCommandDocumentBase):
     :vartype schema: str
     :ivar id: Required. The VM run command id.
     :vartype id: str
-    :ivar os_type: Required. The Operating System type. Possible values include: "Windows",
-     "Linux".
+    :ivar os_type: Required. The Operating System type. Known values are: "Windows", "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2021_11_01.models.OperatingSystemTypes
     :ivar label: Required. The VM run command label.
     :vartype label: str
@@ -6349,11 +6324,11 @@ class RunCommandDocument(RunCommandDocumentBase):
         *,
         schema: str,
         id: str,
-        os_type: Union[str, "OperatingSystemTypes"],
+        os_type: Union[str, "_models.OperatingSystemTypes"],
         label: str,
         description: str,
         script: List[str],
-        parameters: Optional[List["RunCommandParameterDefinition"]] = None,
+        parameters: Optional[List["_models.RunCommandParameterDefinition"]] = None,
         **kwargs
     ):
         """
@@ -6361,8 +6336,7 @@ class RunCommandDocument(RunCommandDocumentBase):
         :paramtype schema: str
         :keyword id: Required. The VM run command id.
         :paramtype id: str
-        :keyword os_type: Required. The Operating System type. Possible values include: "Windows",
-         "Linux".
+        :keyword os_type: Required. The Operating System type. Known values are: "Windows", "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2021_11_01.models.OperatingSystemTypes
         :keyword label: Required. The VM run command label.
         :paramtype label: str
@@ -6408,7 +6382,7 @@ class RunCommandInput(msrest.serialization.Model):
         *,
         command_id: str,
         script: Optional[List[str]] = None,
-        parameters: Optional[List["RunCommandInputParameter"]] = None,
+        parameters: Optional[List["_models.RunCommandInputParameter"]] = None,
         **kwargs
     ):
         """
@@ -6489,7 +6463,7 @@ class RunCommandListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["RunCommandDocumentBase"],
+        value: List["_models.RunCommandDocumentBase"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -6572,7 +6546,7 @@ class RunCommandResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["InstanceViewStatus"]] = None,
+        value: Optional[List["_models.InstanceViewStatus"]] = None,
         **kwargs
     ):
         """
@@ -6616,7 +6590,7 @@ class ScaleInPolicy(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        rules: Optional[List[Union[str, "VirtualMachineScaleSetScaleInRules"]]] = None,
+        rules: Optional[List[Union[str, "_models.VirtualMachineScaleSetScaleInRules"]]] = None,
         force_deletion: Optional[bool] = None,
         **kwargs
     ):
@@ -6663,7 +6637,7 @@ class ScheduledEventsProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        terminate_notification_profile: Optional["TerminateNotificationProfile"] = None,
+        terminate_notification_profile: Optional["_models.TerminateNotificationProfile"] = None,
         **kwargs
     ):
         """
@@ -6690,8 +6664,7 @@ class SecurityProfile(msrest.serialization.Model):
     :vartype encryption_at_host: bool
     :ivar security_type: Specifies the SecurityType of the virtual machine. It has to be set to any
      specified value to enable UefiSettings. :code:`<br>`:code:`<br>` Default: UefiSettings will not
-     be enabled unless this property is set. Possible values include: "TrustedLaunch",
-     "ConfidentialVM".
+     be enabled unless this property is set. Known values are: "TrustedLaunch", "ConfidentialVM".
     :vartype security_type: str or ~azure.mgmt.compute.v2021_11_01.models.SecurityTypes
     """
 
@@ -6704,9 +6677,9 @@ class SecurityProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        uefi_settings: Optional["UefiSettings"] = None,
+        uefi_settings: Optional["_models.UefiSettings"] = None,
         encryption_at_host: Optional[bool] = None,
-        security_type: Optional[Union[str, "SecurityTypes"]] = None,
+        security_type: Optional[Union[str, "_models.SecurityTypes"]] = None,
         **kwargs
     ):
         """
@@ -6721,7 +6694,7 @@ class SecurityProfile(msrest.serialization.Model):
         :paramtype encryption_at_host: bool
         :keyword security_type: Specifies the SecurityType of the virtual machine. It has to be set to
          any specified value to enable UefiSettings. :code:`<br>`:code:`<br>` Default: UefiSettings will
-         not be enabled unless this property is set. Possible values include: "TrustedLaunch",
+         not be enabled unless this property is set. Known values are: "TrustedLaunch",
          "ConfidentialVM".
         :paramtype security_type: str or ~azure.mgmt.compute.v2021_11_01.models.SecurityTypes
         """
@@ -6825,7 +6798,7 @@ class SshConfiguration(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        public_keys: Optional[List["SshPublicKey"]] = None,
+        public_keys: Optional[List["_models.SshPublicKey"]] = None,
         **kwargs
     ):
         """
@@ -7020,7 +6993,7 @@ class SshPublicKeysGroupListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["SshPublicKeyResource"],
+        value: List["_models.SshPublicKeyResource"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -7102,9 +7075,9 @@ class StorageProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        image_reference: Optional["ImageReference"] = None,
-        os_disk: Optional["OSDisk"] = None,
-        data_disks: Optional[List["DataDisk"]] = None,
+        image_reference: Optional["_models.ImageReference"] = None,
+        os_disk: Optional["_models.OSDisk"] = None,
+        data_disks: Optional[List["_models.DataDisk"]] = None,
         **kwargs
     ):
         """
@@ -7176,7 +7149,7 @@ class SubResourceWithColocationStatus(SubResource):
         self,
         *,
         id: Optional[str] = None,
-        colocation_status: Optional["InstanceViewStatus"] = None,
+        colocation_status: Optional["_models.InstanceViewStatus"] = None,
         **kwargs
     ):
         """
@@ -7389,7 +7362,7 @@ class UpgradeOperationHistoricalStatusInfoProperties(msrest.serialization.Model)
     :vartype progress: ~azure.mgmt.compute.v2021_11_01.models.RollingUpgradeProgressInfo
     :ivar error: Error Details for this upgrade if there are any.
     :vartype error: ~azure.mgmt.compute.v2021_11_01.models.ApiError
-    :ivar started_by: Invoker of the Upgrade Operation. Possible values include: "Unknown", "User",
+    :ivar started_by: Invoker of the Upgrade Operation. Known values are: "Unknown", "User",
      "Platform".
     :vartype started_by: str or ~azure.mgmt.compute.v2021_11_01.models.UpgradeOperationInvoker
     :ivar target_image_reference: Image Reference details.
@@ -7436,7 +7409,7 @@ class UpgradeOperationHistoryStatus(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar code: Code indicating the current status of the upgrade. Possible values include:
+    :ivar code: Code indicating the current status of the upgrade. Known values are:
      "RollingForward", "Cancelled", "Completed", "Faulted".
     :vartype code: str or ~azure.mgmt.compute.v2021_11_01.models.UpgradeState
     :ivar start_time: Start time of the upgrade.
@@ -7476,8 +7449,8 @@ class UpgradePolicy(msrest.serialization.Model):
      />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control
      the application of updates to virtual machines in the scale set. You do this by using the
      manualUpgrade action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the
-     scale set are  automatically updated at the same time. Possible values include: "Automatic",
-     "Manual", "Rolling".
+     scale set are  automatically updated at the same time. Known values are: "Automatic", "Manual",
+     "Rolling".
     :vartype mode: str or ~azure.mgmt.compute.v2021_11_01.models.UpgradeMode
     :ivar rolling_upgrade_policy: The configuration parameters used while performing a rolling
      upgrade.
@@ -7497,9 +7470,9 @@ class UpgradePolicy(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        mode: Optional[Union[str, "UpgradeMode"]] = None,
-        rolling_upgrade_policy: Optional["RollingUpgradePolicy"] = None,
-        automatic_os_upgrade_policy: Optional["AutomaticOSUpgradePolicy"] = None,
+        mode: Optional[Union[str, "_models.UpgradeMode"]] = None,
+        rolling_upgrade_policy: Optional["_models.RollingUpgradePolicy"] = None,
+        automatic_os_upgrade_policy: Optional["_models.AutomaticOSUpgradePolicy"] = None,
         **kwargs
     ):
         """
@@ -7507,8 +7480,8 @@ class UpgradePolicy(msrest.serialization.Model):
          />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control
          the application of updates to virtual machines in the scale set. You do this by using the
          manualUpgrade action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the
-         scale set are  automatically updated at the same time. Possible values include: "Automatic",
-         "Manual", "Rolling".
+         scale set are  automatically updated at the same time. Known values are: "Automatic", "Manual",
+         "Rolling".
         :paramtype mode: str or ~azure.mgmt.compute.v2021_11_01.models.UpgradeMode
         :keyword rolling_upgrade_policy: The configuration parameters used while performing a rolling
          upgrade.
@@ -7562,7 +7535,7 @@ class Usage(msrest.serialization.Model):
         *,
         current_value: int,
         limit: int,
-        name: "UsageName",
+        name: "_models.UsageName",
         **kwargs
     ):
         """
@@ -7724,8 +7697,8 @@ class VaultSecretGroup(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        source_vault: Optional["SubResource"] = None,
-        vault_certificates: Optional[List["VaultCertificate"]] = None,
+        source_vault: Optional["_models.SubResource"] = None,
+        vault_certificates: Optional[List["_models.VaultCertificate"]] = None,
         **kwargs
     ):
         """
@@ -7842,14 +7815,13 @@ class VirtualMachine(Resource):
      2018-04-01.
     :vartype proximity_placement_group: ~azure.mgmt.compute.v2021_11_01.models.SubResource
     :ivar priority: Specifies the priority for the virtual machine. :code:`<br>`:code:`<br>`Minimum
-     api-version: 2019-03-01. Possible values include: "Regular", "Low", "Spot".
+     api-version: 2019-03-01. Known values are: "Regular", "Low", "Spot".
     :vartype priority: str or ~azure.mgmt.compute.v2021_11_01.models.VirtualMachinePriorityTypes
     :ivar eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
      Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, both
      'Deallocate' and 'Delete' are supported and the minimum api-version is 2019-03-01.
      :code:`<br>`:code:`<br>`For Azure Spot scale sets, both 'Deallocate' and 'Delete' are supported
-     and the minimum api-version is 2017-10-30-preview. Possible values include: "Deallocate",
-     "Delete".
+     and the minimum api-version is 2017-10-30-preview. Known values are: "Deallocate", "Delete".
     :vartype eviction_policy: str or
      ~azure.mgmt.compute.v2021_11_01.models.VirtualMachineEvictionPolicyTypes
     :ivar billing_profile: Specifies the billing related details of a Azure Spot virtual machine.
@@ -7968,32 +7940,32 @@ class VirtualMachine(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        plan: Optional["Plan"] = None,
-        identity: Optional["VirtualMachineIdentity"] = None,
+        plan: Optional["_models.Plan"] = None,
+        identity: Optional["_models.VirtualMachineIdentity"] = None,
         zones: Optional[List[str]] = None,
-        extended_location: Optional["ExtendedLocation"] = None,
-        hardware_profile: Optional["HardwareProfile"] = None,
-        storage_profile: Optional["StorageProfile"] = None,
-        additional_capabilities: Optional["AdditionalCapabilities"] = None,
-        os_profile: Optional["OSProfile"] = None,
-        network_profile: Optional["NetworkProfile"] = None,
-        security_profile: Optional["SecurityProfile"] = None,
-        diagnostics_profile: Optional["DiagnosticsProfile"] = None,
-        availability_set: Optional["SubResource"] = None,
-        virtual_machine_scale_set: Optional["SubResource"] = None,
-        proximity_placement_group: Optional["SubResource"] = None,
-        priority: Optional[Union[str, "VirtualMachinePriorityTypes"]] = None,
-        eviction_policy: Optional[Union[str, "VirtualMachineEvictionPolicyTypes"]] = None,
-        billing_profile: Optional["BillingProfile"] = None,
-        host: Optional["SubResource"] = None,
-        host_group: Optional["SubResource"] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        hardware_profile: Optional["_models.HardwareProfile"] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
+        additional_capabilities: Optional["_models.AdditionalCapabilities"] = None,
+        os_profile: Optional["_models.OSProfile"] = None,
+        network_profile: Optional["_models.NetworkProfile"] = None,
+        security_profile: Optional["_models.SecurityProfile"] = None,
+        diagnostics_profile: Optional["_models.DiagnosticsProfile"] = None,
+        availability_set: Optional["_models.SubResource"] = None,
+        virtual_machine_scale_set: Optional["_models.SubResource"] = None,
+        proximity_placement_group: Optional["_models.SubResource"] = None,
+        priority: Optional[Union[str, "_models.VirtualMachinePriorityTypes"]] = None,
+        eviction_policy: Optional[Union[str, "_models.VirtualMachineEvictionPolicyTypes"]] = None,
+        billing_profile: Optional["_models.BillingProfile"] = None,
+        host: Optional["_models.SubResource"] = None,
+        host_group: Optional["_models.SubResource"] = None,
         license_type: Optional[str] = None,
         extensions_time_budget: Optional[str] = None,
         platform_fault_domain: Optional[int] = None,
-        scheduled_events_profile: Optional["ScheduledEventsProfile"] = None,
+        scheduled_events_profile: Optional["_models.ScheduledEventsProfile"] = None,
         user_data: Optional[str] = None,
-        capacity_reservation: Optional["CapacityReservationProfile"] = None,
-        application_profile: Optional["ApplicationProfile"] = None,
+        capacity_reservation: Optional["_models.CapacityReservationProfile"] = None,
+        application_profile: Optional["_models.ApplicationProfile"] = None,
         **kwargs
     ):
         """
@@ -8059,15 +8031,14 @@ class VirtualMachine(Resource):
          2018-04-01.
         :paramtype proximity_placement_group: ~azure.mgmt.compute.v2021_11_01.models.SubResource
         :keyword priority: Specifies the priority for the virtual machine.
-         :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01. Possible values include: "Regular",
-         "Low", "Spot".
+         :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01. Known values are: "Regular", "Low",
+         "Spot".
         :paramtype priority: str or ~azure.mgmt.compute.v2021_11_01.models.VirtualMachinePriorityTypes
         :keyword eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
          Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, both
          'Deallocate' and 'Delete' are supported and the minimum api-version is 2019-03-01.
          :code:`<br>`:code:`<br>`For Azure Spot scale sets, both 'Deallocate' and 'Delete' are supported
-         and the minimum api-version is 2017-10-30-preview. Possible values include: "Deallocate",
-         "Delete".
+         and the minimum api-version is 2017-10-30-preview. Known values are: "Deallocate", "Delete".
         :paramtype eviction_policy: str or
          ~azure.mgmt.compute.v2021_11_01.models.VirtualMachineEvictionPolicyTypes
         :keyword billing_profile: Specifies the billing related details of a Azure Spot virtual
@@ -8175,8 +8146,8 @@ class VirtualMachineAgentInstanceView(msrest.serialization.Model):
         self,
         *,
         vm_agent_version: Optional[str] = None,
-        extension_handlers: Optional[List["VirtualMachineExtensionHandlerInstanceView"]] = None,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
+        extension_handlers: Optional[List["_models.VirtualMachineExtensionHandlerInstanceView"]] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
         **kwargs
     ):
         """
@@ -8201,8 +8172,8 @@ class VirtualMachineAssessPatchesResult(msrest.serialization.Model):
 
     :ivar status: The overall success or failure status of the operation. It remains "InProgress"
      until the operation completes. At that point it will become "Unknown", "Failed", "Succeeded",
-     or "CompletedWithWarnings.". Possible values include: "Unknown", "InProgress", "Failed",
-     "Succeeded", "CompletedWithWarnings".
+     or "CompletedWithWarnings.". Known values are: "Unknown", "InProgress", "Failed", "Succeeded",
+     "CompletedWithWarnings".
     :vartype status: str or ~azure.mgmt.compute.v2021_11_01.models.PatchOperationStatus
     :ivar assessment_activity_id: The activity ID of the operation that produced this result. It is
      used to correlate across CRP and extension logs.
@@ -8458,7 +8429,7 @@ class VirtualMachineExtension(Resource):
         enable_automatic_upgrade: Optional[bool] = None,
         settings: Optional[Any] = None,
         protected_settings: Optional[Any] = None,
-        instance_view: Optional["VirtualMachineExtensionInstanceView"] = None,
+        instance_view: Optional["_models.VirtualMachineExtensionInstanceView"] = None,
         suppress_failures: Optional[bool] = None,
         protected_settings_from_key_vault: Optional[Any] = None,
         **kwargs
@@ -8538,7 +8509,7 @@ class VirtualMachineExtensionHandlerInstanceView(msrest.serialization.Model):
         *,
         type: Optional[str] = None,
         type_handler_version: Optional[str] = None,
-        status: Optional["InstanceViewStatus"] = None,
+        status: Optional["_models.InstanceViewStatus"] = None,
         **kwargs
     ):
         """
@@ -8675,8 +8646,8 @@ class VirtualMachineExtensionInstanceView(msrest.serialization.Model):
         name: Optional[str] = None,
         type: Optional[str] = None,
         type_handler_version: Optional[str] = None,
-        substatuses: Optional[List["InstanceViewStatus"]] = None,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
+        substatuses: Optional[List["_models.InstanceViewStatus"]] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
         **kwargs
     ):
         """
@@ -8713,7 +8684,7 @@ class VirtualMachineExtensionsListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["VirtualMachineExtension"]] = None,
+        value: Optional[List["_models.VirtualMachineExtension"]] = None,
         **kwargs
     ):
         """
@@ -8874,8 +8845,8 @@ class VirtualMachineIdentity(msrest.serialization.Model):
     :vartype tenant_id: str
     :ivar type: The type of identity used for the virtual machine. The type 'SystemAssigned,
      UserAssigned' includes both an implicitly created identity and a set of user assigned
-     identities. The type 'None' will remove any identities from the virtual machine. Possible
-     values include: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", "None".
+     identities. The type 'None' will remove any identities from the virtual machine. Known values
+     are: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", "None".
     :vartype type: str or ~azure.mgmt.compute.v2021_11_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the Virtual
      Machine. The user identity dictionary key references will be ARM resource ids in the form:
@@ -8899,15 +8870,15 @@ class VirtualMachineIdentity(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "UserAssignedIdentitiesValue"]] = None,
+        type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentitiesValue"]] = None,
         **kwargs
     ):
         """
         :keyword type: The type of identity used for the virtual machine. The type 'SystemAssigned,
          UserAssigned' includes both an implicitly created identity and a set of user assigned
-         identities. The type 'None' will remove any identities from the virtual machine. Possible
-         values include: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", "None".
+         identities. The type 'None' will remove any identities from the virtual machine. Known values
+         are: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", "None".
         :paramtype type: str or ~azure.mgmt.compute.v2021_11_01.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user identities associated with the Virtual
          Machine. The user identity dictionary key references will be ARM resource ids in the form:
@@ -8961,7 +8932,7 @@ class VirtualMachineImageResource(SubResource):
         location: str,
         id: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        extended_location: Optional["ExtendedLocation"] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
         **kwargs
     ):
         """
@@ -9012,8 +8983,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
     :ivar automatic_os_upgrade_properties: Describes automatic OS upgrade properties on the image.
     :vartype automatic_os_upgrade_properties:
      ~azure.mgmt.compute.v2021_11_01.models.AutomaticOSUpgradeProperties
-    :ivar hyper_v_generation: Specifies the HyperVGeneration Type. Possible values include: "V1",
-     "V2".
+    :ivar hyper_v_generation: Specifies the HyperVGeneration Type. Known values are: "V1", "V2".
     :vartype hyper_v_generation: str or
      ~azure.mgmt.compute.v2021_11_01.models.HyperVGenerationTypes
     :ivar disallowed: Specifies disallowed configuration for the VirtualMachine created from the
@@ -9021,7 +8991,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
     :vartype disallowed: ~azure.mgmt.compute.v2021_11_01.models.DisallowedConfiguration
     :ivar features:
     :vartype features: list[~azure.mgmt.compute.v2021_11_01.models.VirtualMachineImageFeature]
-    :ivar architecture: Specifies the Architecture Type. Possible values include: "x64", "Arm64".
+    :ivar architecture: Specifies the Architecture Type. Known values are: "x64", "Arm64".
     :vartype architecture: str or ~azure.mgmt.compute.v2021_11_01.models.ArchitectureTypes
     """
 
@@ -9053,15 +9023,15 @@ class VirtualMachineImage(VirtualMachineImageResource):
         location: str,
         id: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        extended_location: Optional["ExtendedLocation"] = None,
-        plan: Optional["PurchasePlan"] = None,
-        os_disk_image: Optional["OSDiskImage"] = None,
-        data_disk_images: Optional[List["DataDiskImage"]] = None,
-        automatic_os_upgrade_properties: Optional["AutomaticOSUpgradeProperties"] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGenerationTypes"]] = None,
-        disallowed: Optional["DisallowedConfiguration"] = None,
-        features: Optional[List["VirtualMachineImageFeature"]] = None,
-        architecture: Optional[Union[str, "ArchitectureTypes"]] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        plan: Optional["_models.PurchasePlan"] = None,
+        os_disk_image: Optional["_models.OSDiskImage"] = None,
+        data_disk_images: Optional[List["_models.DataDiskImage"]] = None,
+        automatic_os_upgrade_properties: Optional["_models.AutomaticOSUpgradeProperties"] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGenerationTypes"]] = None,
+        disallowed: Optional["_models.DisallowedConfiguration"] = None,
+        features: Optional[List["_models.VirtualMachineImageFeature"]] = None,
+        architecture: Optional[Union[str, "_models.ArchitectureTypes"]] = None,
         **kwargs
     ):
         """
@@ -9088,8 +9058,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
          image.
         :paramtype automatic_os_upgrade_properties:
          ~azure.mgmt.compute.v2021_11_01.models.AutomaticOSUpgradeProperties
-        :keyword hyper_v_generation: Specifies the HyperVGeneration Type. Possible values include:
-         "V1", "V2".
+        :keyword hyper_v_generation: Specifies the HyperVGeneration Type. Known values are: "V1", "V2".
         :paramtype hyper_v_generation: str or
          ~azure.mgmt.compute.v2021_11_01.models.HyperVGenerationTypes
         :keyword disallowed: Specifies disallowed configuration for the VirtualMachine created from the
@@ -9097,8 +9066,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
         :paramtype disallowed: ~azure.mgmt.compute.v2021_11_01.models.DisallowedConfiguration
         :keyword features:
         :paramtype features: list[~azure.mgmt.compute.v2021_11_01.models.VirtualMachineImageFeature]
-        :keyword architecture: Specifies the Architecture Type. Possible values include: "x64",
-         "Arm64".
+        :keyword architecture: Specifies the Architecture Type. Known values are: "x64", "Arm64".
         :paramtype architecture: str or ~azure.mgmt.compute.v2021_11_01.models.ArchitectureTypes
         """
         super(VirtualMachineImage, self).__init__(id=id, name=name, location=location, tags=tags, extended_location=extended_location, **kwargs)
@@ -9153,7 +9121,7 @@ class VirtualMachineInstallPatchesParameters(msrest.serialization.Model):
      must be an ISO 8601-compliant duration string such as PT4H (4 hours).
     :vartype maximum_duration: str
     :ivar reboot_setting: Required. Defines when it is acceptable to reboot a VM during a software
-     update operation. Possible values include: "IfRequired", "Never", "Always".
+     update operation. Known values are: "IfRequired", "Never", "Always".
     :vartype reboot_setting: str or
      ~azure.mgmt.compute.v2021_11_01.models.VMGuestPatchRebootSetting
     :ivar windows_parameters: Input for InstallPatches on a Windows VM, as directly received by the
@@ -9178,10 +9146,10 @@ class VirtualMachineInstallPatchesParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        reboot_setting: Union[str, "VMGuestPatchRebootSetting"],
+        reboot_setting: Union[str, "_models.VMGuestPatchRebootSetting"],
         maximum_duration: Optional[str] = None,
-        windows_parameters: Optional["WindowsParameters"] = None,
-        linux_parameters: Optional["LinuxParameters"] = None,
+        windows_parameters: Optional["_models.WindowsParameters"] = None,
+        linux_parameters: Optional["_models.LinuxParameters"] = None,
         **kwargs
     ):
         """
@@ -9189,7 +9157,7 @@ class VirtualMachineInstallPatchesParameters(msrest.serialization.Model):
          must be an ISO 8601-compliant duration string such as PT4H (4 hours).
         :paramtype maximum_duration: str
         :keyword reboot_setting: Required. Defines when it is acceptable to reboot a VM during a
-         software update operation. Possible values include: "IfRequired", "Never", "Always".
+         software update operation. Known values are: "IfRequired", "Never", "Always".
         :paramtype reboot_setting: str or
          ~azure.mgmt.compute.v2021_11_01.models.VMGuestPatchRebootSetting
         :keyword windows_parameters: Input for InstallPatches on a Windows VM, as directly received by
@@ -9213,14 +9181,14 @@ class VirtualMachineInstallPatchesResult(msrest.serialization.Model):
 
     :ivar status: The overall success or failure status of the operation. It remains "InProgress"
      until the operation completes. At that point it will become "Failed", "Succeeded", "Unknown" or
-     "CompletedWithWarnings.". Possible values include: "Unknown", "InProgress", "Failed",
-     "Succeeded", "CompletedWithWarnings".
+     "CompletedWithWarnings.". Known values are: "Unknown", "InProgress", "Failed", "Succeeded",
+     "CompletedWithWarnings".
     :vartype status: str or ~azure.mgmt.compute.v2021_11_01.models.PatchOperationStatus
     :ivar installation_activity_id: The activity ID of the operation that produced this result. It
      is used to correlate across CRP and extension logs.
     :vartype installation_activity_id: str
-    :ivar reboot_status: The reboot state of the VM following completion of the operation. Possible
-     values include: "Unknown", "NotNeeded", "Required", "Started", "Failed", "Completed".
+    :ivar reboot_status: The reboot state of the VM following completion of the operation. Known
+     values are: "Unknown", "NotNeeded", "Required", "Started", "Failed", "Completed".
     :vartype reboot_status: str or ~azure.mgmt.compute.v2021_11_01.models.VMGuestPatchRebootStatus
     :ivar maintenance_window_exceeded: Whether the operation ran out of time before it completed
      all its intended actions.
@@ -9315,8 +9283,8 @@ class VirtualMachineInstanceView(msrest.serialization.Model):
     :vartype os_name: str
     :ivar os_version: The version of Operating System running on the virtual machine.
     :vartype os_version: str
-    :ivar hyper_v_generation: Specifies the HyperVGeneration Type associated with a resource.
-     Possible values include: "V1", "V2".
+    :ivar hyper_v_generation: Specifies the HyperVGeneration Type associated with a resource. Known
+     values are: "V1", "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2021_11_01.models.HyperVGenerationType
     :ivar rdp_thumb_print: The Remote desktop certificate thumbprint.
     :vartype rdp_thumb_print: str
@@ -9380,15 +9348,15 @@ class VirtualMachineInstanceView(msrest.serialization.Model):
         computer_name: Optional[str] = None,
         os_name: Optional[str] = None,
         os_version: Optional[str] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGenerationType"]] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGenerationType"]] = None,
         rdp_thumb_print: Optional[str] = None,
-        vm_agent: Optional["VirtualMachineAgentInstanceView"] = None,
-        maintenance_redeploy_status: Optional["MaintenanceRedeployStatus"] = None,
-        disks: Optional[List["DiskInstanceView"]] = None,
-        extensions: Optional[List["VirtualMachineExtensionInstanceView"]] = None,
-        boot_diagnostics: Optional["BootDiagnosticsInstanceView"] = None,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
-        patch_status: Optional["VirtualMachinePatchStatus"] = None,
+        vm_agent: Optional["_models.VirtualMachineAgentInstanceView"] = None,
+        maintenance_redeploy_status: Optional["_models.MaintenanceRedeployStatus"] = None,
+        disks: Optional[List["_models.DiskInstanceView"]] = None,
+        extensions: Optional[List["_models.VirtualMachineExtensionInstanceView"]] = None,
+        boot_diagnostics: Optional["_models.BootDiagnosticsInstanceView"] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
+        patch_status: Optional["_models.VirtualMachinePatchStatus"] = None,
         **kwargs
     ):
         """
@@ -9403,7 +9371,7 @@ class VirtualMachineInstanceView(msrest.serialization.Model):
         :keyword os_version: The version of Operating System running on the virtual machine.
         :paramtype os_version: str
         :keyword hyper_v_generation: Specifies the HyperVGeneration Type associated with a resource.
-         Possible values include: "V1", "V2".
+         Known values are: "V1", "V2".
         :paramtype hyper_v_generation: str or
          ~azure.mgmt.compute.v2021_11_01.models.HyperVGenerationType
         :keyword rdp_thumb_print: The Remote desktop certificate thumbprint.
@@ -9503,7 +9471,7 @@ class VirtualMachineListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["VirtualMachine"],
+        value: List["_models.VirtualMachine"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -9530,7 +9498,7 @@ class VirtualMachineNetworkInterfaceConfiguration(msrest.serialization.Model):
      than 1 network interface.
     :vartype primary: bool
     :ivar delete_option: Specify what happens to the network interface when the VM is deleted.
-     Possible values include: "Delete", "Detach".
+     Known values are: "Delete", "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2021_11_01.models.DeleteOptions
     :ivar enable_accelerated_networking: Specifies whether the network interface is accelerated
      networking-enabled.
@@ -9573,14 +9541,14 @@ class VirtualMachineNetworkInterfaceConfiguration(msrest.serialization.Model):
         *,
         name: str,
         primary: Optional[bool] = None,
-        delete_option: Optional[Union[str, "DeleteOptions"]] = None,
+        delete_option: Optional[Union[str, "_models.DeleteOptions"]] = None,
         enable_accelerated_networking: Optional[bool] = None,
         enable_fpga: Optional[bool] = None,
         enable_ip_forwarding: Optional[bool] = None,
-        network_security_group: Optional["SubResource"] = None,
-        dns_settings: Optional["VirtualMachineNetworkInterfaceDnsSettingsConfiguration"] = None,
-        ip_configurations: Optional[List["VirtualMachineNetworkInterfaceIPConfiguration"]] = None,
-        dscp_configuration: Optional["SubResource"] = None,
+        network_security_group: Optional["_models.SubResource"] = None,
+        dns_settings: Optional["_models.VirtualMachineNetworkInterfaceDnsSettingsConfiguration"] = None,
+        ip_configurations: Optional[List["_models.VirtualMachineNetworkInterfaceIPConfiguration"]] = None,
+        dscp_configuration: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
@@ -9590,7 +9558,7 @@ class VirtualMachineNetworkInterfaceConfiguration(msrest.serialization.Model):
          than 1 network interface.
         :paramtype primary: bool
         :keyword delete_option: Specify what happens to the network interface when the VM is deleted.
-         Possible values include: "Delete", "Detach".
+         Known values are: "Delete", "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2021_11_01.models.DeleteOptions
         :keyword enable_accelerated_networking: Specifies whether the network interface is accelerated
          networking-enabled.
@@ -9665,7 +9633,7 @@ class VirtualMachineNetworkInterfaceIPConfiguration(msrest.serialization.Model):
      ~azure.mgmt.compute.v2021_11_01.models.VirtualMachinePublicIPAddressConfiguration
     :ivar private_ip_address_version: Available from Api-Version 2017-03-30 onwards, it represents
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
-     values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+     values are: 'IPv4' and 'IPv6'. Known values are: "IPv4", "IPv6".
     :vartype private_ip_address_version: str or ~azure.mgmt.compute.v2021_11_01.models.IPVersions
     :ivar application_security_groups: Specifies an array of references to application security
      group.
@@ -9703,13 +9671,13 @@ class VirtualMachineNetworkInterfaceIPConfiguration(msrest.serialization.Model):
         self,
         *,
         name: str,
-        subnet: Optional["SubResource"] = None,
+        subnet: Optional["_models.SubResource"] = None,
         primary: Optional[bool] = None,
-        public_ip_address_configuration: Optional["VirtualMachinePublicIPAddressConfiguration"] = None,
-        private_ip_address_version: Optional[Union[str, "IPVersions"]] = None,
-        application_security_groups: Optional[List["SubResource"]] = None,
-        application_gateway_backend_address_pools: Optional[List["SubResource"]] = None,
-        load_balancer_backend_address_pools: Optional[List["SubResource"]] = None,
+        public_ip_address_configuration: Optional["_models.VirtualMachinePublicIPAddressConfiguration"] = None,
+        private_ip_address_version: Optional[Union[str, "_models.IPVersions"]] = None,
+        application_security_groups: Optional[List["_models.SubResource"]] = None,
+        application_gateway_backend_address_pools: Optional[List["_models.SubResource"]] = None,
+        load_balancer_backend_address_pools: Optional[List["_models.SubResource"]] = None,
         **kwargs
     ):
         """
@@ -9725,7 +9693,7 @@ class VirtualMachineNetworkInterfaceIPConfiguration(msrest.serialization.Model):
          ~azure.mgmt.compute.v2021_11_01.models.VirtualMachinePublicIPAddressConfiguration
         :keyword private_ip_address_version: Available from Api-Version 2017-03-30 onwards, it
          represents whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.
-         Possible values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+         Possible values are: 'IPv4' and 'IPv6'. Known values are: "IPv4", "IPv6".
         :paramtype private_ip_address_version: str or ~azure.mgmt.compute.v2021_11_01.models.IPVersions
         :keyword application_security_groups: Specifies an array of references to application security
          group.
@@ -9785,8 +9753,8 @@ class VirtualMachinePatchStatus(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        available_patch_summary: Optional["AvailablePatchSummary"] = None,
-        last_patch_installation_summary: Optional["LastPatchInstallationSummary"] = None,
+        available_patch_summary: Optional["_models.AvailablePatchSummary"] = None,
+        last_patch_installation_summary: Optional["_models.LastPatchInstallationSummary"] = None,
         **kwargs
     ):
         """
@@ -9817,7 +9785,7 @@ class VirtualMachinePublicIPAddressConfiguration(msrest.serialization.Model):
     :ivar idle_timeout_in_minutes: The idle timeout of the public IP address.
     :vartype idle_timeout_in_minutes: int
     :ivar delete_option: Specify what happens to the public IP address when the VM is deleted.
-     Possible values include: "Delete", "Detach".
+     Known values are: "Delete", "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2021_11_01.models.DeleteOptions
     :ivar dns_settings: The dns settings to be applied on the publicIP addresses .
     :vartype dns_settings:
@@ -9828,10 +9796,10 @@ class VirtualMachinePublicIPAddressConfiguration(msrest.serialization.Model):
     :vartype public_ip_prefix: ~azure.mgmt.compute.v2021_11_01.models.SubResource
     :ivar public_ip_address_version: Available from Api-Version 2019-07-01 onwards, it represents
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4. Possible values
-     are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+     are: 'IPv4' and 'IPv6'. Known values are: "IPv4", "IPv6".
     :vartype public_ip_address_version: str or ~azure.mgmt.compute.v2021_11_01.models.IPVersions
-    :ivar public_ip_allocation_method: Specify the public IP allocation type. Possible values
-     include: "Dynamic", "Static".
+    :ivar public_ip_allocation_method: Specify the public IP allocation type. Known values are:
+     "Dynamic", "Static".
     :vartype public_ip_allocation_method: str or
      ~azure.mgmt.compute.v2021_11_01.models.PublicIPAllocationMethod
     """
@@ -9856,14 +9824,14 @@ class VirtualMachinePublicIPAddressConfiguration(msrest.serialization.Model):
         self,
         *,
         name: str,
-        sku: Optional["PublicIPAddressSku"] = None,
+        sku: Optional["_models.PublicIPAddressSku"] = None,
         idle_timeout_in_minutes: Optional[int] = None,
-        delete_option: Optional[Union[str, "DeleteOptions"]] = None,
-        dns_settings: Optional["VirtualMachinePublicIPAddressDnsSettingsConfiguration"] = None,
-        ip_tags: Optional[List["VirtualMachineIpTag"]] = None,
-        public_ip_prefix: Optional["SubResource"] = None,
-        public_ip_address_version: Optional[Union[str, "IPVersions"]] = None,
-        public_ip_allocation_method: Optional[Union[str, "PublicIPAllocationMethod"]] = None,
+        delete_option: Optional[Union[str, "_models.DeleteOptions"]] = None,
+        dns_settings: Optional["_models.VirtualMachinePublicIPAddressDnsSettingsConfiguration"] = None,
+        ip_tags: Optional[List["_models.VirtualMachineIpTag"]] = None,
+        public_ip_prefix: Optional["_models.SubResource"] = None,
+        public_ip_address_version: Optional[Union[str, "_models.IPVersions"]] = None,
+        public_ip_allocation_method: Optional[Union[str, "_models.PublicIPAllocationMethod"]] = None,
         **kwargs
     ):
         """
@@ -9875,7 +9843,7 @@ class VirtualMachinePublicIPAddressConfiguration(msrest.serialization.Model):
         :keyword idle_timeout_in_minutes: The idle timeout of the public IP address.
         :paramtype idle_timeout_in_minutes: int
         :keyword delete_option: Specify what happens to the public IP address when the VM is deleted.
-         Possible values include: "Delete", "Detach".
+         Known values are: "Delete", "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2021_11_01.models.DeleteOptions
         :keyword dns_settings: The dns settings to be applied on the publicIP addresses .
         :paramtype dns_settings:
@@ -9886,10 +9854,10 @@ class VirtualMachinePublicIPAddressConfiguration(msrest.serialization.Model):
         :paramtype public_ip_prefix: ~azure.mgmt.compute.v2021_11_01.models.SubResource
         :keyword public_ip_address_version: Available from Api-Version 2019-07-01 onwards, it
          represents whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.
-         Possible values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+         Possible values are: 'IPv4' and 'IPv6'. Known values are: "IPv4", "IPv6".
         :paramtype public_ip_address_version: str or ~azure.mgmt.compute.v2021_11_01.models.IPVersions
-        :keyword public_ip_allocation_method: Specify the public IP allocation type. Possible values
-         include: "Dynamic", "Static".
+        :keyword public_ip_allocation_method: Specify the public IP allocation type. Known values are:
+         "Dynamic", "Static".
         :paramtype public_ip_allocation_method: str or
          ~azure.mgmt.compute.v2021_11_01.models.PublicIPAllocationMethod
         """
@@ -10047,9 +10015,9 @@ class VirtualMachineRunCommand(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        source: Optional["VirtualMachineRunCommandScriptSource"] = None,
-        parameters: Optional[List["RunCommandInputParameter"]] = None,
-        protected_parameters: Optional[List["RunCommandInputParameter"]] = None,
+        source: Optional["_models.VirtualMachineRunCommandScriptSource"] = None,
+        parameters: Optional[List["_models.RunCommandInputParameter"]] = None,
+        protected_parameters: Optional[List["_models.RunCommandInputParameter"]] = None,
         async_execution: Optional[bool] = False,
         run_as_user: Optional[str] = None,
         run_as_password: Optional[str] = None,
@@ -10104,7 +10072,7 @@ class VirtualMachineRunCommand(Resource):
 class VirtualMachineRunCommandInstanceView(msrest.serialization.Model):
     """The instance view of a virtual machine run command.
 
-    :ivar execution_state: Script execution status. Possible values include: "Unknown", "Pending",
+    :ivar execution_state: Script execution status. Known values are: "Unknown", "Pending",
      "Running", "Failed", "Succeeded", "TimedOut", "Canceled".
     :vartype execution_state: str or ~azure.mgmt.compute.v2021_11_01.models.ExecutionState
     :ivar execution_message: Communicate script configuration errors or execution messages.
@@ -10137,19 +10105,19 @@ class VirtualMachineRunCommandInstanceView(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        execution_state: Optional[Union[str, "ExecutionState"]] = None,
+        execution_state: Optional[Union[str, "_models.ExecutionState"]] = None,
         execution_message: Optional[str] = None,
         exit_code: Optional[int] = None,
         output: Optional[str] = None,
         error: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
         **kwargs
     ):
         """
-        :keyword execution_state: Script execution status. Possible values include: "Unknown",
-         "Pending", "Running", "Failed", "Succeeded", "TimedOut", "Canceled".
+        :keyword execution_state: Script execution status. Known values are: "Unknown", "Pending",
+         "Running", "Failed", "Succeeded", "TimedOut", "Canceled".
         :paramtype execution_state: str or ~azure.mgmt.compute.v2021_11_01.models.ExecutionState
         :keyword execution_message: Communicate script configuration errors or execution messages.
         :paramtype execution_message: str
@@ -10239,7 +10207,7 @@ class VirtualMachineRunCommandsListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["VirtualMachineRunCommand"],
+        value: List["_models.VirtualMachineRunCommand"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -10315,9 +10283,9 @@ class VirtualMachineRunCommandUpdate(UpdateResource):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        source: Optional["VirtualMachineRunCommandScriptSource"] = None,
-        parameters: Optional[List["RunCommandInputParameter"]] = None,
-        protected_parameters: Optional[List["RunCommandInputParameter"]] = None,
+        source: Optional["_models.VirtualMachineRunCommandScriptSource"] = None,
+        parameters: Optional[List["_models.RunCommandInputParameter"]] = None,
+        protected_parameters: Optional[List["_models.RunCommandInputParameter"]] = None,
         async_execution: Optional[bool] = False,
         run_as_user: Optional[str] = None,
         run_as_password: Optional[str] = None,
@@ -10444,7 +10412,7 @@ class VirtualMachineScaleSet(Resource):
      Virtual Machine Scale Set.
     :vartype scale_in_policy: ~azure.mgmt.compute.v2021_11_01.models.ScaleInPolicy
     :ivar orchestration_mode: Specifies the orchestration mode for the virtual machine scale set.
-     Possible values include: "Uniform", "Flexible".
+     Known values are: "Uniform", "Flexible".
     :vartype orchestration_mode: str or ~azure.mgmt.compute.v2021_11_01.models.OrchestrationMode
     :ivar spot_restore_policy: Specifies the Spot Restore properties for the virtual machine scale
      set.
@@ -10499,25 +10467,25 @@ class VirtualMachineScaleSet(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
-        plan: Optional["Plan"] = None,
-        identity: Optional["VirtualMachineScaleSetIdentity"] = None,
+        sku: Optional["_models.Sku"] = None,
+        plan: Optional["_models.Plan"] = None,
+        identity: Optional["_models.VirtualMachineScaleSetIdentity"] = None,
         zones: Optional[List[str]] = None,
-        extended_location: Optional["ExtendedLocation"] = None,
-        upgrade_policy: Optional["UpgradePolicy"] = None,
-        automatic_repairs_policy: Optional["AutomaticRepairsPolicy"] = None,
-        virtual_machine_profile: Optional["VirtualMachineScaleSetVMProfile"] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        upgrade_policy: Optional["_models.UpgradePolicy"] = None,
+        automatic_repairs_policy: Optional["_models.AutomaticRepairsPolicy"] = None,
+        virtual_machine_profile: Optional["_models.VirtualMachineScaleSetVMProfile"] = None,
         overprovision: Optional[bool] = None,
         do_not_run_extensions_on_overprovisioned_v_ms: Optional[bool] = None,
         single_placement_group: Optional[bool] = None,
         zone_balance: Optional[bool] = None,
         platform_fault_domain_count: Optional[int] = None,
-        proximity_placement_group: Optional["SubResource"] = None,
-        host_group: Optional["SubResource"] = None,
-        additional_capabilities: Optional["AdditionalCapabilities"] = None,
-        scale_in_policy: Optional["ScaleInPolicy"] = None,
-        orchestration_mode: Optional[Union[str, "OrchestrationMode"]] = None,
-        spot_restore_policy: Optional["SpotRestorePolicy"] = None,
+        proximity_placement_group: Optional["_models.SubResource"] = None,
+        host_group: Optional["_models.SubResource"] = None,
+        additional_capabilities: Optional["_models.AdditionalCapabilities"] = None,
+        scale_in_policy: Optional["_models.ScaleInPolicy"] = None,
+        orchestration_mode: Optional[Union[str, "_models.OrchestrationMode"]] = None,
+        spot_restore_policy: Optional["_models.SpotRestorePolicy"] = None,
         **kwargs
     ):
         """
@@ -10583,7 +10551,7 @@ class VirtualMachineScaleSet(Resource):
          the Virtual Machine Scale Set.
         :paramtype scale_in_policy: ~azure.mgmt.compute.v2021_11_01.models.ScaleInPolicy
         :keyword orchestration_mode: Specifies the orchestration mode for the virtual machine scale
-         set. Possible values include: "Uniform", "Flexible".
+         set. Known values are: "Uniform", "Flexible".
         :paramtype orchestration_mode: str or ~azure.mgmt.compute.v2021_11_01.models.OrchestrationMode
         :keyword spot_restore_policy: Specifies the Spot Restore properties for the virtual machine
          scale set.
@@ -10628,14 +10596,13 @@ class VirtualMachineScaleSetDataDisk(msrest.serialization.Model):
     :ivar caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-     storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-     "ReadWrite".
+     storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
     :ivar write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
      disabled on the disk.
     :vartype write_accelerator_enabled: bool
-    :ivar create_option: Required. The create option. Possible values include: "FromImage",
-     "Empty", "Attach".
+    :ivar create_option: Required. The create option. Known values are: "FromImage", "Empty",
+     "Attach".
     :vartype create_option: str or ~azure.mgmt.compute.v2021_11_01.models.DiskCreateOptionTypes
     :ivar disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can be
      used to overwrite the size of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
@@ -10675,12 +10642,12 @@ class VirtualMachineScaleSetDataDisk(msrest.serialization.Model):
         self,
         *,
         lun: int,
-        create_option: Union[str, "DiskCreateOptionTypes"],
+        create_option: Union[str, "_models.DiskCreateOptionTypes"],
         name: Optional[str] = None,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         write_accelerator_enabled: Optional[bool] = None,
         disk_size_gb: Optional[int] = None,
-        managed_disk: Optional["VirtualMachineScaleSetManagedDiskParameters"] = None,
+        managed_disk: Optional["_models.VirtualMachineScaleSetManagedDiskParameters"] = None,
         disk_iops_read_write: Optional[int] = None,
         disk_m_bps_read_write: Optional[int] = None,
         **kwargs
@@ -10695,14 +10662,13 @@ class VirtualMachineScaleSetDataDisk(msrest.serialization.Model):
         :keyword caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
          are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
          :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-         storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-         "ReadWrite".
+         storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
         :keyword write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
          disabled on the disk.
         :paramtype write_accelerator_enabled: bool
-        :keyword create_option: Required. The create option. Possible values include: "FromImage",
-         "Empty", "Attach".
+        :keyword create_option: Required. The create option. Known values are: "FromImage", "Empty",
+         "Attach".
         :paramtype create_option: str or ~azure.mgmt.compute.v2021_11_01.models.DiskCreateOptionTypes
         :keyword disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can
          be used to overwrite the size of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
@@ -10897,7 +10863,7 @@ class VirtualMachineScaleSetExtensionListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["VirtualMachineScaleSetExtension"],
+        value: List["_models.VirtualMachineScaleSetExtension"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -10934,7 +10900,7 @@ class VirtualMachineScaleSetExtensionProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        extensions: Optional[List["VirtualMachineScaleSetExtension"]] = None,
+        extensions: Optional[List["_models.VirtualMachineScaleSetExtension"]] = None,
         extensions_time_budget: Optional[str] = None,
         **kwargs
     ):
@@ -11108,7 +11074,7 @@ class VirtualMachineScaleSetHardwareProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        vm_size_properties: Optional["VMSizeProperties"] = None,
+        vm_size_properties: Optional["_models.VMSizeProperties"] = None,
         **kwargs
     ):
         """
@@ -11135,7 +11101,7 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
     :ivar type: The type of identity used for the virtual machine scale set. The type
      'SystemAssigned, UserAssigned' includes both an implicitly created identity and a set of user
      assigned identities. The type 'None' will remove any identities from the virtual machine scale
-     set. Possible values include: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned",
+     set. Known values are: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned",
      "None".
     :vartype type: str or ~azure.mgmt.compute.v2021_11_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the virtual machine
@@ -11160,15 +11126,15 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue"]] = None,
+        type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue"]] = None,
         **kwargs
     ):
         """
         :keyword type: The type of identity used for the virtual machine scale set. The type
          'SystemAssigned, UserAssigned' includes both an implicitly created identity and a set of user
          assigned identities. The type 'None' will remove any identities from the virtual machine scale
-         set. Possible values include: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned",
+         set. Known values are: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned",
          "None".
         :paramtype type: str or ~azure.mgmt.compute.v2021_11_01.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user identities associated with the virtual
@@ -11251,7 +11217,7 @@ class VirtualMachineScaleSetInstanceView(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
         **kwargs
     ):
         """
@@ -11312,7 +11278,7 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
      ~azure.mgmt.compute.v2021_11_01.models.VirtualMachineScaleSetPublicIPAddressConfiguration
     :ivar private_ip_address_version: Available from Api-Version 2017-03-30 onwards, it represents
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
-     values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+     values are: 'IPv4' and 'IPv6'. Known values are: "IPv4", "IPv6".
     :vartype private_ip_address_version: str or ~azure.mgmt.compute.v2021_11_01.models.IPVersion
     :ivar application_gateway_backend_address_pools: Specifies an array of references to backend
      address pools of application gateways. A scale set can reference backend address pools of
@@ -11356,14 +11322,14 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
         *,
         name: str,
         id: Optional[str] = None,
-        subnet: Optional["ApiEntityReference"] = None,
+        subnet: Optional["_models.ApiEntityReference"] = None,
         primary: Optional[bool] = None,
-        public_ip_address_configuration: Optional["VirtualMachineScaleSetPublicIPAddressConfiguration"] = None,
-        private_ip_address_version: Optional[Union[str, "IPVersion"]] = None,
-        application_gateway_backend_address_pools: Optional[List["SubResource"]] = None,
-        application_security_groups: Optional[List["SubResource"]] = None,
-        load_balancer_backend_address_pools: Optional[List["SubResource"]] = None,
-        load_balancer_inbound_nat_pools: Optional[List["SubResource"]] = None,
+        public_ip_address_configuration: Optional["_models.VirtualMachineScaleSetPublicIPAddressConfiguration"] = None,
+        private_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = None,
+        application_gateway_backend_address_pools: Optional[List["_models.SubResource"]] = None,
+        application_security_groups: Optional[List["_models.SubResource"]] = None,
+        load_balancer_backend_address_pools: Optional[List["_models.SubResource"]] = None,
+        load_balancer_inbound_nat_pools: Optional[List["_models.SubResource"]] = None,
         **kwargs
     ):
         """
@@ -11381,7 +11347,7 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
          ~azure.mgmt.compute.v2021_11_01.models.VirtualMachineScaleSetPublicIPAddressConfiguration
         :keyword private_ip_address_version: Available from Api-Version 2017-03-30 onwards, it
          represents whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.
-         Possible values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+         Possible values are: 'IPv4' and 'IPv6'. Known values are: "IPv4", "IPv6".
         :paramtype private_ip_address_version: str or ~azure.mgmt.compute.v2021_11_01.models.IPVersion
         :keyword application_gateway_backend_address_pools: Specifies an array of references to backend
          address pools of application gateways. A scale set can reference backend address pools of
@@ -11473,7 +11439,7 @@ class VirtualMachineScaleSetListOSUpgradeHistory(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["UpgradeOperationHistoricalStatusInfo"],
+        value: List["_models.UpgradeOperationHistoricalStatusInfo"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -11514,7 +11480,7 @@ class VirtualMachineScaleSetListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["VirtualMachineScaleSet"],
+        value: List["_models.VirtualMachineScaleSet"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -11554,7 +11520,7 @@ class VirtualMachineScaleSetListSkusResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["VirtualMachineScaleSetSku"],
+        value: List["_models.VirtualMachineScaleSetSku"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -11594,7 +11560,7 @@ class VirtualMachineScaleSetListWithLinkResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["VirtualMachineScaleSet"],
+        value: List["_models.VirtualMachineScaleSet"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -11614,8 +11580,8 @@ class VirtualMachineScaleSetManagedDiskParameters(msrest.serialization.Model):
     """Describes the parameters of a ScaleSet managed disk.
 
     :ivar storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
+     are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
      "StandardSSD_ZRS".
     :vartype storage_account_type: str or
      ~azure.mgmt.compute.v2021_11_01.models.StorageAccountTypes
@@ -11636,15 +11602,15 @@ class VirtualMachineScaleSetManagedDiskParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        storage_account_type: Optional[Union[str, "StorageAccountTypes"]] = None,
-        disk_encryption_set: Optional["DiskEncryptionSetParameters"] = None,
-        security_profile: Optional["VMDiskSecurityProfile"] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = None,
+        disk_encryption_set: Optional["_models.DiskEncryptionSetParameters"] = None,
+        security_profile: Optional["_models.VMDiskSecurityProfile"] = None,
         **kwargs
     ):
         """
         :keyword storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-         UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-         include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+         UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
+         are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
          "StandardSSD_ZRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2021_11_01.models.StorageAccountTypes
@@ -11689,7 +11655,7 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
     :ivar enable_ip_forwarding: Whether IP forwarding enabled on this NIC.
     :vartype enable_ip_forwarding: bool
     :ivar delete_option: Specify what happens to the network interface when the VM is deleted.
-     Possible values include: "Delete", "Detach".
+     Known values are: "Delete", "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2021_11_01.models.DeleteOptions
     """
 
@@ -11718,11 +11684,11 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
         primary: Optional[bool] = None,
         enable_accelerated_networking: Optional[bool] = None,
         enable_fpga: Optional[bool] = None,
-        network_security_group: Optional["SubResource"] = None,
-        dns_settings: Optional["VirtualMachineScaleSetNetworkConfigurationDnsSettings"] = None,
-        ip_configurations: Optional[List["VirtualMachineScaleSetIPConfiguration"]] = None,
+        network_security_group: Optional["_models.SubResource"] = None,
+        dns_settings: Optional["_models.VirtualMachineScaleSetNetworkConfigurationDnsSettings"] = None,
+        ip_configurations: Optional[List["_models.VirtualMachineScaleSetIPConfiguration"]] = None,
         enable_ip_forwarding: Optional[bool] = None,
-        delete_option: Optional[Union[str, "DeleteOptions"]] = None,
+        delete_option: Optional[Union[str, "_models.DeleteOptions"]] = None,
         **kwargs
     ):
         """
@@ -11749,7 +11715,7 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
         :keyword enable_ip_forwarding: Whether IP forwarding enabled on this NIC.
         :paramtype enable_ip_forwarding: bool
         :keyword delete_option: Specify what happens to the network interface when the VM is deleted.
-         Possible values include: "Delete", "Detach".
+         Known values are: "Delete", "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2021_11_01.models.DeleteOptions
         """
         super(VirtualMachineScaleSetNetworkConfiguration, self).__init__(id=id, **kwargs)
@@ -11801,7 +11767,7 @@ class VirtualMachineScaleSetNetworkProfile(msrest.serialization.Model):
      list[~azure.mgmt.compute.v2021_11_01.models.VirtualMachineScaleSetNetworkConfiguration]
     :ivar network_api_version: specifies the Microsoft.Network API version used when creating
      networking resources in the Network Interface Configurations for Virtual Machine Scale Set with
-     orchestration mode 'Flexible'. Possible values include: "2020-11-01".
+     orchestration mode 'Flexible'. Known values are: "2020-11-01".
     :vartype network_api_version: str or ~azure.mgmt.compute.v2021_11_01.models.NetworkApiVersion
     """
 
@@ -11814,9 +11780,9 @@ class VirtualMachineScaleSetNetworkProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        health_probe: Optional["ApiEntityReference"] = None,
-        network_interface_configurations: Optional[List["VirtualMachineScaleSetNetworkConfiguration"]] = None,
-        network_api_version: Optional[Union[str, "NetworkApiVersion"]] = None,
+        health_probe: Optional["_models.ApiEntityReference"] = None,
+        network_interface_configurations: Optional[List["_models.VirtualMachineScaleSetNetworkConfiguration"]] = None,
+        network_api_version: Optional[Union[str, "_models.NetworkApiVersion"]] = None,
         **kwargs
     ):
         """
@@ -11829,7 +11795,7 @@ class VirtualMachineScaleSetNetworkProfile(msrest.serialization.Model):
          list[~azure.mgmt.compute.v2021_11_01.models.VirtualMachineScaleSetNetworkConfiguration]
         :keyword network_api_version: specifies the Microsoft.Network API version used when creating
          networking resources in the Network Interface Configurations for Virtual Machine Scale Set with
-         orchestration mode 'Flexible'. Possible values include: "2020-11-01".
+         orchestration mode 'Flexible'. Known values are: "2020-11-01".
         :paramtype network_api_version: str or ~azure.mgmt.compute.v2021_11_01.models.NetworkApiVersion
         """
         super(VirtualMachineScaleSetNetworkProfile, self).__init__(**kwargs)
@@ -11848,8 +11814,7 @@ class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
     :ivar caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-     storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-     "ReadWrite".
+     storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
     :ivar write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
      disabled on the disk.
@@ -11858,8 +11823,8 @@ class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
      created.:code:`<br>`:code:`<br>` The only allowed value is: **FromImage** \u2013 This value is
      used when you are using an image to create the virtual machine. If you are using a platform
      image, you also use the imageReference element described above. If you are using a marketplace
-     image, you  also use the plan element previously described. Possible values include:
-     "FromImage", "Empty", "Attach".
+     image, you  also use the plan element previously described. Known values are: "FromImage",
+     "Empty", "Attach".
     :vartype create_option: str or ~azure.mgmt.compute.v2021_11_01.models.DiskCreateOptionTypes
     :ivar diff_disk_settings: Specifies the ephemeral disk Settings for the operating system disk
      used by the virtual machine scale set.
@@ -11870,8 +11835,8 @@ class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
     :vartype disk_size_gb: int
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk if creating a VM from user-image or a specialized VHD. :code:`<br>`:code:`<br>` Possible
-     values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible
-     values include: "Windows", "Linux".
+     values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known
+     values are: "Windows", "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2021_11_01.models.OperatingSystemTypes
     :ivar image: Specifies information about the unmanaged user image to base the scale set on.
     :vartype image: ~azure.mgmt.compute.v2021_11_01.models.VirtualHardDisk
@@ -11903,16 +11868,16 @@ class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        create_option: Union[str, "DiskCreateOptionTypes"],
+        create_option: Union[str, "_models.DiskCreateOptionTypes"],
         name: Optional[str] = None,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         write_accelerator_enabled: Optional[bool] = None,
-        diff_disk_settings: Optional["DiffDiskSettings"] = None,
+        diff_disk_settings: Optional["_models.DiffDiskSettings"] = None,
         disk_size_gb: Optional[int] = None,
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
-        image: Optional["VirtualHardDisk"] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        image: Optional["_models.VirtualHardDisk"] = None,
         vhd_containers: Optional[List[str]] = None,
-        managed_disk: Optional["VirtualMachineScaleSetManagedDiskParameters"] = None,
+        managed_disk: Optional["_models.VirtualMachineScaleSetManagedDiskParameters"] = None,
         **kwargs
     ):
         """
@@ -11921,8 +11886,7 @@ class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
         :keyword caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
          are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
          :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-         storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
-         "ReadWrite".
+         storage. ReadOnly for Premium storage**. Known values are: "None", "ReadOnly", "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
         :keyword write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
          disabled on the disk.
@@ -11931,8 +11895,8 @@ class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
          created.:code:`<br>`:code:`<br>` The only allowed value is: **FromImage** \u2013 This value is
          used when you are using an image to create the virtual machine. If you are using a platform
          image, you also use the imageReference element described above. If you are using a marketplace
-         image, you  also use the plan element previously described. Possible values include:
-         "FromImage", "Empty", "Attach".
+         image, you  also use the plan element previously described. Known values are: "FromImage",
+         "Empty", "Attach".
         :paramtype create_option: str or ~azure.mgmt.compute.v2021_11_01.models.DiskCreateOptionTypes
         :keyword diff_disk_settings: Specifies the ephemeral disk Settings for the operating system
          disk used by the virtual machine scale set.
@@ -11944,7 +11908,7 @@ class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
         :keyword os_type: This property allows you to specify the type of the OS that is included in
          the disk if creating a VM from user-image or a specialized VHD. :code:`<br>`:code:`<br>`
          Possible values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**.
-         Possible values include: "Windows", "Linux".
+         Known values are: "Windows", "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2021_11_01.models.OperatingSystemTypes
         :keyword image: Specifies information about the unmanaged user image to base the scale set on.
         :paramtype image: ~azure.mgmt.compute.v2021_11_01.models.VirtualHardDisk
@@ -12043,9 +12007,9 @@ class VirtualMachineScaleSetOSProfile(msrest.serialization.Model):
         admin_username: Optional[str] = None,
         admin_password: Optional[str] = None,
         custom_data: Optional[str] = None,
-        windows_configuration: Optional["WindowsConfiguration"] = None,
-        linux_configuration: Optional["LinuxConfiguration"] = None,
-        secrets: Optional[List["VaultSecretGroup"]] = None,
+        windows_configuration: Optional["_models.WindowsConfiguration"] = None,
+        linux_configuration: Optional["_models.LinuxConfiguration"] = None,
+        secrets: Optional[List["_models.VaultSecretGroup"]] = None,
         allow_extension_operations: Optional[bool] = None,
         **kwargs
     ):
@@ -12135,10 +12099,10 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(msrest.serialization.Mo
     :vartype public_ip_prefix: ~azure.mgmt.compute.v2021_11_01.models.SubResource
     :ivar public_ip_address_version: Available from Api-Version 2019-07-01 onwards, it represents
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4. Possible values
-     are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+     are: 'IPv4' and 'IPv6'. Known values are: "IPv4", "IPv6".
     :vartype public_ip_address_version: str or ~azure.mgmt.compute.v2021_11_01.models.IPVersion
-    :ivar delete_option: Specify what happens to the public IP when the VM is deleted. Possible
-     values include: "Delete", "Detach".
+    :ivar delete_option: Specify what happens to the public IP when the VM is deleted. Known values
+     are: "Delete", "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2021_11_01.models.DeleteOptions
     """
 
@@ -12161,13 +12125,13 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(msrest.serialization.Mo
         self,
         *,
         name: str,
-        sku: Optional["PublicIPAddressSku"] = None,
+        sku: Optional["_models.PublicIPAddressSku"] = None,
         idle_timeout_in_minutes: Optional[int] = None,
-        dns_settings: Optional["VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings"] = None,
-        ip_tags: Optional[List["VirtualMachineScaleSetIpTag"]] = None,
-        public_ip_prefix: Optional["SubResource"] = None,
-        public_ip_address_version: Optional[Union[str, "IPVersion"]] = None,
-        delete_option: Optional[Union[str, "DeleteOptions"]] = None,
+        dns_settings: Optional["_models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings"] = None,
+        ip_tags: Optional[List["_models.VirtualMachineScaleSetIpTag"]] = None,
+        public_ip_prefix: Optional["_models.SubResource"] = None,
+        public_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = None,
+        delete_option: Optional[Union[str, "_models.DeleteOptions"]] = None,
         **kwargs
     ):
         """
@@ -12187,10 +12151,10 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(msrest.serialization.Mo
         :paramtype public_ip_prefix: ~azure.mgmt.compute.v2021_11_01.models.SubResource
         :keyword public_ip_address_version: Available from Api-Version 2019-07-01 onwards, it
          represents whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.
-         Possible values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+         Possible values are: 'IPv4' and 'IPv6'. Known values are: "IPv4", "IPv6".
         :paramtype public_ip_address_version: str or ~azure.mgmt.compute.v2021_11_01.models.IPVersion
-        :keyword delete_option: Specify what happens to the public IP when the VM is deleted. Possible
-         values include: "Delete", "Detach".
+        :keyword delete_option: Specify what happens to the public IP when the VM is deleted. Known
+         values are: "Delete", "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2021_11_01.models.DeleteOptions
         """
         super(VirtualMachineScaleSetPublicIPAddressConfiguration, self).__init__(**kwargs)
@@ -12350,8 +12314,7 @@ class VirtualMachineScaleSetSkuCapacity(msrest.serialization.Model):
     :vartype maximum: long
     :ivar default_capacity: The default capacity.
     :vartype default_capacity: long
-    :ivar scale_type: The scale type applicable to the sku. Possible values include: "Automatic",
-     "None".
+    :ivar scale_type: The scale type applicable to the sku. Known values are: "Automatic", "None".
     :vartype scale_type: str or
      ~azure.mgmt.compute.v2021_11_01.models.VirtualMachineScaleSetSkuScaleType
     """
@@ -12413,9 +12376,9 @@ class VirtualMachineScaleSetStorageProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        image_reference: Optional["ImageReference"] = None,
-        os_disk: Optional["VirtualMachineScaleSetOSDisk"] = None,
-        data_disks: Optional[List["VirtualMachineScaleSetDataDisk"]] = None,
+        image_reference: Optional["_models.ImageReference"] = None,
+        os_disk: Optional["_models.VirtualMachineScaleSetOSDisk"] = None,
+        data_disks: Optional[List["_models.VirtualMachineScaleSetDataDisk"]] = None,
         **kwargs
     ):
         """
@@ -12506,18 +12469,18 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
-        plan: Optional["Plan"] = None,
-        identity: Optional["VirtualMachineScaleSetIdentity"] = None,
-        upgrade_policy: Optional["UpgradePolicy"] = None,
-        automatic_repairs_policy: Optional["AutomaticRepairsPolicy"] = None,
-        virtual_machine_profile: Optional["VirtualMachineScaleSetUpdateVMProfile"] = None,
+        sku: Optional["_models.Sku"] = None,
+        plan: Optional["_models.Plan"] = None,
+        identity: Optional["_models.VirtualMachineScaleSetIdentity"] = None,
+        upgrade_policy: Optional["_models.UpgradePolicy"] = None,
+        automatic_repairs_policy: Optional["_models.AutomaticRepairsPolicy"] = None,
+        virtual_machine_profile: Optional["_models.VirtualMachineScaleSetUpdateVMProfile"] = None,
         overprovision: Optional[bool] = None,
         do_not_run_extensions_on_overprovisioned_v_ms: Optional[bool] = None,
         single_placement_group: Optional[bool] = None,
-        additional_capabilities: Optional["AdditionalCapabilities"] = None,
-        scale_in_policy: Optional["ScaleInPolicy"] = None,
-        proximity_placement_group: Optional["SubResource"] = None,
+        additional_capabilities: Optional["_models.AdditionalCapabilities"] = None,
+        scale_in_policy: Optional["_models.ScaleInPolicy"] = None,
+        proximity_placement_group: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
@@ -12595,7 +12558,7 @@ class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
      ~azure.mgmt.compute.v2021_11_01.models.VirtualMachineScaleSetUpdatePublicIPAddressConfiguration
     :ivar private_ip_address_version: Available from Api-Version 2017-03-30 onwards, it represents
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
-     values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+     values are: 'IPv4' and 'IPv6'. Known values are: "IPv4", "IPv6".
     :vartype private_ip_address_version: str or ~azure.mgmt.compute.v2021_11_01.models.IPVersion
     :ivar application_gateway_backend_address_pools: The application gateway backend address pools.
     :vartype application_gateway_backend_address_pools:
@@ -12629,14 +12592,14 @@ class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
         *,
         id: Optional[str] = None,
         name: Optional[str] = None,
-        subnet: Optional["ApiEntityReference"] = None,
+        subnet: Optional["_models.ApiEntityReference"] = None,
         primary: Optional[bool] = None,
-        public_ip_address_configuration: Optional["VirtualMachineScaleSetUpdatePublicIPAddressConfiguration"] = None,
-        private_ip_address_version: Optional[Union[str, "IPVersion"]] = None,
-        application_gateway_backend_address_pools: Optional[List["SubResource"]] = None,
-        application_security_groups: Optional[List["SubResource"]] = None,
-        load_balancer_backend_address_pools: Optional[List["SubResource"]] = None,
-        load_balancer_inbound_nat_pools: Optional[List["SubResource"]] = None,
+        public_ip_address_configuration: Optional["_models.VirtualMachineScaleSetUpdatePublicIPAddressConfiguration"] = None,
+        private_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = None,
+        application_gateway_backend_address_pools: Optional[List["_models.SubResource"]] = None,
+        application_security_groups: Optional[List["_models.SubResource"]] = None,
+        load_balancer_backend_address_pools: Optional[List["_models.SubResource"]] = None,
+        load_balancer_inbound_nat_pools: Optional[List["_models.SubResource"]] = None,
         **kwargs
     ):
         """
@@ -12654,7 +12617,7 @@ class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
          ~azure.mgmt.compute.v2021_11_01.models.VirtualMachineScaleSetUpdatePublicIPAddressConfiguration
         :keyword private_ip_address_version: Available from Api-Version 2017-03-30 onwards, it
          represents whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.
-         Possible values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+         Possible values are: 'IPv4' and 'IPv6'. Known values are: "IPv4", "IPv6".
         :paramtype private_ip_address_version: str or ~azure.mgmt.compute.v2021_11_01.models.IPVersion
         :keyword application_gateway_backend_address_pools: The application gateway backend address
          pools.
@@ -12708,7 +12671,7 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
     :ivar enable_ip_forwarding: Whether IP forwarding enabled on this NIC.
     :vartype enable_ip_forwarding: bool
     :ivar delete_option: Specify what happens to the network interface when the VM is deleted.
-     Possible values include: "Delete", "Detach".
+     Known values are: "Delete", "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2021_11_01.models.DeleteOptions
     """
 
@@ -12733,11 +12696,11 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
         primary: Optional[bool] = None,
         enable_accelerated_networking: Optional[bool] = None,
         enable_fpga: Optional[bool] = None,
-        network_security_group: Optional["SubResource"] = None,
-        dns_settings: Optional["VirtualMachineScaleSetNetworkConfigurationDnsSettings"] = None,
-        ip_configurations: Optional[List["VirtualMachineScaleSetUpdateIPConfiguration"]] = None,
+        network_security_group: Optional["_models.SubResource"] = None,
+        dns_settings: Optional["_models.VirtualMachineScaleSetNetworkConfigurationDnsSettings"] = None,
+        ip_configurations: Optional[List["_models.VirtualMachineScaleSetUpdateIPConfiguration"]] = None,
         enable_ip_forwarding: Optional[bool] = None,
-        delete_option: Optional[Union[str, "DeleteOptions"]] = None,
+        delete_option: Optional[Union[str, "_models.DeleteOptions"]] = None,
         **kwargs
     ):
         """
@@ -12763,7 +12726,7 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
         :keyword enable_ip_forwarding: Whether IP forwarding enabled on this NIC.
         :paramtype enable_ip_forwarding: bool
         :keyword delete_option: Specify what happens to the network interface when the VM is deleted.
-         Possible values include: "Delete", "Detach".
+         Known values are: "Delete", "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2021_11_01.models.DeleteOptions
         """
         super(VirtualMachineScaleSetUpdateNetworkConfiguration, self).__init__(id=id, **kwargs)
@@ -12790,7 +12753,7 @@ class VirtualMachineScaleSetUpdateNetworkProfile(msrest.serialization.Model):
      list[~azure.mgmt.compute.v2021_11_01.models.VirtualMachineScaleSetUpdateNetworkConfiguration]
     :ivar network_api_version: specifies the Microsoft.Network API version used when creating
      networking resources in the Network Interface Configurations for Virtual Machine Scale Set with
-     orchestration mode 'Flexible'. Possible values include: "2020-11-01".
+     orchestration mode 'Flexible'. Known values are: "2020-11-01".
     :vartype network_api_version: str or ~azure.mgmt.compute.v2021_11_01.models.NetworkApiVersion
     """
 
@@ -12803,9 +12766,9 @@ class VirtualMachineScaleSetUpdateNetworkProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        health_probe: Optional["ApiEntityReference"] = None,
-        network_interface_configurations: Optional[List["VirtualMachineScaleSetUpdateNetworkConfiguration"]] = None,
-        network_api_version: Optional[Union[str, "NetworkApiVersion"]] = None,
+        health_probe: Optional["_models.ApiEntityReference"] = None,
+        network_interface_configurations: Optional[List["_models.VirtualMachineScaleSetUpdateNetworkConfiguration"]] = None,
+        network_api_version: Optional[Union[str, "_models.NetworkApiVersion"]] = None,
         **kwargs
     ):
         """
@@ -12818,7 +12781,7 @@ class VirtualMachineScaleSetUpdateNetworkProfile(msrest.serialization.Model):
          list[~azure.mgmt.compute.v2021_11_01.models.VirtualMachineScaleSetUpdateNetworkConfiguration]
         :keyword network_api_version: specifies the Microsoft.Network API version used when creating
          networking resources in the Network Interface Configurations for Virtual Machine Scale Set with
-         orchestration mode 'Flexible'. Possible values include: "2020-11-01".
+         orchestration mode 'Flexible'. Known values are: "2020-11-01".
         :paramtype network_api_version: str or ~azure.mgmt.compute.v2021_11_01.models.NetworkApiVersion
         """
         super(VirtualMachineScaleSetUpdateNetworkProfile, self).__init__(**kwargs)
@@ -12830,7 +12793,7 @@ class VirtualMachineScaleSetUpdateNetworkProfile(msrest.serialization.Model):
 class VirtualMachineScaleSetUpdateOSDisk(msrest.serialization.Model):
     """Describes virtual machine scale set operating system disk Update Object. This should be used for Updating VMSS OS Disk.
 
-    :ivar caching: The caching type. Possible values include: "None", "ReadOnly", "ReadWrite".
+    :ivar caching: The caching type. Known values are: "None", "ReadOnly", "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
     :ivar write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
      disabled on the disk.
@@ -12862,16 +12825,16 @@ class VirtualMachineScaleSetUpdateOSDisk(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        caching: Optional[Union[str, "CachingTypes"]] = None,
+        caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         write_accelerator_enabled: Optional[bool] = None,
         disk_size_gb: Optional[int] = None,
-        image: Optional["VirtualHardDisk"] = None,
+        image: Optional["_models.VirtualHardDisk"] = None,
         vhd_containers: Optional[List[str]] = None,
-        managed_disk: Optional["VirtualMachineScaleSetManagedDiskParameters"] = None,
+        managed_disk: Optional["_models.VirtualMachineScaleSetManagedDiskParameters"] = None,
         **kwargs
     ):
         """
-        :keyword caching: The caching type. Possible values include: "None", "ReadOnly", "ReadWrite".
+        :keyword caching: The caching type. Known values are: "None", "ReadOnly", "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2021_11_01.models.CachingTypes
         :keyword write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
          disabled on the disk.
@@ -12923,9 +12886,9 @@ class VirtualMachineScaleSetUpdateOSProfile(msrest.serialization.Model):
         self,
         *,
         custom_data: Optional[str] = None,
-        windows_configuration: Optional["WindowsConfiguration"] = None,
-        linux_configuration: Optional["LinuxConfiguration"] = None,
-        secrets: Optional[List["VaultSecretGroup"]] = None,
+        windows_configuration: Optional["_models.WindowsConfiguration"] = None,
+        linux_configuration: Optional["_models.LinuxConfiguration"] = None,
+        secrets: Optional[List["_models.VaultSecretGroup"]] = None,
         **kwargs
     ):
         """
@@ -12957,8 +12920,8 @@ class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(msrest.serializat
      ~azure.mgmt.compute.v2021_11_01.models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
     :ivar public_ip_prefix: The PublicIPPrefix from which to allocate publicIP addresses.
     :vartype public_ip_prefix: ~azure.mgmt.compute.v2021_11_01.models.SubResource
-    :ivar delete_option: Specify what happens to the public IP when the VM is deleted. Possible
-     values include: "Delete", "Detach".
+    :ivar delete_option: Specify what happens to the public IP when the VM is deleted. Known values
+     are: "Delete", "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2021_11_01.models.DeleteOptions
     """
 
@@ -12975,9 +12938,9 @@ class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(msrest.serializat
         *,
         name: Optional[str] = None,
         idle_timeout_in_minutes: Optional[int] = None,
-        dns_settings: Optional["VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings"] = None,
-        public_ip_prefix: Optional["SubResource"] = None,
-        delete_option: Optional[Union[str, "DeleteOptions"]] = None,
+        dns_settings: Optional["_models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings"] = None,
+        public_ip_prefix: Optional["_models.SubResource"] = None,
+        delete_option: Optional[Union[str, "_models.DeleteOptions"]] = None,
         **kwargs
     ):
         """
@@ -12990,8 +12953,8 @@ class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(msrest.serializat
          ~azure.mgmt.compute.v2021_11_01.models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
         :keyword public_ip_prefix: The PublicIPPrefix from which to allocate publicIP addresses.
         :paramtype public_ip_prefix: ~azure.mgmt.compute.v2021_11_01.models.SubResource
-        :keyword delete_option: Specify what happens to the public IP when the VM is deleted. Possible
-         values include: "Delete", "Detach".
+        :keyword delete_option: Specify what happens to the public IP when the VM is deleted. Known
+         values are: "Delete", "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2021_11_01.models.DeleteOptions
         """
         super(VirtualMachineScaleSetUpdatePublicIPAddressConfiguration, self).__init__(**kwargs)
@@ -13023,9 +12986,9 @@ class VirtualMachineScaleSetUpdateStorageProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        image_reference: Optional["ImageReference"] = None,
-        os_disk: Optional["VirtualMachineScaleSetUpdateOSDisk"] = None,
-        data_disks: Optional[List["VirtualMachineScaleSetDataDisk"]] = None,
+        image_reference: Optional["_models.ImageReference"] = None,
+        os_disk: Optional["_models.VirtualMachineScaleSetUpdateOSDisk"] = None,
+        data_disks: Optional[List["_models.VirtualMachineScaleSetDataDisk"]] = None,
         **kwargs
     ):
         """
@@ -13091,15 +13054,15 @@ class VirtualMachineScaleSetUpdateVMProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        os_profile: Optional["VirtualMachineScaleSetUpdateOSProfile"] = None,
-        storage_profile: Optional["VirtualMachineScaleSetUpdateStorageProfile"] = None,
-        network_profile: Optional["VirtualMachineScaleSetUpdateNetworkProfile"] = None,
-        security_profile: Optional["SecurityProfile"] = None,
-        diagnostics_profile: Optional["DiagnosticsProfile"] = None,
-        extension_profile: Optional["VirtualMachineScaleSetExtensionProfile"] = None,
+        os_profile: Optional["_models.VirtualMachineScaleSetUpdateOSProfile"] = None,
+        storage_profile: Optional["_models.VirtualMachineScaleSetUpdateStorageProfile"] = None,
+        network_profile: Optional["_models.VirtualMachineScaleSetUpdateNetworkProfile"] = None,
+        security_profile: Optional["_models.SecurityProfile"] = None,
+        diagnostics_profile: Optional["_models.DiagnosticsProfile"] = None,
+        extension_profile: Optional["_models.VirtualMachineScaleSetExtensionProfile"] = None,
         license_type: Optional[str] = None,
-        billing_profile: Optional["BillingProfile"] = None,
-        scheduled_events_profile: Optional["ScheduledEventsProfile"] = None,
+        billing_profile: Optional["_models.BillingProfile"] = None,
+        scheduled_events_profile: Optional["_models.ScheduledEventsProfile"] = None,
         user_data: Optional[str] = None,
         **kwargs
     ):
@@ -13292,18 +13255,18 @@ class VirtualMachineScaleSetVM(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        plan: Optional["Plan"] = None,
-        hardware_profile: Optional["HardwareProfile"] = None,
-        storage_profile: Optional["StorageProfile"] = None,
-        additional_capabilities: Optional["AdditionalCapabilities"] = None,
-        os_profile: Optional["OSProfile"] = None,
-        security_profile: Optional["SecurityProfile"] = None,
-        network_profile: Optional["NetworkProfile"] = None,
-        network_profile_configuration: Optional["VirtualMachineScaleSetVMNetworkProfileConfiguration"] = None,
-        diagnostics_profile: Optional["DiagnosticsProfile"] = None,
-        availability_set: Optional["SubResource"] = None,
+        plan: Optional["_models.Plan"] = None,
+        hardware_profile: Optional["_models.HardwareProfile"] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
+        additional_capabilities: Optional["_models.AdditionalCapabilities"] = None,
+        os_profile: Optional["_models.OSProfile"] = None,
+        security_profile: Optional["_models.SecurityProfile"] = None,
+        network_profile: Optional["_models.NetworkProfile"] = None,
+        network_profile_configuration: Optional["_models.VirtualMachineScaleSetVMNetworkProfileConfiguration"] = None,
+        diagnostics_profile: Optional["_models.DiagnosticsProfile"] = None,
+        availability_set: Optional["_models.SubResource"] = None,
         license_type: Optional[str] = None,
-        protection_policy: Optional["VirtualMachineScaleSetVMProtectionPolicy"] = None,
+        protection_policy: Optional["_models.VirtualMachineScaleSetVMProtectionPolicy"] = None,
         user_data: Optional[str] = None,
         **kwargs
     ):
@@ -13478,7 +13441,7 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
         enable_automatic_upgrade: Optional[bool] = None,
         settings: Optional[Any] = None,
         protected_settings: Optional[Any] = None,
-        instance_view: Optional["VirtualMachineExtensionInstanceView"] = None,
+        instance_view: Optional["_models.VirtualMachineExtensionInstanceView"] = None,
         suppress_failures: Optional[bool] = None,
         protected_settings_from_key_vault: Optional[Any] = None,
         **kwargs
@@ -13548,7 +13511,7 @@ class VirtualMachineScaleSetVMExtensionsListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["VirtualMachineScaleSetVMExtension"]] = None,
+        value: Optional[List["_models.VirtualMachineScaleSetVMExtension"]] = None,
         **kwargs
     ):
         """
@@ -13844,12 +13807,12 @@ class VirtualMachineScaleSetVMInstanceView(msrest.serialization.Model):
         platform_update_domain: Optional[int] = None,
         platform_fault_domain: Optional[int] = None,
         rdp_thumb_print: Optional[str] = None,
-        vm_agent: Optional["VirtualMachineAgentInstanceView"] = None,
-        maintenance_redeploy_status: Optional["MaintenanceRedeployStatus"] = None,
-        disks: Optional[List["DiskInstanceView"]] = None,
-        extensions: Optional[List["VirtualMachineExtensionInstanceView"]] = None,
-        boot_diagnostics: Optional["BootDiagnosticsInstanceView"] = None,
-        statuses: Optional[List["InstanceViewStatus"]] = None,
+        vm_agent: Optional["_models.VirtualMachineAgentInstanceView"] = None,
+        maintenance_redeploy_status: Optional["_models.MaintenanceRedeployStatus"] = None,
+        disks: Optional[List["_models.DiskInstanceView"]] = None,
+        extensions: Optional[List["_models.VirtualMachineExtensionInstanceView"]] = None,
+        boot_diagnostics: Optional["_models.BootDiagnosticsInstanceView"] = None,
+        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
         placement_group_id: Optional[str] = None,
         **kwargs
     ):
@@ -13920,7 +13883,7 @@ class VirtualMachineScaleSetVMListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["VirtualMachineScaleSetVM"],
+        value: List["_models.VirtualMachineScaleSetVM"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -13951,7 +13914,7 @@ class VirtualMachineScaleSetVMNetworkProfileConfiguration(msrest.serialization.M
     def __init__(
         self,
         *,
-        network_interface_configurations: Optional[List["VirtualMachineScaleSetNetworkConfiguration"]] = None,
+        network_interface_configurations: Optional[List["_models.VirtualMachineScaleSetNetworkConfiguration"]] = None,
         **kwargs
     ):
         """
@@ -13998,15 +13961,14 @@ class VirtualMachineScaleSetVMProfile(msrest.serialization.Model):
      :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
     :vartype license_type: str
     :ivar priority: Specifies the priority for the virtual machines in the scale set.
-     :code:`<br>`:code:`<br>`Minimum api-version: 2017-10-30-preview. Possible values include:
-     "Regular", "Low", "Spot".
+     :code:`<br>`:code:`<br>`Minimum api-version: 2017-10-30-preview. Known values are: "Regular",
+     "Low", "Spot".
     :vartype priority: str or ~azure.mgmt.compute.v2021_11_01.models.VirtualMachinePriorityTypes
     :ivar eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
      Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, both
      'Deallocate' and 'Delete' are supported and the minimum api-version is 2019-03-01.
      :code:`<br>`:code:`<br>`For Azure Spot scale sets, both 'Deallocate' and 'Delete' are supported
-     and the minimum api-version is 2017-10-30-preview. Possible values include: "Deallocate",
-     "Delete".
+     and the minimum api-version is 2017-10-30-preview. Known values are: "Deallocate", "Delete".
     :vartype eviction_policy: str or
      ~azure.mgmt.compute.v2021_11_01.models.VirtualMachineEvictionPolicyTypes
     :ivar billing_profile: Specifies the billing related details of a Azure Spot VMSS.
@@ -14053,21 +14015,21 @@ class VirtualMachineScaleSetVMProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        os_profile: Optional["VirtualMachineScaleSetOSProfile"] = None,
-        storage_profile: Optional["VirtualMachineScaleSetStorageProfile"] = None,
-        network_profile: Optional["VirtualMachineScaleSetNetworkProfile"] = None,
-        security_profile: Optional["SecurityProfile"] = None,
-        diagnostics_profile: Optional["DiagnosticsProfile"] = None,
-        extension_profile: Optional["VirtualMachineScaleSetExtensionProfile"] = None,
+        os_profile: Optional["_models.VirtualMachineScaleSetOSProfile"] = None,
+        storage_profile: Optional["_models.VirtualMachineScaleSetStorageProfile"] = None,
+        network_profile: Optional["_models.VirtualMachineScaleSetNetworkProfile"] = None,
+        security_profile: Optional["_models.SecurityProfile"] = None,
+        diagnostics_profile: Optional["_models.DiagnosticsProfile"] = None,
+        extension_profile: Optional["_models.VirtualMachineScaleSetExtensionProfile"] = None,
         license_type: Optional[str] = None,
-        priority: Optional[Union[str, "VirtualMachinePriorityTypes"]] = None,
-        eviction_policy: Optional[Union[str, "VirtualMachineEvictionPolicyTypes"]] = None,
-        billing_profile: Optional["BillingProfile"] = None,
-        scheduled_events_profile: Optional["ScheduledEventsProfile"] = None,
+        priority: Optional[Union[str, "_models.VirtualMachinePriorityTypes"]] = None,
+        eviction_policy: Optional[Union[str, "_models.VirtualMachineEvictionPolicyTypes"]] = None,
+        billing_profile: Optional["_models.BillingProfile"] = None,
+        scheduled_events_profile: Optional["_models.ScheduledEventsProfile"] = None,
         user_data: Optional[str] = None,
-        capacity_reservation: Optional["CapacityReservationProfile"] = None,
-        application_profile: Optional["ApplicationProfile"] = None,
-        hardware_profile: Optional["VirtualMachineScaleSetHardwareProfile"] = None,
+        capacity_reservation: Optional["_models.CapacityReservationProfile"] = None,
+        application_profile: Optional["_models.ApplicationProfile"] = None,
+        hardware_profile: Optional["_models.VirtualMachineScaleSetHardwareProfile"] = None,
         **kwargs
     ):
         """
@@ -14103,15 +14065,14 @@ class VirtualMachineScaleSetVMProfile(msrest.serialization.Model):
          :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
         :paramtype license_type: str
         :keyword priority: Specifies the priority for the virtual machines in the scale set.
-         :code:`<br>`:code:`<br>`Minimum api-version: 2017-10-30-preview. Possible values include:
-         "Regular", "Low", "Spot".
+         :code:`<br>`:code:`<br>`Minimum api-version: 2017-10-30-preview. Known values are: "Regular",
+         "Low", "Spot".
         :paramtype priority: str or ~azure.mgmt.compute.v2021_11_01.models.VirtualMachinePriorityTypes
         :keyword eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
          Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, both
          'Deallocate' and 'Delete' are supported and the minimum api-version is 2019-03-01.
          :code:`<br>`:code:`<br>`For Azure Spot scale sets, both 'Deallocate' and 'Delete' are supported
-         and the minimum api-version is 2017-10-30-preview. Possible values include: "Deallocate",
-         "Delete".
+         and the minimum api-version is 2017-10-30-preview. Known values are: "Deallocate", "Delete".
         :paramtype eviction_policy: str or
          ~azure.mgmt.compute.v2021_11_01.models.VirtualMachineEvictionPolicyTypes
         :keyword billing_profile: Specifies the billing related details of a Azure Spot VMSS.
@@ -14278,7 +14239,7 @@ class VirtualMachineSizeListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["VirtualMachineSize"]] = None,
+        value: Optional[List["_models.VirtualMachineSize"]] = None,
         **kwargs
     ):
         """
@@ -14304,7 +14265,7 @@ class VirtualMachineSoftwarePatchProperties(msrest.serialization.Model):
     :vartype kb_id: str
     :ivar classifications: The classification(s) of the patch as provided by the patch publisher.
     :vartype classifications: list[str]
-    :ivar reboot_behavior: Describes the reboot requirements of the patch. Possible values include:
+    :ivar reboot_behavior: Describes the reboot requirements of the patch. Known values are:
      "Unknown", "NeverReboots", "AlwaysRequiresReboot", "CanRequestReboot".
     :vartype reboot_behavior: str or
      ~azure.mgmt.compute.v2021_11_01.models.VMGuestPatchRebootBehavior
@@ -14315,7 +14276,7 @@ class VirtualMachineSoftwarePatchProperties(msrest.serialization.Model):
     :vartype published_date: ~datetime.datetime
     :ivar last_modified_date_time: The UTC timestamp of the last update to this patch record.
     :vartype last_modified_date_time: ~datetime.datetime
-    :ivar assessment_state: Describes the availability of a given patch. Possible values include:
+    :ivar assessment_state: Describes the availability of a given patch. Known values are:
      "Unknown", "Available".
     :vartype assessment_state: str or ~azure.mgmt.compute.v2021_11_01.models.PatchAssessmentState
     """
@@ -14459,14 +14420,13 @@ class VirtualMachineUpdate(UpdateResource):
      2018-04-01.
     :vartype proximity_placement_group: ~azure.mgmt.compute.v2021_11_01.models.SubResource
     :ivar priority: Specifies the priority for the virtual machine. :code:`<br>`:code:`<br>`Minimum
-     api-version: 2019-03-01. Possible values include: "Regular", "Low", "Spot".
+     api-version: 2019-03-01. Known values are: "Regular", "Low", "Spot".
     :vartype priority: str or ~azure.mgmt.compute.v2021_11_01.models.VirtualMachinePriorityTypes
     :ivar eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
      Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, both
      'Deallocate' and 'Delete' are supported and the minimum api-version is 2019-03-01.
      :code:`<br>`:code:`<br>`For Azure Spot scale sets, both 'Deallocate' and 'Delete' are supported
-     and the minimum api-version is 2017-10-30-preview. Possible values include: "Deallocate",
-     "Delete".
+     and the minimum api-version is 2017-10-30-preview. Known values are: "Deallocate", "Delete".
     :vartype eviction_policy: str or
      ~azure.mgmt.compute.v2021_11_01.models.VirtualMachineEvictionPolicyTypes
     :ivar billing_profile: Specifies the billing related details of a Azure Spot virtual machine.
@@ -14573,31 +14533,31 @@ class VirtualMachineUpdate(UpdateResource):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        plan: Optional["Plan"] = None,
-        identity: Optional["VirtualMachineIdentity"] = None,
+        plan: Optional["_models.Plan"] = None,
+        identity: Optional["_models.VirtualMachineIdentity"] = None,
         zones: Optional[List[str]] = None,
-        hardware_profile: Optional["HardwareProfile"] = None,
-        storage_profile: Optional["StorageProfile"] = None,
-        additional_capabilities: Optional["AdditionalCapabilities"] = None,
-        os_profile: Optional["OSProfile"] = None,
-        network_profile: Optional["NetworkProfile"] = None,
-        security_profile: Optional["SecurityProfile"] = None,
-        diagnostics_profile: Optional["DiagnosticsProfile"] = None,
-        availability_set: Optional["SubResource"] = None,
-        virtual_machine_scale_set: Optional["SubResource"] = None,
-        proximity_placement_group: Optional["SubResource"] = None,
-        priority: Optional[Union[str, "VirtualMachinePriorityTypes"]] = None,
-        eviction_policy: Optional[Union[str, "VirtualMachineEvictionPolicyTypes"]] = None,
-        billing_profile: Optional["BillingProfile"] = None,
-        host: Optional["SubResource"] = None,
-        host_group: Optional["SubResource"] = None,
+        hardware_profile: Optional["_models.HardwareProfile"] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
+        additional_capabilities: Optional["_models.AdditionalCapabilities"] = None,
+        os_profile: Optional["_models.OSProfile"] = None,
+        network_profile: Optional["_models.NetworkProfile"] = None,
+        security_profile: Optional["_models.SecurityProfile"] = None,
+        diagnostics_profile: Optional["_models.DiagnosticsProfile"] = None,
+        availability_set: Optional["_models.SubResource"] = None,
+        virtual_machine_scale_set: Optional["_models.SubResource"] = None,
+        proximity_placement_group: Optional["_models.SubResource"] = None,
+        priority: Optional[Union[str, "_models.VirtualMachinePriorityTypes"]] = None,
+        eviction_policy: Optional[Union[str, "_models.VirtualMachineEvictionPolicyTypes"]] = None,
+        billing_profile: Optional["_models.BillingProfile"] = None,
+        host: Optional["_models.SubResource"] = None,
+        host_group: Optional["_models.SubResource"] = None,
         license_type: Optional[str] = None,
         extensions_time_budget: Optional[str] = None,
         platform_fault_domain: Optional[int] = None,
-        scheduled_events_profile: Optional["ScheduledEventsProfile"] = None,
+        scheduled_events_profile: Optional["_models.ScheduledEventsProfile"] = None,
         user_data: Optional[str] = None,
-        capacity_reservation: Optional["CapacityReservationProfile"] = None,
-        application_profile: Optional["ApplicationProfile"] = None,
+        capacity_reservation: Optional["_models.CapacityReservationProfile"] = None,
+        application_profile: Optional["_models.ApplicationProfile"] = None,
         **kwargs
     ):
         """
@@ -14659,15 +14619,14 @@ class VirtualMachineUpdate(UpdateResource):
          2018-04-01.
         :paramtype proximity_placement_group: ~azure.mgmt.compute.v2021_11_01.models.SubResource
         :keyword priority: Specifies the priority for the virtual machine.
-         :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01. Possible values include: "Regular",
-         "Low", "Spot".
+         :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01. Known values are: "Regular", "Low",
+         "Spot".
         :paramtype priority: str or ~azure.mgmt.compute.v2021_11_01.models.VirtualMachinePriorityTypes
         :keyword eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
          Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, both
          'Deallocate' and 'Delete' are supported and the minimum api-version is 2019-03-01.
          :code:`<br>`:code:`<br>`For Azure Spot scale sets, both 'Deallocate' and 'Delete' are supported
-         and the minimum api-version is 2017-10-30-preview. Possible values include: "Deallocate",
-         "Delete".
+         and the minimum api-version is 2017-10-30-preview. Known values are: "Deallocate", "Delete".
         :paramtype eviction_policy: str or
          ~azure.mgmt.compute.v2021_11_01.models.VirtualMachineEvictionPolicyTypes
         :keyword billing_profile: Specifies the billing related details of a Azure Spot virtual
@@ -14757,8 +14716,8 @@ class VMDiskSecurityProfile(msrest.serialization.Model):
     :ivar security_encryption_type: Specifies the EncryptionType of the managed disk. :code:`<br>`
      It is set to DiskWithVMGuestState for encryption of the managed disk along with VMGuestState
      blob, and VMGuestStateOnly for encryption of just the VMGuestState blob.
-     :code:`<br>`:code:`<br>` NOTE: It can be set for only Confidential VMs. Possible values
-     include: "VMGuestStateOnly", "DiskWithVMGuestState".
+     :code:`<br>`:code:`<br>` NOTE: It can be set for only Confidential VMs. Known values are:
+     "VMGuestStateOnly", "DiskWithVMGuestState".
     :vartype security_encryption_type: str or
      ~azure.mgmt.compute.v2021_11_01.models.SecurityEncryptionTypes
     :ivar disk_encryption_set: Specifies the customer managed disk encryption set resource id for
@@ -14776,16 +14735,16 @@ class VMDiskSecurityProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        security_encryption_type: Optional[Union[str, "SecurityEncryptionTypes"]] = None,
-        disk_encryption_set: Optional["DiskEncryptionSetParameters"] = None,
+        security_encryption_type: Optional[Union[str, "_models.SecurityEncryptionTypes"]] = None,
+        disk_encryption_set: Optional["_models.DiskEncryptionSetParameters"] = None,
         **kwargs
     ):
         """
         :keyword security_encryption_type: Specifies the EncryptionType of the managed disk.
          :code:`<br>` It is set to DiskWithVMGuestState for encryption of the managed disk along with
          VMGuestState blob, and VMGuestStateOnly for encryption of just the VMGuestState blob.
-         :code:`<br>`:code:`<br>` NOTE: It can be set for only Confidential VMs. Possible values
-         include: "VMGuestStateOnly", "DiskWithVMGuestState".
+         :code:`<br>`:code:`<br>` NOTE: It can be set for only Confidential VMs. Known values are:
+         "VMGuestStateOnly", "DiskWithVMGuestState".
         :paramtype security_encryption_type: str or
          ~azure.mgmt.compute.v2021_11_01.models.SecurityEncryptionTypes
         :keyword disk_encryption_set: Specifies the customer managed disk encryption set resource id
@@ -14984,9 +14943,9 @@ class WindowsConfiguration(msrest.serialization.Model):
         provision_vm_agent: Optional[bool] = None,
         enable_automatic_updates: Optional[bool] = None,
         time_zone: Optional[str] = None,
-        additional_unattend_content: Optional[List["AdditionalUnattendContent"]] = None,
-        patch_settings: Optional["PatchSettings"] = None,
-        win_rm: Optional["WinRMConfiguration"] = None,
+        additional_unattend_content: Optional[List["_models.AdditionalUnattendContent"]] = None,
+        patch_settings: Optional["_models.PatchSettings"] = None,
+        win_rm: Optional["_models.WinRMConfiguration"] = None,
         **kwargs
     ):
         """
@@ -15055,7 +15014,7 @@ class WindowsParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        classifications_to_include: Optional[List[Union[str, "VMGuestPatchClassificationWindows"]]] = None,
+        classifications_to_include: Optional[List[Union[str, "_models.VMGuestPatchClassificationWindows"]]] = None,
         kb_numbers_to_include: Optional[List[str]] = None,
         kb_numbers_to_exclude: Optional[List[str]] = None,
         exclude_kbs_requiring_reboot: Optional[bool] = None,
@@ -15100,7 +15059,7 @@ class WinRMConfiguration(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        listeners: Optional[List["WinRMListener"]] = None,
+        listeners: Optional[List["_models.WinRMListener"]] = None,
         **kwargs
     ):
         """
@@ -15115,7 +15074,7 @@ class WinRMListener(msrest.serialization.Model):
     """Describes Protocol and thumbprint of Windows Remote Management listener.
 
     :ivar protocol: Specifies the protocol of WinRM listener. :code:`<br>`:code:`<br>` Possible
-     values are: :code:`<br>`\ **http** :code:`<br>`:code:`<br>` **https**. Possible values include:
+     values are: :code:`<br>`\ **http** :code:`<br>`:code:`<br>` **https**. Known values are:
      "Http", "Https".
     :vartype protocol: str or ~azure.mgmt.compute.v2021_11_01.models.ProtocolTypes
     :ivar certificate_url: This is the URL of a certificate that has been uploaded to Key Vault as
@@ -15140,13 +15099,13 @@ class WinRMListener(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        protocol: Optional[Union[str, "ProtocolTypes"]] = None,
+        protocol: Optional[Union[str, "_models.ProtocolTypes"]] = None,
         certificate_url: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword protocol: Specifies the protocol of WinRM listener. :code:`<br>`:code:`<br>` Possible
-         values are: :code:`<br>`\ **http** :code:`<br>`:code:`<br>` **https**. Possible values include:
+         values are: :code:`<br>`\ **http** :code:`<br>`:code:`<br>` **https**. Known values are:
          "Http", "Https".
         :paramtype protocol: str or ~azure.mgmt.compute.v2021_11_01.models.ProtocolTypes
         :keyword certificate_url: This is the URL of a certificate that has been uploaded to Key Vault

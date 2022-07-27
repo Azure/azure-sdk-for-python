@@ -39,7 +39,8 @@ def main(generate_input, generate_output):
         package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
         package["result"] = "succeeded"
         # to distinguish with track1
-        package["packageName"] = "track2_" + package["packageName"]
+        if 'azure-mgmt-' in package_name:
+            package["packageName"] = "track2_" + package["packageName"]
         package["packageFolder"] = package["path"][0]
         result["packages"].append(package)
 

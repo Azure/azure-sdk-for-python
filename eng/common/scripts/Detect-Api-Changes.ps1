@@ -1,3 +1,5 @@
+# cSpell:ignore PULLREQUEST
+# cSpell:ignore TARGETBRANCH
 [CmdletBinding()]
 Param (
   [Parameter(Mandatory=$True)]
@@ -16,6 +18,8 @@ Param (
   [string] $TargetBranch = ("origin/${env:SYSTEM_PULLREQUEST_TARGETBRANCH}" -replace "refs/heads/")
 )
 
+. (Join-Path $PSScriptRoot common.ps1)
+
 # Submit API review request and return status whether current revision is approved or pending or failed to create review
 function Submit-Request($filePath, $packageName)
 {
@@ -23,6 +27,7 @@ function Submit-Request($filePath, $packageName)
     if (!$repoName) {
         $repoName = "azure/azure-sdk-for-$LanguageShort"
     }
+    $reviewFileName = "$($packageName)_$($LanguageShort).json"
     $query = [System.Web.HttpUtility]::ParseQueryString('')
     $query.Add('artifactName', $ArtifactName)
     $query.Add('buildId', $BuildId)
@@ -31,6 +36,12 @@ function Submit-Request($filePath, $packageName)
     $query.Add('repoName', $repoName)
     $query.Add('pullRequestNumber', $PullRequestNumber)
     $query.Add('packageName', $packageName)
+    $query.Add('language', $LanguageShort)
+    $reviewFileFullName = Join-Path -Path $ArtifactPath $packageName $reviewFileName
+    if (Test-Path $reviewFileFullName)
+    {
+        $query.Add('codeFile', $reviewFileName)
+    }
     $uri = [System.UriBuilder]$APIViewUri
     $uri.query = $query.toString()
     Write-Host "Request URI: $($uri.Uri.OriginalString)"
@@ -61,8 +72,7 @@ function Should-Process-Package($pkgPath, $packageName)
     # Get package info from json file created before updating version to daily dev
     $pkgInfo = Get-Content $pkgPropPath | ConvertFrom-Json
     $packagePath = $pkgInfo.DirectoryPath
-    $modifiedFiles = git diff --name-only --relative $TargetBranch HEAD
-    $modifiedFiles = $modifiedFiles.Where({$_.startswith($packagePath)})
+    $modifiedFiles  = @(Get-ChangedFiles -DiffPath "$packagePath/*" -DiffFilterType '')
     $filteredFileCount = $modifiedFiles.Count
     Write-Host "Number of modified files for package: $filteredFileCount"
     return ($filteredFileCount -gt 0 -and $pkgInfo.IsNewSdk)
@@ -77,10 +87,8 @@ function Log-Input-Params()
     Write-Host "Language: $($Language)"
     Write-Host "Commit SHA: $($CommitSha)"
     Write-Host "Repo Name: $($RepoFullName)"
-    Write-Host "Package Name: $($PackageName)"
 }
 
-. (Join-Path $PSScriptRoot common.ps1)
 Log-Input-Params
 
 if (!($FindArtifactForApiReviewFn -and (Test-Path "Function:$FindArtifactForApiReviewFn")))

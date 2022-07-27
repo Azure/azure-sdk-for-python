@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -6,15 +5,13 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Union, IO, TYPE_CHECKING
+from typing import Any, Union, IO
+from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from ._api_versions import DocumentAnalysisApiVersion
 from ._form_base_client import FormRecognizerClientBase
 from ._models import AnalyzeResult
-
-if TYPE_CHECKING:
-    from azure.core.polling import LROPoller
-    from azure.core.credentials import AzureKeyCredential, TokenCredential
 
 
 class DocumentAnalysisClient(FormRecognizerClientBase):
@@ -60,12 +57,11 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
             :caption: Creating the DocumentAnalysisClient with a token credential.
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
         api_version = kwargs.pop(
-            "api_version", DocumentAnalysisApiVersion.V2022_01_30_PREVIEW
+            "api_version", DocumentAnalysisApiVersion.V2022_06_30_PREVIEW
         )
-        super(DocumentAnalysisClient, self).__init__(
+        super().__init__(
             endpoint=endpoint,
             credential=credential,
             api_version=api_version,
@@ -82,11 +78,12 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         return AnalyzeResult._from_generated(analyze_operation_result.analyze_result)
 
     @distributed_trace
-    def begin_analyze_document(self, model, document, **kwargs):
-        # type: (str, Union[bytes, IO[bytes]], Any) -> LROPoller[AnalyzeResult]
+    def begin_analyze_document(
+        self, model_id: str, document: Union[bytes, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[AnalyzeResult]:
         """Analyze field text and semantic values from a given document.
 
-        :param str model: A unique model identifier can be passed in as a string.
+        :param str model_id: A unique model identifier can be passed in as a string.
             Use this to specify the custom model ID or prebuilt model ID. Prebuilt model IDs supported
             can be found here: https://aka.ms/azsdk/formrecognizer/models
         :param document: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
@@ -96,7 +93,6 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
             `pages="1-3, 5-6"`. Separate each page number or range with a comma.
         :keyword str locale: Locale hint of the input document.
             See supported locales here: https://aka.ms/azsdk/formrecognizer/supportedlocales.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.AnalyzeResult]
@@ -119,15 +115,15 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
                 :caption: Analyze a custom document. For more samples see the `samples` folder.
         """
 
-        if not model:
-            raise ValueError("model cannot be None or empty.")
+        if not model_id:
+            raise ValueError("model_id cannot be None or empty.")
 
         cls = kwargs.pop("cls", self._analyze_document_callback)
         continuation_token = kwargs.pop("continuation_token", None)
 
         return self._client.begin_analyze_document(  # type: ignore
-            model_id=model,
-            analyze_request=document,
+            model_id=model_id,
+            analyze_request=document,  # type: ignore
             content_type="application/octet-stream",
             string_index_type="unicodeCodePoint",
             continuation_token=continuation_token,
@@ -136,12 +132,13 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_analyze_document_from_url(self, model, document_url, **kwargs):
-        # type: (str, str, Any) -> LROPoller[AnalyzeResult]
+    def begin_analyze_document_from_url(
+        self, model_id: str, document_url: str, **kwargs: Any
+    ) -> LROPoller[AnalyzeResult]:
         """Analyze field text and semantic values from a given document.
         The input must be the location (URL) of the document to be analyzed.
 
-        :param str model: A unique model identifier can be passed in as a string.
+        :param str model_id: A unique model identifier can be passed in as a string.
             Use this to specify the custom model ID or prebuilt model ID. Prebuilt model IDs supported
             can be found here: https://aka.ms/azsdk/formrecognizer/models
         :param str document_url: The URL of the document to analyze. The input must be a valid, properly
@@ -152,7 +149,6 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
             `pages="1-3, 5-6"`. Separate each page number or range with a comma.
         :keyword str locale: Locale hint of the input document.
             See supported locales here: https://aka.ms/azsdk/formrecognizer/supportedlocales.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.AnalyzeResult]
@@ -168,31 +164,28 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
                 :caption: Analyze a receipt. For more samples see the `samples` folder.
         """
 
-        if not model:
-            raise ValueError("model cannot be None or empty.")
+        if not model_id:
+            raise ValueError("model_id cannot be None or empty.")
 
         cls = kwargs.pop("cls", self._analyze_document_callback)
         continuation_token = kwargs.pop("continuation_token", None)
 
         return self._client.begin_analyze_document(  # type: ignore
-            model_id=model,
-            analyze_request={"url_source": document_url},
+            model_id=model_id,
+            analyze_request={"urlSource": document_url},  # type: ignore
             string_index_type="unicodeCodePoint",
             continuation_token=continuation_token,
             cls=cls,
             **kwargs
         )
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close the :class:`~azure.ai.formrecognizer.DocumentAnalysisClient` session."""
         return self._client.close()
 
-    def __enter__(self):
-        # type: () -> DocumentAnalysisClient
+    def __enter__(self) -> "DocumentAnalysisClient":
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)  # pylint:disable=no-member

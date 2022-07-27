@@ -1,0 +1,27 @@
+{
+  "jobId": "59678d1c-109e-4d93-a42f-05eb5e063525",
+  "lastUpdateDateTime": "2021-10-21T23:02:34Z",
+  "createdDateTime": "2021-10-21T23:02:27Z",
+  "expirationDateTime": "2021-10-22T23:02:27Z",
+  "status": "failed",
+  "errors": [
+    {
+      "code": "InternalServerError",
+      "message": "1 out of 1 job tasks failed. Failed job tasks : keyphrasescomposite."
+    }
+  ],
+  "tasks": {
+    "completed": 0,
+    "failed": 1,
+    "inProgress": 0,
+    "total": 1,
+    "items": [
+        {
+            "kind": "KeyPhraseExtractionLROResults",
+            "taskName": "0",
+            "lastUpdateDateTime": "2022-04-18T19:43:09.0888005Z",
+            "status": "failed"
+        }
+      ]
+    }
+}

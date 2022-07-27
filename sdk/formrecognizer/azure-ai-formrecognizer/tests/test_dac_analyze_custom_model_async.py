@@ -9,9 +9,9 @@ import functools
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient, DocumentModelAdministrationClient
-from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
@@ -22,9 +22,6 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 
 class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
 
-    def teardown(self):
-        self.sleep(4)
-
     @FormRecognizerPreparer()
     async def test_analyze_document_none_model_id(self, **kwargs):
         formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
@@ -32,7 +29,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
             async with client:
-                await client.begin_analyze_document(model=None, document=b"xx")
+                await client.begin_analyze_document(model_id=None, document=b"xx")
 
     @FormRecognizerPreparer()
     async def test_analyze_document_empty_model_id(self, **kwargs):
@@ -41,7 +38,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
             async with client:
-                await client.begin_analyze_document(model="", document=b"xx")
+                await client.begin_analyze_document(model_id="", document=b"xx")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -85,7 +82,6 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
         self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
-        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -133,7 +129,6 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
         self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
-        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -179,7 +174,6 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
         self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
-        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -230,3 +224,28 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
         assert result.documents[0].fields.get("FullSignature").value_type == "signature"
         # this will notify us of changes in the service, currently expecting to get a None content for signature type fields
         assert result.documents[0].fields.get("FullSignature").content == None
+
+    @FormRecognizerPreparer()
+    @DocumentModelAdministrationClientPreparer()
+    @recorded_by_proxy_async
+    async def test_custom_document_blank_pdf(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()
+        da_client = client.get_document_analysis_client()
+
+        with open(self.blank_pdf, "rb") as fd:
+            my_file = fd.read()
+
+        async with client:
+            build_polling = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+            model = await build_polling.result()
+
+            async with da_client:
+                poller = await da_client.begin_analyze_document(
+                    model.model_id,
+                    my_file,
+                )
+                result = await poller.result()
+
+        assert result is not None
+        assert len(result.pages) == 1
+        assert len(result.pages[0].lines) == 0

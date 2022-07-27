@@ -13,13 +13,13 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - 6dec8a9e-9fd2-48a5-8851-8500639678bc
+      - 57a962ec-d5bc-4a73-951b-588f4b1f506e
       Telemetry-Source-Time:
-      - '2020-11-25 10:03:54.074027'
+      - '2022-05-26T07:27:16.741681Z'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component1/telemetry?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component1/telemetry?api-version=2022-05-31
   response:
     body:
       string: ''
@@ -27,9 +27,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 24 Nov 2020 21:03:57 GMT
+      - Thu, 26 May 2022 07:27:17 GMT
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-3473bd0e6474f947bb436c6f1fa6d2b3-6af4c9433fe7864d-01
     status:
       code: 204
       message: No Content

@@ -21,6 +21,7 @@ import io
 import re
 import fnmatch
 import platform
+from typing import Tuple, Iterable
 
 # Assumes the presence of setuptools
 from pkg_resources import parse_version, parse_requirements, Requirement, WorkingSet, working_set
@@ -229,7 +230,14 @@ def extend_dev_requirements(dev_req_path, packages_to_include):
         dev_req_file.writelines(requirements)
 
 
-def is_required_version_on_pypi(package_name, spec):
+def is_required_version_on_pypi(package_name: str, spec: str) -> bool:
+    """
+    This function evaluates a package name and version specifier combination and returns the versions on pypi
+    that satisfy the provided version specifier.
+
+    Import dependency on azure-sdk-tools.
+    """
+
     from pypi_tools.pypi import PyPIClient
 
     client = PyPIClient()
@@ -241,7 +249,13 @@ def is_required_version_on_pypi(package_name, spec):
     return versions
 
 
-def find_packages_missing_on_pypi(path):
+def find_packages_missing_on_pypi(path: str) -> Iterable[str]:
+    """
+    Given a setup path, evaluate all dependencies and return a list of packages whos specifier can NOT be matched against PyPI releases.
+
+    Import dependency on pkginfo.
+    """
+
     import pkginfo
 
     requires = []

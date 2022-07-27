@@ -1,6 +1,3 @@
-## _Disclaimer_
-_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
-
 # Azure Storage Queues client library for Python
 
 Azure Queue storage is a service for storing large numbers of messages that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS. A single queue message can be up to 64 KiB in size, and a queue can contain millions of messages, up to the total capacity limit of a storage account.
@@ -15,7 +12,7 @@ Common uses of Queue storage include:
 ## Getting started
 
 ### Prerequisites
-* Python 3.6 or later is required to use this package.
+* Python 3.7 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
 
@@ -81,6 +78,7 @@ The `credential` parameter may be provided in a number of different forms, depen
         account_key="<account-access-key>",
         resource_types=ResourceTypes(service=True),
         permission=AccountSasPermissions(read=True),
+        start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=1)
     )
 
@@ -300,7 +298,8 @@ Other optional configuration keyword arguments that can be specified on the clie
 
 **Client keyword arguments:**
 
-* __connection_timeout__ (int): Optionally sets the connect and read timeout value, in seconds.
+* __connection_timeout__ (int): The number of seconds the client will wait to establish a connection to the server.
+* __read_timeout__ (int): The number of seconds the client will wait, after the connections has been established, for the server to send a response.
 * __transport__ (Any): User-provided transport to send the HTTP request.
 
 **Per-operation keyword arguments:**

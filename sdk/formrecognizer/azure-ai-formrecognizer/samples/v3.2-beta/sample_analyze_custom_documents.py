@@ -22,7 +22,7 @@ USAGE:
     python sample_analyze_custom_documents.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
+    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
     3) CUSTOM_BUILT_MODEL_ID - the ID of your custom built model
         -OR-
@@ -54,7 +54,7 @@ def analyze_custom_documents(custom_model_id):
     # Make sure your document's type is included in the list of document types the custom model can analyze
     with open(path_to_sample_documents, "rb") as f:
         poller = document_analysis_client.begin_analyze_document(
-            model=model_id, document=f
+            model_id=model_id, document=f
         )
     result = poller.result()
 

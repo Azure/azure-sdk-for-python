@@ -2,7 +2,7 @@
 cryptography<4
 setuptools==44.1.0; python_version == '2.7'
 setuptools==46.4.0; python_version >= '3.5'
-virtualenv==20.0.23
+virtualenv==20.13.2
 wheel==0.37.0
 Jinja2==2.11.2
 packaging==20.4
@@ -17,7 +17,6 @@ codecov==2.1.0
 beautifulsoup4==4.9.1
 pkginfo==1.5.0.1
 pip==20.3.3
-black==21.6b0; python_version >= '3.6'
 wrapt<=1.12.1; python_version == '2.7'
 markupsafe==2.0.1; python_version > '2.7'
 markupsafe==1.1.1; python_version == '2.7'

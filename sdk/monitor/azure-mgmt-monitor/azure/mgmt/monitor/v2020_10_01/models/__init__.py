@@ -6,28 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ActionGroup
-    from ._models_py3 import ActionList
-    from ._models_py3 import ActivityLogAlertResource
-    from ._models_py3 import AlertRuleAllOfCondition
-    from ._models_py3 import AlertRuleAnyOfOrLeafCondition
-    from ._models_py3 import AlertRuleLeafCondition
-    from ._models_py3 import AlertRuleList
-    from ._models_py3 import AlertRulePatchObject
-    from ._models_py3 import AzureResource
-    from ._models_py3 import ErrorResponse
-except (SyntaxError, ImportError):
-    from ._models import ActionGroup  # type: ignore
-    from ._models import ActionList  # type: ignore
-    from ._models import ActivityLogAlertResource  # type: ignore
-    from ._models import AlertRuleAllOfCondition  # type: ignore
-    from ._models import AlertRuleAnyOfOrLeafCondition  # type: ignore
-    from ._models import AlertRuleLeafCondition  # type: ignore
-    from ._models import AlertRuleList  # type: ignore
-    from ._models import AlertRulePatchObject  # type: ignore
-    from ._models import AzureResource  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
+from ._models_py3 import ActionGroup
+from ._models_py3 import ActionList
+from ._models_py3 import ActivityLogAlertResource
+from ._models_py3 import AlertRuleAllOfCondition
+from ._models_py3 import AlertRuleAnyOfOrLeafCondition
+from ._models_py3 import AlertRuleLeafCondition
+from ._models_py3 import AlertRuleList
+from ._models_py3 import AlertRulePatchObject
+from ._models_py3 import AzureResource
+from ._models_py3 import ErrorResponse
+
 
 __all__ = [
     'ActionGroup',

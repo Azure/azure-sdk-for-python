@@ -10,10 +10,16 @@ import unittest
 from azure.core.exceptions import HttpResponseError
 
 
-from azure.storage.filedatalake import DataLakeServiceClient
+from azure.storage.filedatalake import (
+    DataLakeServiceClient,
+    FileSystemClient,
+    DataLakeFileClient,
+    DataLakeDirectoryClient
+)
 
 from settings.testcase import DataLakePreparer
 from devtools_testutils.storage import StorageTestCase
+from azure.core.credentials import AzureNamedKeyCredential
 
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake._models import AnalyticsLogging, Metrics, RetentionPolicy, \
@@ -321,3 +327,36 @@ class DatalakeServiceTest(StorageTestCase):
         # Assert
         received_props = self.dsc.get_service_properties()
         self._assert_cors_equal(received_props['cors'], cors)
+
+    def test_connectionstring_without_secondary(self):
+        test_conn_str = "DefaultEndpointsProtocol=https;AccountName=foo;AccountKey=bar"
+        client = DataLakeServiceClient.from_connection_string(test_conn_str)
+        assert client.url == 'https://foo.dfs.core.windows.net/'
+        assert client.primary_hostname == 'foo.dfs.core.windows.net'
+        assert not client.secondary_hostname
+
+        client = FileSystemClient.from_connection_string(test_conn_str, "fsname")
+        assert client.url == 'https://foo.dfs.core.windows.net/fsname'
+        assert client.primary_hostname == 'foo.dfs.core.windows.net'
+        assert not client.secondary_hostname
+
+        client = DataLakeFileClient.from_connection_string(test_conn_str, "fsname", "fpath")
+        assert client.url == 'https://foo.dfs.core.windows.net/fsname/fpath'
+        assert client.primary_hostname == 'foo.dfs.core.windows.net'
+        assert not client.secondary_hostname
+
+        client = DataLakeDirectoryClient.from_connection_string(test_conn_str, "fsname", "dname")
+        assert client.url == 'https://foo.dfs.core.windows.net/fsname/dname'
+        assert client.primary_hostname == 'foo.dfs.core.windows.net'
+        assert not client.secondary_hostname
+
+    @DataLakePreparer()
+    def test_azure_named_key_credential_access(self, datalake_storage_account_name, datalake_storage_account_key):
+        named_key = AzureNamedKeyCredential(datalake_storage_account_name, datalake_storage_account_key)
+        dsc = DataLakeServiceClient(self.account_url(datalake_storage_account_name, "blob"), named_key)
+
+        # Act
+        props = dsc.get_service_properties()
+
+        # Assert
+        self.assertIsNotNone(props)

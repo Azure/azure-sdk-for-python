@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import ContainerServiceClientConfiguration
@@ -45,8 +46,11 @@ class ContainerServiceClient:
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure
      subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2020-09-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -65,17 +69,29 @@ class ContainerServiceClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.managed_clusters = ManagedClustersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.agent_pools = AgentPoolsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.resolve_private_link_service_id = ResolvePrivateLinkServiceIdOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_clusters = ManagedClustersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.agent_pools = AgentPoolsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.resolve_private_link_service_id = ResolvePrivateLinkServiceIdOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(
         self,
-        request,  # type: HttpRequest
+        request: HttpRequest,
         **kwargs: Any
     ) -> HttpResponse:
         """Runs the network request through the client's chained policies.

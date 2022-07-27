@@ -13,6 +13,7 @@ stages:
         AZURE_CLIENT_SECRET: $(python-schema-registry-sdk-test-client-secret)
         SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE: $(python-schema-registry-sdk-test-endpoint)
         SCHEMAREGISTRY_GROUP: $(python-schema-registry-sdk-test-group)
+        AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
       MatrixFilters:
         - '"PythonVersion=^(?!pypy3).*"'

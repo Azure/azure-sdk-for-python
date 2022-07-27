@@ -1,6 +1,6 @@
 # Release History
 
-## 7.6.1 (Unreleased)
+## 7.8.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,38 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 7.8.0 (2022-07-06)
+
+This version will be the last version to officially support Python 3.6, future versions will require Python 3.7+.
+
+### Features Added
+
+- In `ServiceBusClient`, `get_queue_receiver`, `get_subscription_receiver`, `get_queue_sender`, and `get_topic_sender` now accept
+an optional `client_identifier` argument which allows for specifying a custom identifier for the respective sender or receiver. It can
+be useful during debugging as Service Bus associates the id with errors and helps with easier correlation.
+- `ServiceBusReceiver` and `ServiceBusSender` have an added property `client_identifier` which returns the `client_identifier` for the current instance.
+
+## 7.7.0 (2022-06-07)
+
+### Bugs Fixed
+
+- Fixed bug to make AMQP exceptions retryable by default, if condition is not non-retryable, to ensure that InternalServerErrors are retried.
+
+### Features Added
+
+- The `ServiceBusClient` constructor now accepts optional `custom_endpoint_address` argument
+which allows for specifying a custom endpoint to use when communicating with the Service Bus service,
+and is useful when your network does not allow communicating to the standard Service Bus endpoint.
+- The `ServiceBusClient`constructor now accepts optional `connection_verify` argument
+which allows for specifying the path to the custom CA_BUNDLE file of the SSL certificate which is used to authenticate
+the identity of the connection endpoint.
+
+## 7.6.1 (2022-04-11)
+
+### Other Changes
+
+- Improved receiving by releasing messages from internal buffer when the `prefetch_count` of `ServiceBusReceiver`  is set 0 and there is no active receive call, this helps avoid receiving expired messages and incrementing delivery count of a message.
 
 ## 7.6.0 (2022-02-10)
 

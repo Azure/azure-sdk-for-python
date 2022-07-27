@@ -6,47 +6,32 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ErrorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ErrorType(with_metaclass(CaseInsensitiveEnumMeta, int, Enum)):
     """The error type of the baseline.
     """
 
-    ZERO = "0"
-    ONE = "1"
-    TWO = "2"
-    THREE = "3"
-    FOUR = "4"
-    ONE_HUNDRED = "100"
-    TWO_HUNDRED = "200"
+    ZERO = 0
+    ONE = 1
+    TWO = 2
+    THREE = 3
+    FOUR = 4
+    ONE_HUNDRED = 100
+    TWO_HUNDRED = 200
 
-class PredictionResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PredictionResultType(with_metaclass(CaseInsensitiveEnumMeta, int, Enum)):
     """The prediction result type of the baseline.
     """
 
-    ZERO = "0"
-    ONE = "1"
-    TWO = "2"
+    ZERO = 0
+    ONE = 1
+    TWO = 2
 
-class ReceiverStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ReceiverStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the status of the receiver. Receivers that are not Enabled will not receive any
     communications.
     """
@@ -55,12 +40,12 @@ class ReceiverStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class ResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResultType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     DATA = "Data"
     METADATA = "Metadata"
 
-class Sensitivity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Sensitivity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The sensitivity of the baseline.
     """
 

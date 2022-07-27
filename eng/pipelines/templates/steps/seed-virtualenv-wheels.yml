@@ -14,11 +14,9 @@ steps:
     displayName: Set VIRTUALENV_OVERRIDE_APP_DATA
 
   - pwsh: |
-      # ensure these can be pulled down from pypi.
-      $env:PIP_EXTRA_INDEX_URL="https://pypi.python.org/simple"
-      virtualenv --download --reset-app-data `
-        --pip="${{ parameters.PIP_VERSION }}" `
-        --setuptools="${{ parameters.SETUPTOOLS_VERSION }}" `
-        --wheel=="${{ parameters.WHEEL_VERSION }}" `
-        $(Agent.TempDirectory)/seed_env
+      $(Build.SourcesDirectory)/eng/scripts/seed-virtualenv-wheels.ps1 `
+        -Pip "${{ parameters.PIP_VERSION }}" `
+        -SetupTools "${{ parameters.SETUPTOOLS_VERSION }}" `
+        -Wheel "${{ parameters.WHEEL_VERSION }}" `
+        -SeedDirectory "$(Agent.TempDirectory)/seed_env"
     displayName: Populate the seed dir

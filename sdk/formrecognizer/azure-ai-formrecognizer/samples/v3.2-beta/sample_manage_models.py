@@ -17,7 +17,7 @@ USAGE:
     python sample_manage_models.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
+    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
     3) CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container
 """
@@ -34,14 +34,14 @@ def sample_manage_models():
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
-    # [START get_account_info]
+    # [START get_resource_details]
     document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    account_info = document_model_admin_client.get_account_info()
-    print("Our account has {} custom models, and we can have at most {} custom models\n".format(
-        account_info.model_count, account_info.model_limit
+    account_info = document_model_admin_client.get_resource_details()
+    print("Our resource has {} custom models, and we can have at most {} custom models\n".format(
+        account_info.document_model_count, account_info.document_model_limit
     ))
-    # [END get_account_info]
+    # [END get_resource_details]
 
     # Next, we get a paged list of all of our custom models
     # [START list_models]

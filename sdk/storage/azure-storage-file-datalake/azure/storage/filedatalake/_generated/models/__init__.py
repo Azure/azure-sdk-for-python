@@ -12,6 +12,7 @@ try:
     from ._models_py3 import BlobItemInternal
     from ._models_py3 import BlobPrefix
     from ._models_py3 import BlobPropertiesInternal
+    from ._models_py3 import CpkInfo
     from ._models_py3 import FileSystem
     from ._models_py3 import FileSystemList
     from ._models_py3 import LeaseAccessConditions
@@ -30,6 +31,7 @@ except (SyntaxError, ImportError):
     from ._models import BlobItemInternal  # type: ignore
     from ._models import BlobPrefix  # type: ignore
     from ._models import BlobPropertiesInternal  # type: ignore
+    from ._models import CpkInfo  # type: ignore
     from ._models import FileSystem  # type: ignore
     from ._models import FileSystemList  # type: ignore
     from ._models import LeaseAccessConditions  # type: ignore
@@ -53,13 +55,16 @@ from ._azure_data_lake_storage_restapi_enums import (
     PathSetAccessControlRecursiveMode,
     PathUpdateAction,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AclFailedEntry',
     'BlobHierarchyListSegment',
     'BlobItemInternal',
     'BlobPrefix',
     'BlobPropertiesInternal',
+    'CpkInfo',
     'FileSystem',
     'FileSystemList',
     'LeaseAccessConditions',
@@ -81,3 +86,5 @@ __all__ = [
     'PathSetAccessControlRecursiveMode',
     'PathUpdateAction',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

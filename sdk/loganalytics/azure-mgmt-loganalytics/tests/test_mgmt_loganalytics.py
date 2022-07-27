@@ -9,7 +9,7 @@ class TestMgmtLogAnalytics(AzureMgmtRecordedTestCase):
             azure.mgmt.loganalytics.LogAnalyticsManagementClient
         )
 
-    @pytest.mark.skip('Hard to test')
+    # @pytest.mark.skip('Hard to test')
     @recorded_by_proxy
     def test_loganalytics_operations(self):
         operations = self.client.operations.list()

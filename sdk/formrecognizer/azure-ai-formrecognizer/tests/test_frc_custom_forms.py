@@ -6,7 +6,7 @@
 
 import pytest
 import functools
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
+from devtools_testutils import recorded_by_proxy
 from azure.ai.formrecognizer import FormContentType, FormTrainingClient, _models
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
@@ -19,14 +19,10 @@ FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTraini
 
 class TestCustomForms(FormRecognizerTest):
 
-    def teardown(self):
-        self.sleep(4)
-
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy
     def test_custom_form_unlabeled(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
-        set_bodiless_matcher()
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
@@ -47,7 +43,6 @@ class TestCustomForms(FormRecognizerTest):
     @FormTrainingClientPreparer()
     @recorded_by_proxy
     def test_custom_form_multipage_unlabeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
-        set_bodiless_matcher()
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
@@ -71,7 +66,6 @@ class TestCustomForms(FormRecognizerTest):
     @FormTrainingClientPreparer()
     @recorded_by_proxy
     def test_custom_form_labeled(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
-        set_bodiless_matcher()
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(
@@ -94,7 +88,6 @@ class TestCustomForms(FormRecognizerTest):
     @FormTrainingClientPreparer()
     @recorded_by_proxy
     def test_custom_form_multipage_labeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
-        set_bodiless_matcher()
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(
@@ -121,7 +114,6 @@ class TestCustomForms(FormRecognizerTest):
     @FormTrainingClientPreparer()
     @recorded_by_proxy
     def test_custom_form_unlabeled_transform(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
-        set_bodiless_matcher()
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
@@ -176,7 +168,6 @@ class TestCustomForms(FormRecognizerTest):
     @FormTrainingClientPreparer()
     @recorded_by_proxy
     def test_custom_form_multipage_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
-        set_bodiless_matcher()
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
@@ -246,7 +237,6 @@ class TestCustomForms(FormRecognizerTest):
     @FormTrainingClientPreparer()
     @recorded_by_proxy
     def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2, **kwargs):
-        set_bodiless_matcher()
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=False)
@@ -288,7 +278,6 @@ class TestCustomForms(FormRecognizerTest):
     @FormTrainingClientPreparer()
     @recorded_by_proxy
     def test_custom_form_multipage_vendor_set_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2, **kwargs):
-        set_bodiless_matcher()
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=True)

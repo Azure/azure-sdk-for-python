@@ -6,252 +6,410 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AADDataConnector
-    from ._models_py3 import AATPDataConnector
-    from ._models_py3 import ASCDataConnector
-    from ._models_py3 import ASCDataConnectorProperties
-    from ._models_py3 import ActionPropertiesBase
-    from ._models_py3 import ActionRequest
-    from ._models_py3 import ActionRequestProperties
-    from ._models_py3 import ActionResponse
-    from ._models_py3 import ActionResponseProperties
-    from ._models_py3 import ActionsList
-    from ._models_py3 import AlertRule
-    from ._models_py3 import AlertRuleTemplate
-    from ._models_py3 import AlertRuleTemplateDataSource
-    from ._models_py3 import AlertRuleTemplatesList
-    from ._models_py3 import AlertRulesList
-    from ._models_py3 import AlertsDataTypeOfDataConnector
-    from ._models_py3 import AwsCloudTrailDataConnector
-    from ._models_py3 import AwsCloudTrailDataConnectorDataTypes
-    from ._models_py3 import AwsCloudTrailDataConnectorDataTypesLogs
-    from ._models_py3 import Bookmark
-    from ._models_py3 import BookmarkList
-    from ._models_py3 import ClientInfo
-    from ._models_py3 import DataConnector
-    from ._models_py3 import DataConnectorDataTypeCommon
-    from ._models_py3 import DataConnectorList
-    from ._models_py3 import DataConnectorTenantId
-    from ._models_py3 import DataConnectorWithAlertsProperties
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import FusionAlertRule
-    from ._models_py3 import FusionAlertRuleTemplate
-    from ._models_py3 import Incident
-    from ._models_py3 import IncidentAdditionalData
-    from ._models_py3 import IncidentComment
-    from ._models_py3 import IncidentCommentList
-    from ._models_py3 import IncidentInfo
-    from ._models_py3 import IncidentLabel
-    from ._models_py3 import IncidentList
-    from ._models_py3 import IncidentOwnerInfo
-    from ._models_py3 import MCASDataConnector
-    from ._models_py3 import MCASDataConnectorDataTypes
-    from ._models_py3 import MDATPDataConnector
-    from ._models_py3 import MicrosoftSecurityIncidentCreationAlertRule
-    from ._models_py3 import MicrosoftSecurityIncidentCreationAlertRuleCommonProperties
-    from ._models_py3 import MicrosoftSecurityIncidentCreationAlertRuleProperties
-    from ._models_py3 import MicrosoftSecurityIncidentCreationAlertRuleTemplate
-    from ._models_py3 import OfficeConsent
-    from ._models_py3 import OfficeConsentList
-    from ._models_py3 import OfficeDataConnector
-    from ._models_py3 import OfficeDataConnectorDataTypes
-    from ._models_py3 import OfficeDataConnectorDataTypesExchange
-    from ._models_py3 import OfficeDataConnectorDataTypesSharePoint
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationsList
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceWithEtag
-    from ._models_py3 import ScheduledAlertRule
-    from ._models_py3 import ScheduledAlertRuleCommonProperties
-    from ._models_py3 import ScheduledAlertRuleProperties
-    from ._models_py3 import ScheduledAlertRuleTemplate
-    from ._models_py3 import Settings
-    from ._models_py3 import TIDataConnector
-    from ._models_py3 import TIDataConnectorDataTypes
-    from ._models_py3 import TIDataConnectorDataTypesIndicators
-    from ._models_py3 import ThreatIntelligence
-    from ._models_py3 import ToggleSettings
-    from ._models_py3 import UebaSettings
-    from ._models_py3 import UserInfo
-except (SyntaxError, ImportError):
-    from ._models import AADDataConnector  # type: ignore
-    from ._models import AATPDataConnector  # type: ignore
-    from ._models import ASCDataConnector  # type: ignore
-    from ._models import ASCDataConnectorProperties  # type: ignore
-    from ._models import ActionPropertiesBase  # type: ignore
-    from ._models import ActionRequest  # type: ignore
-    from ._models import ActionRequestProperties  # type: ignore
-    from ._models import ActionResponse  # type: ignore
-    from ._models import ActionResponseProperties  # type: ignore
-    from ._models import ActionsList  # type: ignore
-    from ._models import AlertRule  # type: ignore
-    from ._models import AlertRuleTemplate  # type: ignore
-    from ._models import AlertRuleTemplateDataSource  # type: ignore
-    from ._models import AlertRuleTemplatesList  # type: ignore
-    from ._models import AlertRulesList  # type: ignore
-    from ._models import AlertsDataTypeOfDataConnector  # type: ignore
-    from ._models import AwsCloudTrailDataConnector  # type: ignore
-    from ._models import AwsCloudTrailDataConnectorDataTypes  # type: ignore
-    from ._models import AwsCloudTrailDataConnectorDataTypesLogs  # type: ignore
-    from ._models import Bookmark  # type: ignore
-    from ._models import BookmarkList  # type: ignore
-    from ._models import ClientInfo  # type: ignore
-    from ._models import DataConnector  # type: ignore
-    from ._models import DataConnectorDataTypeCommon  # type: ignore
-    from ._models import DataConnectorList  # type: ignore
-    from ._models import DataConnectorTenantId  # type: ignore
-    from ._models import DataConnectorWithAlertsProperties  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import FusionAlertRule  # type: ignore
-    from ._models import FusionAlertRuleTemplate  # type: ignore
-    from ._models import Incident  # type: ignore
-    from ._models import IncidentAdditionalData  # type: ignore
-    from ._models import IncidentComment  # type: ignore
-    from ._models import IncidentCommentList  # type: ignore
-    from ._models import IncidentInfo  # type: ignore
-    from ._models import IncidentLabel  # type: ignore
-    from ._models import IncidentList  # type: ignore
-    from ._models import IncidentOwnerInfo  # type: ignore
-    from ._models import MCASDataConnector  # type: ignore
-    from ._models import MCASDataConnectorDataTypes  # type: ignore
-    from ._models import MDATPDataConnector  # type: ignore
-    from ._models import MicrosoftSecurityIncidentCreationAlertRule  # type: ignore
-    from ._models import MicrosoftSecurityIncidentCreationAlertRuleCommonProperties  # type: ignore
-    from ._models import MicrosoftSecurityIncidentCreationAlertRuleProperties  # type: ignore
-    from ._models import MicrosoftSecurityIncidentCreationAlertRuleTemplate  # type: ignore
-    from ._models import OfficeConsent  # type: ignore
-    from ._models import OfficeConsentList  # type: ignore
-    from ._models import OfficeDataConnector  # type: ignore
-    from ._models import OfficeDataConnectorDataTypes  # type: ignore
-    from ._models import OfficeDataConnectorDataTypesExchange  # type: ignore
-    from ._models import OfficeDataConnectorDataTypesSharePoint  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationsList  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceWithEtag  # type: ignore
-    from ._models import ScheduledAlertRule  # type: ignore
-    from ._models import ScheduledAlertRuleCommonProperties  # type: ignore
-    from ._models import ScheduledAlertRuleProperties  # type: ignore
-    from ._models import ScheduledAlertRuleTemplate  # type: ignore
-    from ._models import Settings  # type: ignore
-    from ._models import TIDataConnector  # type: ignore
-    from ._models import TIDataConnectorDataTypes  # type: ignore
-    from ._models import TIDataConnectorDataTypesIndicators  # type: ignore
-    from ._models import ThreatIntelligence  # type: ignore
-    from ._models import ToggleSettings  # type: ignore
-    from ._models import UebaSettings  # type: ignore
-    from ._models import UserInfo  # type: ignore
+from ._models_py3 import AADDataConnector
+from ._models_py3 import AATPDataConnector
+from ._models_py3 import ASCDataConnector
+from ._models_py3 import ASCDataConnectorProperties
+from ._models_py3 import AccountEntity
+from ._models_py3 import AccountEntityProperties
+from ._models_py3 import ActionPropertiesBase
+from ._models_py3 import ActionRequest
+from ._models_py3 import ActionRequestProperties
+from ._models_py3 import ActionResponse
+from ._models_py3 import ActionResponseProperties
+from ._models_py3 import ActionsList
+from ._models_py3 import AlertDetailsOverride
+from ._models_py3 import AlertRule
+from ._models_py3 import AlertRuleTemplate
+from ._models_py3 import AlertRuleTemplateDataSource
+from ._models_py3 import AlertRuleTemplatesList
+from ._models_py3 import AlertRulesList
+from ._models_py3 import AlertsDataTypeOfDataConnector
+from ._models_py3 import AutomationRule
+from ._models_py3 import AutomationRuleAction
+from ._models_py3 import AutomationRuleCondition
+from ._models_py3 import AutomationRuleModifyPropertiesAction
+from ._models_py3 import AutomationRulePropertyValuesCondition
+from ._models_py3 import AutomationRuleRunPlaybookAction
+from ._models_py3 import AutomationRuleTriggeringLogic
+from ._models_py3 import AutomationRulesList
+from ._models_py3 import AwsCloudTrailDataConnector
+from ._models_py3 import AwsCloudTrailDataConnectorDataTypes
+from ._models_py3 import AwsCloudTrailDataConnectorDataTypesLogs
+from ._models_py3 import AzureResourceEntity
+from ._models_py3 import AzureResourceEntityProperties
+from ._models_py3 import Bookmark
+from ._models_py3 import BookmarkList
+from ._models_py3 import ClientInfo
+from ._models_py3 import CloudApplicationEntity
+from ._models_py3 import CloudApplicationEntityProperties
+from ._models_py3 import CloudErrorBody
+from ._models_py3 import DataConnector
+from ._models_py3 import DataConnectorDataTypeCommon
+from ._models_py3 import DataConnectorList
+from ._models_py3 import DataConnectorTenantId
+from ._models_py3 import DataConnectorWithAlertsProperties
+from ._models_py3 import DnsEntity
+from ._models_py3 import DnsEntityProperties
+from ._models_py3 import Entity
+from ._models_py3 import EntityCommonProperties
+from ._models_py3 import EntityMapping
+from ._models_py3 import EventGroupingSettings
+from ._models_py3 import FieldMapping
+from ._models_py3 import FileEntity
+from ._models_py3 import FileEntityProperties
+from ._models_py3 import FileHashEntity
+from ._models_py3 import FileHashEntityProperties
+from ._models_py3 import FusionAlertRule
+from ._models_py3 import FusionAlertRuleTemplate
+from ._models_py3 import GeoLocation
+from ._models_py3 import GroupingConfiguration
+from ._models_py3 import HostEntity
+from ._models_py3 import HostEntityProperties
+from ._models_py3 import HuntingBookmark
+from ._models_py3 import HuntingBookmarkProperties
+from ._models_py3 import Incident
+from ._models_py3 import IncidentAdditionalData
+from ._models_py3 import IncidentAlertList
+from ._models_py3 import IncidentBookmarkList
+from ._models_py3 import IncidentComment
+from ._models_py3 import IncidentCommentList
+from ._models_py3 import IncidentConfiguration
+from ._models_py3 import IncidentEntitiesResponse
+from ._models_py3 import IncidentEntitiesResultsMetadata
+from ._models_py3 import IncidentInfo
+from ._models_py3 import IncidentLabel
+from ._models_py3 import IncidentList
+from ._models_py3 import IncidentOwnerInfo
+from ._models_py3 import IncidentOwnerInfoAutoGenerated
+from ._models_py3 import IncidentPropertiesAction
+from ._models_py3 import IoTDeviceEntity
+from ._models_py3 import IoTDeviceEntityProperties
+from ._models_py3 import IpEntity
+from ._models_py3 import IpEntityProperties
+from ._models_py3 import MCASDataConnector
+from ._models_py3 import MCASDataConnectorDataTypes
+from ._models_py3 import MDATPDataConnector
+from ._models_py3 import MailClusterEntity
+from ._models_py3 import MailClusterEntityProperties
+from ._models_py3 import MailMessageEntity
+from ._models_py3 import MailMessageEntityProperties
+from ._models_py3 import MailboxEntity
+from ._models_py3 import MailboxEntityProperties
+from ._models_py3 import MalwareEntity
+from ._models_py3 import MalwareEntityProperties
+from ._models_py3 import MicrosoftSecurityIncidentCreationAlertRule
+from ._models_py3 import MicrosoftSecurityIncidentCreationAlertRuleCommonProperties
+from ._models_py3 import MicrosoftSecurityIncidentCreationAlertRuleProperties
+from ._models_py3 import MicrosoftSecurityIncidentCreationAlertRuleTemplate
+from ._models_py3 import OfficeDataConnector
+from ._models_py3 import OfficeDataConnectorDataTypes
+from ._models_py3 import OfficeDataConnectorDataTypesExchange
+from ._models_py3 import OfficeDataConnectorDataTypesSharePoint
+from ._models_py3 import OfficeDataConnectorDataTypesTeams
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationsList
+from ._models_py3 import PlaybookActionProperties
+from ._models_py3 import ProcessEntity
+from ._models_py3 import ProcessEntityProperties
+from ._models_py3 import PropertyConditionProperties
+from ._models_py3 import RegistryKeyEntity
+from ._models_py3 import RegistryKeyEntityProperties
+from ._models_py3 import RegistryValueEntity
+from ._models_py3 import RegistryValueEntityProperties
+from ._models_py3 import Relation
+from ._models_py3 import RelationList
+from ._models_py3 import Resource
+from ._models_py3 import ResourceWithEtag
+from ._models_py3 import ScheduledAlertRule
+from ._models_py3 import ScheduledAlertRuleCommonProperties
+from ._models_py3 import ScheduledAlertRuleProperties
+from ._models_py3 import ScheduledAlertRuleTemplate
+from ._models_py3 import SecurityAlert
+from ._models_py3 import SecurityAlertProperties
+from ._models_py3 import SecurityAlertPropertiesConfidenceReasonsItem
+from ._models_py3 import SecurityGroupEntity
+from ._models_py3 import SecurityGroupEntityProperties
+from ._models_py3 import SentinelOnboardingState
+from ._models_py3 import SentinelOnboardingStatesList
+from ._models_py3 import SubmissionMailEntity
+from ._models_py3 import SubmissionMailEntityProperties
+from ._models_py3 import SystemData
+from ._models_py3 import TIDataConnector
+from ._models_py3 import TIDataConnectorDataTypes
+from ._models_py3 import TIDataConnectorDataTypesIndicators
+from ._models_py3 import ThreatIntelligence
+from ._models_py3 import ThreatIntelligenceAppendTags
+from ._models_py3 import ThreatIntelligenceExternalReference
+from ._models_py3 import ThreatIntelligenceFilteringCriteria
+from ._models_py3 import ThreatIntelligenceGranularMarkingModel
+from ._models_py3 import ThreatIntelligenceIndicatorModel
+from ._models_py3 import ThreatIntelligenceIndicatorProperties
+from ._models_py3 import ThreatIntelligenceInformation
+from ._models_py3 import ThreatIntelligenceInformationList
+from ._models_py3 import ThreatIntelligenceKillChainPhase
+from ._models_py3 import ThreatIntelligenceMetric
+from ._models_py3 import ThreatIntelligenceMetricEntity
+from ._models_py3 import ThreatIntelligenceMetrics
+from ._models_py3 import ThreatIntelligenceMetricsList
+from ._models_py3 import ThreatIntelligenceParsedPattern
+from ._models_py3 import ThreatIntelligenceParsedPatternTypeValue
+from ._models_py3 import ThreatIntelligenceSortingCriteria
+from ._models_py3 import UrlEntity
+from ._models_py3 import UrlEntityProperties
+from ._models_py3 import UserInfo
+from ._models_py3 import Watchlist
+from ._models_py3 import WatchlistItem
+from ._models_py3 import WatchlistItemList
+from ._models_py3 import WatchlistList
+
 
 from ._security_insights_enums import (
+    ActionType,
+    AlertDetail,
     AlertRuleKind,
     AlertSeverity,
+    AlertStatus,
+    AntispamMailDirection,
     AttackTactic,
-    CaseSeverity,
+    AutomationRulePropertyConditionSupportedOperator,
+    AutomationRulePropertyConditionSupportedProperty,
+    ConditionType,
+    ConfidenceLevel,
+    ConfidenceScoreStatus,
+    CreatedByType,
     DataConnectorKind,
     DataTypeState,
+    DeliveryAction,
+    DeliveryLocation,
+    ElevationToken,
+    EntityKindEnum,
+    EntityMappingType,
+    EventGroupingAggregationKind,
+    FileHashAlgorithm,
     IncidentClassification,
     IncidentClassificationReason,
     IncidentLabelType,
     IncidentSeverity,
     IncidentStatus,
-    LicenseStatus,
+    KillChainIntent,
+    MatchingMethod,
     MicrosoftSecurityProductName,
-    SettingKind,
-    StatusInMcas,
+    OSFamily,
+    OwnerType,
+    RegistryHive,
+    RegistryValueKind,
+    Source,
     TemplateStatus,
+    ThreatIntelligenceResourceInnerKind,
+    ThreatIntelligenceSortingOrder,
     TriggerOperator,
+    TriggersOn,
+    TriggersWhen,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AADDataConnector',
     'AATPDataConnector',
     'ASCDataConnector',
     'ASCDataConnectorProperties',
+    'AccountEntity',
+    'AccountEntityProperties',
     'ActionPropertiesBase',
     'ActionRequest',
     'ActionRequestProperties',
     'ActionResponse',
     'ActionResponseProperties',
     'ActionsList',
+    'AlertDetailsOverride',
     'AlertRule',
     'AlertRuleTemplate',
     'AlertRuleTemplateDataSource',
     'AlertRuleTemplatesList',
     'AlertRulesList',
     'AlertsDataTypeOfDataConnector',
+    'AutomationRule',
+    'AutomationRuleAction',
+    'AutomationRuleCondition',
+    'AutomationRuleModifyPropertiesAction',
+    'AutomationRulePropertyValuesCondition',
+    'AutomationRuleRunPlaybookAction',
+    'AutomationRuleTriggeringLogic',
+    'AutomationRulesList',
     'AwsCloudTrailDataConnector',
     'AwsCloudTrailDataConnectorDataTypes',
     'AwsCloudTrailDataConnectorDataTypesLogs',
+    'AzureResourceEntity',
+    'AzureResourceEntityProperties',
     'Bookmark',
     'BookmarkList',
     'ClientInfo',
+    'CloudApplicationEntity',
+    'CloudApplicationEntityProperties',
+    'CloudErrorBody',
     'DataConnector',
     'DataConnectorDataTypeCommon',
     'DataConnectorList',
     'DataConnectorTenantId',
     'DataConnectorWithAlertsProperties',
-    'ErrorAdditionalInfo',
-    'ErrorResponse',
+    'DnsEntity',
+    'DnsEntityProperties',
+    'Entity',
+    'EntityCommonProperties',
+    'EntityMapping',
+    'EventGroupingSettings',
+    'FieldMapping',
+    'FileEntity',
+    'FileEntityProperties',
+    'FileHashEntity',
+    'FileHashEntityProperties',
     'FusionAlertRule',
     'FusionAlertRuleTemplate',
+    'GeoLocation',
+    'GroupingConfiguration',
+    'HostEntity',
+    'HostEntityProperties',
+    'HuntingBookmark',
+    'HuntingBookmarkProperties',
     'Incident',
     'IncidentAdditionalData',
+    'IncidentAlertList',
+    'IncidentBookmarkList',
     'IncidentComment',
     'IncidentCommentList',
+    'IncidentConfiguration',
+    'IncidentEntitiesResponse',
+    'IncidentEntitiesResultsMetadata',
     'IncidentInfo',
     'IncidentLabel',
     'IncidentList',
     'IncidentOwnerInfo',
+    'IncidentOwnerInfoAutoGenerated',
+    'IncidentPropertiesAction',
+    'IoTDeviceEntity',
+    'IoTDeviceEntityProperties',
+    'IpEntity',
+    'IpEntityProperties',
     'MCASDataConnector',
     'MCASDataConnectorDataTypes',
     'MDATPDataConnector',
+    'MailClusterEntity',
+    'MailClusterEntityProperties',
+    'MailMessageEntity',
+    'MailMessageEntityProperties',
+    'MailboxEntity',
+    'MailboxEntityProperties',
+    'MalwareEntity',
+    'MalwareEntityProperties',
     'MicrosoftSecurityIncidentCreationAlertRule',
     'MicrosoftSecurityIncidentCreationAlertRuleCommonProperties',
     'MicrosoftSecurityIncidentCreationAlertRuleProperties',
     'MicrosoftSecurityIncidentCreationAlertRuleTemplate',
-    'OfficeConsent',
-    'OfficeConsentList',
     'OfficeDataConnector',
     'OfficeDataConnectorDataTypes',
     'OfficeDataConnectorDataTypesExchange',
     'OfficeDataConnectorDataTypesSharePoint',
+    'OfficeDataConnectorDataTypesTeams',
     'Operation',
     'OperationDisplay',
     'OperationsList',
+    'PlaybookActionProperties',
+    'ProcessEntity',
+    'ProcessEntityProperties',
+    'PropertyConditionProperties',
+    'RegistryKeyEntity',
+    'RegistryKeyEntityProperties',
+    'RegistryValueEntity',
+    'RegistryValueEntityProperties',
+    'Relation',
+    'RelationList',
     'Resource',
     'ResourceWithEtag',
     'ScheduledAlertRule',
     'ScheduledAlertRuleCommonProperties',
     'ScheduledAlertRuleProperties',
     'ScheduledAlertRuleTemplate',
-    'Settings',
+    'SecurityAlert',
+    'SecurityAlertProperties',
+    'SecurityAlertPropertiesConfidenceReasonsItem',
+    'SecurityGroupEntity',
+    'SecurityGroupEntityProperties',
+    'SentinelOnboardingState',
+    'SentinelOnboardingStatesList',
+    'SubmissionMailEntity',
+    'SubmissionMailEntityProperties',
+    'SystemData',
     'TIDataConnector',
     'TIDataConnectorDataTypes',
     'TIDataConnectorDataTypesIndicators',
     'ThreatIntelligence',
-    'ToggleSettings',
-    'UebaSettings',
+    'ThreatIntelligenceAppendTags',
+    'ThreatIntelligenceExternalReference',
+    'ThreatIntelligenceFilteringCriteria',
+    'ThreatIntelligenceGranularMarkingModel',
+    'ThreatIntelligenceIndicatorModel',
+    'ThreatIntelligenceIndicatorProperties',
+    'ThreatIntelligenceInformation',
+    'ThreatIntelligenceInformationList',
+    'ThreatIntelligenceKillChainPhase',
+    'ThreatIntelligenceMetric',
+    'ThreatIntelligenceMetricEntity',
+    'ThreatIntelligenceMetrics',
+    'ThreatIntelligenceMetricsList',
+    'ThreatIntelligenceParsedPattern',
+    'ThreatIntelligenceParsedPatternTypeValue',
+    'ThreatIntelligenceSortingCriteria',
+    'UrlEntity',
+    'UrlEntityProperties',
     'UserInfo',
+    'Watchlist',
+    'WatchlistItem',
+    'WatchlistItemList',
+    'WatchlistList',
+    'ActionType',
+    'AlertDetail',
     'AlertRuleKind',
     'AlertSeverity',
+    'AlertStatus',
+    'AntispamMailDirection',
     'AttackTactic',
-    'CaseSeverity',
+    'AutomationRulePropertyConditionSupportedOperator',
+    'AutomationRulePropertyConditionSupportedProperty',
+    'ConditionType',
+    'ConfidenceLevel',
+    'ConfidenceScoreStatus',
+    'CreatedByType',
     'DataConnectorKind',
     'DataTypeState',
+    'DeliveryAction',
+    'DeliveryLocation',
+    'ElevationToken',
+    'EntityKindEnum',
+    'EntityMappingType',
+    'EventGroupingAggregationKind',
+    'FileHashAlgorithm',
     'IncidentClassification',
     'IncidentClassificationReason',
     'IncidentLabelType',
     'IncidentSeverity',
     'IncidentStatus',
-    'LicenseStatus',
+    'KillChainIntent',
+    'MatchingMethod',
     'MicrosoftSecurityProductName',
-    'SettingKind',
-    'StatusInMcas',
+    'OSFamily',
+    'OwnerType',
+    'RegistryHive',
+    'RegistryValueKind',
+    'Source',
     'TemplateStatus',
+    'ThreatIntelligenceResourceInnerKind',
+    'ThreatIntelligenceSortingOrder',
     'TriggerOperator',
+    'TriggersOn',
+    'TriggersWhen',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

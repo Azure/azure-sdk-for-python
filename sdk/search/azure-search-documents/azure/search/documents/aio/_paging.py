@@ -107,7 +107,7 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
         _next_link, next_page_request = unpack_continuation_token(continuation_token)
 
         return await self._client.documents.search_post(
-            search_request=next_page_request
+            search_request=next_page_request, **self._kwargs
         )
 
     async def _extract_data_cb(self, response):  # pylint:disable=no-self-use

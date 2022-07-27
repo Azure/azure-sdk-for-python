@@ -1,6 +1,9 @@
 interactions:
 - request:
-    body: '{"query": "One california maki please."}'
+    body: '{"kind": "Conversation", "analysisInput": {"conversationItem": {"participantId":
+      "1", "id": "1", "modality": "text", "language": "en", "text": "Send an email
+      to Carol about the tomorrow''s demo"}, "isLoggingEnabled": false}, "parameters":
+      {"projectName": "conv_test", "deploymentName": "dep_test", "verbose": true}}'
     headers:
       Accept:
       - application/json
@@ -9,30 +12,32 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '40'
+      - '324'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.0.0b1 Python/3.9.7 (Windows-10-10.0.19043-SP0)
+      - azsdk-python-ai-language-conversations/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?projectName=test-project&deploymentName=production&api-version=2021-11-01-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?api-version=2022-05-15-preview
   response:
     body:
-      string: '{"query":"One california maki please.","prediction":{"topIntent":"Order","projectKind":"conversation","intents":[{"category":"Order","confidenceScore":1}],"entities":[{"category":"OrderItem","text":"california
-        maki","offset":4,"length":15,"confidenceScore":1}]}}'
+      string: '{"kind":"ConversationResult","result":{"query":"Send an email to Carol
+        about the tomorrow''s demo","prediction":{"topIntent":"Send","projectKind":"Conversation","intents":[{"category":"Send","confidenceScore":0.9053172},{"category":"Read","confidenceScore":0.44011447},{"category":"Setup","confidenceScore":0.41303915},{"category":"Set","confidenceScore":0.21186642},{"category":"None","confidenceScore":0.20198277},{"category":"Find","confidenceScore":0.19216746},{"category":"Call","confidenceScore":0.16446844},{"category":"Play","confidenceScore":0.15655291},{"category":"Open","confidenceScore":0.08699014}],"entities":[{"category":"Contact","text":"Carol","offset":17,"length":5,"confidenceScore":1,"extraInformation":[{"extraInformationKind":"EntitySubtype","value":"person.name"}]},{"category":"MeetingDate","text":"tomorrow","offset":33,"length":8,"confidenceScore":1,"resolutions":[{"resolutionKind":"DateTimeResolution","dateTimeSubKind":"Date","timex":"2022-06-29","value":"2022-06-29"}],"extraInformation":[{"extraInformationKind":"EntitySubtype","value":"datetime.date"}]}]}}}'
     headers:
       apim-request-id:
-      - a040b58d-0e08-45bd-aa45-36904e24abf6
+      - 28739b27-8491-40b3-9837-8b9857808b81
       cache-control:
       - no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type:
       - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.Language.ConversationalLanguageUnderstanding.Prediction=1
       date:
-      - Thu, 28 Oct 2021 15:00:01 GMT
+      - Tue, 28 Jun 2022 21:17:06 GMT
       pragma:
       - no-cache
       request-id:
-      - a040b58d-0e08-45bd-aa45-36904e24abf6
+      - 28739b27-8491-40b3-9837-8b9857808b81
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,7 +45,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '42'
+      - '265'
     status:
       code: 200
       message: OK

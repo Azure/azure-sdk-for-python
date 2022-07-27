@@ -16,7 +16,7 @@ You can find service libraries in the `/sdk` directory.
 
 ### Prerequisites
 
-The client libraries are supported on Python 3.6 or later.
+The client libraries are supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 
 ## Packages available
 
@@ -30,7 +30,7 @@ Each service might have a number of libraries available from each of the followi
 
 New wave of packages that we are announcing as **GA** and several that are currently releasing in **preview**. These libraries allow you to use and consume existing resources and interact with them, for example: upload a blob. These libraries share a number of core functionalities such as: retries, logging, transport protocols, authentication protocols, etc. that can be found in the [azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core) library. You can learn more about these libraries by reading guidelines that they follow [here](https://azure.github.io/azure-sdk/python/guidelines/index.html).
 
-You can find the [most up to date list of all of the new packages on our page](https://azure.github.io/azure-sdk/releases/latest/index.html#python-packages)
+You can find the [most up to date list of all of the new packages on our page](https://azure.github.io/azure-sdk/releases/latest/index.html#python)
 
 > NOTE: If you need to ensure your code is ready for production use one of the stable, non-preview libraries.
 

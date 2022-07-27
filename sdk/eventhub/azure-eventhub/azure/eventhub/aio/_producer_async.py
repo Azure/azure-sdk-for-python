@@ -24,6 +24,7 @@ from .._utils import (
     transform_outbound_single_message,
 )
 from .._constants import TIMEOUT_SYMBOL
+from ..amqp import AmqpAnnotatedMessage
 from ._client_base_async import ConsumerProducerMixin
 from ._async_utils import get_dict_with_loop_if_needed
 
@@ -80,7 +81,8 @@ class EventHubProducer(
         self._timeout = send_timeout
         self._idle_timeout = (idle_timeout * 1000) if idle_timeout else None
         self._retry_policy = errors.ErrorPolicy(
-            max_retries=self._client._config.max_retries, on_error=_error_handler  # pylint:disable=protected-access
+            max_retries=self._client._config.max_retries,
+            on_error=_error_handler,  # pylint:disable=protected-access
         )
         self._reconnect_backoff = 1
         self._name = "EHProducer-{}".format(uuid.uuid4())
@@ -173,12 +175,16 @@ class EventHubProducer(
 
     def _wrap_eventdata(
         self,
-        event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+        event_data: Union[
+            EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]
+        ],
         span: Optional[AbstractSpan],
         partition_key: Optional[AnyStr],
     ) -> Union[EventData, EventDataBatch]:
-        if isinstance(event_data, EventData):
-            outgoing_event_data = transform_outbound_single_message(event_data, EventData)
+        if isinstance(event_data, (EventData, AmqpAnnotatedMessage)):
+            outgoing_event_data = transform_outbound_single_message(
+                event_data, EventData
+            )
             if partition_key:
                 set_message_partition_key(outgoing_event_data.message, partition_key)
             wrapper_event_data = outgoing_event_data
@@ -188,12 +194,16 @@ class EventHubProducer(
                 event_data, EventDataBatch
             ):  # The partition_key in the param will be omitted.
                 if (
-                    partition_key and partition_key != event_data._partition_key  # pylint: disable=protected-access
+                    partition_key
+                    and partition_key
+                    != event_data._partition_key  # pylint: disable=protected-access
                 ):
                     raise ValueError(
                         "The partition_key does not match the one of the EventDataBatch"
                     )
-                for event in event_data.message._body_gen: # pylint: disable=protected-access
+                for (
+                    event
+                ) in event_data.message._body_gen:  # pylint: disable=protected-access
                     trace_message(event, span)
                 wrapper_event_data = event_data  # type:ignore
             else:
@@ -206,7 +216,9 @@ class EventHubProducer(
 
     async def send(
         self,
-        event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+        event_data: Union[
+            EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]
+        ],
         *,
         partition_key: Optional[AnyStr] = None,
         timeout: Optional[float] = None
@@ -238,7 +250,9 @@ class EventHubProducer(
         async with self._lock:
             with send_context_manager() as child:
                 self._check_closed()
-                wrapper_event_data = self._wrap_eventdata(event_data, child, partition_key)
+                wrapper_event_data = self._wrap_eventdata(
+                    event_data, child, partition_key
+                )
                 self._unsent_events = [wrapper_event_data.message]
 
                 if child:

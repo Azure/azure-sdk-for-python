@@ -6,7 +6,7 @@
 
 import pytest
 import functools
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
+from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
@@ -22,13 +22,9 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestContentFromUrl(FormRecognizerTest):
 
-    def teardown(self):
-        self.sleep(4)
-
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_content_url_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        set_bodiless_matcher()
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with pytest.raises(ClientAuthenticationError):
             poller = client.begin_recognize_content_from_url(self.invoice_url_pdf)
@@ -37,7 +33,6 @@ class TestContentFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_content_url_pass_stream(self, client):
-        set_bodiless_matcher()
         with open(self.receipt_jpg, "rb") as receipt:
             with pytest.raises(HttpResponseError):
                 poller = client.begin_recognize_content_from_url(receipt)
@@ -46,7 +41,6 @@ class TestContentFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_content_url_transform_pdf(self, client):
-        set_bodiless_matcher()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -69,7 +63,6 @@ class TestContentFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_content_url_pdf(self, client):
-        set_bodiless_matcher()
         poller = client.begin_recognize_content_from_url(self.invoice_url_pdf)
         result = poller.result()
         assert len(result) == 1
@@ -84,7 +77,6 @@ class TestContentFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_content_url_transform_jpg(self, client):
-        set_bodiless_matcher()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -107,7 +99,6 @@ class TestContentFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_content_url_jpg(self, client):
-        set_bodiless_matcher()
         poller = client.begin_recognize_content_from_url(self.form_url_jpg)
         result = poller.result()
         assert len(result) == 1
@@ -125,7 +116,6 @@ class TestContentFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_content_multipage_url(self, client):
-        set_bodiless_matcher()
         poller = client.begin_recognize_content_from_url(self.multipage_url_pdf)
         result = poller.result()
 
@@ -136,7 +126,6 @@ class TestContentFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_content_multipage_transform_url(self, client):
-        set_bodiless_matcher()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -172,7 +161,6 @@ class TestContentFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_content_multipage_table_span_pdf(self, client):
-        set_bodiless_matcher()
         poller = client.begin_recognize_content_from_url(self.multipage_table_url_pdf)
         result = poller.result()
         assert len(result) == 2
@@ -197,7 +185,6 @@ class TestContentFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_content_selection_marks(self, client):
-        set_bodiless_matcher()
         poller = client.begin_recognize_content_from_url(form_url=self.selection_mark_url_pdf)
         result = poller.result()
         assert len(result) == 1
@@ -209,7 +196,6 @@ class TestContentFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     @recorded_by_proxy
     def test_content_selection_marks_v2(self, client):
-        set_bodiless_matcher()
         poller = client.begin_recognize_content_from_url(form_url=self.selection_mark_url_pdf)
         result = poller.result()
         assert len(result) == 1
@@ -221,7 +207,6 @@ class TestContentFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_content_specify_pages(self, client):
-        set_bodiless_matcher()
         poller = client.begin_recognize_content_from_url(self.multipage_url_pdf, pages=["1"])
         result = poller.result()
         assert len(result) == 1
@@ -242,7 +227,6 @@ class TestContentFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_content_reading_order(self, client):
-        set_bodiless_matcher()
         poller = client.begin_recognize_content_from_url(self.form_url_jpg, reading_order="natural")
 
         assert 'natural' == poller._polling_method._initial_response.http_response.request.query['readingOrder']
@@ -253,7 +237,6 @@ class TestContentFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_content_language_specified(self, client):
-        set_bodiless_matcher()
         poller = client.begin_recognize_content_from_url(self.form_url_jpg, language="de")
         assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
         result = poller.result()
@@ -263,7 +246,6 @@ class TestContentFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_content_language_error(self, client):
-        set_bodiless_matcher()
         with pytest.raises(HttpResponseError) as e:
             client.begin_recognize_content_from_url(self.form_url_jpg, language="not a language")
         assert "NotSupportedLanguage" == e.value.error.code

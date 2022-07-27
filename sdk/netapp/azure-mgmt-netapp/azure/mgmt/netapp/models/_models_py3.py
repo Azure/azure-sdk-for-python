@@ -101,6 +101,8 @@ class ActiveDirectory(msrest.serialization.Model):
     :ivar encrypt_dc_connections: If enabled, Traffic between the SMB server to Domain Controller
      (DC) will be encrypted.
     :vartype encrypt_dc_connections: bool
+    :ivar ldap_search_scope: LDAP Search scope options.
+    :vartype ldap_search_scope: ~azure.mgmt.netapp.models.LdapSearchScopeOpt
     """
 
     _validation = {
@@ -134,6 +136,7 @@ class ActiveDirectory(msrest.serialization.Model):
         'ldap_over_tls': {'key': 'ldapOverTLS', 'type': 'bool'},
         'allow_local_nfs_users_with_ldap': {'key': 'allowLocalNfsUsersWithLdap', 'type': 'bool'},
         'encrypt_dc_connections': {'key': 'encryptDCConnections', 'type': 'bool'},
+        'ldap_search_scope': {'key': 'ldapSearchScope', 'type': 'LdapSearchScopeOpt'},
     }
 
     def __init__(
@@ -158,6 +161,7 @@ class ActiveDirectory(msrest.serialization.Model):
         ldap_over_tls: Optional[bool] = None,
         allow_local_nfs_users_with_ldap: Optional[bool] = None,
         encrypt_dc_connections: Optional[bool] = None,
+        ldap_search_scope: Optional["LdapSearchScopeOpt"] = None,
         **kwargs
     ):
         """
@@ -213,6 +217,8 @@ class ActiveDirectory(msrest.serialization.Model):
         :keyword encrypt_dc_connections: If enabled, Traffic between the SMB server to Domain
          Controller (DC) will be encrypted.
         :paramtype encrypt_dc_connections: bool
+        :keyword ldap_search_scope: LDAP Search scope options.
+        :paramtype ldap_search_scope: ~azure.mgmt.netapp.models.LdapSearchScopeOpt
         """
         super(ActiveDirectory, self).__init__(**kwargs)
         self.active_directory_id = active_directory_id
@@ -236,6 +242,7 @@ class ActiveDirectory(msrest.serialization.Model):
         self.ldap_over_tls = ldap_over_tls
         self.allow_local_nfs_users_with_ldap = allow_local_nfs_users_with_ldap
         self.encrypt_dc_connections = encrypt_dc_connections
+        self.ldap_search_scope = ldap_search_scope
 
 
 class AuthorizeRequest(msrest.serialization.Model):
@@ -470,25 +477,134 @@ class BackupPoliciesList(msrest.serialization.Model):
         self.value = value
 
 
-class BackupPolicy(msrest.serialization.Model):
+class Resource(msrest.serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.system_data = None
+
+
+class TrackedResource(Resource):
+    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
+        super(TrackedResource, self).__init__(**kwargs)
+        self.tags = tags
+        self.location = location
+
+
+class BackupPolicy(TrackedResource):
     """Backup policy information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar location: Required. Resource location.
-    :vartype location: str
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar etag: A unique read-only string that changes whenever the resource is updated.
-    :vartype etag: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
     :ivar backup_policy_id: Backup Policy Resource ID.
     :vartype backup_policy_id: str
     :ivar provisioning_state: Azure lifecycle management.
@@ -508,11 +624,12 @@ class BackupPolicy(msrest.serialization.Model):
     """
 
     _validation = {
-        'location': {'required': True},
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'etag': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'location': {'required': True},
+        'etag': {'readonly': True},
         'backup_policy_id': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'volumes_assigned': {'readonly': True},
@@ -520,12 +637,13 @@ class BackupPolicy(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'backup_policy_id': {'key': 'properties.backupPolicyId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'daily_backups_to_keep': {'key': 'properties.dailyBackupsToKeep', 'type': 'int'},
@@ -548,10 +666,10 @@ class BackupPolicy(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
-        :paramtype location: str
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
         :keyword daily_backups_to_keep: Daily backups count to keep.
         :paramtype daily_backups_to_keep: int
         :keyword weekly_backups_to_keep: Weekly backups count to keep.
@@ -561,13 +679,8 @@ class BackupPolicy(msrest.serialization.Model):
         :keyword enabled: The property to decide policy is enabled or not.
         :paramtype enabled: bool
         """
-        super(BackupPolicy, self).__init__(**kwargs)
-        self.location = location
-        self.id = None
-        self.name = None
+        super(BackupPolicy, self).__init__(tags=tags, location=location, **kwargs)
         self.etag = None
-        self.type = None
-        self.tags = tags
         self.backup_policy_id = None
         self.provisioning_state = None
         self.daily_backups_to_keep = daily_backups_to_keep
@@ -894,28 +1007,33 @@ class BreakReplicationRequest(msrest.serialization.Model):
         self.force_break_replication = force_break_replication
 
 
-class CapacityPool(msrest.serialization.Model):
+class CapacityPool(TrackedResource):
     """Capacity pool resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar location: Required. Resource location.
-    :vartype location: str
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar etag: A unique read-only string that changes whenever the resource is updated.
-    :vartype etag: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
     :ivar pool_id: UUID v4 used to identify the Pool.
     :vartype pool_id: str
-    :ivar size: Required. Provisioned size of the pool (in bytes). Allowed values are in 4TiB
+    :ivar size: Required. Provisioned size of the pool (in bytes). Allowed values are in 1TiB
      chunks (value must be multiply of 4398046511104).
     :vartype size: long
     :ivar service_level: Required. The service level of the file system. Possible values include:
@@ -938,13 +1056,14 @@ class CapacityPool(msrest.serialization.Model):
     """
 
     _validation = {
-        'location': {'required': True},
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'etag': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'location': {'required': True},
+        'etag': {'readonly': True},
         'pool_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
-        'size': {'required': True, 'maximum': 549755813888000, 'minimum': 4398046511104},
+        'size': {'required': True},
         'service_level': {'required': True},
         'provisioning_state': {'readonly': True},
         'total_throughput_mibps': {'readonly': True},
@@ -952,12 +1071,13 @@ class CapacityPool(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'pool_id': {'key': 'properties.poolId', 'type': 'str'},
         'size': {'key': 'properties.size', 'type': 'long'},
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
@@ -973,7 +1093,7 @@ class CapacityPool(msrest.serialization.Model):
         self,
         *,
         location: str,
-        size: int,
+        size: int = 4398046511104,
         service_level: Union[str, "ServiceLevel"] = "Premium",
         tags: Optional[Dict[str, str]] = None,
         qos_type: Optional[Union[str, "QosType"]] = None,
@@ -982,11 +1102,11 @@ class CapacityPool(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
-        :paramtype location: str
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword size: Required. Provisioned size of the pool (in bytes). Allowed values are in 4TiB
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword size: Required. Provisioned size of the pool (in bytes). Allowed values are in 1TiB
          chunks (value must be multiply of 4398046511104).
         :paramtype size: long
         :keyword service_level: Required. The service level of the file system. Possible values
@@ -1001,13 +1121,8 @@ class CapacityPool(msrest.serialization.Model):
          Possible values include: "Single", "Double". Default value: "Single".
         :paramtype encryption_type: str or ~azure.mgmt.netapp.models.EncryptionType
         """
-        super(CapacityPool, self).__init__(**kwargs)
-        self.location = location
-        self.id = None
-        self.name = None
+        super(CapacityPool, self).__init__(tags=tags, location=location, **kwargs)
         self.etag = None
-        self.type = None
-        self.tags = tags
         self.pool_id = None
         self.size = size
         self.service_level = service_level
@@ -1066,7 +1181,7 @@ class CapacityPoolPatch(msrest.serialization.Model):
     :vartype type: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar size: Provisioned size of the pool (in bytes). Allowed values are in 4TiB chunks (value
+    :ivar size: Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks (value
      must be multiply of 4398046511104).
     :vartype size: long
     :ivar qos_type: The qos type of the pool. Possible values include: "Auto", "Manual".
@@ -1077,7 +1192,6 @@ class CapacityPoolPatch(msrest.serialization.Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'size': {'maximum': 549755813888000, 'minimum': 4398046511104},
     }
 
     _attribute_map = {
@@ -1104,7 +1218,7 @@ class CapacityPoolPatch(msrest.serialization.Model):
         :paramtype location: str
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword size: Provisioned size of the pool (in bytes). Allowed values are in 4TiB chunks
+        :keyword size: Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks
          (value must be multiply of 4398046511104).
         :paramtype size: long
         :keyword qos_type: The qos type of the pool. Possible values include: "Auto", "Manual".
@@ -1510,6 +1624,78 @@ class HourlySchedule(msrest.serialization.Model):
         self.used_bytes = used_bytes
 
 
+class LdapSearchScopeOpt(msrest.serialization.Model):
+    """LDAP search scope.
+
+    :ivar user_dn: This specifies the user DN, which overrides the base DN for user lookups.
+    :vartype user_dn: str
+    :ivar group_dn: This specifies the group DN, which overrides the base DN for group lookups.
+    :vartype group_dn: str
+    :ivar group_membership_filter: This specifies the custom LDAP search filter to be used when
+     looking up group membership from LDAP server.
+    :vartype group_membership_filter: str
+    """
+
+    _validation = {
+        'user_dn': {'max_length': 255, 'min_length': 0},
+        'group_dn': {'max_length': 255, 'min_length': 0},
+        'group_membership_filter': {'max_length': 255, 'min_length': 0},
+    }
+
+    _attribute_map = {
+        'user_dn': {'key': 'userDN', 'type': 'str'},
+        'group_dn': {'key': 'groupDN', 'type': 'str'},
+        'group_membership_filter': {'key': 'groupMembershipFilter', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        user_dn: Optional[str] = None,
+        group_dn: Optional[str] = None,
+        group_membership_filter: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword user_dn: This specifies the user DN, which overrides the base DN for user lookups.
+        :paramtype user_dn: str
+        :keyword group_dn: This specifies the group DN, which overrides the base DN for group lookups.
+        :paramtype group_dn: str
+        :keyword group_membership_filter: This specifies the custom LDAP search filter to be used when
+         looking up group membership from LDAP server.
+        :paramtype group_membership_filter: str
+        """
+        super(LdapSearchScopeOpt, self).__init__(**kwargs)
+        self.user_dn = user_dn
+        self.group_dn = group_dn
+        self.group_membership_filter = group_membership_filter
+
+
+class ListReplications(msrest.serialization.Model):
+    """List Replications.
+
+    :ivar value: A list of replications.
+    :vartype value: list[~azure.mgmt.netapp.models.Replication]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Replication]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["Replication"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: A list of replications.
+        :paramtype value: list[~azure.mgmt.netapp.models.Replication]
+        """
+        super(ListReplications, self).__init__(**kwargs)
+        self.value = value
+
+
 class LogSpecification(msrest.serialization.Model):
     """Log Definition of a single resource metric.
 
@@ -1860,27 +2046,30 @@ class MountTargetProperties(msrest.serialization.Model):
         self.smb_server_fqdn = smb_server_fqdn
 
 
-class NetAppAccount(msrest.serialization.Model):
+class NetAppAccount(TrackedResource):
     """NetApp account resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar location: Required. Resource location.
-    :vartype location: str
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar etag: A unique read-only string that changes whenever the resource is updated.
-    :vartype etag: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
     :ivar provisioning_state: Azure lifecycle management.
     :vartype provisioning_state: str
     :ivar active_directories: Active Directories.
@@ -1890,23 +2079,23 @@ class NetAppAccount(msrest.serialization.Model):
     """
 
     _validation = {
-        'location': {'required': True},
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'etag': {'readonly': True},
         'type': {'readonly': True},
         'system_data': {'readonly': True},
+        'location': {'required': True},
+        'etag': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'active_directories': {'key': 'properties.activeDirectories', 'type': '[ActiveDirectory]'},
         'encryption': {'key': 'properties.encryption', 'type': 'AccountEncryption'},
@@ -1922,23 +2111,17 @@ class NetAppAccount(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
-        :paramtype location: str
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
         :keyword active_directories: Active Directories.
         :paramtype active_directories: list[~azure.mgmt.netapp.models.ActiveDirectory]
         :keyword encryption: Encryption settings.
         :paramtype encryption: ~azure.mgmt.netapp.models.AccountEncryption
         """
-        super(NetAppAccount, self).__init__(**kwargs)
-        self.location = location
-        self.id = None
-        self.name = None
+        super(NetAppAccount, self).__init__(tags=tags, location=location, **kwargs)
         self.etag = None
-        self.type = None
-        self.tags = tags
-        self.system_data = None
         self.provisioning_state = None
         self.active_directories = active_directories
         self.encryption = encryption
@@ -2238,45 +2421,6 @@ class PoolChangeRequest(msrest.serialization.Model):
         self.new_pool_resource_id = new_pool_resource_id
 
 
-class Resource(msrest.serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-
-
 class ProxyResource(Resource):
     """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
 
@@ -2290,18 +2434,23 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(
@@ -2364,6 +2513,62 @@ class QuotaAvailabilityRequest(msrest.serialization.Model):
         self.name = name
         self.type = type
         self.resource_group = resource_group
+
+
+class Replication(msrest.serialization.Model):
+    """Replication properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar endpoint_type: Indicates whether the local volume is the source or destination for the
+     Volume Replication. Possible values include: "src", "dst".
+    :vartype endpoint_type: str or ~azure.mgmt.netapp.models.EndpointType
+    :ivar replication_schedule: Schedule. Possible values include: "_10minutely", "hourly",
+     "daily".
+    :vartype replication_schedule: str or ~azure.mgmt.netapp.models.ReplicationSchedule
+    :ivar remote_volume_resource_id: Required. The resource ID of the remote volume.
+    :vartype remote_volume_resource_id: str
+    :ivar remote_volume_region: The remote region for the other end of the Volume Replication.
+    :vartype remote_volume_region: str
+    """
+
+    _validation = {
+        'remote_volume_resource_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'endpoint_type': {'key': 'endpointType', 'type': 'str'},
+        'replication_schedule': {'key': 'replicationSchedule', 'type': 'str'},
+        'remote_volume_resource_id': {'key': 'remoteVolumeResourceId', 'type': 'str'},
+        'remote_volume_region': {'key': 'remoteVolumeRegion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        remote_volume_resource_id: str,
+        endpoint_type: Optional[Union[str, "EndpointType"]] = None,
+        replication_schedule: Optional[Union[str, "ReplicationSchedule"]] = None,
+        remote_volume_region: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword endpoint_type: Indicates whether the local volume is the source or destination for the
+         Volume Replication. Possible values include: "src", "dst".
+        :paramtype endpoint_type: str or ~azure.mgmt.netapp.models.EndpointType
+        :keyword replication_schedule: Schedule. Possible values include: "_10minutely", "hourly",
+         "daily".
+        :paramtype replication_schedule: str or ~azure.mgmt.netapp.models.ReplicationSchedule
+        :keyword remote_volume_resource_id: Required. The resource ID of the remote volume.
+        :paramtype remote_volume_resource_id: str
+        :keyword remote_volume_region: The remote region for the other end of the Volume Replication.
+        :paramtype remote_volume_region: str
+        """
+        super(Replication, self).__init__(**kwargs)
+        self.endpoint_type = endpoint_type
+        self.replication_schedule = replication_schedule
+        self.remote_volume_resource_id = remote_volume_resource_id
+        self.remote_volume_region = remote_volume_region
 
 
 class ReplicationObject(msrest.serialization.Model):
@@ -2753,25 +2958,30 @@ class SnapshotPoliciesList(msrest.serialization.Model):
         self.value = value
 
 
-class SnapshotPolicy(msrest.serialization.Model):
+class SnapshotPolicy(TrackedResource):
     """Snapshot policy information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar location: Required. Resource location.
-    :vartype location: str
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar etag: A unique read-only string that changes whenever the resource is updated.
-    :vartype etag: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
     :ivar hourly_schedule: Schedule for hourly snapshots.
     :vartype hourly_schedule: ~azure.mgmt.netapp.models.HourlySchedule
     :ivar daily_schedule: Schedule for daily snapshots.
@@ -2787,21 +2997,23 @@ class SnapshotPolicy(msrest.serialization.Model):
     """
 
     _validation = {
-        'location': {'required': True},
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'etag': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'location': {'required': True},
+        'etag': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'HourlySchedule'},
         'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'DailySchedule'},
         'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'WeeklySchedule'},
@@ -2823,10 +3035,10 @@ class SnapshotPolicy(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
-        :paramtype location: str
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
         :keyword hourly_schedule: Schedule for hourly snapshots.
         :paramtype hourly_schedule: ~azure.mgmt.netapp.models.HourlySchedule
         :keyword daily_schedule: Schedule for daily snapshots.
@@ -2838,13 +3050,8 @@ class SnapshotPolicy(msrest.serialization.Model):
         :keyword enabled: The property to decide policy is enabled or not.
         :paramtype enabled: bool
         """
-        super(SnapshotPolicy, self).__init__(**kwargs)
-        self.location = location
-        self.id = None
-        self.name = None
+        super(SnapshotPolicy, self).__init__(tags=tags, location=location, **kwargs)
         self.etag = None
-        self.type = None
-        self.tags = tags
         self.hourly_schedule = hourly_schedule
         self.daily_schedule = daily_schedule
         self.weekly_schedule = weekly_schedule
@@ -3062,6 +3269,44 @@ class SnapshotPolicyVolumeList(msrest.serialization.Model):
         self.value = value
 
 
+class SnapshotRestoreFiles(msrest.serialization.Model):
+    """Restore payload for Single File Snapshot Restore.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar file_paths: Required. List of files to be restored.
+    :vartype file_paths: list[str]
+    :ivar destination_path: Destination folder where the files will be restored.
+    :vartype destination_path: str
+    """
+
+    _validation = {
+        'file_paths': {'required': True, 'max_items': 10, 'min_items': 1},
+    }
+
+    _attribute_map = {
+        'file_paths': {'key': 'filePaths', 'type': '[str]'},
+        'destination_path': {'key': 'destinationPath', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        file_paths: List[str],
+        destination_path: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword file_paths: Required. List of files to be restored.
+        :paramtype file_paths: list[str]
+        :keyword destination_path: Destination folder where the files will be restored.
+        :paramtype destination_path: str
+        """
+        super(SnapshotRestoreFiles, self).__init__(**kwargs)
+        self.file_paths = file_paths
+        self.destination_path = destination_path
+
+
 class SnapshotsList(msrest.serialization.Model):
     """List of Snapshots.
 
@@ -3100,7 +3345,8 @@ class SubscriptionQuotaItem(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: The system meta data relating to this resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.netapp.models.SystemData
     :ivar current: The current quota value.
     :vartype current: int
@@ -3133,7 +3379,6 @@ class SubscriptionQuotaItem(ProxyResource):
         """
         """
         super(SubscriptionQuotaItem, self).__init__(**kwargs)
-        self.system_data = None
         self.current = None
         self.default = None
 
@@ -3161,6 +3406,246 @@ class SubscriptionQuotaItemList(msrest.serialization.Model):
         """
         super(SubscriptionQuotaItemList, self).__init__(**kwargs)
         self.value = value
+
+
+class SubvolumeInfo(ProxyResource):
+    """Subvolume Information properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar path: Path to the subvolume.
+    :vartype path: str
+    :ivar size: Truncate subvolume to the provided size in bytes.
+    :vartype size: long
+    :ivar parent_path: parent path to the subvolume.
+    :vartype parent_path: str
+    :ivar provisioning_state: Azure lifecycle management.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'path': {'key': 'properties.path', 'type': 'str'},
+        'size': {'key': 'properties.size', 'type': 'long'},
+        'parent_path': {'key': 'properties.parentPath', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        path: Optional[str] = None,
+        size: Optional[int] = None,
+        parent_path: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword path: Path to the subvolume.
+        :paramtype path: str
+        :keyword size: Truncate subvolume to the provided size in bytes.
+        :paramtype size: long
+        :keyword parent_path: parent path to the subvolume.
+        :paramtype parent_path: str
+        """
+        super(SubvolumeInfo, self).__init__(**kwargs)
+        self.path = path
+        self.size = size
+        self.parent_path = parent_path
+        self.provisioning_state = None
+
+
+class SubvolumeModel(msrest.serialization.Model):
+    """Result of the post subvolume and action is to get metadata of the subvolume.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar path: Path to the subvolume.
+    :vartype path: str
+    :ivar parent_path: Path to the parent subvolume.
+    :vartype parent_path: str
+    :ivar size: Size of subvolume.
+    :vartype size: long
+    :ivar bytes_used: Bytes used.
+    :vartype bytes_used: long
+    :ivar permissions: Permissions of the subvolume.
+    :vartype permissions: str
+    :ivar creation_time_stamp: Creation time and date.
+    :vartype creation_time_stamp: ~datetime.datetime
+    :ivar accessed_time_stamp: Most recent access time and date.
+    :vartype accessed_time_stamp: ~datetime.datetime
+    :ivar modified_time_stamp: Most recent modification time and date.
+    :vartype modified_time_stamp: ~datetime.datetime
+    :ivar changed_time_stamp: Most recent change time and date.
+    :vartype changed_time_stamp: ~datetime.datetime
+    :ivar provisioning_state: Azure lifecycle management.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'path': {'key': 'properties.path', 'type': 'str'},
+        'parent_path': {'key': 'properties.parentPath', 'type': 'str'},
+        'size': {'key': 'properties.size', 'type': 'long'},
+        'bytes_used': {'key': 'properties.bytesUsed', 'type': 'long'},
+        'permissions': {'key': 'properties.permissions', 'type': 'str'},
+        'creation_time_stamp': {'key': 'properties.creationTimeStamp', 'type': 'iso-8601'},
+        'accessed_time_stamp': {'key': 'properties.accessedTimeStamp', 'type': 'iso-8601'},
+        'modified_time_stamp': {'key': 'properties.modifiedTimeStamp', 'type': 'iso-8601'},
+        'changed_time_stamp': {'key': 'properties.changedTimeStamp', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        path: Optional[str] = None,
+        parent_path: Optional[str] = None,
+        size: Optional[int] = None,
+        bytes_used: Optional[int] = None,
+        permissions: Optional[str] = None,
+        creation_time_stamp: Optional[datetime.datetime] = None,
+        accessed_time_stamp: Optional[datetime.datetime] = None,
+        modified_time_stamp: Optional[datetime.datetime] = None,
+        changed_time_stamp: Optional[datetime.datetime] = None,
+        provisioning_state: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword path: Path to the subvolume.
+        :paramtype path: str
+        :keyword parent_path: Path to the parent subvolume.
+        :paramtype parent_path: str
+        :keyword size: Size of subvolume.
+        :paramtype size: long
+        :keyword bytes_used: Bytes used.
+        :paramtype bytes_used: long
+        :keyword permissions: Permissions of the subvolume.
+        :paramtype permissions: str
+        :keyword creation_time_stamp: Creation time and date.
+        :paramtype creation_time_stamp: ~datetime.datetime
+        :keyword accessed_time_stamp: Most recent access time and date.
+        :paramtype accessed_time_stamp: ~datetime.datetime
+        :keyword modified_time_stamp: Most recent modification time and date.
+        :paramtype modified_time_stamp: ~datetime.datetime
+        :keyword changed_time_stamp: Most recent change time and date.
+        :paramtype changed_time_stamp: ~datetime.datetime
+        :keyword provisioning_state: Azure lifecycle management.
+        :paramtype provisioning_state: str
+        """
+        super(SubvolumeModel, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.path = path
+        self.parent_path = parent_path
+        self.size = size
+        self.bytes_used = bytes_used
+        self.permissions = permissions
+        self.creation_time_stamp = creation_time_stamp
+        self.accessed_time_stamp = accessed_time_stamp
+        self.modified_time_stamp = modified_time_stamp
+        self.changed_time_stamp = changed_time_stamp
+        self.provisioning_state = provisioning_state
+
+
+class SubvolumePatchRequest(msrest.serialization.Model):
+    """Subvolume Patch Request properties.
+
+    :ivar size: Truncate subvolume to the provided size in bytes.
+    :vartype size: long
+    :ivar path: path to the subvolume.
+    :vartype path: str
+    """
+
+    _attribute_map = {
+        'size': {'key': 'properties.size', 'type': 'long'},
+        'path': {'key': 'properties.path', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        size: Optional[int] = None,
+        path: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword size: Truncate subvolume to the provided size in bytes.
+        :paramtype size: long
+        :keyword path: path to the subvolume.
+        :paramtype path: str
+        """
+        super(SubvolumePatchRequest, self).__init__(**kwargs)
+        self.size = size
+        self.path = path
+
+
+class SubvolumesList(msrest.serialization.Model):
+    """List of Subvolumes.
+
+    :ivar value: A list of Subvolumes.
+    :vartype value: list[~azure.mgmt.netapp.models.SubvolumeInfo]
+    :ivar next_link: URL to get the next set of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SubvolumeInfo]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["SubvolumeInfo"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: A list of Subvolumes.
+        :paramtype value: list[~azure.mgmt.netapp.models.SubvolumeInfo]
+        :keyword next_link: URL to get the next set of results.
+        :paramtype next_link: str
+        """
+        super(SubvolumesList, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class SystemData(msrest.serialization.Model):
@@ -3307,25 +3792,32 @@ class VaultList(msrest.serialization.Model):
         self.value = value
 
 
-class Volume(msrest.serialization.Model):
+class Volume(TrackedResource):
     """Volume resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar location: Required. Resource location.
-    :vartype location: str
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar etag: A unique read-only string that changes whenever the resource is updated.
-    :vartype etag: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar zones: Availability Zone.
+    :vartype zones: list[str]
     :ivar file_system_id: Unique FileSystem Identifier.
     :vartype file_system_id: str
     :ivar creation_token: Required. A unique file path for the volume. Used when creating mount
@@ -3391,8 +3883,10 @@ class Volume(msrest.serialization.Model):
     :ivar throughput_mibps: Maximum throughput in Mibps that can be achieved by this volume and
      this will be accepted as input only for manual qosType volume.
     :vartype throughput_mibps: float
-    :ivar encryption_key_source: Encryption Key Source. Possible values are: 'Microsoft.NetApp'.
-    :vartype encryption_key_source: str
+    :ivar encryption_key_source: Source of key used to encrypt data in volume. Possible values
+     (case-insensitive) are: 'Microsoft.NetApp'. Possible values include: "Microsoft.NetApp".
+     Default value: "Microsoft.NetApp".
+    :vartype encryption_key_source: str or ~azure.mgmt.netapp.models.EncryptionKeySource
     :ivar ldap_enabled: Specifies whether LDAP is enabled or not for a given NFS volume.
     :vartype ldap_enabled: bool
     :ivar cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
@@ -3423,6 +3917,9 @@ class Volume(msrest.serialization.Model):
     :ivar default_group_quota_in_ki_bs: Default group quota for volume in KiBs. If
      isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies.
     :vartype default_group_quota_in_ki_bs: long
+    :ivar maximum_number_of_files: Maximum number of files allowed. Needs a service request in
+     order to be changed. Only allowed to be changed if volume quota is more than 4TiB.
+    :vartype maximum_number_of_files: long
     :ivar volume_group_name: Volume Group Name.
     :vartype volume_group_name: str
     :ivar capacity_pool_resource_id: Pool Resource Id used in case of creating a volume through
@@ -3435,16 +3932,23 @@ class Volume(msrest.serialization.Model):
     :ivar volume_spec_name: Volume spec name is the application specific designation or identifier
      for the particular volume in a volume group for e.g. data, log.
     :vartype volume_spec_name: str
+    :ivar encrypted: Specifies if the volume is encrypted or not. Only available on volumes created
+     or updated after 2022-01-01.
+    :vartype encrypted: bool
     :ivar placement_rules: Application specific placement rules for the particular volume.
     :vartype placement_rules: list[~azure.mgmt.netapp.models.PlacementKeyValuePairs]
+    :ivar enable_subvolumes: Flag indicating whether subvolume operations are enabled on the
+     volume. Possible values include: "Enabled", "Disabled". Default value: "Disabled".
+    :vartype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
     """
 
     _validation = {
-        'location': {'required': True},
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'etag': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'location': {'required': True},
+        'etag': {'readonly': True},
         'file_system_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'creation_token': {'required': True, 'max_length': 80, 'min_length': 1, 'pattern': r'^[a-zA-Z][a-zA-Z0-9\-]{0,79}$'},
         'usage_threshold': {'required': True, 'maximum': 109951162777600, 'minimum': 107374182400},
@@ -3459,17 +3963,21 @@ class Volume(msrest.serialization.Model):
         'coolness_period': {'maximum': 63, 'minimum': 7},
         'unix_permissions': {'max_length': 4, 'min_length': 4},
         'clone_progress': {'readonly': True},
+        'maximum_number_of_files': {'readonly': True},
         'volume_group_name': {'readonly': True},
         't2_network': {'readonly': True},
+        'encrypted': {'readonly': True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
         'file_system_id': {'key': 'properties.fileSystemId', 'type': 'str'},
         'creation_token': {'key': 'properties.creationToken', 'type': 'str'},
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
@@ -3504,12 +4012,15 @@ class Volume(msrest.serialization.Model):
         'is_default_quota_enabled': {'key': 'properties.isDefaultQuotaEnabled', 'type': 'bool'},
         'default_user_quota_in_ki_bs': {'key': 'properties.defaultUserQuotaInKiBs', 'type': 'long'},
         'default_group_quota_in_ki_bs': {'key': 'properties.defaultGroupQuotaInKiBs', 'type': 'long'},
+        'maximum_number_of_files': {'key': 'properties.maximumNumberOfFiles', 'type': 'long'},
         'volume_group_name': {'key': 'properties.volumeGroupName', 'type': 'str'},
         'capacity_pool_resource_id': {'key': 'properties.capacityPoolResourceId', 'type': 'str'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'str'},
         't2_network': {'key': 'properties.t2Network', 'type': 'str'},
         'volume_spec_name': {'key': 'properties.volumeSpecName', 'type': 'str'},
+        'encrypted': {'key': 'properties.encrypted', 'type': 'bool'},
         'placement_rules': {'key': 'properties.placementRules', 'type': '[PlacementKeyValuePairs]'},
+        'enable_subvolumes': {'key': 'properties.enableSubvolumes', 'type': 'str'},
     }
 
     def __init__(
@@ -3520,6 +4031,7 @@ class Volume(msrest.serialization.Model):
         usage_threshold: int = 107374182400,
         subnet_id: str,
         tags: Optional[Dict[str, str]] = None,
+        zones: Optional[List[str]] = None,
         service_level: Optional[Union[str, "ServiceLevel"]] = "Premium",
         export_policy: Optional["VolumePropertiesExportPolicy"] = None,
         protocol_types: Optional[List[str]] = None,
@@ -3534,8 +4046,8 @@ class Volume(msrest.serialization.Model):
         security_style: Optional[Union[str, "SecurityStyle"]] = "unix",
         smb_encryption: Optional[bool] = False,
         smb_continuously_available: Optional[bool] = False,
-        throughput_mibps: Optional[float] = 0,
-        encryption_key_source: Optional[str] = None,
+        throughput_mibps: Optional[float] = None,
+        encryption_key_source: Optional[Union[str, "EncryptionKeySource"]] = "Microsoft.NetApp",
         ldap_enabled: Optional[bool] = False,
         cool_access: Optional[bool] = False,
         coolness_period: Optional[int] = None,
@@ -3548,13 +4060,16 @@ class Volume(msrest.serialization.Model):
         proximity_placement_group: Optional[str] = None,
         volume_spec_name: Optional[str] = None,
         placement_rules: Optional[List["PlacementKeyValuePairs"]] = None,
+        enable_subvolumes: Optional[Union[str, "EnableSubvolumes"]] = "Disabled",
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
-        :paramtype location: str
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword zones: Availability Zone.
+        :paramtype zones: list[str]
         :keyword creation_token: Required. A unique file path for the volume. Used when creating mount
          targets.
         :paramtype creation_token: str
@@ -3605,8 +4120,10 @@ class Volume(msrest.serialization.Model):
         :keyword throughput_mibps: Maximum throughput in Mibps that can be achieved by this volume and
          this will be accepted as input only for manual qosType volume.
         :paramtype throughput_mibps: float
-        :keyword encryption_key_source: Encryption Key Source. Possible values are: 'Microsoft.NetApp'.
-        :paramtype encryption_key_source: str
+        :keyword encryption_key_source: Source of key used to encrypt data in volume. Possible values
+         (case-insensitive) are: 'Microsoft.NetApp'. Possible values include: "Microsoft.NetApp".
+         Default value: "Microsoft.NetApp".
+        :paramtype encryption_key_source: str or ~azure.mgmt.netapp.models.EncryptionKeySource
         :keyword ldap_enabled: Specifies whether LDAP is enabled or not for a given NFS volume.
         :paramtype ldap_enabled: bool
         :keyword cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
@@ -3643,14 +4160,13 @@ class Volume(msrest.serialization.Model):
         :paramtype volume_spec_name: str
         :keyword placement_rules: Application specific placement rules for the particular volume.
         :paramtype placement_rules: list[~azure.mgmt.netapp.models.PlacementKeyValuePairs]
+        :keyword enable_subvolumes: Flag indicating whether subvolume operations are enabled on the
+         volume. Possible values include: "Enabled", "Disabled". Default value: "Disabled".
+        :paramtype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
         """
-        super(Volume, self).__init__(**kwargs)
-        self.location = location
-        self.id = None
-        self.name = None
+        super(Volume, self).__init__(tags=tags, location=location, **kwargs)
         self.etag = None
-        self.type = None
-        self.tags = tags
+        self.zones = zones
         self.file_system_id = None
         self.creation_token = creation_token
         self.service_level = service_level
@@ -3685,12 +4201,15 @@ class Volume(msrest.serialization.Model):
         self.is_default_quota_enabled = is_default_quota_enabled
         self.default_user_quota_in_ki_bs = default_user_quota_in_ki_bs
         self.default_group_quota_in_ki_bs = default_group_quota_in_ki_bs
+        self.maximum_number_of_files = None
         self.volume_group_name = None
         self.capacity_pool_resource_id = capacity_pool_resource_id
         self.proximity_placement_group = proximity_placement_group
         self.t2_network = None
         self.volume_spec_name = volume_spec_name
+        self.encrypted = None
         self.placement_rules = placement_rules
+        self.enable_subvolumes = enable_subvolumes
 
 
 class VolumeBackupProperties(msrest.serialization.Model):
@@ -3791,8 +4310,6 @@ class VolumeGroup(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
-    :vartype tags: dict[str, str]
     :ivar provisioning_state: Azure lifecycle management.
     :vartype provisioning_state: str
     :ivar group_meta_data: Volume group details.
@@ -3811,7 +4328,6 @@ class VolumeGroup(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'group_meta_data': {'key': 'properties.groupMetaData', 'type': 'VolumeGroupMetaData'},
     }
@@ -3820,15 +4336,12 @@ class VolumeGroup(msrest.serialization.Model):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
         group_meta_data: Optional["VolumeGroupMetaData"] = None,
         **kwargs
     ):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
-        :paramtype tags: dict[str, str]
         :keyword group_meta_data: Volume group details.
         :paramtype group_meta_data: ~azure.mgmt.netapp.models.VolumeGroupMetaData
         """
@@ -3837,7 +4350,6 @@ class VolumeGroup(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
-        self.tags = tags
         self.provisioning_state = None
         self.group_meta_data = group_meta_data
 
@@ -3855,8 +4367,6 @@ class VolumeGroupDetails(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
-    :vartype tags: dict[str, str]
     :ivar provisioning_state: Azure lifecycle management.
     :vartype provisioning_state: str
     :ivar group_meta_data: Volume group details.
@@ -3877,7 +4387,6 @@ class VolumeGroupDetails(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'group_meta_data': {'key': 'properties.groupMetaData', 'type': 'VolumeGroupMetaData'},
         'volumes': {'key': 'properties.volumes', 'type': '[VolumeGroupVolumeProperties]'},
@@ -3887,7 +4396,6 @@ class VolumeGroupDetails(msrest.serialization.Model):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
         group_meta_data: Optional["VolumeGroupMetaData"] = None,
         volumes: Optional[List["VolumeGroupVolumeProperties"]] = None,
         **kwargs
@@ -3895,8 +4403,6 @@ class VolumeGroupDetails(msrest.serialization.Model):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
-        :paramtype tags: dict[str, str]
         :keyword group_meta_data: Volume group details.
         :paramtype group_meta_data: ~azure.mgmt.netapp.models.VolumeGroupMetaData
         :keyword volumes: List of volumes from group.
@@ -3907,7 +4413,6 @@ class VolumeGroupDetails(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
-        self.tags = tags
         self.provisioning_state = None
         self.group_meta_data = group_meta_data
         self.volumes = volumes
@@ -4083,8 +4588,10 @@ class VolumeGroupVolumeProperties(msrest.serialization.Model):
     :ivar throughput_mibps: Maximum throughput in Mibps that can be achieved by this volume and
      this will be accepted as input only for manual qosType volume.
     :vartype throughput_mibps: float
-    :ivar encryption_key_source: Encryption Key Source. Possible values are: 'Microsoft.NetApp'.
-    :vartype encryption_key_source: str
+    :ivar encryption_key_source: Source of key used to encrypt data in volume. Possible values
+     (case-insensitive) are: 'Microsoft.NetApp'. Possible values include: "Microsoft.NetApp".
+     Default value: "Microsoft.NetApp".
+    :vartype encryption_key_source: str or ~azure.mgmt.netapp.models.EncryptionKeySource
     :ivar ldap_enabled: Specifies whether LDAP is enabled or not for a given NFS volume.
     :vartype ldap_enabled: bool
     :ivar cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
@@ -4115,6 +4622,9 @@ class VolumeGroupVolumeProperties(msrest.serialization.Model):
     :ivar default_group_quota_in_ki_bs: Default group quota for volume in KiBs. If
      isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies.
     :vartype default_group_quota_in_ki_bs: long
+    :ivar maximum_number_of_files: Maximum number of files allowed. Needs a service request in
+     order to be changed. Only allowed to be changed if volume quota is more than 4TiB.
+    :vartype maximum_number_of_files: long
     :ivar volume_group_name: Volume Group Name.
     :vartype volume_group_name: str
     :ivar capacity_pool_resource_id: Pool Resource Id used in case of creating a volume through
@@ -4127,8 +4637,14 @@ class VolumeGroupVolumeProperties(msrest.serialization.Model):
     :ivar volume_spec_name: Volume spec name is the application specific designation or identifier
      for the particular volume in a volume group for e.g. data, log.
     :vartype volume_spec_name: str
+    :ivar encrypted: Specifies if the volume is encrypted or not. Only available on volumes created
+     or updated after 2022-01-01.
+    :vartype encrypted: bool
     :ivar placement_rules: Application specific placement rules for the particular volume.
     :vartype placement_rules: list[~azure.mgmt.netapp.models.PlacementKeyValuePairs]
+    :ivar enable_subvolumes: Flag indicating whether subvolume operations are enabled on the
+     volume. Possible values include: "Enabled", "Disabled". Default value: "Disabled".
+    :vartype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
     """
 
     _validation = {
@@ -4148,8 +4664,10 @@ class VolumeGroupVolumeProperties(msrest.serialization.Model):
         'coolness_period': {'maximum': 63, 'minimum': 7},
         'unix_permissions': {'max_length': 4, 'min_length': 4},
         'clone_progress': {'readonly': True},
+        'maximum_number_of_files': {'readonly': True},
         'volume_group_name': {'readonly': True},
         't2_network': {'readonly': True},
+        'encrypted': {'readonly': True},
     }
 
     _attribute_map = {
@@ -4191,12 +4709,15 @@ class VolumeGroupVolumeProperties(msrest.serialization.Model):
         'is_default_quota_enabled': {'key': 'properties.isDefaultQuotaEnabled', 'type': 'bool'},
         'default_user_quota_in_ki_bs': {'key': 'properties.defaultUserQuotaInKiBs', 'type': 'long'},
         'default_group_quota_in_ki_bs': {'key': 'properties.defaultGroupQuotaInKiBs', 'type': 'long'},
+        'maximum_number_of_files': {'key': 'properties.maximumNumberOfFiles', 'type': 'long'},
         'volume_group_name': {'key': 'properties.volumeGroupName', 'type': 'str'},
         'capacity_pool_resource_id': {'key': 'properties.capacityPoolResourceId', 'type': 'str'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'str'},
         't2_network': {'key': 'properties.t2Network', 'type': 'str'},
         'volume_spec_name': {'key': 'properties.volumeSpecName', 'type': 'str'},
+        'encrypted': {'key': 'properties.encrypted', 'type': 'bool'},
         'placement_rules': {'key': 'properties.placementRules', 'type': '[PlacementKeyValuePairs]'},
+        'enable_subvolumes': {'key': 'properties.enableSubvolumes', 'type': 'str'},
     }
 
     def __init__(
@@ -4221,8 +4742,8 @@ class VolumeGroupVolumeProperties(msrest.serialization.Model):
         security_style: Optional[Union[str, "SecurityStyle"]] = "unix",
         smb_encryption: Optional[bool] = False,
         smb_continuously_available: Optional[bool] = False,
-        throughput_mibps: Optional[float] = 0,
-        encryption_key_source: Optional[str] = None,
+        throughput_mibps: Optional[float] = None,
+        encryption_key_source: Optional[Union[str, "EncryptionKeySource"]] = "Microsoft.NetApp",
         ldap_enabled: Optional[bool] = False,
         cool_access: Optional[bool] = False,
         coolness_period: Optional[int] = None,
@@ -4235,6 +4756,7 @@ class VolumeGroupVolumeProperties(msrest.serialization.Model):
         proximity_placement_group: Optional[str] = None,
         volume_spec_name: Optional[str] = None,
         placement_rules: Optional[List["PlacementKeyValuePairs"]] = None,
+        enable_subvolumes: Optional[Union[str, "EnableSubvolumes"]] = "Disabled",
         **kwargs
     ):
         """
@@ -4292,8 +4814,10 @@ class VolumeGroupVolumeProperties(msrest.serialization.Model):
         :keyword throughput_mibps: Maximum throughput in Mibps that can be achieved by this volume and
          this will be accepted as input only for manual qosType volume.
         :paramtype throughput_mibps: float
-        :keyword encryption_key_source: Encryption Key Source. Possible values are: 'Microsoft.NetApp'.
-        :paramtype encryption_key_source: str
+        :keyword encryption_key_source: Source of key used to encrypt data in volume. Possible values
+         (case-insensitive) are: 'Microsoft.NetApp'. Possible values include: "Microsoft.NetApp".
+         Default value: "Microsoft.NetApp".
+        :paramtype encryption_key_source: str or ~azure.mgmt.netapp.models.EncryptionKeySource
         :keyword ldap_enabled: Specifies whether LDAP is enabled or not for a given NFS volume.
         :paramtype ldap_enabled: bool
         :keyword cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
@@ -4330,6 +4854,9 @@ class VolumeGroupVolumeProperties(msrest.serialization.Model):
         :paramtype volume_spec_name: str
         :keyword placement_rules: Application specific placement rules for the particular volume.
         :paramtype placement_rules: list[~azure.mgmt.netapp.models.PlacementKeyValuePairs]
+        :keyword enable_subvolumes: Flag indicating whether subvolume operations are enabled on the
+         volume. Possible values include: "Enabled", "Disabled". Default value: "Disabled".
+        :paramtype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
         """
         super(VolumeGroupVolumeProperties, self).__init__(**kwargs)
         self.id = None
@@ -4370,12 +4897,15 @@ class VolumeGroupVolumeProperties(msrest.serialization.Model):
         self.is_default_quota_enabled = is_default_quota_enabled
         self.default_user_quota_in_ki_bs = default_user_quota_in_ki_bs
         self.default_group_quota_in_ki_bs = default_group_quota_in_ki_bs
+        self.maximum_number_of_files = None
         self.volume_group_name = None
         self.capacity_pool_resource_id = capacity_pool_resource_id
         self.proximity_placement_group = proximity_placement_group
         self.t2_network = None
         self.volume_spec_name = volume_spec_name
+        self.encrypted = None
         self.placement_rules = placement_rules
+        self.enable_subvolumes = enable_subvolumes
 
 
 class VolumeList(msrest.serialization.Model):
@@ -4448,6 +4978,13 @@ class VolumePatch(msrest.serialization.Model):
     :ivar default_group_quota_in_ki_bs: Default group quota for volume in KiBs. If
      isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies.
     :vartype default_group_quota_in_ki_bs: long
+    :ivar unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format. First
+     digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit
+     selects permission for the owner of the file: read (4), write (2) and execute (1). Third
+     selects permissions for other users in the same group. the fourth for other users not in the
+     group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
+     users.
+    :vartype unix_permissions: str
     """
 
     _validation = {
@@ -4455,6 +4992,7 @@ class VolumePatch(msrest.serialization.Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'usage_threshold': {'maximum': 109951162777600, 'minimum': 107374182400},
+        'unix_permissions': {'max_length': 4, 'min_length': 4},
     }
 
     _attribute_map = {
@@ -4471,6 +5009,7 @@ class VolumePatch(msrest.serialization.Model):
         'is_default_quota_enabled': {'key': 'properties.isDefaultQuotaEnabled', 'type': 'bool'},
         'default_user_quota_in_ki_bs': {'key': 'properties.defaultUserQuotaInKiBs', 'type': 'long'},
         'default_group_quota_in_ki_bs': {'key': 'properties.defaultGroupQuotaInKiBs', 'type': 'long'},
+        'unix_permissions': {'key': 'properties.unixPermissions', 'type': 'str'},
     }
 
     def __init__(
@@ -4481,11 +5020,12 @@ class VolumePatch(msrest.serialization.Model):
         service_level: Optional[Union[str, "ServiceLevel"]] = "Premium",
         usage_threshold: Optional[int] = 107374182400,
         export_policy: Optional["VolumePatchPropertiesExportPolicy"] = None,
-        throughput_mibps: Optional[float] = 0,
+        throughput_mibps: Optional[float] = None,
         data_protection: Optional["VolumePatchPropertiesDataProtection"] = None,
         is_default_quota_enabled: Optional[bool] = False,
         default_user_quota_in_ki_bs: Optional[int] = 0,
         default_group_quota_in_ki_bs: Optional[int] = 0,
+        unix_permissions: Optional[str] = None,
         **kwargs
     ):
         """
@@ -4516,6 +5056,13 @@ class VolumePatch(msrest.serialization.Model):
         :keyword default_group_quota_in_ki_bs: Default group quota for volume in KiBs. If
          isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies.
         :paramtype default_group_quota_in_ki_bs: long
+        :keyword unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format.
+         First digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second
+         digit selects permission for the owner of the file: read (4), write (2) and execute (1). Third
+         selects permissions for other users in the same group. the fourth for other users not in the
+         group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
+         users.
+        :paramtype unix_permissions: str
         """
         super(VolumePatch, self).__init__(**kwargs)
         self.location = location
@@ -4531,6 +5078,7 @@ class VolumePatch(msrest.serialization.Model):
         self.is_default_quota_enabled = is_default_quota_enabled
         self.default_user_quota_in_ki_bs = default_user_quota_in_ki_bs
         self.default_group_quota_in_ki_bs = default_group_quota_in_ki_bs
+        self.unix_permissions = unix_permissions
 
 
 class VolumePatchPropertiesDataProtection(msrest.serialization.Model):
@@ -4652,6 +5200,219 @@ class VolumePropertiesExportPolicy(msrest.serialization.Model):
         """
         super(VolumePropertiesExportPolicy, self).__init__(**kwargs)
         self.rules = rules
+
+
+class VolumeQuotaRule(TrackedResource):
+    """Quota Rule of a Volume.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar provisioning_state: Gets the status of the VolumeQuotaRule at the time the operation was
+     called. Possible values include: "Accepted", "Creating", "Patching", "Deleting", "Moving",
+     "Failed", "Succeeded".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.ProvisioningState
+    :ivar quota_size_in_ki_bs: Size of quota.
+    :vartype quota_size_in_ki_bs: long
+    :ivar quota_type: Type of quota. Possible values include: "DefaultUserQuota",
+     "DefaultGroupQuota", "IndividualUserQuota", "IndividualGroupQuota".
+    :vartype quota_type: str or ~azure.mgmt.netapp.models.Type
+    :ivar quota_target: UserID/GroupID/SID based on the quota target type. UserID and groupID can
+     be found by running ‘id’ or ‘getent’ command for the user or group and SID can be found by
+     running :code:`<wmic useraccount where name='user-name' get sid>`.
+    :vartype quota_target: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'location': {'required': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'quota_size_in_ki_bs': {'key': 'properties.quotaSizeInKiBs', 'type': 'long'},
+        'quota_type': {'key': 'properties.quotaType', 'type': 'str'},
+        'quota_target': {'key': 'properties.quotaTarget', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        quota_size_in_ki_bs: Optional[int] = None,
+        quota_type: Optional[Union[str, "Type"]] = None,
+        quota_target: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword quota_size_in_ki_bs: Size of quota.
+        :paramtype quota_size_in_ki_bs: long
+        :keyword quota_type: Type of quota. Possible values include: "DefaultUserQuota",
+         "DefaultGroupQuota", "IndividualUserQuota", "IndividualGroupQuota".
+        :paramtype quota_type: str or ~azure.mgmt.netapp.models.Type
+        :keyword quota_target: UserID/GroupID/SID based on the quota target type. UserID and groupID
+         can be found by running ‘id’ or ‘getent’ command for the user or group and SID can be found by
+         running :code:`<wmic useraccount where name='user-name' get sid>`.
+        :paramtype quota_target: str
+        """
+        super(VolumeQuotaRule, self).__init__(tags=tags, location=location, **kwargs)
+        self.provisioning_state = None
+        self.quota_size_in_ki_bs = quota_size_in_ki_bs
+        self.quota_type = quota_type
+        self.quota_target = quota_target
+
+
+class VolumeQuotaRulePatch(msrest.serialization.Model):
+    """Patchable Quota Rule of a Volume.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioning_state: Gets the status of the VolumeQuotaRule at the time the operation was
+     called. Possible values include: "Accepted", "Creating", "Patching", "Deleting", "Moving",
+     "Failed", "Succeeded".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.ProvisioningState
+    :ivar quota_size_in_ki_bs: Size of quota.
+    :vartype quota_size_in_ki_bs: long
+    :ivar quota_type: Type of quota. Possible values include: "DefaultUserQuota",
+     "DefaultGroupQuota", "IndividualUserQuota", "IndividualGroupQuota".
+    :vartype quota_type: str or ~azure.mgmt.netapp.models.Type
+    :ivar quota_target: UserID/GroupID/SID based on the quota target type. UserID and groupID can
+     be found by running ‘id’ or ‘getent’ command for the user or group and SID can be found by
+     running :code:`<wmic useraccount where name='user-name' get sid>`.
+    :vartype quota_target: str
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'quota_size_in_ki_bs': {'key': 'properties.quotaSizeInKiBs', 'type': 'long'},
+        'quota_type': {'key': 'properties.quotaType', 'type': 'str'},
+        'quota_target': {'key': 'properties.quotaTarget', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        quota_size_in_ki_bs: Optional[int] = None,
+        quota_type: Optional[Union[str, "Type"]] = None,
+        quota_target: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword quota_size_in_ki_bs: Size of quota.
+        :paramtype quota_size_in_ki_bs: long
+        :keyword quota_type: Type of quota. Possible values include: "DefaultUserQuota",
+         "DefaultGroupQuota", "IndividualUserQuota", "IndividualGroupQuota".
+        :paramtype quota_type: str or ~azure.mgmt.netapp.models.Type
+        :keyword quota_target: UserID/GroupID/SID based on the quota target type. UserID and groupID
+         can be found by running ‘id’ or ‘getent’ command for the user or group and SID can be found by
+         running :code:`<wmic useraccount where name='user-name' get sid>`.
+        :paramtype quota_target: str
+        """
+        super(VolumeQuotaRulePatch, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.quota_size_in_ki_bs = quota_size_in_ki_bs
+        self.quota_type = quota_type
+        self.quota_target = quota_target
+
+
+class VolumeQuotaRulesList(msrest.serialization.Model):
+    """List of Volume Quota Rules.
+
+    :ivar value: A list of Volume Quota Rules.
+    :vartype value: list[~azure.mgmt.netapp.models.VolumeQuotaRule]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[VolumeQuotaRule]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["VolumeQuotaRule"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: A list of Volume Quota Rules.
+        :paramtype value: list[~azure.mgmt.netapp.models.VolumeQuotaRule]
+        """
+        super(VolumeQuotaRulesList, self).__init__(**kwargs)
+        self.value = value
+
+
+class VolumeRelocationProperties(msrest.serialization.Model):
+    """Volume relocation properties.
+
+    :ivar old_volume_id: The id of the old volume that is being relocated.
+    :vartype old_volume_id: str
+    :ivar old_bare_metal_tenant_id: The id of the bare metal tenant owned by the existing volume.
+    :vartype old_bare_metal_tenant_id: str
+    :ivar relocation_requested: Has relocation been requested for this volume.
+    :vartype relocation_requested: bool
+    """
+
+    _attribute_map = {
+        'old_volume_id': {'key': 'oldVolumeId', 'type': 'str'},
+        'old_bare_metal_tenant_id': {'key': 'oldBareMetalTenantId', 'type': 'str'},
+        'relocation_requested': {'key': 'relocationRequested', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        old_volume_id: Optional[str] = None,
+        old_bare_metal_tenant_id: Optional[str] = None,
+        relocation_requested: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword old_volume_id: The id of the old volume that is being relocated.
+        :paramtype old_volume_id: str
+        :keyword old_bare_metal_tenant_id: The id of the bare metal tenant owned by the existing
+         volume.
+        :paramtype old_bare_metal_tenant_id: str
+        :keyword relocation_requested: Has relocation been requested for this volume.
+        :paramtype relocation_requested: bool
+        """
+        super(VolumeRelocationProperties, self).__init__(**kwargs)
+        self.old_volume_id = old_volume_id
+        self.old_bare_metal_tenant_id = old_bare_metal_tenant_id
+        self.relocation_requested = relocation_requested
 
 
 class VolumeRevert(msrest.serialization.Model):

@@ -6,7 +6,7 @@
 ################
 
 # Git Hub integration and bot rules
-/.github/                                       @AlexGhiondea @jsquire
+/.github/                                       @jsquire @ronniegeraghty
 
 ###########
 # SDK
@@ -30,10 +30,10 @@
 /sdk/identity/                                                       @mccoyp @schaabs @xiangyan99
 
 # PRLabel: %Event Hubs
-/sdk/eventhub/                                                       @annatisch @yunhaoling @swathipil @rakshith91
+/sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
 
 # PRLabel: %Storage
-/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @tasherif-msft @jalauzon-msft
+/sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft
 
 # PRLabel: %App Configuration
 /sdk/appconfiguration/                                               @xiangyan99 @YalinLi0312
@@ -41,18 +41,29 @@
 /sdk/applicationinsights/azure-applicationinsights/                  @omziv @anatse @raronen @ischrei @danhadari @azmonapplicationinsights
 /sdk/loganalytics/azure-loganalytics/                                @omziv @anatse @raronen @ischrei @danhadari @azmonapplicationinsights
 
-/sdk/attestation/azure-security-attestation                          @larryosterman @anilba06 @Azure/azure-sdk-write-attestation
+/sdk/attestation/azure-security-attestation                          @anilba06 @Azure/azure-sdk-write-attestation @gkostal
 
 # PRLabel: %Batch
 /sdk/batch/                                                          @cRui861 @paterasMSFT @dpwatrous @gingi @zfengms
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
 
+# PRLabel: %Communication - Phone Numbers
+/sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @lucasrsant @RoyHerrod @danielav7
+
+# PRLabel: %Communication - SMS
+/sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
+
+# PRLabel: %Communication - Identity
+/sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @martinbarnas-ms
+
+# PRLabel: %Communication - NetworkTraversal
+/sdk/communication/azure-communication-networktraversal/             @ajpeacock0 @nathpete-msft
+
+# PRLabel: %Communication - Common
+/sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @martinbarnas-ms
+
 # PRLabel: %Communication
 /sdk/communication/                                                  @acsdevx-msft
-/sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @lucasrsant @RoyHerrod @danielav7
-/sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
-/sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk
-/sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @mccoyp @YalinLi0312
@@ -61,7 +72,7 @@
 /sdk/loganalytics/                                                   @alexeldeib
 
 # PRLabel: %Monitor - Exporter
-/sdk/monitor/azure-monitor-opentelemetry-exporter                    @rakshith91 @lmazuel @lzchen
+/sdk/monitor/azure-monitor-opentelemetry-exporter                    @rakshith91 @lmazuel @lzchen @hectorhdzg @jeremydvoss
 
 # PRLabel: %Monitor - Log
 /sdk/monitor/azure-monitor-query                                     @rakshith91
@@ -77,10 +88,10 @@
 /sdk/containerservice/                                               @samkreter @zqingqing1 @GaneshaThirumurthi
 
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @moderakh
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @tjprescott @JericHunter
 
 # ServiceLabel: %Cosmos %Service Attention
-#/<NotInRepo>/                                                       @simorenoh @gahl-levy
+#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @gahl-levy
 
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
@@ -91,7 +102,7 @@
 /sdk/deviceupdate/                                                   @dpokluda @sedols
 
 # PRLabel: %Event Grid
-/sdk/eventgrid/                                                      @lmazuel @yunhaoling @swathipil @rakshith91
+/sdk/eventgrid/                                                      @lmazuel @rakshith91
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
@@ -102,14 +113,17 @@
 # PRLabel: %Machine Learning Compute
 /sdk/machinelearningcompute/                                         @shutchings
 
+# PRLabel: %Machine Learning
+/sdk/ml/                                                             @azureml-github @Azure/azure-ml-sdk
+
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
 
 # PRLabel: %Schema Registry
-/sdk/schemaregistry/                                                 @yunhaoling
+/sdk/schemaregistry/                                                 @kashifkhan
 
 # PRLabel: %Search
-/sdk/search/                                                         @kashifkhan
+/sdk/search/                                                         @rakshith91
 
 # PRLabel: %Service Fabric
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
@@ -118,7 +132,7 @@
 /sql/sql/                                                            @jaredmoo
 
 # PRLabel: %Service Bus
-/sdk/servicebus/                                                     @annatisch @yunhaoling @swathipil @rakshith91
+/sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
 
 # PRLabel: %Synapse
 /sdk/synapse/                                                        @wonner @idear1203 @xiangyan99
@@ -141,6 +155,9 @@
 # PRLabel: %Cognitive - Translator
 /sdk/translation/                                                    @kristapratico @mohamedshabanofficial
 
+# PRLabel: %Cognitive - Language
+/sdk/cognitivelanguage/                                              @kristapratico @mohamedshabanofficial
+
 # PRLabel: %Tables
 /sdk/tables/                                                         @annatisch @YalinLi0312
 
@@ -151,7 +168,7 @@
 /sdk/containerregistry/                                              @YalinLi0312
 
 # PRLabel: %Digital Twins
-/sdk/digitaltwins/                                                   @johngallardo @Aashish93-stack
+/sdk/digitaltwins/                                                   @johngallardo @Aashish93-stack @sjiherzig @Satya-Kolluri
 
 # PRLabel: %VideoAnalyzer
 /sdk/videoanalyzer/                                                  @hivyas
@@ -394,7 +411,7 @@
 #/<NotInRepo>/          @jfggdl
 
 # ServiceLabel: %Event Hubs %Service Attention
-#/<NotInRepo>/          @kasun04
+#/<NotInRepo>/          @kasun04 @saglodha
 
 # ServiceLabel: %Functions %Service Attention
 #/<NotInRepo>/          @ahmedelnably @fabiocav
@@ -436,7 +453,7 @@
 #/<NotInRepo>/          @varunkch
 
 # ServiceLabel: %Machine Learning %Service Attention
-#/<NotInRepo>/          @azureml-github
+#/<NotInRepo>/          @azureml-github @Azure/azure-ml-sdk
 
 # ServiceLabel: %Machine Learning Compute %Service Attention
 #/<NotInRepo>/          @azureml-github
@@ -580,7 +597,7 @@
 #/<NotInRepo>/          @chlahav
 
 # ServiceLabel: %Service Attention %Service Bus
-#/<NotInRepo>/          @jfggdl @EldertGrootenboer
+#/<NotInRepo>/          @saglodha @EldertGrootenboer
 
 # ServiceLabel: %Service Attention %Service Fabric
 #/<NotInRepo>/          @QingChenmsft @vaishnavk @juhacket

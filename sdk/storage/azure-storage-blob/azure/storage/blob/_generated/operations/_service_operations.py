@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,46 +7,427 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
-import warnings
+
+from msrest import Serializer
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, IO, List, Optional, TypeVar, Union
-
+    from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
+# fmt: off
+
+def build_set_properties_request(
+    url,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    restype = kwargs.pop('restype', _params.pop('restype', "service"))  # type: str
+    comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
+    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
+    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/xml")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "{url}")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params['restype'] = _SERIALIZER.query("restype", restype, 'str')
+    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    if timeout is not None:
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+
+    # Construct headers
+    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    if request_id_parameter is not None:
+        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    if content_type is not None:
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PUT",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
+
+
+def build_get_properties_request(
+    url,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    restype = kwargs.pop('restype', _params.pop('restype', "service"))  # type: str
+    comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
+    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
+    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/xml")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "{url}")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params['restype'] = _SERIALIZER.query("restype", restype, 'str')
+    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    if timeout is not None:
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+
+    # Construct headers
+    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    if request_id_parameter is not None:
+        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
+
+
+def build_get_statistics_request(
+    url,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    restype = kwargs.pop('restype', _params.pop('restype', "service"))  # type: str
+    comp = kwargs.pop('comp', _params.pop('comp', "stats"))  # type: str
+    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
+    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/xml")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "{url}")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params['restype'] = _SERIALIZER.query("restype", restype, 'str')
+    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    if timeout is not None:
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+
+    # Construct headers
+    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    if request_id_parameter is not None:
+        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
+
+
+def build_list_containers_segment_request(
+    url,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    comp = kwargs.pop('comp', _params.pop('comp', "list"))  # type: str
+    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    prefix = kwargs.pop('prefix', _params.pop('prefix', None))  # type: Optional[str]
+    marker = kwargs.pop('marker', _params.pop('marker', None))  # type: Optional[str]
+    maxresults = kwargs.pop('maxresults', _params.pop('maxresults', None))  # type: Optional[int]
+    include = kwargs.pop('include', _params.pop('include', None))  # type: Optional[List[Union[str, "_models.ListContainersIncludeType"]]]
+    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
+    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/xml")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "{url}")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    if prefix is not None:
+        _params['prefix'] = _SERIALIZER.query("prefix", prefix, 'str')
+    if marker is not None:
+        _params['marker'] = _SERIALIZER.query("marker", marker, 'str')
+    if maxresults is not None:
+        _params['maxresults'] = _SERIALIZER.query("maxresults", maxresults, 'int', minimum=1)
+    if include is not None:
+        _params['include'] = _SERIALIZER.query("include", include, '[str]', div=',')
+    if timeout is not None:
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+
+    # Construct headers
+    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    if request_id_parameter is not None:
+        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
+
+
+def build_get_user_delegation_key_request(
+    url,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    restype = kwargs.pop('restype', _params.pop('restype', "service"))  # type: str
+    comp = kwargs.pop('comp', _params.pop('comp', "userdelegationkey"))  # type: str
+    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
+    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/xml")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "{url}")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params['restype'] = _SERIALIZER.query("restype", restype, 'str')
+    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    if timeout is not None:
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+
+    # Construct headers
+    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    if request_id_parameter is not None:
+        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    if content_type is not None:
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
+
+
+def build_get_account_info_request(
+    url,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    restype = kwargs.pop('restype', _params.pop('restype', "account"))  # type: str
+    comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
+    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    accept = _headers.pop('Accept', "application/xml")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "{url}")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params['restype'] = _SERIALIZER.query("restype", restype, 'str')
+    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+
+    # Construct headers
+    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
+
+
+def build_submit_batch_request(
+    url,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    comp = kwargs.pop('comp', _params.pop('comp', "batch"))  # type: str
+    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    content_length = kwargs.pop('content_length')  # type: int
+    multipart_content_type = kwargs.pop('multipart_content_type')  # type: str
+    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
+    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/xml")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "{url}")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    if timeout is not None:
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+
+    # Construct headers
+    _headers['Content-Length'] = _SERIALIZER.header("content_length", content_length, 'long')
+    _headers['Content-Type'] = _SERIALIZER.header("multipart_content_type", multipart_content_type, 'str')
+    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    if request_id_parameter is not None:
+        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
+
+
+def build_filter_blobs_request(
+    url,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    comp = kwargs.pop('comp', _params.pop('comp', "blobs"))  # type: str
+    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
+    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
+    where = kwargs.pop('where', _params.pop('where', None))  # type: Optional[str]
+    marker = kwargs.pop('marker', _params.pop('marker', None))  # type: Optional[str]
+    maxresults = kwargs.pop('maxresults', _params.pop('maxresults', None))  # type: Optional[int]
+    include = kwargs.pop('include', _params.pop('include', None))  # type: Optional[List[Union[str, "_models.FilterBlobsIncludeItem"]]]
+    accept = _headers.pop('Accept', "application/xml")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "{url}")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    if timeout is not None:
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+    if where is not None:
+        _params['where'] = _SERIALIZER.query("where", where, 'str')
+    if marker is not None:
+        _params['marker'] = _SERIALIZER.query("marker", marker, 'str')
+    if maxresults is not None:
+        _params['maxresults'] = _SERIALIZER.query("maxresults", maxresults, 'int', minimum=1)
+    if include is not None:
+        _params['include'] = _SERIALIZER.query("include", include, '[str]', div=',')
+
+    # Construct headers
+    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    if request_id_parameter is not None:
+        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
+
+# fmt: on
 class ServiceOperations(object):
-    """ServiceOperations operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.storage.blob.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.storage.blob.AzureBlobStorage`'s
+        :attr:`service` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    def set_properties(
+
+    @distributed_trace
+    def set_properties(  # pylint: disable=inconsistent-return-statements
         self,
-        storage_service_properties,  # type: "_models.StorageServiceProperties"
+        storage_service_properties,  # type: _models.StorageServiceProperties
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
         **kwargs  # type: Any
@@ -59,58 +441,64 @@ class ServiceOperations(object):
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
+        :keyword restype: restype. Default value is "service". Note that overriding this default value
+         may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
-        restype = "service"
-        comp = "properties"
-        content_type = kwargs.pop("content_type", "application/xml")
-        accept = "application/xml"
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        # Construct URL
-        url = self.set_properties.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['restype'] = self._serialize.query("restype", restype, 'str')
-        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        restype = kwargs.pop('restype', _params.pop('restype', "service"))  # type: str
+        comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/xml"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        _content = self._serialize.body(storage_service_properties, 'StorageServiceProperties', is_xml=True)
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(storage_service_properties, 'StorageServiceProperties', is_xml=True)
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        request = build_set_properties_request(
+            url=self._config.url,
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
+            content_type=content_type,
+            content=_content,
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            template_url=self.set_properties.metadata['url'],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -118,92 +506,106 @@ class ServiceOperations(object):
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
 
+
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_properties.metadata = {'url': '/'}  # type: ignore
+    set_properties.metadata = {'url': "{url}"}  # type: ignore
 
+
+    @distributed_trace
     def get_properties(
         self,
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.StorageServiceProperties"
+        # type: (...) -> _models.StorageServiceProperties
         """gets the properties of a storage account's Blob service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
+        :keyword restype: restype. Default value is "service". Note that overriding this default value
+         may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageServiceProperties, or the result of cls(response)
         :rtype: ~azure.storage.blob.models.StorageServiceProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageServiceProperties"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
-        restype = "service"
-        comp = "properties"
-        accept = "application/xml"
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        # Construct URL
-        url = self.get_properties.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['restype'] = self._serialize.query("restype", restype, 'str')
-        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        restype = kwargs.pop('restype', _params.pop('restype', "service"))  # type: str
+        comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.StorageServiceProperties]
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        
+        request = build_get_properties_request(
+            url=self._config.url,
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            template_url=self.get_properties.metadata['url'],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+
         deserialized = self._deserialize('StorageServiceProperties', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    get_properties.metadata = {'url': '/'}  # type: ignore
 
+    get_properties.metadata = {'url': "{url}"}  # type: ignore
+
+
+    @distributed_trace
     def get_statistics(
         self,
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.StorageServiceStats"
+        # type: (...) -> _models.StorageServiceStats
         """Retrieves statistics related to replication for the Blob service. It is only available on the
         secondary location endpoint when read-access geo-redundant replication is enabled for the
         storage account.
@@ -211,53 +613,60 @@ class ServiceOperations(object):
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
+        :keyword restype: restype. Default value is "service". Note that overriding this default value
+         may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "stats". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageServiceStats, or the result of cls(response)
         :rtype: ~azure.storage.blob.models.StorageServiceStats
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageServiceStats"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
-        restype = "service"
-        comp = "stats"
-        accept = "application/xml"
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        # Construct URL
-        url = self.get_statistics.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['restype'] = self._serialize.query("restype", restype, 'str')
-        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        restype = kwargs.pop('restype', _params.pop('restype', "service"))  # type: str
+        comp = kwargs.pop('comp', _params.pop('comp', "stats"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.StorageServiceStats]
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        
+        request = build_get_statistics_request(
+            url=self._config.url,
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            template_url=self.get_statistics.metadata['url'],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -265,14 +674,18 @@ class ServiceOperations(object):
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
         response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+
         deserialized = self._deserialize('StorageServiceStats', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    get_statistics.metadata = {'url': '/'}  # type: ignore
 
+    get_statistics.metadata = {'url': "{url}"}  # type: ignore
+
+
+    @distributed_trace
     def list_containers_segment(
         self,
         prefix=None,  # type: Optional[str]
@@ -283,108 +696,112 @@ class ServiceOperations(object):
         request_id_parameter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.ListContainersSegmentResponse"
+        # type: (...) -> _models.ListContainersSegmentResponse
         """The List Containers Segment operation returns a list of the containers under the specified
         account.
 
         :param prefix: Filters the results to return only containers whose name begins with the
-         specified prefix.
+         specified prefix. Default value is None.
         :type prefix: str
         :param marker: A string value that identifies the portion of the list of containers to be
          returned with the next listing operation. The operation returns the NextMarker value within the
          response body if the listing operation did not return all containers remaining to be listed
          with the current page. The NextMarker value can be used as the value for the marker parameter
          in a subsequent call to request the next page of list items. The marker value is opaque to the
-         client.
+         client. Default value is None.
         :type marker: str
         :param maxresults: Specifies the maximum number of containers to return. If the request does
          not specify maxresults, or specifies a value greater than 5000, the server will return up to
          5000 items. Note that if the listing operation crosses a partition boundary, then the service
          will return a continuation token for retrieving the remainder of the results. For this reason,
          it is possible that the service will return fewer results than specified by maxresults, or than
-         the default of 5000.
+         the default of 5000. Default value is None.
         :type maxresults: int
         :param include: Include this parameter to specify that the container's metadata be returned as
-         part of the response body.
+         part of the response body. Default value is None.
         :type include: list[str or ~azure.storage.blob.models.ListContainersIncludeType]
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
+        :keyword comp: comp. Default value is "list". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListContainersSegmentResponse, or the result of cls(response)
         :rtype: ~azure.storage.blob.models.ListContainersSegmentResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListContainersSegmentResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
-        comp = "list"
-        accept = "application/xml"
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        # Construct URL
-        url = self.list_containers_segment.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
-        if prefix is not None:
-            query_parameters['prefix'] = self._serialize.query("prefix", prefix, 'str')
-        if marker is not None:
-            query_parameters['marker'] = self._serialize.query("marker", marker, 'str')
-        if maxresults is not None:
-            query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', minimum=1)
-        if include is not None:
-            query_parameters['include'] = self._serialize.query("include", include, '[str]', div=',')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        comp = kwargs.pop('comp', _params.pop('comp', "list"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ListContainersSegmentResponse]
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        
+        request = build_list_containers_segment_request(
+            url=self._config.url,
+            comp=comp,
+            version=self._config.version,
+            prefix=prefix,
+            marker=marker,
+            maxresults=maxresults,
+            include=include,
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            template_url=self.list_containers_segment.metadata['url'],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+
         deserialized = self._deserialize('ListContainersSegmentResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    list_containers_segment.metadata = {'url': '/'}  # type: ignore
 
+    list_containers_segment.metadata = {'url': "{url}"}  # type: ignore
+
+
+    @distributed_trace
     def get_user_delegation_key(
         self,
-        key_info,  # type: "_models.KeyInfo"
+        key_info,  # type: _models.KeyInfo
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.UserDelegationKey"
+        # type: (...) -> _models.UserDelegationKey
         """Retrieves a user delegation key for the Blob service. This is only a valid operation when using
         bearer token authentication.
 
@@ -393,58 +810,64 @@ class ServiceOperations(object):
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
+        :keyword restype: restype. Default value is "service". Note that overriding this default value
+         may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "userdelegationkey". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: UserDelegationKey, or the result of cls(response)
         :rtype: ~azure.storage.blob.models.UserDelegationKey
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.UserDelegationKey"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
-        restype = "service"
-        comp = "userdelegationkey"
-        content_type = kwargs.pop("content_type", "application/xml")
-        accept = "application/xml"
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        # Construct URL
-        url = self.get_user_delegation_key.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['restype'] = self._serialize.query("restype", restype, 'str')
-        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        restype = kwargs.pop('restype', _params.pop('restype', "service"))  # type: str
+        comp = kwargs.pop('comp', _params.pop('comp', "userdelegationkey"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/xml"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.UserDelegationKey]
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        _content = self._serialize.body(key_info, 'KeyInfo', is_xml=True)
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(key_info, 'KeyInfo', is_xml=True)
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        request = build_get_user_delegation_key_request(
+            url=self._config.url,
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
+            content_type=content_type,
+            content=_content,
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            template_url=self.get_user_delegation_key.metadata['url'],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -452,59 +875,71 @@ class ServiceOperations(object):
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
         response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+
         deserialized = self._deserialize('UserDelegationKey', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    get_user_delegation_key.metadata = {'url': '/'}  # type: ignore
 
-    def get_account_info(
+    get_user_delegation_key.metadata = {'url': "{url}"}  # type: ignore
+
+
+    @distributed_trace
+    def get_account_info(  # pylint: disable=inconsistent-return-statements
         self,
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Returns the sku name and account kind.
 
+        :keyword restype: restype. Default value is "account". Note that overriding this default value
+         may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
-        restype = "account"
-        comp = "properties"
-        accept = "application/xml"
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        # Construct URL
-        url = self.get_account_info.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['restype'] = self._serialize.query("restype", restype, 'str')
-        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+        restype = kwargs.pop('restype', _params.pop('restype', "account"))  # type: str
+        comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        
+        request = build_get_account_info_request(
+            url=self._config.url,
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
+            template_url=self.get_account_info.metadata['url'],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -516,11 +951,14 @@ class ServiceOperations(object):
         response_headers['x-ms-account-kind']=self._deserialize('str', response.headers.get('x-ms-account-kind'))
         response_headers['x-ms-is-hns-enabled']=self._deserialize('bool', response.headers.get('x-ms-is-hns-enabled'))
 
+
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_account_info.metadata = {'url': '/'}  # type: ignore
+    get_account_info.metadata = {'url': "{url}"}  # type: ignore
 
+
+    @distributed_trace
     def submit_batch(
         self,
         content_length,  # type: int
@@ -543,72 +981,77 @@ class ServiceOperations(object):
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
+        :keyword comp: comp. Default value is "batch". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IO, or the result of cls(response)
         :rtype: IO
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
-        comp = "batch"
-        content_type = kwargs.pop("content_type", "application/xml")
-        accept = "application/xml"
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        # Construct URL
-        url = self.submit_batch.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        comp = kwargs.pop('comp', _params.pop('comp', "batch"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
-        header_parameters['Content-Type'] = self._serialize.header("multipart_content_type", multipart_content_type, 'str')
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        _content = self._serialize.body(body, 'IO')
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(body, 'IO', is_xml=True)
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)
+        request = build_submit_batch_request(
+            url=self._config.url,
+            comp=comp,
+            version=self._config.version,
+            content=_content,
+            content_length=content_length,
+            multipart_content_type=multipart_content_type,
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            template_url=self.submit_batch.metadata['url'],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=True,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+
         deserialized = response.stream_download(self._client._pipeline)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    submit_batch.metadata = {'url': '/'}  # type: ignore
 
+    submit_batch.metadata = {'url': "{url}"}  # type: ignore
+
+
+    @distributed_trace
     def filter_blobs(
         self,
         timeout=None,  # type: Optional[int]
@@ -616,9 +1059,10 @@ class ServiceOperations(object):
         where=None,  # type: Optional[str]
         marker=None,  # type: Optional[str]
         maxresults=None,  # type: Optional[int]
+        include=None,  # type: Optional[List[Union[str, "_models.FilterBlobsIncludeItem"]]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.FilterBlobSegment"
+        # type: (...) -> _models.FilterBlobSegment
         """The Filter Blobs operation enables callers to list blobs across all containers whose tags match
         a given search expression.  Filter blobs searches across all containers within a storage
         account but can be scoped within the expression to a single container.
@@ -626,74 +1070,79 @@ class ServiceOperations(object):
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param where: Filters the results to return only to return only blobs whose tags match the
-         specified expression.
+         specified expression. Default value is None.
         :type where: str
         :param marker: A string value that identifies the portion of the list of containers to be
          returned with the next listing operation. The operation returns the NextMarker value within the
          response body if the listing operation did not return all containers remaining to be listed
          with the current page. The NextMarker value can be used as the value for the marker parameter
          in a subsequent call to request the next page of list items. The marker value is opaque to the
-         client.
+         client. Default value is None.
         :type marker: str
         :param maxresults: Specifies the maximum number of containers to return. If the request does
          not specify maxresults, or specifies a value greater than 5000, the server will return up to
          5000 items. Note that if the listing operation crosses a partition boundary, then the service
          will return a continuation token for retrieving the remainder of the results. For this reason,
          it is possible that the service will return fewer results than specified by maxresults, or than
-         the default of 5000.
+         the default of 5000. Default value is None.
         :type maxresults: int
+        :param include: Include this parameter to specify one or more datasets to include in the
+         response. Default value is None.
+        :type include: list[str or ~azure.storage.blob.models.FilterBlobsIncludeItem]
+        :keyword comp: comp. Default value is "blobs". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FilterBlobSegment, or the result of cls(response)
         :rtype: ~azure.storage.blob.models.FilterBlobSegment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FilterBlobSegment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
-        comp = "blobs"
-        accept = "application/xml"
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        # Construct URL
-        url = self.filter_blobs.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
-        if where is not None:
-            query_parameters['where'] = self._serialize.query("where", where, 'str')
-        if marker is not None:
-            query_parameters['marker'] = self._serialize.query("marker", marker, 'str')
-        if maxresults is not None:
-            query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', minimum=1)
+        comp = kwargs.pop('comp', _params.pop('comp', "blobs"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.FilterBlobSegment]
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        
+        request = build_filter_blobs_request(
+            url=self._config.url,
+            comp=comp,
+            version=self._config.version,
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            where=where,
+            marker=marker,
+            maxresults=maxresults,
+            include=include,
+            template_url=self.filter_blobs.metadata['url'],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -701,10 +1150,13 @@ class ServiceOperations(object):
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
         response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+
         deserialized = self._deserialize('FilterBlobSegment', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    filter_blobs.metadata = {'url': '/'}  # type: ignore
+
+    filter_blobs.metadata = {'url': "{url}"}  # type: ignore
+

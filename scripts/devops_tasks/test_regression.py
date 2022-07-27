@@ -10,6 +10,7 @@
 
 import argparse
 import glob
+import pdb
 import sys
 import os
 import logging
@@ -329,12 +330,11 @@ def find_package_dependency(glob_string, repo_root_dir):
         required_pkgs = [parse_require(r)[0] for r in parsed.requires]
         required_pkgs = [p for p in required_pkgs if p.startswith("azure")]
 
-        for req_pkg in required_pkgs:
-            if req_pkg not in dependency_map:
-                dependency_map[req_pkg] = []
-            dependency_map[req_pkg].append(pkg_root)
+            for req_pkg in required_pkgs:
+                if req_pkg not in dependency_map:
+                    dependency_map[req_pkg] = []
+                dependency_map[req_pkg].append(pkg_root)
 
-    logging.info("Package dependency: {}".format(dependency_map))
     return dependency_map
 
 
@@ -375,7 +375,9 @@ def run_main(args):
         logging.info("Path {} already exists. Skipping step to clone github repo".format(code_repo_root))
 
     # find package dependency map for azure sdk
-    pkg_dependency = find_package_dependency(AZURE_GLOB_STRING, code_repo_root)
+    pkg_dependency = find_package_dependency(AZURE_GLOB_STRING, code_repo_root, args.dependent_service)
+
+    logging.info("Package dependency: {}".format(pkg_dependency))
 
     # Create regression text context. One context object will be reused for all packages
     context = RegressionContext(args.whl_dir, temp_dir, str_to_bool(args.verify_latest), args.mark_arg)
@@ -403,6 +405,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--service",
         help=("Name of service directory (under sdk/) to test." "Example: --service applicationinsights"),
+    )
+    
+    parser.add_argument(
+        "--dependent-service",
+        dest="dependent_service",
+        default="",
+        help=("Optional filter to force regression testing of only dependent packages of service X."),
     )
 
     parser.add_argument(

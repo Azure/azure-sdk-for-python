@@ -1,0 +1,8 @@
+[packaging]
+auto_update = false
+package_name = "azure-monitor-ingestion"
+package_nspkg = "azure-monitor-nspkg"
+package_pprint_name = "Monitor Ingestion"
+package_doc_id = "monitor-ingestion"
+is_stable = false
+is_arm = false

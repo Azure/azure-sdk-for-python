@@ -1,5 +1,49 @@
 # Release History
 
+## 12.5.0b1 (Unreleased)
+
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
+
+### Features Added
+- Added support for `AzureNamedKeyCredential` as a valid `credential` type.
+
+### Bugs Fixed
+
+## 12.4.0 (2022-07-07)
+
+### Features Added
+- Stable release of features from 12.4.0b1.
+
+## 12.4.0b1 (2022-06-15)
+
+### Features Added
+- Introduced version 2.0 of client-side encryption for Queue messages which utilizes AES-GCM-256 encryption.
+Version 1.0 is now deprecated and no longer considered secure. If you are using client-side encryption, it is
+**highly recommended** that you update to version 2.0.
+The encryption version can be specified on any client constructor via the `encryption_version`
+keyword (i.e. `encryption_version='2.0'`).
+
+## 12.3.0 (2022-05-09)
+
+### Features Added
+- Stable release of features from 12.3.0b1.
+
+### Bugs Fixed
+- Fixed a bug, introduced in the previous beta release, that caused Authentication errors when attempting to use
+an Account SAS with certain service level operations.
+
+## 12.3.0b1 (2022-04-14)
+
+### Features Added
+- Added support for `max_messages` in `receive_messages()` to specify the maximum number of messages to receive from the queue.
+
+### Other Changes
+- Updated SAS token generation to use the latest supported service version by default. Moving to the latest version
+also included a change to how account SAS is generated to reflect a change made to the service in SAS generation for
+service version 2020-12-06.
+- Updated documentation for `receive_messages()` to explain iterator behavior and life-cycle.
+- Added a sample to `queue_samples_message.py` (and async-equivalent) showcasing the use of `max_messages` in `receive_messages()`. 
+
 ## 12.2.0 (2022-03-08)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.

@@ -23,6 +23,29 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+"""
+FILE: encode_and_decode_event_data_message.py
+DESCRIPTION:
+    This sample demonstrates the following:
+     - Authenticating a sync SchemaRegistryClient to be used by the AvroEncoder.
+     - Passing in content, schema, and EventData class to the AvroEncoder, which will return an
+      EventData object containing encoded content and corresponding content type.
+     - Passing in an `EventData` object with `body` set to Avro-encoded content and `content_type`
+      set to corresponding content type to the AvroEncoder, which will return the decoded content.
+USAGE:
+    python encode_and_decode_event_data_message.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_TENANT_ID - The ID of the service principal's tenant. Also called its 'directory' ID.
+    2) AZURE_CLIENT_ID - The service principal's client ID. Also called its 'application' ID.
+    3) AZURE_CLIENT_SECRET - One of the service principal's client secrets.
+    4) SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
+     which should follow the format: `<your-namespace>.servicebus.windows.net`
+    5) SCHEMAREGISTRY_GROUP - The name of the schema group.
+
+This example uses ClientSecretCredential, which requests a token from Azure Active Directory.
+For more information on ClientSecretCredential, see:
+    https://docs.microsoft.com/python/api/azure-identity/azure.identity.clientsecretcredential?view=azure-python
+"""
 import os
 
 from azure.identity import ClientSecretCredential
@@ -93,7 +116,7 @@ if __name__ == "__main__":
         credential=token_credential,
     )
     encoder = AvroEncoder(
-        client=schema_registry, group_name=GROUP_NAME, auto_register_schemas=True
+        client=schema_registry, group_name=GROUP_NAME, auto_register=True
     )
     event_data_ben, event_data_alice = encode_to_event_data_message(encoder)
     decoded_content_ben = decode_event_data_message(encoder, event_data_ben)

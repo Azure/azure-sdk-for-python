@@ -9,7 +9,7 @@ import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient, DocumentModelAdministrationClient, AnalyzeResult
-from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import AnalyzeResultOperation
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
@@ -18,16 +18,13 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 
 class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
 
-    def teardown(self):
-        self.sleep(4)
-
     @FormRecognizerPreparer()
     def test_document_analysis_none_model(self, **kwargs):
         formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
         formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
-            client.begin_analyze_document_from_url(model=None, document_url="https://badurl.jpg")
+            client.begin_analyze_document_from_url(model_id=None, document_url="https://badurl.jpg")
 
     @FormRecognizerPreparer()
     def test_document_analysis_empty_model_id(self, **kwargs):
@@ -35,7 +32,7 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
-            client.begin_analyze_document_from_url(model="", document_url="https://badurl.jpg")
+            client.begin_analyze_document_from_url(model_id="", document_url="https://badurl.jpg")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -56,7 +53,7 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
             responses.append(document)
 
         poller = da_client.begin_analyze_document_from_url(
-            model=model.model_id,
+            model_id=model.model_id,
             document_url=self.selection_mark_url_pdf,
             cls=callback
         )
@@ -74,7 +71,6 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
         self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
-        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -116,7 +112,6 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
         self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
-        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -158,7 +153,6 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
         self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
-        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range

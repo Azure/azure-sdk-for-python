@@ -20,7 +20,7 @@ autorest
 ### Settings
 
 ```yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/webpubsub/data-plane/WebPubSub/stable/2021-10-01/webpubsub.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/73a0fa453a93bdbe8885f87b9e4e9fef4f0452d0/specification/webpubsub/data-plane/WebPubSub/stable/2021-10-01/webpubsub.json
 output-folder: ../azure/messaging/webpubsubservice
 namespace: azure.messaging.webpubsubservice
 package-name: azure-messaging-webpubsubservice
@@ -31,9 +31,10 @@ python: true
 title: WebPubSubServiceClient
 version-tolerant: true
 head-as-boolean: true
-package-version: 1.0.0
+package-version: 1.0.1
 add-credential: true
 credential-scopes: https://webpubsub.azure.com/.default
+black: true
 ```
 
 
