@@ -4,20 +4,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from testcase import LoadtestingPowerShellPreparer
+from testcase import LoadtestingPowerShellPreparer, TEST_ID, FILE_ID, TEST_RUN_ID, APP_COMPONENT, SUBSCRIPTION_ID
 from testcase_async import LoadtestingAsyncTest
 import os
 
-TEST_ID = "TEST_ID"  # ID to be assigned to a test
-FILE_ID = "FILE_ID"  # ID to be assigned to file uploaded
-TEST_RUN_ID = "TEST_RUN_ID"  # ID to be assigned to a test run
-APP_COMPONENT = "APP_COMPONENT_ID"  # ID of the APP Componen
-SUBSCRIPTION_ID = "SUBSCRIPTION_ID"
-DISPLAY_NAME = "TestingResource"
-
+DISPLAY_NAME = "TestingResource" # display name
 
 class LoadtestingSmokeAsyncTest(LoadtestingAsyncTest):
-
     @LoadtestingPowerShellPreparer()
     async def test_smoke_create_or_update_test(self, loadtesting_endpoint):
         client = self.create_client(endpoint=loadtesting_endpoint)
@@ -37,7 +30,7 @@ class LoadtestingSmokeAsyncTest(LoadtestingAsyncTest):
                 "passFailCriteria": {"passFailMetrics": {}},
                 "keyvaultReferenceIdentityType": "SystemAssigned",
                 "keyvaultReferenceIdentityId": None,
-            }
+            },
         )
         assert result is not None
 
@@ -64,12 +57,8 @@ class LoadtestingSmokeAsyncTest(LoadtestingAsyncTest):
     @LoadtestingPowerShellPreparer()
     async def test_get_app_components(self, loadtesting_endpoint):
         client = self.create_client(endpoint=loadtesting_endpoint)
-        result = await client.load_test_administration.get_app_components(
-            test_id=TEST_ID
-        )
+        result = await client.load_test_administration.get_app_components(test_id=TEST_ID)
         assert result is not None
 
-        result = client.load_test_administration.get_app_components(
-            name=APP_COMPONENT
-        )
+        result = client.load_test_administration.get_app_components(name=APP_COMPONENT)
         assert result is not None

@@ -13,23 +13,23 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       User-Agent:
-      - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.10.2 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.8.8 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://myservice.azure.com/loadtests/TEST_ID?api-version=2022-06-01-preview
   response:
     body:
-      string: '{"testId":"TEST_ID","description":"","displayName":"TestingResource","resourceId":"/subscriptions/SUBSCRIPTION_ID/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk","loadTestConfig":{"engineInstances":1,"splitAllCSVs":false},"passFailCriteria":{"passFailMetrics":{}},"createdDateTime":"2022-07-26T13:29:41.386Z","createdBy":null,"lastModifiedDateTime":"2022-07-26T13:29:41.386Z","lastModifiedBy":null,"inputArtifacts":{"configUrl":null,"testScriptUrl":{"url":"https://stcntproddataeus.blob.core.windows.net/3d939339-6479-41d4-9ace-a86942297fde/FILE_ID?sv=2020-04-08&se=2022-07-26T14%3A31%3A14Z&sr=b&sp=r&sig=cRm1Ojsa3Pa5loa634PkaWFXwvw4kErEFRf0J5TkvfY%3D","fileId":"FILE_ID","filename":"sample.jmx","fileType":0,"expireTime":"2022-07-26T13:41:14.6470018+00:00","validationStatus":"VALIDATION_SUCCESS"},"userPropUrl":null,"inputArtifactsZipFileurl":null,"additionalUrls":[]},"secrets":null,"environmentVariables":null,"subnetId":null,"keyvaultReferenceIdentityType":"SystemAssigned","keyvaultReferenceIdentityId":null}'
+      string: '{"testId":"TEST_ID","description":"","displayName":"TestingResource","resourceId":"/subscriptions/SUBSCRIPTION_ID/resourcegroups/python-sdk-test/providers/microsoft.loadtestservice/loadtests/loadtest-jf","loadTestConfig":{"engineInstances":1,"splitAllCSVs":false},"passFailCriteria":{"passFailMetrics":{}},"createdDateTime":"2022-07-26T02:38:46.669Z","createdBy":null,"lastModifiedDateTime":"2022-07-26T02:38:46.669Z","lastModifiedBy":null,"inputArtifacts":{"configUrl":null,"testScriptUrl":{"url":"https://stcntproddataeus.blob.core.windows.net/041c60a4-d25f-4102-b324-4f30261785e3/FILE_ID?sv=2020-04-08&se=2022-07-27T07%3A15%3A15Z&sr=b&sp=r&sig=7nITFI4C%2BWDhwrtZNsoVevFNBkhEP2A2%2BwPv95rQFvQ%3D","fileId":"FILE_ID","filename":"sample.jmx","fileType":0,"expireTime":"2022-07-27T06:25:15.5857398+00:00","validationStatus":"VALIDATION_INITIATED"},"userPropUrl":null,"inputArtifactsZipFileurl":null,"additionalUrls":[]},"secrets":null,"environmentVariables":null,"subnetId":null,"keyvaultReferenceIdentityType":"SystemAssigned","keyvaultReferenceIdentityId":null}'
     headers:
       api-supported-versions: 2021-07-01-preview, 2022-06-01-preview
       connection: keep-alive
-      content-length: '1162'
+      content-length: '1131'
       content-type: application/json; charset=utf-8
-      date: Tue, 26 Jul 2022 13:31:14 GMT
-      mise-correlation-id: a3eaa57b-8f21-4ab4-920b-299f376985da
+      date: Wed, 27 Jul 2022 06:15:15 GMT
+      mise-correlation-id: c72c024b-8ed0-4f9a-98b3-c1bb6a799b90
       strict-transport-security: max-age=15724800; includeSubDomains
       x-content-type-options: nosniff
     status:
       code: 200
       message: OK
-    url: https://eccdc9b7-7603-402b-879d-bde2b637db56.eus.cnt-prod.loadtesting.azure.com/loadtests/TEST_ID?api-version=2022-06-01-preview
+    url: https://946598fc-b4a7-4e07-8fbb-a68ca02a9f10.eus.cnt-prod.loadtesting.azure.com/loadtests/a011890b-0201-004d-010d?api-version=2022-06-01-preview
 version: 1

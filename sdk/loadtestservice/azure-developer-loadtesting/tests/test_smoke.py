@@ -7,18 +7,13 @@
 import os
 from pathlib import Path
 
-from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
+from testcase import (LoadtestingTest, LoadtestingPowerShellPreparer, TEST_ID, FILE_ID, TEST_RUN_ID, APP_COMPONENT,
+                      SUBSCRIPTION_ID)
 
-TEST_ID = "TEST_ID"  # ID to be assigned to a test
-FILE_ID = "FILE_ID"  # ID to be assigned to file uploaded
-TEST_RUN_ID = "TEST_RUN_ID"  # ID to be assigned to a test run
-APP_COMPONENT = "APP_COMPONENT_ID"  # ID of the APP Componen
-SUBSCRIPTION_ID = "SUBSCRIPTION_ID"
 DISPLAY_NAME = "TestingResource"
 
 
 class LoadtestingSmokeTest(LoadtestingTest):
-
     @LoadtestingPowerShellPreparer()
     def test_smoke_create_or_update_test(self, loadtesting_endpoint):
         client = self.create_client(endpoint=loadtesting_endpoint)
@@ -38,15 +33,16 @@ class LoadtestingSmokeTest(LoadtestingTest):
                 "passFailCriteria": {"passFailMetrics": {}},
                 "keyvaultReferenceIdentityType": "SystemAssigned",
                 "keyvaultReferenceIdentityId": None,
-            }
+            },
         )
         assert result is not None
 
     @LoadtestingPowerShellPreparer()
     def test_upload_test_file(self, loadtesting_endpoint):
         client = self.create_client(endpoint=loadtesting_endpoint)
-        result = client.load_test_administration.upload_test_file(TEST_ID, FILE_ID, open(
-            os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb"))
+        result = client.load_test_administration.upload_test_file(
+            TEST_ID, FILE_ID, open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb")
+        )
         assert result is not None
 
     @LoadtestingPowerShellPreparer()
@@ -88,12 +84,8 @@ class LoadtestingSmokeTest(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     def test_get_app_components(self, loadtesting_endpoint):
         client = self.create_client(endpoint=loadtesting_endpoint)
-        result = client.load_test_administration.get_app_components(
-            test_id=TEST_ID
-        )
+        result = client.load_test_administration.get_app_components(test_id=TEST_ID)
         assert result is not None
 
-        result = client.load_test_administration.get_app_components(
-            name=APP_COMPONENT
-        )
+        result = client.load_test_administration.get_app_components(name=APP_COMPONENT)
         assert result is not None

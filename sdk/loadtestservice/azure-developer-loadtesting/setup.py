@@ -11,6 +11,7 @@ import os
 import re
 from setuptools import setup, find_packages
 
+
 PACKAGE_NAME = "azure-developer-loadtesting"
 PACKAGE_PPRINT_NAME = "Azure Developer LoadTesting"
 
@@ -19,12 +20,11 @@ package_folder_path = PACKAGE_NAME.replace("-", "/")
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
-    version = re.search(
-        r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE
-    ).group(1)
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
 
 if not version:
     raise RuntimeError("Cannot find version information")
+
 
 setup(
     name=PACKAGE_NAME,
@@ -59,7 +59,7 @@ setup(
     ),
     include_package_data=True,
     package_data={
-        'pytyped': ['py.typed'],
+        "pytyped": ["py.typed"],
     },
     install_requires=[
         "isodate<1.0.0,>=0.6.1",
