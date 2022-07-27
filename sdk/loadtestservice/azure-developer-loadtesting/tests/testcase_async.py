@@ -4,14 +4,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from devtools_testutils import AzureTestCase
-
 from azure.developer.loadtesting.aio import LoadTestingClient
+from testcase import LoadtestingTest
 
-
-class LoadtestingAsyncTest(AzureTestCase):
+class LoadtestingAsyncTest(LoadtestingTest):
     def __init__(self, method_name, **kwargs):
         super(LoadtestingAsyncTest, self).__init__(method_name, **kwargs)
+
 
     def create_client(self, endpoint):
         credential = self.get_credential(LoadTestingClient, is_async=True)

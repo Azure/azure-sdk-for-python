@@ -78,7 +78,6 @@ try:
     print(result)
 except HttpResponseError as e:
     print("Failed to process the request: {}".format(e.response.json()))
-
 # uploading .jmx file to a test
 try:
     # opening .jmx file
@@ -87,7 +86,6 @@ try:
     print(result)
 except HttpResponseError as e:
     print("Failed to send JSON message: {}".format(e.response.json()))
-
 # creating app component
 try:
     result = client.load_test_administration.create_or_update_app_components(
@@ -108,7 +106,6 @@ try:
     print(result)
 except HttpResponseError as e:
     print("Failed to send JSON message: {}".format(e.response.json()))
-
 # Creating the test run
 try:
     result = client.load_test_runs.create_and_update_test(
@@ -125,7 +122,6 @@ try:
     print(result)
 except HttpResponseError as e:
     print("Failed to send JSON message: {}".format(e.response.json()))
-
 # Checking the test run status and printing metrics
 try:
     start_time = time.time()
