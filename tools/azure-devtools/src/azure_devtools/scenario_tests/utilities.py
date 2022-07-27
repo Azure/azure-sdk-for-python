@@ -58,7 +58,8 @@ def _get_content_type(entity):
 
 
 def is_text_payload(entity):
-    text_content_list = ["application/json", "application/xml", "text/", "application/test-content"]
+    text_content_list = ["application/json", "application/xml", "text/", "application/test-content",
+                         "application/merge-patch+json"]
 
     content_type = _get_content_type(entity)
     if content_type:
