@@ -11,6 +11,7 @@ from .generate_utils import (get_package_names, init_new_service, update_service
 
 _LOGGER = logging.getLogger(__name__)
 
+DEFAULT_SPEC_FOLDER = "../../../../../azure-rest-api-specs/"
 
 def main(generate_input, generate_output):
     with open(generate_input, "r") as reader:
@@ -28,7 +29,7 @@ def main(generate_input, generate_output):
             config = generate(CONFIG_FILE, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True,
                               python_tag=python_tag)
         else:
-            config = gen_dpg(input_readme, data.get('autorestConfig', ''), "../../../../../azure-rest-api-specs/")
+            config = gen_dpg(input_readme, data.get('autorestConfig', ''), DEFAULT_SPEC_FOLDER)
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
