@@ -28,7 +28,7 @@ class ComputerVisionClient(ComputerVisionClientOperationsMixin, SDKClient):
     :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
-    :type credentials: None
+    :type credentials: None | CognitiveServicesCredentials
     """
 
     def __init__(
