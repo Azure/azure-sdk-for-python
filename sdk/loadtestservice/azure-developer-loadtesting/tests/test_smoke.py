@@ -7,8 +7,7 @@
 import os
 from pathlib import Path
 
-from testcase import (LoadtestingTest, LoadtestingPowerShellPreparer, TEST_ID, FILE_ID, TEST_RUN_ID, APP_COMPONENT,
-                      SUBSCRIPTION_ID)
+from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
 
 DISPLAY_NAME = "TestingResource"
 
@@ -18,9 +17,9 @@ class LoadtestingSmokeTest(LoadtestingTest):
     def test_smoke_create_or_update_test(self, loadtesting_endpoint):
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.create_or_update_test(
-            TEST_ID,
+            self.test_id,
             {
-                "resourceId": f"/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
+                "resourceId": f"/subscriptions/{self.subscription_id}/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
                 "description": "",
                 "displayName": DISPLAY_NAME,
                 "loadTestConfig": {
@@ -41,7 +40,7 @@ class LoadtestingSmokeTest(LoadtestingTest):
     def test_upload_test_file(self, loadtesting_endpoint):
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.upload_test_file(
-            TEST_ID, FILE_ID, open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb")
+            self.test_id, self.file_id, open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb")
         )
         assert result is not None
 
@@ -49,16 +48,16 @@ class LoadtestingSmokeTest(LoadtestingTest):
     def test_create_or_update_app_components(self, loadtesting_endpoint):
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.create_or_update_app_components(
-            APP_COMPONENT,
+            self.app_component,
             {
                 "name": "app_component",
-                "testId": TEST_ID,
+                "testId": self.test_id,
                 "value": {
-                    f"/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo": {
-                        "resourceId": f"/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo",
+                    f"/subscriptions/{self.subscription_id}/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo": {
+                        "resourceId": f"/subscriptions/{self.subscription_id}/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo",
                         "resourceName": "App-Service-Sample-Demo",
                         "resourceType": "Microsoft.Web/sites",
-                        "subscriptionId": SUBSCRIPTION_ID,
+                        "subscriptionId": self.subscription_id,
                     }
                 },
             },
@@ -69,9 +68,9 @@ class LoadtestingSmokeTest(LoadtestingTest):
     def test_create_or_update_test_run(self, loadtesting_endpoint):
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_runs.create_or_update_test(
-            TEST_RUN_ID,
+            self.test_run_id,
             {
-                "testId": TEST_ID,
+                "testId": self.test_id,
                 "displayName": DISPLAY_NAME,
                 "requestSamplers": [],
                 "errors": [],
@@ -84,8 +83,8 @@ class LoadtestingSmokeTest(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     def test_get_app_components(self, loadtesting_endpoint):
         client = self.create_client(endpoint=loadtesting_endpoint)
-        result = client.load_test_administration.get_app_components(test_id=TEST_ID)
+        result = client.load_test_administration.get_app_components(test_id=self.test_id)
         assert result is not None
 
-        result = client.load_test_administration.get_app_components(name=APP_COMPONENT)
+        result = client.load_test_administration.get_app_components(name=self.app_component)
         assert result is not None

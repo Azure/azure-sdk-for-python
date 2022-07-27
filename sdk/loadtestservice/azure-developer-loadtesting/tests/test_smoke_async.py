@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from testcase import LoadtestingPowerShellPreparer, TEST_ID, FILE_ID, TEST_RUN_ID, APP_COMPONENT, SUBSCRIPTION_ID
+from testcase import LoadtestingPowerShellPreparer
 from testcase_async import LoadtestingAsyncTest
 import os
 
@@ -16,9 +16,9 @@ class LoadtestingSmokeAsyncTest(LoadtestingAsyncTest):
     async def test_smoke_create_or_update_test(self, loadtesting_endpoint):
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = await client.load_test_administration.create_or_update_test(
-            TEST_ID,
+            self.test_id,
             {
-                "resourceId": f"/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
+                "resourceId": f"/subscriptions/{self.subscription_id}/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
                 "description": "",
                 "displayName": DISPLAY_NAME,
                 "loadTestConfig": {
@@ -39,16 +39,16 @@ class LoadtestingSmokeAsyncTest(LoadtestingAsyncTest):
     async def test_create_or_update_app_components(self, loadtesting_endpoint):
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = await client.load_test_administration.create_or_update_app_components(
-            APP_COMPONENT,
+            self.app_component,
             {
                 "name": "app_component",
-                "testId": TEST_ID,
+                "testId": self.test_id,
                 "value": {
-                    f"/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo": {
-                        "resourceId": f"/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo",
+                    f"/subscriptions/{self.subscription_id}/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo": {
+                        "resourceId": f"/subscriptions/{self.subscription_id}/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo",
                         "resourceName": "App-Service-Sample-Demo",
                         "resourceType": "Microsoft.Web/sites",
-                        "subscriptionId": SUBSCRIPTION_ID,
+                        "subscriptionId": self.subscription_id,
                     }
                 },
             },
@@ -58,8 +58,8 @@ class LoadtestingSmokeAsyncTest(LoadtestingAsyncTest):
     @LoadtestingPowerShellPreparer()
     async def test_get_app_components(self, loadtesting_endpoint):
         client = self.create_client(endpoint=loadtesting_endpoint)
-        result = await client.load_test_administration.get_app_components(test_id=TEST_ID)
+        result = await client.load_test_administration.get_app_components(test_id=self.test_id)
         assert result is not None
 
-        result = client.load_test_administration.get_app_components(name=APP_COMPONENT)
+        result = client.load_test_administration.get_app_components(name=self.app_component)
         assert result is not None

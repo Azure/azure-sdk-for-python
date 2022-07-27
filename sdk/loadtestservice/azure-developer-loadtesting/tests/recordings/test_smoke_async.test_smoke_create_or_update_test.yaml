@@ -18,14 +18,14 @@ interactions:
     uri: https://myservice.azure.com/loadtests/TEST_ID?api-version=2022-06-01-preview
   response:
     body:
-      string: '{"testId":"TEST_ID","description":"","displayName":"TestingResource","resourceId":"/subscriptions/SUBSCRIPTION_ID/resourcegroups/python-sdk-test/providers/microsoft.loadtestservice/loadtests/loadtest-jf","loadTestConfig":{"engineInstances":1,"splitAllCSVs":false},"passFailCriteria":{"passFailMetrics":{}},"createdDateTime":"2022-07-26T02:38:46.669Z","createdBy":null,"lastModifiedDateTime":"2022-07-26T02:38:46.669Z","lastModifiedBy":null,"inputArtifacts":{"configUrl":null,"testScriptUrl":{"url":"https://stcntproddataeus.blob.core.windows.net/041c60a4-d25f-4102-b324-4f30261785e3/FILE_ID?sv=2020-04-08&se=2022-07-27T07%3A15%3A15Z&sr=b&sp=r&sig=7nITFI4C%2BWDhwrtZNsoVevFNBkhEP2A2%2BwPv95rQFvQ%3D","fileId":"FILE_ID","filename":"sample.jmx","fileType":0,"expireTime":"2022-07-27T06:25:15.5857398+00:00","validationStatus":"VALIDATION_INITIATED"},"userPropUrl":null,"inputArtifactsZipFileurl":null,"additionalUrls":[]},"secrets":null,"environmentVariables":null,"subnetId":null,"keyvaultReferenceIdentityType":"SystemAssigned","keyvaultReferenceIdentityId":null}'
+      string: '{"testId":"TEST_ID","description":"","displayName":"TestingResource","resourceId":"/subscriptions/SUBSCRIPTION_ID/resourcegroups/python-sdk-test/providers/microsoft.loadtestservice/loadtests/loadtest-jf","loadTestConfig":{"engineInstances":1,"splitAllCSVs":false},"passFailCriteria":{"passFailMetrics":{}},"createdDateTime":"2022-07-26T02:38:46.669Z","createdBy":null,"lastModifiedDateTime":"2022-07-26T02:38:46.669Z","lastModifiedBy":null,"inputArtifacts":{"configUrl":null,"testScriptUrl":{"url":"https://stcntproddataeus.blob.core.windows.net/041c60a4-d25f-4102-b324-4f30261785e3/FILE_ID?sv=2020-04-08&se=2022-07-27T09%3A20%3A40Z&sr=b&sp=r&sig=a%2BrD%2FM458gOdTO6yn1O6uU%2B46VAoEwnr%2BvxP8CbwO6k%3D","fileId":"FILE_ID","filename":"sample.jmx","fileType":0,"expireTime":"2022-07-27T08:30:40.2220875+00:00","validationStatus":"VALIDATION_INITIATED"},"userPropUrl":null,"inputArtifactsZipFileurl":null,"additionalUrls":[]},"secrets":null,"environmentVariables":null,"subnetId":null,"keyvaultReferenceIdentityType":"SystemAssigned","keyvaultReferenceIdentityId":null}'
     headers:
       api-supported-versions: 2021-07-01-preview, 2022-06-01-preview
       connection: keep-alive
-      content-length: '1131'
+      content-length: '1135'
       content-type: application/json; charset=utf-8
-      date: Wed, 27 Jul 2022 06:15:15 GMT
-      mise-correlation-id: c72c024b-8ed0-4f9a-98b3-c1bb6a799b90
+      date: Wed, 27 Jul 2022 08:20:40 GMT
+      mise-correlation-id: c666d266-6acb-4569-b1c5-7685b904d0d8
       strict-transport-security: max-age=15724800; includeSubDomains
       x-content-type-options: nosniff
     status:
