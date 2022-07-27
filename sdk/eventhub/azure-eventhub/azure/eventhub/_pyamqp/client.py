@@ -19,7 +19,7 @@ from .session import Session
 from .sender import SenderLink
 from .receiver import ReceiverLink
 from .sasl import SASLAnonymousCredential, SASLTransport
-from .endpoints import Sopurce, Source, Target
+from .endpoints import Source, Target
 from .error import (
     AMQPConnectionError,
     AMQPException,
