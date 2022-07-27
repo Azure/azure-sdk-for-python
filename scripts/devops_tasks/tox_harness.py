@@ -5,6 +5,7 @@ import shutil
 import re
 import multiprocessing
 import glob
+import pdb
 
 if sys.version_info < (3, 0):
     from Queue import Queue

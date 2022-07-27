@@ -13,10 +13,10 @@ from pkg_resources import (
     WorkingSet,
     working_set,
 )
+import pdb
 
 # this assumes the presence of "packaging"
 from packaging.specifiers import SpecifierSet
-from packaging.version import Version, parse
 
 
 NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
@@ -126,15 +126,16 @@ def parse_setup(setup_filename: str) -> Tuple[str, str, List[str], List[str], bo
     return name, version, python_requires, requires, is_new_sdk, setup_filename
 
 
-def parse_require(req: str) -> Tuple[str, str]:
+def parse_require(req: str) -> Tuple[str, SpecifierSet]:
     """
     Parses the incoming version specification and returns a tuple of the requirement name and specifier.
 
     "azure-core<2.0.0,>=1.11.0" -> [azure-core, <2.0.0,>=1.11.0]
     """
-    req_object = Requirement.parse(req.split(";")[0])
+    req_object = Requirement.parse(req.split(";")[0].lower())
     pkg_name = req_object.key
-    spec = SpecifierSet(str(req_object).replace(pkg_name, ""))
+    isolated_spec = str(req_object).replace(pkg_name, "")
+    spec = SpecifierSet(isolated_spec)
     return [pkg_name, spec]
 
 
@@ -150,6 +151,8 @@ def parse_requirements_file(file_location: str) -> Dict[str, str]:
 
 def get_name_from_specifier(version: str) -> str:
     """
-    Given a specifier string of format A <comparison> <versionNumber>, returns the package name.
+    Given a specifier string of format of <package-name><comparison><versionNumber>, returns the package name.
+
+    "azure-core<2.0.0,>=1.11.0" -> azure-core
     """
     return re.split(r"[><=]", version)[0]
