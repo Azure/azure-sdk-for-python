@@ -1,6 +1,6 @@
 # Release History
 
-## 12.5.0b1 (Unreleased)
+## 12.5.0b1 (2022-08-09)
 
 This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
 
