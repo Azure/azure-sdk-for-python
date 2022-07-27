@@ -215,7 +215,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                 except (IncompleteReadError, HttpResponseError, DecodeError) as error:
                     retry_total -= 1
                     if retry_total <= 0:
-                        raise ServiceResponseError(error, error=error)
+                        raise HttpResponseError(error, error=error)
                     time.sleep(1)
 
             # This makes sure that if_match is set so that we can validate
@@ -476,7 +476,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             except (IncompleteReadError, HttpResponseError, DecodeError) as error:
                 retry_total -= 1
                 if retry_total <= 0:
-                    raise ServiceResponseError(error, error=error)
+                    raise HttpResponseError(error, error=error)
                 time.sleep(1)
 
         # get page ranges to optimize downloading sparse page blob

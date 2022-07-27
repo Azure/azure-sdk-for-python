@@ -441,6 +441,7 @@ class StorageRetryTest(StorageTestCase):
     @BlobPreparer()
     def test_streaming_retry(self, storage_account_name, storage_account_key):
         """Test that retry mechanisms are working when streaming data."""
+        # Should check that multiple requests went through the pipeline
         container_name = self.get_resource_name('utcontainer')
         service = self._create_storage_service(
             BlobServiceClient, storage_account_name, storage_account_key)
@@ -455,7 +456,7 @@ class StorageRetryTest(StorageTestCase):
             iterator_mock.__next__.side_effect = error
             iter_content_mock = mock.Mock()
             iter_content_mock.return_value = iterator_mock
-            with mock.patch.object(Response, "iter_content", iter_content_mock), pytest.raises(ServiceResponseError):
+            with mock.patch.object(Response, "iter_content", iter_content_mock), pytest.raises(HttpResponseError):
                 blob = container.get_blob_client(blob=blob_name)
                 blob.download_blob()
             assert iterator_mock.__next__.call_count == 3
