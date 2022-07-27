@@ -139,7 +139,7 @@ def build_packages(
         create_package(package_root, dist_dir)
 
 
-def create_package(setup_directory_or_file: str, dest_folder: str = None):
+def create_package(setup_directory_or_file: str, dest_folder: str = None, enable_wheel: bool = True, enable_sdist: bool = True):
     """
     Uses the invoking python executable to build a wheel and sdist file given a setup.py or setup.py directory. Outputs
     into a distribution directory and defaults to the value of get_artifiact_directory().
@@ -150,7 +150,8 @@ def create_package(setup_directory_or_file: str, dest_folder: str = None):
     if not os.path.isdir(setup_directory_or_file):
         setup_directory_or_file = os.path.dirname(setup_directory_or_file)
 
-    # TODO: prime candidates for logging updates here. should pipe off to a file that is uploaded to alongside build available in
-    # your local artifacts folder
-    run([sys.executable, "setup.py", "bdist_wheel", "-d", dist], cwd=setup_directory_or_file)
-    run([sys.executable, "setup.py", "sdist", "--format", "zip", "-d", dist], cwd=setup_directory_or_file)
+    # TODO: prime candidates for logging updates here. should pipe off to a file that is uploaded as an artifact
+    if enable_wheel:
+        run([sys.executable, "setup.py", "bdist_wheel", "-d", dist], cwd=setup_directory_or_file)
+    if enable_sdist:
+        run([sys.executable, "setup.py", "sdist", "--format", "zip", "-d", dist], cwd=setup_directory_or_file)

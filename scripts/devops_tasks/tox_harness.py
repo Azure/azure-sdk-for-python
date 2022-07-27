@@ -26,6 +26,7 @@ from common_tasks import (
 
 from ci_tools.functions import discover_targeted_packages
 from ci_tools.parsing import ParsedSetup
+from ci_tools.build import create_package
 
 from pkg_resources import parse_requirements, RequirementParseError
 import logging
@@ -243,7 +244,7 @@ def build_whl_for_req(req, package_path):
         parsed = ParsedSetup.from_path(req_pkg_path)
 
         logging.info("Building wheel for package {}".format(parsed.name))
-        run_check_call([sys.executable, "setup.py", "bdist_wheel", "-d", temp_dir], req_pkg_path)
+        create_package(req_pkg_path, temp_dir, enable_sdist = False)
 
         whl_path = os.path.join(temp_dir, find_whl(parsed.name, parsed.version, temp_dir))
         logging.info("Wheel for package {0} is {1}".format(parsed.name, whl_path))

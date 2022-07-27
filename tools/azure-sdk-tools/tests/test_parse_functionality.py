@@ -19,4 +19,13 @@ def test_parse_require():
       Assert(result[1] is not None)
       Assert(result[1] is SpecifierSet)
 
-   
+def test_parse_require_with_no_spec():
+   spec_scenarios = [
+      "readme_renderer"
+   ]
+
+   for scenario in spec_scenarios:
+      result = parse_require(scenario)
+
+      Assert(result[0] == scenario)
+      Assert(result[1] is None)

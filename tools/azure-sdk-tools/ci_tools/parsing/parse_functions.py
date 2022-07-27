@@ -134,7 +134,13 @@ def parse_require(req: str) -> Tuple[str, SpecifierSet]:
     """
     req_object = Requirement.parse(req.split(";")[0].lower())
     pkg_name = req_object.key
+    spec_object_str = str(req_object)
     isolated_spec = str(req_object).replace(pkg_name, "")
+
+    # we were not passed a full requirement. Instead we were passed a value of "readme-renderer" or another string without a version.
+    if spec_object_str == spec_object_str:
+        return [pkg_name, None]
+
     spec = SpecifierSet(isolated_spec)
     return [pkg_name, spec]
 
