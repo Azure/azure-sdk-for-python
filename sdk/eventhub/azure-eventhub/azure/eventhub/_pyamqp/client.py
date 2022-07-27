@@ -110,7 +110,7 @@ class AMQPClient(object):
      operations. If set to `Unsettled`, the client will wait for a confirmation
      from the service that the message was successfully sent. If set to 'Settled',
      the client will not wait for confirmation and assume success.
-    :type send_settle_mode: ~uamqp.constants.SenderSettleMode
+    :type send_settle_mode: ~pyamqp.constants.SenderSettleMode
     :param receive_settle_mode: The mode by which to settle message receive
      operations. If set to `PeekLock`, the receiver will lock a message once received until
      the client accepts or rejects the message. If set to `ReceiveAndDelete`, the service
@@ -145,12 +145,15 @@ class AMQPClient(object):
         self._channel_max = kwargs.pop('channel_max', None) or 65535
         self._idle_timeout = kwargs.pop('idle_timeout', None)
         self._properties = kwargs.pop('properties', None)
+        self._remote_idle_timeout_empty_frame_send_ratio = kwargs.pop(
+        'remote_idle_timeout_empty_frame_send_ratio', None)
         self._network_trace = debug
 
         # Session settings
         self._outgoing_window = kwargs.pop('outgoing_window', None) or OUTGOING_WIDNOW
         self._incoming_window = kwargs.pop('incoming_window', None) or INCOMING_WINDOW
         self._handle_max = kwargs.pop('handle_max', None)
+        self._on_attach = kwargs.pop('on_attach', None)
 
         # Link settings
         self._send_settle_mode = kwargs.pop('send_settle_mode', SenderSettleMode.Unsettled)
@@ -236,7 +239,7 @@ class AMQPClient(object):
 
         :param connection: An existing Connection that may be shared between
          multiple clients.
-        :type connetion: ~uamqp.Connection
+        :type connetion: ~pyamqp.Connection
         """
         # pylint: disable=protected-access
         if self._session:
@@ -536,10 +539,10 @@ class ReceiveClient(AMQPClient):
      a string or a ~uamqp.address.Source object.
     :type target: str, bytes or ~uamqp.address.Source
     :param auth: Authentication for the connection. This should be one of the subclasses of
-     uamqp.authentication.AMQPAuth. Currently this includes:
-        - uamqp.authentication.SASLAnonymous
-        - uamqp.authentication.SASLPlain
-        - uamqp.authentication.SASTokenAuth
+     pyamqp.authentication.AMQPAuth. Currently this includes:
+        - pyamqp.authentication.SASLAnonymous
+        - pyamqp.authentication.SASLPlain
+        - pyamqp.authentication.SASTokenAuth
      If no authentication is supplied, SASLAnnoymous will be used by default.
     :type auth: ~uamqp.authentication.common.AMQPAuth
     :param client_name: The name for the client, also known as the Container ID.
@@ -556,7 +559,7 @@ class ReceiveClient(AMQPClient):
     :type auto_complete: bool
     :param retry_policy: A policy for parsing errors on link, connection and message
      disposition to determine whether the error should be retryable.
-    :type retry_policy: ~uamqp.errors.RetryPolicy
+    :type retry_policy: ~pyamqp.errors.RetryPolicy
     :param keep_alive_interval: If set, a thread will be started to keep the connection
      alive during periods of user inactivity. The value will determine how long the
      thread will sleep (in seconds) between pinging the connection. If 0 or None, no
@@ -566,13 +569,13 @@ class ReceiveClient(AMQPClient):
      operations. If set to `Unsettled`, the client will wait for a confirmation
      from the service that the message was successfully sent. If set to 'Settled',
      the client will not wait for confirmation and assume success.
-    :type send_settle_mode: ~uamqp.constants.SenderSettleMode
+    :type send_settle_mode: ~pyamqp.constants.SenderSettleMode
     :param receive_settle_mode: The mode by which to settle message receive
      operations. If set to `PeekLock`, the receiver will lock a message once received until
      the client accepts or rejects the message. If set to `ReceiveAndDelete`, the service
      will assume successful receipt of the message and clear it from the queue. The
      default is `PeekLock`.
-    :type receive_settle_mode: ~uamqp.constants.ReceiverSettleMode
+    :type receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
     :param desired_capabilities: The extension capabilities desired from the peer endpoint.
      To create an desired_capabilities object, please do as follows:
         - 1. Create an array of desired capability symbols: `capabilities_symbol_array = [types.AMQPSymbol(string)]`
@@ -607,7 +610,7 @@ class ReceiveClient(AMQPClient):
     :type handle_max: int
     :param on_attach: A callback function to be run on receipt of an ATTACH frame.
      The function must take 4 arguments: source, target, properties and error.
-    :type on_attach: func[~uamqp.address.Source, ~uamqp.address.Target, dict, ~uamqp.errors.AMQPConnectionError]
+    :type on_attach: func[~uamqp.address.Source, ~uamqp.address.Target, dict, ~pyamqp.errors.AMQPConnectionError]
     :param encoding: The encoding to use for parameters supplied as strings.
      Default is 'UTF-8'
     :type encoding: str
