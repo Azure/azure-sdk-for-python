@@ -74,8 +74,11 @@ class CronSchedule(RestCronSchedule, Schedule):
     :param start_time: Specifies start time of schedule in ISO 8601 format. If no time zone
         offset is specified in the start_time, it will default to UTC (+0:00)
     :type start_time: Union[str, datetime]
+    :param end_time: Specifies end time of schedule in ISO 8601 format. If no time zone
+        offset is specified in the end_time, it will default to UTC (+0:00)
+    :type end_time: Union[str, datetime]
+    :param time_zone: Time zone in which the schedule runs. This does not apply to the start_time and end_time.
     :type time_zone: Optional[TimeZone]
-    :param time_zone: Time zone in which the schedule runs. This does not apply to the start_time.
     :param expression: Specifies cron expression of schedule.
         The expression should follow NCronTab format.
     :type expression: str
@@ -87,14 +90,21 @@ class CronSchedule(RestCronSchedule, Schedule):
         expression: str,
         status: str = None,
         start_time: str = None,
+        end_time: str = None,
         time_zone: TimeZone = TimeZone.UTC,
     ):
-        super().__init__(expression=expression, schedule_status=status, start_time=start_time, time_zone=time_zone)
+        super().__init__(
+            expression=expression, schedule_status=status, start_time=start_time, end_time=end_time, time_zone=time_zone
+        )
 
     @classmethod
     def _from_rest_object(cls, obj: RestCronSchedule) -> "CronSchedule":
         return cls(
-            expression=obj.expression, status=obj.schedule_status, start_time=obj.start_time, time_zone=obj.time_zone
+            expression=obj.expression,
+            status=obj.schedule_status,
+            start_time=obj.start_time,
+            end_time=obj.end_time,
+            time_zone=obj.time_zone,
         )
 
 
@@ -107,9 +117,12 @@ class RecurrenceSchedule(RestRecurrenceSchedule, Schedule):
     :param start_time: Specifies start time of schedule in ISO 8601 format. If no time zone
         offset is specified in the start_time, it will default to UTC (+0:00)
     :type start_time: Union[str, datetime]
-    :param time_zone: Time zone in which the schedule runs. This does not apply to the start_time.
+    :param end_time: Specifies end time of schedule in ISO 8601 format. If no time zone
+        offset is specified in the end_time, it will default to UTC (+0:00)
+    :type end_time: Union[str, datetime]
+    :param time_zone: Time zone in which the schedule runs. This does not apply to the start_time and end_time.
     :type time_zone: Optional[TimeZone]
-    :param frequency: Specifies frequency with with which to trigger schedule.
+    :param frequency: Specifies frequency which to trigger schedule with.
      Possible values include: "minute", "hour", "day", "week", "month".
     :type frequency: str
     :param interval: Specifies schedule interval in conjunction with frequency.
@@ -128,6 +141,7 @@ class RecurrenceSchedule(RestRecurrenceSchedule, Schedule):
         pattern: RecurrencePattern = None,
         status: str = None,
         start_time: str = None,
+        end_time: str = None,
         time_zone: TimeZone = TimeZone.UTC,
     ):
         super().__init__(
@@ -136,6 +150,7 @@ class RecurrenceSchedule(RestRecurrenceSchedule, Schedule):
             pattern=pattern,
             schedule_status=status,
             start_time=start_time,
+            end_time=end_time,
             time_zone=time_zone,
         )
 
@@ -147,5 +162,6 @@ class RecurrenceSchedule(RestRecurrenceSchedule, Schedule):
             pattern=RecurrencePattern._from_rest_object(obj.pattern) if obj.pattern else None,
             status=obj.schedule_status,
             start_time=obj.start_time,
+            end_time=obj.end_time,
             time_zone=obj.time_zone,
         )

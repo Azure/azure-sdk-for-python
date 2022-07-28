@@ -12,7 +12,4 @@ code: ../../../python
 inputs:
   iris: 
     type: uri_file
-environment:
-  build:
-    path: ../../../environment/environment_files
-    dockerfile_path: DockerfileNonDefault
+environment: file:../../../environment/environment_docker_context.yml

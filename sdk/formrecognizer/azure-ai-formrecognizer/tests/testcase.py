@@ -6,9 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import pytest
 import os
-import six
 import logging
 from azure.core.credentials import AccessToken
 from azure.ai.formrecognizer._helpers import (

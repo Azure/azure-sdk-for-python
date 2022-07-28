@@ -33,7 +33,7 @@ from azure.ai.ml._schema.pipeline.pipeline_job_io import OutputBindingStr
 from .._sweep.parameterized_sweep import ParameterizedSweepSchema
 from .._utils.data_binding_expression import support_data_binding_expression_for_fields
 
-from ..core.fields import ComputeField, StringTransformedEnum
+from ..core.fields import ComputeField, StringTransformedEnum, TypeSensitiveUnionField
 from ..job import ParameterizedCommandSchema, ParameterizedParallelSchema
 from ..job.distribution import PyTorchDistributionSchema, TensorFlowDistributionSchema, MPIDistributionSchema
 from ..job.job_limits import CommandJobLimitsSchema
@@ -89,16 +89,20 @@ def _resolve_inputs_outputs(job):
 
 
 class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
-    component = UnionField(
-        [
+    component = TypeSensitiveUnionField(
+        {
+            NodeType.COMMAND: [
+                # inline component or component file reference starting with FILE prefix
+                NestedField(AnonymousCommandComponentSchema, unknown=INCLUDE),
+                # component file reference
+                ComponentFileRefField(),
+            ],
+        },
+        plain_union_fields=[
             # for registry type assets
             RegistryStr(),
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
-            # inline component or component file reference starting with FILE prefix
-            NestedField(AnonymousCommandComponentSchema, unknown=INCLUDE),
-            # component file reference
-            ComponentFileRefField(),
         ],
         required=True,
     )
@@ -113,6 +117,7 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
     )
     environment = UnionField(
         [
+            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
             NestedField(AnonymousEnvironmentSchema),
             ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
         ],
@@ -162,14 +167,18 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
 
 class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):
     type = StringTransformedEnum(allowed_values=[NodeType.SWEEP])
-    trial = UnionField(
-        [
+    trial = TypeSensitiveUnionField(
+        {
+            NodeType.SWEEP: [
+                # inline component or component file reference starting with FILE prefix
+                NestedField(AnonymousCommandComponentSchema, unknown=INCLUDE),
+                # component file reference
+                ComponentFileRefField(),
+            ],
+        },
+        plain_union_fields=[
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
-            # inline component or component file reference starting with FILE prefix
-            NestedField(AnonymousCommandComponentSchema, unknown=INCLUDE),
-            # component file reference
-            ComponentFileRefField(),
         ],
         required=True,
     )
@@ -191,16 +200,20 @@ class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):
 
 
 class ParallelSchema(BaseNodeSchema, ParameterizedParallelSchema):
-    component = UnionField(
-        [
+    component = TypeSensitiveUnionField(
+        {
+            NodeType.PARALLEL: [
+                # inline component or component file reference starting with FILE prefix
+                NestedField(AnonymousParallelComponentSchema, unknown=INCLUDE),
+                # component file reference
+                ParallelComponentFileRefField(),
+            ],
+        },
+        plain_union_fields=[
             # for registry type assets
             RegistryStr(),
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
-            # inline component or component file reference starting with FILE prefix
-            NestedField(AnonymousParallelComponentSchema, unknown=INCLUDE),
-            # component file reference
-            ParallelComponentFileRefField(),
         ],
         required=True,
     )

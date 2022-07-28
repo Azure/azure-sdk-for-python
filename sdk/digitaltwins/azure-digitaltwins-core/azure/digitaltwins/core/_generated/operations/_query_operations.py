@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,43 +7,88 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
-import warnings
+
+from msrest import Serializer
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
+from .._vendor import _convert_request
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
-
+    from typing import Any, Callable, Dict, Optional, TypeVar
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
+# fmt: off
+
+def build_query_twins_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+    max_items_per_page = kwargs.pop('max_items_per_page', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/query")
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    if max_items_per_page is not None:
+        _header_parameters['max-items-per-page'] = _SERIALIZER.header("max_items_per_page", max_items_per_page, 'int')
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+# fmt: on
 class QueryOperations(object):
-    """QueryOperations operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.digitaltwins.core.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.digitaltwins.core.AzureDigitalTwinsAPI`'s
+        :attr:`query` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
 
+
+    @distributed_trace
     def query_twins(
         self,
         query_specification,  # type: "_models.QuerySpecification"
@@ -59,14 +105,14 @@ class QueryOperations(object):
 
           * BadRequest - The continuation token is invalid.
           * SqlQueryError - The query contains some errors.
-
-        * 429 Too Many Requests
-
+          * TimeoutError - The query execution timed out after 60 seconds. Try simplifying the query or
+        adding conditions to reduce the result size.
+          * 429 Too Many Requests
           * QuotaReachedError - The maximum query rate limit has been reached.
 
         :param query_specification: The query specification to execute.
         :type query_specification: ~azure.digitaltwins.core.models.QuerySpecification
-        :param query_twins_options: Parameter group.
+        :param query_twins_options: Parameter group. Default value is None.
         :type query_twins_options: ~azure.digitaltwins.core.models.QueryTwinsOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: QueryResult, or the result of cls(response)
@@ -78,7 +124,10 @@ class QueryOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
         _traceparent = None
         _tracestate = None
         _max_items_per_page = None
@@ -86,46 +135,41 @@ class QueryOperations(object):
             _traceparent = query_twins_options.traceparent
             _tracestate = query_twins_options.tracestate
             _max_items_per_page = query_twins_options.max_items_per_page
-        api_version = "2020-10-31"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
+        _json = self._serialize.body(query_specification, 'QuerySpecification')
 
-        # Construct URL
-        url = self.query_twins.metadata['url']  # type: ignore
+        request = build_query_twins_request(
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            max_items_per_page=_max_items_per_page,
+            template_url=self.query_twins.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        if _max_items_per_page is not None:
-            header_parameters['max-items-per-page'] = self._serialize.header("max_items_per_page", _max_items_per_page, 'int')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(query_specification, 'QuerySpecification')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['query-charge']=self._deserialize('float', response.headers.get('query-charge'))
+
         deserialized = self._deserialize('QueryResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    query_twins.metadata = {'url': '/query'}  # type: ignore
+
+    query_twins.metadata = {'url': "/query"}  # type: ignore
+
