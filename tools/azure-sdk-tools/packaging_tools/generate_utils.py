@@ -170,7 +170,7 @@ def gen_basic_config(origin_config: Dict[str, Any], spec_folder: str) -> Dict[st
         "package-name": gen_package_name(origin_config),
         "license-header": "MICROSOFT_MIT_NO_VERSION",
         "package-version": origin_config.get("package-version", "1.0.0b1"),
-        "require": [spec_root + line for line in origin_config["require"]],
+        "require": [spec_folder + line for line in origin_config["require"]],
         "package-mode": "dataplane",
         "output-folder": "../",
     }
