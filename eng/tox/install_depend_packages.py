@@ -104,6 +104,10 @@ def process_requirement(req, dependency_type):
 
     # return first version that matches specifier in <package-name>==<version> format
     for version in versions:
+        # if there IS NO specifier, then we should take the first entry. we have already sorted for latest/minimum.
+        if spec is None:
+            return pkg_name + "==" + version
+
         if version in spec:
             logging.info(
                 "Found %s version %s that matches specifier %s",

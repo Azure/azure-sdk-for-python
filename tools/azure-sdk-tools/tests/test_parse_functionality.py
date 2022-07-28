@@ -1,6 +1,5 @@
 from ci_tools.parsing import parse_require, ParsedSetup
 from packaging.specifiers import SpecifierSet
-import pdb
 
 def test_parse_require():
     test_scenarios = [
