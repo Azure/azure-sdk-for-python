@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
 ##### Supported Token Credentials for Azure AD Authentication
 
-**Note:** The samples in this doc use the azure-identity library's `DefaultAzureCredential` to fetch Azure AD Access Token. The other supported `TokenCredential` implementations that can be used from azure-identity for Python are as follows:
+**Note:** The samples in this doc use the azure-identity library's `DefaultAzureCredential` to fetch an Azure AD access token. The other supported `TokenCredential` implementations that can be used from azure-identity are as follows:
 
 - [Client Certificate Credential](https://aka.ms/azsdk/python/identity/certificatecredential)
 - [Client Secret Credential](https://aka.ms/azsdk/python/identity/clientsecretcredential)
