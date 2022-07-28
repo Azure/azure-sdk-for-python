@@ -9,8 +9,8 @@ PATH="$VIRTUAL_ENV/bin:$PATH"
 export PATH
 
 # node version degrade
-npm install -g n
-n 14.15.0
+sudo npm install -g n
+sudo n 14.15.0
 echo "$PATH"
 export PATH="/usr/local/n/versions/node/14.15.0/bin:$PATH"
 
