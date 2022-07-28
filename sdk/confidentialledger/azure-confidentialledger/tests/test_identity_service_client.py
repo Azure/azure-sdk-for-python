@@ -1,4 +1,4 @@
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.confidentialledger.certificate import (
     ConfidentialLedgerCertificateClient,
@@ -7,9 +7,12 @@ from azure.confidentialledger.certificate import (
 from _shared.testcase import ConfidentialLedgerPreparer
 
 
-class ConfidentialLedgerCertificateClientTest(AzureTestCase):
+class TestConfidentialLedgerCertificateClient(AzureRecordedTestCase):
     @ConfidentialLedgerPreparer()
-    def test_get_ledger_identity(self, confidentialledger_id):
+    @recorded_by_proxy
+    def test_get_ledger_identity(self, **kwargs):
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
+
         client = self.create_client_from_credential(
             ConfidentialLedgerCertificateClient,
             credential=None,

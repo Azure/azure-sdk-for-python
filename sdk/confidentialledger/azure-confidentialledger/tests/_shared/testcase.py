@@ -2,7 +2,7 @@ import functools
 import os
 import tempfile
 
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 
 from azure.confidentialledger.certificate import (
     ConfidentialLedgerCertificateClient,
@@ -20,30 +20,32 @@ ConfidentialLedgerPreparer = functools.partial(
 )
 
 
-class ConfidentialLedgerTestCase(AzureTestCase):
-    def __init__(self, *args, **kwargs):
-        super(ConfidentialLedgerTestCase, self).__init__(*args, **kwargs)
-
-    def setUp(self):
-        super().setUp()
+class ConfidentialLedgerTestCase(AzureRecordedTestCase):
+    @classmethod
+    def setup_class(cls):
+        """setup any state specific to the execution of the given class (which
+        usually contains tests).
+        """
 
         with tempfile.NamedTemporaryFile(
             "w", suffix=".pem", delete=False
         ) as tls_cert_file:
-            self.network_certificate_path = tls_cert_file.name
+            cls.network_certificate_path = tls_cert_file.name
 
         with tempfile.NamedTemporaryFile(
             "w", suffix=".pem", delete=False
         ) as user_cert_file:
             user_cert_file.write(USER_CERTIFICATE)
-            self.user_certificate_path = user_cert_file.name
+            cls.user_certificate_path = user_cert_file.name
 
-    def tearDown(self):
-        os.remove(self.user_certificate_path)
-        if self.network_certificate_path:
-            os.remove(self.network_certificate_path)
-
-        return super().tearDown()
+    @classmethod
+    def teardown_class(cls):
+        """teardown any state that was previously setup with a call to
+        setup_class.
+        """
+        os.remove(cls.user_certificate_path)
+        if cls.network_certificate_path:
+            os.remove(cls.network_certificate_path)
 
     def set_ledger_identity(self, confidentialledger_id):
         client = self.create_client_from_credential(
