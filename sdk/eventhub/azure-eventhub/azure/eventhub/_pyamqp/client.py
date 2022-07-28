@@ -124,6 +124,7 @@ class AMQPClient(object):
 
     def __init__(self, remote_address, auth=None, client_name=None, debug=False, retry_policy=None, 
     keep_alive_interval=None, **kwargs):
+        # I think these are just strings not instances of target or source
         self._remote_address = remote_address.address if (isinstance(remote_address, Source) or isinstance(remote_address, Target)) else remote_address
         self._auth = auth
         self._name = client_name if client_name else str(uuid.uuid4())
@@ -239,7 +240,7 @@ class AMQPClient(object):
 
         :param connection: An existing Connection that may be shared between
          multiple clients.
-        :type connetion: ~pyamqp.Connection
+        :type connection: ~pyamqp.Connection
         """
         # pylint: disable=protected-access
         if self._session:

@@ -121,6 +121,7 @@ class EventHubProducerClient(ClientBase):
             for p_id in cast(List[str], self._partition_ids):
                 self._producers[p_id] = None
 
+    # this is spelled wrong here -- do we change - or were the changes elsewhere
     def _get_max_mesage_size(self):
         # type: () -> None
         # pylint: disable=protected-access,line-too-long

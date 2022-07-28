@@ -159,7 +159,7 @@ class EventHubConsumer(
                 custom_endpoint_address += '/$servicebus/websocket/'
 
         self._handler = ReceiveClient(
-            hostname,
+            # hostname,
             source,
             auth=auth,
             idle_timeout=self._idle_timeout,

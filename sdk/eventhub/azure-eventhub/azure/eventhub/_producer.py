@@ -133,7 +133,7 @@ class EventHubProducer(
             if custom_endpoint_address:
                 custom_endpoint_address += '/$servicebus/websocket/' 
         self._handler = SendClient(
-            hostname,
+            # hostname,
             self._target,
             auth=auth,
             idle_timeout=self._idle_timeout,
