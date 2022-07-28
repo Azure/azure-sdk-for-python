@@ -166,7 +166,6 @@ def gen_package_name(origin_config: Dict[str, Any]) -> str:
 
 
 def gen_basic_config(origin_config: Dict[str, Any], spec_folder: str) -> Dict[str, Any]:
-    spec_root = re.sub('specification', '', spec_folder)
     return {
         "package-name": gen_package_name(origin_config),
         "license-header": "MICROSOFT_MIT_NO_VERSION",
