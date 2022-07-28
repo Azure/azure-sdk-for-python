@@ -2,6 +2,8 @@ import hashlib
 import os
 import time
 
+from devtools_testutils import recorded_by_proxy
+
 from azure.confidentialledger import (
     ConfidentialLedgerCertificateCredential,
     ConfidentialLedgerClient,
@@ -11,7 +13,7 @@ from _shared.constants import USER_CERTIFICATE_THUMBPRINT
 from _shared.testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestCase
 
 
-class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
+class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     def create_confidentialledger_client(self, endpoint, ledger_id, is_aad, fetch_tls_cert=True):
         if fetch_tls_cert:  # If True, explicitly fetch the ledger TLS certificate.
             self.set_ledger_identity(ledger_id)
@@ -51,14 +53,20 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         return client
 
     @ConfidentialLedgerPreparer()
-    def test_append_entry_flow_aad_user(self, confidentialledger_endpoint, confidentialledger_id):
+    @recorded_by_proxy
+    def test_append_entry_flow_aad_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=True
         )
         self.append_entry_flow_actions(client)
 
     @ConfidentialLedgerPreparer()
-    def test_append_entry_flow_cert_user(self, confidentialledger_endpoint, confidentialledger_id):
+    @recorded_by_proxy
+    def test_append_entry_flow_cert_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=False
         )
@@ -120,18 +128,24 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         assert original_entry["entry"]["collectionId"] == append_result_sub_ledger_id
 
     @ConfidentialLedgerPreparer()
+    @recorded_by_proxy
     def test_append_entry_flow_with_collection_id_aad_user(
-        self, confidentialledger_endpoint, confidentialledger_id
+        self, **kwargs,
     ):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=True
         )
         self.append_entry_flow_with_collection_id_actions(client)
 
     @ConfidentialLedgerPreparer()
+    @recorded_by_proxy
     def test_append_entry_flow_with_collection_id_cert_user(
-        self, confidentialledger_endpoint, confidentialledger_id
+        self, **kwargs,
     ):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=False
         )
@@ -205,14 +219,20 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         assert collection_id in collection_ids
 
     @ConfidentialLedgerPreparer()
-    def test_range_query_aad_user(self, confidentialledger_endpoint, confidentialledger_id):
+    @recorded_by_proxy
+    def test_range_query_aad_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=True
         )
         self.range_query_actions(client)
 
     @ConfidentialLedgerPreparer()
-    def test_range_query_cert_user(self, confidentialledger_endpoint, confidentialledger_id):
+    @recorded_by_proxy
+    def test_range_query_cert_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=False
         )
@@ -265,14 +285,20 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         assert num_matched == num_messages_sent
 
     @ConfidentialLedgerPreparer()
-    def test_user_management_aad_user(self, confidentialledger_endpoint, confidentialledger_id):
+    @recorded_by_proxy
+    def test_user_management_aad_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=True
         )
         self.user_management_actions(client)
 
     @ConfidentialLedgerPreparer()
-    def test_user_management_cert_user(self, confidentialledger_endpoint, confidentialledger_id):
+    @recorded_by_proxy
+    def test_user_management_cert_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=False
         )
@@ -310,14 +336,20 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             client.delete_user(user_id)
 
     @ConfidentialLedgerPreparer()
-    def test_verification_methods_aad_user(self, confidentialledger_endpoint, confidentialledger_id):
+    @recorded_by_proxy
+    def test_verification_methods_aad_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=True
         )
         self.verification_methods_actions(client)
 
     @ConfidentialLedgerPreparer()
-    def test_verification_methods_cert_user(self, confidentialledger_endpoint, confidentialledger_id):
+    @recorded_by_proxy
+    def test_verification_methods_cert_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=False
         )
@@ -351,14 +383,20 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             assert quote["quoteVersion"]
 
     @ConfidentialLedgerPreparer()
-    def test_tls_cert_convenience_aad_user(self, confidentialledger_endpoint, confidentialledger_id):
+    @recorded_by_proxy
+    def test_tls_cert_convenience_aad_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=True, fetch_tls_cert=False,
         )
         self.tls_cert_convenience_actions(client)
 
     @ConfidentialLedgerPreparer()
-    def test_tls_cert_convenience_cert_user(self, confidentialledger_endpoint, confidentialledger_id):
+    @recorded_by_proxy
+    def test_tls_cert_convenience_cert_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=False, fetch_tls_cert=False,
         )
