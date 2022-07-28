@@ -16,6 +16,7 @@ import logging
 import sys
 import glob
 import shutil
+import pdb
 from pkg_resources import parse_version
 
 from tox_helper_tasks import find_whl, find_sdist, get_pip_list_output
@@ -228,6 +229,10 @@ if __name__ == "__main__":
 
                         # if we have the package already present...
                         if req_name in installed_pkgs:
+                            # if there is no specifier for the requirement, we can ignore it
+                            if req_specifier is None:
+                                addition_necessary = False
+
                             # ...do we need to install the new version? if the existing specifier matches, we're fine
                             if installed_pkgs[req_name] in req_specifier:
                                 addition_necessary = False
