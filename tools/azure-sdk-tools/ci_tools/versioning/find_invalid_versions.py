@@ -51,10 +51,10 @@ def find_invalid_versions_main():
 
     invalid_packages = []
     for package in packages:
-        package_name = package[1][0]
+        package_name = package.name
         try:
             try:
-                version_py_path = get_version_py(package[0])
+                version_py_path = get_version_py(package.setup_filename)
             except:
                 invalid_packages.append((package_name, "Could not find _version.py file"))
                 continue
@@ -70,11 +70,11 @@ def find_invalid_versions_main():
                     r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', version_contents, re.MULTILINE  # type: ignore
                 ).group(1)
 
-                if version != package[1][1]:
+                if version != package.version:
                     invalid_packages.append(
                         (
                             package_name,
-                            f"Version evaluation mismatch: setup.py: {package[1][1]} _version.py: {version}",
+                            f"Version evaluation mismatch: setup.py: {package.version} _version.py: {version}",
                         )
                     )
                     continue

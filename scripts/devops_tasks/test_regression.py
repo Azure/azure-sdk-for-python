@@ -330,10 +330,10 @@ def find_package_dependency(glob_string, repo_root_dir):
         required_pkgs = [parse_require(r)[0] for r in parsed.requires]
         required_pkgs = [p for p in required_pkgs if p.startswith("azure")]
 
-            for req_pkg in required_pkgs:
-                if req_pkg not in dependency_map:
-                    dependency_map[req_pkg] = []
-                dependency_map[req_pkg].append(pkg_root)
+        for req_pkg in required_pkgs:
+            if req_pkg not in dependency_map:
+                dependency_map[req_pkg] = []
+            dependency_map[req_pkg].append(pkg_root)
 
     return dependency_map
 
