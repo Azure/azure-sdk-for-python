@@ -6,6 +6,7 @@
 # -------------------------------------------------------------------------
 import os
 import gzip
+import tempfile
 from flask import (
     Response,
     Blueprint,
@@ -68,13 +69,12 @@ def compressed():
     return Response(stream_compressed_header_error(), status=300, headers={"Content-Encoding": "gzip"})
 
 def stream_decompress_header():
-    with gzip.open('test.tar.gz', 'wb') as f:
-        f.write(b"test")
-
-    with open(os.path.join(os.path.abspath('test.tar.gz')), "rb") as fd:
-        yield fd.read()
-
-    os.remove("test.tar.gz")
+    with tempfile.TemporaryFile(mode='w+b') as f:
+        gzf = gzip.GzipFile(mode='w+b', fileobj=f)
+        gzf.write(b"test")
+        gzf.flush()
+        f.seek(0)
+        yield f.read()
     
 @streams_api.route('/decompress_header', methods=['GET'])
 def decompress_header():
