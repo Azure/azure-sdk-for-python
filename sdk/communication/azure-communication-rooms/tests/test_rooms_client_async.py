@@ -191,7 +191,9 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
         )
 
         async def mock_send(*_, **__):
-            return mock_response(status_code=200)
+            return mock_response(status_code=200, json_payload={
+                "participants": [self.json_participant]
+            })
 
         rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
 

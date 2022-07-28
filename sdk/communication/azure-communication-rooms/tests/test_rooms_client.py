@@ -197,6 +197,8 @@ class TestRoomsClient(unittest.TestCase):
             })
 
         rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
+        response = None
+
         try:
             response = rooms_client.update_participants(room_id=self.room_id, participants=[updated_participant])
         except:
