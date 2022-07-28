@@ -444,9 +444,9 @@ def _convert_span_events_to_envelopes(span: Span) -> Sequence[TelemetryItem]:
         envelope = _utils._create_telemetry_item(event.timestamp)
         envelope.tags.update(_utils._populate_part_a_fields(span.resource))
         envelope.tags["ai.operation.id"] = "{:032x}".format(span.context.trace_id)
-        if span.parent and span.parent.span_id:
+        if span.context and span.context.span_id:
             envelope.tags["ai.operation.parentId"] = "{:016x}".format(
-                span.parent.span_id
+                span.context.span_id
             )
         properties = {}
         for key, val in event.attributes.items():
