@@ -1,0 +1,101 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.14.0b1 Python/3.7.13 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      x-ms-date:
+      - Thu, 28 Jul 2022 17:20:03 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer8bf411fcda52506ff2624030ad184b855dd02cd0?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 28 Jul 2022 17:20:03 GMT
+      etag: '"0x8DA70BD68F3D0F0"'
+      last-modified: Thu, 28 Jul 2022 17:20:03 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://tsjinxuansdktestaccount.blob.core.windows.net/utcontainer8bf411fcda52506ff2624030ad184b855dd02cd0?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.14.0b1 Python/3.7.13 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      x-ms-date:
+      - Thu, 28 Jul 2022 17:20:03 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainer8bf411fcda52506ff2624030ad184b855dd02cd0?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 28 Jul 2022 17:20:03 GMT
+      etag: '"0x8DA70BD68F3D0F0"'
+      last-modified: Thu, 28 Jul 2022 17:20:03 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-default-encryption-scope: $account-encryption-key
+      x-ms-deny-encryption-scope-override: 'false'
+      x-ms-has-immutability-policy: 'false'
+      x-ms-has-legal-hold: 'false'
+      x-ms-immutable-storage-with-versioning-enabled: 'false'
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-version: '2021-08-06'
+    status:
+      code: 200
+      message: OK
+    url: https://tsjinxuansdktestaccount.blob.core.windows.net/utcontainer8bf411fcda52506ff2624030ad184b855dd02cd0?restype=container
+- request:
+    body: abcde
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '5'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.14.0b1 Python/3.7.13 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Thu, 28 Jul 2022 17:20:03 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer8bf411fcda52506ff2624030ad184b855dd02cd0/myblob
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      content-md5: q1a02StAcTrMWviZhdS3hg==
+      date: Thu, 28 Jul 2022 17:20:03 GMT
+      etag: '"0x8DA70BD68F9F016"'
+      last-modified: Thu, 28 Jul 2022 17:20:03 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: ExJGZ9Dkswo=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://tsjinxuansdktestaccount.blob.core.windows.net/utcontainer8bf411fcda52506ff2624030ad184b855dd02cd0/myblob
+version: 1
