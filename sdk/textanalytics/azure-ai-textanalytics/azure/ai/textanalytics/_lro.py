@@ -9,7 +9,6 @@ import json
 from urllib.parse import urlencode
 from typing import Any, Mapping, Optional, Callable, TypeVar, cast
 from typing_extensions import Protocol, runtime_checkable
-from azure.core.polling import PollingMethod
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import (
@@ -25,7 +24,7 @@ _FAILED = frozenset(["failed"])
 _SUCCEEDED = frozenset(["succeeded", "partiallycompleted", "partiallysucceeded"])
 
 
-PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType = TypeVar("PollingReturnType", covariant=True)
 
 
 @runtime_checkable
@@ -35,9 +34,6 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType]):
 
     @property
     def details(self) -> Mapping[str, Any]:
-        ...
-
-    def polling_method(self) -> PollingMethod[PollingReturnType]:  # pylint: disable=no-self-use
         ...
 
     def continuation_token(self) -> str:  # pylint: disable=no-self-use

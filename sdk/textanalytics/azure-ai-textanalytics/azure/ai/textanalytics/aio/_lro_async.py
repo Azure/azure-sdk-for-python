@@ -9,7 +9,7 @@ import json
 from typing import Mapping, Any, TypeVar, Generator, Awaitable, cast
 from typing_extensions import Protocol, runtime_checkable
 from azure.core.exceptions import HttpResponseError
-from azure.core.polling import AsyncLROPoller, AsyncPollingMethod
+from azure.core.polling import AsyncLROPoller
 from azure.core.polling.base_polling import OperationFailed, BadStatus
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from .._lro import TextAnalyticsOperationResourcePolling
@@ -20,7 +20,7 @@ _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted",
 _FAILED = frozenset(["failed"])
 _SUCCEEDED = frozenset(["succeeded", "partiallycompleted", "partiallysucceeded"])
 
-PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType = TypeVar("PollingReturnType", covariant=True)
 
 
 @runtime_checkable
@@ -30,9 +30,6 @@ class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType], Awaitable):
 
     @property
     def details(self) -> Mapping[str, Any]:
-        ...
-
-    def polling_method(self) -> AsyncPollingMethod[PollingReturnType]:  # pylint: disable=no-self-use
         ...
 
     def continuation_token(self) -> str:  # pylint: disable=no-self-use
