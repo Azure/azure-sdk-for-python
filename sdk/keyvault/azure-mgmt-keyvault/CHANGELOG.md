@@ -1,5 +1,9 @@
 # Release History
 
+## 10.0.1b1 (unreleased)
+
+  - Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+
 ## 10.0.0 (2022-05-24)
 
 **Breaking changes**
