@@ -22,16 +22,16 @@
         "Connection": "keep-alive",
         "Content-Length": "266",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:40:59 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:00 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
           "max-age=31536000; includeSubDomains",
           "max-age=31536000; includeSubDomains"
         ],
-        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo54393e47:pull,push\u0022",
+        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo54393e47:push,pull\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "0392fbfb-8379-4253-8aab-3ca22bb4ad02"
+        "X-Ms-Correlation-Request-Id": "53f8a4d8-127d-412e-9584-35ef7ce1ae65"
       },
       "ResponseBody": {
         "errors": [
@@ -71,16 +71,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:40:58 GMT",
+        "Date": "Thu, 28 Jul 2022 07:46:59 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AtruxlEOGphAu-ud8rhFZFehBUEeAgAAAHN7atoOAAAA; expires=Fri, 19-Aug-2022 22:40:59 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Agbl-ocKLdpNuKj9df3cjDahBUEeAgAAAOs1dNoOAAAA; expires=Sat, 27-Aug-2022 07:47:00 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13315.8 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.13355.6 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -158,7 +158,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AtruxlEOGphAu-ud8rhFZFehBUEeAgAAAHN7atoOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=Agbl-ocKLdpNuKj9df3cjDahBUEeAgAAAOs1dNoOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.10.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -168,18 +168,17 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
-        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-klocCPOu177FA3ejfHMnVw\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027; object-src \u0027none\u0027; base-uri \u0027none\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:40:58 GMT",
+        "Date": "Thu, 28 Jul 2022 07:46:59 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AtruxlEOGphAu-ud8rhFZFehBUEeAgAAAHN7atoOAAAA; expires=Fri, 19-Aug-2022 22:40:59 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Agbl-ocKLdpNuKj9df3cjDahBUEeAgAAAOs1dNoOAAAA; expires=Sat, 27-Aug-2022 07:47:00 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13315.8 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.13355.6 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -235,11 +234,11 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "02a539eb-0c9c-4aae-aa51-50a3b8aaf70d",
+        "client-request-id": "add967cc-e656-4dbc-ac3a-24a359a2b348",
         "Connection": "keep-alive",
         "Content-Length": "238",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=AtruxlEOGphAu-ud8rhFZFehBUEeAgAAAHN7atoOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=Agbl-ocKLdpNuKj9df3cjDahBUEeAgAAAOs1dNoOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.10.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
@@ -253,23 +252,22 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "02a539eb-0c9c-4aae-aa51-50a3b8aaf70d",
+        "client-request-id": "add967cc-e656-4dbc-ac3a-24a359a2b348",
         "Content-Length": "114",
-        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-4sEBBCxHRQuPtSVN0yo4gw\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027; object-src \u0027none\u0027; base-uri \u0027none\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:40:59 GMT",
+        "Date": "Thu, 28 Jul 2022 07:46:59 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=AtruxlEOGphAu-ud8rhFZFehBUEeAwAAAHN7atoOAAAA; expires=Fri, 19-Aug-2022 22:40:59 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Agbl-ocKLdpNuKj9df3cjDahBUEeAwAAAOs1dNoOAAAA; expires=Sat, 27-Aug-2022 07:47:00 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.13315.8 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.13355.6 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -296,12 +294,12 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:40:59 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:00 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "9d7046d4-1796-47ff-8d04-49a3af7c6ed1",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.55"
+        "X-Ms-Correlation-Request-Id": "fa89ea46-2d79-40ed-aa35-4a8543a55285",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.05"
       },
       "ResponseBody": {
         "refresh_token": "refresh_token"
@@ -318,17 +316,17 @@
         "Content-Type": "application/x-www-form-urlencoded",
         "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Arepo54393e47%3Apull%2Cpush\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
+      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Arepo54393e47%3Apush%2Cpull\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:40:59 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:00 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "8b6a0944-a1d9-4920-9b4c-0ea01e522a65",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.533333"
+        "X-Ms-Correlation-Request-Id": "774cd955-10f0-4f9e-88c3-3e5227fb8e0c",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.033333"
       },
       "ResponseBody": {
         "access_token": "access_token"
@@ -355,10 +353,10 @@
         ],
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Wed, 20 Jul 2022 22:41:00 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:00 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
-        "Docker-Upload-Uuid": "04ec3806-ceaf-4b7d-b811-9999d57a17d1",
-        "Location": "/v2/repo54393e47/blobs/uploads/04ec3806-ceaf-4b7d-b811-9999d57a17d1?_nouploadcache=false\u0026_state=k82q2Dsd-bODleUTyXWJiPged_0rJ4yqqzwtpPT-_kt7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiMDRlYzM4MDYtY2VhZi00YjdkLWI4MTEtOTk5OWQ1N2ExN2QxIiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDIyLTA3LTIwVDIyOjQwOjU5Ljk4ODgzNjExN1oifQ%3D%3D",
+        "Docker-Upload-Uuid": "c7d9329c-05b0-48aa-aea0-428c2c9fa993",
+        "Location": "/v2/repo54393e47/blobs/uploads/c7d9329c-05b0-48aa-aea0-428c2c9fa993?_nouploadcache=false\u0026_state=ZBMFXTQD9LFzLni0huJ_uR3Jr3cQkAg8KvdrfgngljJ7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiYzdkOTMyOWMtMDViMC00OGFhLWFlYTAtNDI4YzJjOWZhOTkzIiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDIyLTA3LTI4VDA3OjQ3OjAwLjc4Mzc4MjIzWiJ9",
         "Range": "0-0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -366,12 +364,12 @@
           "max-age=31536000; includeSubDomains"
         ],
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "bd847d22-78a5-4447-b5c5-96036bb8160e"
+        "X-Ms-Correlation-Request-Id": "01d36eee-2494-4ce3-b1d2-894c28edab7b"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/blobs/uploads/04ec3806-ceaf-4b7d-b811-9999d57a17d1?_nouploadcache=false\u0026_state=k82q2Dsd-bODleUTyXWJiPged_0rJ4yqqzwtpPT-_kt7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiMDRlYzM4MDYtY2VhZi00YjdkLWI4MTEtOTk5OWQ1N2ExN2QxIiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDIyLTA3LTIwVDIyOjQwOjU5Ljk4ODgzNjExN1oifQ%3D%3D",
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/blobs/uploads/c7d9329c-05b0-48aa-aea0-428c2c9fa993?_nouploadcache=false\u0026_state=ZBMFXTQD9LFzLni0huJ_uR3Jr3cQkAg8KvdrfgngljJ7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiYzdkOTMyOWMtMDViMC00OGFhLWFlYTAtNDI4YzJjOWZhOTkzIiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDIyLTA3LTI4VDA3OjQ3OjAwLjc4Mzc4MjIzWiJ9",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -393,16 +391,16 @@
         "Connection": "keep-alive",
         "Content-Length": "266",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:00 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:00 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
           "max-age=31536000; includeSubDomains",
           "max-age=31536000; includeSubDomains"
         ],
-        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo54393e47:pull,push\u0022",
+        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo54393e47:push,pull\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "de73c5db-13d0-4c1e-8674-ff71dda03756"
+        "X-Ms-Correlation-Request-Id": "f37a03d8-19f9-47a8-90c4-1d65e33e26c8"
       },
       "ResponseBody": {
         "errors": [
@@ -441,12 +439,12 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:00 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:00 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "b5f15262-3b54-480e-8e91-8b6b7aef9650",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.766667"
+        "X-Ms-Correlation-Request-Id": "6bae09ff-3319-4ddf-abb9-5f43ce8a0181",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.016667"
       },
       "ResponseBody": {
         "refresh_token": "refresh_token"
@@ -463,24 +461,24 @@
         "Content-Type": "application/x-www-form-urlencoded",
         "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Arepo54393e47%3Apull%2Cpush\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
+      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Arepo54393e47%3Apush%2Cpull\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:00 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:01 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "f5e28cfe-c37b-49db-9312-e2cb7e076e4e",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.75"
+        "X-Ms-Correlation-Request-Id": "c31f02aa-1de7-456b-978c-2462c5cbce3b",
+        "x-ms-ratelimit-remaining-calls-per-second": "166"
       },
       "ResponseBody": {
         "access_token": "access_token"
       }
     },
     {
-      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/blobs/uploads/04ec3806-ceaf-4b7d-b811-9999d57a17d1?_nouploadcache=false\u0026_state=k82q2Dsd-bODleUTyXWJiPged_0rJ4yqqzwtpPT-_kt7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiMDRlYzM4MDYtY2VhZi00YjdkLWI4MTEtOTk5OWQ1N2ExN2QxIiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDIyLTA3LTIwVDIyOjQwOjU5Ljk4ODgzNjExN1oifQ%3D%3D",
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/blobs/uploads/c7d9329c-05b0-48aa-aea0-428c2c9fa993?_nouploadcache=false\u0026_state=ZBMFXTQD9LFzLni0huJ_uR3Jr3cQkAg8KvdrfgngljJ7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiYzdkOTMyOWMtMDViMC00OGFhLWFlYTAtNDI4YzJjOWZhOTkzIiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDIyLTA3LTI4VDA3OjQ3OjAwLjc4Mzc4MjIzWiJ9",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -501,10 +499,10 @@
         ],
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Wed, 20 Jul 2022 22:41:00 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:01 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
-        "Docker-Upload-Uuid": "04ec3806-ceaf-4b7d-b811-9999d57a17d1",
-        "Location": "/v2/repo54393e47/blobs/uploads/04ec3806-ceaf-4b7d-b811-9999d57a17d1?_nouploadcache=false\u0026_state=WhFqgs9KuishLbUh7Uy2k477ZnpEYN5iOb8pvHoxAFF7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiMDRlYzM4MDYtY2VhZi00YjdkLWI4MTEtOTk5OWQ1N2ExN2QxIiwiT2Zmc2V0IjoxNzEsIlN0YXJ0ZWRBdCI6IjIwMjItMDctMjBUMjI6NDA6NTlaIn0%3D",
+        "Docker-Upload-Uuid": "c7d9329c-05b0-48aa-aea0-428c2c9fa993",
+        "Location": "/v2/repo54393e47/blobs/uploads/c7d9329c-05b0-48aa-aea0-428c2c9fa993?_nouploadcache=false\u0026_state=iuNUy53hofqESJ5vKkC4DbwPshAJZKoFEdDw49WueFZ7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiYzdkOTMyOWMtMDViMC00OGFhLWFlYTAtNDI4YzJjOWZhOTkzIiwiT2Zmc2V0IjoxNzEsIlN0YXJ0ZWRBdCI6IjIwMjItMDctMjhUMDc6NDc6MDBaIn0%3D",
         "Range": "0-170",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -512,12 +510,12 @@
           "max-age=31536000; includeSubDomains"
         ],
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "1bab54fa-22a7-47d5-9a4d-8c3ab67777b7"
+        "X-Ms-Correlation-Request-Id": "48db44e8-609d-4c7f-ae30-2aded5f33940"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/blobs/uploads/04ec3806-ceaf-4b7d-b811-9999d57a17d1?digest=sha256%3Ad25b42d3dbad5361ed2d909624d899e7254a822c9a632b582ebd3a44f9b0dbc8\u0026_nouploadcache=false\u0026_state=WhFqgs9KuishLbUh7Uy2k477ZnpEYN5iOb8pvHoxAFF7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiMDRlYzM4MDYtY2VhZi00YjdkLWI4MTEtOTk5OWQ1N2ExN2QxIiwiT2Zmc2V0IjoxNzEsIlN0YXJ0ZWRBdCI6IjIwMjItMDctMjBUMjI6NDA6NTlaIn0%3D",
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/blobs/uploads/c7d9329c-05b0-48aa-aea0-428c2c9fa993?digest=sha256_encoded_stream",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -539,7 +537,7 @@
         "Connection": "keep-alive",
         "Content-Length": "266",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:00 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:01 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -548,7 +546,7 @@
         ],
         "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo54393e47:pull,push\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "9fe448b7-becf-4c1f-b578-3c7f544c1841"
+        "X-Ms-Correlation-Request-Id": "5c71d2b5-39eb-4e70-a42f-8d2430cc38b9"
       },
       "ResponseBody": {
         "errors": [
@@ -587,12 +585,12 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:00 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:01 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "50473d85-1530-4a47-b6d3-b36f43207bae",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.733333"
+        "X-Ms-Correlation-Request-Id": "6a19c56e-409b-4d6e-a84d-e391560b2133",
+        "x-ms-ratelimit-remaining-calls-per-second": "165.983333"
       },
       "ResponseBody": {
         "refresh_token": "refresh_token"
@@ -614,19 +612,19 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:00 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:01 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "4bcb15e1-7ba2-44d2-87c4-738961f28d40",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.716667"
+        "X-Ms-Correlation-Request-Id": "5ff08b55-92c7-41a3-b415-2049b0a23440",
+        "x-ms-ratelimit-remaining-calls-per-second": "165.966667"
       },
       "ResponseBody": {
         "access_token": "access_token"
       }
     },
     {
-      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/blobs/uploads/04ec3806-ceaf-4b7d-b811-9999d57a17d1?digest=sha256%3Ad25b42d3dbad5361ed2d909624d899e7254a822c9a632b582ebd3a44f9b0dbc8\u0026_nouploadcache=false\u0026_state=WhFqgs9KuishLbUh7Uy2k477ZnpEYN5iOb8pvHoxAFF7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiMDRlYzM4MDYtY2VhZi00YjdkLWI4MTEtOTk5OWQ1N2ExN2QxIiwiT2Zmc2V0IjoxNzEsIlN0YXJ0ZWRBdCI6IjIwMjItMDctMjBUMjI6NDA6NTlaIn0%3D",
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/blobs/uploads/c7d9329c-05b0-48aa-aea0-428c2c9fa993?digest=sha256_encoded_stream",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -647,7 +645,7 @@
         ],
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Wed, 20 Jul 2022 22:41:00 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:01 GMT",
         "Docker-Content-Digest": "sha256:d25b42d3dbad5361ed2d909624d899e7254a822c9a632b582ebd3a44f9b0dbc8",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Location": "/v2/repo54393e47/blobs/sha256:d25b42d3dbad5361ed2d909624d899e7254a822c9a632b582ebd3a44f9b0dbc8",
@@ -657,7 +655,7 @@
           "max-age=31536000; includeSubDomains"
         ],
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "4906b83a-78a6-4ce0-85d2-44a1a66529de"
+        "X-Ms-Correlation-Request-Id": "e5b37a85-a6c5-4ab3-99f3-b85a3c7eb7de"
       },
       "ResponseBody": null
     },
@@ -683,7 +681,7 @@
         "Connection": "keep-alive",
         "Content-Length": "266",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:00 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:01 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -692,7 +690,7 @@
         ],
         "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo54393e47:pull,push\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "6ee57d49-3c55-4969-8fb8-c67175e29026"
+        "X-Ms-Correlation-Request-Id": "5adc71c3-9fc5-40c8-a655-250d4660480a"
       },
       "ResponseBody": {
         "errors": [
@@ -731,12 +729,12 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:00 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:01 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "f3a2888a-6e9d-4b34-869e-c6aaf2828d19",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.7"
+        "X-Ms-Correlation-Request-Id": "0e1cc5bf-f8e2-40ce-a24d-d769fad4bbbc",
+        "x-ms-ratelimit-remaining-calls-per-second": "165.95"
       },
       "ResponseBody": {
         "refresh_token": "refresh_token"
@@ -758,12 +756,12 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:00 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:01 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "80d51510-0d92-4cf1-8d2e-dded135fcf3c",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.683333"
+        "X-Ms-Correlation-Request-Id": "df00ebfd-5d56-4e07-b39e-a9a16345eaa4",
+        "x-ms-ratelimit-remaining-calls-per-second": "165.933333"
       },
       "ResponseBody": {
         "access_token": "access_token"
@@ -790,10 +788,10 @@
         ],
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Wed, 20 Jul 2022 22:41:00 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:01 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
-        "Docker-Upload-Uuid": "0f75a309-9822-4453-984d-28caaa768d19",
-        "Location": "/v2/repo54393e47/blobs/uploads/0f75a309-9822-4453-984d-28caaa768d19?_nouploadcache=false\u0026_state=gI0-hb0gIv0PkMLSrb0tfMRig7IqLh2ON9KdiN-FVYd7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiMGY3NWEzMDktOTgyMi00NDUzLTk4NGQtMjhjYWFhNzY4ZDE5IiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDIyLTA3LTIwVDIyOjQxOjAwLjk3NTg2MTk5OVoifQ%3D%3D",
+        "Docker-Upload-Uuid": "26124fbc-8f67-40c3-bb93-0dd4cee4a6d2",
+        "Location": "/v2/repo54393e47/blobs/uploads/26124fbc-8f67-40c3-bb93-0dd4cee4a6d2?_nouploadcache=false\u0026_state=6aSf5gqPI_RGugdpm6miEGxR3gmjw0OjfmeJuRqMx7J7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiMjYxMjRmYmMtOGY2Ny00MGMzLWJiOTMtMGRkNGNlZTRhNmQyIiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDIyLTA3LTI4VDA3OjQ3OjAxLjgxOTA0ODE4OVoifQ%3D%3D",
         "Range": "0-0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -801,12 +799,12 @@
           "max-age=31536000; includeSubDomains"
         ],
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "e4e7587c-4aab-4d4a-8e88-e114e046b043"
+        "X-Ms-Correlation-Request-Id": "32f3d58e-6886-483a-acbf-cd28e02e5f00"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/blobs/uploads/0f75a309-9822-4453-984d-28caaa768d19?_nouploadcache=false\u0026_state=gI0-hb0gIv0PkMLSrb0tfMRig7IqLh2ON9KdiN-FVYd7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiMGY3NWEzMDktOTgyMi00NDUzLTk4NGQtMjhjYWFhNzY4ZDE5IiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDIyLTA3LTIwVDIyOjQxOjAwLjk3NTg2MTk5OVoifQ%3D%3D",
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/blobs/uploads/26124fbc-8f67-40c3-bb93-0dd4cee4a6d2?_nouploadcache=false\u0026_state=6aSf5gqPI_RGugdpm6miEGxR3gmjw0OjfmeJuRqMx7J7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiMjYxMjRmYmMtOGY2Ny00MGMzLWJiOTMtMGRkNGNlZTRhNmQyIiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDIyLTA3LTI4VDA3OjQ3OjAxLjgxOTA0ODE4OVoifQ%3D%3D",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -828,7 +826,7 @@
         "Connection": "keep-alive",
         "Content-Length": "266",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:01 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:01 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -837,7 +835,7 @@
         ],
         "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo54393e47:pull,push\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "db44fe47-47ee-4f72-866b-2e1fd066fc11"
+        "X-Ms-Correlation-Request-Id": "db8a8b2e-c4bb-4cfd-81ae-f06d454fa27c"
       },
       "ResponseBody": {
         "errors": [
@@ -876,12 +874,12 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:01 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:02 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "0265e461-8974-49b6-b88b-2c972655b445",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.666667"
+        "X-Ms-Correlation-Request-Id": "2d107a65-63b6-4384-9778-1bb8ccd7657f",
+        "x-ms-ratelimit-remaining-calls-per-second": "165.916667"
       },
       "ResponseBody": {
         "refresh_token": "refresh_token"
@@ -903,19 +901,19 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:01 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:02 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "2bfa2612-f12a-4d60-92c6-9326a20d25f7",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.65"
+        "X-Ms-Correlation-Request-Id": "10b3c732-6102-418f-a4d8-3e2b1f20a9dd",
+        "x-ms-ratelimit-remaining-calls-per-second": "165.9"
       },
       "ResponseBody": {
         "access_token": "access_token"
       }
     },
     {
-      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/blobs/uploads/0f75a309-9822-4453-984d-28caaa768d19?_nouploadcache=false\u0026_state=gI0-hb0gIv0PkMLSrb0tfMRig7IqLh2ON9KdiN-FVYd7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiMGY3NWEzMDktOTgyMi00NDUzLTk4NGQtMjhjYWFhNzY4ZDE5IiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDIyLTA3LTIwVDIyOjQxOjAwLjk3NTg2MTk5OVoifQ%3D%3D",
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/blobs/uploads/26124fbc-8f67-40c3-bb93-0dd4cee4a6d2?_nouploadcache=false\u0026_state=6aSf5gqPI_RGugdpm6miEGxR3gmjw0OjfmeJuRqMx7J7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiMjYxMjRmYmMtOGY2Ny00MGMzLWJiOTMtMGRkNGNlZTRhNmQyIiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDIyLTA3LTI4VDA3OjQ3OjAxLjgxOTA0ODE4OVoifQ%3D%3D",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -936,10 +934,10 @@
         ],
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Wed, 20 Jul 2022 22:41:01 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:02 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
-        "Docker-Upload-Uuid": "0f75a309-9822-4453-984d-28caaa768d19",
-        "Location": "/v2/repo54393e47/blobs/uploads/0f75a309-9822-4453-984d-28caaa768d19?_nouploadcache=false\u0026_state=YXsIsImG5PF6yfgS_9BHxXhvXWMaeHKXTkhMyzmAwoJ7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiMGY3NWEzMDktOTgyMi00NDUzLTk4NGQtMjhjYWFhNzY4ZDE5IiwiT2Zmc2V0IjoyOCwiU3RhcnRlZEF0IjoiMjAyMi0wNy0yMFQyMjo0MTowMFoifQ%3D%3D",
+        "Docker-Upload-Uuid": "26124fbc-8f67-40c3-bb93-0dd4cee4a6d2",
+        "Location": "/v2/repo54393e47/blobs/uploads/26124fbc-8f67-40c3-bb93-0dd4cee4a6d2?_nouploadcache=false\u0026_state=oxRfB-pgDlP075WE-p5o5lANX8ScXyoTPvjPSpyTgjJ7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiMjYxMjRmYmMtOGY2Ny00MGMzLWJiOTMtMGRkNGNlZTRhNmQyIiwiT2Zmc2V0IjoyOCwiU3RhcnRlZEF0IjoiMjAyMi0wNy0yOFQwNzo0NzowMVoifQ%3D%3D",
         "Range": "0-27",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -947,12 +945,12 @@
           "max-age=31536000; includeSubDomains"
         ],
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "74073dc8-099a-4dfd-b666-8c487dc550f0"
+        "X-Ms-Correlation-Request-Id": "eeef4f62-3a51-4bb3-b357-9a3d72483142"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/blobs/uploads/0f75a309-9822-4453-984d-28caaa768d19?digest=sha256%3A654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed\u0026_nouploadcache=false\u0026_state=YXsIsImG5PF6yfgS_9BHxXhvXWMaeHKXTkhMyzmAwoJ7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiMGY3NWEzMDktOTgyMi00NDUzLTk4NGQtMjhjYWFhNzY4ZDE5IiwiT2Zmc2V0IjoyOCwiU3RhcnRlZEF0IjoiMjAyMi0wNy0yMFQyMjo0MTowMFoifQ%3D%3D",
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/blobs/uploads/26124fbc-8f67-40c3-bb93-0dd4cee4a6d2?digest=sha256_encoded_stream",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -974,16 +972,16 @@
         "Connection": "keep-alive",
         "Content-Length": "266",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:01 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:02 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
           "max-age=31536000; includeSubDomains",
           "max-age=31536000; includeSubDomains"
         ],
-        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo54393e47:pull,push\u0022",
+        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo54393e47:push,pull\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "771c3f61-cc55-4cf9-b9c5-0519a62cf0c1"
+        "X-Ms-Correlation-Request-Id": "d956b6a2-e5d4-4fd2-b8c1-2b309f9a82a1"
       },
       "ResponseBody": {
         "errors": [
@@ -1022,12 +1020,12 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:01 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:02 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "bb71e4fc-a97b-48d5-898d-f7f3c32e06c2",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.633333"
+        "X-Ms-Correlation-Request-Id": "5adc5160-ea10-416e-a914-461b872b42ad",
+        "x-ms-ratelimit-remaining-calls-per-second": "165.883333"
       },
       "ResponseBody": {
         "refresh_token": "refresh_token"
@@ -1044,24 +1042,24 @@
         "Content-Type": "application/x-www-form-urlencoded",
         "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Arepo54393e47%3Apull%2Cpush\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
+      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Arepo54393e47%3Apush%2Cpull\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:01 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:02 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "19ccdbb9-4915-4299-bd51-e75458768915",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.616667"
+        "X-Ms-Correlation-Request-Id": "0a113afc-9598-4ce5-9540-f81acdfe960c",
+        "x-ms-ratelimit-remaining-calls-per-second": "165.866667"
       },
       "ResponseBody": {
         "access_token": "access_token"
       }
     },
     {
-      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/blobs/uploads/0f75a309-9822-4453-984d-28caaa768d19?digest=sha256%3A654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed\u0026_nouploadcache=false\u0026_state=YXsIsImG5PF6yfgS_9BHxXhvXWMaeHKXTkhMyzmAwoJ7Ik5hbWUiOiJyZXBvNTQzOTNlNDciLCJVVUlEIjoiMGY3NWEzMDktOTgyMi00NDUzLTk4NGQtMjhjYWFhNzY4ZDE5IiwiT2Zmc2V0IjoyOCwiU3RhcnRlZEF0IjoiMjAyMi0wNy0yMFQyMjo0MTowMFoifQ%3D%3D",
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/blobs/uploads/26124fbc-8f67-40c3-bb93-0dd4cee4a6d2?digest=sha256_encoded_stream",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1082,7 +1080,7 @@
         ],
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Wed, 20 Jul 2022 22:41:01 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:02 GMT",
         "Docker-Content-Digest": "sha256:654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Location": "/v2/repo54393e47/blobs/sha256:654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed",
@@ -1092,7 +1090,7 @@
           "max-age=31536000; includeSubDomains"
         ],
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "e4301453-31dc-4897-b3cb-ae8065e7ed7c"
+        "X-Ms-Correlation-Request-Id": "168aae53-93f5-4fc7-9f47-ad7ce8bf1286"
       },
       "ResponseBody": null
     },
@@ -1136,16 +1134,16 @@
         "Connection": "keep-alive",
         "Content-Length": "266",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:01 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:02 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
           "max-age=31536000; includeSubDomains",
           "max-age=31536000; includeSubDomains"
         ],
-        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo54393e47:push,pull\u0022",
+        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo54393e47:pull,push\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "c9e03d37-7a0d-4b7d-8cc1-4499dbe13cae"
+        "X-Ms-Correlation-Request-Id": "dfbe0432-0be6-4ed4-9650-67276e4429a4"
       },
       "ResponseBody": {
         "errors": [
@@ -1184,12 +1182,12 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:01 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:02 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "3da82670-a17d-4849-a0c1-e6d50db58287",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.6"
+        "X-Ms-Correlation-Request-Id": "24cd9d07-4b0a-467d-b484-00302891a81a",
+        "x-ms-ratelimit-remaining-calls-per-second": "165.85"
       },
       "ResponseBody": {
         "refresh_token": "refresh_token"
@@ -1206,17 +1204,17 @@
         "Content-Type": "application/x-www-form-urlencoded",
         "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Arepo54393e47%3Apush%2Cpull\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
+      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Arepo54393e47%3Apull%2Cpush\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:01 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:02 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "46559ad9-e742-4de7-891d-fc0a65e6c8ce",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.583333"
+        "X-Ms-Correlation-Request-Id": "6c7129b9-6703-4c46-beb2-c1a27f47eb8c",
+        "x-ms-ratelimit-remaining-calls-per-second": "165.833333"
       },
       "ResponseBody": {
         "access_token": "access_token"
@@ -1261,7 +1259,7 @@
         ],
         "Connection": "close",
         "Content-Length": "0",
-        "Date": "Wed, 20 Jul 2022 22:41:02 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:03 GMT",
         "Docker-Content-Digest": "sha256:81c148434d2814d0c55688399beeda776299a11814a3a2555871a3182908601a",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Location": "/v2/repo54393e47/manifests/sha256:81c148434d2814d0c55688399beeda776299a11814a3a2555871a3182908601a",
@@ -1271,12 +1269,12 @@
           "max-age=31536000; includeSubDomains"
         ],
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "52cde0ee-8dc0-4fa4-bdc0-e8ee14d95535"
+        "X-Ms-Correlation-Request-Id": "9c606631-e4f9-4045-a41d-5163e3e577d9"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/manifests/sha256%3A81c148434d2814d0c55688399beeda776299a11814a3a2555871a3182908601a",
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/manifests/sha256_encoded_stream",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/vnd.oci.image.manifest.v1\u002Bjson",
@@ -1296,7 +1294,7 @@
         "Connection": "keep-alive",
         "Content-Length": "206",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:02 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:03 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -1305,7 +1303,7 @@
         ],
         "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo54393e47:pull\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "56a751eb-0503-4e61-b58f-3d1023a7437c"
+        "X-Ms-Correlation-Request-Id": "7ebe527a-3004-41bd-adb1-ad0bf5aa36a0"
       },
       "ResponseBody": {
         "errors": [
@@ -1339,12 +1337,12 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:02 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:03 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "6100717c-b6b0-4c00-97ce-4a277f999aae",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.45"
+        "X-Ms-Correlation-Request-Id": "b6807eb7-ffcc-49a2-b1fc-692811330e0b",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.65"
       },
       "ResponseBody": {
         "refresh_token": "refresh_token"
@@ -1366,19 +1364,19 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:02 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:03 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "d316893b-59d3-4446-9396-dc38bd0ac8d9",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.433333"
+        "X-Ms-Correlation-Request-Id": "387111b9-bb65-4141-be85-1827715706b3",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.633333"
       },
       "ResponseBody": {
         "access_token": "access_token"
       }
     },
     {
-      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/manifests/sha256%3A81c148434d2814d0c55688399beeda776299a11814a3a2555871a3182908601a",
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/manifests/sha256_encoded_stream",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/vnd.oci.image.manifest.v1\u002Bjson",
@@ -1398,7 +1396,7 @@
         "Connection": "keep-alive",
         "Content-Length": "417",
         "Content-Type": "application/vnd.oci.image.manifest.v1\u002Bjson",
-        "Date": "Wed, 20 Jul 2022 22:41:02 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:03 GMT",
         "Docker-Content-Digest": "sha256:81c148434d2814d0c55688399beeda776299a11814a3a2555871a3182908601a",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "ETag": "\u0022sha256:81c148434d2814d0c55688399beeda776299a11814a3a2555871a3182908601a\u0022",
@@ -1408,7 +1406,7 @@
           "max-age=31536000; includeSubDomains"
         ],
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "27797e2c-ac57-4260-98bb-30a5616b4eb8"
+        "X-Ms-Correlation-Request-Id": "463a3996-aec6-41aa-b11b-fdf3111b1a21"
       },
       "ResponseBody": {
         "config": {
@@ -1450,7 +1448,7 @@
         "Connection": "keep-alive",
         "Content-Length": "206",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:02 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:03 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -1459,7 +1457,7 @@
         ],
         "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo54393e47:pull\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "df3dd41d-a24a-408f-aa37-1cfebac6307c"
+        "X-Ms-Correlation-Request-Id": "e6fc2d50-c766-4b76-acce-0a93d59ba531"
       },
       "ResponseBody": {
         "errors": [
@@ -1493,12 +1491,12 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:02 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:03 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "5c744067-2144-4a23-a111-9238ca37710e",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.416667"
+        "X-Ms-Correlation-Request-Id": "bd26ed42-7eb4-4ba1-849c-9d27ee973d47",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.616667"
       },
       "ResponseBody": {
         "refresh_token": "refresh_token"
@@ -1520,12 +1518,12 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:02 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:03 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "d4671a23-4e27-4844-89c8-2df226969b8c",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.4"
+        "X-Ms-Correlation-Request-Id": "6cd8c41c-3127-4670-8dff-f15e42126637",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.6"
       },
       "ResponseBody": {
         "access_token": "access_token"
@@ -1552,7 +1550,7 @@
         "Connection": "keep-alive",
         "Content-Length": "417",
         "Content-Type": "application/vnd.oci.image.manifest.v1\u002Bjson",
-        "Date": "Wed, 20 Jul 2022 22:41:02 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:03 GMT",
         "Docker-Content-Digest": "sha256:81c148434d2814d0c55688399beeda776299a11814a3a2555871a3182908601a",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "ETag": "\u0022sha256:81c148434d2814d0c55688399beeda776299a11814a3a2555871a3182908601a\u0022",
@@ -1562,7 +1560,7 @@
           "max-age=31536000; includeSubDomains"
         ],
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "ece86506-de9b-451c-a8a3-51681dfac4ef"
+        "X-Ms-Correlation-Request-Id": "a7739dae-c3e5-4b92-901b-fe1abe8adb95"
       },
       "ResponseBody": {
         "config": {
@@ -1584,7 +1582,7 @@
       }
     },
     {
-      "RequestUri": "https://fake_url.azurecr.io/acr/v1/repo54393e47/_manifests/sha256%3A81c148434d2814d0c55688399beeda776299a11814a3a2555871a3182908601a?api-version=2021-07-01",
+      "RequestUri": "https://fake_url.azurecr.io/acr/v1/repo54393e47/_manifests/sha256_encoded_stream",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1604,7 +1602,7 @@
         "Connection": "keep-alive",
         "Content-Length": "215",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:02 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:03 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -1613,7 +1611,7 @@
         ],
         "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo54393e47:metadata_read\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "43d2e4c6-29ff-47ed-991b-5569f808bff0"
+        "X-Ms-Correlation-Request-Id": "a8482642-c939-45b9-a999-e4d011e89f39"
       },
       "ResponseBody": {
         "errors": [
@@ -1647,12 +1645,12 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:03 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:04 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "8d1cf06a-a510-4809-be09-4d208f0f9ed0",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.383333"
+        "X-Ms-Correlation-Request-Id": "cd03178e-5bd0-467d-b54f-5e3b50a9db7f",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.583333"
       },
       "ResponseBody": {
         "refresh_token": "refresh_token"
@@ -1674,19 +1672,19 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:03 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:04 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "d276c737-82eb-4575-8ffd-80ac1bb08f38",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.366667"
+        "X-Ms-Correlation-Request-Id": "3d9c68f2-e4ee-4795-9e11-f1d92c758f09",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.566667"
       },
       "ResponseBody": {
         "access_token": "access_token"
       }
     },
     {
-      "RequestUri": "https://fake_url.azurecr.io/acr/v1/repo54393e47/_manifests/sha256%3A81c148434d2814d0c55688399beeda776299a11814a3a2555871a3182908601a?api-version=2021-07-01",
+      "RequestUri": "https://fake_url.azurecr.io/acr/v1/repo54393e47/_manifests/sha256_encoded_stream",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1704,9 +1702,9 @@
           "X-Ms-Correlation-Request-Id"
         ],
         "Connection": "keep-alive",
-        "Content-Length": "442",
+        "Content-Length": "444",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:03 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:04 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -1714,7 +1712,7 @@
           "max-age=31536000; includeSubDomains"
         ],
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "1317ec5e-f3e5-4472-b56c-0898dbffd049"
+        "X-Ms-Correlation-Request-Id": "9c161e87-4503-4ad4-8391-64ca88d45c45"
       },
       "ResponseBody": {
         "registry": "yallacrtests.azurecr.io",
@@ -1722,8 +1720,8 @@
         "manifest": {
           "digest": "sha256:81c148434d2814d0c55688399beeda776299a11814a3a2555871a3182908601a",
           "imageSize": 0,
-          "createdTime": "2022-07-20T22:41:01.933112Z",
-          "lastUpdateTime": "2022-07-20T22:41:01.933112Z",
+          "createdTime": "2022-07-28T07:47:02.9154468Z",
+          "lastUpdateTime": "2022-07-28T07:47:02.9154468Z",
           "mediaType": "application/vnd.oci.image.manifest.v1\u002Bjson",
           "tags": [
             "v1"
@@ -1738,7 +1736,7 @@
       }
     },
     {
-      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/manifests/sha256%3A81c148434d2814d0c55688399beeda776299a11814a3a2555871a3182908601a",
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/manifests/sha256_encoded_stream",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1759,7 +1757,7 @@
         "Connection": "keep-alive",
         "Content-Length": "208",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:03 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:04 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -1768,7 +1766,7 @@
         ],
         "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo54393e47:delete\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "1fbd5dc7-008f-437d-bf09-822c286028c6"
+        "X-Ms-Correlation-Request-Id": "c9c02912-33b3-4348-ac2e-263445324c2f"
       },
       "ResponseBody": {
         "errors": [
@@ -1802,12 +1800,12 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:03 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:04 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "67f1bb8c-1c7e-4255-99f9-a755e38feba4",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.35"
+        "X-Ms-Correlation-Request-Id": "dd4193c8-d590-4253-a89a-43e0077a9726",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.55"
       },
       "ResponseBody": {
         "refresh_token": "refresh_token"
@@ -1829,19 +1827,19 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Jul 2022 22:41:03 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:04 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "af2b4db6-f90c-4226-82ce-d947fd3f11a8",
-        "x-ms-ratelimit-remaining-calls-per-second": "165.333333"
+        "X-Ms-Correlation-Request-Id": "c6461172-09f0-4168-9035-5bede13ab8ec",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.533333"
       },
       "ResponseBody": {
         "access_token": "access_token"
       }
     },
     {
-      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/manifests/sha256%3A81c148434d2814d0c55688399beeda776299a11814a3a2555871a3182908601a",
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo54393e47/manifests/sha256_encoded_stream",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1861,7 +1859,7 @@
         ],
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Wed, 20 Jul 2022 22:41:03 GMT",
+        "Date": "Thu, 28 Jul 2022 07:47:04 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -1869,7 +1867,7 @@
           "max-age=31536000; includeSubDomains"
         ],
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "3ae026bc-9ccb-4834-9e2b-d08807a33e1c",
+        "X-Ms-Correlation-Request-Id": "a81062ce-18e4-46dd-a6ca-8d32eed3db6f",
         "X-Ms-Ratelimit-Remaining-Calls-Per-Second": "8.000000"
       },
       "ResponseBody": null
