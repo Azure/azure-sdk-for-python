@@ -19,7 +19,10 @@ _LOGGER = logging.getLogger(__name__)
 _SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
 
 DEFAULT_DEST_FOLDER = "./dist"
+<<<<<<< HEAD
 DEFAULT_SPEC_FOLDER = "../../../../../azure-rest-api-specs/"
+=======
+>>>>>>> f5eded26f09270ae60c840dab2ce275d523eb8f6
 _DPG_README = "README.md"
 
 def get_package_names(sdk_folder):
@@ -163,13 +166,21 @@ def gen_package_name(origin_config: Dict[str, Any]) -> str:
     return Path(origin_config["output-folder"]).parts[-1]
 
 
+<<<<<<< HEAD
 def gen_basic_config(origin_config: Dict[str, Any], spec_folder: str = DEFAULT_SPEC_FOLDER) -> Dict[str, Any]:
     spec_root = re.sub('specification', '', spec_folder)
+=======
+def gen_basic_config(origin_config: Dict[str, Any]) -> Dict[str, Any]:
+>>>>>>> f5eded26f09270ae60c840dab2ce275d523eb8f6
     return {
         "package-name": gen_package_name(origin_config),
         "license-header": "MICROSOFT_MIT_NO_VERSION",
         "package-version": origin_config.get("package-version", "1.0.0b1"),
+<<<<<<< HEAD
         "require": [spec_root + line for line in origin_config["require"]],
+=======
+        "require": ["../../../../../azure-rest-api-specs/" + line for line in origin_config["require"]],
+>>>>>>> f5eded26f09270ae60c840dab2ce275d523eb8f6
         "package-mode": "dataplane",
         "output-folder": "../",
     }
@@ -179,9 +190,15 @@ def gen_general_namespace(package_name: str) -> str:
     return package_name.replace('-', '.')
 
 
+<<<<<<< HEAD
 def gen_dpg_config_single_client(origin_config: Dict[str, Any], spec_folder: str) -> str:
     package_name = Path(origin_config["output-folder"]).parts[-1]
     readme_config = gen_basic_config(origin_config, spec_folder)
+=======
+def gen_dpg_config_single_client(origin_config: Dict[str, Any]) -> str:
+    package_name = Path(origin_config["output-folder"]).parts[-1]
+    readme_config = gen_basic_config(origin_config)
+>>>>>>> f5eded26f09270ae60c840dab2ce275d523eb8f6
     readme_config.update({
         "namespace": gen_general_namespace(package_name),
     })
