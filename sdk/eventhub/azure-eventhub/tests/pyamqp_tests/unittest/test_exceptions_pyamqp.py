@@ -9,10 +9,9 @@ from azure.eventhub._pyamqp.error import AMQPConnectionError
 
 def test_client_creation_exceptions():
     with pytest.raises(TypeError):
-        sender = SendClient(
-            "fake.host.com",
-        )
-        assert sender._remote_address == "fake.host.com"
+        sender = SendClient()
+        # assert sender._remote_address == "fake.host.com"
+        # We can't test this now b/c the assert would have to be against source and would pass -- maybe remove this test
 
 def test_connection_endpoint_exceptions():
     with pytest.raises(AMQPConnectionError):
