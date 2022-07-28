@@ -98,7 +98,7 @@ def test_send_connection_idle_timeout_and_reconnect_sync(connstr_receivers, uamq
         sender._open_with_retry()
         time.sleep(11)
         ed = transform_outbound_single_message(ed, EventData, amqp_transport.to_outgoing_amqp_message)
-        sender._unsent_events = [ed.message]
+        sender._unsent_events = [ed._message]
         if uamqp_transport:
             sender._unsent_events[0].on_send_complete = sender._on_outcome
             with pytest.raises((uamqp.errors.ConnectionClose,
@@ -122,7 +122,7 @@ def test_send_connection_idle_timeout_and_reconnect_sync(connstr_receivers, uamq
                 sender._open_with_retry()
                 time.sleep(11)
                 ed = transform_outbound_single_message(ed, EventData, amqp_transport.to_outgoing_amqp_message)
-                sender._unsent_events = [ed.message]
+                sender._unsent_events = [ed._message]
                 sender._send_event_data()
 
     retry = 0

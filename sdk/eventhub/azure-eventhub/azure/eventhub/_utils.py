@@ -232,23 +232,23 @@ def get_last_enqueued_event_properties(event_data):
     if event_data._last_enqueued_event_properties:
         return event_data._last_enqueued_event_properties
 
-    if event_data.message.delivery_annotations:
-        sequence_number = event_data.message.delivery_annotations.get(
+    if event_data._message.delivery_annotations:
+        sequence_number = event_data._message.delivery_annotations.get(
             PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None
         )
-        enqueued_time_stamp = event_data.message.delivery_annotations.get(
+        enqueued_time_stamp = event_data._message.delivery_annotations.get(
             PROP_LAST_ENQUEUED_TIME_UTC, None
         )
         if enqueued_time_stamp:
             enqueued_time_stamp = utc_from_timestamp(float(enqueued_time_stamp) / 1000)
-        retrieval_time_stamp = event_data.message.delivery_annotations.get(
+        retrieval_time_stamp = event_data._message.delivery_annotations.get(
             PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None
         )
         if retrieval_time_stamp:
             retrieval_time_stamp = utc_from_timestamp(
                 float(retrieval_time_stamp) / 1000
             )
-        offset_bytes = event_data.message.delivery_annotations.get(
+        offset_bytes = event_data._message.delivery_annotations.get(
             PROP_LAST_ENQUEUED_OFFSET, None
         )
         offset = offset_bytes.decode("UTF-8") if offset_bytes else None
@@ -289,7 +289,8 @@ def transform_outbound_single_message(message, message_type, to_outgoing_amqp_me
     try:
         # pylint: disable=protected-access
         # EventData.message stores uamqp/pyamqp.Message during sending
-        message.message = to_outgoing_amqp_message(message.raw_amqp_message)
+        # pylint: disable=protected-access
+        message._message = to_outgoing_amqp_message(message.raw_amqp_message)
         return message  # type: ignore
     except AttributeError:
         # pylint: disable=protected-access

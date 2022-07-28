@@ -53,7 +53,7 @@ def _set_partition_key(
     amqp_transport: "AmqpTransport",
 ) -> Iterable[EventData]:
     for ed in iter(event_datas):
-        amqp_transport.set_message_partition_key(ed.message, partition_key)
+        amqp_transport.set_message_partition_key(ed._message, partition_key)  # pylint: disable=protected-access
         yield ed
 
 
@@ -196,7 +196,7 @@ class EventHubProducer(
             )
             if partition_key:
                 self._amqp_transport.set_message_partition_key(
-                    outgoing_event_data.message, partition_key
+                    outgoing_event_data._message, partition_key  # pylint: disable=protected-access
                 )
             wrapper_event_data = outgoing_event_data
             trace_message(wrapper_event_data, span)
@@ -214,7 +214,7 @@ class EventHubProducer(
                     )
                 for (
                     event
-                ) in event_data.message.data:  # pylint: disable=protected-access
+                ) in event_data._message.data:  # pylint: disable=protected-access
                     trace_message(event, span)
                 wrapper_event_data = event_data  # type:ignore
             else:
@@ -264,7 +264,7 @@ class EventHubProducer(
                 wrapper_event_data = self._wrap_eventdata(
                     event_data, child, partition_key
                 )
-                self._unsent_events = [wrapper_event_data.message]
+                self._unsent_events = [wrapper_event_data._message]  # pylint: disable=protected-access
                 if child:
                     self._client._add_span_request_attributes(  # pylint: disable=protected-access
                         child

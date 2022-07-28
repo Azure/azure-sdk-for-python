@@ -139,17 +139,17 @@ if uamqp_installed:
                     encoding=annotated_message._encoding    # pylint: disable=protected-access
                 )
 
-            amqp_body_type = annotated_message.body_type  # pylint: disable=protected-access
-            amqp_body = annotated_message.body
+            # pylint: disable=protected-access
+            amqp_body_type = annotated_message.body_type
             if amqp_body_type == AmqpMessageBodyType.DATA:
                 amqp_body_type = MessageBodyType.Data
-                amqp_body = list(amqp_body)
+                amqp_body = list(annotated_message._data_body)
             elif amqp_body_type == AmqpMessageBodyType.SEQUENCE:
                 amqp_body_type = MessageBodyType.Sequence
-                amqp_body = list(amqp_body)
+                amqp_body = list(annotated_message._sequence_body)
             else:
-                # amqp_body_type is type of AmqpMessageBodyType.VALUE
                 amqp_body_type = MessageBodyType.Value
+                amqp_body = annotated_message._value_body
 
             return Message(
                 body=amqp_body,
@@ -299,8 +299,8 @@ if uamqp_installed:
             :rtype: None
             """
             batch_message._internal_events.append(event_data)
-            batch_message.message._body_gen.append(
-                outgoing_event_data
+            batch_message._message._body_gen.append(    # pylint: disable=protected-access
+                outgoing_event_data._message
             )
 
         def create_source(self, source, offset, selector):

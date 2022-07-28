@@ -117,15 +117,11 @@ class PyamqpTransport(AmqpTransport):
             "application_properties": annotated_message.application_properties,
             "message_annotations": annotated_message.annotations,
             "delivery_annotations": annotated_message.delivery_annotations,
-            "footer": annotated_message.footer,
+            "data": annotated_message._data_body,   # pylint: disable=protected-access
+            "sequence": annotated_message._sequence_body,   # pylint: disable=protected-access
+            "value": annotated_message._value_body, # pylint: disable=protected-access
+            "footer": annotated_message.footer
         }
-
-        if annotated_message.body_type == AmqpMessageBodyType.DATA:
-            message_dict["data"] = annotated_message.body
-        elif annotated_message.body_type == AmqpMessageBodyType.SEQUENCE:
-            message_dict["sequence"] = annotated_message.body
-        else:
-            message_dict["value"] = annotated_message.body
 
         return Message(**message_dict)
 
@@ -267,7 +263,7 @@ class PyamqpTransport(AmqpTransport):
         :param event_data: EventData to add to internal batch events. uamqp use only.
         :rtype: None
         """
-        utils.add_batch(batch_message.message, outgoing_event_data.message)
+        utils.add_batch(batch_message._message, outgoing_event_data._message)   # pylint: disable=protected-access
 
     def create_source(self, source, offset, selector):
         """

@@ -14,9 +14,10 @@ except ImportError:
     UamqpTransport = None
     pass
 from azure.eventhub._transport._pyamqp_transport import PyamqpTransport
-from azure.eventhub.amqp import AmqpAnnotatedMessage
+from azure.eventhub.amqp import AmqpAnnotatedMessage, AmqpMessageHeader, AmqpMessageProperties
 from azure.eventhub import _common
-from azure.eventhub._pyamqp.message import Message, Properties
+from azure.eventhub._pyamqp.message import Message, Properties, Header
+from azure.eventhub._utils import transform_outbound_single_message
 from .._test_case import get_decorator
 
 uamqp_transport_vals = get_decorator()
@@ -153,11 +154,11 @@ def test_event_data_batch(uamqp_transport):
 @pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
 def test_event_data_from_message(uamqp_transport):
     if uamqp_transport:
-        message = uamqp.Message('A')
-        expected_result = [b'A']
+        amqp_transport = UamqpTransport()
     else:
-        message = Message(data=b'A')
-        expected_result = [65]
+        amqp_transport = PyamqpTransport()
+    annotated_message = AmqpAnnotatedMessage(data_body=b'A')
+    message = amqp_transport.to_outgoing_amqp_message(annotated_message)
     event = EventData._from_message(message)
     assert event.content_type is None
     assert event.correlation_id is None
@@ -169,7 +170,7 @@ def test_event_data_from_message(uamqp_transport):
     assert event.content_type == 'content_type'
     assert event.correlation_id == 'correlation_id'
     assert event.message_id == 'message_id'
-    assert list(event.body) == expected_result
+    assert list(event.body) == [b'A']
 
 
 def test_amqp_message_str_repr():
@@ -177,3 +178,76 @@ def test_amqp_message_str_repr():
     message = AmqpAnnotatedMessage(data_body=data_body)
     assert str(message) == 'A'
     assert 'AmqpAnnotatedMessage(body=A, body_type=data' in repr(message)
+
+
+@pytest.mark.parametrize("uamqp_transport",
+                         uamqp_transport_vals)
+def test_amqp_message_from_message(uamqp_transport):
+    if uamqp_transport:
+        header = uamqp.message.MessageHeader()
+        header.delivery_count = 1
+        header.time_to_live = 10000
+        header.first_acquirer = True
+        header.durable = True
+        header.priority = 1
+        properties = uamqp.message.MessageProperties()
+        properties.message_id = "message_id"
+        properties.user_id = "user_id"
+        properties.to = "to"
+        properties.subject = "subject"
+        properties.reply_to = "reply_to"
+        properties.correlation_id = "correlation_id"
+        properties.content_type = "content_type"
+        properties.content_encoding = "content_encoding"
+        properties.absolute_expiry_time = 1
+        properties.creation_time = 1
+        properties.group_id = "group_id"
+        properties.group_sequence = 1
+        properties.reply_to_group_id = "reply_to_group_id"
+        message = uamqp.message.Message(header=header, properties=properties)
+        message.annotations = {_common.PROP_OFFSET: "@latest"}
+    else:
+        header = Header(
+            delivery_count=1,
+            ttl=10000,
+            first_acquirer=True,
+            durable=True,
+            priority=1
+        )
+        properties = Properties(
+            message_id="message_id",
+            user_id="user_id",
+            to="to",
+            subject="subject",
+            reply_to="reply_to",
+            correlation_id="correlation_id",
+            content_type="content_type",
+            content_encoding="content_encoding",
+            absolute_expiry_time=1,
+            creation_time=1,
+            group_id="group_id",
+            group_sequence=1,
+            reply_to_group_id="reply_to_group_id"
+        )
+        message_annotations = {_common.PROP_OFFSET: "@latest"}
+        message = Message(properties=properties, header=header, message_annotations=message_annotations)
+
+    amqp_message = AmqpAnnotatedMessage(message=message)
+    assert amqp_message.properties.message_id == message.properties.message_id
+    assert amqp_message.properties.user_id == message.properties.user_id
+    assert amqp_message.properties.to == message.properties.to
+    assert amqp_message.properties.subject == message.properties.subject
+    assert amqp_message.properties.reply_to == message.properties.reply_to
+    assert amqp_message.properties.correlation_id == message.properties.correlation_id
+    assert amqp_message.properties.content_type == message.properties.content_type
+    assert amqp_message.properties.absolute_expiry_time == message.properties.absolute_expiry_time
+    assert amqp_message.properties.creation_time == message.properties.creation_time
+    assert amqp_message.properties.group_id == message.properties.group_id
+    assert amqp_message.properties.group_sequence == message.properties.group_sequence
+    assert amqp_message.properties.reply_to_group_id == message.properties.reply_to_group_id
+    assert amqp_message.header.time_to_live == message.header.ttl
+    assert amqp_message.header.delivery_count == message.header.delivery_count
+    assert amqp_message.header.first_acquirer == message.header.first_acquirer
+    assert amqp_message.header.durable == message.header.durable
+    assert amqp_message.header.priority == message.header.priority
+    assert amqp_message.annotations == message.message_annotations
