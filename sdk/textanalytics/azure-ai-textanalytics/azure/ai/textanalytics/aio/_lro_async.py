@@ -30,28 +30,56 @@ class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType], Awaitable):
 
     @property
     def details(self) -> Mapping[str, Any]:
-        ...
+        """Long-running operation metadata.
+
+        :return: A mapping of details about the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
 
     def continuation_token(self) -> str:  # pylint: disable=no-self-use
-        ...
+        """Return a continuation token that allows to restart the poller later.
+
+        :returns: An opaque continuation token
+        :rtype: str
+        """
 
     def status(self) -> str:  # pylint: disable=no-self-use
-        ...
+        """Returns the current status string.
+
+        :returns: The current status string
+        :rtype: str
+        """
 
     async def result(self) -> PollingReturnType:
-        ...
+        """Return the result of the long running operation.
+
+        :returns: The deserialized resource of the long running operation, if one is available.
+        :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
+        """
 
     async def wait(self) -> None:
-        ...
+        """Wait on the long running operation.
+
+        :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
+        """
 
     def done(self) -> bool:  # pylint: disable=no-self-use
-        ...
+        """Check status of the long running operation.
+
+        :returns: 'True' if the process has completed, else 'False'.
+        :rtype: bool
+        """
 
     def __await__(self) -> Generator[Any, None, PollingReturnType]:
         ...
 
     async def cancel(self) -> None:  # pylint: disable=no-self-use
-        ...
+        """Cancel the operation currently being polled.
+
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
+        """
 
 
 class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
