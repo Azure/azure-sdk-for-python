@@ -207,7 +207,7 @@ stages:
                       - checkout: self
                       - task: UsePythonVersion@0
                       - script: |
-                          pip install "tools/azure-sdk-tools[build]"
+                          pip install "./tools/azure-sdk-tools[build]"
                         displayName: Install versioning tool dependencies
                       - pwsh: |
                           sdk_version_increment --package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}
