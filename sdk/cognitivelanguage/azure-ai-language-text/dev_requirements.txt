@@ -1,0 +1,6 @@
+-e ../../../tools/azure-sdk-tools
+-e ../../../tools/azure-devtools
+../../core/azure-core
+-e ../../identity/azure-identity
+-e ../../cognitiveservices/azure-mgmt-cognitiveservices
+aiohttp>=3.0
