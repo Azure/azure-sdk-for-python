@@ -5,7 +5,7 @@
 ### Features Added
 
 ### Bugs Fixed
-- Removed forced `requests` import for sync calls. (25017)
+- Updated exception catching of `StorageStreamDownloader`'s retry mechanism.
 - Adjusted type hints for `upload_blob` and `StorageStreamDownloader.readall`.
 
 ## 12.13.0 (2022-07-07)
