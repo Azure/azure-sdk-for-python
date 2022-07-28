@@ -6,6 +6,7 @@
 # pylint: disable=too-many-lines, invalid-overridden-method, too-many-public-methods
 import functools
 import time
+import warnings
 from io import BytesIO
 from typing import Optional, Union, IO, List, Tuple, Dict, Any, Iterable, TYPE_CHECKING  # pylint: disable=unused-import
 
@@ -127,8 +128,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
-    :keyword loop:
-        The event loop to run the asynchronous tasks.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
     """
 
@@ -144,13 +143,14 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         # type: (...) -> None
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
+        if loop:
+            warnings.warn("``loop`` is no longer supported.", DeprecationWarning)
         super(ShareFileClient, self).__init__(
             account_url, share_name=share_name, file_path=file_path, snapshot=snapshot,
-            credential=credential, loop=loop, **kwargs
+            credential=credential, **kwargs
         )
-        self._client = AzureFileStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
+        self._client = AzureFileStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
-        self._loop = loop
 
     @distributed_trace_async
     async def acquire_lease(self, lease_id=None, **kwargs):
