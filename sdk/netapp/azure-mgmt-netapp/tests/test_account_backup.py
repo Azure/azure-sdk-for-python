@@ -65,7 +65,7 @@ class TestNetAppAccountBackup(AzureMgmtRecordedTestCase):
         account_backup = self.client.account_backups.get(TEST_RG, ACCOUNT1, backup1)
         assert account_backup.name == ACCOUNT1 + "/" + backup1
 
-        disable_backup(self.client, backup1, live=self.is_live)
+        disable_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, live=self.is_live)
         delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, live=self.is_live)
         delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)

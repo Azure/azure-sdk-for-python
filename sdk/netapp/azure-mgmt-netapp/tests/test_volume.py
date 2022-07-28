@@ -39,7 +39,7 @@ def create_volume(client, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_PO
             False)
         if live:
             time.sleep(10)
-    print("Creating volume in NetApp Account '{0} '...".format(account_name))
+    print("Creating volume {0} in NetApp Account '{1} '...".format(volume_name, account_name))
     #def create_virtual_network(, group_name, location, network_name, subnet_name):    
     volume_body = create_volume_body(volume_name, location, rg, vnet, enable_subvolumes)
     volume = client.volumes.begin_create_or_update(
@@ -147,7 +147,7 @@ def delete_volume(client, rg, account_name, pool_name, volume_name, live=False):
 def wait_for_replication_status(client, target_state, dp_rg=TEST_REPL_REMOTE_RG, dp_account_name=TEST_ACC_2, dp_pool_name=TEST_POOL_2, dp_volume_name=TEST_VOL_2, live=False):
     # python isn't good at do-while loops but loop until we get the target state
     while True:
-        replication_status = client.volumes.replication_status(dp_rg, account_name, pool_name, volume_name)
+        replication_status = client.volumes.replication_status(dp_rg, dp_account_name, dp_pool_name, dp_volume_name)
         if replication_status.mirror_state == target_state:
             break
         if live:
@@ -158,7 +158,7 @@ def wait_for_succeeded(client, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TE
     # python isn't good at do-while loops but loop until we get volumes in succeeded state
     while True:
         source_volume = client.volumes.get(rg, account_name, pool_name, volume_name)
-        dp_volume = client.volumes.get(dp_rg, dpaccount_name, dp_pool_name, dpvolume_name)
+        dp_volume = client.volumes.get(dp_rg, dp_account_name, dp_pool_name, dp_volume_name)
         if (source_volume.provisioning_state == "Succeeded") and (dp_volume.provisioning_state == "Succeeded"):
             break
         if live:
@@ -269,15 +269,15 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
     def test_volume_replication(self):
         set_bodiless_matcher()
         print("Starting test_create_delete_list_volume...")
-        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
-        ACCOUNT2 = self.get_resource_name(TEST_ACC_2+"-")
-        volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
-        dbVolumeName = self.get_resource_name(TEST_VOL_2+"-")
-        VNETNAME = self.get_resource_name(VNET+"-")
-        dpVNET_NAME = self.get_resource_name(REMOTE_VNET+"-")
+        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-b2-")
+        ACCOUNT2 = self.get_resource_name(TEST_ACC_2+"-b2-")
+        volumeName1 = self.get_resource_name(TEST_VOL_1+"-b2-")        
+        dbVolumeName = self.get_resource_name(TEST_VOL_2+"-b2-")
+        VNETNAME = self.get_resource_name(VNET+"-b2-")
+        dpVNET_NAME = self.get_resource_name(REMOTE_VNET+"-b2-")
         #create remote pool        
         SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')
-        SUBNET = create_virtual_network(self.network_client, TEST_REPL_REMOTE_RG, REMOTE_LOCATION, dpVNET_NAME, 'default')
+        SUBNET2 = create_virtual_network(self.network_client, TEST_REPL_REMOTE_RG, REMOTE_LOCATION, dpVNET_NAME, 'default')
         source_volume = create_volume(
             self.client,
             TEST_RG,
@@ -302,42 +302,42 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         # sync replication
         body = AuthorizeRequest(remote_volume_resource_id=dp_volume.id)
         self.client.volumes.begin_authorize_replication(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, body)
-        wait_for_succeeded(self.client, TEST_RG, account_name=ACCOUNT1, pool_name=TEST_POOL_1, volume_name=volumeName1, dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=volumeName2 ,live=self.is_live)
+        wait_for_succeeded(self.client, TEST_RG, account_name=ACCOUNT1, pool_name=TEST_POOL_1, volume_name=volumeName1, dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=dbVolumeName ,live=self.is_live)
         if self.is_live:
             time.sleep(30)
-        wait_for_replication_status(self.client, "Mirrored", dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=volumeName2, live=self.is_live)
+        wait_for_replication_status(self.client, "Mirrored", dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=dbVolumeName, live=self.is_live)
 
         # list replications
         replications = self.client.volumes.list_replications(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1)
         assert len(list(replications)) == 1
 
         # break replication
-        self.client.volumes.begin_break_replication(TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, volumeName2)
-        wait_for_replication_status(self.client, "Mirrored", dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=volumeName2, live=self.is_live)
+        self.client.volumes.begin_break_replication(TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, dbVolumeName)
+        wait_for_replication_status(self.client, "Mirrored", dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=dbVolumeName, live=self.is_live)
         if self.is_live:
             time.sleep(30)
-        wait_for_succeeded(self.client, TEST_RG, account_name=ACCOUNT1, pool_name=TEST_POOL_1, volume_name=volumeName1, dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=volumeName2, live=self.is_live)
+        wait_for_succeeded(self.client, TEST_RG, account_name=ACCOUNT1, pool_name=TEST_POOL_1, volume_name=volumeName1, dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=dbVolumeName, live=self.is_live)
 
         # resync
-        self.client.volumes.begin_resync_replication(TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, volumeName2)
-        wait_for_replication_status(self.client, "Mirrored", dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=volumeName2, live=self.is_live)
+        self.client.volumes.begin_resync_replication(TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, dbVolumeName)
+        wait_for_replication_status(self.client, "Mirrored", dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=dbVolumeName, live=self.is_live)
         if self.is_live:
             time.sleep(30)
 
         # break again
-        self.client.volumes.begin_break_replication(TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, volumeName2)
-        wait_for_replication_status(self.client, "Mirrored", dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=volumeName2, live=self.is_live)
+        self.client.volumes.begin_break_replication(TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, dbVolumeName)
+        wait_for_replication_status(self.client, "Mirrored", dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=dbVolumeName, live=self.is_live)
         if self.is_live:
             time.sleep(30)
 
         # delete the data protection object
         #  - initiate delete replication on destination, this then releases on source, both resulting in object deletion
-        self.client.volumes.begin_delete_replication(TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, volumeName2)
+        self.client.volumes.begin_delete_replication(TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, dbVolumeName)
 
         replication_found = True  # because it was previously present
         while replication_found:
             try:
-                self.client.volumes.replication_status(TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, volumeName2)
+                self.client.volumes.replication_status(TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, dbVolumeName)
             except:
                 # an exception means the replication was not found
                 # i.e. it has been deleted
@@ -353,7 +353,7 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         # python isn't good at do-while loops but loop until we get volumes in succeeded state
         while True:
             source_volume = self.client.volumes.get(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1)
-            dp_volume = self.client.volumes.get(TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, volumeName2)
+            dp_volume = self.client.volumes.get(TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, dbVolumeName)
             if (source_volume.provisioning_state == "Succeeded") and (dp_volume.provisioning_state == "Succeeded") and \
                     (source_volume.data_protection.replication is None) and \
                     (dp_volume.data_protection.replication is None):
@@ -364,13 +364,13 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         # now proceed with the delete of the volumes and tidy up resources
 
         # delete destination volume
-        delete_volume(self.client, TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, volumeName2, live=self.is_live)
+        delete_volume(self.client, TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, dbVolumeName, live=self.is_live)
         delete_pool(self.client, TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, live=self.is_live)
         delete_account(self.client, TEST_REPL_REMOTE_RG, ACCOUNT2, live=self.is_live)
 
         # delete source volume
         delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, live=self.is_live)
-        delete_pool(self.client, TEST_RG, ACCOUNT1, volumeName1, live=self.is_live)
+        delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)
         self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
         self.network_client.virtual_networks.begin_delete(TEST_REPL_REMOTE_RG, dpVNET_NAME)
@@ -457,7 +457,7 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_pool_change(self):
         set_bodiless_matcher()
-        print("Starting test_create_delete_list_volume...")
+        print("Starting test_pool_change...")
         ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
         volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
         VNETNAME = self.get_resource_name(VNET+"-")

@@ -5,7 +5,7 @@
 #  - vnet must exist
 
 LOCATION = 'westus2'
-REMOTE_LOCATION = 'eastus2euap'
+REMOTE_LOCATION = 'eastus2'
 TEST_RG = 'sdk-python-tests-rg'
 TEST_REPL_REMOTE_RG = 'sdk-python-tests-rg-R'
 TEST_ACC_1 = 'sdk-py-tests-acc-1'
