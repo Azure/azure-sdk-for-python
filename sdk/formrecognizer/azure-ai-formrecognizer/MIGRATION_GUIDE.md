@@ -1,8 +1,8 @@
 # Guide for migrating azure-ai-formrecognizer to version 3.2.x from versions 3.1.x and below
 
-This guide is intended to assist in the migration to `azure-ai-formrecognizer (3.2.x)` from versions `3.1.x` and below. It will focus on side-by-side comparisons for similar operations between versions. Please note that version `3.2.0b5` will be used for comparison with `3.1.2`. 
+This guide is intended to assist in the migration to `azure-ai-formrecognizer (3.2.x)` from versions `3.1.x` and below. It will focus on side-by-side comparisons for similar operations between versions. Please note that version `3.2.0b6` will be used for comparison with `3.1.2`. 
 
-> NOTE: Please read the [CHANGELOG][changelog] to see important changes that have occurred since version `3.2.0b5` of the SDK.
+> NOTE: Please read the [CHANGELOG][changelog] to see important changes that have occurred since version `3.2.0b6` of the SDK.
 
 Familiarity with `azure-ai-formrecognizer (3.1.x and below)` package is assumed. For those new to the Azure Form Recognizer client library for Python please refer to the [README][readme] rather than this guide.
 
@@ -644,7 +644,7 @@ Use `begin_build_model()` to build a custom model. Please note that this method 
 ```python
 document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
 poller = document_model_admin_client.begin_build_model(
-    container_sas_url, "template", model_id="my-model-id", description="my model description"
+    "template", container_sas_url, model_id="my-model-id", description="my model description"
 )
 model = poller.result()
 
