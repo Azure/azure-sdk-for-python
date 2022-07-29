@@ -657,8 +657,8 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [cosmos_resources]: https://docs.microsoft.com/azure/cosmos-db/databases-containers-items
 [cosmos_sql_queries]: https://docs.microsoft.com/azure/cosmos-db/how-to-sql-query
 [cosmos_ttl]: https://docs.microsoft.com/azure/cosmos-db/time-to-live
-[cosmos_integrated_cache]: https://docs.microsoft.com/en-us/azure/cosmos-db/integrated-cache
-[cosmos_configure_integrated_cache]: https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-configure-integrated-cache
+[cosmos_integrated_cache]: https://docs.microsoft.com/azure/cosmos-db/integrated-cache
+[cosmos_configure_integrated_cache]: https://docs.microsoft.com/azure/cosmos-db/how-to-configure-integrated-cache
 [python]: https://www.python.org/downloads/
 [ref_container_delete_item]: https://aka.ms/azsdk-python-cosmos-ref-delete-item
 [ref_container_query_items]: https://aka.ms/azsdk-python-cosmos-ref-query-items
