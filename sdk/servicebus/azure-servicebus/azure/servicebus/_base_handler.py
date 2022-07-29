@@ -12,11 +12,11 @@ from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKe
 from azure.core.pipeline.policies import RetryMode
 
 try:
-    from urllib.parse import quote_plus, urlparse
+    from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse  # type: ignore
 
-from ._pyamqp import utils as utils
+from ._pyamqp.utils import generate_sas_token
 from ._pyamqp.message import Message, Properties
 
 from ._common._configuration import Configuration
@@ -143,7 +143,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
         expiry = timedelta(hours=1)  # Default to 1 hour.
 
     abs_expiry = int(time.time()) + expiry.seconds
-    token = utils.generate_sas_token(uri, policy, key, abs_expiry).encode("UTF-8")
+    token = generate_sas_token(uri, policy, key, abs_expiry).encode("UTF-8")
     return AccessToken(token=token, expires_on=abs_expiry)
 
 def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
@@ -493,7 +493,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             )
             return callback(status, response, description)
         except Exception as exp:  # pylint: disable=broad-except
-            if isinstance(exp, compat.TimeoutException):
+            if isinstance(exp, TimeoutError): #TODO: was compat.TimeoutException
                 raise OperationTimeoutError(error=exp)
             raise
 

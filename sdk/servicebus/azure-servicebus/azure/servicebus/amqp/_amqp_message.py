@@ -179,7 +179,7 @@ class AmqpAnnotatedMessage(object):
         self._delivery_annotations = delivery_annotations
 
     def __str__(self) -> str:
-        if self.body_type == AmqpMessageBodyType.DATA:
+        if self.body_type == AmqpMessageBodyType.DATA: # pylint:disable=no-else-return
             return "".join(d.decode(self._encoding) for d in self._data_body)
         elif self.body_type == AmqpMessageBodyType.SEQUENCE:
             return str(self._sequence_body)
@@ -347,7 +347,7 @@ class AmqpAnnotatedMessage(object):
 
         :rtype: Any
         """
-        if self.body_type == AmqpMessageBodyType.DATA:
+        if self.body_type == AmqpMessageBodyType.DATA: # pylint:disable=no-else-return
             return (i for i in self._data_body)
         elif self.body_type == AmqpMessageBodyType.SEQUENCE:
             return (i for i in self._sequence_body)
