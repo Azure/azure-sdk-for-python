@@ -231,10 +231,17 @@ class _PerfStressRunner:
         self._operation_status_tracker = total_operations
         self.logger.info("{}\t\t{}\t\t{:.2f}".format(current_operations, total_operations, average_operations))
 
+    # Formats a number with a minimum number of significant digits.
+    # Digits to the left of the decimal point are always significant.
+    # Examples:
+    # - _format_number(0, 4) -> "0.000"
+    # - _format_number(12345, 4) -> "12,345"
+    # - _format_number(1.2345, 4) -> "1.235"
+    # - _format_number(0.00012345, 4) -> "0.0001235"
     def _format_number(self, value, min_significant_digits):
-        # Signficant digits are undefined for the number zero, so hardcode to string "0".
+        # Special case since log(0) is undefined
         if value == 0:
-            return "0"
+            return ("{:." + str(min_significant_digits - 1) + "f}").format(value)
 
         log = math.log10(abs(value))
         significant_digits = max(math.ceil(log), min_significant_digits)
