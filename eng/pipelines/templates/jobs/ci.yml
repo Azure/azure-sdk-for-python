@@ -199,7 +199,7 @@ jobs:
             GenerateVMJobs: true
       PreGenerationSteps:
         - script: |
-            pip install packaging==20.4
+            pip install tools/azure-sdk-tools[build]
           displayName: 'Prep Environment'
         - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
           parameters:
