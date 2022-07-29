@@ -1,5 +1,100 @@
 # Release History
 
+## 21.0.0 (2022-07-29)
+
+**Features**
+
+  - Added operation AdminRuleCollectionsOperations.begin_delete
+  - Added operation AdminRulesOperations.begin_delete
+  - Added operation AzureFirewallsOperations.begin_list_learned_prefixes
+  - Added operation ConnectivityConfigurationsOperations.begin_delete
+  - Added operation NetworkGroupsOperations.begin_delete
+  - Added operation NetworkManagementClientOperationsMixin.express_route_provider_port
+  - Added operation NetworkManagementClientOperationsMixin.list_active_connectivity_configurations
+  - Added operation NetworkManagementClientOperationsMixin.list_active_security_admin_rules
+  - Added operation NetworkManagementClientOperationsMixin.list_network_manager_effective_connectivity_configurations
+  - Added operation NetworkManagementClientOperationsMixin.list_network_manager_effective_security_admin_rules
+  - Added operation NetworkManagerCommitsOperations.begin_post
+  - Added operation NetworkManagersOperations.begin_delete
+  - Added operation NetworkManagersOperations.patch
+  - Added operation NetworkSecurityPerimetersOperations.check_members
+  - Added operation NetworkSecurityPerimetersOperations.query
+  - Added operation SecurityAdminConfigurationsOperations.begin_delete
+  - Added operation group ExpressRouteProviderPortsLocationOperations
+  - Added operation group ManagementGroupNetworkManagerConnectionsOperations
+  - Added operation group NspAccessRulesReconcileOperations
+  - Added operation group NspAssociationsProxyOperations
+  - Added operation group ScopeConnectionsOperations
+  - Added operation group StaticMembersOperations
+  - Added operation group SubscriptionNetworkManagerConnectionsOperations
+  - Model ApplicationGatewayRoutingRule has a new parameter priority
+  - Model CustomIpPrefix has a new parameter no_internet_advertise
+  - Model FirewallPolicy has a new parameter explicit_proxy
+  - Model FirewallPolicySNAT has a new parameter auto_learn_private_ranges
+  - Model NetworkManagerPropertiesNetworkManagerScopes has a new parameter cross_tenant_scopes
+  - Model NetworkSecurityGroup has a new parameter flush_connection
+  - Model NetworkSecurityPerimeter has a new parameter perimeter_guid
+  - Model PacketCapture has a new parameter scope
+  - Model PacketCapture has a new parameter target_type
+  - Model PacketCaptureParameters has a new parameter scope
+  - Model PacketCaptureParameters has a new parameter target_type
+  - Model PacketCaptureResult has a new parameter scope
+  - Model PacketCaptureResult has a new parameter target_type
+  - Model PacketCaptureResultProperties has a new parameter scope
+  - Model PacketCaptureResultProperties has a new parameter target_type
+  - Model VirtualHub has a new parameter virtual_router_auto_scale_configuration
+
+**Breaking changes**
+
+  - Model ActiveBaseSecurityAdminRule no longer has parameter configuration_display_name
+  - Model ActiveBaseSecurityAdminRule no longer has parameter rule_collection_display_name
+  - Model ActiveConnectivityConfiguration no longer has parameter display_name
+  - Model ActiveDefaultSecurityAdminRule no longer has parameter configuration_display_name
+  - Model ActiveDefaultSecurityAdminRule no longer has parameter display_name
+  - Model ActiveDefaultSecurityAdminRule no longer has parameter rule_collection_display_name
+  - Model ActiveSecurityAdminRule no longer has parameter configuration_display_name
+  - Model ActiveSecurityAdminRule no longer has parameter display_name
+  - Model ActiveSecurityAdminRule no longer has parameter rule_collection_display_name
+  - Model AdminRule no longer has parameter display_name
+  - Model ConfigurationGroup no longer has parameter conditional_membership
+  - Model ConfigurationGroup no longer has parameter display_name
+  - Model ConfigurationGroup no longer has parameter group_members
+  - Model ConfigurationGroup no longer has parameter member_type
+  - Model ConnectivityConfiguration no longer has parameter display_name
+  - Model DefaultAdminRule no longer has parameter display_name
+  - Model EffectiveBaseSecurityAdminRule no longer has parameter configuration_display_name
+  - Model EffectiveBaseSecurityAdminRule no longer has parameter rule_collection_display_name
+  - Model EffectiveConnectivityConfiguration no longer has parameter display_name
+  - Model EffectiveDefaultSecurityAdminRule no longer has parameter configuration_display_name
+  - Model EffectiveDefaultSecurityAdminRule no longer has parameter display_name
+  - Model EffectiveDefaultSecurityAdminRule no longer has parameter rule_collection_display_name
+  - Model EffectiveSecurityAdminRule no longer has parameter configuration_display_name
+  - Model EffectiveSecurityAdminRule no longer has parameter display_name
+  - Model EffectiveSecurityAdminRule no longer has parameter rule_collection_display_name
+  - Model FirewallPolicy no longer has parameter explicit_proxy_settings
+  - Model NetworkGroup no longer has parameter conditional_membership
+  - Model NetworkGroup no longer has parameter display_name
+  - Model NetworkGroup no longer has parameter group_members
+  - Model NetworkGroup no longer has parameter member_type
+  - Model NetworkManager no longer has parameter display_name
+  - Model NetworkSecurityPerimeter no longer has parameter description
+  - Model NetworkSecurityPerimeter no longer has parameter display_name
+  - Model NetworkSecurityPerimeter no longer has parameter etag
+  - Model NspProfile no longer has parameter enabled_log_categories
+  - Parameter commit_type of model NetworkManagerCommit is now required
+  - Parameter group_connectivity of model ConnectivityGroupItem is now required
+  - Parameter network_group_id of model ConnectivityGroupItem is now required
+  - Parameter network_group_id of model NetworkManagerSecurityGroupItem is now required
+  - Parameter target_locations of model NetworkManagerCommit is now required
+  - Removed operation AdminRuleCollectionsOperations.delete
+  - Removed operation AdminRulesOperations.delete
+  - Removed operation ConnectivityConfigurationsOperations.delete
+  - Removed operation NetworkGroupsOperations.delete
+  - Removed operation NetworkManagerCommitsOperations.post
+  - Removed operation NetworkManagersOperations.delete
+  - Removed operation NetworkManagersOperations.patch_tags
+  - Removed operation SecurityAdminConfigurationsOperations.delete
+
 ## 20.0.0 (2022-05-10)
 
 **Features**

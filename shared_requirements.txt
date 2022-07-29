@@ -347,7 +347,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-reservations azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-chaos azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-network msrest>=0.6.21
-#override azure-mgmt-network azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-network azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-redhatopenshift msrest>=0.6.21
 #override azure-mgmt-redhatopenshift azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-appcontainers msrest>=0.6.21
