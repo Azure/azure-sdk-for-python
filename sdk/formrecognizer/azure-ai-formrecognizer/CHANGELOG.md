@@ -9,6 +9,7 @@
 - Renamed `begin_create_composed_model()` on `DocumentModelAdministrationClient` to `begin_compose_model()`.
 - Renamed `get_account_info()` on `DocumentModelAdministrationClient` to `get_resource_details()`.
 - Renamed `AccountInfo` model to `ResourceDetails`.
+- Renamed `DocTypeInfo` model to `DocTypeDetails`.
 - Renamed `DocumentModelInfo` model to `DocumentModelSummary`.
 - Renamed `DocumentModel` to `DocumentModelDetails`.
 - Renamed `ModelOperation` to `ModelOperationDetails`.
