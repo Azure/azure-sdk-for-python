@@ -191,14 +191,14 @@ jobs:
     parameters:
       JobTemplatePath: /eng/pipelines/templates/jobs/regression.yml
       GenerateJobName: generate_regression_matrix
-      SparseCheckoutPaths: [ "scripts/", "sdk/" ]
+      SparseCheckoutPaths: [ "scripts/", "sdk/", "tools/azure-sdk-tools/" ]
       MatrixConfigs:
           - Name: Python_regression_envs
             Path: eng/pipelines/templates/stages/regression-job-matrix.json
             Selection: sparse
             GenerateVMJobs: true
       PreGenerationSteps:
-        - script: |
+        - pwsh: |
             pip install "./tools/azure-sdk-tools[build]"
           displayName: 'Prep Environment'
         - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
