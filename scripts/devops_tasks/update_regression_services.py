@@ -11,6 +11,7 @@ import json
 
 import pkg_resources
 from test_regression import find_package_dependency, AZURE_GLOB_STRING
+
 from ci_tools.functions import discover_targeted_packages
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
@@ -63,7 +64,7 @@ if __name__ == "__main__":
         target_dir = root_dir
 
     targeted_packages = [
-        os.path.basename(path_name) for path_name in discovered_targeted_packages(args.glob_string, target_dir, "", "Regression")
+        os.path.basename(path_name) for path_name in discover_targeted_packages(args.glob_string, target_dir, "", "Regression")
     ]
     deps = find_package_dependency(AZURE_GLOB_STRING, root_dir, "")
     package_set = []
