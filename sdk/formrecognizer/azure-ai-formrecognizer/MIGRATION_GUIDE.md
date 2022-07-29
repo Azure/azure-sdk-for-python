@@ -61,7 +61,7 @@ Some terminology has changed to reflect the enhanced capabilities of the newest 
 
 We continue to support API key and AAD authentication methods when creating the clients. Below are the differences between the two versions:
 
-- In `3.2.x`, we have added `DocumentAnalysisClient` and `DocumentModelAdministrationClient` which support API version `2021-09-30-preview` and later.
+- In `3.2.x`, we have added `DocumentAnalysisClient` and `DocumentModelAdministrationClient` which support API version `2022-06-30-preview` and later.
 - `FormRecognizerClient` and `FormTrainingClient` will continue to work targeting API versions `2.1` and `2.0`.
 - In `DocumentAnalysisClient` all prebuilt model methods along with custom model, layout, and a prebuilt general document analysis model are unified into two methods called
 `begin_analyze_document` and `begin_analyze_document_from_url`.
