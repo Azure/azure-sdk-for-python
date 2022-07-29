@@ -11,8 +11,7 @@ import warnings
 from io import BytesIO
 from typing import Generic, Iterator, TypeVar
 
-import requests
-from azure.core.exceptions import HttpResponseError, ServiceResponseError
+from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError
 from azure.core.tracing.common import with_current_context
 
 from ._shared.request_handlers import validate_and_format_range_headers
@@ -213,10 +212,10 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                 try:
                     chunk_data = process_content(response, offset[0], offset[1], self.encryption_options)
                     retry_active = False
-                except (requests.exceptions.ChunkedEncodingError, requests.exceptions.ConnectionError) as error:
+                except (IncompleteReadError, HttpResponseError, DecodeError) as error:
                     retry_total -= 1
                     if retry_total <= 0:
-                        raise ServiceResponseError(error, error=error)
+                        raise HttpResponseError(error, error=error)
                     time.sleep(1)
 
             # This makes sure that if_match is set so that we can validate
@@ -474,10 +473,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                         self._encryption_options
                     )
                 retry_active = False
-            except (requests.exceptions.ChunkedEncodingError, requests.exceptions.ConnectionError) as error:
+            except (IncompleteReadError, HttpResponseError, DecodeError) as error:
                 retry_total -= 1
                 if retry_total <= 0:
-                    raise ServiceResponseError(error, error=error)
+                    raise HttpResponseError(error, error=error)
                 time.sleep(1)
 
         # get page ranges to optimize downloading sparse page blob
