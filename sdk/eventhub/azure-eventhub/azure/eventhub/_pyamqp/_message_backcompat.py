@@ -50,10 +50,10 @@ class LegacyMessage(object):
         self.delivery_no = kwargs.get('delivery_no')
         self.delivery_tag = kwargs.get('delivery_tag') or None
         self.on_send_complete = None
-        self.properties = LegacyMessageProperties(self._message.properties)
+        self.properties = LegacyMessageProperties(self._message.properties) if self._message.properties else None
         self.application_properties = self._message.application_properties
         self.annotations = self._message.annotations
-        self.header = LegacyMessageHeader(self._message.header)
+        self.header = LegacyMessageHeader(self._message.header) if self._message.header else None
         self.footer = self._message.footer
         self.delivery_annotations = self._message.delivery_annotations
         if self._settler:

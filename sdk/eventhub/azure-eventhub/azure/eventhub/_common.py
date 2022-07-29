@@ -233,6 +233,12 @@ class EventData(object):
             )
         return self._uamqp_message
 
+    # TODO: make message property mutable
+    @message.setter
+    def message(self, value: Union["uamqp_Message", Message]) -> None:
+        self._message = value
+        self._raw_amqp_message = AmqpAnnotatedMessage(message=value)
+
     @property
     def raw_amqp_message(self) -> AmqpAnnotatedMessage:
         """Advanced usage only. The internal AMQP message payload that is sent or received."""

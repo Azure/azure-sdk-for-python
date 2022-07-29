@@ -9,9 +9,11 @@ import threading
 import pytest
 import time
 import datetime
+import uamqp
 
 from azure.eventhub import EventData, TransportType, EventHubConsumerClient
 from azure.eventhub.exceptions import EventHubError
+from azure.eventhub._pyamqp.message import Properties
 from ..._test_case import get_decorator
 
 uamqp_transport_vals = get_decorator()
@@ -106,6 +108,35 @@ def test_receive_with_event_position_sync(uamqp_transport, connstr_senders, posi
         assert on_event.event.body_as_str() == expected_result
 
     thread.join()
+
+# TODO: after fixing message property mutability, test
+#@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
+#@pytest.mark.liveTest
+#def test_receive_modify_message_resend_sync(uamqp_transport, connstr_senders):
+#    received_modified = [False]
+#    def on_event(partition_context, event):
+#        message = event.message
+#        if message.properties.message_id == b'a1':
+#            message.properties.message_id = 'a2'
+#            senders[0].send(event)
+#        elif message.properties.message_id == b'a2':
+#            received_modified = [True]
+#
+#    connection_str, senders = connstr_senders
+#    event = EventData("A", message_id='a1')
+#    senders[0].send(event)
+#    client = EventHubConsumerClient.from_connection_string(
+#        connection_str, consumer_group='$default', uamqp_transport=uamqp_transport
+#    )
+#    with client:
+#        thread = threading.Thread(target=client.receive, args=(on_event,),
+#                                  kwargs={"partition_id": "0", "starting_position": "-1"})
+#        thread.daemon = True
+#        thread.start()
+#        time.sleep(10)
+#        assert received_modified[0]
+#    thread.join()
+
 
 @pytest.mark.parametrize("uamqp_transport",
                          uamqp_transport_vals)
