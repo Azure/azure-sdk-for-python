@@ -16,7 +16,7 @@ try:
 except ImportError:
     from urlparse import urlparse  # type: ignore
 
-from ._pyamqp import error as utils
+from ._pyamqp import utils as utils
 from ._pyamqp.message import Message, Properties
 
 from ._common._configuration import Configuration

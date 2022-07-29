@@ -15,6 +15,7 @@ from ._pyamqp.error import (
     AMQPException,
     RetryPolicy,
     AMQPConnectionError, 
+    AuthenticationException,
 )
 
 from ._common.constants import (
@@ -44,7 +45,16 @@ def _handle_amqp_exception_with_condition(
         condition,
         description,
     )
-    if condition == ErrorCondition.NotFound:
+    if isinstance(exception, AuthenticationException):
+        logger.info("AMQP Connection authentication error occurred: (%r).", exception)
+        error_cls = ServiceBusAuthenticationError
+    # elif isinstance(exception, AMQPErrors.MessageException):
+    #     logger.info("AMQP Message error occurred: (%r).", exception)
+    #     if isinstance(exception, AMQPErrors.MessageAlreadySettled):
+    #         error_cls = MessageAlreadySettled
+    #     elif isinstance(exception, AMQPErrors.MessageContentTooLarge):
+    #         error_cls = MessageSizeExceededError
+    elif condition == ErrorCondition.NotFound:
         # handle NotFound error code
         error_cls = (
             ServiceBusCommunicationError
@@ -54,7 +64,7 @@ def _handle_amqp_exception_with_condition(
     elif condition == ErrorCondition.ClientError and "timed out" in str(exception):
         # handle send timeout
         error_cls = OperationTimeoutError
-    elif condition == ErrorCondition.UnknownError and isinstance(exception, AMQPConnectionError):
+    elif condition == ErrorCondition.UnknownError or isinstance(exception, AMQPConnectionError):
         error_cls = ServiceBusConnectionError
     else:
         # handle other error codes
@@ -71,30 +81,6 @@ def _handle_amqp_exception_with_condition(
     else:
         error._retryable = True # pylint: disable=protected-access
 
-    return error
-
-
-def _handle_amqp_exception_without_condition(logger, exception):
-    error_cls = ServiceBusError
-    if isinstance(exception, AMQPConnectionError):
-        logger.info("AMQP Connection error occurred: (%r).", exception)
-        error_cls = ServiceBusConnectionError
-    # TODO: AMQPError fix
-    # elif isinstance(exception, AMQPErrors.AuthenticationException):
-    #     logger.info("AMQP Connection authentication error occurred: (%r).", exception)
-    #     error_cls = ServiceBusAuthenticationError
-    # elif isinstance(exception, AMQPErrors.MessageException):
-    #     logger.info("AMQP Message error occurred: (%r).", exception)
-    #     if isinstance(exception, AMQPErrors.MessageAlreadySettled):
-    #         error_cls = MessageAlreadySettled
-    #     elif isinstance(exception, AMQPErrors.MessageContentTooLarge):
-    #         error_cls = MessageSizeExceededError
-    else:
-        logger.info(
-            "Unexpected AMQP error occurred (%r). Handler shutting down.", exception
-        )
-
-    error = error_cls(message=str(exception), error=exception)
     return error
 
 
@@ -115,17 +101,12 @@ def _handle_amqp_mgmt_error(
 
 def _create_servicebus_exception(logger, exception):
     if isinstance(exception, AMQPException):
-        try:
-            # handling AMQP Errors that have the condition field
-            condition = exception.condition
-            description = exception.description
-            exception = _handle_amqp_exception_with_condition(
-                logger, condition, description, exception=exception
-            )
-        except AttributeError:
-            # TODO: This can no longer happen, pending full error review.
-            # handling AMQP Errors that don't have the condition field
-            exception = _handle_amqp_exception_without_condition(logger, exception)
+        # handling AMQP Errors that have the condition field
+        condition = exception.condition
+        description = exception.description
+        exception = _handle_amqp_exception_with_condition(
+            logger, condition, description, exception=exception
+        )
     elif not isinstance(exception, ServiceBusError):
         logger.exception(
             "Unexpected error occurred (%r). Handler shutting down.", exception

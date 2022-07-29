@@ -83,6 +83,8 @@ class ReceiverLink(Link):
                 self._received_payload = bytearray()
             else:
                 message = decode_payload(frame[11])
+                if self.network_trace:
+                    _LOGGER.info("   %r", message, extra=self.network_trace_params)
             delivery_state = self._process_incoming_message(frame, message)
             if not frame[4] and delivery_state:  # settled
                 self._outgoing_disposition(first=frame[1], settled=True, state=delivery_state)

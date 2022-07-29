@@ -267,7 +267,7 @@ class AmqpAnnotatedMessage(object):
                 priority=self.header.priority,
                 ttl=self.header.time_to_live,
                 first_acquirer=self.header.first_acquirer,
-                delivery_count=self.header.delivery_count
+                delivery_count=self.header.delivery_count if self.header.delivery_count is not None else 0
             )
 
             if self.header.time_to_live and self.header.time_to_live != MAX_DURATION_VALUE:

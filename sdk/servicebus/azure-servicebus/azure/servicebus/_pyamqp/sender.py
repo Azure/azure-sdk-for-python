@@ -100,6 +100,7 @@ class SenderLink(Link):
         if self.network_trace:
             # TODO: whether we should move frame tracing into centralized place e.g. connection.py
             _LOGGER.info("-> %r", TransferFrame(delivery_id='<pending>', **delivery.frame), extra=self.network_trace_params) # pylint:disable=line-to-long
+            _LOGGER.info("   %r", delivery.message, extra=self.network_trace_params)
         self._session._outgoing_transfer(delivery) # pylint:disable=protected-access
         if delivery.transfer_state == SessionTransferState.OKAY:
             self.delivery_count = delivery_count

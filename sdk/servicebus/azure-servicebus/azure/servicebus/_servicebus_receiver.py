@@ -343,7 +343,6 @@ class ServiceBusReceiver(
             hostname += '/$servicebus/websocket/'
             if custom_endpoint_address:
                 custom_endpoint_address += '/$servicebus/websocket/'
-
         self._handler = ReceiveClient(
             hostname,
             self._get_source(),
@@ -356,7 +355,7 @@ class ServiceBusReceiver(
             receive_settle_mode=ServiceBusToAMQPReceiveModeMap[self._receive_mode],
             send_settle_mode=SenderSettleMode.Settled
             if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
-            else None,
+            else SenderSettleMode.Unsettled,
             timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
             prefetch=self._prefetch_count,
             # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages

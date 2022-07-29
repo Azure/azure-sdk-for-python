@@ -30,6 +30,7 @@ _logger = get_logger(logging.DEBUG)
 
 
 class ServiceBusSubscriptionTests(AzureMgmtTestCase):
+    @pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -71,6 +72,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                     receiver.complete_message(message)
             assert count == 1
 
+    @pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -124,6 +126,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
         assert subs[0].name == servicebus_subscription.name
         assert subs[0].topic_name == servicebus_topic.name
 
+    @pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')

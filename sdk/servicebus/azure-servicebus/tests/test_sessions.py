@@ -1016,7 +1016,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     count += 1
                 assert len(messages) == 0
 
-
+    @pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
