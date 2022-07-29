@@ -557,7 +557,7 @@ An integrated cache is an in-memory cache that helps you ensure manageable costs
 
 The benefit of using this is that the point reads and queries that hit the integrated cache won't use any RUs. This means you will have a much lower per-operation cost than reads from the backend.
 
-How to configure integrated cache on your Azure Cosmos DB account: [How to configure the Azure Cosmos DB integrated cache (Preview)][cosmos_configure_integrated_cache]
+[How to configure the Azure Cosmos DB integrated cache (Preview)][cosmos_configure_integrated_cache]
 
 ```Python
 import azure.cosmos.cosmos_client as cosmos_client
