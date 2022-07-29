@@ -10,6 +10,7 @@ import pytest
 
 from azure.core.exceptions import (
     HttpResponseError,
+    IncompleteReadError,
     ResourceExistsError,
     AzureError,
     ClientAuthenticationError,
@@ -33,6 +34,7 @@ from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 from aiohttp.client_exceptions import ClientPayloadError
 from aiohttp.streams import StreamReader
+from aiohttp.client import ClientResponse
 
 class AiohttpTestTransport(AioHttpTransport):
     """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
@@ -484,9 +486,7 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_streaming_retry_async(self, storage_account_name, storage_account_key):
         """Test that retry mechanisms are working when streaming data."""
-        # Should check that multiple requests went through the pipeline
-        from uuid import uuid4
-        container_name = self.get_resource_name('utcontainer') + uuid4().hex
+        container_name = self.get_resource_name('utcontainer') 
         retry = LinearRetry(backoff = 0.1, random_jitter_range=0)
 
         service = self._create_storage_service(
@@ -506,5 +506,6 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
             count = [0]
             blob._pipeline._transport.send = self._count_wrapper(count, blob._pipeline._transport.send)
             await blob.download_blob()
-        assert stream_reader_read_mock.call_count == count[0] == 4
+            assert stream_reader_read_mock.call_count == count[0] == 4
+
 # ------------------------------------------------------------------------------
