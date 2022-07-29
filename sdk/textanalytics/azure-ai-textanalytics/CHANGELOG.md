@@ -10,6 +10,7 @@
 - Added property `details` on returned poller objects which contain long-running operation metadata.
 - Added `TextAnalysisLROPoller` and `AsyncTextAnalysisLROPoller` protocols to describe the return types from long-running operations.
 - Added `cancel` method on the poller objects. Call it to cancel a long-running operation that's in progress.
+- Added `kind` to *Result types and to `DocumentError`.
 
 ### Breaking Changes
 
