@@ -2,10 +2,14 @@
 
 ## 12.14.0b1 (Unreleased)
 
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
+
 ### Features Added
+- Added support for `AzureNamedKeyCredential` as a valid `credential` type.
 
 ### Bugs Fixed
-- Removed forced `aiohttp` import from storage async download. (#24965)
+- Removed dead retry meachism from async `azure.storage.blob.aio.StorageStreamDownloader`
+- Updated exception catching of `azure.storage.blob.StorageStreamDownloader`'s retry mechanism.
 - Adjusted type hints for `upload_blob` and `StorageStreamDownloader.readall`.
 
 ## 12.13.0 (2022-07-07)

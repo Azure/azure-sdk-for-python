@@ -7,14 +7,18 @@
 
 ### Breaking Changes
 - Renamed `begin_create_composed_model()` on `DocumentModelAdministrationClient` to `begin_compose_model()`.
-- Renamed `get_account_info()` on `DocumentModelAdministrationClient` to `get_resource_info()`.
-- Renamed `AccountInfo` model to `ResourceInfo`.
+- Renamed `get_account_info()` on `DocumentModelAdministrationClient` to `get_resource_details()`.
+- Renamed `AccountInfo` model to `ResourceDetails`.
+- Renamed `DocTypeInfo` model to `DocTypeDetails`.
 - Renamed `DocumentModelInfo` model to `DocumentModelSummary`.
-- Renamed `DocumentModel` to `DocumentModelInfo`.
+- Renamed `DocumentModel` to `DocumentModelDetails`.
+- Renamed `ModelOperation` to `ModelOperationDetails`.
+- Renamed `ModelOperationInfo` to `ModelOperationSummary`.
 - Renamed `model` parameter to `model_id` on `begin_analyze_document()` and `begin_analyze_document_from_url()`.
 - Removed `continuation_token` keyword from `begin_analyze_document()` and `begin_analyze_document_from_url()` on `DocumentAnalysisClient` and from `begin_build_model()`, `begin_compose_model()` and `begin_copy_model_to()` on `DocumentModelAdministrationClient`.
 - Changed return type of `get_copy_authorization()` from `dict[str, str]` to `TargetAuthorization`.
 - Changed expected `target` parameter in `begin_copy_to()` from `dict[str, str]` to `TargetAuthorization`.
+- Long-running operation metadata is now accessible through the `details` property on the returned `DocumentModelAdministrationLROPoller` and `AsyncDocumentModelAdministrationLROPoller` instances.
 
 ### Bugs Fixed
 
