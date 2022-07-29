@@ -4,8 +4,4 @@
 # ------------------------------------
 
 def get_decorator():
-    try:
-        import uamqp
-    except (ImportError, ModuleNotFoundError):
-        return [False]
-    return [True, False]
+    return [True]

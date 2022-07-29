@@ -52,16 +52,12 @@ from .amqp import (
     AmqpMessageHeader,
     AmqpMessageProperties,
 )
-from ._pyamqp.message import Message
-from ._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
-from ._transport._pyamqp_transport import PyamqpTransport
 
 if TYPE_CHECKING:
     try:
-        from uamqp import uamqp_Message
+        from uamqp import Message as uamqp_Message, BatchMessage as uamqp_BatchMessage
     except ImportError:
         uamqp_Message = None
-    import datetime
     from ._transport._base import AmqpTransport
 
 PrimitiveTypes = Optional[
@@ -124,7 +120,6 @@ class EventData(object):
         self._sys_properties = None  # type: Optional[Dict[bytes, Any]]
         if body is None:
             raise ValueError("EventData cannot be None.")
-        self._uamqp_message = None
 
         # Internal usage only for transforming AmqpAnnotatedMessage to outgoing EventData
         self._raw_amqp_message = AmqpAnnotatedMessage(  # type: ignore
@@ -140,7 +135,6 @@ class EventData(object):
     def __repr__(self) -> str:
         # pylint: disable=bare-except
         try:
-            # TODO: below call won't work b/c pyamqp.message.message doesn't have body_type
             body_str = self.body_as_str()
         except:
             body_str = "<read-error>"
@@ -191,7 +185,7 @@ class EventData(object):
     @classmethod
     def _from_message(
         cls,
-        message: Union["uamqp_Message", Message],
+        message: uamqp_Message,
         raw_amqp_message: Optional[AmqpAnnotatedMessage] = None,
     ) -> EventData:
         # pylint:disable=protected-access
@@ -225,17 +219,11 @@ class EventData(object):
         return str(decode_with_recurse(seq_list, encoding))
 
     @property
-    def message(self) -> LegacyMessage:
-        if not self._uamqp_message:
-            self._uamqp_message = LegacyMessage(
-                self._raw_amqp_message,
-                to_outgoing_amqp_message=PyamqpTransport().to_outgoing_amqp_message,
-            )
-        return self._uamqp_message
+    def message(self) -> uamqp_Message:
+        return self._message
 
-    # TODO: make message property mutable
     @message.setter
-    def message(self, value: Union["uamqp_Message", Message]) -> None:
+    def message(self, value: uamqp_Message) -> None:
         self._message = value
         self._raw_amqp_message = AmqpAnnotatedMessage(message=value)
 
@@ -524,7 +512,6 @@ class EventDataBatch(object):
         self._internal_events: List[
             Union[EventData, AmqpAnnotatedMessage]
         ] = []  # TODO: only used by uamqp
-        self._uamqp_message = None
 
     def __repr__(self) -> str:
         batch_repr = (
@@ -577,11 +564,12 @@ class EventDataBatch(object):
         return self._size
 
     @property
-    def message(self) -> LegacyBatchMessage:
-        if not self._uamqp_message:
-            message = AmqpAnnotatedMessage(message=Message(*self._message))
-            self._uamqp_message = LegacyBatchMessage(message)
-        return self._uamqp_message
+    def message(self) -> uamqp_BatchMessage:
+        return self._message
+
+    @message.setter
+    def message(self, value: uamqp_BatchMessage) -> None:
+        self._message = value
 
     def add(self, event_data: Union[EventData, AmqpAnnotatedMessage]) -> None:
         """Try to add an EventData to the batch.

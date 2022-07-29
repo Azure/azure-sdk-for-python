@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from __future__ import unicode_literals
+from __future__ import unicode_literals, annotations
 
 import logging
 import uuid
@@ -291,14 +291,14 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         credential: "CredentialTypes",
         **kwargs: Any,
     ) -> None:
-        self._uamqp_transport = kwargs.pop("uamqp_transport", False)
-        if not self._uamqp_transport:
-            self._amqp_transport = PyamqpTransport()
-        else:
+        self._uamqp_transport = kwargs.pop("uamqp_transport", True)
+        if self._uamqp_transport:
             try:
                 self._amqp_transport = UamqpTransport()
             except TypeError:
                 raise ImportError("uamqp package is not installed")
+        else:
+            self._amqp_transport = PyamqpTransport()
 
         self.eventhub_name = eventhub_name
         if not eventhub_name:
@@ -310,11 +310,6 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             self._credential = EventhubAzureSasTokenCredential(credential)
         elif isinstance(credential, AzureNamedKeyCredential):
             self._credential = EventhubAzureNamedKeyTokenCredential(credential)
-            # TODO: see if pyamqp generated token works for uamqp
-            # if self._uamqp_transport:
-            #    self._credential = UamqpTransport.create_named_key_token_credential(credential)  # type: ignore
-            # else:
-            #    raise NotImplementedError('pyamqp named key token credential')
         else:
             self._credential = credential  # type: ignore
         self._keep_alive = kwargs.get("keep_alive", 30)
@@ -340,9 +335,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         if token and token_expiry:
             kwargs["credential"] = EventHubSASTokenCredential(token, token_expiry)
         elif policy and key:
-            # TODO: see if pyamqp generated token works for uamqp. pyamqp by default here, else uamqp
             kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
-            # kwargs["credential"] = UamqpTransport.create_shared_key_credential(policy, key)
         return kwargs
 
     def _create_auth(self) -> Union["uamqp_JWTTokenAuth", "JWTTokenAuth"]:
@@ -361,7 +354,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 functools.partial(self._credential.get_token, self._auth_uri),
                 token_type=token_type,
                 config=self._config,
-                update_token=True,  # TODO: discarded by pyamqp transport
+                update_token=True,
             )
         return self._amqp_transport.create_token_auth(
             self._auth_uri,
@@ -418,7 +411,6 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 mgmt_client.open()
                 while not mgmt_client.client_ready():
                     time.sleep(0.05)
-                # TODO: below might not be needed
                 mgmt_msg.application_properties[
                     "security_token"
                 ] = self._amqp_transport.get_updated_token(mgmt_auth)
@@ -446,7 +438,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     )
                 if status_code in [
                     404
-                ]:  # TODO: make sure the error surfaced is the same across pyamqp and uamqp
+                ]:
                     return self._amqp_transport.get_error(
                         self._amqp_transport.CONNECTION_ERROR,
                         f"Management connection failed. Status code: {status_code}, Description: {description!r}",
