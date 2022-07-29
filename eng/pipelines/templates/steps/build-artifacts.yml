@@ -61,7 +61,7 @@ steps:
     condition: and(succeeded(),eq(variables['SetDevVersion'],'true'))
 
   - pwsh: |
-      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --devbuild="$(SetDevVersion)"
+      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}}
     displayName: 'Generate Packages'
 
   - script: |

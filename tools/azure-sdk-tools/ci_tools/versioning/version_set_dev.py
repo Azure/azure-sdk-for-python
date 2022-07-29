@@ -19,6 +19,7 @@ from ci_tools.versioning.version_shared import (
 )
 
 from ci_tools.variables import discover_repo_root
+from ci_tools.functions import process_requires
 
 MAX_R_DIGITS = 3
 
@@ -91,6 +92,7 @@ def version_set_dev_main() -> None:
             new_version = get_dev_version(target_package.version, build_id)
             print("{0}: {1} -> {2}".format(target_package.name, target_package.version, new_version))
 
+            process_requires(target_package.setup_filename)
             set_version_py(target_package.setup_filename, new_version)
             set_dev_classifier(target_package.setup_filename, new_version)
         except:
