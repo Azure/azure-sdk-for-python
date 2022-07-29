@@ -31,7 +31,7 @@ import os
 import asyncio
 
 
-async def sample_classify_document_single_label_async():
+async def sample_classify_document_single_label_async() -> None:
     # [START single_label_classify_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
@@ -71,12 +71,12 @@ async def sample_classify_document_single_label_async():
             document_results.append(page)
 
     for doc, classification_result in zip(document, document_results):
-        if not classification_result.is_error:
+        if classification_result.kind == "CustomDocumentClassification":
             classification = classification_result.classifications[0]
             print("The document text '{}' was classified as '{}' with confidence score {}.".format(
                 doc, classification.category, classification.confidence_score)
             )
-        else:
+        elif classification_result.kind == "DocumentError":
             print("Document text '{}' has an error with code '{}' and message '{}'".format(
                 doc, classification_result.code, classification_result.message
             ))

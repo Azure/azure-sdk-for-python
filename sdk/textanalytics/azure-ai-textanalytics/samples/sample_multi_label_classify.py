@@ -30,7 +30,7 @@ USAGE:
 import os
 
 
-def sample_classify_document_multi_label():
+def sample_classify_document_multi_label() -> None:
     # [START multi_label_classify]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
@@ -63,14 +63,14 @@ def sample_classify_document_multi_label():
 
     document_results = poller.result()
     for doc, classification_result in zip(document, document_results):
-        if not classification_result.is_error:
+        if classification_result.kind == "CustomDocumentClassification":
             classifications = classification_result.classifications
             print(f"\nThe movie plot '{doc}' was classified as the following genres:\n")
             for classification in classifications:
                 print("'{}' with confidence score {}.".format(
                     classification.category, classification.confidence_score
                 ))
-        else:
+        elif classification_result.kind == "DocumentError":
             print("Movie plot '{}' has an error with code '{}' and message '{}'".format(
                 doc, classification_result.code, classification_result.message
             ))
