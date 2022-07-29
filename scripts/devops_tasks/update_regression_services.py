@@ -66,7 +66,7 @@ if __name__ == "__main__":
     targeted_packages = [
         os.path.basename(path_name) for path_name in discover_targeted_packages(args.glob_string, target_dir, "", "Regression")
     ]
-    deps = find_package_dependency(AZURE_GLOB_STRING, root_dir, "")
+    deps = find_package_dependency(AZURE_GLOB_STRING, root_dir)
     package_set = []
 
     for key in list(deps.keys()):
