@@ -48,6 +48,7 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
@@ -64,6 +65,6 @@ setup(
             "azure.keyvault",
         ]
     ),
-    python_requires=">=3.7",
+    python_requires=">=3.6",
     install_requires=["azure-common~=1.1", "azure-core<2.0.0,>=1.20.0", "msrest>=0.6.21", "six>=1.11.0"],
 )
