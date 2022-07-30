@@ -5,7 +5,6 @@ from azure.mgmt.netapp.models import Volume, VolumePatch, ReplicationObject, Vol
 from test_pool import create_pool, delete_pool
 from test_account import delete_account
 from setup import *
-from azure.mgmt.network import NetworkManagementClient
 import azure.mgmt.netapp.models
 
 GIGABYTE = 1024 * 1024 * 1024
@@ -200,7 +199,9 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)
-        self.network_client = self.create_mgmt_client(NetworkManagementClient)
+        if self.is_live:
+            from azure.mgmt.network import NetworkManagementClient
+            self.network_client = self.create_mgmt_client(NetworkManagementClient)             
 
     # Before tests are run live a resource group needs to be created along with vnet and subnet
     # Note that when tests are run in live mode it is best to run one test at a time.
@@ -209,7 +210,8 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
         VNETNAME = self.get_resource_name(VNET+"-")
         print("Starting test_create_delete_list_volume...")
-        SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')
         set_bodiless_matcher()
         volume = create_volume(
             self.client,
@@ -237,7 +239,8 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         wait_for_no_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
         delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)
-        self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
+        if self.is_live:
+            self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
 
     @recorded_by_proxy
     def test_list_volumes(self):
@@ -246,7 +249,8 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
         volumeName2 = self.get_resource_name(TEST_VOL_2+"-")
         VNETNAME = self.get_resource_name(VNET+"-")
-        SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')
         set_bodiless_matcher()
         create_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, LOCATION, vnet=VNETNAME, live=self.is_live)
         create_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName2, LOCATION, vnet=VNETNAME, volume_only=True, live=self.is_live)
@@ -263,7 +267,8 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName2, live=self.is_live)
         delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)
-        self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
+        if self.is_live:
+            self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
 
     @recorded_by_proxy
     def test_volume_replication(self):
@@ -275,9 +280,9 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         dbVolumeName = self.get_resource_name(TEST_VOL_2+"-b2-")
         VNETNAME = self.get_resource_name(VNET+"-b2-")
         dpVNET_NAME = self.get_resource_name(REMOTE_VNET+"-b2-")
-        #create remote pool        
-        SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')
-        SUBNET2 = create_virtual_network(self.network_client, TEST_REPL_REMOTE_RG, REMOTE_LOCATION, dpVNET_NAME, 'default')
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')
+            SUBNET2 = create_virtual_network(self.network_client, TEST_REPL_REMOTE_RG, REMOTE_LOCATION, dpVNET_NAME, 'default')
         source_volume = create_volume(
             self.client,
             TEST_RG,
@@ -372,8 +377,9 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, live=self.is_live)
         delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)
-        self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
-        self.network_client.virtual_networks.begin_delete(TEST_REPL_REMOTE_RG, dpVNET_NAME)
+        if self.is_live:
+            self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
+            self.network_client.virtual_networks.begin_delete(TEST_REPL_REMOTE_RG, dpVNET_NAME)
 
     @recorded_by_proxy
     def test_get_volume_by_name(self):
@@ -382,8 +388,9 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
         volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
         VNETNAME = self.get_resource_name(VNET+"-")
-        #create remote pool        
-        SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')
+        #create remote pool
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')
 
         create_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, LOCATION, vnet=VNETNAME, live=self.is_live)
 
@@ -393,7 +400,8 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, live=self.is_live)
         delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)
-        self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
+        if self.is_live:
+            self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
 
     @recorded_by_proxy
     def test_update_volume(self):
@@ -403,7 +411,8 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
         VNETNAME = self.get_resource_name(VNET+"-")
         #create vnet
-        SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')                 
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')                 
         volume = create_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, LOCATION, vnet=VNETNAME, live=self.is_live)
         assert "Premium" == volume.service_level
         assert 100 * GIGABYTE == volume.usage_threshold
@@ -430,7 +439,8 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, live=self.is_live)
         delete_pool(self.client, TEST_RG, volumeName1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, volumeName1, live=self.is_live)
-        self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
+        if self.is_live:
+            self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
 
     @recorded_by_proxy
     def test_patch_volume(self):
@@ -439,7 +449,8 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
         volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
         VNETNAME = self.get_resource_name(VNET+"-")
-        SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')
         volume = create_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, LOCATION, vnet=VNETNAME, live=self.is_live)
         assert "Premium" == volume.service_level
         assert 100 * GIGABYTE == volume.usage_threshold
@@ -452,7 +463,8 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, live=self.is_live)
         delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)
-        self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
+        if self.is_live:
+            self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
 
     @recorded_by_proxy
     def test_pool_change(self):
@@ -461,7 +473,8 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
         volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
         VNETNAME = self.get_resource_name(VNET+"-")
-        SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')                 
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')                 
         volume = create_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, LOCATION, vnet=VNETNAME, live=self.is_live)
         pool2 = create_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_2, LOCATION, True)
         if self.is_live:
@@ -479,3 +492,5 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, live=self.is_live)
         delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_2, live=self.is_live)
         delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)
+        if self.is_live:
+            self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)

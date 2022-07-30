@@ -1,6 +1,5 @@
 import time
 from azure.mgmt.resource import ResourceManagementClient
-from azure.mgmt.network import NetworkManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
 from azure.mgmt.netapp.models import Backup, BackupPatch, VolumePatch
 from test_account import delete_account
@@ -84,22 +83,23 @@ def wait_for_backup_created(client, rg, account_name, pool_name, volume_name, ba
             break
 
 
-def clean_up(client, network_client, disable_bp=True, account_name=TEST_ACC_1, pool_name=TEST_POOL_1, volume_name=TEST_VOL_1, vnet=VNET, backup_name=TEST_BACKUP_1, live=False):
+def clean_up(self, disable_bp=True, account_name=TEST_ACC_1, pool_name=TEST_POOL_1, volume_name=TEST_VOL_1, vnet=VNET, backup_name=TEST_BACKUP_1, live=False):
     if disable_bp:
-        disable_backup(client, account_name=account_name, pool_name=pool_name, volume_name=volume_name, live=live)
+        disable_backup(self.client, account_name=account_name, pool_name=pool_name, volume_name=volume_name, live=live)
 
-    delete_volume(client, TEST_RG, account_name=account_name, pool_name=pool_name, volume_name=volume_name, live=live)
-    delete_pool(client, TEST_RG, acc_name=account_name, pool_name=pool_name, live=live)
+    delete_volume(self.client, TEST_RG, account_name=account_name, pool_name=pool_name, volume_name=volume_name, live=live)
+    delete_pool(self.client, TEST_RG, acc_name=account_name, pool_name=pool_name, live=live)
     #client.account_backups.begin_delete(TEST_RG, account_name, backup_name).wait()
-    delete_account(client, TEST_RG, acc_name=account_name, live=live)
-    network_client.virtual_networks.begin_delete(TEST_RG, vnet)
-
+    delete_account(self.client, TEST_RG, acc_name=account_name, live=live)
+    if self.is_live:
+        self.network_client.virtual_networks.begin_delete(TEST_RG, vnet)
 
 class TestNetAppBackup(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)
-        self.network_client = self.create_mgmt_client(NetworkManagementClient)
+        if self.is_live:
+            self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
 
     # Before tests are run live a resource group needs to be created along with vnet and subnet
     # Note that when tests are run in live mode it is best to run one test at a time.
@@ -109,7 +109,8 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
         ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
         volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
         VNETNAME = self.get_resource_name(VNET+"-")
-        SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')                        
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')                        
 
         # Create 2 backups since delete backups can only be used when volume has multiple backups
         create_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, vnet=VNETNAME, live=self.is_live)
@@ -127,7 +128,7 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
         backup_list = get_backup_list(self.client, account_name=ACCOUNT1, volume_name=volumeName1)
         assert len(list(backup_list)) == 0
 
-        clean_up(self.client,self.network_client, disable_bp=False, account_name=ACCOUNT1, volume_name=volumeName1, vnet=VNETNAME, backup_name=TEST_BACKUP_1, live=self.is_live)
+        clean_up(self, disable_bp=False, account_name=ACCOUNT1, volume_name=volumeName1, vnet=VNETNAME, backup_name=TEST_BACKUP_1, live=self.is_live)
 
     @recorded_by_proxy
     def test_list_backup(self):
@@ -135,7 +136,8 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
         ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
         volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
         VNETNAME = self.get_resource_name(VNET+"-")
-        SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')
         create_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, vnet=VNETNAME,live=self.is_live)
         create_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, vnet=VNETNAME, backup_name=TEST_BACKUP_2, backup_only=True, live=self.is_live)
         backup_list = get_backup_list(self.client, account_name=ACCOUNT1, volume_name=volumeName1)
@@ -151,7 +153,7 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
         backup_list = get_backup_list(self.client, account_name=ACCOUNT1, volume_name=volumeName1)
         assert len(list(backup_list)) == 0
 
-        clean_up(self.client, self.network_client, account_name=ACCOUNT1, volume_name=volumeName1, vnet=VNETNAME, disable_bp=False, live=self.is_live)
+        clean_up(self, account_name=ACCOUNT1, volume_name=volumeName1, vnet=VNETNAME, disable_bp=False, live=self.is_live)
 
     @recorded_by_proxy
     def test_get_backup_by_name(self):
@@ -159,13 +161,14 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
         ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
         volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
         VNETNAME = self.get_resource_name(VNET+"-")
-        SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')        
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')        
         create_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, vnet=VNETNAME, live=self.is_live)
 
         backup = get_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, backup_name=TEST_BACKUP_1)
         assert backup.name == ACCOUNT1 + "/" + TEST_POOL_1 + "/" + volumeName1 + "/" + TEST_BACKUP_1
 
-        clean_up(self.client, self.network_client, account_name=ACCOUNT1, volume_name=volumeName1, vnet=VNETNAME, live=self.is_live)
+        clean_up(self, account_name=ACCOUNT1, volume_name=volumeName1, vnet=VNETNAME, live=self.is_live)
 
     @recorded_by_proxy
     def test_update_backup(self):
@@ -174,7 +177,8 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
         volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
         VNETNAME = self.get_resource_name(VNET+"-")
         backup1 = self.get_resource_name(TEST_BACKUP_1+"-")
-        SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')         
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')         
         create_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, backup_name=backup1, vnet=VNETNAME, live=self.is_live)
         backup_body = BackupPatch(account_name=ACCOUNT1, volume_name=volumeName1, backup_name=backup1, location=LOCATION, label="label1")
         self.client.backups.begin_update(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, backup1, backup_body).wait()
@@ -182,7 +186,7 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
         backup = get_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, backup_name=backup1)
         assert backup.label == "label1"
 
-        clean_up(self.client, self.network_client, account_name=ACCOUNT1, volume_name=volumeName1, backup_name=backup1, vnet=VNETNAME, live=self.is_live)
+        clean_up(self, account_name=ACCOUNT1, volume_name=volumeName1, backup_name=backup1, vnet=VNETNAME, live=self.is_live)
 
     @recorded_by_proxy
     def test_get_backup_status(self):
@@ -191,7 +195,8 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
         volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
         VNETNAME = self.get_resource_name(VNET+"-")
         backup1 = self.get_resource_name(TEST_BACKUP_1+"-")
-        SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')         
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')         
         create_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, backup_name=backup1, vnet=VNETNAME, live=self.is_live)
 
         if self.is_live:
@@ -201,4 +206,4 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
         assert backup_status.healthy
         assert backup_status.mirror_state == "Mirrored"
 
-        clean_up(self.client, self.network_client, account_name=ACCOUNT1, volume_name=volumeName1, backup_name=backup1, vnet=VNETNAME, live=self.is_live)
+        clean_up(self, account_name=ACCOUNT1, volume_name=volumeName1, backup_name=backup1, vnet=VNETNAME, live=self.is_live)

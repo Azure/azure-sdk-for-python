@@ -1,6 +1,5 @@
 import time
 from azure.mgmt.resource import ResourceManagementClient
-from azure.mgmt.network import NetworkManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
 from azure.mgmt.netapp.models import Volume, Snapshot
 from test_volume import create_volume, wait_for_volume, delete_volume, create_virtual_network
@@ -48,7 +47,9 @@ class TestNetAppSnapshot(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)
-        self.network_client = self.create_mgmt_client(NetworkManagementClient)
+        if self.is_live:
+            from azure.mgmt.network import NetworkManagementClient
+            self.network_client = self.create_mgmt_client(NetworkManagementClient) 
 
     # Before tests are run live a resource group needs to be created along with vnet and subnet
     # Note that when tests are run in live mode it is best to run one test at a time.
@@ -58,7 +59,8 @@ class TestNetAppSnapshot(AzureMgmtRecordedTestCase):
         ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
         volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
         VNETNAME = self.get_resource_name(VNET+"-")
-        SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')                
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')                
         create_snapshot(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, TEST_SNAPSHOT_1, LOCATION, vnet=VNETNAME)
 
         snapshot_list = self.client.snapshots.list(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1)
@@ -71,7 +73,8 @@ class TestNetAppSnapshot(AzureMgmtRecordedTestCase):
         delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, self.is_live)
         delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, self.is_live)
         delete_account(self.client, TEST_RG, ACCOUNT1, self.is_live)
-        self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
+        if self.is_live:
+            self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
 
     @recorded_by_proxy
     def test_list_snapshots(self):
@@ -79,7 +82,8 @@ class TestNetAppSnapshot(AzureMgmtRecordedTestCase):
         ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
         volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
         VNETNAME = self.get_resource_name(VNET+"-")
-        SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')           
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')           
         create_snapshot(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, TEST_SNAPSHOT_1, LOCATION, vnet=VNETNAME)
         create_snapshot(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, TEST_SNAPSHOT_2, LOCATION, snapshot_only=True)
         snapshots = [TEST_SNAPSHOT_1, TEST_SNAPSHOT_2]
@@ -96,6 +100,8 @@ class TestNetAppSnapshot(AzureMgmtRecordedTestCase):
         delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, self.is_live)
         delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, self.is_live)
         delete_account(self.client, TEST_RG, ACCOUNT1, self.is_live)
+        if self.is_live:
+            self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)        
 
     @recorded_by_proxy
     def test_get_snapshot_by_name(self):
@@ -103,7 +109,8 @@ class TestNetAppSnapshot(AzureMgmtRecordedTestCase):
         ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
         volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
         VNETNAME = self.get_resource_name(VNET+"-")
-        SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')           
+        if self.is_live:        
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')           
         create_snapshot(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, TEST_SNAPSHOT_1, LOCATION, vnet=VNETNAME)
 
         snapshot = self.client.snapshots.get(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, TEST_SNAPSHOT_1)
@@ -113,3 +120,5 @@ class TestNetAppSnapshot(AzureMgmtRecordedTestCase):
         delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, self.is_live)
         delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, self.is_live)
         delete_account(self.client, TEST_RG, ACCOUNT1, self.is_live)
+        if self.is_live:
+            self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)        
