@@ -8,17 +8,10 @@ from .swaggertosdk.SwaggerToSdkCore import (
     CONFIG_FILE,
 )
 from .generate_sdk import generate
-from .generate_utils import (
-    get_package_names,
-    init_new_service,
-    update_servicemetadata,
-    judge_tag_preview,
-    format_samples,
-    gen_dpg,
-)
+from .generate_utils import (get_package_names, init_new_service, update_servicemetadata, judge_tag_preview,
+                             format_samples, gen_dpg, dpg_relative_folder)
 
 _LOGGER = logging.getLogger(__name__)
-
 
 def main(generate_input, generate_output):
     with open(generate_input, "r") as reader:
@@ -35,14 +28,11 @@ def main(generate_input, generate_output):
             continue
         relative_path_readme = str(Path(spec_folder, input_readme))
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
-        config = generate(
-            CONFIG_FILE,
-            sdk_folder,
-            [],
-            relative_path_readme,
-            spec_folder,
-            force_generation=True,
-        )
+        if 'resource-manager' in input_readme:
+            config = generate(CONFIG_FILE, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True,
+                              python_tag=python_tag)
+        else:
+            config = gen_dpg(input_readme, data.get('autorestConfig', ''), dpg_relative_folder(spec_folder))
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 

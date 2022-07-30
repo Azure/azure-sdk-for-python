@@ -13,6 +13,7 @@ _LOGGER = logging.getLogger(__name__)
 def main(generate_input, generate_output):
     with open(generate_input, "r") as reader:
         data = json.load(reader)
+        _LOGGER.info(f"auto_package input: {data}")
 
     sdk_folder = "."
     result = {"packages": []}
@@ -38,9 +39,19 @@ def main(generate_input, generate_output):
         dist_path = Path(sdk_folder, folder_name, package_name, "dist")
         package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
         package["result"] = "succeeded"
+        # Installation package
+        package["installInstructions"] = {
+            "full": "You can install the use using pip install of the artificats.",
+            "lite": f"pip install {package_name}",
+        }
         # to distinguish with track1
         if "azure-mgmt-" in package_name:
             package["packageName"] = "track2_" + package["packageName"]
+        for artifact in package["artifacts"]:
+            if ".whl" in artifact:
+                package["apiViewArtifact"] = artifact
+                package["language"] = "Python"
+                break
         package["packageFolder"] = package["path"][0]
         result["packages"].append(package)
 

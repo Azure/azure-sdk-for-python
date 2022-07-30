@@ -4,13 +4,24 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
+from urllib.error import HTTPError
 import requests
 
 from .config import PROXY_URL
 from .helpers import get_recording_id, is_live, is_live_and_not_recording
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
+    from typing import Any, Iterable, Optional
+
+
+# This file contains methods for adjusting many aspects of test proxy behavior:
+#
+# - Sanitizers: record stand-in values to hide secrets and/or enable playback when behavior is inconsistent
+# - Transforms: extend test proxy functionality by changing how recordings are processed in playback mode
+# - Matchers: modify the conditions that are used to match request and response content with recorded values
+# - Recording options: further customization for advanced scenarios, such as providing certificates to the transport
+#
+# Methods for a given category are grouped together under a header containing more details.
 
 
 def set_default_function_settings() -> None:
@@ -34,7 +45,7 @@ def set_default_session_settings() -> None:
     """Resets sanitizers, matchers, and transforms for the test proxy to their default settings, for all tests.
 
     This will reset any setting customizations for an entire test session. To reset setting customizations for a single
-    test -- which is recommended -- use `set_default_session_settings` instead.
+    test -- which is recommended -- use `set_default_function_settings` instead.
     """
 
     _send_reset_request({})
@@ -393,21 +404,110 @@ def add_storage_request_id_transform() -> None:
     _send_transform_request("StorageRequestIdTransform", {})
 
 
+# ----------RECORDING OPTIONS----------
+#
+# Recording options enable customization beyond what is offered by sanitizers, matchers, and transforms. These are
+# intended for advanced scenarios and are generally not applicable.
+#
+# -------------------------------------
+
+
+def set_function_recording_options(**kwargs: "Any") -> None:
+    """Sets custom recording options for the current test only.
+
+    This must be called during test case execution, rather than at a session, module, or class level. To set recording
+    options for all tests, use `set_session_recording_options` instead.
+
+    :keyword bool handle_redirects: The test proxy does not perform transparent follow directs by default. That means
+        that if the initial request sent through the test proxy results in a 3XX redirect status, the test proxy will
+        not follow. It will return that redirect response to the client and allow it to handle the redirect. Setting
+        `handle_redirects` to True will set the proxy to instead handle redirects itself.
+    :keyword str context_directory: This changes the "root" path that the test proxy uses when loading a recording.
+    :keyword certificates: A list of `PemCertificate`s. Any number of certificates is allowed.
+    :type certificates: Iterable[PemCertificate]
+    :keyword str tls_certificate: The public key portion of a TLS certificate, as a string. This is used specifically so
+        that an SSL connection presenting a non-standard certificate can still be validated.
+    """
+
+    x_recording_id = get_recording_id()
+    request_args = _get_recording_option_args(**kwargs)
+    _send_recording_options_request(request_args, {"x-recording-id": x_recording_id})
+
+
+def set_session_recording_options(**kwargs: "Any") -> None:
+    """Sets custom recording options for all tests.
+
+    This will set the specified recording options for an entire test session. To set recording options for a single test
+    -- which is recommended -- use `set_function_recording_options` instead.
+
+    :keyword bool handle_redirects: The test proxy does not perform transparent follow directs by default. That means
+        that if the initial request sent through the test proxy results in a 3XX redirect status, the test proxy will
+        not follow. It will return that redirect response to the client and allow it to handle the redirect. Setting
+        `handle_redirects` to True will set the proxy to instead handle redirects itself.
+    :keyword str context_directory: This changes the "root" path that the test proxy uses when loading a recording.
+    :keyword certificates: A list of `PemCertificate`s. Any number of certificates is allowed.
+    :type certificates: Iterable[PemCertificate]
+    :keyword str tls_certificate: The public key portion of a TLS certificate, as a string. This is used specifically so
+        that an SSL connection presenting a non-standard certificate can still be validated.
+    """
+
+    request_args = _get_recording_option_args(**kwargs)
+    _send_recording_options_request(request_args)
+
+
+class PemCertificate:
+    """Represents a PEM certificate that can be sent to and used by the test proxy.
+
+    :param str data: The content of the certificate, as a string.
+    :param str key: The certificate key, as a string.
+    """
+
+    def __init__(self, data: str, key: str) -> None:
+        self.data = data
+        self.key = key
+
+
 # ----------HELPERS----------
 
 
+def _get_recording_option_args(**kwargs: "Any") -> dict:
+    """Returns a dictionary of recording option request arguments, formatted for test proxy consumption."""
+
+    certificates = kwargs.pop("certificates", None)
+    tls_certificate = kwargs.pop("tls_certificate", None)
+    request_args = _get_request_args(**kwargs)
+
+    if certificates or tls_certificate:
+        transport = {}
+
+        if certificates:
+            cert_pairs = [{"PemValue": cert.data, "PemKey": cert.key} for cert in certificates]
+            transport["Certificates"] = cert_pairs
+
+        if tls_certificate:
+            transport["TLSValidationCert"] = tls_certificate
+
+        request_args["Transport"] = transport
+
+    return request_args
+
+
 def _get_request_args(**kwargs: "Any") -> dict:
-    """Returns a dictionary of sanitizer constructor headers"""
+    """Returns a dictionary of request arguments, formatted for test proxy consumption."""
 
     request_args = {}
     if "compare_bodies" in kwargs:
         request_args["compareBodies"] = kwargs.get("compare_bodies")
     if "condition" in kwargs:
         request_args["condition"] = kwargs.get("condition")
+    if "context_directory" in kwargs:
+        request_args["ContextDirectory"] = kwargs.get("context_directory")
     if "excluded_headers" in kwargs:
         request_args["excludedHeaders"] = kwargs.get("excluded_headers")
     if "group_for_replace" in kwargs:
         request_args["groupForReplace"] = kwargs.get("group_for_replace")
+    if "handle_redirects" in kwargs:
+        request_args["HandleRedirects"] = kwargs.get("handle_redirects")
     if "headers" in kwargs:
         request_args["headersForRemoval"] = kwargs.get("headers")
     if "ignored_headers" in kwargs:
@@ -440,6 +540,8 @@ def _send_matcher_request(matcher: str, headers: dict, parameters: "Optional[dic
 
     :param str matcher: The name of the matcher to set.
     :param dict headers: Any matcher headers, as a dictionary.
+    :param parameters: Any matcher constructor parameters, as a dictionary. Defaults to None.
+    :type parameters: Optional[dict]
     """
 
     if is_live():
@@ -448,6 +550,28 @@ def _send_matcher_request(matcher: str, headers: dict, parameters: "Optional[dic
     headers_to_send = {"x-abstraction-identifier": matcher}
     headers_to_send.update(headers)
     response = requests.post(f"{PROXY_URL}/Admin/SetMatcher", headers=headers_to_send, json=parameters)
+    response.raise_for_status()
+
+
+def _send_recording_options_request(parameters: dict, headers: "Optional[dict]" = None) -> None:
+    """Sends a POST request to the test proxy endpoint to set the specified recording options.
+
+    If live tests are being run with recording turned off via the AZURE_SKIP_LIVE_RECORDING environment variable, no
+    request will be sent.
+
+    :param dict parameters: The recording options, as a dictionary.
+    :param headers: Any recording option request headers, as a dictionary. Defaults to None.
+    :type headers: Optional[dict]
+    """
+
+    if is_live_and_not_recording():
+        return
+
+    response = requests.post(
+        f"{PROXY_URL}/Admin/SetRecordingOptions",
+        headers=headers,
+        json=parameters
+    )
     response.raise_for_status()
 
 
