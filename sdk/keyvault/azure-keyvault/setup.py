@@ -9,6 +9,13 @@
 from setuptools import setup
 from io import open
 
+# Version extraction inspired from 'requests'
+with open(os.path.join(PACKAGE_FOLDER_PATH, "_version.py"), "r") as fd:
+    VERSION = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)  # type: ignore
+
+if not VERSION:
+    raise RuntimeError("Cannot find version information")
+
 with open("README.md", encoding="utf-8") as f:
     README = f.read()
 with open("CHANGELOG.md", encoding="utf-8") as f:
@@ -16,7 +23,7 @@ with open("CHANGELOG.md", encoding="utf-8") as f:
 
 setup(
     name='azure-keyvault',
-    version='4.2.0',
+    version=VERSION,
     description='Microsoft Azure Key Vault Client Libraries for Python',
     long_description=README + "\n\n" + CHANGELOG,
     long_description_content_type="text/markdown",
