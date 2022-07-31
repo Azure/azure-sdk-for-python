@@ -15,6 +15,7 @@ from .._pyamqp.message import Message, BatchMessage
 from .._pyamqp.performatives import TransferFrame
 from .._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
 from .._pyamqp.utils import add_batch, get_message_encoded_size
+from .._pyamqp._encode import encode_payload
 
 from .constants import (
     _BATCH_MESSAGE_OVERHEAD_COST,
@@ -228,6 +229,11 @@ class ServiceBusMessage(
 
     def _to_outgoing_message(self) -> "ServiceBusMessage":
         return self
+
+    def _encode_message(self):
+        output = bytearray()
+        encode_payload(output, self.raw_amqp_message._to_outgoing_amqp_message())
+        return output
 
     @property
     def message(self) -> LegacyMessage:

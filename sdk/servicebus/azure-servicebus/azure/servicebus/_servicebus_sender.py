@@ -108,7 +108,7 @@ class SenderMixin(object):
             if message.partition_key:
                 message_data[MGMT_REQUEST_PARTITION_KEY] = message.partition_key
             message_data[MGMT_REQUEST_MESSAGE] = bytearray(
-                message.message.encode_message()
+                message._encode_message()
             )
             request_body[MGMT_REQUEST_MESSAGES].append(message_data)
         return request_body

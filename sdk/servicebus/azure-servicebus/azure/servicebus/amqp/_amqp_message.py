@@ -19,14 +19,12 @@ from ._constants import AmqpMessageBodyType
 from .._common.constants import (
     MAX_DURATION_VALUE,
     MAX_ABSOLUTE_EXPIRY_TIME,
-    _X_OPT_SCHEDULED_ENQUEUE_TIME,
     _X_OPT_ENQUEUED_TIME,
     _X_OPT_LOCKED_UNTIL
 )
 
 _LONG_ANNOTATIONS = (
     _X_OPT_ENQUEUED_TIME,
-    _X_OPT_SCHEDULED_ENQUEUE_TIME,
     _X_OPT_LOCKED_UNTIL
 )
 

@@ -357,7 +357,7 @@ class ServiceBusReceiver(
             if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
             else SenderSettleMode.Unsettled,
             timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
-            prefetch=self._prefetch_count,
+            link_credit=self._prefetch_count,
             # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
             keep_alive_interval=self._config.keep_alive if self._prefetch_count != 1 else 5,
             shutdown_after_timeout=False,
