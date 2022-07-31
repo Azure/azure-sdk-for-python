@@ -1,0 +1,14 @@
+type: pipeline
+description: "Hello World component example"
+
+jobs:
+  hello_python_world_job:
+    type: command
+    component: file:./components/component.yml
+    compute: azureml:cpu-cluster
+
+  hello_python_world_job_duplicate:
+    type: command
+    component: file:./components/component.yml
+    compute: azureml:cpu-cluster
+

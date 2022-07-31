@@ -1,52 +1,77 @@
 # Release History
 
-## 5.8.0b5 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 5.10.1 (Unreleased)
 
 ### Bugs Fixed
 
 ### Other Changes
 
-## 5.8.0a4 (2022-06-07)
+- Internal refactoring to support upcoming Pure Python AMQP-based release.
+
+## 5.10.0 (2022-06-08)
 
 ### Features Added
 
-- Added support for connection using websocket and http proxy.
-- Added support for custom endpoint connection over websocket.
+- Includes the following features related to buffered sending of events:
+  - A new method `send_event` to `EventHubProducerClient` which allows sending single `EventData` or `AmqpAnnotatedMessage`.
+  - Buffered mode sending to `EventHubProducerClient` which is intended to allow for efficient publishing of events
+   without having to explicitly manage batches in the application.
+    - The constructor of `EventHubProducerClient` and `from_connection_string` method takes the following new keyword arguments
+     for configuration:
+      - `buffered_mode`: The flag to enable/disable buffered mode sending.
+      - `on_success`: The callback to be called once events have been successfully published.
+      - `on_error`: The callback to be called once events have failed to be published.
+      - `max_buffer_length`: The total number of events per partition that can be buffered before a flush will be triggered.
+      - `max_wait_time`: The amount of time to wait for a batch to be built with events in the buffer before publishing.
+    - A new method `EventHubProducerClient.flush` which flushes events in the buffer to be sent immediately.
+    - A new method `EventHubProducerClient.get_buffered_event_count` which returns the number of events that are buffered and waiting to be published for a given partition.
+    - A new property `EventHubProducerClient.total_buffered_event_count` which returns the total number of events that are currently buffered and waiting to be published, across all partitions.
+    - A new boolean keyword argument `flush` to `EventHubProducerClient.close` which indicates whether to flush the buffer or not while closing.
 
-## 5.8.0a3 (2022-03-08)
-
-### Other Changes
-
-- Improved the performance of async sending and receiving.
-
-## 5.8.0a2 (2022-02-09)
+## 5.9.0 (2022-05-10)
 
 ### Features Added
 
-- Added support for async `EventHubProducerClient` and `EventHubConsumerClient`.
-
-### Breaking changes
-
-- The following features have been temporarily pulled out of async `EventHubProducerClient` and `EventHubConsumerClient` which will be added back in future previews as we work towards a stable release:
-  - Passing the following keyword arguments to the constructors and `from_connection_string` methods of the `EventHubProducerClient` and `EventHubConsumerClient` is not supported:  `transport_type`, `http_proxy`, `custom_endpoint_address`, and `connection_verify`.
-
-## 5.8.0a1 (2022-01-13)
-
-Version 5.8.0a1 is our first efforts to build an Azure Event Hubs client library based on pure python implemented AMQP stack.
-
-### Breaking changes
-
-- The following features have been temporarily pulled out which will be added back in future previews as we work towards a stable release:
-  - Async is not supported.
-  - Passing the following keyword arguments to the constructors and `from_connection_string` methods of the `EventHubProducerClient` and `EventHubConsumerClient` is not supported:  `transport_type`, `http_proxy`, `custom_endpoint_address`, and `connection_verify`.
+- The classmethod `from_message_content` has been added to `EventData` for interoperability with the Schema Registry Avro Encoder library, and takes `content` and `content_type` as positional parameters.
 
 ### Other Changes
 
-- uAMQP dependency is removed.
+- Features related to buffered sending of events are still in beta and will not be included in this release.
+
+## 5.9.0b3 (2022-04-20)
+
+### Features Added
+
+- Introduced new method `send_event` to `EventHubProducerClient` which allows sending single `EventData` or `AmqpAnnotatedMessage`.
+- Introduced buffered mode sending to `EventHubProducerClient` which is intended to allow for efficient publishing of events
+ without having to explicitly manage batches in the application.
+  - The constructor of `EventHubProducerClient` and `from_connection_string` method now takes the following new keyword arguments
+   for configuration:
+    - `buffered_mode`: The flag to enable/disable buffered mode sending.
+    - `on_success`: The callback to be called once events have been successfully published.
+    - `on_error`: The callback to be called once events have failed to be published.
+    - `max_buffer_length`: The total number of events per partition that can be buffered before a flush will be triggered.
+    - `max_wait_time`: The amount of time to wait for a batch to be built with events in the buffer before publishing.
+  - Introduced new method `EventHubProducerClient.flush` which flushes events in the buffer to be sent immediately.
+  - Introduced new method `EventHubProducerClient.get_buffered_event_count` which returns the number of events that are buffered and waiting to be published for a given partition.
+  - Introduced new property `EventHubProducerClient.total_buffered_event_count` which returns the total number of events that are currently buffered and waiting to be published, across all partitions.
+  - Introduced new boolean keyword argument `flush` to `EventHubProducerClient.close` which indicates whether to flush the buffer or not while closing.
+
+### Other Changes
+
+- Updated `EventData` internals for interoperability with the Schema Registry Avro Encoder library.
+
+## 5.9.0b2 (2022-03-09)
+
+### Breaking Changes
+
+- `from_message_data` on `EventData` has been renamed `from_message_content` for interoperability with the Schema Registry Avro Encoder library. The `data` parameter has been renamed to `content`.
+
+## 5.9.0b1 (2022-02-09)
+
+### Features Added
+
+- The classmethod `from_message_data` has been added to `EventData` for interoperability with the Schema Registry Avro Encoder library, and takes `data` and `content_type` as positional parameters.
 
 ## 5.7.0 (2022-01-12)
 
@@ -554,8 +579,4 @@ Version 5.0.0b1 is a preview of our efforts to create a client library that is u
 - Further testing and minor bug fixes.
 
 
-## 0.2.0a2 (2018-04-02)
-
-- Updated uAQMP dependency.
-
-
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/eventhub/azure-eventhub/HISTORY.png)

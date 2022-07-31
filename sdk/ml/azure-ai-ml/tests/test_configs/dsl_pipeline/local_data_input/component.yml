@@ -1,0 +1,25 @@
+type: command
+
+name: hello__python__world
+display_name: Hello_Python_World
+version: 1
+
+inputs:
+  sample_input_data:
+    type: uri_folder
+  sample_input_string:
+    type: string
+    default: "hello_python_world"
+outputs:
+  sample_output_data:
+    type: uri_folder
+
+code: ./src
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+
+command: >-
+  python hello.py  
+  --input_data ${{inputs.sample_input_data}}
+  --input_string ${{inputs.sample_input_string}}
+  --output_data ${{outputs.sample_output_data}}

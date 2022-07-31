@@ -1,0 +1,7 @@
+name: test_ws_conn_git_pat
+type: git
+target: https://test-git-feed.com
+credentials:
+  type: pat
+  pat: dummy_pat
+metadata: ~

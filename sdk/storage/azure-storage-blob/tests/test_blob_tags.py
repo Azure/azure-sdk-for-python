@@ -416,7 +416,6 @@ class StorageBlobTagsTest(StorageTestCase):
         items_on_page1 = list(first_page)
         self.assertEqual(1, len(items_on_page1))
 
-    @pytest.mark.skip(reason="https://github.com/Azure/azure-sdk-for-python/issues/23693 ; Test failing after resolving odd service versioning skip behavior.")
     @pytest.mark.live_test_only
     @BlobPreparer()
     def test_set_blob_tags_using_blob_sas(self, storage_account_name, storage_account_key):

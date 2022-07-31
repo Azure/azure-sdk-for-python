@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from __future__ import unicode_literals
+from __future__ import unicode_literals, annotations
 
 import uuid
 import logging
@@ -25,9 +25,10 @@ from ._utils import (
     send_context_manager,
     transform_outbound_single_message,
 )
-from ._constants import (
-    TIMEOUT_SYMBOL,
-)
+from ._constants import TIMEOUT_SYMBOL
+from .amqp import AmqpAnnotatedMessage
+
+_LOGGER = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from azure.core.tracing import AbstractSpan
@@ -50,7 +51,7 @@ _LOGGER = logging.getLogger(__name__)
 def _set_partition_key(
     event_datas: Iterable[EventData],
     partition_key: AnyStr,
-    amqp_transport: "AmqpTransport",
+    amqp_transport: AmqpTransport,
 ) -> Iterable[EventData]:
     for ed in iter(event_datas):
         amqp_transport.set_message_partition_key(ed._message, partition_key)  # pylint: disable=protected-access
@@ -126,8 +127,8 @@ class EventHubProducer(
         if partition:
             self._target += "/Partitions/" + partition
             self._name += f"-partition{partition}"
-        self._handler: Optional[Union["SendClient", "uamqp_SendClient"]] = None
-        self._outcome: Optional["uamqp_constants.MessageSendResult"] = None
+        self._handler: Optional[Union[SendClient, uamqp_SendClient]] = None
+        self._outcome: Optional[uamqp_constants.MessageSendResult] = None
         self._condition: Optional[Exception] = None
         self._lock = threading.Lock()
         self._link_properties = self._amqp_transport.create_link_properties(
@@ -190,7 +191,7 @@ class EventHubProducer(
         span: Optional["AbstractSpan"],
         partition_key: Optional[AnyStr],
     ) -> Union[EventData, EventDataBatch]:
-        if isinstance(event_data, EventData):
+        if isinstance(event_data, (EventData, AmqpAnnotatedMessage)):
             outgoing_event_data = transform_outbound_single_message(
                 event_data, EventData, self._amqp_transport.to_outgoing_amqp_message
             )
@@ -204,6 +205,8 @@ class EventHubProducer(
             if isinstance(
                 event_data, EventDataBatch
             ):  # The partition_key in the param will be omitted.
+                if not event_data:
+                    return event_data
                 if (
                     partition_key
                     and partition_key
@@ -264,6 +267,10 @@ class EventHubProducer(
                 wrapper_event_data = self._wrap_eventdata(
                     event_data, child, partition_key
                 )
+
+                if not wrapper_event_data:
+                    return
+
                 self._unsent_events = [wrapper_event_data._message]  # pylint: disable=protected-access
                 if child:
                     self._client._add_span_request_attributes(  # pylint: disable=protected-access

@@ -8,7 +8,7 @@ import logging
 
 from opentelemetry.sdk._logs import (
     LogEmitterProvider,
-    OTLPHandler,
+    LoggingHandler,
     get_log_emitter_provider,
     set_log_emitter_provider,
 )
@@ -22,14 +22,22 @@ exporter = AzureMonitorLogExporter.from_connection_string(
 )
 get_log_emitter_provider().add_log_processor(BatchLogProcessor(exporter))
 
-# Attach OTel handler to namespaced logger
-handler = OTLPHandler()
+# Attach LoggingHandler to namespaced logger
+handler = LoggingHandler()
 logger = logging.getLogger(__name__)
 logger.addHandler(handler)
 logger.setLevel(logging.NOTSET)
 
+# The following code will generate two pieces of exception telemetry
+# that are identical in nature
 try:
     val = 1 / 0
     print(val)
 except ZeroDivisionError:
     logger.exception("Error: Division by zero")
+
+try:
+    val = 1 / 0
+    print(val)
+except ZeroDivisionError:
+    logger.error("Error: Division by zero", stack_info=True, exc_info=True)

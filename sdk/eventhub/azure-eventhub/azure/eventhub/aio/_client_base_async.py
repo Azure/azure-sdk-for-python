@@ -43,6 +43,13 @@ from ._error_async import _handle_exception
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
+    CredentialTypes = Union[
+        "EventHubSharedKeyCredential",
+        AsyncTokenCredential,
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+    ]
+
     try:
         from typing_extensions import Protocol
     except ImportError:
@@ -63,7 +70,9 @@ class EventHubSharedKeyCredential(object):
         self.key = key
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    async def get_token(self, *scopes, **kwargs) -> AccessToken:  # pylint:disable=unused-argument
+    async def get_token(
+        self, *scopes, **kwargs # pylint:disable=unused-argument
+    ) -> AccessToken:
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
@@ -106,7 +115,9 @@ class EventhubAzureNamedKeyTokenCredentialAsync(object):
         self._credential = azure_named_key_credential
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    async def get_token(self, *scopes, **kwargs) -> AccessToken:  # pylint:disable=unused-argument
+    async def get_token(
+        self, *scopes, **kwargs # pylint:disable=unused-argument
+    ) -> AccessToken:
         if not scopes:
             raise ValueError("No token scope provided.")
         name, key = self._credential.named_key

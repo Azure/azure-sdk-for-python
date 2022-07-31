@@ -57,7 +57,13 @@ class AmqpAnnotatedMessage(object):
             return
 
         # manually constructed AMQPAnnotatedMessage
-        input_count_validation = len([key for key in ("data_body", "sequence_body", "value_body") if key in kwargs])
+        input_count_validation = len(
+            [
+                key
+                for key in ("data_body", "sequence_body", "value_body")
+                if key in kwargs
+            ]
+        )
         if input_count_validation != 1:
             raise ValueError(
                 "There should be one and only one of either data_body, sequence_body "
@@ -79,7 +85,9 @@ class AmqpAnnotatedMessage(object):
         self._header = AmqpMessageHeader(**header_dict) if "header" in kwargs else None
         self._footer = kwargs.get("footer")
         properties_dict = cast(Mapping, kwargs.get("properties"))
-        self._properties = AmqpMessageProperties(**properties_dict) if "properties" in kwargs else None
+        self._properties = (
+            AmqpMessageProperties(**properties_dict) if "properties" in kwargs else None
+        )
         self._application_properties = kwargs.get("application_properties")
         self._annotations = kwargs.get("annotations")
         self._delivery_annotations = kwargs.get("delivery_annotations")
@@ -95,9 +103,7 @@ class AmqpAnnotatedMessage(object):
 
     def __repr__(self) -> str:
         # pylint: disable=bare-except
-        message_repr = "body={}".format(
-            str(self)
-        )
+        message_repr = "body={}".format(str(self))
         message_repr += ", body_type={}".format(self.body_type)
         try:
             message_repr += ", header={}".format(self.header)
@@ -112,11 +118,15 @@ class AmqpAnnotatedMessage(object):
         except:
             message_repr += ", properties=<read-error>"
         try:
-            message_repr += ", application_properties={}".format(self.application_properties)
+            message_repr += ", application_properties={}".format(
+                self.application_properties
+            )
         except:
             message_repr += ", application_properties=<read-error>"
         try:
-            message_repr += ", delivery_annotations={}".format(self.delivery_annotations)
+            message_repr += ", delivery_annotations={}".format(
+                self.delivery_annotations
+            )
         except:
             message_repr += ", delivery_annotations=<read-error>"
         try:
@@ -126,7 +136,6 @@ class AmqpAnnotatedMessage(object):
         return "AmqpAnnotatedMessage({})".format(message_repr)[:1024]
 
     def _from_amqp_message(self, message):
-        # populate the properties from a amqp transport message
         # TODO: pyamqp message.properties should not be a list
         self._properties = AmqpMessageProperties(
             message_id=message.properties.message_id,
@@ -329,6 +338,7 @@ class AmqpMessageHeader(DictMixin):
      priority messages. Messages with higher priorities MAY be delivered before those with lower priorities.
     :vartype priority: Optional[int]
     """
+
     def __init__(self, **kwargs):
         self.delivery_count = kwargs.get("delivery_count")
         self.time_to_live = kwargs.get("time_to_live")
@@ -411,6 +421,7 @@ class AmqpMessageProperties(DictMixin):
      to this message to a specific group.
     :vartype reply_to_group_id: Optional[bytes]
     """
+
     def __init__(self, **kwargs):
         self.message_id = kwargs.get("message_id")
         self.user_id = kwargs.get("user_id")

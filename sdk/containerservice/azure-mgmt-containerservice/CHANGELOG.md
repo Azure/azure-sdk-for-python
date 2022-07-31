@@ -1,5 +1,48 @@
 # Release History
 
+## 20.2.0 (2022-07-25)
+
+**Features**
+
+  - Add a new api-version `2022-06-01`
+
+## 20.1.0 (2022-07-21)
+
+**Features**
+
+  - Added operation group FleetMembersOperations
+  - Added operation group FleetsOperations
+  - Model ManagedClusterSecurityProfile has a new parameter node_restriction
+
+## 20.0.0 (2022-06-09)
+
+**Features**
+
+  - Model AzureKeyVaultKms has a new parameter key_vault_network_access
+  - Model AzureKeyVaultKms has a new parameter key_vault_resource_id
+  - Model ManagedCluster has a new parameter workload_auto_scaler_profile
+  - Model ManagedClusterSecurityProfile has a new parameter defender
+  - Model ManagedClusterStorageProfile has a new parameter blob_csi_driver
+
+**Breaking changes**
+
+  - Model ManagedClusterSecurityProfile no longer has parameter azure_defender
+
+## 19.1.0 (2022-05-13)
+
+**Features**
+
+  - Added operation group TrustedAccessRoleBindingsOperations
+  - Added operation group TrustedAccessRolesOperations
+  - Model AgentPool has a new parameter enable_custom_ca_trust
+  - Model ContainerServiceNetworkProfile has a new parameter network_plugin_mode
+  - Model ManagedCluster has a new parameter storage_profile
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter enable_vnet_integration
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter subnet_id
+  - Model ManagedClusterAgentPoolProfile has a new parameter enable_custom_ca_trust
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter enable_custom_ca_trust
+  - Model NetworkProfileForSnapshot has a new parameter network_plugin_mode
+
 ## 19.0.0 (2022-04-15)
 
 **Features**

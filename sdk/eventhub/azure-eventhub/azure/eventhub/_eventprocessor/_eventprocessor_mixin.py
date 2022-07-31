@@ -99,7 +99,9 @@ class EventProcessorMixin(object):
         if span_impl_type is None:
             yield
         else:
-            child = span_impl_type(name="Azure.EventHubs.process", kind=SpanKind.CONSUMER, links=links)
+            child = span_impl_type(
+                name="Azure.EventHubs.process", kind=SpanKind.CONSUMER, links=links
+            )
             self._eventhub_client._add_span_request_attributes(child)  # type: ignore  # pylint: disable=protected-access
             with child:
                 yield

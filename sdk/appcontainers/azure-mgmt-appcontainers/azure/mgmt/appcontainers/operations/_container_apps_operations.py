@@ -98,18 +98,18 @@ def build_list_by_resource_group_request(
 def build_get_request(
     subscription_id: str,
     resource_group_name: str,
-    name: str,
+    container_app_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -134,7 +134,7 @@ def build_get_request(
 def build_create_or_update_request_initial(
     subscription_id: str,
     resource_group_name: str,
-    name: str,
+    container_app_name: str,
     *,
     json: JSONType = None,
     content: Any = None,
@@ -145,11 +145,11 @@ def build_create_or_update_request_initial(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -178,18 +178,18 @@ def build_create_or_update_request_initial(
 def build_delete_request_initial(
     subscription_id: str,
     resource_group_name: str,
-    name: str,
+    container_app_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -214,7 +214,7 @@ def build_delete_request_initial(
 def build_update_request_initial(
     subscription_id: str,
     resource_group_name: str,
-    name: str,
+    container_app_name: str,
     *,
     json: JSONType = None,
     content: Any = None,
@@ -225,11 +225,11 @@ def build_update_request_initial(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -298,18 +298,18 @@ def build_list_custom_host_name_analysis_request(
 def build_list_secrets_request(
     subscription_id: str,
     resource_group_name: str,
-    name: str,
+    container_app_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}/listSecrets")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/listSecrets")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -511,7 +511,7 @@ class ContainerAppsOperations(object):
     def get(
         self,
         resource_group_name: str,
-        name: str,
+        container_app_name: str,
         **kwargs: Any
     ) -> "_models.ContainerApp":
         """Get the properties of a Container App.
@@ -520,8 +520,8 @@ class ContainerAppsOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param name: Name of the Container App.
-        :type name: str
+        :param container_app_name: Name of the Container App.
+        :type container_app_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ContainerApp, or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.ContainerApp
@@ -539,7 +539,7 @@ class ContainerAppsOperations(object):
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            name=name,
+            container_app_name=container_app_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
         )
@@ -565,13 +565,13 @@ class ContainerAppsOperations(object):
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}"}  # type: ignore
 
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
-        name: str,
+        container_app_name: str,
         container_app_envelope: "_models.ContainerApp",
         **kwargs: Any
     ) -> "_models.ContainerApp":
@@ -589,7 +589,7 @@ class ContainerAppsOperations(object):
         request = build_create_or_update_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            name=name,
+            container_app_name=container_app_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -620,14 +620,14 @@ class ContainerAppsOperations(object):
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}"}  # type: ignore
+    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}"}  # type: ignore
 
 
     @distributed_trace
     def begin_create_or_update(
         self,
         resource_group_name: str,
-        name: str,
+        container_app_name: str,
         container_app_envelope: "_models.ContainerApp",
         **kwargs: Any
     ) -> LROPoller["_models.ContainerApp"]:
@@ -637,8 +637,8 @@ class ContainerAppsOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param name: Name of the Container App.
-        :type name: str
+        :param container_app_name: Name of the Container App.
+        :type container_app_name: str
         :param container_app_envelope: Properties used to create a container app.
         :type container_app_envelope: ~azure.mgmt.appcontainers.models.ContainerApp
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -666,7 +666,7 @@ class ContainerAppsOperations(object):
         if cont_token is None:
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
-                name=name,
+                container_app_name=container_app_name,
                 container_app_envelope=container_app_envelope,
                 api_version=api_version,
                 content_type=content_type,
@@ -695,12 +695,12 @@ class ContainerAppsOperations(object):
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}"}  # type: ignore
+    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}"}  # type: ignore
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
-        name: str,
+        container_app_name: str,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -715,7 +715,7 @@ class ContainerAppsOperations(object):
         request = build_delete_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            name=name,
+            container_app_name=container_app_name,
             api_version=api_version,
             template_url=self._delete_initial.metadata['url'],
         )
@@ -736,14 +736,14 @@ class ContainerAppsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}"}  # type: ignore
+    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}"}  # type: ignore
 
 
     @distributed_trace
     def begin_delete(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
-        name: str,
+        container_app_name: str,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Delete a Container App.
@@ -752,8 +752,8 @@ class ContainerAppsOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param name: Name of the Container App.
-        :type name: str
+        :param container_app_name: Name of the Container App.
+        :type container_app_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -777,7 +777,7 @@ class ContainerAppsOperations(object):
         if cont_token is None:
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
-                name=name,
+                container_app_name=container_app_name,
                 api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -801,12 +801,12 @@ class ContainerAppsOperations(object):
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}"}  # type: ignore
+    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}"}  # type: ignore
 
     def _update_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
-        name: str,
+        container_app_name: str,
         container_app_envelope: "_models.ContainerApp",
         **kwargs: Any
     ) -> None:
@@ -824,7 +824,7 @@ class ContainerAppsOperations(object):
         request = build_update_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            name=name,
+            container_app_name=container_app_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -847,14 +847,14 @@ class ContainerAppsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}"}  # type: ignore
+    _update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}"}  # type: ignore
 
 
     @distributed_trace
     def begin_update(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
-        name: str,
+        container_app_name: str,
         container_app_envelope: "_models.ContainerApp",
         **kwargs: Any
     ) -> LROPoller[None]:
@@ -864,8 +864,8 @@ class ContainerAppsOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param name: Name of the Container App.
-        :type name: str
+        :param container_app_name: Name of the Container App.
+        :type container_app_name: str
         :param container_app_envelope: Properties of a Container App that need to be updated.
         :type container_app_envelope: ~azure.mgmt.appcontainers.models.ContainerApp
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -892,7 +892,7 @@ class ContainerAppsOperations(object):
         if cont_token is None:
             raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
-                name=name,
+                container_app_name=container_app_name,
                 container_app_envelope=container_app_envelope,
                 api_version=api_version,
                 content_type=content_type,
@@ -918,7 +918,7 @@ class ContainerAppsOperations(object):
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}"}  # type: ignore
+    begin_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}"}  # type: ignore
 
     @distributed_trace
     def list_custom_host_name_analysis(
@@ -989,7 +989,7 @@ class ContainerAppsOperations(object):
     def list_secrets(
         self,
         resource_group_name: str,
-        name: str,
+        container_app_name: str,
         **kwargs: Any
     ) -> "_models.SecretsCollection":
         """List secrets for a container app.
@@ -998,8 +998,8 @@ class ContainerAppsOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param name: Name of the Container App.
-        :type name: str
+        :param container_app_name: Name of the Container App.
+        :type container_app_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretsCollection, or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.SecretsCollection
@@ -1017,7 +1017,7 @@ class ContainerAppsOperations(object):
         request = build_list_secrets_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            name=name,
+            container_app_name=container_app_name,
             api_version=api_version,
             template_url=self.list_secrets.metadata['url'],
         )
@@ -1043,5 +1043,5 @@ class ContainerAppsOperations(object):
 
         return deserialized
 
-    list_secrets.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}/listSecrets"}  # type: ignore
+    list_secrets.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/listSecrets"}  # type: ignore
 

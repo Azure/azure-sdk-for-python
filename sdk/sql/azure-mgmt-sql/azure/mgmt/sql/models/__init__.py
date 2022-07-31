@@ -25,6 +25,8 @@ from ._models_py3 import DataMaskingRuleListResult
 from ._models_py3 import DataWarehouseUserActivities
 from ._models_py3 import DataWarehouseUserActivitiesListResult
 from ._models_py3 import Database
+from ._models_py3 import DatabaseAdvancedThreatProtection
+from ._models_py3 import DatabaseAdvancedThreatProtectionListResult
 from ._models_py3 import DatabaseAutomaticTuning
 from ._models_py3 import DatabaseBlobAuditingPolicy
 from ._models_py3 import DatabaseBlobAuditingPolicyListResult
@@ -50,7 +52,6 @@ from ._models_py3 import DatabaseVulnerabilityAssessmentListResult
 from ._models_py3 import DatabaseVulnerabilityAssessmentRuleBaseline
 from ._models_py3 import DatabaseVulnerabilityAssessmentRuleBaselineItem
 from ._models_py3 import DatabaseVulnerabilityAssessmentScansExport
-from ._models_py3 import Delegation
 from ._models_py3 import DeletedServer
 from ._models_py3 import DeletedServerListResult
 from ._models_py3 import DistributedAvailabilityGroup
@@ -72,6 +73,8 @@ from ._models_py3 import ElasticPoolPerformanceLevelCapability
 from ._models_py3 import ElasticPoolUpdate
 from ._models_py3 import EncryptionProtector
 from ._models_py3 import EncryptionProtectorListResult
+from ._models_py3 import EndpointCertificate
+from ._models_py3 import EndpointCertificateListResult
 from ._models_py3 import ExportDatabaseDefinition
 from ._models_py3 import ExtendedDatabaseBlobAuditingPolicy
 from ._models_py3 import ExtendedDatabaseBlobAuditingPolicyListResult
@@ -88,7 +91,6 @@ from ._models_py3 import FirewallRuleListResult
 from ._models_py3 import GeoBackupPolicy
 from ._models_py3 import GeoBackupPolicyListResult
 from ._models_py3 import IPv6FirewallRule
-from ._models_py3 import IPv6FirewallRuleList
 from ._models_py3 import IPv6FirewallRuleListResult
 from ._models_py3 import ImportExistingDatabaseDefinition
 from ._models_py3 import ImportExportExtensionsOperationListResult
@@ -133,6 +135,7 @@ from ._models_py3 import LocationCapabilities
 from ._models_py3 import LogSizeCapability
 from ._models_py3 import LogicalDatabaseTransparentDataEncryption
 from ._models_py3 import LogicalDatabaseTransparentDataEncryptionListResult
+from ._models_py3 import LogicalServerAdvancedThreatProtectionListResult
 from ._models_py3 import LogicalServerSecurityAlertPolicyListResult
 from ._models_py3 import LongTermRetentionBackup
 from ._models_py3 import LongTermRetentionBackupListResult
@@ -190,6 +193,10 @@ from ._models_py3 import ManagedInstanceVcoresCapability
 from ._models_py3 import ManagedInstanceVersionCapability
 from ._models_py3 import ManagedInstanceVulnerabilityAssessment
 from ._models_py3 import ManagedInstanceVulnerabilityAssessmentListResult
+from ._models_py3 import ManagedServerDnsAlias
+from ._models_py3 import ManagedServerDnsAliasAcquisition
+from ._models_py3 import ManagedServerDnsAliasCreation
+from ._models_py3 import ManagedServerDnsAliasListResult
 from ._models_py3 import ManagedServerSecurityAlertPolicy
 from ._models_py3 import ManagedServerSecurityAlertPolicyListResult
 from ._models_py3 import ManagedTransparentDataEncryption
@@ -264,6 +271,7 @@ from ._models_py3 import SensitivityLabelListResult
 from ._models_py3 import SensitivityLabelUpdate
 from ._models_py3 import SensitivityLabelUpdateList
 from ._models_py3 import Server
+from ._models_py3 import ServerAdvancedThreatProtection
 from ._models_py3 import ServerAutomaticTuning
 from ._models_py3 import ServerAzureADAdministrator
 from ._models_py3 import ServerAzureADOnlyAuthentication
@@ -334,7 +342,6 @@ from ._models_py3 import TimeZoneListResult
 from ._models_py3 import TopQueries
 from ._models_py3 import TopQueriesListResult
 from ._models_py3 import TrackedResource
-from ._models_py3 import UnlinkParameters
 from ._models_py3 import UpdateLongTermRetentionBackupParameters
 from ._models_py3 import UpdateManagedInstanceDnsServersOperation
 from ._models_py3 import UpsertManagedServerOperationParameters
@@ -360,6 +367,8 @@ from ._models_py3 import WorkloadGroupListResult
 from ._sql_management_client_enums import (
     AdministratorName,
     AdministratorType,
+    AdvancedThreatProtectionName,
+    AdvancedThreatProtectionState,
     AdvisorStatus,
     AggregationFunctionType,
     AuthenticationName,
@@ -492,7 +501,9 @@ from ._sql_management_client_enums import (
     VulnerabilityAssessmentScanState,
     VulnerabilityAssessmentScanTriggerType,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AdministratorListResult',
     'Advisor',
@@ -513,6 +524,8 @@ __all__ = [
     'DataWarehouseUserActivities',
     'DataWarehouseUserActivitiesListResult',
     'Database',
+    'DatabaseAdvancedThreatProtection',
+    'DatabaseAdvancedThreatProtectionListResult',
     'DatabaseAutomaticTuning',
     'DatabaseBlobAuditingPolicy',
     'DatabaseBlobAuditingPolicyListResult',
@@ -538,7 +551,6 @@ __all__ = [
     'DatabaseVulnerabilityAssessmentRuleBaseline',
     'DatabaseVulnerabilityAssessmentRuleBaselineItem',
     'DatabaseVulnerabilityAssessmentScansExport',
-    'Delegation',
     'DeletedServer',
     'DeletedServerListResult',
     'DistributedAvailabilityGroup',
@@ -560,6 +572,8 @@ __all__ = [
     'ElasticPoolUpdate',
     'EncryptionProtector',
     'EncryptionProtectorListResult',
+    'EndpointCertificate',
+    'EndpointCertificateListResult',
     'ExportDatabaseDefinition',
     'ExtendedDatabaseBlobAuditingPolicy',
     'ExtendedDatabaseBlobAuditingPolicyListResult',
@@ -576,7 +590,6 @@ __all__ = [
     'GeoBackupPolicy',
     'GeoBackupPolicyListResult',
     'IPv6FirewallRule',
-    'IPv6FirewallRuleList',
     'IPv6FirewallRuleListResult',
     'ImportExistingDatabaseDefinition',
     'ImportExportExtensionsOperationListResult',
@@ -621,6 +634,7 @@ __all__ = [
     'LogSizeCapability',
     'LogicalDatabaseTransparentDataEncryption',
     'LogicalDatabaseTransparentDataEncryptionListResult',
+    'LogicalServerAdvancedThreatProtectionListResult',
     'LogicalServerSecurityAlertPolicyListResult',
     'LongTermRetentionBackup',
     'LongTermRetentionBackupListResult',
@@ -678,6 +692,10 @@ __all__ = [
     'ManagedInstanceVersionCapability',
     'ManagedInstanceVulnerabilityAssessment',
     'ManagedInstanceVulnerabilityAssessmentListResult',
+    'ManagedServerDnsAlias',
+    'ManagedServerDnsAliasAcquisition',
+    'ManagedServerDnsAliasCreation',
+    'ManagedServerDnsAliasListResult',
     'ManagedServerSecurityAlertPolicy',
     'ManagedServerSecurityAlertPolicyListResult',
     'ManagedTransparentDataEncryption',
@@ -752,6 +770,7 @@ __all__ = [
     'SensitivityLabelUpdate',
     'SensitivityLabelUpdateList',
     'Server',
+    'ServerAdvancedThreatProtection',
     'ServerAutomaticTuning',
     'ServerAzureADAdministrator',
     'ServerAzureADOnlyAuthentication',
@@ -822,7 +841,6 @@ __all__ = [
     'TopQueries',
     'TopQueriesListResult',
     'TrackedResource',
-    'UnlinkParameters',
     'UpdateLongTermRetentionBackupParameters',
     'UpdateManagedInstanceDnsServersOperation',
     'UpsertManagedServerOperationParameters',
@@ -845,6 +863,8 @@ __all__ = [
     'WorkloadGroupListResult',
     'AdministratorName',
     'AdministratorType',
+    'AdvancedThreatProtectionName',
+    'AdvancedThreatProtectionState',
     'AdvisorStatus',
     'AggregationFunctionType',
     'AuthenticationName',
@@ -977,3 +997,5 @@ __all__ = [
     'VulnerabilityAssessmentScanState',
     'VulnerabilityAssessmentScanTriggerType',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -4,12 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines, invalid-overridden-method
+
+import warnings
 from functools import partial
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
+    Any, AnyStr, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
-import warnings
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
@@ -17,25 +18,29 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import return_response_headers, process_storage_error
-from .._deserialize import get_page_ranges_result, parse_tags, deserialize_pipeline_response_into_cls
-from .._serialize import get_modify_conditions, get_api_version, get_access_conditions
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import CpkInfo
-from .._deserialize import deserialize_blob_properties
 from .._blob_client import BlobClient as BlobClientBase
+from .._deserialize import (
+    deserialize_blob_properties,
+    deserialize_pipeline_response_into_cls,
+    get_page_ranges_result,
+    parse_tags
+)
+from .._encryption import StorageEncryptionMixin
+from .._models import BlobType, BlobBlock, BlobProperties, PageRange
+from .._serialize import get_modify_conditions, get_api_version, get_access_conditions
+from ._download_async import StorageStreamDownloader
+from ._lease_async import BlobLeaseClient
+from ._models import PageRangePaged
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
-    upload_page_blob)
-from .._models import BlobType, BlobBlock, BlobProperties, PageRange
-from ._models import PageRangePaged
-from ._lease_async import BlobLeaseClient
-from ._download_async import StorageStreamDownloader
-
+    upload_page_blob
+)
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -48,7 +53,7 @@ if TYPE_CHECKING:
     )
 
 
-class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disable=too-many-public-methods
+class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptionMixin):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific blob, although that blob may not yet exist.
 
     :param str account_url:
@@ -65,10 +70,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -112,7 +119,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             container_name,  # type: str
             blob_name,  # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -126,6 +133,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._configure_encryption(kwargs)
 
     @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore
@@ -247,7 +255,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def upload_blob(
-            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -399,9 +407,31 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             return await upload_page_blob(**options)
         return await upload_append_blob(**options)
 
+    @overload
+    async def download_blob(
+            self, offset: int = None,
+            length: int = None,
+            *,
+            encoding: str,
+            **kwargs) -> StorageStreamDownloader[str]:
+        ...
+
+    @overload
+    async def download_blob(
+            self, offset: int = None,
+            length: int = None,
+            *,
+            encoding: None = None,
+            **kwargs) -> StorageStreamDownloader[bytes]:
+        ...
+
     @distributed_trace_async
-    async def download_blob(self, offset=None, length=None, **kwargs):
-        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
+    async def download_blob(
+            self, offset: int = None,
+            length: int = None,
+            *,
+            encoding: Optional[str] = None,
+            **kwargs) -> StorageStreamDownloader:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
@@ -489,6 +519,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._download_blob_options(
             offset=offset,
             length=length,
+            encoding=encoding,
             **kwargs)
         downloader = StorageStreamDownloader(**options)
         await downloader._setup()  # pylint: disable=protected-access
@@ -2465,7 +2496,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def append_block( # type: ignore
-            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             **kwargs
         ):
@@ -2731,6 +2762,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         return ContainerClient(
             "{}://{}".format(self.scheme, self.primary_hostname), container_name=self.container_name,
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
-            _location_mode=self._location_mode, _hosts=self._hosts, require_encryption=self.require_encryption,
-            _pipeline=_pipeline, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
+            require_encryption=self.require_encryption, encryption_version=self.encryption_version,
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)

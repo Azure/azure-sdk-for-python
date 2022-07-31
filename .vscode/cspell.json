@@ -11,6 +11,7 @@
   ],
   "ignorePaths": [
     "eng/**",
+    ".github/CODEOWNERS",
     "scripts/**",
     "**/tests/recordings/**",
     ".vscode/cspell.json",
@@ -71,6 +72,7 @@
     "sdk/eventhub/azure-eventhub/**",
     "sdk/graphrbac/azure-graphrbac/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
+    "sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/**",
     "sdk/identity/azure-identity/images/**",
     "sdk/identity/azure-identity/tests/pod-identity/**",
     "sdk/identity/azure-identity/tests/managed-identity-live/service-fabric/**",
@@ -100,6 +102,10 @@
     "sdk/translation/azure-ai-translation-document/tests/glossaries-valid.csv",
     "sdk/tables/azure-data-tables/**",
     "sdk/storage/azure-storage-blob/**",
+    "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
+    "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
+    "sdk/ml/azure-ai-ml/tests/**",
+    "sdk/monitor/azure-monitor-ingestion/**",
     "eng/**/*.json",
     "eng/*.txt",
     "eng/tox/tox.ini",
@@ -108,6 +114,10 @@
     ".gitignore"
   ],
   "words": [
+    "pyyaml",
+    "CONLL",
+    "pyjwt",
+    "conll",
     "aad",
     "aadclient",
     "AADSTS",
@@ -138,6 +148,7 @@
     "contoso",
     "contosodataset",
     "centralus",
+    "centraluseuap",
     "creds",
     "ctoring",
     "ctypes",
@@ -147,8 +158,10 @@
     "delenv",
     "dependened",
     "deserialization",
+    "disablecov",
     "docfx",
     "dotenv",
+    "dpkg",
     "DWORD",
     "eastus",
     "eckey",
@@ -196,7 +209,7 @@
     "livekvtestcertrec",
     "livekvtestgetcertperfcert",
     "livekvtestgetsecretperfsecret",
-    "livekvtestlistperfsecret",    
+    "livekvtestlistperfsecret",
     "livekvtestdecryptperfkey",
     "livekvtestgetkeyperfkey",
     "livekvtestsignperfkey",
@@ -214,9 +227,11 @@
     "msrest",
     "msrestazure",
     "MSSQL",
+    "mutex",
     "myacr",
     "nazsdk",
     "noarch",
+    "NOPERM",
     "northcentralus",
     "nspkg",
     "OAEP",
@@ -240,8 +255,10 @@
     "prebuilts",
     "pschema",
     "PSECRET",
+    "pyfuncitem",
     "pygobject",
     "parameterizing",
+    "pytyped",
     "pytz",
     "pywin",
     "pyversion",
@@ -258,6 +275,7 @@
     "rwdlacu",
     "scbedd",
     "sdist",
+    "sdpath",
     "secbak",
     "SECG",
     "SECP",
@@ -372,19 +390,28 @@
       ]
     },
     {
-      "filename": "sdk/communication/azure-communication-identity/tests/*.py",
+      "filename": "sdk/communication/azure-communication-identity/tests/**",
       "words": [
         "XVCJ",
         "Njgw",
         "FNNHHJT",
         "Zwiz",
-        "nypg"
+        "nypg",
+        "PBOF",
+        "tzutc",
+        "gettz"
       ]
     },
     {
       "filename": "sdk/containerregistry/azure-containerregistry/**",
       "words": [
         "udpated"
+      ]
+    },
+    {
+      "filename": "sdk/eventhub/test-resources.json",
+      "words": [
+        "mmspecial"
       ]
     },
     {
@@ -400,6 +427,19 @@
         "dmac",
         "ierr",
         "mymodel"
+      ]
+    },
+    {
+      "filename": "sdk/monitor/test-resources.json",
+      "words": [
+        "azconfig",
+        "azmonitordce",
+        "euap",
+        "azmonitordcr",
+        "azmonitorlogsws",
+        "authr",
+        "dcrrole",
+        "pergb"
       ]
     },
     {
@@ -421,6 +461,94 @@
       "filename": "sdk/schemaregistry/azure-schemaregistry-avroencoder/doc/*.rst",
       "words": [
         "undoc"
+      ]
+    },
+    {
+      "filename": "sdk/ml/azure-ai-ml/**",
+      "words": [
+        "azureml",
+        "mldesigner",
+        "restclient",
+        "tqdm",
+        "mlflow",
+        "automl",
+        "featurization",
+        "mltable",
+        "flds",
+        "resourceid",
+        "hdfs",
+        "qnormal",
+        "qlognormal",
+        "quniform",
+        "qloguniform",
+        "odict",
+        "sdkv",
+        "levelno",
+        "amlignore",
+        "envvar",
+        "miniconda",
+        "amlcompute",
+        "onnx",
+        "nesterov",
+        "debugpy",
+        "byoc",
+        "klass",
+        "vits",
+        "vitb",
+        "pbar",
+        "cntx",
+        "pydash",
+        "sklearn",
+        "openmpi",
+        "myworkspace",
+        "mydatastore",
+        "mlnlp",
+        "pacf",
+        "armid",
+        "dsvm",
+        "aisupercomputer",
+        "mferp",
+        "nopycln",
+        "smod",
+        "etype",
+        "stype",
+        "roups",
+        "txts",
+        "sobol",
+        "revo",
+        "modelsrc",
+        "amlworkspace",
+        "plrmodel",
+        "noopener",
+        "runsvdir",
+        "toolsai",
+        "azuremlext",
+        "euap",
+        "centraluseuap",
+        "consts",
+        "lnotab",
+        "nlocals",
+        "kwonlyargcount",
+        "dcid",
+        "startf",
+        "dpkg",
+        "isreused",
+        "reusedrunid",
+        "strictyaml",
+        "funcs",
+        "Fsubscriptions",
+        "Fresource",
+        "Fproviders",
+        "Fdeployments",
+        "isfolder",
+        "mylist",
+        "unioned"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/test-resources.bicep",
+      "words": [
+        "pysdkci"
       ]
     }
   ],

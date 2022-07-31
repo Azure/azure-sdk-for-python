@@ -7,6 +7,7 @@
 
 # This script is intended to be a place holder for common tasks that are requried by scripts running on tox
 
+import shutil
 import sys
 import logging
 import ast
@@ -60,13 +61,22 @@ def get_package_details(setup_filename):
     package_name = kwargs["name"]
     # default namespace for the package
     name_space = package_name.replace("-", ".")
+
+    package_data = None
+    if "package_data" in kwargs:
+        package_data = kwargs["package_data"]
+
+    include_package_data = None
+    if "include_package_data" in kwargs:
+        include_package_data = kwargs["include_package_data"]
+
     if "packages" in kwargs.keys():
         packages = kwargs["packages"]
         if packages:
             name_space = packages[0]
             logging.info("Namespaces found for package {0}: {1}".format(package_name, packages))
 
-    return package_name, name_space, kwargs["version"]
+    return package_name, name_space, kwargs["version"], package_data, include_package_data
 
 
 def parse_req(req):
@@ -120,6 +130,10 @@ def unzip_file_to_directory(path_to_zip_file, extract_location):
 
 def move_and_rename(source_location):
     new_location = os.path.join(os.path.dirname(source_location), "unzipped")
+
+    if os.path.exists(new_location):
+        shutil.rmtree(new_location)
+
     os.rename(source_location, new_location)
     return new_location
 

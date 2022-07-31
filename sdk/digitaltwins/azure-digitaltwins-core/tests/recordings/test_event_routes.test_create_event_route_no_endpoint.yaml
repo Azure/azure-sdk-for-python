@@ -14,23 +14,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes/eventRoute-5398160f?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes/eventRoute-5398160f?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"EventRouteEndpointInvalid","message":"The endpoint
         provided does not exist or is not active. Check that your endpoint is provisioned
-        correctly. See event route documentation (http://aka.ms/ADTv2Routes)."}}'
+        correctly. See event route documentation (https://aka.ms/ADTv2Routes)."}}'
     headers:
       content-length:
-      - '223'
+      - '224'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:08:51 GMT
+      - Thu, 26 May 2022 07:28:18 GMT
+      mise-correlation-id:
+      - c6a74157-ab4a-43ca-a0bd-27474734ebfd
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-3bb7dcc82f179042b80d23d24e7493ef-a2c96b59da300346-01
     status:
       code: 400
       message: Bad Request

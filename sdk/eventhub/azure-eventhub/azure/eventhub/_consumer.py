@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from __future__ import unicode_literals
+from __future__ import unicode_literals, annotations
 from multiprocessing import Event
 
 import time
@@ -119,11 +119,11 @@ class EventHubConsumer(
         ) * self._amqp_transport.IDLE_TIMEOUT_FACTOR
         link_properties[TIMEOUT_SYMBOL] = int(link_property_timeout_ms)
         self._link_properties = self._amqp_transport.create_link_properties(link_properties)
-        self._handler: Optional[Union["ReceiveClient", "uamqp_ReceiveClient"]] = None
+        self._handler: Optional[Union[ReceiveClient, uamqp_ReceiveClient]] = None
         self._track_last_enqueued_event_properties = (
             track_last_enqueued_event_properties
         )
-        self._message_buffer: Deque[Union["Message", "uamqp_Message"]] = deque()
+        self._message_buffer: Deque[Union[Message, uamqp_Message]] = deque()
         self._last_received_event: Optional[EventData] = None
         self._receive_start_time: Optional[float]= None
 
@@ -192,7 +192,9 @@ class EventHubConsumer(
             self._client._config.max_retries  # pylint:disable=protected-access
         )
         self._receive_start_time = self._receive_start_time or time.time()
-        deadline = self._receive_start_time + (max_wait_time or 0)  # max_wait_time can be None
+        deadline = self._receive_start_time + (
+            max_wait_time or 0
+        )  # max_wait_time can be None
         if len(self._message_buffer) < max_batch_size:
             # TODO: the retry here is a bit tricky as we are using low-level api from the amqp client.
             #  Currently we create a new client with the latest received event's offset per retry.
@@ -200,8 +202,6 @@ class EventHubConsumer(
             while retried_times <= max_retries:
                 try:
                     if self._open():
-                        # TODO: for pyamqp, this will pass in batch. But, in the ReceiveClient._client_run,
-                        # can remove (batch=self._link_credit)?
                         self._handler.do_work(batch=self._prefetch)  # type: ignore
                     break
                 except Exception as exception:  # pylint: disable=broad-except
@@ -223,9 +223,11 @@ class EventHubConsumer(
                             last_exception,
                         )
                         raise last_exception
-        if len(self._message_buffer) >= max_batch_size \
-                or (self._message_buffer and not max_wait_time) \
-                or (deadline <= time.time() and max_wait_time):
+        if (
+            len(self._message_buffer) >= max_batch_size
+            or (self._message_buffer and not max_wait_time)
+            or (deadline <= time.time() and max_wait_time)
+        ):
             if batch:
                 events_for_callback = []
                 for _ in range(min(max_batch_size, len(self._message_buffer))):
@@ -234,5 +236,7 @@ class EventHubConsumer(
                     )
                 self._on_event_received(events_for_callback)
             else:
-                self._on_event_received(self._next_message_in_buffer() if self._message_buffer else None)
+                self._on_event_received(
+                    self._next_message_in_buffer() if self._message_buffer else None
+                )
             self._receive_start_time = None

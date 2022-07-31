@@ -281,22 +281,7 @@ partition_ids = client.get_partition_ids()
 
 ## Troubleshooting
 
-### General
-
-The Event Hubs APIs generate the following exceptions in azure.eventhub.exceptions
-
-- **AuthenticationError:** Failed to authenticate because of wrong address, SAS policy/key pair, SAS token or azure identity.
-- **ConnectError:** Failed to connect to the EventHubs. The AuthenticationError is a type of ConnectError.
-- **ConnectionLostError:** Lose connection after a connection has been built.
-- **EventDataError:** The EventData to be sent fails data validation. For instance, this error is raised if you try to send an EventData that is already sent.
-- **EventDataSendError:** The Eventhubs service responds with an error when an EventData is sent.
-- **OperationTimeoutError:** EventHubConsumer.send() times out.
-- **EventHubError:** All other Eventhubs related errors. It is also the root error class of all the errors described above.
-
-### Logging
-
-- Enable `azure.eventhub` logger to collect traces from the library.
-- Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
+See the `azure-eventhubs` [troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/TROUBLESHOOTING.md) for details on how to diagnose various failure scenarios.
 
 ## Next steps
 

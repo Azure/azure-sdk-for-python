@@ -9,12 +9,17 @@ from unittest import mock
 # pylint: disable=import-error
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk._metrics.export import MetricExportResult
-from opentelemetry.sdk._metrics.point import (
+from opentelemetry.sdk.metrics.export import (
     AggregationTemporality,
     Gauge,
     Histogram,
+    HistogramDataPoint,
     Metric,
+    MetricExportResult,
+    MetricsData,
+    NumberDataPoint,
+    ResourceMetrics,
+    ScopeMetrics,
     Sum,
 )
 
@@ -47,24 +52,42 @@ class TestAzureMetricExporter(unittest.TestCase):
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
         cls._exporter = AzureMonitorMetricExporter()
-        cls._metric = Metric(
-            attributes={
-                "test": "attribute"
-            },
-            description="test description",
-            instrumentation_scope=InstrumentationScope("test_name"),
-            name="test name",
-            resource = Resource.create(
-                attributes={"asd":"test_resource"}
-            ),
-            unit="ms",
-            point=Sum(
-                start_time_unix_nano=1646865018558419456,
-                time_unix_nano=1646865018558419457,
-                value=10,
-                aggregation_temporality=AggregationTemporality.CUMULATIVE,
-                is_monotonic=False,
-            )
+        cls._metrics_data = MetricsData(
+            resource_metrics=[
+                ResourceMetrics(
+                    resource = Resource.create(
+                        attributes={"asd":"test_resource"}
+                    ),
+                    scope_metrics=[
+                        ScopeMetrics(
+                            scope=InstrumentationScope("test_name"),
+                            metrics=[
+                                Metric(
+                                    name="test name",
+                                    description="test description",
+                                    unit="ms",
+                                    data=Sum(
+                                        data_points=[
+                                            NumberDataPoint(
+                                                attributes={
+                                                    "test": "attribute",
+                                                },
+                                                start_time_unix_nano=1646865018558419456,
+                                                time_unix_nano=1646865018558419457,
+                                                value=10,
+                                            )
+                                        ],
+                                        aggregation_temporality=AggregationTemporality.CUMULATIVE,
+                                        is_monotonic=False,
+                                    )
+                                )
+                            ],
+                            schema_url="test url",
+                        )
+                    ],
+                    schema_url="test url",
+                )
+            ]
         )
 
     @classmethod
@@ -91,9 +114,9 @@ class TestAzureMetricExporter(unittest.TestCase):
             "4321abcd-5678-4efa-8abc-1234567890ab",
         )
 
-    def test_export_empty(self):
+    def test_export_none(self):
         exporter = self._exporter
-        result = exporter.export([])
+        result = exporter.export(None)
         self.assertEqual(result, MetricExportResult.SUCCESS)
 
     def test_export_failure(self):
@@ -104,7 +127,7 @@ class TestAzureMetricExporter(unittest.TestCase):
             transmit.return_value = ExportResult.FAILED_RETRYABLE
             storage_mock = mock.Mock()
             exporter.storage.put = storage_mock
-            result = exporter.export([self._metric])
+            result = exporter.export(self._metrics_data)
         self.assertEqual(result, MetricExportResult.FAILURE)
         self.assertEqual(storage_mock.call_count, 1)
 
@@ -116,7 +139,7 @@ class TestAzureMetricExporter(unittest.TestCase):
             transmit.return_value = ExportResult.SUCCESS
             storage_mock = mock.Mock()
             exporter._transmit_from_storage = storage_mock
-            result = exporter.export([self._metric])
+            result = exporter.export(self._metrics_data)
             self.assertEqual(result, MetricExportResult.SUCCESS)
             self.assertEqual(storage_mock.call_count, 1)
 
@@ -127,7 +150,7 @@ class TestAzureMetricExporter(unittest.TestCase):
             "azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter._transmit",
             throw(Exception),
         ):  # noqa: E501
-            result = exporter.export([self._metric])
+            result = exporter.export(self._metrics_data)
             self.assertEqual(result, MetricExportResult.FAILURE)
             self.assertEqual(logger_mock.exception.called, True)
 
@@ -137,33 +160,24 @@ class TestAzureMetricExporter(unittest.TestCase):
             "azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter._transmit"
         ) as transmit:  # noqa: E501
             transmit.return_value = ExportResult.FAILED_NOT_RETRYABLE
-            result = exporter.export([self._metric])
+            result = exporter.export(self._metrics_data)
             self.assertEqual(result, MetricExportResult.FAILURE)
 
-    def test_metric_to_envelope_partA(self):
+    def test_point_to_envelope_partA(self):
         exporter = self._exporter
         resource = Resource(
             {"service.name": "testServiceName",
              "service.namespace": "testServiceNamespace",
              "service.instance.id": "testServiceInstanceId"})
-        _metric = Metric(
+        point=NumberDataPoint(
             attributes={
-                "test": "attribute"
+                "test": "attribute",
             },
-            description="test description",
-            instrumentation_scope=InstrumentationScope("test_name"),
-            name="test name",
-            resource = resource,
-            unit="ms",
-            point=Sum(
-                start_time_unix_nano=1646865018558419456,
-                time_unix_nano=1646865018558419457,
-                value=10,
-                aggregation_temporality=AggregationTemporality.CUMULATIVE,
-                is_monotonic=False,
-            )
+            start_time_unix_nano=1646865018558419456,
+            time_unix_nano=1646865018558419457,
+            value=10,
         )
-        envelope = exporter._metric_to_envelope(_metric)
+        envelope = exporter._point_to_envelope(point, "test name", resource)
 
         self.assertEqual(envelope.instrumentation_key,
                          "1234abcd-5678-4efa-8abc-1234567890ab")
@@ -178,54 +192,38 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.tags.get("ai.cloud.roleInstance"), "testServiceInstanceId")
         self.assertEqual(envelope.tags.get("ai.internal.nodeName"), "testServiceInstanceId")
 
-    def test_metric_to_envelope_partA_default(self):
+    def test_point_to_envelope_partA_default(self):
         exporter = self._exporter
         resource = Resource(
             {"service.name": "testServiceName"})
-        _metric = Metric(
+        point=NumberDataPoint(
             attributes={
-                "test": "attribute"
+                "test": "attribute",
             },
-            description="test description",
-            instrumentation_scope=InstrumentationScope("test_name"),
-            name="test name",
-            resource = resource,
-            unit="ms",
-            point=Sum(
-                start_time_unix_nano=1646865018558419456,
-                time_unix_nano=1646865018558419457,
-                value=10,
-                aggregation_temporality=AggregationTemporality.CUMULATIVE,
-                is_monotonic=False,
-            )
+            start_time_unix_nano=1646865018558419456,
+            time_unix_nano=1646865018558419457,
+            value=10,
         )
-        envelope = exporter._metric_to_envelope(_metric)
+        envelope = exporter._point_to_envelope(point, "test name", resource)
         self.assertEqual(envelope.tags.get("ai.cloud.role"), "testServiceName")
         self.assertEqual(envelope.tags.get("ai.cloud.roleInstance"), platform.node())
         self.assertEqual(envelope.tags.get("ai.internal.nodeName"), envelope.tags.get("ai.cloud.roleInstance"))
 
-    def test_metric_to_envelope_sum(self):
+    def test_point_to_envelope_number(self):
         exporter = self._exporter
-        _metric = Metric(
+        resource = Resource.create(attributes={"asd":"test_resource"})
+        scope = InstrumentationScope("test_scope"),
+        point=NumberDataPoint(
             attributes={
-                "test": "attribute"
+                "test": "attribute",
             },
-            description="test description",
-            instrumentation_scope=InstrumentationScope("test_name"),
-            name="test name",
-            resource=None,
-            unit="ms",
-            point=Sum(
-                start_time_unix_nano=1646865018558419456,
-                time_unix_nano=1646865018558419457,
-                value=10,
-                aggregation_temporality=AggregationTemporality.CUMULATIVE,
-                is_monotonic=False,
-            )
+            start_time_unix_nano=1646865018558419456,
+            time_unix_nano=1646865018558419457,
+            value=10,
         )
-        envelope = exporter._metric_to_envelope(_metric)
+        envelope = exporter._point_to_envelope(point, "test name", resource, scope)
         self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Metric')
-        self.assertEqual(envelope.time, ns_to_iso_str(_metric.point.time_unix_nano))
+        self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
         self.assertEqual(envelope.data.base_type, 'MetricData')
         self.assertEqual(len(envelope.data.base_data.properties), 1)
         self.assertEqual(envelope.data.base_data.properties['test'], 'attribute')
@@ -235,65 +233,32 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].data_point_type, "Aggregation")
         self.assertEqual(envelope.data.base_data.metrics[0].count, 1)
 
-    def test_metric_to_envelope_gauge(self):
+    def test_point_to_envelope_histogram(self):
         exporter = self._exporter
-        _metric = Metric(
+        resource = Resource.create(attributes={"asd":"test_resource"})
+        scope = InstrumentationScope("test_scope"),
+        point=HistogramDataPoint(
             attributes={
-                "test": "attribute"
+                "test": "attribute",
             },
-            description="test description",
-            instrumentation_scope=InstrumentationScope("test_name"),
-            name="test name",
-            resource=None,
-            unit="ms",
-            point=Gauge(
-                time_unix_nano=1646865018558419457,
-                value=100,
-            )
+            bucket_counts=[0,3,4],
+            count=7,
+            explicit_bounds=[0,5,10,0],
+            max=18,
+            min=1,
+            start_time_unix_nano=1646865018558419456,
+            time_unix_nano=1646865018558419457,
+            sum=31,
         )
-        envelope = exporter._metric_to_envelope(_metric)
+        envelope = exporter._point_to_envelope(point, "test name", resource, scope)
         self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Metric')
-        self.assertEqual(envelope.time, ns_to_iso_str(_metric.point.time_unix_nano))
+        self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
         self.assertEqual(envelope.data.base_type, 'MetricData')
         self.assertEqual(len(envelope.data.base_data.properties), 1)
         self.assertEqual(envelope.data.base_data.properties['test'], 'attribute')
         self.assertEqual(len(envelope.data.base_data.metrics), 1)
         self.assertEqual(envelope.data.base_data.metrics[0].name, "test name")
-        self.assertEqual(envelope.data.base_data.metrics[0].value, 100)
-        self.assertEqual(envelope.data.base_data.metrics[0].data_point_type, "Aggregation")
-        self.assertEqual(envelope.data.base_data.metrics[0].count, 1)
-
-    def test_metric_to_envelope_histogram(self):
-        exporter = self._exporter
-        _metric = Metric(
-            attributes={
-                "test": "attribute"
-            },
-            description="test description",
-            instrumentation_scope=InstrumentationScope("test_name"),
-            name="test name",
-            resource=None,
-            unit="ms",
-            point=Histogram(
-                aggregation_temporality=AggregationTemporality.DELTA,
-                bucket_counts=[0,3,4],
-                explicit_bounds=[0,5,10,0],
-                max=18,
-                min=1,
-                start_time_unix_nano=1646865018558419456,
-                time_unix_nano=1646865018558419457,
-                sum=31,
-            )
-        )
-        envelope = exporter._metric_to_envelope(_metric)
-        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Metric')
-        self.assertEqual(envelope.time, ns_to_iso_str(_metric.point.time_unix_nano))
-        self.assertEqual(envelope.data.base_type, 'MetricData')
-        self.assertEqual(len(envelope.data.base_data.properties), 1)
-        self.assertEqual(envelope.data.base_data.properties['test'], 'attribute')
-        self.assertEqual(len(envelope.data.base_data.metrics), 1)
-        self.assertEqual(envelope.data.base_data.metrics[0].name, "test name")
-        self.assertEqual(envelope.data.base_data.metrics[0].value, 7)
+        self.assertEqual(envelope.data.base_data.metrics[0].value, 31)
         self.assertEqual(envelope.data.base_data.metrics[0].data_point_type, "Aggregation")
         self.assertEqual(envelope.data.base_data.metrics[0].count, 7)
 

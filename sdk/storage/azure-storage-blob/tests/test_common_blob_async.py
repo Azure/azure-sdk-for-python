@@ -19,7 +19,7 @@ from datetime import datetime, timedelta
 from azure.mgmt.storage.aio import StorageManagementClient
 
 from azure.core import MatchConditions
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -166,7 +166,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
 
         # wait until the policy has gone into effect
         if self.is_live:
-            time.sleep(35)
+            time.sleep(40)
 
     async def _disable_soft_delete(self):
         delete_retention_policy = RetentionPolicy(enabled=False)
@@ -449,6 +449,20 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertIsNotNone(resp.get('etag'))
         md = (await blob.get_blob_properties()).metadata
         self.assertDictEqual(md, metadata)
+
+    @BlobPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_upload_blob_with_dictionary_async(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = 'test_blob'
+        blob_data = {'hello': 'world'}
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Assert
+        with self.assertRaises(TypeError):
+            await blob.upload_blob(blob_data)
 
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -792,10 +806,13 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
     @pytest.mark.live_test_only
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_no_server_encryption(self, storage_account_name, storage_account_key):
-        pytest.skip("Aiohttp headers dict (CIMultiDictProxy) is immutable.")
+    async def test_no_server_encryption_async(self, storage_account_name, storage_account_key):
         # Arrange
-        await self._setup(storage_account_name, storage_account_key)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        self.container_name = self.get_resource_name('utcontainer')
+        self.source_container_name = self.get_resource_name('utcontainersource')
+        self.byte_data = self.get_random_bytes(1024)
+        await self.bsc.create_container(self.container_name)
         blob_name = await self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -1693,7 +1710,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         lease = await blob.acquire_lease(lease_duration=15)
         resp = await blob.upload_blob(b'hello 2', length=7, lease=lease)
-        self.sleep(15)
+        self.sleep(17)
 
         # Assert
         with self.assertRaises(HttpResponseError):
@@ -2019,6 +2036,20 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertEqual(blob_name, blob_properties.name)
         self.assertEqual(self.container_name, container_properties.name)
+
+    @BlobPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_azure_named_key_credential_access(self, storage_account_name, storage_account_key):
+        named_key = AzureNamedKeyCredential(storage_account_name, storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), named_key)
+        container_name = self._get_container_reference()
+
+        # Act
+        container = bsc.get_container_client(container_name)
+        created = await container.create_container()
+
+        # Assert
+        self.assertTrue(created)
 
     @pytest.mark.live_test_only
     @BlobPreparer()

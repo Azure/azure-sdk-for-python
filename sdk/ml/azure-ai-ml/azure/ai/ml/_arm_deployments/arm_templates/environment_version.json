@@ -1,0 +1,11 @@
+{
+    "type": "Microsoft.MachineLearningServices/workspaces/environments/versions",
+    "apiVersion": "2021-10-01",
+    "name": "[concat(parameters('workspaceName'), '/', parameters('environment_version')[copyIndex()].name, '/', parameters('environment_version')[copyIndex()].version)]",
+    "properties": "[parameters('environment_version')[copyIndex()].properties]",
+    "copy": {
+        "name": "environmentVersionDeploymentCopy",
+        "count": "[length(parameters('environment_version'))]",
+        "mode": "serial"
+    }
+}

@@ -44,10 +44,12 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -71,7 +73,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
 
     def __init__(
             self, account_url,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -347,9 +349,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         return FileSystemClient(self.url, file_system_name, credential=self._raw_credential,
                                 api_version=self.api_version,
                                 _configuration=self._config,
-                                _pipeline=self._pipeline, _hosts=self._hosts,
-                                require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-                                key_resolver_function=self.key_resolver_function)
+                                _pipeline=self._pipeline, _hosts=self._hosts)
 
     def get_directory_client(self, file_system,  # type: Union[FileSystemProperties, str]
                              directory  # type: Union[DirectoryProperties, str]
@@ -396,11 +396,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
                                        credential=self._raw_credential,
                                        api_version=self.api_version,
                                        _configuration=self._config, _pipeline=self._pipeline,
-                                       _hosts=self._hosts,
-                                       require_encryption=self.require_encryption,
-                                       key_encryption_key=self.key_encryption_key,
-                                       key_resolver_function=self.key_resolver_function
-                                       )
+                                       _hosts=self._hosts)
 
     def get_file_client(self, file_system,  # type: Union[FileSystemProperties, str]
                         file_path  # type: Union[FileProperties, str]
@@ -446,10 +442,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         return DataLakeFileClient(
             self.url, file_system_name, file_path=file_path, credential=self._raw_credential,
             api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline)
 
     async def set_service_properties(self, **kwargs):
         # type: (**Any) -> None

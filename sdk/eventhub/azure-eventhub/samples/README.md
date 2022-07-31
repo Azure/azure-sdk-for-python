@@ -78,6 +78,11 @@ The [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/e
     - Send AMQPAnnotatedMessage of different body types.
     - Receive messages and parse the body according to the body type.
 
+- [send_buffered_mode.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples/send_buffered_mode.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/async_samples/send_buffered_mode_async.py)) - Examples to send events in buffered mode:
+    - Send single events, which will be automatically batched.
+    - Send a batch of events by enqueuing an EventDataBatch object to the buffer.
+    - Send events in buffer immediately by calling `flush`.
+
 ## Prerequisites
 - Python 3.6 or later.
 - **Microsoft Azure Subscription:**  To use Azure services, including Azure Event Hubs, you'll need a subscription.

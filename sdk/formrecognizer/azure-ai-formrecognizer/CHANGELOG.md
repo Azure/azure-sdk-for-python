@@ -1,14 +1,43 @@
 # Release History
 
-## 3.2.0b5 (Unreleased)
+## 3.2.0b6 (Unreleased)
 
 ### Features Added
+- Added `TargetAuthorization` of type `dict[str, str]`.
 
 ### Breaking Changes
+- Renamed `begin_create_composed_model()` on `DocumentModelAdministrationClient` to `begin_compose_model()`.
+- Renamed `get_account_info()` on `DocumentModelAdministrationClient` to `get_resource_details()`.
+- Renamed `AccountInfo` model to `ResourceDetails`.
+- Renamed `DocumentModelInfo` model to `DocumentModelSummary`.
+- Renamed `DocumentModel` to `DocumentModelDetails`.
+- Renamed `ModelOperation` to `ModelOperationDetails`.
+- Renamed `ModelOperationInfo` to `ModelOperationSummary`.
+- Renamed `model` parameter to `model_id` on `begin_analyze_document()` and `begin_analyze_document_from_url()`.
+- Removed `continuation_token` keyword from `begin_analyze_document()` and `begin_analyze_document_from_url()` on `DocumentAnalysisClient` and from `begin_build_model()`, `begin_compose_model()` and `begin_copy_model_to()` on `DocumentModelAdministrationClient`.
+- Changed return type of `get_copy_authorization()` from `dict[str, str]` to `TargetAuthorization`.
+- Changed expected `target` parameter in `begin_copy_to()` from `dict[str, str]` to `TargetAuthorization`.
+- Long-running operation metadata is now accessible through the `details` property on the returned `DocumentModelAdministrationLROPoller` and `AsyncDocumentModelAdministrationLROPoller` instances.
 
 ### Bugs Fixed
 
 ### Other Changes
+- Python 3.6 is no longer supported in this release. Please use Python 3.7 or later.
+
+## 3.2.0b5 (2022-06-07)
+
+### Features Added
+- Added `paragraphs` property on `AnalyzeResult`.
+- Added new `DocumentParagraph` model to represent document paragraphs.
+- Added new `AddressValue` model to represent address fields found in documents.
+- Added `kind` property on `DocumentPage`.
+
+### Breaking Changes
+- Renamed `bounding_box` to `polygon` on `BoundingRegion`, `DocumentContentElement`, `DocumentLine`, `DocumentSelectionMark`, `DocumentWord`.
+- Renamed `language_code` to `locale` on `DocumentLanguage`.
+- Some models that previously returned string for address related fields may now return `AddressValue`. TIP: Use `get_model()` on `DocumentModelAdministrationClient` to see updated prebuilt model schemas.
+- Removed `entities` property on `AnalyzeResult`.
+- Removed `DocumentEntity` model.
 
 ## 3.2.0b4 (2022-04-05)
 
@@ -38,7 +67,7 @@
 
 ### Breaking Changes
 - Added new required parameter `build_mode` to `begin_build_model()`.
-- Some models that previously returned float for currency related fields may now return a `CurrencyValue`. TIP: Use `get_model()` to see updated prebuilt model schemas.
+- Some models that previously returned float for currency related fields may now return a `CurrencyValue`. TIP: Use `get_model()` on `DocumentModelAdministrationClient` to see updated prebuilt model schemas.
 
 ### Bugs Fixed
 - Default the `percent_completed` property to 0 when not returned with model operation information.

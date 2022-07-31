@@ -1,0 +1,6 @@
+name: akse2etest
+type: online
+target: azureml:sdkv2endpointaks
+auth_mode: Key
+traffic:
+    etred: 100

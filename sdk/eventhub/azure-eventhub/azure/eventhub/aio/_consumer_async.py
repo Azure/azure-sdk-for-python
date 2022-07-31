@@ -10,6 +10,7 @@ from collections import deque
 from typing import TYPE_CHECKING, Callable, Awaitable, cast, Dict, Optional, Union, List
 from urllib.parse import urlparse
 
+import uamqp
 from .._pyamqp import (
     types,
     utils as pyamqp_utils,
@@ -98,13 +99,9 @@ class EventHubConsumer(
         self._owner_level = owner_level
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
-        self._retry_policy = error.RetryPolicy(
-            retry_total=self._client._config.max_retries,  # pylint:disable=protected-access
-            retry_backoff_factor=self._client._config.backoff_factor,  # pylint:disable=protected-access
-            retry_backoff_max=self._client._config.backoff_max,  # pylint:disable=protected-access
-            retry_mode=self._client._config.retry_mode,  # pylint:disable=protected-access
-            no_retry_condition=NO_RETRY_ERRORS,
-            custom_condition_backoff=CUSTOM_CONDITION_BACKOFF,
+        self._retry_policy = errors.ErrorPolicy(
+            max_retries=self._client._config.max_retries,
+            on_error=_error_handler,  # pylint:disable=protected-access
         )
         self._reconnect_backoff = 1
         self._timeout = 0
@@ -116,7 +113,8 @@ class EventHubConsumer(
         if owner_level is not None:
             self._link_properties[EPOCH_SYMBOL] = pyamqp_utils.amqp_long_value(int(owner_level))
         link_property_timeout_ms = (
-            self._client._config.receive_timeout or self._timeout # pylint:disable=protected-access
+            self._client._config.receive_timeout
+            or self._timeout  # pylint:disable=protected-access
         ) * 1000
         self._link_properties[TIMEOUT_SYMBOL] = pyamqp_utils.amqp_long_value(int(link_property_timeout_ms))
         self._handler = None  # type: Optional[ReceiveClientAsync]
@@ -236,14 +234,72 @@ class EventHubConsumer(
                     )
                     raise last_exception
 
-    async def receive(self, batch=False, max_batch_size=300, max_wait_time=None) -> None:
-        self._callback_task_run = True
-        self._last_callback_called_time = time.time()
-        callback_task = asyncio.ensure_future(self._callback_task(batch, max_batch_size, max_wait_time))
-        receive_task = asyncio.ensure_future(self._receive_task())
+   # async def receive(self, batch=False, max_batch_size=300, max_wait_time=None) -> None:
+   #     self._callback_task_run = True
+   #     self._last_callback_called_time = time.time()
+   #     callback_task = asyncio.ensure_future(self._callback_task(batch, max_batch_size, max_wait_time))
+   #     receive_task = asyncio.ensure_future(self._receive_task())
 
-        try:
-            await receive_task
-        finally:
-            self._callback_task_run = False
-            await callback_task
+   #     try:
+   #         await receive_task
+   #     finally:
+   #         self._callback_task_run = False
+   #         await callback_task
+
+    async def receive(
+        self, batch=False, max_batch_size=300, max_wait_time=None
+    ) -> None:
+        max_retries = (
+            self._client._config.max_retries  # pylint:disable=protected-access
+        )
+        has_not_fetched_once = True  # ensure one trip when max_wait_time is very small
+        deadline = time.time() + (max_wait_time or 0)  # max_wait_time can be None
+        while len(self._message_buffer) < max_batch_size and (
+            time.time() < deadline or has_not_fetched_once
+        ):
+            retried_times = 0
+            has_not_fetched_once = False
+            while retried_times <= max_retries:
+                try:
+                    await self._open()
+                    await cast(
+                        ReceiveClientAsync, self._handler
+                    ).do_work_async()  # uamqp sleeps 0.05 if none received
+                    break
+                except asyncio.CancelledError:  # pylint: disable=try-except-raise
+                    raise
+                except Exception as exception:  # pylint: disable=broad-except
+                    if (
+                        isinstance(exception, uamqp.errors.LinkDetach)
+                        and exception.condition # pylint: disable=no-member
+                        == uamqp.constants.ErrorCodes.LinkStolen
+                    ):
+                        raise await self._handle_exception(exception)
+                    if not self.running:  # exit by close
+                        return
+                    if self._last_received_event:
+                        self._offset = self._last_received_event.offset
+                    last_exception = await self._handle_exception(exception)
+                    retried_times += 1
+                    if retried_times > max_retries:
+                        _LOGGER.info(
+                            "%r operation has exhausted retry. Last exception: %r.",
+                            self._name,
+                            last_exception,
+                        )
+                        raise last_exception
+
+        if self._message_buffer:
+            while self._message_buffer:
+                if batch:
+                    events_for_callback = []  # type: List[EventData]
+                    for _ in range(min(max_batch_size, len(self._message_buffer))):
+                        events_for_callback.append(self._next_message_in_buffer())
+                    await self._on_event_received(events_for_callback)
+                else:
+                    await self._on_event_received(self._next_message_in_buffer())
+        elif max_wait_time:
+            if batch:
+                await self._on_event_received([])
+            else:
+                await self._on_event_received(None)

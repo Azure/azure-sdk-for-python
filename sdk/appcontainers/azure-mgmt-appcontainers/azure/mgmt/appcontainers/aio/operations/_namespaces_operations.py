@@ -47,7 +47,7 @@ class NamespacesOperations:
     async def check_name_availability(
         self,
         resource_group_name: str,
-        managed_environment_name: str,
+        environment_name: str,
         check_name_availability_request: "_models.CheckNameAvailabilityRequest",
         **kwargs: Any
     ) -> "_models.CheckNameAvailabilityResponse":
@@ -57,8 +57,8 @@ class NamespacesOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param managed_environment_name: Name of the Managed Environment.
-        :type managed_environment_name: str
+        :param environment_name: Name of the Managed Environment.
+        :type environment_name: str
         :param check_name_availability_request: The check name availability request.
         :type check_name_availability_request:
          ~azure.mgmt.appcontainers.models.CheckNameAvailabilityRequest
@@ -81,7 +81,7 @@ class NamespacesOperations:
         request = build_check_name_availability_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            managed_environment_name=managed_environment_name,
+            environment_name=environment_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -109,5 +109,5 @@ class NamespacesOperations:
 
         return deserialized
 
-    check_name_availability.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{managedEnvironmentName}/checkNameAvailability"}  # type: ignore
+    check_name_availability.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/checkNameAvailability"}  # type: ignore
 

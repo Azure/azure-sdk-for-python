@@ -1,5 +1,29 @@
 # Release History
 
+## 1.11.0b3 (Unreleased)
+
+Azure-identity is supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+
+### Features Added
+
+- Added ability to specify `tenant_id` for `AzureCliCredential` (thanks @tikicoder)    ([#25207](https://github.com/Azure/azure-sdk-for-python/pull/25207))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.11.0b2 (2022-07-05)
+
+### Features Added
+
+- `EnvironmentCredential` added `AZURE_CLIENT_CERTIFICATE_PASSWORD` support for the cert password    ([#24652](https://github.com/Azure/azure-sdk-for-python/issues/24652))
+
+### Bugs Fixed
+
+- Fixed the issue that failed to parse PEM certificate if it does not start with "-----"    ([#24643](https://github.com/Azure/azure-sdk-for-python/issues/24643))
+
 ## 1.11.0b1 (2022-05-10)
 
 ### Features Added
