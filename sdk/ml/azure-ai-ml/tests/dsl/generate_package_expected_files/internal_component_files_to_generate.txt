@@ -1,0 +1,7 @@
+tests/test_configs/internal/helloworld_component_command.yml
+tests/test_configs/internal/hemera-component/component.yaml
+tests/test_configs/internal/hdi-component/component_spec.yaml
+tests/test_configs/internal/batch_inference/batch_score.yaml
+tests/test_configs/internal/scope-component/component_spec.yaml
+tests/test_configs/internal/data-transfer-component/component_spec.yaml
+tests/test_configs/internal/starlite-component/component_spec.yaml

@@ -1,0 +1,511 @@
+# THIS IS AN AUTO GENERATED FILE.
+# PLEASE DO NOT MODIFY MANUALLY.
+# Components included in this generated file:
+# - atestcomponent:1
+# - atestcomponent:None
+# - batch_score:1.0.0
+# - command_component_hdsds_registry_734_5459:10
+# - component_asset_short_form:1
+# - component_merge_outputs:0.0.1
+# - default_optional_component:1
+# - file_batch_score:1.0.0
+# - helloworld_component_with_env:0.0.1
+# - microsoft_samples_command_component_basic:1
+# - microsoft_samples_command_component_basic_inputs:1
+# - microsoft_samples_command_component_custom_input_outputs:1
+# - microsoft_samples_command_component_ml_table_input_outputs:1
+# - microsoft_samples_command_component_path_input_outputs:1
+# - microsoftsamples_command_component_basic:0.0.1
+# - microsoftsamples_command_component_basic:1
+# - microsoftsamples_command_component_basic_with_optional_inputs:1
+# - microsoftsamples_command_component_basic_with_paths_test:1
+# - microsoftsamples_command_component_for_sweep:0.0.1
+# - microsoftsamples_command_component_mpi:None
+# - microsoftsamples_command_component_multiple_data:1
+# - microsoftsamples_command_component_pytorch:None
+# - microsoftsamples_command_component_tensor_flow:None
+# - microsoftsamplescommandcomponentbasic_nopaths_test:1
+# - sample_command_component_basic:1
+
+from enum import Enum
+
+from azure.ai.ml import Input, Output
+from azure.ai.ml.entities._builders import Command, Parallel
+
+
+class _AtestcomponentOutput:
+    output_path: Output
+    """uri_folder (type: uri_folder)"""
+
+
+class _AtestcomponentComponent(Command):
+    outputs: _AtestcomponentOutput
+
+
+class _AtestcomponentNoneOutput:
+    output_path: Output
+    """uri_folder (type: uri_folder)"""
+
+
+class _AtestcomponentNoneComponent(Command):
+    outputs: _AtestcomponentNoneOutput
+
+
+class _BatchScoreInput:
+    label: Input
+    """Other reference data for batch scoring, e.g. labels. (type: uri_file)"""
+    score_input: Input
+    """The data to be split and scored in parallel. (type: mltable)"""
+    score_model: Input
+    """The model for batch score. (type: custom_model)"""
+
+
+class _BatchScoreOutput:
+    scored_result: Output
+    """mltable (type: mltable)"""
+    scoring_summary: Output
+    """uri_file (type: uri_file)"""
+
+
+class _BatchScoreComponent(Parallel):
+    inputs: _BatchScoreInput
+    outputs: _BatchScoreOutput
+
+
+class _CommandComponentHdsdsRegistry7345459Input:
+    component_in_number: float = 10.99
+    """A number (optional)"""
+    component_in_path: Input
+    """A path (type: uri_folder)"""
+
+
+class _CommandComponentHdsdsRegistry7345459Output:
+    component_out_path: Output
+    """uri_folder (type: uri_folder)"""
+
+
+class _CommandComponentHdsdsRegistry7345459Component(Command):
+    inputs: _CommandComponentHdsdsRegistry7345459Input
+    outputs: _CommandComponentHdsdsRegistry7345459Output
+
+
+class _ComponentAssetShortFormInput:
+    component_in_number: float = 10.99
+    """A number (optional)"""
+    component_in_path: Input
+    """A path (type: uri_folder)"""
+
+
+class _ComponentAssetShortFormOutput:
+    component_out_path: Output
+    """uri_folder (type: uri_folder)"""
+
+
+class _ComponentAssetShortFormComponent(Command):
+    inputs: _ComponentAssetShortFormInput
+    outputs: _ComponentAssetShortFormOutput
+
+
+class _ComponentMergeOutputsInput:
+    component_in_number: float = 10.99
+    """A number"""
+    component_in_path_1: Input
+    """A path (type: uri_folder)"""
+    component_in_path_2: Input
+    """A path (type: uri_folder)"""
+
+
+class _ComponentMergeOutputsOutput:
+    component_out_path_1: Output
+    """uri_folder (type: uri_folder)"""
+    component_out_path_2: Output
+    """uri_folder (type: uri_folder)"""
+
+
+class _ComponentMergeOutputsComponent(Command):
+    inputs: _ComponentMergeOutputsInput
+    outputs: _ComponentMergeOutputsOutput
+
+
+class _DefaultOptionalComponentInput:
+    optional_input: Input
+    """uri_folder (type: uri_folder) (optional)"""
+    optional_param: str = None
+    """string (optional)"""
+    optional_param_with_default: str = 'optional_param_with_default'
+    """string (optional)"""
+    required_input: Input
+    """uri_folder (type: uri_folder)"""
+    required_param: str = None
+    """string"""
+    required_param_with_default: str = 'required_param_with_default'
+    """string"""
+
+
+class _DefaultOptionalComponentComponent(Command):
+    inputs: _DefaultOptionalComponentInput
+
+
+class _FileBatchScoreInput:
+    job_data_path: Input
+    """The data to be split and scored in parallel. (type: mltable)"""
+
+
+class _FileBatchScoreOutput:
+    job_output_path: Output
+    """uri_folder (type: uri_folder)"""
+
+
+class _FileBatchScoreComponent(Parallel):
+    inputs: _FileBatchScoreInput
+    outputs: _FileBatchScoreOutput
+
+
+class _HelloworldComponentWithEnvInput:
+    component_in_number: float = 10.99
+    """A number (optional)"""
+    component_in_path: Input
+    """A path (type: uri_folder)"""
+
+
+class _HelloworldComponentWithEnvOutput:
+    component_out_path: Output
+    """uri_folder (type: uri_folder)"""
+
+
+class _HelloworldComponentWithEnvComponent(Command):
+    inputs: _HelloworldComponentWithEnvInput
+    outputs: _HelloworldComponentWithEnvOutput
+
+
+class _MicrosoftSamplesCommandComponentBasicInput:
+    component_in_number: float = 10.99
+    """A number"""
+    component_in_path: Input
+    """A path (type: uri_folder)"""
+
+
+class _MicrosoftSamplesCommandComponentBasicOutput:
+    component_out_path: Output
+    """uri_folder (type: uri_folder)"""
+
+
+class _MicrosoftSamplesCommandComponentBasicComponent(Command):
+    inputs: _MicrosoftSamplesCommandComponentBasicInput
+    outputs: _MicrosoftSamplesCommandComponentBasicOutput
+
+
+class _MicrosoftSamplesCommandComponentBasicInputsComponentInEnum(Enum):
+    HELLO = "hello"
+    WORLD = "world"
+
+
+class _MicrosoftSamplesCommandComponentBasicInputsInput:
+    component_in_boolean: bool = False
+    """A boolean"""
+    component_in_enum: _MicrosoftSamplesCommandComponentBasicInputsComponentInEnum = _MicrosoftSamplesCommandComponentBasicInputsComponentInEnum.HELLO
+    """An enum (enum: ['hello', 'world'])"""
+    component_in_ranged_integer: int = 10
+    """A ranged integer (min: 1, max: 100)"""
+    component_in_ranged_number: float = 10.0
+    """A ranged number (min: 2.0, max: 8.0)"""
+    component_in_string: str = None
+    """A string"""
+
+
+class _MicrosoftSamplesCommandComponentBasicInputsComponent(Command):
+    inputs: _MicrosoftSamplesCommandComponentBasicInputsInput
+
+
+class _MicrosoftSamplesCommandComponentCustomInputOutputsInput:
+    component_in_custom_model: Input
+    """custom_model (type: custom_model)"""
+    component_in_trition_model: Input
+    """triton_model (type: triton_model)"""
+
+
+class _MicrosoftSamplesCommandComponentCustomInputOutputsOutput:
+    component_out_custom_model: Output
+    """custom_model (type: custom_model)"""
+    component_out_trition_model: Output
+    """triton_model (type: triton_model)"""
+
+
+class _MicrosoftSamplesCommandComponentCustomInputOutputsComponent(Command):
+    inputs: _MicrosoftSamplesCommandComponentCustomInputOutputsInput
+    outputs: _MicrosoftSamplesCommandComponentCustomInputOutputsOutput
+
+
+class _MicrosoftSamplesCommandComponentMlTableInputOutputsInput:
+    component_in_mlflow_model_azure: Input
+    """mlflow_model (type: mlflow_model)"""
+    component_in_mlflow_model_uri: Input
+    """mlflow_model (type: mlflow_model)"""
+
+
+class _MicrosoftSamplesCommandComponentMlTableInputOutputsOutput:
+    component_out_mlflow_model: Output
+    """mlflow_model (type: mlflow_model)"""
+
+
+class _MicrosoftSamplesCommandComponentMlTableInputOutputsComponent(Command):
+    inputs: _MicrosoftSamplesCommandComponentMlTableInputOutputsInput
+    outputs: _MicrosoftSamplesCommandComponentMlTableInputOutputsOutput
+
+
+class _MicrosoftSamplesCommandComponentPathInputOutputsInput:
+    component_in_file: Input
+    """uri_file (type: uri_file)"""
+    component_in_folder: Input
+    """uri_folder (type: uri_folder)"""
+    component_in_path: Input
+    """path (type: path)"""
+
+
+class _MicrosoftSamplesCommandComponentPathInputOutputsOutput:
+    component_out_file: Output
+    """uri_file (type: uri_file)"""
+    component_out_folder: Output
+    """uri_folder (type: uri_folder)"""
+
+
+class _MicrosoftSamplesCommandComponentPathInputOutputsComponent(Command):
+    inputs: _MicrosoftSamplesCommandComponentPathInputOutputsInput
+    outputs: _MicrosoftSamplesCommandComponentPathInputOutputsOutput
+
+
+class _MicrosoftsamplesCommandComponentBasicInput:
+    component_in_number: float = 10.99
+    """A number (optional)"""
+    component_in_path: Input
+    """A path (type: uri_folder)"""
+
+
+class _MicrosoftsamplesCommandComponentBasicOutput:
+    component_out_path: Output
+    """uri_folder (type: uri_folder)"""
+
+
+class _MicrosoftsamplesCommandComponentBasicComponent(Command):
+    inputs: _MicrosoftsamplesCommandComponentBasicInput
+    outputs: _MicrosoftsamplesCommandComponentBasicOutput
+
+
+class _MicrosoftsamplesCommandComponentBasic1Input:
+    component_in_number: float = 10.99
+    """A number"""
+    component_in_path: Input
+    """A path (type: uri_folder)"""
+
+
+class _MicrosoftsamplesCommandComponentBasic1Output:
+    component_out_path_1: Output
+    """uri_folder (type: uri_folder)"""
+    component_out_path_2: Output
+    """uri_folder (type: uri_folder)"""
+    component_out_path_3: Output
+    """uri_folder (type: uri_folder)"""
+
+
+class _MicrosoftsamplesCommandComponentBasic1Component(Command):
+    inputs: _MicrosoftsamplesCommandComponentBasic1Input
+    outputs: _MicrosoftsamplesCommandComponentBasic1Output
+
+
+class _MicrosoftsamplesCommandComponentBasicWithOptionalInputsInput:
+    component_in_number: float
+    """A number (optional)"""
+    component_in_path: Input
+    """A path (type: uri_folder)"""
+    component_in_path_optional: Input
+    """An optional path (type: uri_folder) (optional)"""
+
+
+class _MicrosoftsamplesCommandComponentBasicWithOptionalInputsOutput:
+    component_out_path: Output
+    """uri_folder (type: uri_folder)"""
+
+
+class _MicrosoftsamplesCommandComponentBasicWithOptionalInputsComponent(Command):
+    inputs: _MicrosoftsamplesCommandComponentBasicWithOptionalInputsInput
+    outputs: _MicrosoftsamplesCommandComponentBasicWithOptionalInputsOutput
+
+
+class _MicrosoftsamplesCommandComponentBasicWithPathsTestInput:
+    component_in_number: float = 10.99
+    """A number"""
+    component_in_path_1: Input
+    """uri_folder (type: uri_folder)"""
+    component_in_path_2: Input
+    """uri_folder (type: uri_folder)"""
+
+
+class _MicrosoftsamplesCommandComponentBasicWithPathsTestComponent(Command):
+    inputs: _MicrosoftsamplesCommandComponentBasicWithPathsTestInput
+
+
+class _MicrosoftsamplesCommandComponentForSweepInput:
+    batch_size: int
+    """integer"""
+    data_folder: Input
+    """mltable (type: mltable)"""
+    epochs: int
+    """integer"""
+    f1: float
+    """number"""
+    f2: float
+    """number"""
+    first_layer_neurons: int
+    """integer"""
+    learning_rate: float
+    """number"""
+    momentum: float
+    """number"""
+    random_seed: int = 42
+    """integer"""
+    second_layer_neurons: int
+    """integer"""
+    third_layer_neurons: int
+    """integer"""
+    weight_decay: float
+    """number"""
+
+
+class _MicrosoftsamplesCommandComponentForSweepOutput:
+    trained_model_dir: Output
+    """mlflow_model (type: mlflow_model)"""
+
+
+class _MicrosoftsamplesCommandComponentForSweepComponent(Command):
+    inputs: _MicrosoftsamplesCommandComponentForSweepInput
+    outputs: _MicrosoftsamplesCommandComponentForSweepOutput
+
+
+class _MicrosoftsamplesCommandComponentMpiInput:
+    component_in_number: float = 10.99
+    """A number"""
+    component_in_path: Input
+    """A path (type: uri_folder)"""
+
+
+class _MicrosoftsamplesCommandComponentMpiOutput:
+    component_out_path: Output
+    """uri_folder (type: uri_folder)"""
+
+
+class _MicrosoftsamplesCommandComponentMpiComponent(Command):
+    inputs: _MicrosoftsamplesCommandComponentMpiInput
+    outputs: _MicrosoftsamplesCommandComponentMpiOutput
+
+
+class _MicrosoftsamplesCommandComponentMultipleDataInput:
+    component_in_1: Input
+    """uri_folder (type: uri_folder)"""
+    component_in_10: Input
+    """uri_folder (type: uri_folder)"""
+    component_in_11: Input
+    """uri_folder (type: uri_folder)"""
+    component_in_12: Input
+    """uri_folder (type: uri_folder)"""
+    component_in_13: Input
+    """uri_folder (type: uri_folder)"""
+    component_in_14: Input
+    """uri_folder (type: uri_folder)"""
+    component_in_15: Input
+    """uri_folder (type: uri_folder)"""
+    component_in_2: Input
+    """uri_folder (type: uri_folder)"""
+    component_in_3: Input
+    """uri_folder (type: uri_folder)"""
+    component_in_4: Input
+    """uri_folder (type: uri_folder)"""
+    component_in_5: Input
+    """uri_folder (type: uri_folder)"""
+    component_in_6: Input
+    """uri_folder (type: uri_folder)"""
+    component_in_7: Input
+    """uri_folder (type: uri_folder)"""
+    component_in_8: Input
+    """uri_folder (type: uri_folder)"""
+    component_in_9: Input
+    """uri_folder (type: uri_folder)"""
+
+
+class _MicrosoftsamplesCommandComponentMultipleDataOutput:
+    component_out_1: Output
+    """uri_folder (type: uri_folder)"""
+    component_out_10: Output
+    """uri_folder (type: uri_folder)"""
+    component_out_2: Output
+    """uri_folder (type: uri_folder)"""
+    component_out_3: Output
+    """uri_folder (type: uri_folder)"""
+    component_out_4: Output
+    """uri_folder (type: uri_folder)"""
+    component_out_5: Output
+    """uri_folder (type: uri_folder)"""
+    component_out_6: Output
+    """uri_folder (type: uri_folder)"""
+    component_out_7: Output
+    """uri_folder (type: uri_folder)"""
+    component_out_8: Output
+    """uri_folder (type: uri_folder)"""
+    component_out_9: Output
+    """uri_folder (type: uri_folder)"""
+
+
+class _MicrosoftsamplesCommandComponentMultipleDataComponent(Command):
+    inputs: _MicrosoftsamplesCommandComponentMultipleDataInput
+    outputs: _MicrosoftsamplesCommandComponentMultipleDataOutput
+
+
+class _MicrosoftsamplesCommandComponentPytorchInput:
+    component_in_number: float = 10.99
+    """A number"""
+    component_in_path: Input
+    """A path (type: uri_folder)"""
+
+
+class _MicrosoftsamplesCommandComponentPytorchOutput:
+    component_out_path: Output
+    """uri_folder (type: uri_folder)"""
+
+
+class _MicrosoftsamplesCommandComponentPytorchComponent(Command):
+    inputs: _MicrosoftsamplesCommandComponentPytorchInput
+    outputs: _MicrosoftsamplesCommandComponentPytorchOutput
+
+
+class _MicrosoftsamplesCommandComponentTensorFlowInput:
+    component_in_number: float = 10.99
+    """A number"""
+    component_in_path: Input
+    """A path (type: uri_folder)"""
+
+
+class _MicrosoftsamplesCommandComponentTensorFlowOutput:
+    component_out_path: Output
+    """uri_folder (type: uri_folder)"""
+
+
+class _MicrosoftsamplesCommandComponentTensorFlowComponent(Command):
+    inputs: _MicrosoftsamplesCommandComponentTensorFlowInput
+    outputs: _MicrosoftsamplesCommandComponentTensorFlowOutput
+
+
+class _MicrosoftsamplescommandcomponentbasicNopathsTestInput:
+    component_in_number: float = 10.99
+    """A number"""
+
+
+class _MicrosoftsamplescommandcomponentbasicNopathsTestComponent(Command):
+    inputs: _MicrosoftsamplescommandcomponentbasicNopathsTestInput
+
+
+class _SampleCommandComponentBasicOutput:
+    component_out_path: Output
+    """uri_folder (type: uri_folder)"""
+
+
+class _SampleCommandComponentBasicComponent(Command):
+    outputs: _SampleCommandComponentBasicOutput

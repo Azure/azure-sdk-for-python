@@ -1,0 +1,207 @@
+# THIS IS AN AUTO GENERATED FILE.
+# PLEASE DO NOT MODIFY MANUALLY.
+from pathlib import Path
+
+from azure.ai.ml import Input
+from mldesigner import reference_component
+
+from ._components_impl import (
+    _AdslrdnnrawkeysDummyComponent,
+    _Convert2SsComponent,
+    _DataTransferComponent,
+    _MicrosoftComAzuremlSamplesParallelScoreImageComponent,
+    _MicrosoftComAzuremlSamplesStarliteSearchGoldGetFilesComponent,
+    _MicrosoftComAzuremlSamplesStarliteSearchGoldGetFilesUploadtocosmos,
+    _MicrosoftComAzuremlSamplesTrainComponent,
+    _TrainInSparkComponent,
+)
+
+
+current_folder = Path(__file__).parent
+
+
+@reference_component(
+    path=current_folder / 'test_configs/internal/hemera-component/component.yaml',
+)
+def adslrdnnrawkeys_dummy(
+    CosmosRootDir: str = 'https://cosmos09.osdinfra.net/cosmos/dummy/local/root/',
+    Cpu: str = 2.0,
+    HdfsRootDir: str = '/projects/default/',
+    InitialModelDir: Input = None,
+    JobQueue: str = 'default',
+    Memory: str = '10g',
+    TrainingDataDir: Input = None,
+    ValidationDataDir: Input = None,
+    WorkerCount: str = 2.0,
+    YarnCluster: str = 'mtprime-bn2-0',
+) -> _AdslrdnnrawkeysDummyComponent:
+    """Ads LR DNN Raw Keys Dummy sample.
+
+    Args:
+        CosmosRootDir (str): string
+        Cpu (str): string
+        HdfsRootDir (str): string
+        InitialModelDir (Input): path (type: path)
+        JobQueue (str): string
+        Memory (str): string
+        TrainingDataDir (Input): path (type: path)
+        ValidationDataDir (Input): path (type: path)
+        WorkerCount (str): string
+        YarnCluster (str): string
+
+    Returns:
+        A component node.
+        The component contains the following outputs:
+            output1 (Output): AnyFile (type: AnyFile)
+            output2 (Output): AnyFile (type: AnyFile)
+        reference the outputs by:
+            node.outputs.output1
+            node.outputs.output2
+    """
+    ...
+
+
+@reference_component(
+    path=current_folder / 'test_configs/internal/scope-component/component_spec.yaml',
+)
+def convert2ss(
+    ExtractionClause: str = None,
+    TextData: str = None,
+) -> _Convert2SsComponent:
+    """Convert adls test data to SS format
+
+    Args:
+        ExtractionClause (str): the extraction clause, something like "column1:string, column2:int"
+        TextData (str): text file on ADLS storage
+
+    Returns:
+        A component node.
+        The component contains the following outputs:
+            SSPath (Output): the converted structured stream (type: CosmosStructuredStream)
+        reference the outputs by:
+            node.outputs.SSPath
+    """
+    ...
+
+
+@reference_component(
+    path=current_folder / 'test_configs/internal/data-transfer-component/component_spec.yaml',
+)
+def data_transfer(
+    source_data: Input = None,
+) -> _DataTransferComponent:
+    """transfer data between common storage types such as Azure Blob Storage and Azure Data Lake.
+
+    Args:
+        source_data (Input): Source data (type: path)
+
+    Returns:
+        A component node.
+        The component contains the following outputs:
+            destination_data (Output): Destination data (type: path)
+        reference the outputs by:
+            node.outputs.destination_data
+    """
+    ...
+
+
+@reference_component(
+    path=current_folder / 'test_configs/internal/batch_inference/batch_score.yaml',
+)
+def microsoft_com_azureml_samples_parallel_score_image(
+    images_to_score: Input = None,
+    model_path: Input = None,
+) -> _MicrosoftComAzuremlSamplesParallelScoreImageComponent:
+    """Score images with MNIST image classification model.
+
+    Args:
+        images_to_score (Input): Images to score. (type: path)
+        model_path (Input): Trained MNIST image classification model. (type: path)
+
+    Returns:
+        A component node.
+        The component contains the following outputs:
+            scored_dataset (Output): Output folder to save scored result. (type: path)
+        reference the outputs by:
+            node.outputs.scored_dataset
+    """
+    ...
+
+
+@reference_component(
+    path=current_folder / 'test_configs/internal/helloworld_component_command.yml',
+)
+def microsoft_com_azureml_samples_train(
+    learning_rate: Input = 0.01,
+    max_epochs: int = None,
+    training_data: Input = None,
+) -> _MicrosoftComAzuremlSamplesTrainComponent:
+    """A dummy training module
+
+    Args:
+        learning_rate (Input): Learning rate, default is 0.01 (type: float)
+        max_epochs (int): Maximum number of epochs for the training
+        training_data (Input): Training data organized in the torchvision format/structure (type: path)
+
+    Returns:
+        A component node.
+        The component contains the following outputs:
+            model_output (Output): The output model (type: path)
+        reference the outputs by:
+            node.outputs.model_output
+    """
+    ...
+
+
+@reference_component(
+    path=current_folder / 'test_configs/internal/starlite-component/component_spec.yaml',
+)
+def microsoft_com_azureml_samples_starlite_search_gold_get_files(
+    FileList: Input = None,
+    FileListFileName: str = '\\\\output.tsv',
+    RunId: str = None,
+    UploadToCosmos: _MicrosoftComAzuremlSamplesStarliteSearchGoldGetFilesUploadtocosmos = _MicrosoftComAzuremlSamplesStarliteSearchGoldGetFilesUploadtocosmos.FALSE,
+) -> _MicrosoftComAzuremlSamplesStarliteSearchGoldGetFilesComponent:
+    """Allows to download files from SearchGold to cosmos and get their revision information. 'FileList' input is a file with source depot paths, one per line.
+
+    Args:
+        FileList (Input): AnyFile (type: AnyFile)
+        FileListFileName (str): string
+        RunId (str): a parameter value
+        UploadToCosmos (_MicrosoftComAzuremlSamplesStarliteSearchGoldGetFilesUploadtocosmos): enum (type: enum)
+
+    Returns:
+        A component node.
+        The component contains the following outputs:
+            CosmosPath (Output): AnyFile (type: AnyFile)
+            Files (Output): AnyDirectory (type: AnyDirectory)
+            ResultInfo (Output): AnyFile (type: AnyFile)
+        reference the outputs by:
+            node.outputs.CosmosPath
+            node.outputs.Files
+            node.outputs.ResultInfo
+    """
+    ...
+
+
+@reference_component(
+    path=current_folder / 'test_configs/internal/hdi-component/component_spec.yaml',
+)
+def train_in_spark(
+    input_path: Input = None,
+    regularization_rate: Input = 0.01,
+) -> _TrainInSparkComponent:
+    """Train a Spark ML model using an HDInsight Spark cluster
+
+    Args:
+        input_path (Input): Iris csv file (type: path)
+        regularization_rate (Input): Regularization rate when training with logistic regression (type: float)
+
+    Returns:
+        A component node.
+        The component contains the following outputs:
+            output_path (Output): The output path to save the trained model to (type: path)
+        reference the outputs by:
+            node.outputs.output_path
+    """
+    ...

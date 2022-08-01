@@ -1,0 +1,9 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+name: atestcomponent
+code: git+https://github.com/varndorfer/test-git-snapshot-public.git@testBranch&subdirectory=subdirectory
+command: >-
+  echo ${{outputs.output_path}}
+environment: azureml:AzureML-Minimal:2
+outputs:
+  output_path:
+    type: uri_folder

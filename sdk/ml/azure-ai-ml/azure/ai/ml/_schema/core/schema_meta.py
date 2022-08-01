@@ -1,6 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=unused-argument,no-self-use
+
 import logging
 from collections import OrderedDict
 
@@ -23,17 +26,17 @@ class PatchedBaseSchema(Schema):
 
     @post_dump
     def remove_none(self, data, **kwargs):
-        """Prevents from dumping attributes that are None,
-        thus making the dump more compact.
-        """
+        """Prevents from dumping attributes that are None, thus making the dump
+        more compact."""
         return OrderedDict((key, value) for key, value in data.items() if value is not None)
 
 
 class PatchedSchemaMeta(SchemaMeta):
-    """
-    Currently there is an open issue in marshmallow, that the "unknown" property
-    is not inherited. We use a metaclass to inject a Meta class into all our
-    Schema classes.
+    """Currently there is an open issue in marshmallow, that the "unknown"
+    property is not inherited.
+
+    We use a metaclass to inject a Meta class into all our Schema
+    classes.
     """
 
     def __new__(cls, name, bases, dct):

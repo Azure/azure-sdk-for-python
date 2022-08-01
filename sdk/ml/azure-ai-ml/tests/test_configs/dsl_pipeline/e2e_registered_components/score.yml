@@ -13,7 +13,7 @@ outputs:
 environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
 code: ./score_src
 command: >-
-  python score.py 
+  python score.py
   --model_input ${{inputs.model_input}}
   --test_data ${{inputs.test_data}}
   --score_output ${{outputs.score_output}}

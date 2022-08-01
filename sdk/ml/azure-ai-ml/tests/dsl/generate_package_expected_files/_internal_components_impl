@@ -1,0 +1,165 @@
+# THIS IS AN AUTO GENERATED FILE.
+# PLEASE DO NOT MODIFY MANUALLY.
+# Components included in this generated file:
+# - AdsLRDNNRawKeys_Dummy:0.0.2
+# - convert2ss:0.0.1
+# - data_transfer:0.0.1
+# - microsoft.com.azureml.samples.parallel_score_image:0.0.1
+# - microsoft.com.azureml.samples.train:0.0.4
+# - microsoft_com_azureml_samples_starlite__search_gold_get_files:0.0.1
+# - train_in_spark:0.0.1
+
+from enum import Enum
+
+from azure.ai.ml import Input, Output
+from azure.ai.ml._internal.entities import Command, DataTransfer, HDInsight, Hemera, Parallel, Scope, Starlite
+
+
+class _AdslrdnnrawkeysDummyInput:
+    CosmosRootDir: str = 'https://cosmos09.osdinfra.net/cosmos/dummy/local/root/'
+    """string"""
+    Cpu: str = 2.0
+    """string"""
+    HdfsRootDir: str = '/projects/default/'
+    """string"""
+    InitialModelDir: Input
+    """path (type: path) (optional)"""
+    JobQueue: str = 'default'
+    """string"""
+    Memory: str = '10g'
+    """string"""
+    TrainingDataDir: Input
+    """path (type: path) (optional)"""
+    ValidationDataDir: Input
+    """path (type: path) (optional)"""
+    WorkerCount: str = 2.0
+    """string"""
+    YarnCluster: str = 'mtprime-bn2-0'
+    """string"""
+
+
+class _AdslrdnnrawkeysDummyOutput:
+    output1: Output
+    """AnyFile (type: AnyFile)"""
+    output2: Output
+    """AnyFile (type: AnyFile)"""
+
+
+class _AdslrdnnrawkeysDummyComponent(Hemera):
+    inputs: _AdslrdnnrawkeysDummyInput
+    outputs: _AdslrdnnrawkeysDummyOutput
+
+
+class _Convert2SsInput:
+    ExtractionClause: str = None
+    """the extraction clause, something like \"column1:string, column2:int\""""
+    TextData: str = None
+    """text file on ADLS storage"""
+
+
+class _Convert2SsOutput:
+    SSPath: Output
+    """the converted structured stream (type: CosmosStructuredStream)"""
+
+
+class _Convert2SsComponent(Scope):
+    inputs: _Convert2SsInput
+    outputs: _Convert2SsOutput
+
+
+class _DataTransferInput:
+    source_data: Input
+    """Source data (type: path)"""
+
+
+class _DataTransferOutput:
+    destination_data: Output
+    """Destination data (type: path)"""
+
+
+class _DataTransferComponent(DataTransfer):
+    inputs: _DataTransferInput
+    outputs: _DataTransferOutput
+
+
+class _MicrosoftComAzuremlSamplesParallelScoreImageInput:
+    images_to_score: Input
+    """Images to score. (type: path)"""
+    model_path: Input
+    """Trained MNIST image classification model. (type: path)"""
+
+
+class _MicrosoftComAzuremlSamplesParallelScoreImageOutput:
+    scored_dataset: Output
+    """Output folder to save scored result. (type: path)"""
+
+
+class _MicrosoftComAzuremlSamplesParallelScoreImageComponent(Parallel):
+    inputs: _MicrosoftComAzuremlSamplesParallelScoreImageInput
+    outputs: _MicrosoftComAzuremlSamplesParallelScoreImageOutput
+
+
+class _MicrosoftComAzuremlSamplesTrainInput:
+    learning_rate: Input = 0.01
+    """Learning rate, default is 0.01 (type: float)"""
+    max_epochs: int
+    """Maximum number of epochs for the training"""
+    training_data: Input
+    """Training data organized in the torchvision format/structure (type: path)"""
+
+
+class _MicrosoftComAzuremlSamplesTrainOutput:
+    model_output: Output
+    """The output model (type: path)"""
+
+
+class _MicrosoftComAzuremlSamplesTrainComponent(Command):
+    inputs: _MicrosoftComAzuremlSamplesTrainInput
+    outputs: _MicrosoftComAzuremlSamplesTrainOutput
+
+
+class _MicrosoftComAzuremlSamplesStarliteSearchGoldGetFilesUploadtocosmos(Enum):
+    TRUE = "True"
+    FALSE = "False"
+
+
+class _MicrosoftComAzuremlSamplesStarliteSearchGoldGetFilesInput:
+    FileList: Input
+    """AnyFile (type: AnyFile)"""
+    FileListFileName: str = '\\\\output.tsv'
+    """string"""
+    RunId: str = None
+    """a parameter value (optional)"""
+    UploadToCosmos: _MicrosoftComAzuremlSamplesStarliteSearchGoldGetFilesUploadtocosmos = _MicrosoftComAzuremlSamplesStarliteSearchGoldGetFilesUploadtocosmos.FALSE
+    """enum (type: enum) (enum: ['True', 'False'])"""
+
+
+class _MicrosoftComAzuremlSamplesStarliteSearchGoldGetFilesOutput:
+    CosmosPath: Output
+    """AnyFile (type: AnyFile)"""
+    Files: Output
+    """AnyDirectory (type: AnyDirectory)"""
+    ResultInfo: Output
+    """AnyFile (type: AnyFile)"""
+
+
+class _MicrosoftComAzuremlSamplesStarliteSearchGoldGetFilesComponent(Starlite):
+    inputs: _MicrosoftComAzuremlSamplesStarliteSearchGoldGetFilesInput
+    outputs: _MicrosoftComAzuremlSamplesStarliteSearchGoldGetFilesOutput
+
+
+class _TrainInSparkInput:
+    input_path: Input
+    """Iris csv file (type: path)"""
+    regularization_rate: Input = 0.01
+    """Regularization rate when training with logistic regression (type: float) (optional)"""
+
+
+class _TrainInSparkOutput:
+    output_path: Output
+    """The output path to save the trained model to (type: path)"""
+
+
+class _TrainInSparkComponent(HDInsight):
+    inputs: _TrainInSparkInput
+    outputs: _TrainInSparkOutput

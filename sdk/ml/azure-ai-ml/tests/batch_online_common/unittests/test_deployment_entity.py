@@ -63,7 +63,7 @@ class TestOnlineDeploymentFromYAML:
             target = yaml.safe_load(f)
         blue = load_online_deployment(TestOnlineDeploymentFromYAML.BLUE_ONLINE_DEPLOYMENT)
         assert isinstance(blue, OnlineDeployment)
-        assert blue.type == EndpointComputeType.KUBERNETES
+        assert blue.type == EndpointComputeType.MANAGED
         assert blue.endpoint_name == target["endpoint_name"]
         assert "blue" in blue.name
         assert isinstance(blue.model, Model)
@@ -72,7 +72,7 @@ class TestOnlineDeploymentFromYAML:
         assert isinstance(blue.liveness_probe, ProbeSettings)
         assert isinstance(blue.readiness_probe, ProbeSettings)
         assert blue.model.name == target["model"]["name"]
-        assert blue.instance_type == "cpuinstance"
+        assert blue.instance_type == "cpuInstance"
         assert blue.description == target["description"]
 
     def test_generic_deployment_merge(self) -> None:
@@ -130,7 +130,7 @@ class TestOnlineDeploymentFromYAML:
     def test_k8s_deployment(self) -> None:
         with open(TestOnlineDeploymentFromYAML.BLUE_K8S_ONLINE_DEPLOYMENT, "r") as f:
             target = yaml.safe_load(f)
-        blue = load_online_deployment(TestOnlineDeploymentFromYAML.BLUE_K8S_ONLINE_DEPLOYMENT)
+        blue = KubernetesOnlineDeployment.load(TestOnlineDeploymentFromYAML.BLUE_K8S_ONLINE_DEPLOYMENT)
         assert isinstance(blue, KubernetesOnlineDeployment)
         assert blue.type == EndpointComputeType.KUBERNETES
         assert blue.endpoint_name == target["endpoint_name"]

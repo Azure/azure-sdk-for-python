@@ -216,7 +216,6 @@ class TestBatchEndpointOperations:
         )
         assert mock_batch_endpoint_operations._batch_operation.get.call_count == 2
 
-    @pytest.mark.skip(reason="invoke is going to change in the next pr until then it is commented")
     @patch.object(BatchEndpoint, "_from_rest_object")
     def test_batch_invoke_failed(
         self,

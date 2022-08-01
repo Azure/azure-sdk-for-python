@@ -4,16 +4,14 @@
 
 import logging
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    EndpointAuthMode,
-)
-from azure.ai.ml._schema import NestedField
-from azure.ai.ml._schema.identity import IdentitySchema
-from azure.ai.ml._schema.core.fields import ArmStr, StringTransformedEnum
-from azure.ai.ml._schema.core.schema import PathAwareSchema
-from azure.ai.ml._utils.utils import camel_to_snake
-from marshmallow import ValidationError, fields
+from marshmallow import fields
 
+from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthMode
+from azure.ai.ml._schema.core.fields import NestedField
+from azure.ai.ml._schema.core.fields import StringTransformedEnum
+from azure.ai.ml._schema.core.schema import PathAwareSchema
+from azure.ai.ml._schema.identity import IdentitySchema
+from azure.ai.ml._utils.utils import camel_to_snake
 
 module_logger = logging.getLogger(__name__)
 
@@ -26,7 +24,11 @@ class EndpointSchema(PathAwareSchema):
     provisioning_state = fields.Str(metadata={"description": "Provisioning state for the endpoint."})
     properties = fields.Dict()
     auth_mode = StringTransformedEnum(
-        allowed_values=[EndpointAuthMode.AML_TOKEN, EndpointAuthMode.KEY, EndpointAuthMode.AAD_TOKEN],
+        allowed_values=[
+            EndpointAuthMode.AML_TOKEN,
+            EndpointAuthMode.KEY,
+            EndpointAuthMode.AAD_TOKEN,
+        ],
         casing_transform=camel_to_snake,
         metadata={
             "description": "authentication method: no auth, key based or azure ml token based. aad_token is only valid for batch endpoint."

@@ -21,7 +21,7 @@ def code_operations():
 
 @pytest.fixture
 def deployment_yaml_base_path():
-    return Path(Path(__file__).parent.absolute(), "../../test_configs/deployments/online/")
+    return Path(Path(__file__).parent.absolute(), "../../../test_configs/deployments/online/")
 
 
 @pytest.mark.skip(reason="TODO[BUG 1260290] Deployment should not be instantiated")
