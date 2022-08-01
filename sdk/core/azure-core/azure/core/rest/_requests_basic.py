@@ -46,16 +46,6 @@ class _ItemsView(collections.ItemsView):
     def __repr__(self):
         return 'ItemsView({})'.format(dict(self.__iter__()))
 
-class _CaseInsensitiveDict(CaseInsensitiveDict):
-    """Overriding default requests dict so we can unify
-    to not raise if users pass in incorrect items to contains.
-    Instead, we return False
-    """
-
-    def items(self):
-        """Return a new view of the dictionary's items."""
-        return _ItemsView(self)
-
 class _RestRequestsTransportResponseBaseMixin(_HttpResponseBackcompatMixinBase):
     """Backcompat mixin for the sync and async requests responses
 
@@ -78,7 +68,7 @@ class _RestRequestsTransportResponseBase(_HttpResponseBaseImpl, _RestRequestsTra
         content = None
         if internal_response._content_consumed:
             content = internal_response.content
-        headers = _CaseInsensitiveDict(internal_response.headers)
+        headers = CaseInsensitiveDict(internal_response.headers)
         super(_RestRequestsTransportResponseBase, self).__init__(
             internal_response=internal_response,
             status_code=internal_response.status_code,
