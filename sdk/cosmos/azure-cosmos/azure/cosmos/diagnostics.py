@@ -24,6 +24,7 @@
 
 from azure.core.utils import CaseInsensitiveDict
 
+
 class RecordDiagnostics(object):
     """Record Response headers from Cosmos read operations.
 
