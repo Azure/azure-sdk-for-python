@@ -45,6 +45,11 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
 
+        # Set recording options after the client has been created, other the TLS/user cert options
+        # might screw up the ConfidentialLedgerClient creation for tests expecting auto-magic TLS
+        # cert retrieval.
+        set_function_recording_options(**function_recording_options)
+
         if not is_aad:
             # Add the certificate-based user.
             try:
@@ -56,6 +61,11 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
             # Sleep to make sure all replicas know the user is added.
             await asyncio.sleep(3)
+
+            if not fetch_tls_cert:
+                # If we're testing certificate retrieval auto-magic, delete the certificate file
+                # again so we can be sure the certicate-auth client also does the auto-magic.
+                os.remove(self.network_certificate_path)
 
             credential = ConfidentialLedgerCertificateCredential(
                 certificate_path=self.user_certificate_path
@@ -71,10 +81,9 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
                 PemCertificate(data=USER_CERTIFICATE_PRIVATE_KEY, key=USER_CERTIFICATE_PUBLIC_KEY)
             ]
 
-        # Set recording options after the client has been created, other the TLS/user cert options
-        # might screw up the ConfidentialLedgerClient creation for tests expecting auto-magic TLS
-        # cert retrieval.
-        set_function_recording_options(**function_recording_options)
+            # Update the options to account for certificate-based authentication.
+            set_function_recording_options(**function_recording_options)
+
         return client
 
     @ConfidentialLedgerPreparer()
