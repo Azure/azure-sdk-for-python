@@ -374,8 +374,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 if custom_endpoint_address:
                     custom_endpoint_address += '/$servicebus/websocket/'
             mgmt_client = AMQPClient(
-                # Do we want this to be hostname or remote_address
-                # hostname,
+                hostname,
                 auth=mgmt_auth,
                 network_trace=self._config.network_tracing,
                 transport_type=self._config.transport_type,
