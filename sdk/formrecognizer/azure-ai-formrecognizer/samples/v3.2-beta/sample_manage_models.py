@@ -53,7 +53,7 @@ def sample_manage_models():
     # [END list_models]
 
     # let's build a model to use for this sample
-    poller = document_model_admin_client.begin_build_model(container_sas_url, DocumentBuildMode.TEMPLATE, description="model for sample")
+    poller = document_model_admin_client.begin_build_model(DocumentBuildMode.TEMPLATE, container_sas_url, description="model for sample")
     model = poller.result()
 
     # [START get_model]
