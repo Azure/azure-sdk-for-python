@@ -33,18 +33,6 @@ from azure.core.utils import CaseInsensitiveDict
 from ._http_response_impl import _HttpResponseBaseImpl, HttpResponseImpl, _HttpResponseBackcompatMixinBase
 from ..pipeline.transport._requests_basic import StreamDownloadGenerator
 
-class _ItemsView(collections.ItemsView):
-
-    def __contains__(self, item):
-        if not (isinstance(item, (list, tuple)) and len(item) == 2):
-            return False  # requests raises here, we just return False
-        for k, v in self.__iter__():
-            if item[0].lower() == k.lower() and item[1] == v:
-                return True
-        return False
-
-    def __repr__(self):
-        return 'ItemsView({})'.format(dict(self.__iter__()))
 
 class _RestRequestsTransportResponseBaseMixin(_HttpResponseBackcompatMixinBase):
     """Backcompat mixin for the sync and async requests responses
