@@ -9,16 +9,8 @@ import asyncio
 import time
 import functools
 from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union, cast
-
 import six
-from uamqp import (
-    authentication,
-    constants,
-    errors,
-    compat,
-    Message,
-    AMQPClientAsync,
-)
+
 from azure.core.credentials import (
     AccessToken,
     AzureSasCredential,
@@ -31,6 +23,11 @@ from .._client_base import (
     _parse_conn_str,
     _get_backoff_time,
 )
+
+from .._pyamqp.message import Message
+from .._pyamqp import constants, error as errors, utils as pyamqp_utils
+from .._pyamqp.aio import AMQPClientAsync
+from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
 from .._utils import utc_from_timestamp, parse_sas_credential
 from ..exceptions import ClientClosedError, ConnectError
 from .._constants import (
@@ -38,10 +35,9 @@ from .._constants import (
     MGMT_OPERATION,
     MGMT_PARTITION_OPERATION,
     MGMT_STATUS_CODE,
-    MGMT_STATUS_DESC,
+    MGMT_STATUS_DESC, READ_OPERATION,
 )
 from ._async_utils import get_dict_with_loop_if_needed
-from ._connection_manager_async import get_connection_manager
 from ._error_async import _handle_exception
 
 if TYPE_CHECKING:
@@ -58,58 +54,6 @@ if TYPE_CHECKING:
         from typing_extensions import Protocol
     except ImportError:
         Protocol = object  # type: ignore
-
-    class AbstractConsumerProducer(Protocol):
-        @property
-        def _name(self):
-            # type: () -> str
-            """Name of the consumer or producer"""
-
-        @_name.setter
-        def _name(self, value):
-            pass
-
-        @property
-        def _client(self):
-            # type: () -> ClientBaseAsync
-            """The instance of EventHubComsumerClient or EventHubProducerClient"""
-
-        @_client.setter
-        def _client(self, value):
-            pass
-
-        @property
-        def _handler(self):
-            # type: () -> AMQPClientAsync
-            """The instance of SendClientAsync or ReceiveClientAsync"""
-
-        @property
-        def _internal_kwargs(self):
-            # type: () -> dict
-            """The dict with an event loop that users may pass in to wrap sync calls to async API.
-            It's furthur passed to uamqp APIs
-            """
-
-        @_internal_kwargs.setter
-        def _internal_kwargs(self, value):
-            pass
-
-        @property
-        def running(self):
-            # type: () -> bool
-            """Whether the consumer or producer is running"""
-
-        @running.setter
-        def running(self, value):
-            pass
-
-        def _create_handler(self, auth: authentication.JWTTokenAsync) -> None:
-            pass
-
-    _MIXIN_BASE = AbstractConsumerProducer
-else:
-    _MIXIN_BASE = object
-
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -207,7 +151,9 @@ class ClientBaseAsync(ClientBase):
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: "CredentialTypes",
+        credential: Union[
+            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
+        ],
         **kwargs: Any
     ) -> None:
         self._internal_kwargs = get_dict_with_loop_if_needed(kwargs.get("loop", None))
@@ -223,7 +169,6 @@ class ClientBaseAsync(ClientBase):
             credential=self._credential,
             **kwargs
         )
-        self._conn_manager_async = get_connection_manager(**kwargs)
 
     def __enter__(self):
         raise TypeError(
@@ -243,7 +188,7 @@ class ClientBaseAsync(ClientBase):
             kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
-    async def _create_auth_async(self) -> authentication.JWTTokenAsync:
+    async def _create_auth_async(self) -> JWTTokenAuthAsync:
         """
         Create an ~uamqp.authentication.SASTokenAuthAsync instance to authenticate
         the session.
@@ -255,22 +200,12 @@ class ClientBaseAsync(ClientBase):
         except AttributeError:
             token_type = b"jwt"
         if token_type == b"servicebus.windows.net:sastoken":
-            auth = authentication.JWTTokenAsync(
+            return JWTTokenAuthAsync(
                 self._auth_uri,
                 self._auth_uri,
                 functools.partial(self._credential.get_token, self._auth_uri),
-                token_type=token_type,
-                timeout=self._config.auth_timeout,
-                http_proxy=self._config.http_proxy,
-                transport_type=self._config.transport_type,
-                custom_endpoint_hostname=self._config.custom_endpoint_hostname,
-                port=self._config.connection_port,
-                verify=self._config.connection_verify,
-                refresh_window=300,
             )
-            await auth.update_token()
-            return auth
-        return authentication.JWTTokenAsync(
+        return JWTTokenAuthAsync(
             self._auth_uri,
             self._auth_uri,
             functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE),
@@ -284,7 +219,7 @@ class ClientBaseAsync(ClientBase):
         )
 
     async def _close_connection_async(self) -> None:
-        await self._conn_manager_async.reset_connection_if_broken()
+        pass
 
     async def _backoff_async(
         self,
@@ -322,19 +257,30 @@ class ClientBaseAsync(ClientBase):
         last_exception = None
         while retried_times <= self._config.max_retries:
             mgmt_auth = await self._create_auth_async()
+            hostname = self._address.hostname
+            custom_endpoint_address = self._config.custom_endpoint_address
+            if self._config.transport_type.name == 'AmqpOverWebsocket':
+                hostname += '/$servicebus/websocket/'
+                if custom_endpoint_address:
+                    custom_endpoint_address += '/$servicebus/websocket/'
             mgmt_client = AMQPClientAsync(
-                self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing
+                hostname,
+                auth=mgmt_auth,
+                debug=self._config.network_tracing,
+                transport_type=self._config.transport_type,
+                http_proxy=self._config.http_proxy,
+                custom_endpoint_address=custom_endpoint_address,
+                connection_verify=self._config.connection_verify
             )
             try:
-                conn = await self._conn_manager_async.get_connection(
-                    self._address.hostname, mgmt_auth
-                )
-                mgmt_msg.application_properties["security_token"] = mgmt_auth.token
-                await mgmt_client.open_async(connection=conn)
+                await mgmt_client.open_async()
+                while not (await mgmt_client.client_ready_async()):
+                    await asyncio.sleep(0.05)
+                mgmt_msg.application_properties["security_token"] = await mgmt_auth.get_token()
                 response = await mgmt_client.mgmt_request_async(
                     mgmt_msg,
-                    constants.READ_OPERATION,
-                    op_type=op_type,
+                    operation=READ_OPERATION.decode(),
+                    operation_type=op_type.decode(),
                     status_code_field=MGMT_STATUS_CODE,
                     description_fields=MGMT_STATUS_DESC,
                 )
@@ -348,19 +294,25 @@ class ClientBaseAsync(ClientBase):
                     return response
                 if status_code in [401]:
                     raise errors.AuthenticationException(
-                        "Management authentication failed. Status code: {}, Description: {!r}".format(
-                            status_code, description
+                        errors.ErrorCondition.UnauthorizedAccess,
+                        description="Management authentication failed. Status code: {}, Description: {!r}".format(
+                            status_code,
+                            description
                         )
                     )
                 if status_code in [404]:
-                    raise ConnectError(
-                        "Management connection failed. Status code: {}, Description: {!r}".format(
-                            status_code, description
+                    raise errors.AMQPConnectionError(
+                        errors.ErrorCondition.NotFound,
+                        description="Management connection failed. Status code: {}, Description: {!r}".format(
+                            status_code,
+                            description
                         )
                     )
                 raise errors.AMQPConnectionError(
-                    "Management request error. Status code: {}, Description: {!r}".format(
-                        status_code, description
+                    errors.ErrorCondition.UnknownError,
+                    description="Management operation failed. Status code: {}, Description: {!r}".format(
+                        status_code,
+                        description
                     )
                 )
             except asyncio.CancelledError:  # pylint: disable=try-except-raise
@@ -385,7 +337,7 @@ class ClientBaseAsync(ClientBase):
             mgmt_msg, op_type=MGMT_OPERATION
         )
         output = {}
-        eh_info = response.get_data()  # type: Dict[bytes, Any]
+        eh_info = response.value  # type: Dict[bytes, Any]
         if eh_info:
             output["eventhub_name"] = eh_info[b"name"].decode("utf-8")
             output["created_at"] = utc_from_timestamp(
@@ -411,7 +363,7 @@ class ClientBaseAsync(ClientBase):
         response = await self._management_request_async(
             mgmt_msg, op_type=MGMT_PARTITION_OPERATION
         )
-        partition_info = response.get_data()  # type: Dict[bytes, Union[bytes, int]]
+        partition_info = response.value  # type: Dict[bytes, Union[bytes, int]]
         output = {}  # type: Dict[str, Any]
         if partition_info:
             output["eventhub_name"] = cast(bytes, partition_info[b"name"]).decode(
@@ -434,7 +386,61 @@ class ClientBaseAsync(ClientBase):
         return output
 
     async def _close_async(self) -> None:
-        await self._conn_manager_async.close_connection()
+        pass
+
+
+if TYPE_CHECKING:
+
+    class AbstractConsumerProducer(Protocol):
+        @property
+        def _name(self):
+            # type: () -> str
+            """Name of the consumer or producer"""
+
+        @_name.setter
+        def _name(self, value):
+            pass
+
+        @property
+        def _client(self):
+            # type: () -> ClientBaseAsync
+            """The instance of EventHubComsumerClient or EventHubProducerClient"""
+
+        @_client.setter
+        def _client(self, value):
+            pass
+
+        @property
+        def _handler(self):
+            # type: () -> AMQPClientAsync
+            """The instance of SendClientAsync or ReceiveClientAsync"""
+
+        @property
+        def _internal_kwargs(self):
+            # type: () -> dict
+            """The dict with an event loop that users may pass in to wrap sync calls to async API.
+            It's furthur passed to uamqp APIs
+            """
+
+        @_internal_kwargs.setter
+        def _internal_kwargs(self, value):
+            pass
+
+        @property
+        def running(self):
+            # type: () -> bool
+            """Whether the consumer or producer is running"""
+
+        @running.setter
+        def running(self, value):
+            pass
+
+        def _create_handler(self, auth: JWTTokenAuthAsync) -> None:
+            pass
+
+    _MIXIN_BASE = AbstractConsumerProducer
+else:
+    _MIXIN_BASE = object
 
 
 class ConsumerProducerMixin(_MIXIN_BASE):
@@ -463,16 +469,12 @@ class ConsumerProducerMixin(_MIXIN_BASE):
                 await self._handler.close_async()
             auth = await self._client._create_auth_async()
             self._create_handler(auth)
-            await self._handler.open_async(
-                connection=await self._client._conn_manager_async.get_connection(
-                    self._client._address.hostname, auth
-                )
-            )
+            await self._handler.open_async()
             while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05, **self._internal_kwargs)
             self._max_message_size_on_link = (
-                self._handler.message_handler._link.peer_max_message_size
-                or constants.MAX_MESSAGE_LENGTH_BYTES
+                self._handler._link.remote_max_message_size
+                or constants.MAX_FRAME_SIZE_BYTES
             )
             self.running = True
 
@@ -487,10 +489,11 @@ class ConsumerProducerMixin(_MIXIN_BASE):
         await self._client._conn_manager_async.reset_connection_if_broken()  # pylint:disable=protected-access
 
     async def _handle_exception(self, exception: Exception) -> Exception:
-        if not self.running and isinstance(exception, compat.TimeoutException):
-            exception = errors.AuthenticationException("Authorization timeout.")
-            return await _handle_exception(exception, self)
-
+        if not self.running and isinstance(exception, TimeoutError):
+            exception = errors.AuthenticationException(
+                errors.ErrorCondition.InternalError,
+                description="Authorization timeout."
+            )
         return await _handle_exception(exception, self)
 
     async def _do_retryable_operation(

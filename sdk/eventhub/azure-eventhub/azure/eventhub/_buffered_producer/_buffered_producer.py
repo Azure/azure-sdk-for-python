@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from __future__ import annotations
 import time
 import queue
 import logging
@@ -14,6 +15,7 @@ from .._common import EventDataBatch
 from ..exceptions import OperationTimeoutError
 
 if TYPE_CHECKING:
+    from .._transport._base import AmqpTransport
     from .._producer_client import SendEventTypes
 
 _LOGGER = logging.getLogger(__name__)
@@ -31,7 +33,8 @@ class BufferedProducer:
         executor: ThreadPoolExecutor,
         *,
         max_wait_time: float = 1,
-        max_buffer_length: int
+        max_buffer_length: int,
+        amqp_transport: AmqpTransport
     ):
         self._buffered_queue: queue.Queue = queue.Queue()
         self._max_buffer_len = max_buffer_length
@@ -47,11 +50,12 @@ class BufferedProducer:
         self._cur_batch: Optional[EventDataBatch] = None
         self._max_message_size_on_link = max_message_size_on_link
         self._check_max_wait_time_future = None
+        self._amqp_transport = amqp_transport
         self.partition_id = partition_id
 
     def start(self):
         with self._lock:
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
             self._running = True
             if self._max_wait_time:
                 self._last_send_time = time.time()
@@ -111,11 +115,11 @@ class BufferedProducer:
                 self._buffered_queue.put(self._cur_batch)
             self._buffered_queue.put(events)
             # create a new batch for incoming events
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
         except ValueError:
             # add single event exceeds the cur batch size, create new batch
             self._buffered_queue.put(self._cur_batch)
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
             self._cur_batch.add(events)
         self._cur_buffered_len += new_events_len
 
@@ -182,7 +186,7 @@ class BufferedProducer:
                     break
             # after finishing flushing, reset cur batch and put it into the buffer
             self._last_send_time = time.time()
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
             _LOGGER.info("Partition %r finished flushing.", self.partition_id)
 
     def check_max_wait_time_worker(self):

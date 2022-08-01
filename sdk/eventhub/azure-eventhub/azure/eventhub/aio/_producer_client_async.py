@@ -20,8 +20,10 @@ from .._constants import ALL_PARTITIONS
 from .._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
     from ._client_base_async import CredentialTypes
     from uamqp.constants import TransportType  # pylint: disable=ungrouped-imports
+
 
 SendEventTypes = List[Union[EventData, AmqpAnnotatedMessage]]
 
@@ -303,8 +305,8 @@ class EventHubProducerClient(
                 self._max_message_size_on_link = (
                     cast(  # type: ignore
                         EventHubProducer, self._producers[ALL_PARTITIONS]
-                    )._handler.message_handler._link.peer_max_message_size
-                    or constants.MAX_MESSAGE_LENGTH_BYTES
+                    )._handler._link.remote_max_message_size
+                    or MAX_MESSAGE_LENGTH_BYTES
                 )
 
     async def _start_producer(
@@ -398,11 +400,9 @@ class EventHubProducerClient(
         max_buffer_length: Optional[int] = None,
         max_wait_time: Optional[float] = None,
         logging_enable: bool = False,
-        http_proxy: Optional[Dict[str, Union[str, int]]] = None,
         auth_timeout: float = 60,
         user_agent: Optional[str] = None,
         retry_total: int = 3,
-        transport_type: Optional["TransportType"] = None,
         **kwargs: Any
     ) -> "EventHubProducerClient":
         """Create an EventHubProducerClient from a connection string.
@@ -493,11 +493,9 @@ class EventHubProducerClient(
             max_buffer_length=max_buffer_length,
             max_wait_time=max_wait_time,
             logging_enable=logging_enable,
-            http_proxy=http_proxy,
             auth_timeout=auth_timeout,
             user_agent=user_agent,
             retry_total=retry_total,
-            transport_type=transport_type,
             **kwargs
         )
         return cls(**constructor_args)

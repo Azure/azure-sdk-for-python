@@ -4,5 +4,5 @@
 azure-mgmt-eventhub==10.0.0
 azure-mgmt-resource==20.0.0
 aiohttp>=3.0
+websocket-client
 -e ../../../tools/azure-devtools
--e ../../servicebus/azure-servicebus

@@ -1,5 +1,13 @@
 # Release History
 
+## 5.10.1 (Unreleased)
+
+### Bugs Fixed
+
+### Other Changes
+
+- Internal refactoring to support upcoming Pure Python AMQP-based release.
+
 ## 5.10.0 (2022-06-08)
 
 ### Features Added

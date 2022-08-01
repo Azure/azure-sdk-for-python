@@ -26,8 +26,7 @@ from .._eventprocessor.common import LoadBalancingStrategy
 
 
 if TYPE_CHECKING:
-    from ._client_base_async import CredentialTypes
-    from uamqp.constants import TransportType
+    from azure.core.credentials_async import AsyncTokenCredential
     from ._eventprocessor.partition_context import PartitionContext
     from ._eventprocessor.checkpoint_store import CheckpointStore
     from .._common import EventData
@@ -130,7 +129,7 @@ class EventHubConsumerClient(
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
-     Default is None in which case `certifi.where()` will be used.
+     Default is None in which case `certifi.where()` will be used.   
 
     .. admonition:: Example:
 
@@ -231,7 +230,6 @@ class EventHubConsumerClient(
         auth_timeout: float = 60,
         user_agent: Optional[str] = None,
         retry_total: int = 3,
-        transport_type: Optional["TransportType"] = None,
         checkpoint_store: Optional["CheckpointStore"] = None,
         load_balancing_interval: float = 10,
         **kwargs: Any
@@ -307,6 +305,7 @@ class EventHubConsumerClient(
          Default is None in which case `certifi.where()` will be used.
         :rtype: ~azure.eventhub.aio.EventHubConsumerClient
 
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
@@ -326,7 +325,6 @@ class EventHubConsumerClient(
             auth_timeout=auth_timeout,
             user_agent=user_agent,
             retry_total=retry_total,
-            transport_type=transport_type,
             checkpoint_store=checkpoint_store,
             load_balancing_interval=load_balancing_interval,
             **kwargs,

@@ -69,6 +69,10 @@ log = get_logger(None, logging.DEBUG)
 
 
 @pytest.fixture(scope="session")
+def timeout_factor():
+    return 1000 # TODO: if pyamqp ReceiveClient is used, set to 1
+
+@pytest.fixture(scope="session")
 def resource_group():
     try:
         SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
