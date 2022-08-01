@@ -7,7 +7,7 @@ from subprocess import check_call
 from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE
 from .generate_sdk import generate
 from .generate_utils import (get_package_names, init_new_service, update_servicemetadata, judge_tag_preview,
-                             format_samples, gen_dpg, DEFAULT_SPEC_FOLDER)
+                             format_samples, gen_dpg, dpg_relative_folder)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ def main(generate_input, generate_output):
             config = generate(CONFIG_FILE, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True,
                               python_tag=python_tag)
         else:
-            config = gen_dpg(input_readme, data.get('autorestConfig', ''), DEFAULT_SPEC_FOLDER)
+            config = gen_dpg(input_readme, data.get('autorestConfig', ''), dpg_relative_folder(spec_folder))
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 

@@ -19,8 +19,10 @@ _LOGGER = logging.getLogger(__name__)
 _SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
 
 DEFAULT_DEST_FOLDER = "./dist"
-DEFAULT_SPEC_FOLDER = "../../../../../azure-rest-api-specs/"
 _DPG_README = "README.md"
+
+def dpg_relative_folder(spec_folder: str) -> str:
+    return ("../" * 4) + spec_folder + "/"
 
 def get_package_names(sdk_folder):
     files = get_add_diff_file_list(sdk_folder)
@@ -163,13 +165,12 @@ def gen_package_name(origin_config: Dict[str, Any]) -> str:
     return Path(origin_config["output-folder"]).parts[-1]
 
 
-def gen_basic_config(origin_config: Dict[str, Any], spec_folder: str = DEFAULT_SPEC_FOLDER) -> Dict[str, Any]:
-    spec_root = re.sub('specification', '', spec_folder)
+def gen_basic_config(origin_config: Dict[str, Any], spec_folder: str) -> Dict[str, Any]:
     return {
         "package-name": gen_package_name(origin_config),
         "license-header": "MICROSOFT_MIT_NO_VERSION",
         "package-version": origin_config.get("package-version", "1.0.0b1"),
-        "require": [spec_root + line for line in origin_config["require"]],
+        "require": [spec_folder + line for line in origin_config["require"]],
         "package-mode": "dataplane",
         "output-folder": "../",
     }
@@ -210,9 +211,9 @@ def gen_batch_config(origin_config: Dict[str, Any]) -> Dict[str, Any]:
     return {"batch": batch_config}
 
 
-def gen_dpg_config_multi_client(origin_config: Dict[str, Any]) -> str:
+def gen_dpg_config_multi_client(origin_config: Dict[str, Any], spec_folder: str) -> str:
     # generate config
-    basic_config = gen_basic_config(origin_config)
+    basic_config = gen_basic_config(origin_config, spec_folder)
     batch_config = gen_batch_config(origin_config)
     tag_config = gen_tag_config(origin_config)
 
@@ -244,7 +245,7 @@ def gen_dpg_config(autorest_config: str, spec_folder: str) -> str:
 
     # generate autorest configuration
     if "batch:" in autorest_config:
-        readme_content = gen_dpg_config_multi_client(origin_config)
+        readme_content = gen_dpg_config_multi_client(origin_config, spec_folder)
     else:
         readme_content = gen_dpg_config_single_client(origin_config, spec_folder)
 
