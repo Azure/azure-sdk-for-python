@@ -212,7 +212,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         capabilities_request = PhoneNumberCapabilitiesRequest(calling=calling, sms=sms)
 
         poller = self._phone_number_client.phone_numbers.begin_update_capabilities(
-            phone_number, 
+            phone_number,
             body=capabilities_request,
             **kwargs
         )
