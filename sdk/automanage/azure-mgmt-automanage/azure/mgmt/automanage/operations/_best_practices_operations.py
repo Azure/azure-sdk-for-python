@@ -20,14 +20,15 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
-from .._vendor import _convert_request
+from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def build_list_request(
+def build_get_request(
+    best_practice_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -37,7 +38,12 @@ def build_list_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/providers/Microsoft.Automanage/operations")
+    _url = kwargs.pop("template_url", "/providers/Microsoft.Automanage/bestPractices/{bestPracticeName}")
+    path_format_arguments = {
+        "bestPracticeName": _SERIALIZER.url("best_practice_name", best_practice_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
@@ -53,14 +59,41 @@ def build_list_request(
         **kwargs
     )
 
-class Operations:
+
+def build_list_by_tenant_request(
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-04"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "/providers/Microsoft.Automanage/bestPractices")
+
+    # Construct parameters
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
+
+class BestPracticesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.automanage.AutomanageClient`'s
-        :attr:`operations` attribute.
+        :attr:`best_practices` attribute.
     """
 
     models = _models
@@ -74,22 +107,81 @@ class Operations:
 
 
     @distributed_trace
-    def list(
+    def get(
+        self,
+        best_practice_name: str,
+        **kwargs: Any
+    ) -> _models.BestPractice:
+        """Get information about a Automanage best practice.
+
+        :param best_practice_name: The Automanage best practice name.
+        :type best_practice_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: BestPractice, or the result of cls(response)
+        :rtype: ~azure.mgmt.automanage.models.BestPractice
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-04"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BestPractice]
+
+        
+        request = build_get_request(
+            best_practice_name=best_practice_name,
+            api_version=api_version,
+            template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('BestPractice', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get.metadata = {'url': "/providers/Microsoft.Automanage/bestPractices/{bestPracticeName}"}  # type: ignore
+
+
+    @distributed_trace
+    def list_by_tenant(
         self,
         **kwargs: Any
-    ) -> Iterable[_models.OperationListResult]:
-        """Lists all of the available Automanage REST API operations.
+    ) -> Iterable[_models.BestPracticeList]:
+        """Retrieve a list of Automanage best practices.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OperationListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.automanage.models.OperationListResult]
+        :return: An iterator like instance of either BestPracticeList or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.automanage.models.BestPracticeList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-04"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.OperationListResult]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BestPracticeList]
 
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -98,9 +190,9 @@ class Operations:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_request(
+                request = build_list_by_tenant_request(
                     api_version=api_version,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list_by_tenant.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
@@ -109,7 +201,7 @@ class Operations:
 
             else:
                 
-                request = build_list_request(
+                request = build_list_by_tenant_request(
                     api_version=api_version,
                     template_url=next_link,
                     headers=_headers,
@@ -121,7 +213,7 @@ class Operations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("OperationListResult", pipeline_response)
+            deserialized = self._deserialize("BestPracticeList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -148,4 +240,4 @@ class Operations:
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': "/providers/Microsoft.Automanage/operations"}  # type: ignore
+    list_by_tenant.metadata = {'url': "/providers/Microsoft.Automanage/bestPractices"}  # type: ignore
