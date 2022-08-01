@@ -32,6 +32,7 @@ from azure.core.utils import CaseInsensitiveDict
 
 from ._http_response_impl import _HttpResponseBaseImpl, HttpResponseImpl, _HttpResponseBackcompatMixinBase
 from ..pipeline.transport._requests_basic import StreamDownloadGenerator
+
 class _ItemsView(collections.ItemsView):
 
     def __contains__(self, item):
