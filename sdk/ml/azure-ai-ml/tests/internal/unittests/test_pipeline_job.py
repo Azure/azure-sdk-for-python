@@ -13,7 +13,7 @@ from azure.ai.ml._internal.entities.component import InternalComponent
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import PipelineJob, CommandComponent
-from tests.internal._utils import PARAMETERS_TO_TEST, set_run_settings
+from .._utils import PARAMETERS_TO_TEST, set_run_settings
 
 
 @pytest.mark.usefixtures("enable_internal_components")
