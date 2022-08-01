@@ -547,7 +547,7 @@ Analyze custom document with `3.2.x`:
 ```python
 with open(path_to_sample_documents, "rb") as f:
     poller = document_analysis_client.begin_analyze_document(
-        model=model_id, document=f
+        model_id=model_id, document=f
     )
 result = poller.result()
 
@@ -643,7 +643,7 @@ Train a custom model with `3.2.x`:
 ```python
 document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
 poller = document_model_admin_client.begin_build_model(
-    container_sas_url, "template", model_id="my-model-id", description="my model description"
+    "template", container_sas_url, model_id="my-model-id", description="my model description"
 )
 model = poller.result()
 

@@ -105,6 +105,7 @@
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
     "sdk/ml/azure-ai-ml/tests/**",
+    "sdk/loadtestservice/azure-developer-loadtesting/**",
     "sdk/monitor/azure-monitor-ingestion/**",
     "eng/**/*.json",
     "eng/*.txt",
@@ -193,6 +194,7 @@
     "ipconfiguration",
     "ipconfigurations",
     "iqmp",
+    "isclass",
     "iscoroutine",
     "iscoroutinefunction",
     "iscsi",
@@ -231,6 +233,7 @@
     "myacr",
     "nazsdk",
     "noarch",
+    "NOPERM",
     "northcentralus",
     "nspkg",
     "OAEP",
@@ -254,6 +257,7 @@
     "prebuilts",
     "pschema",
     "PSECRET",
+    "pyfuncitem",
     "pygobject",
     "parameterizing",
     "pytyped",
@@ -462,6 +466,12 @@
       ]
     },
     {
+      "filename": "sdk/loadtestservice/azure-developer-loadtesting/azure/developer/loadtesting/**",
+      "words":[
+        "vusers"
+      ]
+    },
+    {
       "filename": "sdk/ml/azure-ai-ml/**",
       "words": [
         "azureml",
@@ -529,7 +539,24 @@
         "kwonlyargcount",
         "dcid",
         "startf",
-        "dpkg"
+        "dpkg",
+        "isreused",
+        "reusedrunid",
+        "strictyaml",
+        "funcs",
+        "Fsubscriptions",
+        "Fresource",
+        "Fproviders",
+        "Fdeployments",
+        "isfolder",
+        "mylist",
+        "unioned"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/test-resources.bicep",
+      "words": [
+        "pysdkci"
       ]
     }
   ],
