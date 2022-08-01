@@ -440,6 +440,7 @@ class SendClient(AMQPClient):
         - 1. Create an array of desired capability symbols: `capabilities_symbol_array = [types.AMQPSymbol(string)]`
         - 2. Transform the array to AMQPValue object: `utils.data_factory(types.AMQPArray(capabilities_symbol_array))`
     :paramtype desired_capabilities: ~uamqp.c_uamqp.AMQPValue
+# TODO: is this used by pyamqp? -- desired capabilities
     :keyword max_message_size: The maximum allowed message size negotiated for the Link.
     :paramtype max_message_size: int
     :keyword link_properties: Metadata to be sent in the Link ATTACH frame.
@@ -490,6 +491,7 @@ class SendClient(AMQPClient):
         states.
 
         :rtype: bool
+# TODO: MessageHandlerError in uamqp - do we have an equivalent in pyamqp yet, rn it is commented out - we don't raise anything
         :raises: ~uamqp.errors.MessageHandlerError if the MessageReceiver
          goes into an error state.
         """
@@ -669,6 +671,7 @@ class ReceiveClient(AMQPClient):
         - 1. Create an array of desired capability symbols: `capabilities_symbol_array = [types.AMQPSymbol(string)]`
         - 2. Transform the array to AMQPValue object: `utils.data_factory(types.AMQPArray(capabilities_symbol_array))`
     :paramtype desired_capabilities: ~uamqp.c_uamqp.AMQPValue
+# TODO: same thing here - do we use desired capabilities / what would it become 
     :keyword max_message_size: The maximum allowed message size negotiated for the Link.
     :paramtype max_message_size: int
     :keyword link_properties: Metadata to be sent in the Link ATTACH frame.
@@ -723,6 +726,7 @@ class ReceiveClient(AMQPClient):
         states.
 
         :rtype: bool
+# TODO: uamqp error handling error here - do we want to raise anything or should this be something else 
         :raises: ~uamqp.errors.MessageHandlerError if the MessageReceiver
          goes into an error state.
         """
