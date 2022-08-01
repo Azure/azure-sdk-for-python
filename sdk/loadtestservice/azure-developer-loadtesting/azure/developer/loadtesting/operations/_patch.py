@@ -372,21 +372,21 @@ class AppComponentOperations:
         """
         return self.__app_component_operations_generated.create_or_update_app_components(name, body, **kwargs)
 
-        @distributed_trace
-        def delete_app_components(  # pylint: disable=inconsistent-return-statements
-            self, name: str, **kwargs: Any
-        ) -> None:
-            """Delete an App Component.
+    @distributed_trace
+    def delete_app_components(  # pylint: disable=inconsistent-return-statements
+        self, name: str, **kwargs: Any
+    ) -> None:
+        """Delete an App Component.
 
-            Delete an App Component.
+        Delete an App Component.
 
-            :param name: Unique name of the App Component, must be a valid URL character ^[a-z0-9_-]*$.
-             Required.
-            :type name: str
-            :return: None
-            :rtype: None
-            :raises ~azure.core.exceptions.HttpResponseError:
-            """
+        :param name: Unique name of the App Component, must be a valid URL character ^[a-z0-9_-]*$.
+        Required.
+        :type name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
         return self.__app_component_operations_generated.delete_app_components(name, **kwargs)
 

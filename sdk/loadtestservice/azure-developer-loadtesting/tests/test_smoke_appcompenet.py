@@ -64,3 +64,21 @@ class AppComponentTestingSmokeTest(LoadtestingTest):
                     },
                 },
             )
+
+    @LoadtestingPowerShellPreparer()
+    def test_delete_app_component(self, loadtesting_endpoint):
+
+        #positive testing
+        client = self.create_client(endpoint=loadtesting_endpoint)
+        result = client.load_test_administration.delete_app_components(
+            self.app_component
+        )
+        assert result is None
+
+        #positive testing
+        with pytest.raises(HttpResponseError):
+            client = self.create_client(endpoint=loadtesting_endpoint)
+            result = client.load_test_administration.delete_app_components(
+                self.app_component
+            )
+        assert result is None
