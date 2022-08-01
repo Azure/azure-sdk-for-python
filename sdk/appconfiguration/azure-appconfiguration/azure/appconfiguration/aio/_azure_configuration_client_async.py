@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------
 import binascii
 from typing import Dict, Any, Optional, Mapping, Union, TYPE_CHECKING
-from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.pipeline import AsyncPipeline
@@ -19,6 +18,7 @@ from azure.core.pipeline.policies import (
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.transport import AsyncioRequestsTransport
+from azure.core.utils import CaseInsensitiveDict
 from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError,
