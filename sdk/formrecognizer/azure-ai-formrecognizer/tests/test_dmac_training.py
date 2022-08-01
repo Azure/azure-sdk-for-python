@@ -87,6 +87,7 @@ class TestDMACTraining(FormRecognizerTest):
                 assert field["type"]
                 assert doc_type.field_confidence[key] is not None
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -94,8 +95,8 @@ class TestDMACTraining(FormRecognizerTest):
         set_bodiless_matcher()
         model_id = str(uuid.uuid4())
         poller = client.begin_build_model(
+            "neural",
             formrecognizer_storage_container_sas_url,
-            build_mode="neural",
             model_id=model_id,
             description="a v3 model",
             tags={"testkey": "testvalue"}
