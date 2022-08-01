@@ -873,8 +873,8 @@ class HealthcareEntityAssertion(DictMixin):
     Are the doctors 'certain' about this diagnosis? Is this diagnosis 'associated'
     with another diagnosis?
 
-    :ivar Optional[str] conditionality: Describes whether the healthcare entity it's on is conditional on another entity.
-        For example, "If the patient has a fever, he has pneumonia", the diagnosis of pneumonia
+    :ivar Optional[str] conditionality: Describes whether the healthcare entity it's on is conditional
+        on another entity. For example, "If the patient has a fever, he has pneumonia", the diagnosis of pneumonia
         is 'conditional' on whether the patient has a fever. Possible values are "hypothetical" and
         "conditional".
     :ivar Optional[str] certainty: Describes how certain the healthcare entity it's on is. For example,
