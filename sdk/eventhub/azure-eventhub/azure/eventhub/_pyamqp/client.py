@@ -56,10 +56,9 @@ _logger = logging.getLogger(__name__)
 
 class AMQPClient(object):
     """An AMQP client.
-
-    :param remote_address: The AMQP endpoint to connect to. This could be a send target
-     or a receive source.
-    :type remote_address: str, bytes or ~pyamqp.endpoint.Target or ~pyamqp.endpoint.Source
+# TODO: would it be a target or source?
+    :param hostname: The AMQP endpoint to connect to.
+    :type hostname: str, bytes or ~pyamqp.endpoint.Target or ~pyamqp.endpoint.Source
     :keyword auth: Authentication for the connection. This should be one of the following:
         - pyamqp.authentication.SASLAnonymous
         - pyamqp.authentication.SASLPlain
@@ -122,10 +121,9 @@ class AMQPClient(object):
     :paramtype encoding: str
     """
 
-# auth=None, client_name=None, debug=False, retry_policy=None, keep_alive_interval=None,
-    def __init__(self, remote_address, **kwargs):
+    def __init__(self, hostname, **kwargs):
         # I think these are just strings not instances of target or source
-        self._remote_address = remote_address.address if (isinstance(remote_address, Source) or isinstance(remote_address, Target)) else remote_address
+        self._hostname = hostname
         self._auth = kwargs.pop("auth", None)
         self._name = kwargs.pop("client_name", str(uuid.uuid4()))
 
@@ -248,7 +246,7 @@ class AMQPClient(object):
         _logger.debug("Opening client connection.")
         if not self._connection:
             self._connection = Connection(
-                "amqps://" + self._remote_address,
+                "amqps://" + self._hostname,
                 sasl_credential=self._auth.sasl,
                 ssl={'ca_certs':self._connection_verify or certifi.where()},
                 container_id=self._name,
@@ -391,13 +389,99 @@ class AMQPClient(object):
 
 
 class SendClient(AMQPClient):
-    def __init__(self, target, auth=None, **kwargs):
+    """An AMQP client for sending messages.
+
+    :param hostname: The AMQP endpoint to connect to.
+    :type hostname: str, bytes or ~pyamqp.endpoint.Target or ~pyamqp.endpoint.Source
+    :param target: The target AMQP service endpoint. This can either be the URI as
+     a string or a ~pyamqp.endpoint.Target object.
+    :type target: str, bytes or ~pyamqp.endpoint.Target
+    :param auth: Authentication for the connection. This should be one of the subclasses of
+     pyamqp.authentication.AMQPAuth. Currently this includes:
+        - pyamqp.authentication.SASLAnonymous
+        - pyamqp.authentication.SASLPlain
+        - pyamqp.authentication.SASTokenAuth
+     If no authentication is supplied, SASLAnnoymous will be used by default.
+    :type auth: ~pyamqp.authentication.SASLAnonymous or pyamqp.authentication.SASLPlain
+     or pyamqp.authentication.SASTokenAuth
+    :param client_name: The name for the client, also known as the Container ID.
+     If no name is provided, a random GUID will be used.
+    :type client_name: str or bytes
+    :param debug: Whether to turn on network trace logs. If `True`, trace logs
+     will be logged at INFO level. Default is `False`.
+    :type debug: bool
+    :param auto_complete: Whether to automatically settle message received via callback
+     or via iterator. If the message has not been explicitly settled after processing
+     the message will be accepted. Alternatively, when used with batch receive, this setting
+     will determine whether the messages are pre-emptively settled during batching, or otherwise
+     let to the user to be explicitly settled.
+    :type auto_complete: bool
+    :param retry_policy: A policy for parsing errors on link, connection and message
+     disposition to determine whether the error should be retryable.
+    :type retry_policy: ~pyamqp.errors.RetryPolicy
+    :param keep_alive_interval: If set, a thread will be started to keep the connection
+     alive during periods of user inactivity. The value will determine how long the
+     thread will sleep (in seconds) between pinging the connection. If 0 or None, no
+     thread will be started.
+    :type keep_alive_interval: int
+    :param send_settle_mode: The mode by which to settle message send
+     operations. If set to `Unsettled`, the client will wait for a confirmation
+     from the service that the message was successfully sent. If set to 'Settled',
+     the client will not wait for confirmation and assume success.
+    :type send_settle_mode: ~pyamqp.constants.SenderSettleMode
+    :param receive_settle_mode: The mode by which to settle message receive
+     operations. If set to `PeekLock`, the receiver will lock a message once received until
+     the client accepts or rejects the message. If set to `ReceiveAndDelete`, the service
+     will assume successful receipt of the message and clear it from the queue. The
+     default is `PeekLock`.
+    :type receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
+    :param desired_capabilities: The extension capabilities desired from the peer endpoint.
+     To create an desired_capabilities object, please do as follows:
+        - 1. Create an array of desired capability symbols: `capabilities_symbol_array = [types.AMQPSymbol(string)]`
+        - 2. Transform the array to AMQPValue object: `utils.data_factory(types.AMQPArray(capabilities_symbol_array))`
+    :type desired_capabilities: ~uamqp.c_uamqp.AMQPValue
+    :param max_message_size: The maximum allowed message size negotiated for the Link.
+    :type max_message_size: int
+    :param link_properties: Metadata to be sent in the Link ATTACH frame.
+    :type link_properties: dict
+    :param prefetch: The receiver Link credit that determines how many
+     messages the Link will attempt to handle per connection iteration.
+     The default is 300.
+    :type prefetch: int
+    :param max_frame_size: Maximum AMQP frame size. Default is 63488 bytes.
+    :type max_frame_size: int
+    :param channel_max: Maximum number of Session channels in the Connection.
+    :type channel_max: int
+    :param idle_timeout: Timeout in seconds after which the Connection will close
+     if there is no further activity.
+    :type idle_timeout: int
+    :param properties: Connection properties.
+    :type properties: dict
+    :param remote_idle_timeout_empty_frame_send_ratio: Ratio of empty frames to
+     idle time for Connections with no activity. Value must be between
+     0.0 and 1.0 inclusive. Default is 0.5.
+    :type remote_idle_timeout_empty_frame_send_ratio: float
+    :param incoming_window: The size of the allowed window for incoming messages.
+    :type incoming_window: int
+    :param outgoing_window: The size of the allowed window for outgoing messages.
+    :type outgoing_window: int
+    :param handle_max: The maximum number of concurrent link handles.
+    :type handle_max: int
+    :param on_attach: A callback function to be run on receipt of an ATTACH frame.
+     The function must take 4 arguments: source, target, properties and error.
+    :type on_attach: func[~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.errors.AMQPConnectionError]
+    :param encoding: The encoding to use for parameters supplied as strings.
+     Default is 'UTF-8'
+    :type encoding: str
+    """
+
+    def __init__(self, hostname, target, auth=None, **kwargs):
         self.target = target
         # Sender and Link settings
         self._max_message_size = kwargs.pop('max_message_size', None) or MAX_FRAME_SIZE_BYTES
         self._link_properties = kwargs.pop('link_properties', None)
         self._link_credit = kwargs.pop('link_credit', None)
-        super(SendClient, self).__init__(target, auth=auth, **kwargs)
+        super(SendClient, self).__init__(hostname, auth=auth, **kwargs)
 
     def _client_ready(self):
         """Determine whether the client is ready to start receiving messages.
@@ -536,6 +620,8 @@ class SendClient(AMQPClient):
 class ReceiveClient(AMQPClient):
     """An AMQP client for receiving messages.
 
+    :param hostname: The AMQP endpoint to connect to.
+    :type hostname: str, bytes or ~pyamqp.endpoint.Target or ~pyamqp.endpoint.Source
     :param source: The source AMQP service endpoint. This can either be the URI as
      a string or a ~pyamqp.endpoint.Source object.
     :type source: str, bytes or ~pyamqp.endpoint.Source
