@@ -24,7 +24,7 @@ A natural question to ask when considering whether to adopt a new version of the
 There are many benefits to using the new design of the `azure-ai-formrecognizer (3.2.x)` library. This new version of the library introduces two new clients `DocumentAnalysisClient` and the `DocumentModelAdministrationClient` with unified methods for analyzing documents and provides support for the new features added by the service in API version `2022-06-30-preview` and later.
 
 New features provided by the `DocumentAnalysisClient` include:
-- One consolidated method for analyzing document layout, a prebuilt general document model type, a prebuilt read model to get text detection and detected languages, along with the same prebuilt models that existed previously (receipts, invoices, business cards, ID documents) plus more new prebuilt models that can be seen [here][fr-models], and custom models.
+- One consolidated method for analyzing document layout, a prebuilt general document model type, a prebuilt read model to get text detection and detected languages, along with more new prebuilt models that can be seen [here][fr-models].
 - Models introduced in the latest version of the library, such as `AnalyzeResult`, remove hierarchical dependencies between document elements and move them to a more top level and easily accessible position.
 - The Form Recognizer service has further improved how to define where elements are located on documents by moving towards `BoundingRegion` definitions allowing for cross-page elements.
 - Document element fields are returned with more information, such as content and spans. 
