@@ -311,7 +311,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-cdn azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-digitaltwins msrest>=0.6.21
 #override azure-mgmt-digitaltwins azure-mgmt-core>=1.3.0,<2.0.0
-#override azure-mgmt-mobilenetwork azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-mobilenetwork azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-kubernetesconfiguration msrest>=0.6.21
 #override azure-mgmt-kubernetesconfiguration azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-healthcareapis msrest>=0.6.21
