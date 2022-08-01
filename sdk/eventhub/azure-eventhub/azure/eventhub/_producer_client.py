@@ -122,7 +122,7 @@ class EventHubProducerClient(ClientBase):
                 self._producers[p_id] = None
 
     # this is spelled wrong here -- do we change - or were the changes elsewhere
-    def _get_max_mesage_size(self):
+    def _get_max_message_size(self):
         # type: () -> None
         # pylint: disable=protected-access,line-too-long
         with self._lock:
@@ -348,7 +348,7 @@ class EventHubProducerClient(ClientBase):
 
         """
         if not self._max_message_size_on_link:
-            self._get_max_mesage_size()
+            self._get_max_message_size()
 
         max_size_in_bytes = kwargs.get("max_size_in_bytes", None)
         partition_id = kwargs.get("partition_id", None)
