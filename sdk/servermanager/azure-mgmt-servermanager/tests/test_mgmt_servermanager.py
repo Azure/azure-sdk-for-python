@@ -8,17 +8,17 @@
 import unittest
 
 import azure.mgmt.servermanager
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
-class MgmtServerManagerTest(AzureMgmtTestCase):
+class TestMgmtServerManager(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtServerManagerTest, self).setUp()
+    def setup_method(self, method):
         self.client = self.create_mgmt_client(
             azure.mgmt.servermanager.ServerManagement
         )
 
     @ResourceGroupPreparer()
+    @recorded_by_proxy
     def test_servermanager_gateways(self, resource_group, location):
         gateway_name = self.get_resource_name('pygateway')
         region = 'centralus'
@@ -29,16 +29,16 @@ class MgmtServerManagerTest(AzureMgmtTestCase):
             region
         )
         gateway = gateway_async.result()
-        self.assertEqual(gateway.name, gateway_name)
+        assert gateway.name == gateway_name
 
         gateway = self.client.gateway.get(
             resource_group.name,
             gateway_name
         )
-        self.assertEqual(gateway.name, gateway_name)
+        assert gateway.name == gateway_name
 
         gateways = list(self.client.gateway.list())
-        self.assertEqual(len(gateways), 1)
+        assert len(gateways) == 1
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
