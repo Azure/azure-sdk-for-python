@@ -16,10 +16,6 @@ Azure-identity is supported on Python 3.7 or later. For more details, please rea
 > Only code written against a beta version such as 1.11.0b2 may be affected.
 - `validate_authority` support is not available in 1.11.0.
 
-### Bugs Fixed
-
-### Other Changes
-
 ## 1.11.0b2 (2022-07-05)
 
 ### Features Added
