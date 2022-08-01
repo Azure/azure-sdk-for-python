@@ -2,7 +2,10 @@ import functools
 import os
 import tempfile
 
-from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
+from devtools_testutils import (
+    AzureRecordedTestCase,
+    PowerShellPreparer,
+)
 
 from azure.confidentialledger.certificate import (
     ConfidentialLedgerCertificateClient,
@@ -47,7 +50,15 @@ class ConfidentialLedgerTestCase(AzureRecordedTestCase):
         if cls.network_certificate_path:
             os.remove(cls.network_certificate_path)
 
-    def set_ledger_identity(self, confidentialledger_id):
+    def set_ledger_identity(self, confidentialledger_id: str) -> str:
+        """Retrieves the Confidential Ledger's TLS certificate, saving it to the object's network
+        certificate path as well as returning it directly.
+
+        :param confidentialledger_id: Id of the Confidential Ledger.
+        :type confidentialledger_id: str
+        :return: The Confidential Ledger's TLS certificate.
+        :rtype: str
+        """
         client = self.create_client_from_credential(
             ConfidentialLedgerCertificateClient,
             credential=None,
@@ -61,3 +72,5 @@ class ConfidentialLedgerTestCase(AzureRecordedTestCase):
 
         with open(self.network_certificate_path, "w", encoding="utf-8") as outfile:
             outfile.write(network_identity["ledgerTlsCertificate"])
+
+        return network_identity["ledgerTlsCertificate"]

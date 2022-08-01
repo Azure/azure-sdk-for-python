@@ -1,13 +1,22 @@
 import asyncio
 import hashlib
 import os
+from typing import Dict, List, Union
 
 from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import (
+    PemCertificate,
+    set_function_recording_options,
+)
 
 from azure.confidentialledger.aio import ConfidentialLedgerClient
 from azure.confidentialledger import ConfidentialLedgerCertificateCredential
 
-from _shared.constants import USER_CERTIFICATE_THUMBPRINT
+from _shared.constants import (
+    USER_CERTIFICATE_THUMBPRINT,
+    USER_CERTIFICATE_PRIVATE_KEY,
+    USER_CERTIFICATE_PUBLIC_KEY,
+)
 from _shared.testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestCase
 
 
@@ -15,11 +24,16 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     async def create_confidentialledger_client(
         self, endpoint, ledger_id, is_aad, fetch_tls_cert=True
     ):
-        if fetch_tls_cert:  # If True, explicitly fetch the ledger TLS certificate.
-            self.set_ledger_identity(ledger_id)
-        else:
-            # Remove the file so the client sees it doesn't exist and creates it.
+        # Always explicitly fetch the TLS certificate.
+        network_cert = self.set_ledger_identity(ledger_id)
+        if not fetch_tls_cert:
+            # For some test scenarios, emove the file so the client sees it doesn't exist and
+            # creates it auto-magically.
             os.remove(self.network_certificate_path)
+
+        function_recording_options: Dict[str, Union[str, List[PemCertificate]]] = {
+            "tls_certificate": network_cert,
+        }
 
         # The ACL instance should already have the potential AAD user added as an Administrator.
         credential = self.get_credential(ConfidentialLedgerClient, is_async=True)
@@ -53,6 +67,11 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
                 ledger_certificate_path=self.network_certificate_path,  # type: ignore
             )
 
+            function_recording_options["certificates"] = [
+                PemCertificate(data=USER_CERTIFICATE_PRIVATE_KEY, key=USER_CERTIFICATE_PUBLIC_KEY)
+            ]
+
+        set_function_recording_options(**function_recording_options)
         return client
 
     @ConfidentialLedgerPreparer()
