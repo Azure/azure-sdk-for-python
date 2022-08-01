@@ -17,6 +17,7 @@ import calendar
 import unittest
 
 from azure.servicebus._pyamqp.message import Message
+from azure.servicebus._pyamqp import error, client
 from azure.servicebus import (
     ServiceBusClient,
     AutoLockRenewer,
@@ -2328,14 +2329,14 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', lock_duration='PT5S')
     def test_queue_operation_negative(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
-        def _hack_amqp_message_complete(cls):
+        def _hack_amqp_message_complete(cls, *args, **kwargs):
             raise RuntimeError()
 
         def _hack_amqp_mgmt_request(cls, message, operation, op_type=None, node=None, callback=None, **kwargs):
-            raise uamqp.errors.AMQPConnectionError()
+            raise error.AMQPConnectionError(error.ErrorCondition.ConnectionCloseForced)
 
         def _hack_sb_receiver_settle_message(self, message, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
-            raise uamqp.errors.AMQPError()
+            raise error.AMQPException(error.ErrorCondition.ClientError)
 
         with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string, logging_enable=False) as sb_client:
@@ -2345,16 +2346,16 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 # negative settlement via receiver link
                 sender.send_messages(ServiceBusMessage("body"), timeout=10)
                 message = receiver.receive_messages()[0]
-                message.message.accept = types.MethodType(_hack_amqp_message_complete, message.message)
+                client.ReceiveClient.settle_messages = types.MethodType(_hack_amqp_message_complete, receiver._handler)
                 receiver.complete_message(message)  # settle via mgmt link
 
-                origin_amqp_client_mgmt_request_method = uamqp.AMQPClient.mgmt_request
+                origin_amqp_client_mgmt_request_method = client.AMQPClient.mgmt_request
                 try:
-                    uamqp.AMQPClient.mgmt_request = _hack_amqp_mgmt_request
+                    client.AMQPClient.mgmt_request = _hack_amqp_mgmt_request
                     with pytest.raises(ServiceBusConnectionError):
                         receiver.peek_messages()
                 finally:
-                    uamqp.AMQPClient.mgmt_request = origin_amqp_client_mgmt_request_method
+                    client.AMQPClient.mgmt_request = origin_amqp_client_mgmt_request_method
 
                 sender.send_messages(ServiceBusMessage("body"), timeout=10)
 

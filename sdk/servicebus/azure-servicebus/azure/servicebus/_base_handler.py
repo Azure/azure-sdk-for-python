@@ -16,7 +16,7 @@ try:
 except ImportError:
     from urlparse import urlparse  # type: ignore
 
-from ._pyamqp.utils import generate_sas_token
+from ._pyamqp.utils import generate_sas_token, amqp_string_value
 from ._pyamqp.message import Message, Properties
 
 from ._common._configuration import Configuration
@@ -486,8 +486,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         try:
             status, description, response = self._handler.mgmt_request(
                 mgmt_msg,
-                operation=mgmt_operation,
-                operation_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
+                operation=amqp_string_value(mgmt_operation),
+                operation_type=amqp_string_value(MGMT_REQUEST_OP_TYPE_ENTITY_MGMT),
                 node=self._mgmt_target.encode(self._config.encoding),
                 timeout=timeout,  # TODO: check if this should be seconds * 1000 if timeout else None,
             )

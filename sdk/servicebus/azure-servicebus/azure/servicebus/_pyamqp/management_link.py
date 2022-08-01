@@ -207,7 +207,8 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
         timeout = kwargs.get("timeout")
         message.application_properties["operation"] = kwargs.get("operation")
         message.application_properties["type"] = kwargs.get("type")
-        message.application_properties["locales"] = kwargs.get("locales")
+        if "locales" in kwargs:
+            message.application_properties["locales"] = kwargs.get("locales")
         try:
             # TODO: namedtuple is immutable, which may push us to re-think about the namedtuple approach for Message
             new_properties = message.properties._replace(message_id=self.next_message_id)
