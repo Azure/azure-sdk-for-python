@@ -61,9 +61,7 @@ def get_packages(
 ) -> List[ParsedSetup]:
     if root_dir is None:
         root_dir = discover_repo_root()
-    # This function returns list of path to setup.py and setup info like install requires, version for all packages discovered using glob
-    # Followiong are the list of arguements expected and parsed by this method
-    # service, glob_string
+    # This function returns list of path to setup.py and setup info like install requires, version for all packages discovered using glob.
     if args.service:
         target_dir = path.join(root_dir, "sdk", args.service)
     else:

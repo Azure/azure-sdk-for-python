@@ -210,7 +210,7 @@ stages:
                           pip install "./tools/azure-sdk-tools[build]"
                         displayName: Install versioning tool dependencies
                       - pwsh: |
-                          sdk_version_increment --package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}
+                          sdk_increment_version --package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}
                         displayName: Increment package version
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:

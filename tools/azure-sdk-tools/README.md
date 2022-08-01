@@ -73,8 +73,8 @@ Some common invocations.
 # build all package that have form azure-storage*. Set dev version for file + requirements before building.
 sdk_build azure-storage* --devbuild=True
 
-# build everything under sdk/core, dump into my special repo
-sdk_build azure* --service=core -d "myspecialfolder"
+# build everything under sdk/core, dump into target directory
+sdk_build azure* --service=core -d "<artifact_folder>"
 ```
 
 ## Using "versioning" modules
@@ -117,7 +117,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   --package-name PACKAGE_NAME
-                        name of package (accetps both formats: azure-service-package and azure_service_pacage)
+                        name of package (accepts both formats: azure-service-package and azure_service_package)
   --new-version NEW_VERSION
                         new package version
   --service SERVICE     name of the service for which to set the dev build id (e.g. keyvault)
@@ -143,7 +143,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   --package-name PACKAGE_NAME
-                        name of package (accetps both formats: azure-service-package and azure_service_pacage)
+                        name of package (accepts both formats: azure-service-package and azure_service_package)
   --service SERVICE     name of the service for which to set the dev build id (e.g. keyvault)
   --repo REPO           Where is the start directory that we are building against? If not provided, the current working directory will be used. Please
                         ensure you are within the azure-sdk-for-python repository.
@@ -156,7 +156,7 @@ This package honors a few different environment variables as far as logging, art
 | Environment Variable | Description |
 |---|---|
 | `SDK_DEV_BUILD_IDENTIFIER` | Defaults to value "a". The character prefix before the build number when setting dev build versions. |
-| `SDK_BUILD_ID` | When setting dev version, the current build number is passed to the function as an argument. For local repros, that can be unwieldy, so the value from this environment variable is fallen back on. |
+| `SDK_BUILD_ID` | When setting dev version, the current build number is passed to the function as an argument. For a local repro, that can be unwieldy, so the value from this environment variable is fallen back on. |
 | `SDK_ARTIFACT_DIRECTORY` | If a given command invocation outputs to an artifact directory, and that directory is NOT provided via CLI args, azure-sdk-tools will fall back to this variable value. |
 
 This set of environment variables will grow as more of the common functionality from azure-sdk-for-python is refactored into azure-sdk-tools.

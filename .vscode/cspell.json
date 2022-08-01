@@ -328,7 +328,17 @@
     "westcentralus",
     "westus",
     "wfile",
-    "westus"
+    "westus",
+    "BUILDID",
+    "documentdb",
+    "chdir",
+    "reqs",
+    "rgpy",
+    "swaggertosdk",
+    "rgname",
+    "mtype",
+    "venvtools",
+    "ispkg"
   ],
   "overrides": [
     {

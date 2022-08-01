@@ -17,7 +17,7 @@ def version_set_main():
     parser.add_argument(
         "--package-name",
         required=True,
-        help="name of package (accetps both formats: azure-service-package and azure_service_pacage)",
+        help="name of package (accepts both formats: azure-service-package and azure_service_package)",
     )
     parser.add_argument("--new-version", required=True, help="new package version")
     parser.add_argument(

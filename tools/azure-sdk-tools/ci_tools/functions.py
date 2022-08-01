@@ -58,7 +58,7 @@ omit_mgmt = lambda x: "mgmt" not in x or os.path.basename(x) in MANAGEMENT_PACKA
 
 
 # dict of filter type and filter function
-omit_funct_dict = {
+omit_function_dict = {
     "Build": omit_build,
     "Docs": omit_docs,
     "Regression": omit_regression,
@@ -132,7 +132,7 @@ def discover_targeted_packages(
         )
         collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
 
-    # dedup, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
+    # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     collected_directories = list(set([p for p in collected_top_level_directories if additional_contains_filter in p]))
 
     # if we have individually queued this specific package, it's obvious that we want to build it specifically
@@ -146,7 +146,7 @@ def discover_targeted_packages(
         pkg_set_ci_filtered = filter_for_compatibility(allowed_package_set)
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
-    pkg_set_ci_filtered = list(filter(omit_funct_dict.get(filter_type, omit_build), pkg_set_ci_filtered))
+    pkg_set_ci_filtered = list(filter(omit_function_dict.get(filter_type, omit_build), pkg_set_ci_filtered))
     logging.info("Target packages after filtering by CI Type: {}".format(pkg_set_ci_filtered))
     logging.info(
         "Package(s) omitted by CI filter: {}".format(list(set(collected_directories) - set(pkg_set_ci_filtered)))

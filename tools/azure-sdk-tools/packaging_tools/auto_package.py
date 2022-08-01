@@ -40,7 +40,7 @@ def main(generate_input, generate_output):
         package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
         # Installation package
         package["installInstructions"] = {
-            "full": "You can install the use using pip install of the artificats.",
+            "full": "You can install the use using pip install of the artifacts.",
             "lite": f"pip install {package_name}",
         }
         # to distinguish with track1
