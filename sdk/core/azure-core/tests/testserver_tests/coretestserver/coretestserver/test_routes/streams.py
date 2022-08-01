@@ -68,7 +68,7 @@ def compressed_no_header():
 def compressed():
     return Response(stream_compressed_header_error(), status=300, headers={"Content-Encoding": "gzip"})
 
-def stream_decompress_header():
+def compressed_stream():
     with tempfile.TemporaryFile(mode='w+b') as f:
         gzf = gzip.GzipFile(mode='w+b', fileobj=f)
         gzf.write(b"test")
@@ -78,4 +78,4 @@ def stream_decompress_header():
     
 @streams_api.route('/decompress_header', methods=['GET'])
 def decompress_header():
-    return Response(stream_decompress_header(), status=200, headers={"Content-Encoding": "gzip"})
+    return Response(compressed_stream(), status=200, headers={"Content-Encoding": "gzip"})
