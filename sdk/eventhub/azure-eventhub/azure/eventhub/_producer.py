@@ -128,6 +128,7 @@ class EventHubProducer(
         transport_type = self._client._config.transport_type   # pylint:disable=protected-access
         custom_endpoint_address = self._client._config.custom_endpoint_address # pylint: disable=protected-access
         hostname = self._client._address.hostname  # pylint: disable=protected-access
+        print(type(hostname))
         if transport_type.name == 'AmqpOverWebsocket':
             hostname += '/$servicebus/websocket/'
             if custom_endpoint_address:

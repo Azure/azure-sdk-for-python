@@ -58,7 +58,7 @@ class AMQPClient(object):
     """An AMQP client.
 # TODO: would it be a target or source?
     :param hostname: The AMQP endpoint to connect to.
-    :type hostname: str, bytes or ~pyamqp.endpoint.Target or ~pyamqp.endpoint.Source
+    :type hostname: str
     :keyword auth: Authentication for the connection. This should be one of the following:
         - pyamqp.authentication.SASLAnonymous
         - pyamqp.authentication.SASLPlain
@@ -137,7 +137,7 @@ class AMQPClient(object):
         self._auth_timeout = kwargs.pop("auth_timeout", DEFAULT_AUTH_TIMEOUT)
         self._mgmt_links = {}
         self._retry_policy = kwargs.pop("rety_policy", RetryPolicy())
-        self._keep_alive_interval = int(kwargs.pop("keep_alive_interval") or 0)
+        self._keep_alive_interval = int(kwargs.pop("keep_alive_interval", None) or 0)
 
         # Connection settings
         self._max_frame_size = kwargs.pop('max_frame_size', None) or MAX_FRAME_SIZE_BYTES
@@ -392,7 +392,7 @@ class SendClient(AMQPClient):
     """An AMQP client for sending messages.
 
     :param hostname: The AMQP endpoint to connect to.
-    :type hostname: str, bytes or ~pyamqp.endpoint.Target or ~pyamqp.endpoint.Source
+    :type hostname: str
     :param target: The target AMQP service endpoint. This can either be the URI as
      a string or a ~pyamqp.endpoint.Target object.
     :type target: str, bytes or ~pyamqp.endpoint.Target
@@ -623,7 +623,7 @@ class ReceiveClient(AMQPClient):
     """An AMQP client for receiving messages.
 
     :param hostname: The AMQP endpoint to connect to.
-    :type hostname: str, bytes or ~pyamqp.endpoint.Target or ~pyamqp.endpoint.Source
+    :type hostname: str
     :param source: The source AMQP service endpoint. This can either be the URI as
      a string or a ~pyamqp.endpoint.Source object.
     :type source: str, bytes or ~pyamqp.endpoint.Source
