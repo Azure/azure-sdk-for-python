@@ -290,8 +290,8 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         credential: CredentialTypes,
         **kwargs: Any,
     ) -> None:
-        self._uamqp_transport = True
-        self._amqp_transport = UamqpTransport
+        self._uamqp_transport = kwargs.pop("uamqp_transport", True)
+        self._amqp_transport = UamqpTransport if self._uamqp_transport else None
 
         self.eventhub_name = eventhub_name
         if not eventhub_name:

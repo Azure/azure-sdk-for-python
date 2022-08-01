@@ -1,9 +1,25 @@
+# -- coding: utf-8 --
+#-------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+#--------------------------------------------------------------------------
+
 import platform
 import pytest
-import uamqp
 from packaging import version
-from azure.eventhub.amqp import AmqpAnnotatedMessage
+try:
+    import uamqp
+    from azure.eventhub._transport._uamqp_transport import UamqpTransport 
+except ImportError:
+    UamqpTransport = None
+    pass
+from azure.eventhub.amqp import AmqpAnnotatedMessage, AmqpMessageHeader, AmqpMessageProperties
 from azure.eventhub import _common
+from azure.eventhub._utils import transform_outbound_single_message
+from .._test_case import get_decorator
+
+uamqp_transport_vals = get_decorator()
 
 pytestmark = pytest.mark.skipif(platform.python_implementation() == "PyPy", reason="This is ignored for PyPy")
 
@@ -55,23 +71,28 @@ def test_app_properties():
     assert event_data.properties["a"] == "b"
 
 
-def test_sys_properties():
-    properties = uamqp.message.MessageProperties()
-    properties.message_id = "message_id"
-    properties.user_id = "user_id"
-    properties.to = "to"
-    properties.subject = "subject"
-    properties.reply_to = "reply_to"
-    properties.correlation_id = "correlation_id"
-    properties.content_type = "content_type"
-    properties.content_encoding = "content_encoding"
-    properties.absolute_expiry_time = 1
-    properties.creation_time = 1
-    properties.group_id = "group_id"
-    properties.group_sequence = 1
-    properties.reply_to_group_id = "reply_to_group_id"
-    message = uamqp.Message(properties=properties)
-    message.annotations = {_common.PROP_OFFSET: "@latest"}
+@pytest.mark.parametrize("uamqp_transport",
+                         uamqp_transport_vals)
+def test_sys_properties(uamqp_transport):
+    if uamqp_transport:
+        properties = uamqp.message.MessageProperties()
+        properties.message_id = "message_id"
+        properties.user_id = "user_id"
+        properties.to = "to"
+        properties.subject = "subject"
+        properties.reply_to = "reply_to"
+        properties.correlation_id = "correlation_id"
+        properties.content_type = "content_type"
+        properties.content_encoding = "content_encoding"
+        properties.absolute_expiry_time = 1
+        properties.creation_time = 1
+        properties.group_id = "group_id"
+        properties.group_sequence = 1
+        properties.reply_to_group_id = "reply_to_group_id"
+        message = uamqp.message.Message(properties=properties)
+        message.annotations = {_common.PROP_OFFSET: "@latest"}
+    else:
+        pass
     ed = EventData._from_message(message)  # type: EventData
 
     assert ed.system_properties[_common.PROP_OFFSET] == "@latest"
@@ -90,39 +111,102 @@ def test_sys_properties():
     assert ed.system_properties[_common.PROP_REPLY_TO_GROUP_ID] == properties.reply_to_group_id
 
 
-def test_event_data_batch():
-    batch = EventDataBatch(max_size_in_bytes=110, partition_key="par")
+@pytest.mark.parametrize("uamqp_transport",
+                         uamqp_transport_vals)
+def test_event_data_batch(uamqp_transport):
+    if uamqp_transport:
+        amqp_transport = UamqpTransport()
+        if version.parse(uamqp.__version__) >= version.parse("1.2.8"):
+            expected_result = 101
+        else:
+            expected_result = 93
+    else:
+        pass
+    batch = EventDataBatch(max_size_in_bytes=110, partition_key="par", amqp_transport=amqp_transport)
     batch.add(EventData("A"))
     assert str(batch) == "EventDataBatch(max_size_in_bytes=110, partition_id=None, partition_key='par', event_count=1)"
     assert repr(batch) == "EventDataBatch(max_size_in_bytes=110, partition_id=None, partition_key='par', event_count=1)"
 
-    # In uamqp v1.2.8, the encoding size of a message has changed. delivery_count in message header is now set to 0
-    # instead of None according to the C spec.
-    # This uamqp change is transparent to EH users so it's not considered as a breaking change. However, it's breaking
-    # the unit test here. The solution is to add backward compatibility in test.
-    if version.parse(uamqp.__version__) >= version.parse("1.2.8"):
-        assert batch.size_in_bytes == 101 and len(batch) == 1
-    else:
-        assert batch.size_in_bytes == 93 and len(batch) == 1
+    assert batch.size_in_bytes == expected_result and len(batch) == 1
+
     with pytest.raises(ValueError):
         batch.add(EventData("A"))
 
-def test_event_data_from_message():
-    message = uamqp.Message('A')
+
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
+def test_event_data_from_message(uamqp_transport):
+    if uamqp_transport:
+        amqp_transport = UamqpTransport()
+    else:
+        pass
+    annotated_message = AmqpAnnotatedMessage(data_body=b'A')
+    message = amqp_transport.to_outgoing_amqp_message(annotated_message)
     event = EventData._from_message(message)
     assert event.content_type is None
     assert event.correlation_id is None
     assert event.message_id is None
 
     event.content_type = 'content_type'
-    event.correlation_id =  'correlation_id'
+    event.correlation_id = 'correlation_id'
     event.message_id = 'message_id'
     assert event.content_type == 'content_type'
-    assert event.correlation_id ==  'correlation_id'
+    assert event.correlation_id == 'correlation_id'
     assert event.message_id == 'message_id'
+    assert list(event.body) == [b'A']
+
 
 def test_amqp_message_str_repr():
     data_body = b'A'
     message = AmqpAnnotatedMessage(data_body=data_body)
     assert str(message) == 'A'
     assert 'AmqpAnnotatedMessage(body=A, body_type=data' in repr(message)
+
+
+@pytest.mark.parametrize("uamqp_transport",
+                         uamqp_transport_vals)
+def test_amqp_message_from_message(uamqp_transport):
+    if uamqp_transport:
+        header = uamqp.message.MessageHeader()
+        header.delivery_count = 1
+        header.time_to_live = 10000
+        header.first_acquirer = True
+        header.durable = True
+        header.priority = 1
+        properties = uamqp.message.MessageProperties()
+        properties.message_id = "message_id"
+        properties.user_id = "user_id"
+        properties.to = "to"
+        properties.subject = "subject"
+        properties.reply_to = "reply_to"
+        properties.correlation_id = "correlation_id"
+        properties.content_type = "content_type"
+        properties.content_encoding = "content_encoding"
+        properties.absolute_expiry_time = 1
+        properties.creation_time = 1
+        properties.group_id = "group_id"
+        properties.group_sequence = 1
+        properties.reply_to_group_id = "reply_to_group_id"
+        message = uamqp.message.Message(header=header, properties=properties)
+        message.annotations = {_common.PROP_OFFSET: "@latest"}
+    else:
+        pass
+
+    amqp_message = AmqpAnnotatedMessage(message=message)
+    assert amqp_message.properties.message_id == message.properties.message_id
+    assert amqp_message.properties.user_id == message.properties.user_id
+    assert amqp_message.properties.to == message.properties.to
+    assert amqp_message.properties.subject == message.properties.subject
+    assert amqp_message.properties.reply_to == message.properties.reply_to
+    assert amqp_message.properties.correlation_id == message.properties.correlation_id
+    assert amqp_message.properties.content_type == message.properties.content_type
+    assert amqp_message.properties.absolute_expiry_time == message.properties.absolute_expiry_time
+    assert amqp_message.properties.creation_time == message.properties.creation_time
+    assert amqp_message.properties.group_id == message.properties.group_id
+    assert amqp_message.properties.group_sequence == message.properties.group_sequence
+    assert amqp_message.properties.reply_to_group_id == message.properties.reply_to_group_id
+    assert amqp_message.header.time_to_live == message.header.ttl
+    assert amqp_message.header.delivery_count == message.header.delivery_count
+    assert amqp_message.header.first_acquirer == message.header.first_acquirer
+    assert amqp_message.header.durable == message.header.durable
+    assert amqp_message.header.priority == message.header.priority
+    assert amqp_message.annotations == message.message_annotations

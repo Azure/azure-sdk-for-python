@@ -9,13 +9,19 @@ import threading
 import pytest
 import time
 import datetime
+import uamqp
 
 from azure.eventhub import EventData, TransportType, EventHubConsumerClient
 from azure.eventhub.exceptions import EventHubError
+from ..._test_case import get_decorator
+
+uamqp_transport_vals = get_decorator()
 
 
+@pytest.mark.parametrize("uamqp_transport",
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
-def test_receive_end_of_stream(connstr_senders):
+def test_receive_end_of_stream(connstr_senders, uamqp_transport):
     def on_event(partition_context, event):
         if partition_context.partition_id == "0":
             assert event.body_as_str() == "Receiving only a single event"
@@ -29,7 +35,9 @@ def test_receive_end_of_stream(connstr_senders):
             assert ", partition_key: 0" in event_str
     on_event.called = False
     connection_str, senders = connstr_senders
-    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
+    client = EventHubConsumerClient.from_connection_string(
+        connection_str, consumer_group='$default', uamqp_transport=uamqp_transport
+    )
     with client:
         thread = threading.Thread(target=client.receive, args=(on_event,),
                                   kwargs={"partition_id": "0", "starting_position": "@latest"})
@@ -43,6 +51,7 @@ def test_receive_end_of_stream(connstr_senders):
     thread.join()
 
 
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
 @pytest.mark.parametrize("position, inclusive, expected_result",
                          [("offset", False, "Exclusive"),
                           ("offset", True, "Inclusive"),
@@ -50,7 +59,7 @@ def test_receive_end_of_stream(connstr_senders):
                           ("sequence", True, "Inclusive"),
                           ("enqueued_time", False, "Exclusive")])
 @pytest.mark.liveTest
-def test_receive_with_event_position_sync(connstr_senders, position, inclusive, expected_result):
+def test_receive_with_event_position_sync(uamqp_transport, connstr_senders, position, inclusive, expected_result):
     def on_event(partition_context, event):
         assert partition_context.last_enqueued_event_properties.get('sequence_number') == event.sequence_number
         assert partition_context.last_enqueued_event_properties.get('offset') == event.offset
@@ -69,7 +78,9 @@ def test_receive_with_event_position_sync(connstr_senders, position, inclusive, 
     connection_str, senders = connstr_senders
     senders[0].send(EventData(b"Inclusive"))
     senders[1].send(EventData(b"Inclusive"))
-    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
+    client = EventHubConsumerClient.from_connection_string(
+        connection_str, consumer_group='$default', uamqp_transport=uamqp_transport
+    )
     with client:
         thread = threading.Thread(target=client.receive, args=(on_event,),
                                   kwargs={"starting_position": "-1",
@@ -82,7 +93,9 @@ def test_receive_with_event_position_sync(connstr_senders, position, inclusive, 
     thread.join()
     senders[0].send(EventData(expected_result))
     senders[1].send(EventData(expected_result))
-    client2 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
+    client2 = EventHubConsumerClient.from_connection_string(
+        connection_str, consumer_group='$default', uamqp_transport=uamqp_transport
+    )
     with client2:
         thread = threading.Thread(target=client2.receive, args=(on_event,),
                                   kwargs={"starting_position": on_event.event_position,
@@ -90,14 +103,44 @@ def test_receive_with_event_position_sync(connstr_senders, position, inclusive, 
                                           "track_last_enqueued_event_properties": True})
         thread.daemon = True
         thread.start()
-        time.sleep(10)
+        time.sleep(15)
         assert on_event.event.body_as_str() == expected_result
 
     thread.join()
 
+# TODO: after fixing message property mutability, test
+#@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
+#@pytest.mark.liveTest
+#def test_receive_modify_message_resend_sync(uamqp_transport, connstr_senders):
+#    received_modified = [False]
+#    def on_event(partition_context, event):
+#        message = event.message
+#        if message.properties.message_id == b'a1':
+#            message.properties.message_id = 'a2'
+#            senders[0].send(event)
+#        elif message.properties.message_id == b'a2':
+#            received_modified = [True]
+#
+#    connection_str, senders = connstr_senders
+#    event = EventData("A", message_id='a1')
+#    senders[0].send(event)
+#    client = EventHubConsumerClient.from_connection_string(
+#        connection_str, consumer_group='$default', uamqp_transport=uamqp_transport
+#    )
+#    with client:
+#        thread = threading.Thread(target=client.receive, args=(on_event,),
+#                                  kwargs={"partition_id": "0", "starting_position": "-1"})
+#        thread.daemon = True
+#        thread.start()
+#        time.sleep(10)
+#        assert received_modified[0]
+#    thread.join()
 
+
+@pytest.mark.parametrize("uamqp_transport",
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
-def test_receive_owner_level(connstr_senders):
+def test_receive_owner_level(connstr_senders, uamqp_transport):
     def on_event(partition_context, event):
         pass
     def on_error(partition_context, error):
@@ -105,8 +148,8 @@ def test_receive_owner_level(connstr_senders):
 
     on_error.error = None
     connection_str, senders = connstr_senders
-    client1 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
-    client2 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
+    client1 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default', uamqp_transport=uamqp_transport)
+    client2 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default', uamqp_transport=uamqp_transport)
     with client1, client2:
         thread1 = threading.Thread(target=client1.receive, args=(on_event,),
                                    kwargs={"partition_id": "0", "starting_position": "-1",
@@ -128,8 +171,10 @@ def test_receive_owner_level(connstr_senders):
     assert isinstance(on_error.error, EventHubError)
 
 
+@pytest.mark.parametrize("uamqp_transport",
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
-def test_receive_over_websocket_sync(connstr_senders):
+def test_receive_over_websocket_sync(connstr_senders, uamqp_transport):
     app_prop = {"raw_prop": "raw_value"}
     content_type = "text/plain"
     message_id_base = "mess_id_sample_"
@@ -143,7 +188,8 @@ def test_receive_over_websocket_sync(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubConsumerClient.from_connection_string(connection_str,
                                                            consumer_group='$default',
-                                                           transport_type=TransportType.AmqpOverWebsocket)
+                                                           transport_type=TransportType.AmqpOverWebsocket,
+                                                           uamqp_transport=uamqp_transport)
 
     event_list = []
     for i in range(5):
