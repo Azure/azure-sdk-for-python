@@ -2329,8 +2329,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', lock_duration='PT5S')
     def test_queue_operation_negative(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
-        def _hack_amqp_message_complete(cls, *args, **kwargs):
-            raise RuntimeError()
+        def _hack_amqp_message_complete(cls, _, settlement):
+                if settlement == 'completed':
+                    raise RuntimeError()
 
         def _hack_amqp_mgmt_request(cls, message, operation, op_type=None, node=None, callback=None, **kwargs):
             raise error.AMQPConnectionError(error.ErrorCondition.ConnectionCloseForced)
@@ -2342,33 +2343,37 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 servicebus_namespace_connection_string, logging_enable=False) as sb_client:
             sender = sb_client.get_queue_sender(servicebus_queue.name)
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
-            with sender, receiver:
-                # negative settlement via receiver link
-                sender.send_messages(ServiceBusMessage("body"), timeout=10)
-                message = receiver.receive_messages()[0]
-                client.ReceiveClient.settle_messages = types.MethodType(_hack_amqp_message_complete, receiver._handler)
-                receiver.complete_message(message)  # settle via mgmt link
+            original_settlement = client.ReceiveClient.settle_messages
+            try:
+                with sender, receiver:
+                    # negative settlement via receiver link
+                    sender.send_messages(ServiceBusMessage("body"), timeout=10)
+                    message = receiver.receive_messages()[0]
+                    client.ReceiveClient.settle_messages = types.MethodType(_hack_amqp_message_complete, receiver._handler)
+                    receiver.complete_message(message)  # settle via mgmt link
 
-                origin_amqp_client_mgmt_request_method = client.AMQPClient.mgmt_request
-                try:
-                    client.AMQPClient.mgmt_request = _hack_amqp_mgmt_request
-                    with pytest.raises(ServiceBusConnectionError):
-                        receiver.peek_messages()
-                finally:
-                    client.AMQPClient.mgmt_request = origin_amqp_client_mgmt_request_method
+                    origin_amqp_client_mgmt_request_method = client.AMQPClient.mgmt_request
+                    try:
+                        client.AMQPClient.mgmt_request = _hack_amqp_mgmt_request
+                        with pytest.raises(ServiceBusConnectionError):
+                            receiver.peek_messages()
+                    finally:
+                        client.AMQPClient.mgmt_request = origin_amqp_client_mgmt_request_method
 
-                sender.send_messages(ServiceBusMessage("body"), timeout=10)
+                    sender.send_messages(ServiceBusMessage("body"), timeout=10)
 
-                message = receiver.receive_messages()[0]
+                    message = receiver.receive_messages()[0]
 
-                origin_sb_receiver_settle_message_method = receiver._settle_message
-                receiver._settle_message = types.MethodType(_hack_sb_receiver_settle_message, receiver)
-                with pytest.raises(ServiceBusError):
+                    origin_sb_receiver_settle_message_method = receiver._settle_message
+                    receiver._settle_message = types.MethodType(_hack_sb_receiver_settle_message, receiver)
+                    with pytest.raises(ServiceBusError):
+                        receiver.complete_message(message)
+
+                    receiver._settle_message = origin_sb_receiver_settle_message_method
+                    message = receiver.receive_messages(max_wait_time=6)[0]
                     receiver.complete_message(message)
-
-                receiver._settle_message = origin_sb_receiver_settle_message_method
-                message = receiver.receive_messages(max_wait_time=6)[0]
-                receiver.complete_message(message)
+            finally:
+                client.ReceiveClient.settle_messages = original_settlement
 
     @pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest

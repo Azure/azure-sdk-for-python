@@ -50,6 +50,13 @@ class ReceiverLink(Link):
         super(ReceiverLink, self).__init__(session, handle, name, role, source_address=source_address, **kwargs)
         self._on_transfer = kwargs.pop('on_transfer')
 
+    def _process_incoming_message(self, frame, message):
+        try:
+            return self._on_transfer(frame, message)
+        except Exception as e:
+            _LOGGER.error("Handler function failed with error: %r", e)
+        return None
+
     def _incoming_attach(self, frame):
         super(ReceiverLink, self)._incoming_attach(frame)
         if frame[9] is None:  # initial_delivery_count
@@ -78,7 +85,7 @@ class ReceiverLink(Link):
                 message = decode_payload(frame[11])
                 if self.network_trace:
                     _LOGGER.info("   %r", message, extra=self.network_trace_params)
-            delivery_state = self._on_transfer(frame, message)
+            delivery_state = self._process_incoming_message(frame, message)
             if not frame[4] and delivery_state:  # settled
                 self._outgoing_disposition(first=frame[1], settled=True, state=delivery_state)
         if self.current_link_credit <= 0:
