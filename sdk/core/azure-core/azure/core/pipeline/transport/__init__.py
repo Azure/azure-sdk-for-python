@@ -27,6 +27,7 @@
 from ._base import HttpTransport, HttpRequest, HttpResponse
 from ._base_async import AsyncHttpTransport, AsyncHttpResponse
 
+# pylint: disable=undefined-all-variable
 
 __all__ = [
     'HttpTransport',
@@ -44,9 +45,8 @@ __all__ = [
     'AioHttpTransportResponse',
 ]
 
-# pylint: disable=unused-import, redefined-outer-name
+# pylint: disable=unused-import, redefined-outer-name, no-member
 
-        
 def __dir__():
     return __all__
 
@@ -94,15 +94,11 @@ def __getattr__(name):
         except ImportError as ex:
             if ex.msg.endswith("'requests'"):
                 raise ImportError("requests package is not installed")
-            else:
-                raise ImportError("trio package is not installed")
-                
+            raise ImportError("trio package is not installed")
     if name == 'TrioRequestsTransportResponse':
         try:
             from ._requests_trio import TrioRequestsTransportResponse
             return TrioRequestsTransportResponse
         except ImportError:
             raise ImportError("trio package is not installed")
-    
     raise AttributeError(f"module 'azure.core.pipeline.transport' has no attribute {name}")
-    
