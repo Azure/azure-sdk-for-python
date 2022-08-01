@@ -32,7 +32,7 @@ _SERIALIZER.client_side_validation = False
 def build_delete_request_initial(
     subscription_id: str,
     resource_group_name: str,
-    mobile_network_name: str,
+    sim_group_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -42,11 +42,11 @@ def build_delete_request_initial(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/simGroups/{simGroupName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "mobileNetworkName": _SERIALIZER.url("mobile_network_name", mobile_network_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$'),
+        "simGroupName": _SERIALIZER.url("sim_group_name", sim_group_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -69,7 +69,7 @@ def build_delete_request_initial(
 def build_get_request(
     subscription_id: str,
     resource_group_name: str,
-    mobile_network_name: str,
+    sim_group_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -79,11 +79,11 @@ def build_get_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/simGroups/{simGroupName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "mobileNetworkName": _SERIALIZER.url("mobile_network_name", mobile_network_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$'),
+        "simGroupName": _SERIALIZER.url("sim_group_name", sim_group_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -106,9 +106,9 @@ def build_get_request(
 def build_create_or_update_request_initial(
     subscription_id: str,
     resource_group_name: str,
-    mobile_network_name: str,
+    sim_group_name: str,
     *,
-    json: Optional[_models.MobileNetwork] = None,
+    json: Optional[_models.SimGroup] = None,
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -120,11 +120,11 @@ def build_create_or_update_request_initial(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/simGroups/{simGroupName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "mobileNetworkName": _SERIALIZER.url("mobile_network_name", mobile_network_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$'),
+        "simGroupName": _SERIALIZER.url("sim_group_name", sim_group_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -151,7 +151,7 @@ def build_create_or_update_request_initial(
 def build_update_tags_request(
     subscription_id: str,
     resource_group_name: str,
-    mobile_network_name: str,
+    sim_group_name: str,
     *,
     json: Optional[_models.TagsObject] = None,
     content: Any = None,
@@ -165,11 +165,11 @@ def build_update_tags_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/simGroups/{simGroupName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "mobileNetworkName": _SERIALIZER.url("mobile_network_name", mobile_network_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$'),
+        "simGroupName": _SERIALIZER.url("sim_group_name", sim_group_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -204,7 +204,7 @@ def build_list_by_subscription_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.MobileNetwork/mobileNetworks")
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.MobileNetwork/simGroups")
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
     }
@@ -227,8 +227,8 @@ def build_list_by_subscription_request(
 
 
 def build_list_by_resource_group_request(
-    subscription_id: str,
     resource_group_name: str,
+    subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -238,10 +238,10 @@ def build_list_by_resource_group_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/simGroups")  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -260,51 +260,14 @@ def build_list_by_resource_group_request(
         **kwargs
     )
 
-
-def build_list_sim_ids_request_initial(
-    subscription_id: str,
-    resource_group_name: str,
-    mobile_network_name: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}/listSimIds")  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "mobileNetworkName": _SERIALIZER.url("mobile_network_name", mobile_network_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-class MobileNetworksOperations:
+class SimGroupsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.mobilenetwork.MobileNetworkManagementClient`'s
-        :attr:`mobile_networks` attribute.
+        :attr:`sim_groups` attribute.
     """
 
     models = _models
@@ -320,7 +283,7 @@ class MobileNetworksOperations:
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
-        mobile_network_name: str,
+        sim_group_name: str,
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -338,7 +301,7 @@ class MobileNetworksOperations:
         request = build_delete_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            mobile_network_name=mobile_network_name,
+            sim_group_name=sim_group_name,
             api_version=api_version,
             template_url=self._delete_initial.metadata['url'],
             headers=_headers,
@@ -361,22 +324,22 @@ class MobileNetworksOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}"}  # type: ignore
+    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/simGroups/{simGroupName}"}  # type: ignore
 
 
     @distributed_trace
     def begin_delete(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
-        mobile_network_name: str,
+        sim_group_name: str,
         **kwargs: Any
     ) -> LROPoller[None]:
-        """Deletes the specified mobile network.
+        """Deletes the specified SIM group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param mobile_network_name: The name of the mobile network.
-        :type mobile_network_name: str
+        :param sim_group_name: The name of the SIM Group.
+        :type sim_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -403,7 +366,7 @@ class MobileNetworksOperations:
         if cont_token is None:
             raw_result = self._delete_initial(  # type: ignore
                 resource_group_name=resource_group_name,
-                mobile_network_name=mobile_network_name,
+                sim_group_name=sim_group_name,
                 api_version=api_version,
                 cls=lambda x,y,z: x,
                 headers=_headers,
@@ -435,24 +398,24 @@ class MobileNetworksOperations:
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}"}  # type: ignore
+    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/simGroups/{simGroupName}"}  # type: ignore
 
     @distributed_trace
     def get(
         self,
         resource_group_name: str,
-        mobile_network_name: str,
+        sim_group_name: str,
         **kwargs: Any
-    ) -> _models.MobileNetwork:
-        """Gets information about the specified mobile network.
+    ) -> _models.SimGroup:
+        """Gets information about the specified SIM group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param mobile_network_name: The name of the mobile network.
-        :type mobile_network_name: str
+        :param sim_group_name: The name of the SIM Group.
+        :type sim_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MobileNetwork, or the result of cls(response)
-        :rtype: ~azure.mgmt.mobilenetwork.models.MobileNetwork
+        :return: SimGroup, or the result of cls(response)
+        :rtype: ~azure.mgmt.mobilenetwork.models.SimGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -464,13 +427,13 @@ class MobileNetworksOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.MobileNetwork]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SimGroup]
 
         
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            mobile_network_name=mobile_network_name,
+            sim_group_name=sim_group_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
             headers=_headers,
@@ -491,23 +454,23 @@ class MobileNetworksOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('MobileNetwork', pipeline_response)
+        deserialized = self._deserialize('SimGroup', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/simGroups/{simGroupName}"}  # type: ignore
 
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
-        mobile_network_name: str,
-        parameters: _models.MobileNetwork,
+        sim_group_name: str,
+        parameters: _models.SimGroup,
         **kwargs: Any
-    ) -> _models.MobileNetwork:
+    ) -> _models.SimGroup:
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -518,14 +481,14 @@ class MobileNetworksOperations:
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.MobileNetwork]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SimGroup]
 
-        _json = self._serialize.body(parameters, 'MobileNetwork')
+        _json = self._serialize.body(parameters, 'SimGroup')
 
         request = build_create_or_update_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            mobile_network_name=mobile_network_name,
+            sim_group_name=sim_group_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -548,35 +511,35 @@ class MobileNetworksOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('MobileNetwork', pipeline_response)
+            deserialized = self._deserialize('SimGroup', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('MobileNetwork', pipeline_response)
+            deserialized = self._deserialize('SimGroup', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}"}  # type: ignore
+    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/simGroups/{simGroupName}"}  # type: ignore
 
 
     @distributed_trace
     def begin_create_or_update(
         self,
         resource_group_name: str,
-        mobile_network_name: str,
-        parameters: _models.MobileNetwork,
+        sim_group_name: str,
+        parameters: _models.SimGroup,
         **kwargs: Any
-    ) -> LROPoller[_models.MobileNetwork]:
-        """Creates or updates a mobile network.
+    ) -> LROPoller[_models.SimGroup]:
+        """Creates or updates a SIM group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param mobile_network_name: The name of the mobile network.
-        :type mobile_network_name: str
-        :param parameters: Parameters supplied to the create or update mobile network operation.
-        :type parameters: ~azure.mgmt.mobilenetwork.models.MobileNetwork
+        :param sim_group_name: The name of the SIM Group.
+        :type sim_group_name: str
+        :param parameters: Parameters supplied to the create or update SIM group operation.
+        :type parameters: ~azure.mgmt.mobilenetwork.models.SimGroup
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -585,9 +548,8 @@ class MobileNetworksOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either MobileNetwork or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mobilenetwork.models.MobileNetwork]
+        :return: An instance of LROPoller that returns either SimGroup or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mobilenetwork.models.SimGroup]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -595,7 +557,7 @@ class MobileNetworksOperations:
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.MobileNetwork]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SimGroup]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -605,7 +567,7 @@ class MobileNetworksOperations:
         if cont_token is None:
             raw_result = self._create_or_update_initial(  # type: ignore
                 resource_group_name=resource_group_name,
-                mobile_network_name=mobile_network_name,
+                sim_group_name=sim_group_name,
                 parameters=parameters,
                 api_version=api_version,
                 content_type=content_type,
@@ -617,7 +579,7 @@ class MobileNetworksOperations:
         kwargs.pop('error_map', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('MobileNetwork', pipeline_response)
+            deserialized = self._deserialize('SimGroup', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -641,27 +603,27 @@ class MobileNetworksOperations:
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}"}  # type: ignore
+    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/simGroups/{simGroupName}"}  # type: ignore
 
     @distributed_trace
     def update_tags(
         self,
         resource_group_name: str,
-        mobile_network_name: str,
+        sim_group_name: str,
         parameters: _models.TagsObject,
         **kwargs: Any
-    ) -> _models.MobileNetwork:
-        """Updates mobile network tags.
+    ) -> _models.SimGroup:
+        """Updates SIM group tags.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param mobile_network_name: The name of the mobile network.
-        :type mobile_network_name: str
-        :param parameters: Parameters supplied to update mobile network tags.
+        :param sim_group_name: The name of the SIM Group.
+        :type sim_group_name: str
+        :param parameters: Parameters supplied to update SIM group tags.
         :type parameters: ~azure.mgmt.mobilenetwork.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MobileNetwork, or the result of cls(response)
-        :rtype: ~azure.mgmt.mobilenetwork.models.MobileNetwork
+        :return: SimGroup, or the result of cls(response)
+        :rtype: ~azure.mgmt.mobilenetwork.models.SimGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -674,14 +636,14 @@ class MobileNetworksOperations:
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.MobileNetwork]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SimGroup]
 
         _json = self._serialize.body(parameters, 'TagsObject')
 
         request = build_update_tags_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            mobile_network_name=mobile_network_name,
+            sim_group_name=sim_group_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -704,34 +666,33 @@ class MobileNetworksOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('MobileNetwork', pipeline_response)
+        deserialized = self._deserialize('SimGroup', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    update_tags.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}"}  # type: ignore
+    update_tags.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/simGroups/{simGroupName}"}  # type: ignore
 
 
     @distributed_trace
     def list_by_subscription(
         self,
         **kwargs: Any
-    ) -> Iterable[_models.MobileNetworkListResult]:
-        """Lists all the mobile networks in a subscription.
+    ) -> Iterable[_models.SimGroupListResult]:
+        """Gets all the SIM groups in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either MobileNetworkListResult or the result of
-         cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mobilenetwork.models.MobileNetworkListResult]
+        :return: An iterator like instance of either SimGroupListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mobilenetwork.models.SimGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.MobileNetworkListResult]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SimGroupListResult]
 
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -765,7 +726,7 @@ class MobileNetworksOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("MobileNetworkListResult", pipeline_response)
+            deserialized = self._deserialize("SimGroupListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -792,29 +753,28 @@ class MobileNetworksOperations:
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_subscription.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.MobileNetwork/mobileNetworks"}  # type: ignore
+    list_by_subscription.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.MobileNetwork/simGroups"}  # type: ignore
 
     @distributed_trace
     def list_by_resource_group(
         self,
         resource_group_name: str,
         **kwargs: Any
-    ) -> Iterable[_models.MobileNetworkListResult]:
-        """Lists all the mobile networks in a resource group.
+    ) -> Iterable[_models.SimGroupListResult]:
+        """Gets all the SIM groups in a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either MobileNetworkListResult or the result of
-         cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mobilenetwork.models.MobileNetworkListResult]
+        :return: An iterator like instance of either SimGroupListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mobilenetwork.models.SimGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.MobileNetworkListResult]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SimGroupListResult]
 
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -824,8 +784,8 @@ class MobileNetworksOperations:
             if not next_link:
                 
                 request = build_list_by_resource_group_request(
-                    subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list_by_resource_group.metadata['url'],
                     headers=_headers,
@@ -837,8 +797,8 @@ class MobileNetworksOperations:
             else:
                 
                 request = build_list_by_resource_group_request(
-                    subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=next_link,
                     headers=_headers,
@@ -850,7 +810,7 @@ class MobileNetworksOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("MobileNetworkListResult", pipeline_response)
+            deserialized = self._deserialize("SimGroupListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -877,135 +837,4 @@ class MobileNetworksOperations:
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_resource_group.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks"}  # type: ignore
-
-    def _list_sim_ids_initial(
-        self,
-        resource_group_name: str,
-        mobile_network_name: str,
-        **kwargs: Any
-    ) -> _models.SimIdListResult:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SimIdListResult]
-
-        
-        request = build_list_sim_ids_request_initial(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            mobile_network_name=mobile_network_name,
-            api_version=api_version,
-            template_url=self._list_sim_ids_initial.metadata['url'],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('SimIdListResult', pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize('SimIdListResult', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    _list_sim_ids_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}/listSimIds"}  # type: ignore
-
-
-    @distributed_trace
-    def begin_list_sim_ids(
-        self,
-        resource_group_name: str,
-        mobile_network_name: str,
-        **kwargs: Any
-    ) -> LROPoller[_models.SimIdListResult]:
-        """Lists the IDs of all provisioned SIMs in a mobile network.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param mobile_network_name: The name of the mobile network.
-        :type mobile_network_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either SimIdListResult or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mobilenetwork.models.SimIdListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SimIdListResult]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = self._list_sim_ids_initial(  # type: ignore
-                resource_group_name=resource_group_name,
-                mobile_network_name=mobile_network_name,
-                api_version=api_version,
-                cls=lambda x,y,z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('SimIdListResult', pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-
-        if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(
-                lro_delay,
-                lro_options={'final-state-via': 'location'},
-                
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_list_sim_ids.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}/listSimIds"}  # type: ignore
+    list_by_resource_group.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/simGroups"}  # type: ignore

@@ -7,22 +7,24 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import MobileNetworkManagementClientConfiguration
-from .operations import AttachedDataNetworksOperations, DataNetworksOperations, MobileNetworksOperations, Operations, PacketCoreControlPlanesOperations, PacketCoreDataPlanesOperations, ServicesOperations, SimPoliciesOperations, SimsOperations, SitesOperations, SlicesOperations
+from .operations import AttachedDataNetworksOperations, DataNetworksOperations, MobileNetworksOperations, Operations, PacketCoreControlPlaneVersionsOperations, PacketCoreControlPlanesOperations, PacketCoreDataPlanesOperations, ServicesOperations, SimGroupsOperations, SimPoliciesOperations, SimsOperations, SitesOperations, SlicesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class MobileNetworkManagementClient:
-    """The resources in this swagger specification will be used to manage attached data network resources in mobile network attached to a particular packet core instance.
+class MobileNetworkManagementClient:    # pylint: disable=too-many-instance-attributes
+    """The resources in this swagger specification will be used to manage attached data network
+    resources in mobile network attached to a particular packet core instance.
 
     :ivar attached_data_networks: AttachedDataNetworksOperations operations
     :vartype attached_data_networks:
@@ -33,6 +35,8 @@ class MobileNetworkManagementClient:
     :vartype mobile_networks: azure.mgmt.mobilenetwork.aio.operations.MobileNetworksOperations
     :ivar sites: SitesOperations operations
     :vartype sites: azure.mgmt.mobilenetwork.aio.operations.SitesOperations
+    :ivar sim_groups: SimGroupsOperations operations
+    :vartype sim_groups: azure.mgmt.mobilenetwork.aio.operations.SimGroupsOperations
     :ivar sims: SimsOperations operations
     :vartype sims: azure.mgmt.mobilenetwork.aio.operations.SimsOperations
     :ivar operations: Operations operations
@@ -40,6 +44,9 @@ class MobileNetworkManagementClient:
     :ivar packet_core_control_planes: PacketCoreControlPlanesOperations operations
     :vartype packet_core_control_planes:
      azure.mgmt.mobilenetwork.aio.operations.PacketCoreControlPlanesOperations
+    :ivar packet_core_control_plane_versions: PacketCoreControlPlaneVersionsOperations operations
+    :vartype packet_core_control_plane_versions:
+     azure.mgmt.mobilenetwork.aio.operations.PacketCoreControlPlaneVersionsOperations
     :ivar packet_core_data_planes: PacketCoreDataPlanesOperations operations
     :vartype packet_core_data_planes:
      azure.mgmt.mobilenetwork.aio.operations.PacketCoreDataPlanesOperations
@@ -53,8 +60,11 @@ class MobileNetworkManagementClient:
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-04-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -73,17 +83,45 @@ class MobileNetworkManagementClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.attached_data_networks = AttachedDataNetworksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.data_networks = DataNetworksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.mobile_networks = MobileNetworksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.sites = SitesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.sims = SimsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.packet_core_control_planes = PacketCoreControlPlanesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.packet_core_data_planes = PacketCoreDataPlanesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.services = ServicesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.sim_policies = SimPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.slices = SlicesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.attached_data_networks = AttachedDataNetworksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.data_networks = DataNetworksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.mobile_networks = MobileNetworksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sites = SitesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sim_groups = SimGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sims = SimsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.packet_core_control_planes = PacketCoreControlPlanesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.packet_core_control_plane_versions = PacketCoreControlPlaneVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.packet_core_data_planes = PacketCoreDataPlanesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.services = ServicesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sim_policies = SimPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.slices = SlicesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(
