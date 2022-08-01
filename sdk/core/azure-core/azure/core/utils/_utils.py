@@ -4,6 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import collections
 import datetime
 from typing import Any, Dict, Iterator, Mapping, MutableMapping
 
@@ -89,6 +90,17 @@ def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping:
     """
     return CaseInsensitiveDict(*args, **kwargs)
 
+
+class _ItemsView(collections.ItemsView):
+
+    def __contains__(self, item):
+        if not (isinstance(item, (list, tuple)) and len(item) == 2):
+            return False  # `collections.ItemsView` raises here, we just return False.
+        for k, v in self.__iter__():
+            if item[0].lower() == k.lower() and item[1] == v:
+                return True
+        return False
+
 class CaseInsensitiveDict(MutableMapping):
     """
     NOTE: This implementation is heavily inspired from the case insensitive dictionary from the requests library.
@@ -143,3 +155,7 @@ class CaseInsensitiveDict(MutableMapping):
 
     def __repr__(self) -> str:
         return str(dict(self.items()))
+
+    def items(self) -> _ItemsView:
+        """Return a new view of the dictionary's items."""
+        return _ItemsView(self)
