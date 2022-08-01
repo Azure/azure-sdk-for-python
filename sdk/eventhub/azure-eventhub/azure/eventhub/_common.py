@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from __future__ import unicode_literals
+from __future__ import unicode_literals, annotations
 
 import json
+import datetime
 import logging
 import uuid
 from typing import (
@@ -22,10 +23,7 @@ from typing_extensions import TypedDict
 
 import six
 
-from uamqp import BatchMessage, Message, constants
-
 from ._utils import (
-    set_message_partition_key,
     trace_message,
     utc_from_timestamp,
     transform_outbound_single_message,
@@ -35,7 +33,6 @@ from ._constants import (
     PROP_SEQ_NUMBER,
     PROP_OFFSET,
     PROP_PARTITION_KEY,
-    PROP_PARTITION_KEY_AMQP_SYMBOL,
     PROP_TIMESTAMP,
     PROP_ABSOLUTE_EXPIRY_TIME,
     PROP_CONTENT_ENCODING,
@@ -57,9 +54,11 @@ from .amqp import (
     AmqpMessageHeader,
     AmqpMessageProperties,
 )
+from ._transport._uamqp_transport import UamqpTransport
 
 if TYPE_CHECKING:
-    import datetime
+    from uamqp import Message as uamqp_Message, BatchMessage as uamqp_BatchMessage
+    from ._transport._base import AmqpTransport
 
 MessageContent = TypedDict("MessageContent", {"content": bytes, "content_type": str})
 PrimitiveTypes = Optional[
@@ -127,62 +126,59 @@ class EventData(object):
         self._raw_amqp_message = AmqpAnnotatedMessage(  # type: ignore
             data_body=body, annotations={}, application_properties={}
         )
-        self.message = (
-            self._raw_amqp_message._message
-        )  # pylint:disable=protected-access
+        # amqp message to be reset right before sending
+        self._message = UamqpTransport.to_outgoing_amqp_message(self._raw_amqp_message)
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
         self.message_id = None
         self.content_type = None
         self.correlation_id = None
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         # pylint: disable=bare-except
         try:
             body_str = self.body_as_str()
         except:
             body_str = "<read-error>"
-        event_repr = "body='{}'".format(body_str)
+        event_repr = f"body='{body_str}'"
         try:
-            event_repr += ", properties={}".format(self.properties)
+            event_repr += f", properties={self.properties}"
         except:
             event_repr += ", properties=<read-error>"
         try:
-            event_repr += ", offset={}".format(self.offset)
+            event_repr += f", offset={self.offset}"
         except:
             event_repr += ", offset=<read-error>"
         try:
-            event_repr += ", sequence_number={}".format(self.sequence_number)
+            event_repr += f", sequence_number={self.sequence_number}"
         except:
             event_repr += ", sequence_number=<read-error>"
         try:
-            event_repr += ", partition_key={!r}".format(self.partition_key)
+            event_repr += f", partition_key={self.partition_key!r}"
         except:
             event_repr += ", partition_key=<read-error>"
         try:
-            event_repr += ", enqueued_time={!r}".format(self.enqueued_time)
+            event_repr += f", enqueued_time={self.enqueued_time!r}"
         except:
             event_repr += ", enqueued_time=<read-error>"
-        return "EventData({})".format(event_repr)
+        return f"EventData({event_repr})"
 
-    def __str__(self):
-        # type: () -> str
+    def __str__(self) -> str:
         try:
             body_str = self.body_as_str()
         except:  # pylint: disable=bare-except
             body_str = "<read-error>"
-        event_str = "{{ body: '{}'".format(body_str)
+        event_str = f"{{ body: '{body_str}'"
         try:
-            event_str += ", properties: {}".format(self.properties)
+            event_str += f", properties: {self.properties}"
             if self.offset:
-                event_str += ", offset: {}".format(self.offset)
+                event_str += f", offset: {self.offset}"
             if self.sequence_number:
-                event_str += ", sequence_number: {}".format(self.sequence_number)
+                event_str += f", sequence_number: {self.sequence_number}"
             if self.partition_key:
-                event_str += ", partition_key={!r}".format(self.partition_key)
+                event_str += f", partition_key={self.partition_key!r}"
             if self.enqueued_time:
-                event_str += ", enqueued_time={!r}".format(self.enqueued_time)
+                event_str += f", enqueued_time={self.enqueued_time!r}"
         except:  # pylint: disable=bare-except
             pass
         event_str += " }"
@@ -213,8 +209,11 @@ class EventData(object):
         return event_data
 
     @classmethod
-    def _from_message(cls, message, raw_amqp_message=None):
-        # type: (Message, Optional[AmqpAnnotatedMessage]) -> EventData
+    def _from_message(
+        cls,
+        message: uamqp_Message,
+        raw_amqp_message: Optional[AmqpAnnotatedMessage] = None,
+    ) -> EventData:
         # pylint:disable=protected-access
         """Internal use only.
 
@@ -225,7 +224,7 @@ class EventData(object):
         :rtype: ~azure.eventhub.EventData
         """
         event_data = cls(body="")
-        event_data.message = message
+        event_data._message = message
         # pylint: disable=protected-access
         event_data._raw_amqp_message = (
             raw_amqp_message
@@ -234,39 +233,32 @@ class EventData(object):
         )
         return event_data
 
-    def _encode_message(self):
-        # type: () -> bytes
+    def _decode_non_data_body_as_str(self, encoding: str = "UTF-8") -> str:
         # pylint: disable=protected-access
-        return self._raw_amqp_message._message.encode_message()
-
-    def _decode_non_data_body_as_str(self, encoding="UTF-8"):
-        # type: (str) -> str
-        # pylint: disable=protected-access
-        body = self.raw_amqp_message._message._body
+        body = self.raw_amqp_message.body
         if self.body_type == AmqpMessageBodyType.VALUE:
-            if not body.data:
+            if not body:
                 return ""
-            return str(decode_with_recurse(body.data, encoding))
+            return str(decode_with_recurse(body, encoding))
 
-        seq_list = [d for seq_section in body.data for d in seq_section]
+        seq_list = [d for seq_section in body for d in seq_section]
         return str(decode_with_recurse(seq_list, encoding))
 
-    def _to_outgoing_message(self):
-        # type: () -> EventData
-        self.message = (
-            self._raw_amqp_message._to_outgoing_amqp_message()  # pylint:disable=protected-access
-        )
-        return self
+    @property
+    def message(self) -> uamqp_Message:
+        return self._message
+
+    @message.setter
+    def message(self, value: uamqp_Message) -> None:
+        self._message = value
 
     @property
-    def raw_amqp_message(self):
-        # type: () -> AmqpAnnotatedMessage
+    def raw_amqp_message(self) -> AmqpAnnotatedMessage:
         """Advanced usage only. The internal AMQP message payload that is sent or received."""
         return self._raw_amqp_message
 
     @property
-    def sequence_number(self):
-        # type: () -> Optional[int]
+    def sequence_number(self) -> Optional[int]:
         """The sequence number of the event.
 
         :rtype: int
@@ -274,8 +266,7 @@ class EventData(object):
         return self._raw_amqp_message.annotations.get(PROP_SEQ_NUMBER, None)
 
     @property
-    def offset(self):
-        # type: () -> Optional[str]
+    def offset(self) -> Optional[str]:
         """The offset of the event.
 
         :rtype: str
@@ -286,8 +277,7 @@ class EventData(object):
             return None
 
     @property
-    def enqueued_time(self):
-        # type: () -> Optional[datetime.datetime]
+    def enqueued_time(self) -> Optional[datetime.datetime]:
         """The enqueued timestamp of the event.
 
         :rtype: datetime.datetime
@@ -298,20 +288,20 @@ class EventData(object):
         return None
 
     @property
-    def partition_key(self):
-        # type: () -> Optional[bytes]
+    def partition_key(self) -> Optional[bytes]:
         """The partition key of the event.
 
         :rtype: bytes
         """
-        try:
-            return self._raw_amqp_message.annotations[PROP_PARTITION_KEY_AMQP_SYMBOL]
-        except KeyError:
-            return self._raw_amqp_message.annotations.get(PROP_PARTITION_KEY, None)
+        # TODO: Ask Anna. can we remove the try and just do except? Haven't seen a case where symbol is used to get.
+        # try:
+        #    return self._raw_amqp_message.annotations[types.AMQPSymbol(PROP_PARTITION_KEY)]
+        # except KeyError:
+        #    return self._raw_amqp_message.annotations.get(PROP_PARTITION_KEY, None)
+        return self._raw_amqp_message.annotations.get(PROP_PARTITION_KEY, None)
 
     @property
-    def properties(self):
-        # type: () -> Dict[Union[str, bytes], Any]
+    def properties(self) -> Dict[Union[str, bytes], Any]:
         """Application-defined properties on the event.
 
         :rtype: dict
@@ -319,7 +309,7 @@ class EventData(object):
         return self._raw_amqp_message.application_properties
 
     @properties.setter
-    def properties(self, value):
+    def properties(self, value: Dict[Union[str, bytes], Any]):
         # type: (Dict[Union[str, bytes], Any]) -> None
         """Application-defined properties on the event.
 
@@ -329,8 +319,7 @@ class EventData(object):
         self._raw_amqp_message.application_properties = properties
 
     @property
-    def system_properties(self):
-        # type: () -> Dict[bytes, Any]
+    def system_properties(self) -> Dict[bytes, Any]:
         """Metadata set by the Event Hubs Service associated with the event.
 
         An EventData could have some or all of the following meta data depending on the source
@@ -368,8 +357,7 @@ class EventData(object):
         return self._sys_properties
 
     @property
-    def body(self):
-        # type: () -> PrimitiveTypes
+    def body(self) -> PrimitiveTypes:
         """The body of the Message. The format may vary depending on the body type:
         For :class:`azure.eventhub.amqp.AmqpMessageBodyType.DATA<azure.eventhub.amqp.AmqpMessageBodyType.DATA>`,
         the body could be bytes or Iterable[bytes].
@@ -386,16 +374,14 @@ class EventData(object):
             raise ValueError("Event content empty.")
 
     @property
-    def body_type(self):
-        # type: () -> AmqpMessageBodyType
+    def body_type(self) -> AmqpMessageBodyType:
         """The body type of the underlying AMQP message.
 
         :rtype: ~azure.eventhub.amqp.AmqpMessageBodyType
         """
         return self._raw_amqp_message.body_type
 
-    def body_as_str(self, encoding="UTF-8"):
-        # type: (str) -> str
+    def body_as_str(self, encoding: str = "UTF-8") -> str:
         """The content of the event as a string, if the data is of a compatible type.
 
         :param encoding: The encoding to use for decoding event data.
@@ -414,12 +400,9 @@ class EventData(object):
         try:
             return cast(bytes, data).decode(encoding)
         except Exception as e:
-            raise TypeError(
-                "Message data is not compatible with string type: {}".format(e)
-            )
+            raise TypeError(f"Message data is not compatible with string type: {e}")
 
-    def body_as_json(self, encoding="UTF-8"):
-        # type: (str) -> Dict[str, Any]
+    def body_as_json(self, encoding: str = "UTF-8") -> Dict[str, Any]:
         """The content of the event loaded as a JSON object, if the data is compatible.
 
         :param encoding: The encoding to use for decoding event data.
@@ -430,11 +413,10 @@ class EventData(object):
         try:
             return json.loads(data_str)
         except Exception as e:
-            raise TypeError("Event data is not compatible with JSON type: {}".format(e))
+            raise TypeError(f"Event data is not compatible with JSON type: {e}")
 
     @property
-    def content_type(self):
-        # type: () -> Optional[str]
+    def content_type(self) -> Optional[str]:
         """The content type descriptor.
         Optionally describes the payload of the message, with a descriptor following the format of RFC2045, Section 5,
         for example "application/json".
@@ -448,15 +430,13 @@ class EventData(object):
             return self._raw_amqp_message.properties.content_type
 
     @content_type.setter
-    def content_type(self, value):
-        # type: (str) -> None
+    def content_type(self, value: str) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.content_type = value
 
     @property
-    def correlation_id(self):
-        # type: () -> Optional[str]
+    def correlation_id(self) -> Optional[str]:
         """The correlation identifier.
         Allows an application to specify a context for the message for the purposes of correlation, for example
         reflecting the MessageId of a message that is being replied to.
@@ -470,15 +450,13 @@ class EventData(object):
             return self._raw_amqp_message.properties.correlation_id
 
     @correlation_id.setter
-    def correlation_id(self, value):
-        # type: (str) -> None
+    def correlation_id(self, value: str) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.correlation_id = value
 
     @property
-    def message_id(self):
-        # type: () -> Optional[str]
+    def message_id(self) -> Optional[str]:
         """The id to identify the message.
         The message identifier is an application-defined value that uniquely identifies the message and its payload.
         The identifier is a free-form string and can reflect a GUID or an identifier derived from the
@@ -494,7 +472,7 @@ class EventData(object):
             return self._raw_amqp_message.properties.message_id
 
     @message_id.setter
-    def message_id(self, value):
+    def message_id(self, value: str) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.message_id = value
@@ -525,8 +503,18 @@ class EventDataBatch(object):
      Event Hub decided by the service.
     """
 
-    def __init__(self, max_size_in_bytes=None, partition_id=None, partition_key=None):
-        # type: (Optional[int], Optional[str], Optional[Union[str, bytes]]) -> None
+    def __init__(
+        self,
+        max_size_in_bytes: Optional[int] = None,
+        partition_id: Optional[str] = None,
+        partition_key: Optional[Union[str, bytes]] = None,
+        **kwargs,
+    ) -> None:
+        # TODO: this changes API, check with Anna if valid -
+        # If possible, move out message creation to right before sending.
+        # Might take more time to loop through events and add them all to batch in `send` than in `add` here
+        self._amqp_transport = kwargs.pop("amqp_transport", UamqpTransport)
+
 
         if partition_key and not isinstance(
             partition_key, (six.text_type, six.binary_type)
@@ -538,35 +526,51 @@ class EventDataBatch(object):
                 "partition_key to only be string type, they might fail to parse the non-string value."
             )
 
-        self.max_size_in_bytes = max_size_in_bytes or constants.MAX_MESSAGE_LENGTH_BYTES
-        self.message = BatchMessage(data=[], multi_messages=False, properties=None)
+        self.max_size_in_bytes = (
+            max_size_in_bytes or self._amqp_transport.MAX_FRAME_SIZE_BYTES
+        )
+        self._message = self._amqp_transport.BATCH_MESSAGE(data=[])
         self._partition_id = partition_id
         self._partition_key = partition_key
 
-        set_message_partition_key(self.message, self._partition_key)
-        self._size = self.message.gather()[0].get_message_encoded_size()
-        self._count = 0
-        self._internal_events: List[Union[EventData, AmqpAnnotatedMessage]] = []
-
-    def __repr__(self):
-        # type: () -> str
-        batch_repr = "max_size_in_bytes={}, partition_id={}, partition_key={!r}, event_count={}".format(
-            self.max_size_in_bytes, self._partition_id, self._partition_key, self._count
+        self._message = self._amqp_transport.set_message_partition_key(
+            self._message, self._partition_key
         )
-        return "EventDataBatch({})".format(batch_repr)
+        self._size = self._amqp_transport.get_batch_message_encoded_size(self._message)
+        self._count = 0
+        self._internal_events: List[
+            Union[EventData, AmqpAnnotatedMessage]
+        ] = []
 
-    def __len__(self):
+    def __repr__(self) -> str:
+        batch_repr = (
+            f"max_size_in_bytes={self.max_size_in_bytes}, partition_id={self._partition_id}, "
+            f"partition_key={self._partition_key!r}, event_count={self._count}"
+        )
+        return f"EventDataBatch({batch_repr})"
+
+    def __len__(self) -> int:
         return self._count
 
     @classmethod
-    def _from_batch(cls, batch_data, partition_key=None):
-        # type: (Iterable[EventData], Optional[AnyStr]) -> EventDataBatch
+    def _from_batch(
+        cls,
+        batch_data: Iterable[EventData],
+        amqp_transport: AmqpTransport,
+        partition_key: Optional[AnyStr] = None,
+    ) -> EventDataBatch:
         outgoing_batch_data = [
-            transform_outbound_single_message(m, EventData) for m in batch_data
+            transform_outbound_single_message(
+                m, EventData, amqp_transport.to_outgoing_amqp_message
+            )
+            for m in batch_data
         ]
-        batch_data_instance = cls(partition_key=partition_key)
-        for data in outgoing_batch_data:
-            batch_data_instance.add(data)
+        batch_data_instance = cls(
+            partition_key=partition_key, amqp_transport=amqp_transport
+        )
+
+        for event_data in outgoing_batch_data:
+            batch_data_instance.add(event_data)
         return batch_data_instance
 
     def _load_events(self, events):
@@ -581,16 +585,22 @@ class EventDataBatch(object):
                 )
 
     @property
-    def size_in_bytes(self):
-        # type: () -> int
+    def size_in_bytes(self) -> int:
         """The combined size of the events in the batch, in bytes.
 
         :rtype: int
         """
         return self._size
 
-    def add(self, event_data):
-        # type: (Union[EventData, AmqpAnnotatedMessage]) -> None
+    @property
+    def message(self) -> uamqp_BatchMessage:
+        return self._message
+
+    @message.setter
+    def message(self, value: uamqp_BatchMessage) -> None:
+        self._message = value
+
+    def add(self, event_data: Union[EventData, AmqpAnnotatedMessage]) -> None:
         """Try to add an EventData to the batch.
 
         The total size of an added event is the sum of its body, properties, etc.
@@ -603,7 +613,9 @@ class EventDataBatch(object):
         :raise: :class:`ValueError`, when exceeding the size limit.
         """
 
-        outgoing_event_data = transform_outbound_single_message(event_data, EventData)
+        outgoing_event_data = transform_outbound_single_message(
+            event_data, EventData, self._amqp_transport.to_outgoing_amqp_message
+        )
 
         if self._partition_key:
             if (
@@ -614,13 +626,15 @@ class EventDataBatch(object):
                     "The partition key of event_data does not match the partition key of this batch."
                 )
             if not outgoing_event_data.partition_key:
-                set_message_partition_key(
-                    outgoing_event_data.message, self._partition_key
+                self._amqp_transport.set_message_partition_key(
+                    outgoing_event_data._message,  # pylint: disable=protected-access
+                    self._partition_key,
                 )
 
         trace_message(outgoing_event_data)
-        event_data_size = outgoing_event_data.message.get_message_encoded_size()
-
+        event_data_size = self._amqp_transport.get_message_encoded_size(
+            outgoing_event_data._message  # pylint: disable=protected-access
+        )
         # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
         # message into the BatchMessage would be 5 bytes, if >= 256, it would be 8 bytes.
         size_after_add = (
@@ -631,14 +645,9 @@ class EventDataBatch(object):
 
         if size_after_add > self.max_size_in_bytes:
             raise ValueError(
-                "EventDataBatch has reached its size limit: {}".format(
-                    self.max_size_in_bytes
-                )
+                f"EventDataBatch has reached its size limit: {self.max_size_in_bytes}"
             )
 
-        self._internal_events.append(event_data)
-        self.message._body_gen.append(  # pylint: disable=protected-access
-            outgoing_event_data
-        )
+        self._amqp_transport.add_batch(self, outgoing_event_data, event_data)
         self._size = size_after_add
         self._count += 1

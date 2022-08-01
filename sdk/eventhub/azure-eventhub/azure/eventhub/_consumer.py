@@ -2,19 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from __future__ import unicode_literals
+from __future__ import unicode_literals, annotations
+from multiprocessing import Event
 
 import time
 import uuid
 import logging
 from collections import deque
-from typing import TYPE_CHECKING, Callable, Dict, Optional, Any
+from typing import TYPE_CHECKING, Callable, Dict, Optional, Any, Deque, Union
 
-import uamqp
-from uamqp import types, errors, utils
-from uamqp import ReceiveClient, Source, Message
-
-from .exceptions import _error_handler
 from ._common import EventData
 from ._client_base import ConsumerProducerMixin
 from ._utils import create_properties, event_position_selector
@@ -26,7 +22,9 @@ from ._constants import (
 
 if TYPE_CHECKING:
     from typing import Deque
-    from uamqp.authentication import JWTTokenAuth
+    from uamqp import ReceiveClient as uamqp_ReceiveClient, Message as uamqp_Message
+    from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+
     from ._consumer_client import EventHubConsumerClient
 
 
@@ -69,8 +67,7 @@ class EventHubConsumer(
         It is set to `False` by default.
     """
 
-    def __init__(self, client, source, **kwargs):
-        # type: (EventHubConsumerClient, str, Any) -> None
+    def __init__(self, client: "EventHubConsumerClient", source: str, **kwargs: Any) -> None:
         event_position = kwargs.get("event_position", None)
         prefetch = kwargs.get("prefetch", 300)
         owner_level = kwargs.get("owner_level", None)
@@ -86,9 +83,10 @@ class EventHubConsumer(
         self.stop = False  # used by event processor
         self.handler_ready = False
 
-        self._on_event_received = kwargs[
+        self._amqp_transport = kwargs.pop("amqp_transport")
+        self._on_event_received: Callable[[EventData], None] = kwargs[
             "on_event_received"
-        ]  # type: Callable[[EventData], None]
+        ]
         self._client = client
         self._source = source
         self._offset = event_position
@@ -97,110 +95,86 @@ class EventHubConsumer(
         self._owner_level = owner_level
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
-        self._retry_policy = errors.ErrorPolicy(
-            max_retries=self._client._config.max_retries,
-            on_error=_error_handler,  # pylint:disable=protected-access
-        )
+        self._retry_policy = self._amqp_transport.create_retry_policy(self._client._config)
         self._reconnect_backoff = 1
-        self._link_properties = {}  # type: Dict[types.AMQPType, types.AMQPType]
+        link_properties: Dict[bytes, int] = {}
         self._error = None
         self._timeout = 0
-        self._idle_timeout = (idle_timeout * 1000) if idle_timeout else None
+        self._idle_timeout = (idle_timeout * self._amqp_transport.IDLE_TIMEOUT_FACTOR) if idle_timeout else None
         partition = self._source.split("/")[-1]
         self._partition = partition
-        self._name = "EHConsumer-{}-partition{}".format(uuid.uuid4(), partition)
+        self._name = f"EHConsumer-{uuid.uuid4()}-partition{partition}"
         if owner_level is not None:
-            self._link_properties[types.AMQPSymbol(EPOCH_SYMBOL)] = types.AMQPLong(
-                int(owner_level)
-            )
+            link_properties[EPOCH_SYMBOL] = int(owner_level)
         link_property_timeout_ms = (
-            self._client._config.receive_timeout
-            or self._timeout  # pylint:disable=protected-access
-        ) * 1000
-        self._link_properties[types.AMQPSymbol(TIMEOUT_SYMBOL)] = types.AMQPLong(
-            int(link_property_timeout_ms)
-        )
-        self._handler = None  # type: Optional[ReceiveClient]
+            self._client._config.receive_timeout or self._timeout  # pylint:disable=protected-access
+        ) * self._amqp_transport.IDLE_TIMEOUT_FACTOR
+        link_properties[TIMEOUT_SYMBOL] = int(link_property_timeout_ms)
+        self._link_properties = self._amqp_transport.create_link_properties(link_properties)
+        self._handler: Optional[uamqp_ReceiveClient] = None
         self._track_last_enqueued_event_properties = (
             track_last_enqueued_event_properties
         )
-        self._message_buffer = deque()  # type: Deque[Message]
-        self._last_received_event = None  # type: Optional[EventData]
-        self._receive_start_time = None  # type: Optional[float]
+        self._message_buffer: Deque[uamqp_Message] = deque()
+        self._last_received_event: Optional[EventData] = None
+        self._receive_start_time: Optional[float]= None
 
-    def _create_handler(self, auth):
-        # type: (JWTTokenAuth) -> None
-        source = Source(self._source)
-        if self._offset is not None:
-            source.set_filter(
-                event_position_selector(self._offset, self._offset_inclusive)
-            )
-        desired_capabilities = None
-        if self._track_last_enqueued_event_properties:
-            symbol_array = [types.AMQPSymbol(RECEIVER_RUNTIME_METRIC_SYMBOL)]
-            desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
-
-        properties = create_properties(
-            self._client._config.user_agent  # pylint:disable=protected-access
+    def _create_handler(self, auth: uamqp_JWTTokenAuth) -> None:
+        source = self._amqp_transport.create_source(
+            self._source,
+            self._offset,
+            event_position_selector(self._offset, self._offset_inclusive)
         )
-        self._handler = ReceiveClient(
-            source,
+        desired_capabilities = [RECEIVER_RUNTIME_METRIC_SYMBOL] if self._track_last_enqueued_event_properties else None
+
+        self._handler = self._amqp_transport.create_receive_client(
+            config=self._client._config,    # pylint:disable=protected-access
+            source=source,
             auth=auth,
-            debug=self._client._config.network_tracing,  # pylint:disable=protected-access
-            prefetch=self._prefetch,
+            network_trace=self._client._config.network_tracing,  # pylint:disable=protected-access
+            link_credit=self._prefetch,
             link_properties=self._link_properties,
-            timeout=self._timeout,
             idle_timeout=self._idle_timeout,
-            error_policy=self._retry_policy,
+            retry_policy=self._retry_policy,
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
-            receive_settle_mode=uamqp.constants.ReceiverSettleMode.ReceiveAndDelete,
-            auto_complete=False,
-            properties=properties,
+            properties=create_properties(
+                self._client._config.user_agent, amqp_transport=self._amqp_transport  # pylint:disable=protected-access
+            ),
             desired_capabilities=desired_capabilities,
+            streaming_receive=True,
+            message_received_callback=self._message_received,
         )
 
-        self._handler._streaming_receive = True  # pylint:disable=protected-access
-        self._handler._message_received_callback = (  # pylint:disable=protected-access
-            self._message_received
-        )
-
-    def _open_with_retry(self):
-        # type: () -> None
+    def _open_with_retry(self) -> None:
         self._do_retryable_operation(self._open, operation_need_param=False)
 
-    def _message_received(self, message):
-        # type: (uamqp.Message) -> None
+    def _message_received(self, message: uamqp_Message) -> None:
         # pylint:disable=protected-access
-        self._message_buffer.appendleft(message)
+        self._message_buffer.append(message)
 
     def _next_message_in_buffer(self):
         # pylint:disable=protected-access
-        message = self._message_buffer.pop()
+        message = self._message_buffer.popleft()
         event_data = EventData._from_message(message)
         self._last_received_event = event_data
         return event_data
 
-    def _open(self):
-        # type: () -> bool
-        """Open the EventHubConsumer/EventHubProducer using the supplied connection."""
+    def _open(self) -> bool:
+        """Open the EventHubConsumer/EventHubProducer using the supplied connection.
+        """
         # pylint: disable=protected-access
         if not self.running:
             if self._handler:
                 self._handler.close()
             auth = self._client._create_auth()
             self._create_handler(auth)
-            self._handler.open(
-                connection=self._client._conn_manager.get_connection(
-                    self._client._address.hostname, auth
-                )  # pylint: disable=protected-access
-            )
-            self.handler_ready = False
+            self._handler.open()
+            while not self._handler.client_ready():
+                time.sleep(0.05)
+            self.handler_ready = True
             self.running = True
 
-        if not self.handler_ready:
-            if self._handler.client_ready():  # type: ignore
-                self.handler_ready = True
         return self.handler_ready
 
     def receive(self, batch=False, max_batch_size=300, max_wait_time=None):
@@ -211,18 +185,17 @@ class EventHubConsumer(
         self._receive_start_time = self._receive_start_time or time.time()
         deadline = self._receive_start_time + (
             max_wait_time or 0
-        )  # max_wait_time can be None
+        )
         if len(self._message_buffer) < max_batch_size:
             while retried_times <= max_retries:
                 try:
                     if self._open():
-                        self._handler.do_work()  # type: ignore
+                        self._handler.do_work(batch=self._prefetch)  # type: ignore
                     break
                 except Exception as exception:  # pylint: disable=broad-except
                     if (
-                        isinstance(exception, uamqp.errors.LinkDetach)
-                        and exception.condition # pylint: disable=no-member
-                        == uamqp.constants.ErrorCodes.LinkStolen
+                        isinstance(exception, self._amqp_transport.AMQP_LINK_ERROR)
+                        and exception.condition == self._amqp_transport.LINK_STOLEN_CONDITION  # pylint: disable=no-member
                     ):
                         raise self._handle_exception(exception)
                     if not self.running:  # exit by close
