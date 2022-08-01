@@ -22,8 +22,7 @@
 """Diagnostic tools for Azure Cosmos database service operations.
 """
 
-from requests.structures import CaseInsensitiveDict
-
+from azure.core.utils import CaseInsensitiveDict
 
 class RecordDiagnostics(object):
     """Record Response headers from Cosmos read operations.
