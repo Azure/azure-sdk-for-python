@@ -90,6 +90,36 @@ class TestDMACTraining(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
+    def test_build_model_neural(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()
+        model_id = str(uuid.uuid4())
+        poller = client.begin_build_model(
+            formrecognizer_storage_container_sas_url,
+            build_mode="neural",
+            model_id=model_id,
+            description="a v3 model",
+            tags={"testkey": "testvalue"}
+        )
+        model = poller.result()
+
+        if self.is_live:
+            assert model.model_id == model_id
+
+        assert model.model_id
+        assert model.description == "a v3 model"
+        assert model.created_on
+        assert model.tags == {"testkey": "testvalue"}
+        for name, doc_type in model.doc_types.items():
+            assert name
+            for key, field in doc_type.field_schema.items():
+                assert key
+                assert field["type"]
+                # neural not returning field confidence
+                # assert doc_type.field_confidence[key] is not None
+
+    @FormRecognizerPreparer()
+    @DocumentModelAdministrationClientPreparer()
+    @recorded_by_proxy
     def test_build_model_multipage(self, client, formrecognizer_multipage_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
 
