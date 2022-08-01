@@ -68,6 +68,9 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
                 PemCertificate(data=USER_CERTIFICATE_PRIVATE_KEY, key=USER_CERTIFICATE_PUBLIC_KEY)
             ]
 
+        # Set recording options after the client has been created, other the TLS/user cert options
+        # might screw up the ConfidentialLedgerClient creation for tests expecting auto-magic TLS
+        # cert retrieval.
         set_function_recording_options(**function_recording_options)
         return client
 
