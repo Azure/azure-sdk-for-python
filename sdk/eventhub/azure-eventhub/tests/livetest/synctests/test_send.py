@@ -12,6 +12,7 @@ import json
 import sys
 
 import uamqp
+from uamqp.message import MessageProperties
 from azure.eventhub import EventData, TransportType, EventDataBatch
 from azure.eventhub import EventHubProducerClient, EventHubConsumerClient
 from azure.eventhub.exceptions import EventDataSendError, OperationTimeoutError
@@ -21,6 +22,7 @@ from azure.eventhub.amqp import (
     AmqpAnnotatedMessage,
     AmqpMessageProperties,
 )
+from azure.eventhub._pyamqp.message import Properties
 try:
     from azure.eventhub._transport._uamqp_transport import UamqpTransport
 except (ImportError, ModuleNotFoundError):
@@ -499,7 +501,7 @@ def test_send_list_wrong_data(connection_str, to_send, exception_type, uamqp_tra
 @pytest.mark.parametrize("partition_id, partition_key", [("0", None), (None, "pk")])
 def test_send_batch_pid_pk(invalid_hostname, partition_id, partition_key, uamqp_transport):
     # Use invalid_hostname because this is not a live test.
-    amqp_transport = UamqpTransport() if uamqp_transport else PyamqpTransport()
+    amqp_transport = UamqpTransport if uamqp_transport else PyamqpTransport
     client = EventHubProducerClient.from_connection_string(invalid_hostname, uamqp_transport=uamqp_transport)
     batch = EventDataBatch(partition_id=partition_id, partition_key=partition_key, amqp_transport=amqp_transport)
     with client:
@@ -553,3 +555,65 @@ def test_send_with_callback(connstr_receivers, uamqp_transport):
         assert sent_events[-1][1] == "0"
 
         assert not on_error.err
+
+# TODO: add more checks after LegacyMessage has been added
+@pytest.mark.parametrize("uamqp_transport",
+                         uamqp_transport_vals)
+@pytest.mark.liveTest
+def test_send_message_modify_backcompat(connstr_receivers, uamqp_transport, timeout_factor):
+    connection_str, receivers = connstr_receivers
+    if uamqp_transport:
+        properties = MessageProperties
+
+    timeout = 10 * timeout_factor
+    outgoing_event_data = EventData(body="hello")
+    message = outgoing_event_data.message
+    message.properties = properties(user_id='fake_user')
+    assert outgoing_event_data.message.properties.user_id == b'fake_user'
+    assert outgoing_event_data.message.state == uamqp.constants.MessageState.WaitingToBeSent
+    assert outgoing_event_data.message.delivery_annotations is None
+    assert outgoing_event_data.message.delivery_no is None
+    assert outgoing_event_data.message.delivery_tag is None
+    assert outgoing_event_data.message.on_send_complete is None
+    assert outgoing_event_data.message.footer is None
+    assert outgoing_event_data.message.retries == 0
+    assert outgoing_event_data.message.idle_time == 0
+    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
+    with client:
+        client.send_batch([outgoing_event_data])
+    received = []
+    for r in receivers:
+        received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=timeout)])
+
+    assert len(received) == 1
+    received_ed = received[0]
+    # check that setting properties directly on uamqp message doesn't update the outgoing message from the event data
+    assert received_ed.message.properties.user_id is None
+    assert received_ed.message.state == uamqp.constants.MessageState.ReceivedSettled
+    assert received_ed.message.delivery_annotations is None
+    assert received_ed.message.delivery_no >= 1
+    assert received_ed.message.delivery_tag is None
+    assert received_ed.message.on_send_complete is None
+    assert received_ed.message.footer is None
+    assert received_ed.message.retries >= 0
+    assert received_ed.message.idle_time >= 0
+
+    # setting message properties by calling event data properties SHOULD update the outgoing uamqp message
+    received_ed.properties = {'prop': 'test'}
+    received_ed.message_id = "id_message"
+    received_ed.content_type = "content type"
+    received_ed.correlation_id = "correlation"
+
+    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
+    with client:
+        client.send_batch([received_ed])
+    received = []
+    for r in receivers:
+        received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=timeout)])
+
+    assert len(received) == 1
+    received_ed = received[0]
+    assert received_ed.message.application_properties == {b"prop": b"test"}
+    assert received_ed.message_id == "id_message"
+    assert received_ed.content_type == "content type"
+    assert received_ed.correlation_id == "correlation"

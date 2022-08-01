@@ -29,47 +29,53 @@ class AmqpTransport(ABC):
     CONNECTION_ERROR = None
     AMQP_CONNECTION_ERROR = None
 
+    @staticmethod
     @abstractmethod
-    def to_outgoing_amqp_message(self, annotated_message):
+    def to_outgoing_amqp_message(annotated_message):
         """
         Converts an AmqpAnnotatedMessage into an Amqp Message.
         :param AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
         :rtype: uamqp.Message or pyamqp.Message
         """
 
+    @staticmethod
     @abstractmethod
-    def get_message_encoded_size(self, message):
+    def get_message_encoded_size(message):
         """
         Gets the message encoded size given an underlying Message.
         :param uamqp.Message or pyamqp.Message message: Message to get encoded size of.
         :rtype: int
         """
 
+    @staticmethod
     @abstractmethod
-    def get_remote_max_message_size(self, handler):
+    def get_remote_max_message_size(handler):
         """
         Returns max peer message size.
         :param AMQPClient handler: Client to get remote max message size on link from.
         :rtype: int
         """
 
+    @staticmethod
     @abstractmethod
-    def create_retry_policy(self, config):
+    def create_retry_policy(config):
         """
         Creates the error retry policy.
         :param ~azure.eventhub._configuration.Configuration config: Configuration.
         """
 
+    @staticmethod
     @abstractmethod
-    def create_link_properties(self, link_properties):
+    def create_link_properties(link_properties):
         """
         Creates and returns the link properties.
         :param dict[bytes, int] link_properties: The dict of symbols and corresponding values.
         :rtype: dict
         """
 
+    @staticmethod
     @abstractmethod
-    def create_send_client(self, *, config, **kwargs):
+    def create_send_client(*, config, **kwargs):
         """
         Creates and returns the send client.
         :param ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -85,8 +91,9 @@ class AmqpTransport(ABC):
         :keyword properties: Required.
         """
 
+    @staticmethod
     @abstractmethod
-    def send_messages(self, producer, timeout_time, last_exception, logger):
+    def send_messages(producer, timeout_time, last_exception, logger):
         """
         Handles sending of event data messages.
         :param ~azure.eventhub._producer.EventHubProducer producer: The producer with handler to send messages.
@@ -95,16 +102,9 @@ class AmqpTransport(ABC):
         :param logger: Logger.
         """
 
-    # TODO: delete after data property added to uamqp.BatchMessage
-    #@abstractmethod
-    #def get_batch_message_data(self, batch_message):
-    #    """
-    #    Gets the data body of the BatchMessage.
-    #    :param batch_message: BatchMessage to retrieve data body from.
-    #    """
-
+    @staticmethod
     @abstractmethod
-    def set_message_partition_key(self, message, partition_key, **kwargs):
+    def set_message_partition_key(message, partition_key, **kwargs):
         """Set the partition key as an annotation on a uamqp message.
 
         :param message: The message to update.
@@ -112,8 +112,9 @@ class AmqpTransport(ABC):
         :rtype: None
         """
 
+    @staticmethod
     @abstractmethod
-    def add_batch(self, batch_message, outgoing_event_data, event_data):
+    def add_batch(batch_message, outgoing_event_data, event_data):
         """
         Add EventData to the data body of the BatchMessage.
         :param batch_message: BatchMessage to add data to.
@@ -122,8 +123,9 @@ class AmqpTransport(ABC):
         :rtype: None
         """
 
+    @staticmethod
     @abstractmethod
-    def create_source(self, source, offset, selector):
+    def create_source(source, offset, selector):
         """
         Creates and returns the Source.
 
@@ -132,8 +134,9 @@ class AmqpTransport(ABC):
         :param bytes selector: Required.
         """
 
+    @staticmethod
     @abstractmethod
-    def create_receive_client(self, *, config, **kwargs):
+    def create_receive_client(*, config, **kwargs):
         """
         Creates and returns the receive client.
         :param ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -153,16 +156,19 @@ class AmqpTransport(ABC):
         :keyword message_received_callback: Required.
         :keyword timeout: Required.
         """
+
+    @staticmethod
     @abstractmethod
-    def open_receive_client(self, *, handler, client, auth):
+    def open_receive_client(*, handler, client, auth):
         """
         Opens the receive client.
         :param ReceiveClient handler: The receive client.
         :param ~azure.eventhub.EventHubConsumerClient client: The consumer client.
         """
 
+    @staticmethod
     @abstractmethod
-    def create_token_auth(self, auth_uri, get_token, token_type, config, **kwargs):
+    def create_token_auth(auth_uri, get_token, token_type, config, **kwargs):
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
@@ -175,8 +181,9 @@ class AmqpTransport(ABC):
          then pass 300 to refresh_window. Only used by uamqp.
         """
 
+    @staticmethod
     @abstractmethod
-    def create_mgmt_client(self, address, mgmt_auth, config):
+    def create_mgmt_client(address, mgmt_auth, config):
         """
         Creates and returns the mgmt AMQP client.
         :param _Address address: Required. The Address.
@@ -184,15 +191,17 @@ class AmqpTransport(ABC):
         :param ~azure.eventhub._configuration.Configuration config: The configuration.
         """
 
+    @staticmethod
     @abstractmethod
-    def get_updated_token(self, mgmt_auth):
+    def get_updated_token(mgmt_auth):
         """
         Return updated auth token.
         :param mgmt_auth: Auth.
         """
 
+    @staticmethod
     @abstractmethod
-    def mgmt_client_request(self, mgmt_client, mgmt_msg, **kwargs):
+    def mgmt_client_request(mgmt_client, mgmt_msg, **kwargs):
         """
         Send mgmt request.
         :param AMQP Client mgmt_client: Client to send request with.
@@ -203,8 +212,9 @@ class AmqpTransport(ABC):
         :keyword description_fields: mgmt status desc.
         """
 
+    @staticmethod
     @abstractmethod
-    def get_error(self, error, message, *, condition=None):
+    def get_error(error, message, *, condition=None):
         """
         Gets error and passes in error message, and, if applicable, condition.
         :param error: The error to raise.

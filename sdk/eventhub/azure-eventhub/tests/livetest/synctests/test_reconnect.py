@@ -82,10 +82,10 @@ def test_send_with_long_interval_sync(live_eventhub, sleep, uamqp_transport):
 def test_send_connection_idle_timeout_and_reconnect_sync(connstr_receivers, uamqp_transport):
     connection_str, receivers = connstr_receivers
     if uamqp_transport:
-        amqp_transport = UamqpTransport()
+        amqp_transport = UamqpTransport
         retry_total = 3
     else:
-        amqp_transport = PyamqpTransport()
+        amqp_transport = PyamqpTransport
         retry_total = 0
     # no retry, should just raise error
     client = EventHubProducerClient.from_connection_string(

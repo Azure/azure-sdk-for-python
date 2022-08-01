@@ -52,6 +52,8 @@ from .amqp import (
     AmqpMessageHeader,
     AmqpMessageProperties,
 )
+from ._transport._uamqp_transport import UamqpTransport
+from ._transport._pyamqp_transport import PyamqpTransport
 
 if TYPE_CHECKING:
     try:
@@ -125,7 +127,8 @@ class EventData(object):
         self._raw_amqp_message = AmqpAnnotatedMessage(  # type: ignore
             data_body=body, annotations={}, application_properties={}
         )
-        self._message = None  # amqp message to be set right before sending
+        # amqp message to be reset right before sending
+        self._message = UamqpTransport.to_outgoing_amqp_message(self._raw_amqp_message)
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
         self.message_id = None
@@ -183,6 +186,21 @@ class EventData(object):
         return event_str
 
     @classmethod
+    def from_message_content(  # pylint: disable=unused-argument
+        cls, content: bytes, content_type: str, **kwargs: Any
+    ) -> "EventData":
+        """
+        Creates an EventData object given content type and a content value to be set as body.
+
+        :param bytes content: The content value to be set as the body of the message.
+        :param str content_type: The content type to be set on the message.
+        :rtype: ~azure.eventhub.EventData
+        """
+        event_data = cls(content)
+        event_data.content_type = content_type
+        return event_data
+
+    @classmethod
     def _from_message(
         cls,
         message: uamqp_Message,
@@ -225,7 +243,6 @@ class EventData(object):
     @message.setter
     def message(self, value: uamqp_Message) -> None:
         self._message = value
-        self._raw_amqp_message = AmqpAnnotatedMessage(message=value)
 
     @property
     def raw_amqp_message(self) -> AmqpAnnotatedMessage:
@@ -268,7 +285,7 @@ class EventData(object):
 
         :rtype: bytes
         """
-        # TODO: Ask Anna. I think just trying this is reasonable? Haven't seen a case where symbol is used to get.
+        # TODO: Ask Anna. can we remove the try and just do except? Haven't seen a case where symbol is used to get.
         # try:
         #    return self._raw_amqp_message.annotations[types.AMQPSymbol(PROP_PARTITION_KEY)]
         # except KeyError:
@@ -485,7 +502,19 @@ class EventDataBatch(object):
         partition_key: Optional[Union[str, bytes]] = None,
         **kwargs,
     ) -> None:
-        self._amqp_transport = kwargs.pop("amqp_transport")
+        # TODO: this changes API, check with Anna if valid -
+        # otherwise, if keeping internal events and converting to BatchMessage right before sending,
+        # would take more time to loop through events and add them all to batch in `send` than in `add` here
+        # Option 1: If possible, move out message creation to right before sending.
+        #  Might not be possible, b/c batch size is diff for pyamqp Message vs uamqp Message
+        # Option 2: If user creates EventDataBatch on their own, raise error prompting user for uamqp_transport
+        #  or tell them to create batch with ProducerClient.create_batch()
+        try:
+            self._amqp_transport = kwargs.pop("amqp_transport")
+        except KeyError:
+            uamqp_transport = kwargs.pop("uamqp_transport", True)
+            self._amqp_transport = UamqpTransport if uamqp_transport else PyamqpTransport
+
 
         if partition_key and not isinstance(
             partition_key, (six.text_type, six.binary_type)

@@ -320,7 +320,6 @@ def transform_outbound_single_message(message, message_type, to_outgoing_amqp_me
     try:
         # pylint: disable=protected-access
         # EventData.message stores uamqp/pyamqp.Message during sending
-        # pylint: disable=protected-access
         message._message = to_outgoing_amqp_message(message.raw_amqp_message)
         return message  # type: ignore
     except AttributeError:

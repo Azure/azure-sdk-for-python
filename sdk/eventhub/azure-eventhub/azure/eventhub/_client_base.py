@@ -283,22 +283,33 @@ class EventhubAzureSasTokenCredential(object):
         return AccessToken(signature, expiry)
 
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+
+    CredentialTypes = Union[
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+        EventHubSharedKeyCredential,
+        TokenCredential,
+    ]
+
+
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: "CredentialTypes",
+        credential: CredentialTypes,
         **kwargs: Any,
     ) -> None:
         self._uamqp_transport = kwargs.pop("uamqp_transport", True)
         if self._uamqp_transport:
             try:
-                self._amqp_transport = UamqpTransport()
+                self._amqp_transport = UamqpTransport
             except TypeError:
                 raise ImportError("uamqp package is not installed")
         else:
-            self._amqp_transport = PyamqpTransport()
+            self._amqp_transport = PyamqpTransport
 
         self.eventhub_name = eventhub_name
         if not eventhub_name:

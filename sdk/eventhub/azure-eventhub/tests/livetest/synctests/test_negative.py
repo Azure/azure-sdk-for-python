@@ -32,7 +32,7 @@ uamqp_transport_vals = get_decorator()
 @pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_send_batch_with_invalid_hostname(invalid_hostname, uamqp_transport):
-    amqp_transport = UamqpTransport() if uamqp_transport else PyamqpTransport()
+    amqp_transport = UamqpTransport if uamqp_transport else PyamqpTransport
     if sys.platform.startswith('darwin'):
         pytest.skip("Skipping on OSX - it keeps reporting 'Unable to set external certificates' "
                     "and blocking other tests")
@@ -86,7 +86,7 @@ def test_receive_with_invalid_hostname_sync(invalid_hostname, uamqp_transport):
 @pytest.mark.liveTest
 def test_send_batch_with_invalid_key(invalid_key, uamqp_transport):
     client = EventHubProducerClient.from_connection_string(invalid_key, uamqp_transport=uamqp_transport)
-    amqp_transport = UamqpTransport() if uamqp_transport else PyamqpTransport()
+    amqp_transport = UamqpTransport if uamqp_transport else PyamqpTransport
     try:
         with pytest.raises(ConnectError):
             batch = EventDataBatch(amqp_transport=amqp_transport)

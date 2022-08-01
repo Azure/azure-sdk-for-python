@@ -103,7 +103,8 @@ if uamqp_installed:
         AMQP_CONNECTION_ERROR = errors.AMQPConnectionError
         TIMEOUT_EXCEPTION = compat.TimeoutException
 
-        def to_outgoing_amqp_message(self, annotated_message):
+        @staticmethod
+        def to_outgoing_amqp_message(annotated_message):
             """
             Converts an AmqpAnnotatedMessage into an Amqp Message.
             :param AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
@@ -162,7 +163,8 @@ if uamqp_installed:
                 footer=annotated_message.footer
             )
 
-        def get_batch_message_encoded_size(self, message):
+        @staticmethod
+        def get_batch_message_encoded_size(message):
             """
             Gets the batch message encoded size given an underlying Message.
             :param uamqp.BatchMessage message: Message to get encoded size of.
@@ -170,7 +172,8 @@ if uamqp_installed:
             """
             return message.gather()[0].get_message_encoded_size()
 
-        def get_message_encoded_size(self, message):
+        @staticmethod
+        def get_message_encoded_size(message):
             """
             Gets the message encoded size given an underlying Message.
             :param uamqp.Message message: Message to get encoded size of.
@@ -178,7 +181,8 @@ if uamqp_installed:
             """
             return message.get_message_encoded_size()
 
-        def get_remote_max_message_size(self, handler):
+        @staticmethod
+        def get_remote_max_message_size(handler):
             """
             Returns max peer message size.
             :param AMQPClient handler: Client to get remote max message size on link from.
@@ -186,14 +190,16 @@ if uamqp_installed:
             """
             return handler.message_handler._link.peer_max_message_size  # pylint:disable=protected-access
 
-        def create_retry_policy(self, config):
+        @staticmethod
+        def create_retry_policy(config):
             """
             Creates the error retry policy.
             :param ~azure.eventhub._configuration.Configuration config: Configuration.
             """
             return errors.ErrorPolicy(max_retries=config.max_retries, on_error=_error_handler)
 
-        def create_link_properties(self, link_properties):
+        @staticmethod
+        def create_link_properties(link_properties):
             """
             Creates and returns the link properties.
             :param dict[bytes, int] link_properties: The dict of symbols and corresponding values.
@@ -201,7 +207,8 @@ if uamqp_installed:
             """
             return {types.AMQPSymbol(symbol): types.AMQPLong(value) for (symbol, value) in link_properties.items()}
 
-        def create_send_client(self, *, config, **kwargs): # pylint:disable=unused-argument
+        @staticmethod
+        def create_send_client(*, config, **kwargs): # pylint:disable=unused-argument
             """
             Creates and returns the uamqp SendClient.
             :param ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -227,7 +234,8 @@ if uamqp_installed:
                 **kwargs
             )
 
-        def _set_msg_timeout(self, producer, timeout_time, last_exception, logger):
+        @staticmethod
+        def _set_msg_timeout(producer, timeout_time, last_exception, logger):
             if not timeout_time:
                 return
             remaining_time = timeout_time - time.time()
@@ -240,7 +248,8 @@ if uamqp_installed:
                 raise error
             producer._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
 
-        def send_messages(self, producer, timeout_time, last_exception, logger):
+        @staticmethod
+        def send_messages(producer, timeout_time, last_exception, logger):
             """
             Handles sending of event data messages.
             :param ~azure.eventhub._producer.EventHubProducer producer: The producer with handler to send messages.
@@ -251,7 +260,7 @@ if uamqp_installed:
             # pylint: disable=protected-access
             producer._open()
             producer._unsent_events[0].on_send_complete = producer._on_outcome
-            self._set_msg_timeout(producer, timeout_time, last_exception, logger)
+            UamqpTransport._set_msg_timeout(producer, timeout_time, last_exception, logger)
             producer._handler.queue_message(*producer._unsent_events)  # type: ignore
             producer._handler.wait()  # type: ignore
             producer._unsent_events = producer._handler.pending_messages  # type: ignore
@@ -261,15 +270,8 @@ if uamqp_installed:
                 if producer._condition:
                     raise producer._condition
 
-        # TODO: can delete this method, if data prop is added to uamqp.BatchMessage
-        #def get_batch_message_data(self, batch_message):
-        #    """
-        #    Gets the data body of the BatchMessage.
-        #    :param batch_message: BatchMessage to retrieve data body from.
-        #    """
-        #    return batch_message._body_gen  # pylint:disable=protected-access
-
-        def set_message_partition_key(self, message, partition_key, **kwargs):  # pylint:disable=unused-argument
+        @staticmethod
+        def set_message_partition_key(message, partition_key, **kwargs):  # pylint:disable=unused-argument
             # type: (Message, Optional[Union[bytes, str]], Any) -> Message
             """Set the partition key as an annotation on a uamqp message.
 
@@ -290,7 +292,8 @@ if uamqp_installed:
                 message.header = header
             return message
 
-        def add_batch(self, batch_message, outgoing_event_data, event_data):
+        @staticmethod
+        def add_batch(batch_message, outgoing_event_data, event_data):
             """
             Add EventData to the data body of the BatchMessage.
             :param batch_message: BatchMessage to add data to.
@@ -303,7 +306,8 @@ if uamqp_installed:
                 outgoing_event_data._message
             )
 
-        def create_source(self, source, offset, selector):
+        @staticmethod
+        def create_source(source, offset, selector):
             """
             Creates and returns the Source.
 
@@ -316,7 +320,8 @@ if uamqp_installed:
                 source.set_filter(selector)
             return source
 
-        def create_receive_client(self, *, config, **kwargs):
+        @staticmethod
+        def create_receive_client(*, config, **kwargs):
             """
             Creates and returns the receive client.
             :param ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -366,7 +371,8 @@ if uamqp_installed:
             client._message_received_callback = (message_received_callback)
             return client
 
-        def open_receive_client(self, *, handler, client, auth):
+        @staticmethod
+        def open_receive_client(*, handler, client, auth):
             """
             Opens the receive client and returns ready status.
             :param ReceiveClient handler: The receive client.
@@ -379,7 +385,8 @@ if uamqp_installed:
                 client._address.hostname, auth
             ))
 
-        def create_token_auth(self, auth_uri, get_token, token_type, config, **kwargs):
+        @staticmethod
+        def create_token_auth(auth_uri, get_token, token_type, config, **kwargs):
             """
             Creates the JWTTokenAuth.
             :param str auth_uri: The auth uri to pass to JWTTokenAuth.
@@ -413,7 +420,8 @@ if uamqp_installed:
                 token_auth.update_token()   # TODO: why don't we need to update in pyamqp?
             return token_auth
 
-        def create_mgmt_client(self, address, mgmt_auth, config):
+        @staticmethod
+        def create_mgmt_client(address, mgmt_auth, config):
             """
             Creates and returns the mgmt AMQP client.
             :param _Address address: Required. The Address.
@@ -428,14 +436,16 @@ if uamqp_installed:
                 debug=config.network_tracing
             )
 
-        def get_updated_token(self, mgmt_auth):
+        @staticmethod
+        def get_updated_token(mgmt_auth):
             """
             Return updated auth token.
             :param mgmt_auth: Auth.
             """
             return mgmt_auth.token
 
-        def mgmt_client_request(self, mgmt_client, mgmt_msg, **kwargs):
+        @staticmethod
+        def mgmt_client_request(mgmt_client, mgmt_msg, **kwargs):
             """
             Send mgmt request.
             :param AMQP Client mgmt_client: Client to send request with.
@@ -454,7 +464,8 @@ if uamqp_installed:
                 **kwargs
             )
 
-        def get_error(self, error, message, *, condition=None): # pylint: disable=unused-argument
+        @staticmethod
+        def get_error(error, message, *, condition=None): # pylint: disable=unused-argument
             """
             Gets error and passes in error message, and, if applicable, condition.
             :param error: The error to raise.
@@ -463,7 +474,8 @@ if uamqp_installed:
             """
             return error(message)
 
-        def _create_eventhub_exception(self, exception):
+        @staticmethod
+        def _create_eventhub_exception(exception):
             if isinstance(exception, errors.AuthenticationException):
                 error = AuthenticationError(str(exception), exception)
             elif isinstance(exception, errors.VendorLinkDetach):
@@ -487,9 +499,9 @@ if uamqp_installed:
                 error = EventHubError(str(exception), exception)
             return error
 
-
+        @staticmethod
         def _handle_exception(
-            self, exception, closable
+            exception, closable
         ):  # pylint:disable=too-many-branches, too-many-statements
             try:  # closable is a producer/consumer object
                 name = closable._name  # pylint: disable=protected-access
@@ -536,4 +548,4 @@ if uamqp_installed:
                 else:  # errors.AMQPConnectionError, compat.TimeoutException
                     if hasattr(closable, "_close_connection"):
                         closable._close_connection()  # pylint:disable=protected-access
-                return self._create_eventhub_exception(exception)
+                return UamqpTransport._create_eventhub_exception(exception)
