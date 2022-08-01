@@ -94,3 +94,20 @@ class TestOperationsSmokeTest(LoadtestingTest):
             client.load_test_administration.delete_load_test(
                 test_id="non-existing-test-id"
             )
+
+
+    @LoadtestingPowerShellPreparer()
+    def test_get_loadtest(self, loadtesting_endpoint):
+
+        # positive testing
+        client = self.create_client(endpoint=loadtesting_endpoint)
+        result = client.load_test_administration.get_load_test(
+            test_id="some-unique-test-id"
+        )
+        assert result is not None
+
+        # negative testing
+        with pytest.raises(ResourceNotFoundError):
+            client.load_test_administration.get_load_test(
+                test_id="non-existing-test-id"
+            )
