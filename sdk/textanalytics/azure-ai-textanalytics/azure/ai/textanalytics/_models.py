@@ -4,8 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import re
-from typing_extensions import Literal
 from enum import Enum
+from typing_extensions import Literal
 from azure.core import CaseInsensitiveEnumMeta
 from ._generated.models import (
     LanguageInput,
