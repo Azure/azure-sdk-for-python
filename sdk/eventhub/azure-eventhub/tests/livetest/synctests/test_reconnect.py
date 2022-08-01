@@ -46,7 +46,7 @@ def test_send_with_long_interval_sync(live_eventhub, sleep, uamqp_transport):
     received = []
 
     uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
-    sas_auth = SASTokenAuth(
+    sas_auth = uamqp.authentication.SASTokenAuth(
         uri, uri, live_eventhub['key_name'], live_eventhub['access_key']
     )
     source = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
@@ -54,7 +54,7 @@ def test_send_with_long_interval_sync(live_eventhub, sleep, uamqp_transport):
         live_eventhub['event_hub'],
         live_eventhub['consumer_group'],
         test_partition)
-    receiver = ReceiveClient(live_eventhub['hostname'], source, auth=sas_auth, debug=False, link_credit=500)
+    receiver = uamqp.ReceiveClient(live_eventhub['hostname'], source, auth=sas_auth, debug=False, link_credit=500)
     try:
         receiver.open()
         # receive_message_batch() returns immediately once it receives any messages before the max_batch_size
