@@ -45,7 +45,7 @@ __all__ = [
     'AioHttpTransportResponse',
 ]
 
-# pylint: disable=unused-import, redefined-outer-name, no-member
+# pylint: disable=unused-import, redefined-outer-name, no-member, too-many-statements, too-many-branches
 
 def __dir__():
     return __all__
