@@ -22,18 +22,18 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._attached_data_networks_operations import build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_by_packet_core_data_plane_request, build_update_tags_request
+from ...operations._sim_groups_operations import build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_by_resource_group_request, build_list_by_subscription_request, build_update_tags_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class AttachedDataNetworksOperations:
+class SimGroupsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.mobilenetwork.aio.MobileNetworkManagementClient`'s
-        :attr:`attached_data_networks` attribute.
+        :attr:`sim_groups` attribute.
     """
 
     models = _models
@@ -49,9 +49,7 @@ class AttachedDataNetworksOperations:
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
-        packet_core_control_plane_name: str,
-        packet_core_data_plane_name: str,
-        attached_data_network_name: str,
+        sim_group_name: str,
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -69,9 +67,7 @@ class AttachedDataNetworksOperations:
         request = build_delete_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            packet_core_control_plane_name=packet_core_control_plane_name,
-            packet_core_data_plane_name=packet_core_data_plane_name,
-            attached_data_network_name=attached_data_network_name,
+            sim_group_name=sim_group_name,
             api_version=api_version,
             template_url=self._delete_initial.metadata['url'],
             headers=_headers,
@@ -94,28 +90,22 @@ class AttachedDataNetworksOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/packetCoreControlPlanes/{packetCoreControlPlaneName}/packetCoreDataPlanes/{packetCoreDataPlaneName}/attachedDataNetworks/{attachedDataNetworkName}"}  # type: ignore
+    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/simGroups/{simGroupName}"}  # type: ignore
 
 
     @distributed_trace_async
     async def begin_delete(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
-        packet_core_control_plane_name: str,
-        packet_core_data_plane_name: str,
-        attached_data_network_name: str,
+        sim_group_name: str,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Deletes the specified attached data network.
+        """Deletes the specified SIM group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param packet_core_control_plane_name: The name of the packet core control plane.
-        :type packet_core_control_plane_name: str
-        :param packet_core_data_plane_name: The name of the packet core data plane.
-        :type packet_core_data_plane_name: str
-        :param attached_data_network_name: The name of the attached data network.
-        :type attached_data_network_name: str
+        :param sim_group_name: The name of the SIM Group.
+        :type sim_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -142,9 +132,7 @@ class AttachedDataNetworksOperations:
         if cont_token is None:
             raw_result = await self._delete_initial(  # type: ignore
                 resource_group_name=resource_group_name,
-                packet_core_control_plane_name=packet_core_control_plane_name,
-                packet_core_data_plane_name=packet_core_data_plane_name,
-                attached_data_network_name=attached_data_network_name,
+                sim_group_name=sim_group_name,
                 api_version=api_version,
                 cls=lambda x,y,z: x,
                 headers=_headers,
@@ -176,30 +164,24 @@ class AttachedDataNetworksOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/packetCoreControlPlanes/{packetCoreControlPlaneName}/packetCoreDataPlanes/{packetCoreDataPlaneName}/attachedDataNetworks/{attachedDataNetworkName}"}  # type: ignore
+    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/simGroups/{simGroupName}"}  # type: ignore
 
     @distributed_trace_async
     async def get(
         self,
         resource_group_name: str,
-        packet_core_control_plane_name: str,
-        packet_core_data_plane_name: str,
-        attached_data_network_name: str,
+        sim_group_name: str,
         **kwargs: Any
-    ) -> _models.AttachedDataNetwork:
-        """Gets information about the specified attached data network.
+    ) -> _models.SimGroup:
+        """Gets information about the specified SIM group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param packet_core_control_plane_name: The name of the packet core control plane.
-        :type packet_core_control_plane_name: str
-        :param packet_core_data_plane_name: The name of the packet core data plane.
-        :type packet_core_data_plane_name: str
-        :param attached_data_network_name: The name of the attached data network.
-        :type attached_data_network_name: str
+        :param sim_group_name: The name of the SIM Group.
+        :type sim_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AttachedDataNetwork, or the result of cls(response)
-        :rtype: ~azure.mgmt.mobilenetwork.models.AttachedDataNetwork
+        :return: SimGroup, or the result of cls(response)
+        :rtype: ~azure.mgmt.mobilenetwork.models.SimGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -211,15 +193,13 @@ class AttachedDataNetworksOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AttachedDataNetwork]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SimGroup]
 
         
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            packet_core_control_plane_name=packet_core_control_plane_name,
-            packet_core_data_plane_name=packet_core_data_plane_name,
-            attached_data_network_name=attached_data_network_name,
+            sim_group_name=sim_group_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
             headers=_headers,
@@ -240,25 +220,23 @@ class AttachedDataNetworksOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('AttachedDataNetwork', pipeline_response)
+        deserialized = self._deserialize('SimGroup', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/packetCoreControlPlanes/{packetCoreControlPlaneName}/packetCoreDataPlanes/{packetCoreDataPlaneName}/attachedDataNetworks/{attachedDataNetworkName}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/simGroups/{simGroupName}"}  # type: ignore
 
 
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
-        packet_core_control_plane_name: str,
-        packet_core_data_plane_name: str,
-        attached_data_network_name: str,
-        parameters: _models.AttachedDataNetwork,
+        sim_group_name: str,
+        parameters: _models.SimGroup,
         **kwargs: Any
-    ) -> _models.AttachedDataNetwork:
+    ) -> _models.SimGroup:
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -269,16 +247,14 @@ class AttachedDataNetworksOperations:
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AttachedDataNetwork]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SimGroup]
 
-        _json = self._serialize.body(parameters, 'AttachedDataNetwork')
+        _json = self._serialize.body(parameters, 'SimGroup')
 
         request = build_create_or_update_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            packet_core_control_plane_name=packet_core_control_plane_name,
-            packet_core_data_plane_name=packet_core_data_plane_name,
-            attached_data_network_name=attached_data_network_name,
+            sim_group_name=sim_group_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -301,41 +277,35 @@ class AttachedDataNetworksOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('AttachedDataNetwork', pipeline_response)
+            deserialized = self._deserialize('SimGroup', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('AttachedDataNetwork', pipeline_response)
+            deserialized = self._deserialize('SimGroup', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/packetCoreControlPlanes/{packetCoreControlPlaneName}/packetCoreDataPlanes/{packetCoreDataPlaneName}/attachedDataNetworks/{attachedDataNetworkName}"}  # type: ignore
+    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/simGroups/{simGroupName}"}  # type: ignore
 
 
     @distributed_trace_async
     async def begin_create_or_update(
         self,
         resource_group_name: str,
-        packet_core_control_plane_name: str,
-        packet_core_data_plane_name: str,
-        attached_data_network_name: str,
-        parameters: _models.AttachedDataNetwork,
+        sim_group_name: str,
+        parameters: _models.SimGroup,
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AttachedDataNetwork]:
-        """Creates or updates an attached data network.
+    ) -> AsyncLROPoller[_models.SimGroup]:
+        """Creates or updates a SIM group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param packet_core_control_plane_name: The name of the packet core control plane.
-        :type packet_core_control_plane_name: str
-        :param packet_core_data_plane_name: The name of the packet core data plane.
-        :type packet_core_data_plane_name: str
-        :param attached_data_network_name: The name of the attached data network.
-        :type attached_data_network_name: str
-        :param parameters: Parameters supplied to the create or update attached data network operation.
-        :type parameters: ~azure.mgmt.mobilenetwork.models.AttachedDataNetwork
+        :param sim_group_name: The name of the SIM Group.
+        :type sim_group_name: str
+        :param parameters: Parameters supplied to the create or update SIM group operation.
+        :type parameters: ~azure.mgmt.mobilenetwork.models.SimGroup
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -344,10 +314,9 @@ class AttachedDataNetworksOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either AttachedDataNetwork or the result of
+        :return: An instance of AsyncLROPoller that returns either SimGroup or the result of
          cls(response)
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.mobilenetwork.models.AttachedDataNetwork]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.mobilenetwork.models.SimGroup]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -355,7 +324,7 @@ class AttachedDataNetworksOperations:
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AttachedDataNetwork]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SimGroup]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -365,9 +334,7 @@ class AttachedDataNetworksOperations:
         if cont_token is None:
             raw_result = await self._create_or_update_initial(  # type: ignore
                 resource_group_name=resource_group_name,
-                packet_core_control_plane_name=packet_core_control_plane_name,
-                packet_core_data_plane_name=packet_core_data_plane_name,
-                attached_data_network_name=attached_data_network_name,
+                sim_group_name=sim_group_name,
                 parameters=parameters,
                 api_version=api_version,
                 content_type=content_type,
@@ -379,7 +346,7 @@ class AttachedDataNetworksOperations:
         kwargs.pop('error_map', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('AttachedDataNetwork', pipeline_response)
+            deserialized = self._deserialize('SimGroup', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -403,33 +370,27 @@ class AttachedDataNetworksOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/packetCoreControlPlanes/{packetCoreControlPlaneName}/packetCoreDataPlanes/{packetCoreDataPlaneName}/attachedDataNetworks/{attachedDataNetworkName}"}  # type: ignore
+    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/simGroups/{simGroupName}"}  # type: ignore
 
     @distributed_trace_async
     async def update_tags(
         self,
         resource_group_name: str,
-        packet_core_control_plane_name: str,
-        packet_core_data_plane_name: str,
-        attached_data_network_name: str,
+        sim_group_name: str,
         parameters: _models.TagsObject,
         **kwargs: Any
-    ) -> _models.AttachedDataNetwork:
-        """Updates an attached data network tags.
+    ) -> _models.SimGroup:
+        """Updates SIM group tags.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param packet_core_control_plane_name: The name of the packet core control plane.
-        :type packet_core_control_plane_name: str
-        :param packet_core_data_plane_name: The name of the packet core data plane.
-        :type packet_core_data_plane_name: str
-        :param attached_data_network_name: The name of the attached data network.
-        :type attached_data_network_name: str
-        :param parameters: Parameters supplied to update attached data network tags.
+        :param sim_group_name: The name of the SIM Group.
+        :type sim_group_name: str
+        :param parameters: Parameters supplied to update SIM group tags.
         :type parameters: ~azure.mgmt.mobilenetwork.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AttachedDataNetwork, or the result of cls(response)
-        :rtype: ~azure.mgmt.mobilenetwork.models.AttachedDataNetwork
+        :return: SimGroup, or the result of cls(response)
+        :rtype: ~azure.mgmt.mobilenetwork.models.SimGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -442,16 +403,14 @@ class AttachedDataNetworksOperations:
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AttachedDataNetwork]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SimGroup]
 
         _json = self._serialize.body(parameters, 'TagsObject')
 
         request = build_update_tags_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            packet_core_control_plane_name=packet_core_control_plane_name,
-            packet_core_data_plane_name=packet_core_data_plane_name,
-            attached_data_network_name=attached_data_network_name,
+            sim_group_name=sim_group_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -474,44 +433,34 @@ class AttachedDataNetworksOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('AttachedDataNetwork', pipeline_response)
+        deserialized = self._deserialize('SimGroup', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    update_tags.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/packetCoreControlPlanes/{packetCoreControlPlaneName}/packetCoreDataPlanes/{packetCoreDataPlaneName}/attachedDataNetworks/{attachedDataNetworkName}"}  # type: ignore
+    update_tags.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/simGroups/{simGroupName}"}  # type: ignore
 
 
     @distributed_trace
-    def list_by_packet_core_data_plane(
+    def list_by_subscription(
         self,
-        resource_group_name: str,
-        packet_core_control_plane_name: str,
-        packet_core_data_plane_name: str,
         **kwargs: Any
-    ) -> AsyncIterable[_models.AttachedDataNetworkListResult]:
-        """Gets all the attached data networks associated with a packet core data plane.
+    ) -> AsyncIterable[_models.SimGroupListResult]:
+        """Gets all the SIM groups in a subscription.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param packet_core_control_plane_name: The name of the packet core control plane.
-        :type packet_core_control_plane_name: str
-        :param packet_core_data_plane_name: The name of the packet core data plane.
-        :type packet_core_data_plane_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either AttachedDataNetworkListResult or the result of
-         cls(response)
+        :return: An iterator like instance of either SimGroupListResult or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.mobilenetwork.models.AttachedDataNetworkListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.mobilenetwork.models.SimGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AttachedDataNetworkListResult]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SimGroupListResult]
 
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -520,13 +469,10 @@ class AttachedDataNetworksOperations:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_by_packet_core_data_plane_request(
+                request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    packet_core_control_plane_name=packet_core_control_plane_name,
-                    packet_core_data_plane_name=packet_core_data_plane_name,
                     api_version=api_version,
-                    template_url=self.list_by_packet_core_data_plane.metadata['url'],
+                    template_url=self.list_by_subscription.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
@@ -535,11 +481,8 @@ class AttachedDataNetworksOperations:
 
             else:
                 
-                request = build_list_by_packet_core_data_plane_request(
+                request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    packet_core_control_plane_name=packet_core_control_plane_name,
-                    packet_core_data_plane_name=packet_core_data_plane_name,
                     api_version=api_version,
                     template_url=next_link,
                     headers=_headers,
@@ -551,7 +494,7 @@ class AttachedDataNetworksOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("AttachedDataNetworkListResult", pipeline_response)
+            deserialized = self._deserialize("SimGroupListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -578,4 +521,89 @@ class AttachedDataNetworksOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_packet_core_data_plane.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/packetCoreControlPlanes/{packetCoreControlPlaneName}/packetCoreDataPlanes/{packetCoreDataPlaneName}/attachedDataNetworks"}  # type: ignore
+    list_by_subscription.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.MobileNetwork/simGroups"}  # type: ignore
+
+    @distributed_trace
+    def list_by_resource_group(
+        self,
+        resource_group_name: str,
+        **kwargs: Any
+    ) -> AsyncIterable[_models.SimGroupListResult]:
+        """Gets all the SIM groups in a resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either SimGroupListResult or the result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.mobilenetwork.models.SimGroupListResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SimGroupListResult]
+
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
+        def prepare_request(next_link=None):
+            if not next_link:
+                
+                request = build_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    template_url=self.list_by_resource_group.metadata['url'],
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)  # type: ignore
+
+            else:
+                
+                request = build_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    template_url=next_link,
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)  # type: ignore
+                request.method = "GET"
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("SimGroupListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    list_by_resource_group.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/simGroups"}  # type: ignore

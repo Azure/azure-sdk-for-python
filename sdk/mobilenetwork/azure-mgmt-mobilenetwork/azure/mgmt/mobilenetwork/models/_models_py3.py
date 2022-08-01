@@ -7,16 +7,18 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._mobile_network_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class Ambr(msrest.serialization.Model):
-    """Aggregate Maximum Bit Rate.
+    """Aggregate maximum bit rate.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -61,11 +63,11 @@ class Arp(msrest.serialization.Model):
 
     :ivar priority_level: Required. ARP priority level.
     :vartype priority_level: int
-    :ivar preempt_cap: Required. ARP preemption capability. Possible values include: "NotPreempt",
+    :ivar preempt_cap: Required. ARP preemption capability. Known values are: "NotPreempt",
      "MayPreempt".
     :vartype preempt_cap: str or ~azure.mgmt.mobilenetwork.models.PreemptionCapability
-    :ivar preempt_vuln: Required. ARP preemption vulnerability. Possible values include:
-     "NotPreemptable", "Preemptable".
+    :ivar preempt_vuln: Required. ARP preemption vulnerability. Known values are: "NotPreemptable",
+     "Preemptable".
     :vartype preempt_vuln: str or ~azure.mgmt.mobilenetwork.models.PreemptionVulnerability
     """
 
@@ -85,17 +87,17 @@ class Arp(msrest.serialization.Model):
         self,
         *,
         priority_level: int,
-        preempt_cap: Union[str, "PreemptionCapability"],
-        preempt_vuln: Union[str, "PreemptionVulnerability"],
+        preempt_cap: Union[str, "_models.PreemptionCapability"],
+        preempt_vuln: Union[str, "_models.PreemptionVulnerability"],
         **kwargs
     ):
         """
         :keyword priority_level: Required. ARP priority level.
         :paramtype priority_level: int
-        :keyword preempt_cap: Required. ARP preemption capability. Possible values include:
-         "NotPreempt", "MayPreempt".
+        :keyword preempt_cap: Required. ARP preemption capability. Known values are: "NotPreempt",
+         "MayPreempt".
         :paramtype preempt_cap: str or ~azure.mgmt.mobilenetwork.models.PreemptionCapability
-        :keyword preempt_vuln: Required. ARP preemption vulnerability. Possible values include:
+        :keyword preempt_vuln: Required. ARP preemption vulnerability. Known values are:
          "NotPreemptable", "Preemptable".
         :paramtype preempt_vuln: str or ~azure.mgmt.mobilenetwork.models.PreemptionVulnerability
         """
@@ -231,29 +233,33 @@ class AttachedDataNetwork(TrackedResource):
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
-    :ivar provisioning_state: The provisioning state of the attached data network resource.
-     Possible values include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled",
-     "Deleted".
+    :ivar provisioning_state: The provisioning state of the attached data network resource. Known
+     values are: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
     :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
-    :ivar user_plane_data_interface: Required. The user plane interface on the data network. In 5G
-     networks this is called as N6 interface whereas in 4G networks this is called as SGi interface.
+    :ivar user_plane_data_interface: Required. The user plane interface on the data network. For 5G
+     networks, this is the N6 interface. For 4G networks, this is the SGi interface.
     :vartype user_plane_data_interface: ~azure.mgmt.mobilenetwork.models.InterfaceProperties
-    :ivar napt_configuration: The Network Address and Port Translation configuration.
-     If not specified the attached data network uses a default NAPT configuration with NAPT
-     enabled.
+    :ivar dns_addresses: The DNS servers to signal to UEs to use for this attached data network.
+    :vartype dns_addresses: list[str]
+    :ivar napt_configuration: The network address and port translation (NAPT) configuration.
+     If this is not specified, the attached data network will use a default NAPT configuration with
+     NAPT enabled.
     :vartype napt_configuration: ~azure.mgmt.mobilenetwork.models.NaptConfiguration
-    :ivar user_equipment_address_pool_prefix: The user equipment address pool prefixes for the
-     attached data network that are dynamically assigned by the core to UEs when they set up a PDU
-     session.
-     At least one of userEquipmentAddressPoolPrefix and userEquipmentStaticAddressPoolPrefix must
-     be defined. If both are defined then they must be the same size.
+    :ivar user_equipment_address_pool_prefix: The user equipment (UE) address pool prefixes for the
+     attached data network from which the packet core instance will dynamically assign IP addresses
+     to UEs.
+     The packet core instance assigns an IP address to a UE when the UE sets up a PDU session.
+      You must define at least one of userEquipmentAddressPoolPrefix and
+     userEquipmentStaticAddressPoolPrefix. If you define both, they must be of the same size.
     :vartype user_equipment_address_pool_prefix: list[str]
-    :ivar user_equipment_static_address_pool_prefix: The user equipment address pool prefixes for
-     the attached data network that are statically assigned by the core to UEs when they set up a
-     PDU session.
-     The mapping of static IP to sim is configured in staticIpConfiguration on the sim resource.
+    :ivar user_equipment_static_address_pool_prefix: The user equipment (UE) address pool prefixes
+     for the attached data network from which the packet core instance will assign static IP
+     addresses to UEs.
+     The packet core instance assigns an IP address to a UE when the UE sets up a PDU session. The
+     static IP address for a specific UE is set in StaticIPConfiguration on the corresponding SIM
+     resource.
      At least one of userEquipmentAddressPoolPrefix and userEquipmentStaticAddressPoolPrefix must
-     be defined. If both are defined then they must be the same size.
+     be defined. If both are defined, they must be of the same size.
     :vartype user_equipment_static_address_pool_prefix: list[str]
     """
 
@@ -265,6 +271,7 @@ class AttachedDataNetwork(TrackedResource):
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'user_plane_data_interface': {'required': True},
+        'dns_addresses': {'unique': True},
         'user_equipment_address_pool_prefix': {'min_items': 1, 'unique': True},
         'user_equipment_static_address_pool_prefix': {'min_items': 1, 'unique': True},
     }
@@ -278,6 +285,7 @@ class AttachedDataNetwork(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'user_plane_data_interface': {'key': 'properties.userPlaneDataInterface', 'type': 'InterfaceProperties'},
+        'dns_addresses': {'key': 'properties.dnsAddresses', 'type': '[str]'},
         'napt_configuration': {'key': 'properties.naptConfiguration', 'type': 'NaptConfiguration'},
         'user_equipment_address_pool_prefix': {'key': 'properties.userEquipmentAddressPoolPrefix', 'type': '[str]'},
         'user_equipment_static_address_pool_prefix': {'key': 'properties.userEquipmentStaticAddressPoolPrefix', 'type': '[str]'},
@@ -287,9 +295,10 @@ class AttachedDataNetwork(TrackedResource):
         self,
         *,
         location: str,
-        user_plane_data_interface: "InterfaceProperties",
+        user_plane_data_interface: "_models.InterfaceProperties",
         tags: Optional[Dict[str, str]] = None,
-        napt_configuration: Optional["NaptConfiguration"] = None,
+        dns_addresses: Optional[List[str]] = None,
+        napt_configuration: Optional["_models.NaptConfiguration"] = None,
         user_equipment_address_pool_prefix: Optional[List[str]] = None,
         user_equipment_static_address_pool_prefix: Optional[List[str]] = None,
         **kwargs
@@ -299,31 +308,36 @@ class AttachedDataNetwork(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
-        :keyword user_plane_data_interface: Required. The user plane interface on the data network. In
-         5G networks this is called as N6 interface whereas in 4G networks this is called as SGi
-         interface.
+        :keyword user_plane_data_interface: Required. The user plane interface on the data network. For
+         5G networks, this is the N6 interface. For 4G networks, this is the SGi interface.
         :paramtype user_plane_data_interface: ~azure.mgmt.mobilenetwork.models.InterfaceProperties
-        :keyword napt_configuration: The Network Address and Port Translation configuration.
-         If not specified the attached data network uses a default NAPT configuration with NAPT
-         enabled.
+        :keyword dns_addresses: The DNS servers to signal to UEs to use for this attached data network.
+        :paramtype dns_addresses: list[str]
+        :keyword napt_configuration: The network address and port translation (NAPT) configuration.
+         If this is not specified, the attached data network will use a default NAPT configuration with
+         NAPT enabled.
         :paramtype napt_configuration: ~azure.mgmt.mobilenetwork.models.NaptConfiguration
-        :keyword user_equipment_address_pool_prefix: The user equipment address pool prefixes for the
-         attached data network that are dynamically assigned by the core to UEs when they set up a PDU
-         session.
-         At least one of userEquipmentAddressPoolPrefix and userEquipmentStaticAddressPoolPrefix must
-         be defined. If both are defined then they must be the same size.
+        :keyword user_equipment_address_pool_prefix: The user equipment (UE) address pool prefixes for
+         the attached data network from which the packet core instance will dynamically assign IP
+         addresses to UEs.
+         The packet core instance assigns an IP address to a UE when the UE sets up a PDU session.
+          You must define at least one of userEquipmentAddressPoolPrefix and
+         userEquipmentStaticAddressPoolPrefix. If you define both, they must be of the same size.
         :paramtype user_equipment_address_pool_prefix: list[str]
-        :keyword user_equipment_static_address_pool_prefix: The user equipment address pool prefixes
-         for the attached data network that are statically assigned by the core to UEs when they set up
-         a PDU session.
-         The mapping of static IP to sim is configured in staticIpConfiguration on the sim resource.
+        :keyword user_equipment_static_address_pool_prefix: The user equipment (UE) address pool
+         prefixes for the attached data network from which the packet core instance will assign static
+         IP addresses to UEs.
+         The packet core instance assigns an IP address to a UE when the UE sets up a PDU session. The
+         static IP address for a specific UE is set in StaticIPConfiguration on the corresponding SIM
+         resource.
          At least one of userEquipmentAddressPoolPrefix and userEquipmentStaticAddressPoolPrefix must
-         be defined. If both are defined then they must be the same size.
+         be defined. If both are defined, they must be of the same size.
         :paramtype user_equipment_static_address_pool_prefix: list[str]
         """
         super(AttachedDataNetwork, self).__init__(tags=tags, location=location, **kwargs)
         self.provisioning_state = None
         self.user_plane_data_interface = user_plane_data_interface
+        self.dns_addresses = dns_addresses
         self.napt_configuration = napt_configuration
         self.user_equipment_address_pool_prefix = user_equipment_address_pool_prefix
         self.user_equipment_static_address_pool_prefix = user_equipment_static_address_pool_prefix
@@ -352,7 +366,7 @@ class AttachedDataNetworkListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["AttachedDataNetwork"]] = None,
+        value: Optional[List["_models.AttachedDataNetwork"]] = None,
         **kwargs
     ):
         """
@@ -365,11 +379,11 @@ class AttachedDataNetworkListResult(msrest.serialization.Model):
 
 
 class AttachedDataNetworkResourceId(msrest.serialization.Model):
-    """Reference to an Attached Data Network resource.
+    """Reference to an attached data network resource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. Attached Data Network resource ID.
+    :ivar id: Required. Attached data network resource ID.
     :vartype id: str
     """
 
@@ -388,19 +402,81 @@ class AttachedDataNetworkResourceId(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword id: Required. Attached Data Network resource ID.
+        :keyword id: Required. Attached data network resource ID.
         :paramtype id: str
         """
         super(AttachedDataNetworkResourceId, self).__init__(**kwargs)
         self.id = id
 
 
-class CustomLocationResourceId(msrest.serialization.Model):
-    """Reference to an Azure ARC custom location resource.
+class AzureStackEdgeDeviceResourceId(msrest.serialization.Model):
+    """Reference to an Azure Arc custom location resource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. Azure ARC custom location resource ID.
+    :ivar id: Required. Azure Stack Edge device resource ID.
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'required': True, 'pattern': r'^/[sS][uU][bB][sS][cC][rR][iI][pP][tT][iI][oO][nN][sS]/[^/?#]+/[rR][eE][sS][oO][uU][rR][cC][eE][gG][rR][oO][uU][pP][sS]/[^/?#]+/[pP][rR][oO][vV][iI][dD][eE][rR][sS]/[mM][iI][cC][rR][oO][sS][oO][fF][tT]\.[dD][aA][tT][aA][bB][oO][xX][eE][dD][gG][eE]/[dD][aA][tT][aA][bB][oO][xX][eE][dD][gG][eE][dD][eE][vV][iI][cC][eE][sS]/[^/?#]+$'},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        **kwargs
+    ):
+        """
+        :keyword id: Required. Azure Stack Edge device resource ID.
+        :paramtype id: str
+        """
+        super(AzureStackEdgeDeviceResourceId, self).__init__(**kwargs)
+        self.id = id
+
+
+class ConnectedClusterResourceId(msrest.serialization.Model):
+    """Reference to an Azure Arc custom location resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Required. Azure Arc connected cluster resource ID.
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'required': True, 'pattern': r'^/[sS][uU][bB][sS][cC][rR][iI][pP][tT][iI][oO][nN][sS]/[^/?#]+/[rR][eE][sS][oO][uU][rR][cC][eE][gG][rR][oO][uU][pP][sS]/[^/?#]+/[pP][rR][oO][vV][iI][dD][eE][rR][sS]/[mM][iI][cC][rR][oO][sS][oO][fF][tT]\.[kK][uU][bB][eE][rR][nN][eE][tT][eE][sS]/[cC][oO][nN][nN][eE][cC][tT][eE][dD][cC][lL][uU][sS][tT][eE][rR][sS]/[^/?#]+$'},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        **kwargs
+    ):
+        """
+        :keyword id: Required. Azure Arc connected cluster resource ID.
+        :paramtype id: str
+        """
+        super(ConnectedClusterResourceId, self).__init__(**kwargs)
+        self.id = id
+
+
+class CustomLocationResourceId(msrest.serialization.Model):
+    """Reference to an Azure Arc custom location resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Required. Azure Arc custom location resource ID.
     :vartype id: str
     """
 
@@ -419,7 +495,7 @@ class CustomLocationResourceId(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword id: Required. Azure ARC custom location resource ID.
+        :keyword id: Required. Azure Arc custom location resource ID.
         :paramtype id: str
         """
         super(CustomLocationResourceId, self).__init__(**kwargs)
@@ -448,8 +524,8 @@ class DataNetwork(TrackedResource):
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
-    :ivar provisioning_state: The provisioning state of the data network resource. Possible values
-     include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
+    :ivar provisioning_state: The provisioning state of the data network resource. Known values
+     are: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
     :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
     :ivar description: An optional description for this data network.
     :vartype description: str
@@ -497,22 +573,22 @@ class DataNetwork(TrackedResource):
 
 
 class DataNetworkConfiguration(msrest.serialization.Model):
-    """Settings controlling Data Network use.
+    """Settings controlling data network use.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar data_network: Required. A reference to the Data Network that these settings apply to.
+    :ivar data_network: Required. A reference to the data network that these settings apply to.
     :vartype data_network: ~azure.mgmt.mobilenetwork.models.DataNetworkResourceId
     :ivar session_ambr: Required. Aggregate maximum bit rate across all non-GBR QoS flows of a
      given PDU session. See 3GPP TS23.501 section 5.7.2.6 for a full description of the
      Session-AMBR.
     :vartype session_ambr: ~azure.mgmt.mobilenetwork.models.Ambr
-    :ivar five_qi: Default QoS Flow 5G QoS Indicator value.  The 5QI identifies a specific QoS
+    :ivar five_qi: Default QoS Flow 5G QoS Indicator value. The 5QI identifies a specific QoS
      forwarding treatment to be provided to a flow. This must not be a standardized 5QI value
-     selecting a GBR (Guaranteed Bit Rate) QoS.  The illegal GBR 5QI values are: 1, 2, 3, 4, 65, 66,
-     67, 71, 72, 73, 74, 75, 76, 82, 83, 84, and 85. See 3GPP TS23.501 section 5.7.2.1 for a full
-     description of the 5Qi parameter, and table 5.7.4-1 for the definition of which are the GBR 5QI
-     values.
+     corresponding to a GBR (guaranteed bit rate) QoS Flow. The illegal GBR 5QI values are: 1, 2, 3,
+     4, 65, 66, 67, 71, 72, 73, 74, 75, 76, 82, 83, 84, and 85. See 3GPP TS23.501 section 5.7.2.1
+     for a full description of the 5QI parameter, and table 5.7.4-1 for the definition of which are
+     the GBR 5QI values.
     :vartype five_qi: int
     :ivar allocation_and_retention_priority_level: Default QoS Flow allocation and retention
      priority (ARP) level. Flows with higher priority preempt flows with lower priority, if the
@@ -520,25 +596,25 @@ class DataNetworkConfiguration(msrest.serialization.Model):
      level of priority. If this field is not specified then ``5qi`` is used to derive the ARP value.
      See 3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters.
     :vartype allocation_and_retention_priority_level: int
-    :ivar preemption_capability: Default QoS Flow preemption capability.  The Preemption Capability
+    :ivar preemption_capability: Default QoS Flow preemption capability. The preemption capability
      of a QoS Flow controls whether it can preempt another QoS Flow with a lower priority level. See
-     3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Possible values
-     include: "NotPreempt", "MayPreempt".
+     3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Known values are:
+     "NotPreempt", "MayPreempt".
     :vartype preemption_capability: str or ~azure.mgmt.mobilenetwork.models.PreemptionCapability
-    :ivar preemption_vulnerability: Default QoS Flow preemption vulnerability.  The Preemption
-     Vulnerability of a QoS Flow controls whether it can be preempted by QoS Flow with a higher
+    :ivar preemption_vulnerability: Default QoS Flow preemption vulnerability. The preemption
+     vulnerability of a QoS Flow controls whether it can be preempted by a QoS Flow with a higher
      priority level. See 3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters.
-     Possible values include: "NotPreemptable", "Preemptable".
+     Known values are: "NotPreemptable", "Preemptable".
     :vartype preemption_vulnerability: str or
      ~azure.mgmt.mobilenetwork.models.PreemptionVulnerability
     :ivar default_session_type: The default PDU session type, which is used if the UE does not
-     request a specific session type. Possible values include: "IPv4", "IPv6".
+     request a specific session type. Known values are: "IPv4", "IPv6".
     :vartype default_session_type: str or ~azure.mgmt.mobilenetwork.models.PduSessionType
     :ivar additional_allowed_session_types: Allowed session types in addition to the default
-     session type.  Must not duplicate the default session type.
+     session type. Must not duplicate the default session type.
     :vartype additional_allowed_session_types: list[str or
      ~azure.mgmt.mobilenetwork.models.PduSessionType]
-    :ivar allowed_services: Required. List of Services that can be used as part of this Sim Policy.
+    :ivar allowed_services: Required. List of services that can be used as part of this SIM policy.
      The list must not contain duplicate items and must contain at least one item.
     :vartype allowed_services: list[~azure.mgmt.mobilenetwork.models.ServiceResourceId]
     """
@@ -567,30 +643,30 @@ class DataNetworkConfiguration(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        data_network: "DataNetworkResourceId",
-        session_ambr: "Ambr",
-        allowed_services: List["ServiceResourceId"],
+        data_network: "_models.DataNetworkResourceId",
+        session_ambr: "_models.Ambr",
+        allowed_services: List["_models.ServiceResourceId"],
         five_qi: Optional[int] = None,
         allocation_and_retention_priority_level: Optional[int] = None,
-        preemption_capability: Optional[Union[str, "PreemptionCapability"]] = None,
-        preemption_vulnerability: Optional[Union[str, "PreemptionVulnerability"]] = None,
-        default_session_type: Optional[Union[str, "PduSessionType"]] = None,
-        additional_allowed_session_types: Optional[List[Union[str, "PduSessionType"]]] = None,
+        preemption_capability: Optional[Union[str, "_models.PreemptionCapability"]] = None,
+        preemption_vulnerability: Optional[Union[str, "_models.PreemptionVulnerability"]] = None,
+        default_session_type: Optional[Union[str, "_models.PduSessionType"]] = None,
+        additional_allowed_session_types: Optional[List[Union[str, "_models.PduSessionType"]]] = None,
         **kwargs
     ):
         """
-        :keyword data_network: Required. A reference to the Data Network that these settings apply to.
+        :keyword data_network: Required. A reference to the data network that these settings apply to.
         :paramtype data_network: ~azure.mgmt.mobilenetwork.models.DataNetworkResourceId
         :keyword session_ambr: Required. Aggregate maximum bit rate across all non-GBR QoS flows of a
          given PDU session. See 3GPP TS23.501 section 5.7.2.6 for a full description of the
          Session-AMBR.
         :paramtype session_ambr: ~azure.mgmt.mobilenetwork.models.Ambr
-        :keyword five_qi: Default QoS Flow 5G QoS Indicator value.  The 5QI identifies a specific QoS
+        :keyword five_qi: Default QoS Flow 5G QoS Indicator value. The 5QI identifies a specific QoS
          forwarding treatment to be provided to a flow. This must not be a standardized 5QI value
-         selecting a GBR (Guaranteed Bit Rate) QoS.  The illegal GBR 5QI values are: 1, 2, 3, 4, 65, 66,
-         67, 71, 72, 73, 74, 75, 76, 82, 83, 84, and 85. See 3GPP TS23.501 section 5.7.2.1 for a full
-         description of the 5Qi parameter, and table 5.7.4-1 for the definition of which are the GBR 5QI
-         values.
+         corresponding to a GBR (guaranteed bit rate) QoS Flow. The illegal GBR 5QI values are: 1, 2, 3,
+         4, 65, 66, 67, 71, 72, 73, 74, 75, 76, 82, 83, 84, and 85. See 3GPP TS23.501 section 5.7.2.1
+         for a full description of the 5QI parameter, and table 5.7.4-1 for the definition of which are
+         the GBR 5QI values.
         :paramtype five_qi: int
         :keyword allocation_and_retention_priority_level: Default QoS Flow allocation and retention
          priority (ARP) level. Flows with higher priority preempt flows with lower priority, if the
@@ -598,26 +674,26 @@ class DataNetworkConfiguration(msrest.serialization.Model):
          level of priority. If this field is not specified then ``5qi`` is used to derive the ARP value.
          See 3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters.
         :paramtype allocation_and_retention_priority_level: int
-        :keyword preemption_capability: Default QoS Flow preemption capability.  The Preemption
-         Capability of a QoS Flow controls whether it can preempt another QoS Flow with a lower priority
-         level. See 3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Possible
-         values include: "NotPreempt", "MayPreempt".
+        :keyword preemption_capability: Default QoS Flow preemption capability. The preemption
+         capability of a QoS Flow controls whether it can preempt another QoS Flow with a lower priority
+         level. See 3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Known
+         values are: "NotPreempt", "MayPreempt".
         :paramtype preemption_capability: str or ~azure.mgmt.mobilenetwork.models.PreemptionCapability
-        :keyword preemption_vulnerability: Default QoS Flow preemption vulnerability.  The Preemption
-         Vulnerability of a QoS Flow controls whether it can be preempted by QoS Flow with a higher
+        :keyword preemption_vulnerability: Default QoS Flow preemption vulnerability. The preemption
+         vulnerability of a QoS Flow controls whether it can be preempted by a QoS Flow with a higher
          priority level. See 3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters.
-         Possible values include: "NotPreemptable", "Preemptable".
+         Known values are: "NotPreemptable", "Preemptable".
         :paramtype preemption_vulnerability: str or
          ~azure.mgmt.mobilenetwork.models.PreemptionVulnerability
         :keyword default_session_type: The default PDU session type, which is used if the UE does not
-         request a specific session type. Possible values include: "IPv4", "IPv6".
+         request a specific session type. Known values are: "IPv4", "IPv6".
         :paramtype default_session_type: str or ~azure.mgmt.mobilenetwork.models.PduSessionType
         :keyword additional_allowed_session_types: Allowed session types in addition to the default
-         session type.  Must not duplicate the default session type.
+         session type. Must not duplicate the default session type.
         :paramtype additional_allowed_session_types: list[str or
          ~azure.mgmt.mobilenetwork.models.PduSessionType]
-        :keyword allowed_services: Required. List of Services that can be used as part of this Sim
-         Policy. The list must not contain duplicate items and must contain at least one item.
+        :keyword allowed_services: Required. List of services that can be used as part of this SIM
+         policy. The list must not contain duplicate items and must contain at least one item.
         :paramtype allowed_services: list[~azure.mgmt.mobilenetwork.models.ServiceResourceId]
         """
         super(DataNetworkConfiguration, self).__init__(**kwargs)
@@ -637,7 +713,7 @@ class DataNetworkListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: A list of data networks in a resource group.
+    :ivar value: A list of data networks.
     :vartype value: list[~azure.mgmt.mobilenetwork.models.DataNetwork]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
@@ -655,11 +731,11 @@ class DataNetworkListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["DataNetwork"]] = None,
+        value: Optional[List["_models.DataNetwork"]] = None,
         **kwargs
     ):
         """
-        :keyword value: A list of data networks in a resource group.
+        :keyword value: A list of data networks.
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.DataNetwork]
         """
         super(DataNetworkListResult, self).__init__(**kwargs)
@@ -668,11 +744,11 @@ class DataNetworkListResult(msrest.serialization.Model):
 
 
 class DataNetworkResourceId(msrest.serialization.Model):
-    """Reference to a Data Network resource.
+    """Reference to a data network resource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. Data Network resource ID.
+    :ivar id: Required. Data network resource ID.
     :vartype id: str
     """
 
@@ -691,7 +767,7 @@ class DataNetworkResourceId(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword id: Required. Data Network resource ID.
+        :keyword id: Required. Data network resource ID.
         :paramtype id: str
         """
         super(DataNetworkResourceId, self).__init__(**kwargs)
@@ -791,7 +867,7 @@ class ErrorResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["ErrorDetail"] = None,
+        error: Optional["_models.ErrorDetail"] = None,
         **kwargs
     ):
         """
@@ -805,10 +881,8 @@ class ErrorResponse(msrest.serialization.Model):
 class InterfaceProperties(msrest.serialization.Model):
     """Interface properties.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar name: Required. The logical name for this interface. This should match one of the
-     interfaces configured on your Azure Stack Edge machine.
+    :ivar name: The logical name for this interface. This should match one of the interfaces
+     configured on your Azure Stack Edge device.
     :vartype name: str
     :ivar ipv4_address: The IPv4 address.
     :vartype ipv4_address: str
@@ -819,7 +893,6 @@ class InterfaceProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
         'ipv4_address': {'pattern': r'^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$'},
         'ipv4_subnet': {'pattern': r'^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$'},
         'ipv4_gateway': {'pattern': r'^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$'},
@@ -835,15 +908,15 @@ class InterfaceProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: str,
+        name: Optional[str] = None,
         ipv4_address: Optional[str] = None,
         ipv4_subnet: Optional[str] = None,
         ipv4_gateway: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. The logical name for this interface. This should match one of the
-         interfaces configured on your Azure Stack Edge machine.
+        :keyword name: The logical name for this interface. This should match one of the interfaces
+         configured on your Azure Stack Edge device.
         :paramtype name: str
         :keyword ipv4_address: The IPv4 address.
         :paramtype ipv4_address: str
@@ -857,6 +930,151 @@ class InterfaceProperties(msrest.serialization.Model):
         self.ipv4_address = ipv4_address
         self.ipv4_subnet = ipv4_subnet
         self.ipv4_gateway = ipv4_gateway
+
+
+class KeyVaultCertificate(msrest.serialization.Model):
+    """An Azure key vault certificate.
+
+    :ivar certificate_url: The certificate URL, unversioned. For example:
+     https://contosovault.vault.azure.net/certificates/ingress.
+    :vartype certificate_url: str
+    """
+
+    _attribute_map = {
+        'certificate_url': {'key': 'certificateUrl', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        certificate_url: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword certificate_url: The certificate URL, unversioned. For example:
+         https://contosovault.vault.azure.net/certificates/ingress.
+        :paramtype certificate_url: str
+        """
+        super(KeyVaultCertificate, self).__init__(**kwargs)
+        self.certificate_url = certificate_url
+
+
+class KeyVaultKey(msrest.serialization.Model):
+    """An Azure key vault key.
+
+    :ivar key_url: The key URL, unversioned. For example:
+     https://contosovault.vault.azure.net/keys/azureKey.
+    :vartype key_url: str
+    """
+
+    _attribute_map = {
+        'key_url': {'key': 'keyUrl', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        key_url: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword key_url: The key URL, unversioned. For example:
+         https://contosovault.vault.azure.net/keys/azureKey.
+        :paramtype key_url: str
+        """
+        super(KeyVaultKey, self).__init__(**kwargs)
+        self.key_url = key_url
+
+
+class LocalDiagnosticsAccessConfiguration(msrest.serialization.Model):
+    """The kubernetes ingress configuration to control access to packet core diagnostics over local APIs.
+
+    :ivar https_server_certificate: The HTTPS server TLS certificate used to secure local access to
+     diagnostics.
+    :vartype https_server_certificate: ~azure.mgmt.mobilenetwork.models.KeyVaultCertificate
+    """
+
+    _attribute_map = {
+        'https_server_certificate': {'key': 'httpsServerCertificate', 'type': 'KeyVaultCertificate'},
+    }
+
+    def __init__(
+        self,
+        *,
+        https_server_certificate: Optional["_models.KeyVaultCertificate"] = None,
+        **kwargs
+    ):
+        """
+        :keyword https_server_certificate: The HTTPS server TLS certificate used to secure local access
+         to diagnostics.
+        :paramtype https_server_certificate: ~azure.mgmt.mobilenetwork.models.KeyVaultCertificate
+        """
+        super(LocalDiagnosticsAccessConfiguration, self).__init__(**kwargs)
+        self.https_server_certificate = https_server_certificate
+
+
+class ManagedServiceIdentity(msrest.serialization.Model):
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: Required. Type of managed service identity (where both SystemAssigned and
+     UserAssigned types are allowed). Known values are: "None", "SystemAssigned", "UserAssigned",
+     "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.mobilenetwork.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The set of user assigned identities associated with the
+     resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     The dictionary values can be empty objects ({}) in requests.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.mobilenetwork.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword type: Required. Type of managed service identity (where both SystemAssigned and
+         UserAssigned types are allowed). Known values are: "None", "SystemAssigned", "UserAssigned",
+         "SystemAssigned,UserAssigned".
+        :paramtype type: str or ~azure.mgmt.mobilenetwork.models.ManagedServiceIdentityType
+        :keyword user_assigned_identities: The set of user assigned identities associated with the
+         resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         The dictionary values can be empty objects ({}) in requests.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.mobilenetwork.models.UserAssignedIdentity]
+        """
+        super(ManagedServiceIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
 
 
 class MobileNetwork(TrackedResource):
@@ -881,12 +1099,11 @@ class MobileNetwork(TrackedResource):
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
-    :ivar provisioning_state: The provisioning state of the mobile network resource. Possible
-     values include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled",
-     "Deleted".
+    :ivar provisioning_state: The provisioning state of the mobile network resource. Known values
+     are: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
     :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
     :ivar public_land_mobile_network_identifier: Required. The unique public land mobile network
-     identifier for the network. This is made up of the Mobile Country Code and Mobile Network Code,
+     identifier for the network. This is made up of the mobile country code and mobile network code,
      as defined in https://www.itu.int/rec/T-REC-E.212. The values 001-01 and 001-001 can be used
      for testing and the values 999-99 and 999-999 can be used on internal private networks.
     :vartype public_land_mobile_network_identifier: ~azure.mgmt.mobilenetwork.models.PlmnId
@@ -921,7 +1138,7 @@ class MobileNetwork(TrackedResource):
         self,
         *,
         location: str,
-        public_land_mobile_network_identifier: "PlmnId",
+        public_land_mobile_network_identifier: "_models.PlmnId",
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
@@ -931,7 +1148,7 @@ class MobileNetwork(TrackedResource):
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
         :keyword public_land_mobile_network_identifier: Required. The unique public land mobile network
-         identifier for the network. This is made up of the Mobile Country Code and Mobile Network Code,
+         identifier for the network. This is made up of the mobile country code and mobile network code,
          as defined in https://www.itu.int/rec/T-REC-E.212. The values 001-01 and 001-001 can be used
          for testing and the values 999-99 and 999-999 can be used on internal private networks.
         :paramtype public_land_mobile_network_identifier: ~azure.mgmt.mobilenetwork.models.PlmnId
@@ -965,7 +1182,7 @@ class MobileNetworkListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["MobileNetwork"]] = None,
+        value: Optional[List["_models.MobileNetwork"]] = None,
         **kwargs
     ):
         """
@@ -978,11 +1195,11 @@ class MobileNetworkListResult(msrest.serialization.Model):
 
 
 class MobileNetworkResourceId(msrest.serialization.Model):
-    """Reference to a Mobile Network resource.
+    """Reference to a mobile network resource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. Mobile Network resource ID.
+    :ivar id: Required. Mobile network resource ID.
     :vartype id: str
     """
 
@@ -1001,7 +1218,7 @@ class MobileNetworkResourceId(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword id: Required. Mobile Network resource ID.
+        :keyword id: Required. Mobile network resource ID.
         :paramtype id: str
         """
         super(MobileNetworkResourceId, self).__init__(**kwargs)
@@ -1009,21 +1226,23 @@ class MobileNetworkResourceId(msrest.serialization.Model):
 
 
 class NaptConfiguration(msrest.serialization.Model):
-    """The Network Address and Port Translation settings to use for the attached data network.
+    """The network address and port translation settings to use for the attached data network.
 
-    :ivar enabled: Whether NAPT is enabled for connections to this attachedDataNetwork. Possible
-     values include: "Enabled", "Disabled". Default value: "Enabled".
+    :ivar enabled: Whether NAPT is enabled for connections to this attached data network. Known
+     values are: "Enabled", "Disabled". Default value: "Enabled".
     :vartype enabled: str or ~azure.mgmt.mobilenetwork.models.NaptEnabled
     :ivar port_range: Range of port numbers to use as translated ports on each translated address.
-     If not specified and NAPT is enabled, this range defaults to 1,024 - 65,535. (Ports under
-     1,024 should not be used because these are special purpose ports reserved by IANA.).
+     If not specified and NAPT is enabled, this range defaults to 1,024 - 49,999.
+     (Ports under 1,024 should not be used because these are special purpose ports reserved by
+     IANA. Ports 50,000 and above are reserved for non-NAPT use.).
     :vartype port_range: ~azure.mgmt.mobilenetwork.models.PortRange
     :ivar port_reuse_hold_time: The minimum time (in seconds) that will pass before a port that was
      used by a closed pinhole can be recycled for use by another pinhole. All hold times must be
      minimum 1 second.
     :vartype port_reuse_hold_time: ~azure.mgmt.mobilenetwork.models.PortReuseHoldTimes
     :ivar pinhole_limits: Maximum number of UDP and TCP pinholes that can be open simultaneously on
-     the core interface.
+     the core interface. For 5G networks, this is the N6 interface. For 4G networks, this is the SGi
+     interface.
     :vartype pinhole_limits: int
     :ivar pinhole_timeouts: Expiry times of inactive NAPT pinholes, in seconds. All timers must be
      at least 1 second.
@@ -1045,28 +1264,30 @@ class NaptConfiguration(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        enabled: Optional[Union[str, "NaptEnabled"]] = "Enabled",
-        port_range: Optional["PortRange"] = None,
-        port_reuse_hold_time: Optional["PortReuseHoldTimes"] = None,
+        enabled: Optional[Union[str, "_models.NaptEnabled"]] = "Enabled",
+        port_range: Optional["_models.PortRange"] = None,
+        port_reuse_hold_time: Optional["_models.PortReuseHoldTimes"] = None,
         pinhole_limits: Optional[int] = 65536,
-        pinhole_timeouts: Optional["PinholeTimeouts"] = None,
+        pinhole_timeouts: Optional["_models.PinholeTimeouts"] = None,
         **kwargs
     ):
         """
-        :keyword enabled: Whether NAPT is enabled for connections to this attachedDataNetwork. Possible
-         values include: "Enabled", "Disabled". Default value: "Enabled".
+        :keyword enabled: Whether NAPT is enabled for connections to this attached data network. Known
+         values are: "Enabled", "Disabled". Default value: "Enabled".
         :paramtype enabled: str or ~azure.mgmt.mobilenetwork.models.NaptEnabled
         :keyword port_range: Range of port numbers to use as translated ports on each translated
          address.
-         If not specified and NAPT is enabled, this range defaults to 1,024 - 65,535. (Ports under
-         1,024 should not be used because these are special purpose ports reserved by IANA.).
+         If not specified and NAPT is enabled, this range defaults to 1,024 - 49,999.
+         (Ports under 1,024 should not be used because these are special purpose ports reserved by
+         IANA. Ports 50,000 and above are reserved for non-NAPT use.).
         :paramtype port_range: ~azure.mgmt.mobilenetwork.models.PortRange
         :keyword port_reuse_hold_time: The minimum time (in seconds) that will pass before a port that
          was used by a closed pinhole can be recycled for use by another pinhole. All hold times must be
          minimum 1 second.
         :paramtype port_reuse_hold_time: ~azure.mgmt.mobilenetwork.models.PortReuseHoldTimes
         :keyword pinhole_limits: Maximum number of UDP and TCP pinholes that can be open simultaneously
-         on the core interface.
+         on the core interface. For 5G networks, this is the N6 interface. For 4G networks, this is the
+         SGi interface.
         :paramtype pinhole_limits: int
         :keyword pinhole_timeouts: Expiry times of inactive NAPT pinholes, in seconds. All timers must
          be at least 1 second.
@@ -1222,23 +1443,37 @@ class PacketCoreControlPlane(TrackedResource):
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
+    :ivar identity: The identity used to retrieve the ingress certificate from Azure key vault.
+    :vartype identity: ~azure.mgmt.mobilenetwork.models.ManagedServiceIdentity
     :ivar provisioning_state: The provisioning state of the packet core control plane resource.
-     Possible values include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled",
+     Known values are: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled",
      "Deleted".
     :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
-    :ivar mobile_network: Required. Mobile network that this packet core control plane belongs to.
+    :ivar mobile_network: Required. Mobile network in which this packet core control plane is
+     deployed.
     :vartype mobile_network: ~azure.mgmt.mobilenetwork.models.MobileNetworkResourceId
-    :ivar custom_location: Azure ARC custom location where the packet core is deployed.
-    :vartype custom_location: ~azure.mgmt.mobilenetwork.models.CustomLocationResourceId
-    :ivar core_network_technology: The core network technology generation. Possible values include:
-     "5GC", "EPC".
+    :ivar platform: The platform where the packet core is deployed.
+    :vartype platform: ~azure.mgmt.mobilenetwork.models.PlatformConfiguration
+    :ivar core_network_technology: The core network technology generation (5G core or EPC / 4G
+     core). Known values are: "5GC", "EPC".
     :vartype core_network_technology: str or ~azure.mgmt.mobilenetwork.models.CoreNetworkType
     :ivar version: The version of the packet core software that is deployed.
     :vartype version: str
     :ivar control_plane_access_interface: Required. The control plane interface on the access
-     network. In 5G networks this is called as N2 interface whereas in 4G networks this is called as
-     S1-MME interface.
+     network. For 5G networks, this is the N2 interface. For 4G networks, this is the S1-MME
+     interface.
     :vartype control_plane_access_interface: ~azure.mgmt.mobilenetwork.models.InterfaceProperties
+    :ivar sku: Required. The SKU defining the throughput and SIM allowances for this packet core
+     control plane deployment. Known values are: "EvaluationPackage", "FlagshipStarterPackage",
+     "EdgeSite2GBPS", "EdgeSite3GBPS", "EdgeSite4GBPS", "MediumPackage", "LargePackage".
+    :vartype sku: str or ~azure.mgmt.mobilenetwork.models.BillingSku
+    :ivar local_diagnostics_access: The kubernetes ingress configuration to control access to
+     packet core diagnostics over local APIs.
+    :vartype local_diagnostics_access:
+     ~azure.mgmt.mobilenetwork.models.LocalDiagnosticsAccessConfiguration
+    :ivar interop_settings: Settings to allow interoperability with third party components e.g.
+     RANs and UEs.
+    :vartype interop_settings: any
     """
 
     _validation = {
@@ -1250,6 +1485,7 @@ class PacketCoreControlPlane(TrackedResource):
         'provisioning_state': {'readonly': True},
         'mobile_network': {'required': True},
         'control_plane_access_interface': {'required': True},
+        'sku': {'required': True},
     }
 
     _attribute_map = {
@@ -1259,24 +1495,32 @@ class PacketCoreControlPlane(TrackedResource):
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'mobile_network': {'key': 'properties.mobileNetwork', 'type': 'MobileNetworkResourceId'},
-        'custom_location': {'key': 'properties.customLocation', 'type': 'CustomLocationResourceId'},
+        'platform': {'key': 'properties.platform', 'type': 'PlatformConfiguration'},
         'core_network_technology': {'key': 'properties.coreNetworkTechnology', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
         'control_plane_access_interface': {'key': 'properties.controlPlaneAccessInterface', 'type': 'InterfaceProperties'},
+        'sku': {'key': 'properties.sku', 'type': 'str'},
+        'local_diagnostics_access': {'key': 'properties.localDiagnosticsAccess', 'type': 'LocalDiagnosticsAccessConfiguration'},
+        'interop_settings': {'key': 'properties.interopSettings', 'type': 'object'},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        mobile_network: "MobileNetworkResourceId",
-        control_plane_access_interface: "InterfaceProperties",
+        mobile_network: "_models.MobileNetworkResourceId",
+        control_plane_access_interface: "_models.InterfaceProperties",
+        sku: Union[str, "_models.BillingSku"],
         tags: Optional[Dict[str, str]] = None,
-        custom_location: Optional["CustomLocationResourceId"] = None,
-        core_network_technology: Optional[Union[str, "CoreNetworkType"]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        platform: Optional["_models.PlatformConfiguration"] = None,
+        core_network_technology: Optional[Union[str, "_models.CoreNetworkType"]] = None,
         version: Optional[str] = None,
+        local_diagnostics_access: Optional["_models.LocalDiagnosticsAccessConfiguration"] = None,
+        interop_settings: Optional[Any] = None,
         **kwargs
     ):
         """
@@ -1284,28 +1528,45 @@ class PacketCoreControlPlane(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
-        :keyword mobile_network: Required. Mobile network that this packet core control plane belongs
-         to.
+        :keyword identity: The identity used to retrieve the ingress certificate from Azure key vault.
+        :paramtype identity: ~azure.mgmt.mobilenetwork.models.ManagedServiceIdentity
+        :keyword mobile_network: Required. Mobile network in which this packet core control plane is
+         deployed.
         :paramtype mobile_network: ~azure.mgmt.mobilenetwork.models.MobileNetworkResourceId
-        :keyword custom_location: Azure ARC custom location where the packet core is deployed.
-        :paramtype custom_location: ~azure.mgmt.mobilenetwork.models.CustomLocationResourceId
-        :keyword core_network_technology: The core network technology generation. Possible values
-         include: "5GC", "EPC".
+        :keyword platform: The platform where the packet core is deployed.
+        :paramtype platform: ~azure.mgmt.mobilenetwork.models.PlatformConfiguration
+        :keyword core_network_technology: The core network technology generation (5G core or EPC / 4G
+         core). Known values are: "5GC", "EPC".
         :paramtype core_network_technology: str or ~azure.mgmt.mobilenetwork.models.CoreNetworkType
         :keyword version: The version of the packet core software that is deployed.
         :paramtype version: str
         :keyword control_plane_access_interface: Required. The control plane interface on the access
-         network. In 5G networks this is called as N2 interface whereas in 4G networks this is called as
-         S1-MME interface.
+         network. For 5G networks, this is the N2 interface. For 4G networks, this is the S1-MME
+         interface.
         :paramtype control_plane_access_interface: ~azure.mgmt.mobilenetwork.models.InterfaceProperties
+        :keyword sku: Required. The SKU defining the throughput and SIM allowances for this packet core
+         control plane deployment. Known values are: "EvaluationPackage", "FlagshipStarterPackage",
+         "EdgeSite2GBPS", "EdgeSite3GBPS", "EdgeSite4GBPS", "MediumPackage", "LargePackage".
+        :paramtype sku: str or ~azure.mgmt.mobilenetwork.models.BillingSku
+        :keyword local_diagnostics_access: The kubernetes ingress configuration to control access to
+         packet core diagnostics over local APIs.
+        :paramtype local_diagnostics_access:
+         ~azure.mgmt.mobilenetwork.models.LocalDiagnosticsAccessConfiguration
+        :keyword interop_settings: Settings to allow interoperability with third party components e.g.
+         RANs and UEs.
+        :paramtype interop_settings: any
         """
         super(PacketCoreControlPlane, self).__init__(tags=tags, location=location, **kwargs)
+        self.identity = identity
         self.provisioning_state = None
         self.mobile_network = mobile_network
-        self.custom_location = custom_location
+        self.platform = platform
         self.core_network_technology = core_network_technology
         self.version = version
         self.control_plane_access_interface = control_plane_access_interface
+        self.sku = sku
+        self.local_diagnostics_access = local_diagnostics_access
+        self.interop_settings = interop_settings
 
 
 class PacketCoreControlPlaneListResult(msrest.serialization.Model):
@@ -1331,7 +1592,7 @@ class PacketCoreControlPlaneListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PacketCoreControlPlane"]] = None,
+        value: Optional[List["_models.PacketCoreControlPlane"]] = None,
         **kwargs
     ):
         """
@@ -1339,6 +1600,149 @@ class PacketCoreControlPlaneListResult(msrest.serialization.Model):
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.PacketCoreControlPlane]
         """
         super(PacketCoreControlPlaneListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class PacketCoreControlPlaneVersion(ProxyResource):
+    """Packet core control plane version resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
+    :ivar provisioning_state: The provisioning state of the packet core control plane version
+     resource. Known values are: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed",
+     "Canceled", "Deleted".
+    :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
+    :ivar version_state: The state of this packet core control plane version. Known values are:
+     "Unknown", "Preview", "Validating", "ValidationFailed", "Active", "Deprecated".
+    :vartype version_state: str or ~azure.mgmt.mobilenetwork.models.VersionState
+    :ivar recommended_version: Indicates whether this is the recommended version to use for new
+     packet core control plane deployments. Known values are: "Recommended", "NotRecommended".
+    :vartype recommended_version: str or ~azure.mgmt.mobilenetwork.models.RecommendedVersion
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'version_state': {'key': 'properties.versionState', 'type': 'str'},
+        'recommended_version': {'key': 'properties.recommendedVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        version_state: Optional[Union[str, "_models.VersionState"]] = None,
+        recommended_version: Optional[Union[str, "_models.RecommendedVersion"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword version_state: The state of this packet core control plane version. Known values are:
+         "Unknown", "Preview", "Validating", "ValidationFailed", "Active", "Deprecated".
+        :paramtype version_state: str or ~azure.mgmt.mobilenetwork.models.VersionState
+        :keyword recommended_version: Indicates whether this is the recommended version to use for new
+         packet core control plane deployments. Known values are: "Recommended", "NotRecommended".
+        :paramtype recommended_version: str or ~azure.mgmt.mobilenetwork.models.RecommendedVersion
+        """
+        super(PacketCoreControlPlaneVersion, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.version_state = version_state
+        self.recommended_version = recommended_version
+
+
+class PacketCoreControlPlaneVersionListResult(msrest.serialization.Model):
+    """Response for packet core control plane version API service call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: A list of supported packet core control plane versions.
+    :vartype value: list[~azure.mgmt.mobilenetwork.models.PacketCoreControlPlaneVersion]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PacketCoreControlPlaneVersion]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.PacketCoreControlPlaneVersion"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: A list of supported packet core control plane versions.
+        :paramtype value: list[~azure.mgmt.mobilenetwork.models.PacketCoreControlPlaneVersion]
+        """
+        super(PacketCoreControlPlaneVersionListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
 
@@ -1365,13 +1769,11 @@ class PacketCoreDataPlane(TrackedResource):
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
-    :ivar provisioning_state: The provisioning state of the packet core data plane resource.
-     Possible values include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled",
-     "Deleted".
+    :ivar provisioning_state: The provisioning state of the packet core data plane resource. Known
+     values are: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
     :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
-    :ivar user_plane_access_interface: Required. The user plane interface on the access network. In
-     5G networks this is called as N3 interface whereas in 4G networks this is called the S1-U
-     interface.
+    :ivar user_plane_access_interface: Required. The user plane interface on the access network.
+     For 5G networks, this is the N3 interface. For 4G networks, this is the S1-U interface.
     :vartype user_plane_access_interface: ~azure.mgmt.mobilenetwork.models.InterfaceProperties
     """
 
@@ -1400,7 +1802,7 @@ class PacketCoreDataPlane(TrackedResource):
         self,
         *,
         location: str,
-        user_plane_access_interface: "InterfaceProperties",
+        user_plane_access_interface: "_models.InterfaceProperties",
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
@@ -1410,8 +1812,7 @@ class PacketCoreDataPlane(TrackedResource):
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
         :keyword user_plane_access_interface: Required. The user plane interface on the access network.
-         In 5G networks this is called as N3 interface whereas in 4G networks this is called the S1-U
-         interface.
+         For 5G networks, this is the N3 interface. For 4G networks, this is the S1-U interface.
         :paramtype user_plane_access_interface: ~azure.mgmt.mobilenetwork.models.InterfaceProperties
         """
         super(PacketCoreDataPlane, self).__init__(tags=tags, location=location, **kwargs)
@@ -1442,7 +1843,7 @@ class PacketCoreDataPlaneListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PacketCoreDataPlane"]] = None,
+        value: Optional[List["_models.PacketCoreDataPlane"]] = None,
         **kwargs
     ):
         """
@@ -1455,26 +1856,27 @@ class PacketCoreDataPlaneListResult(msrest.serialization.Model):
 
 
 class PccRuleConfiguration(msrest.serialization.Model):
-    """PCC rule configuration.
+    """Data flow policy rule configuration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar rule_name: Required. The name of the rule. This must be unique within the parent Service.
+    :ivar rule_name: Required. The name of the rule. This must be unique within the parent service.
      You must not use any of the following reserved strings - ``default``\ , ``requested`` or
      ``service``.
     :vartype rule_name: str
-    :ivar rule_precedence: Required. A precedence value that is used to decide between PCC Rules
-     when identifying the QoS values to use for a particular Sim. A lower value means a higher
-     priority. This value should be unique among all PCC Rules configured in the Mobile Network.
+    :ivar rule_precedence: Required. A precedence value that is used to decide between data flow
+     policy rules when identifying the QoS values to use for a particular SIM. A lower value means a
+     higher priority. This value should be unique among all data flow policy rules configured in the
+     mobile network.
     :vartype rule_precedence: int
     :ivar rule_qos_policy: The QoS policy to use for packets matching this rule. If this field is
-     null then the Service will define the QoS settings.
+     null then the parent service will define the QoS settings.
     :vartype rule_qos_policy: ~azure.mgmt.mobilenetwork.models.PccRuleQosPolicy
-    :ivar traffic_control: Determines whether flows that match this PCC Rule are permitted.
-     Possible values include: "Enabled", "Blocked".
+    :ivar traffic_control: Determines whether flows that match this data flow policy rule are
+     permitted. Known values are: "Enabled", "Blocked".
     :vartype traffic_control: str or ~azure.mgmt.mobilenetwork.models.TrafficControlPermission
-    :ivar service_data_flow_templates: Required. The set of service data flow templates to use for
-     this PCC Rule.
+    :ivar service_data_flow_templates: Required. The set of data flow templates to use for this
+     data flow policy rule.
     :vartype service_data_flow_templates:
      list[~azure.mgmt.mobilenetwork.models.ServiceDataFlowTemplate]
     """
@@ -1498,28 +1900,29 @@ class PccRuleConfiguration(msrest.serialization.Model):
         *,
         rule_name: str,
         rule_precedence: int,
-        service_data_flow_templates: List["ServiceDataFlowTemplate"],
-        rule_qos_policy: Optional["PccRuleQosPolicy"] = None,
-        traffic_control: Optional[Union[str, "TrafficControlPermission"]] = None,
+        service_data_flow_templates: List["_models.ServiceDataFlowTemplate"],
+        rule_qos_policy: Optional["_models.PccRuleQosPolicy"] = None,
+        traffic_control: Optional[Union[str, "_models.TrafficControlPermission"]] = None,
         **kwargs
     ):
         """
         :keyword rule_name: Required. The name of the rule. This must be unique within the parent
-         Service. You must not use any of the following reserved strings - ``default``\ , ``requested``
+         service. You must not use any of the following reserved strings - ``default``\ , ``requested``
          or ``service``.
         :paramtype rule_name: str
-        :keyword rule_precedence: Required. A precedence value that is used to decide between PCC Rules
-         when identifying the QoS values to use for a particular Sim. A lower value means a higher
-         priority. This value should be unique among all PCC Rules configured in the Mobile Network.
+        :keyword rule_precedence: Required. A precedence value that is used to decide between data flow
+         policy rules when identifying the QoS values to use for a particular SIM. A lower value means a
+         higher priority. This value should be unique among all data flow policy rules configured in the
+         mobile network.
         :paramtype rule_precedence: int
         :keyword rule_qos_policy: The QoS policy to use for packets matching this rule. If this field
-         is null then the Service will define the QoS settings.
+         is null then the parent service will define the QoS settings.
         :paramtype rule_qos_policy: ~azure.mgmt.mobilenetwork.models.PccRuleQosPolicy
-        :keyword traffic_control: Determines whether flows that match this PCC Rule are permitted.
-         Possible values include: "Enabled", "Blocked".
+        :keyword traffic_control: Determines whether flows that match this data flow policy rule are
+         permitted. Known values are: "Enabled", "Blocked".
         :paramtype traffic_control: str or ~azure.mgmt.mobilenetwork.models.TrafficControlPermission
-        :keyword service_data_flow_templates: Required. The set of service data flow templates to use
-         for this PCC Rule.
+        :keyword service_data_flow_templates: Required. The set of data flow templates to use for this
+         data flow policy rule.
         :paramtype service_data_flow_templates:
          list[~azure.mgmt.mobilenetwork.models.ServiceDataFlowTemplate]
         """
@@ -1536,11 +1939,12 @@ class QosPolicy(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar five_qi: QoS Flow 5G QoS Indicator value.  The 5QI identifies a specific QoS forwarding
-     treatment to be provided to a flow. This must not be a standardized 5QI value selecting a GBR
-     (Guaranteed Bit Rate) QoS.  The illegal GBR 5QI values are: 1, 2, 3, 4, 65, 66, 67, 71, 72, 73,
-     74, 75, 76, 82, 83, 84, and 85. See 3GPP TS23.501 section 5.7.2.1 for a full description of the
-     5Qi parameter, and table 5.7.4-1 for the definition of which are the GBR 5QI values.
+    :ivar five_qi: QoS Flow 5G QoS Indicator value. The 5QI identifies a specific QoS forwarding
+     treatment to be provided to a flow. This must not be a standardized 5QI value corresponding to
+     a GBR (guaranteed bit rate) QoS Flow. The illegal GBR 5QI values are: 1, 2, 3, 4, 65, 66, 67,
+     71, 72, 73, 74, 75, 76, 82, 83, 84, and 85. See 3GPP TS23.501 section 5.7.2.1 for a full
+     description of the 5QI parameter, and table 5.7.4-1 for the definition of which are the GBR 5QI
+     values.
     :vartype five_qi: int
     :ivar allocation_and_retention_priority_level: QoS Flow allocation and retention priority (ARP)
      level. Flows with higher priority preempt flows with lower priority, if the settings of
@@ -1548,19 +1952,19 @@ class QosPolicy(msrest.serialization.Model):
      priority. If this field is not specified then ``5qi`` is used to derive the ARP value. See 3GPP
      TS23.501 section 5.7.2.2 for a full description of the ARP parameters.
     :vartype allocation_and_retention_priority_level: int
-    :ivar preemption_capability: QoS Flow preemption capability.  The Preemption Capability of a
-     QoS Flow controls whether it can preempt another QoS Flow with a lower priority level. See 3GPP
-     TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Possible values include:
+    :ivar preemption_capability: QoS Flow preemption capability. The preemption capability of a QoS
+     Flow controls whether it can preempt another QoS Flow with a lower priority level. See 3GPP
+     TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Known values are:
      "NotPreempt", "MayPreempt".
     :vartype preemption_capability: str or ~azure.mgmt.mobilenetwork.models.PreemptionCapability
-    :ivar preemption_vulnerability: QoS Flow preemption vulnerability.  The Preemption
-     Vulnerability of a QoS Flow controls whether it can be preempted by QoS Flow with a higher
-     priority level. See 3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters.
-     Possible values include: "NotPreemptable", "Preemptable".
+    :ivar preemption_vulnerability: QoS Flow preemption vulnerability. The preemption vulnerability
+     of a QoS Flow controls whether it can be preempted by a QoS Flow with a higher priority level.
+     See 3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Known values
+     are: "NotPreemptable", "Preemptable".
     :vartype preemption_vulnerability: str or
      ~azure.mgmt.mobilenetwork.models.PreemptionVulnerability
-    :ivar maximum_bit_rate: Required. The Maximum Bit Rate (MBR) for all service data flows that
-     use this PCC Rule or Service.
+    :ivar maximum_bit_rate: Required. The maximum bit rate (MBR) for all service data flows that
+     use this data flow policy rule or service.
     :vartype maximum_bit_rate: ~azure.mgmt.mobilenetwork.models.Ambr
     """
 
@@ -1581,19 +1985,19 @@ class QosPolicy(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        maximum_bit_rate: "Ambr",
+        maximum_bit_rate: "_models.Ambr",
         five_qi: Optional[int] = None,
         allocation_and_retention_priority_level: Optional[int] = None,
-        preemption_capability: Optional[Union[str, "PreemptionCapability"]] = None,
-        preemption_vulnerability: Optional[Union[str, "PreemptionVulnerability"]] = None,
+        preemption_capability: Optional[Union[str, "_models.PreemptionCapability"]] = None,
+        preemption_vulnerability: Optional[Union[str, "_models.PreemptionVulnerability"]] = None,
         **kwargs
     ):
         """
-        :keyword five_qi: QoS Flow 5G QoS Indicator value.  The 5QI identifies a specific QoS
-         forwarding treatment to be provided to a flow. This must not be a standardized 5QI value
-         selecting a GBR (Guaranteed Bit Rate) QoS.  The illegal GBR 5QI values are: 1, 2, 3, 4, 65, 66,
-         67, 71, 72, 73, 74, 75, 76, 82, 83, 84, and 85. See 3GPP TS23.501 section 5.7.2.1 for a full
-         description of the 5Qi parameter, and table 5.7.4-1 for the definition of which are the GBR 5QI
+        :keyword five_qi: QoS Flow 5G QoS Indicator value. The 5QI identifies a specific QoS forwarding
+         treatment to be provided to a flow. This must not be a standardized 5QI value corresponding to
+         a GBR (guaranteed bit rate) QoS Flow. The illegal GBR 5QI values are: 1, 2, 3, 4, 65, 66, 67,
+         71, 72, 73, 74, 75, 76, 82, 83, 84, and 85. See 3GPP TS23.501 section 5.7.2.1 for a full
+         description of the 5QI parameter, and table 5.7.4-1 for the definition of which are the GBR 5QI
          values.
         :paramtype five_qi: int
         :keyword allocation_and_retention_priority_level: QoS Flow allocation and retention priority
@@ -1602,19 +2006,19 @@ class QosPolicy(msrest.serialization.Model):
          priority. If this field is not specified then ``5qi`` is used to derive the ARP value. See 3GPP
          TS23.501 section 5.7.2.2 for a full description of the ARP parameters.
         :paramtype allocation_and_retention_priority_level: int
-        :keyword preemption_capability: QoS Flow preemption capability.  The Preemption Capability of a
+        :keyword preemption_capability: QoS Flow preemption capability. The preemption capability of a
          QoS Flow controls whether it can preempt another QoS Flow with a lower priority level. See 3GPP
-         TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Possible values include:
+         TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Known values are:
          "NotPreempt", "MayPreempt".
         :paramtype preemption_capability: str or ~azure.mgmt.mobilenetwork.models.PreemptionCapability
-        :keyword preemption_vulnerability: QoS Flow preemption vulnerability.  The Preemption
-         Vulnerability of a QoS Flow controls whether it can be preempted by QoS Flow with a higher
+        :keyword preemption_vulnerability: QoS Flow preemption vulnerability. The preemption
+         vulnerability of a QoS Flow controls whether it can be preempted by a QoS Flow with a higher
          priority level. See 3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters.
-         Possible values include: "NotPreemptable", "Preemptable".
+         Known values are: "NotPreemptable", "Preemptable".
         :paramtype preemption_vulnerability: str or
          ~azure.mgmt.mobilenetwork.models.PreemptionVulnerability
-        :keyword maximum_bit_rate: Required. The Maximum Bit Rate (MBR) for all service data flows that
-         use this PCC Rule or Service.
+        :keyword maximum_bit_rate: Required. The maximum bit rate (MBR) for all service data flows that
+         use this data flow policy rule or service.
         :paramtype maximum_bit_rate: ~azure.mgmt.mobilenetwork.models.Ambr
         """
         super(QosPolicy, self).__init__(**kwargs)
@@ -1626,15 +2030,16 @@ class QosPolicy(msrest.serialization.Model):
 
 
 class PccRuleQosPolicy(QosPolicy):
-    """PCC rule QoS policy.
+    """Data flow policy rule QoS policy.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar five_qi: QoS Flow 5G QoS Indicator value.  The 5QI identifies a specific QoS forwarding
-     treatment to be provided to a flow. This must not be a standardized 5QI value selecting a GBR
-     (Guaranteed Bit Rate) QoS.  The illegal GBR 5QI values are: 1, 2, 3, 4, 65, 66, 67, 71, 72, 73,
-     74, 75, 76, 82, 83, 84, and 85. See 3GPP TS23.501 section 5.7.2.1 for a full description of the
-     5Qi parameter, and table 5.7.4-1 for the definition of which are the GBR 5QI values.
+    :ivar five_qi: QoS Flow 5G QoS Indicator value. The 5QI identifies a specific QoS forwarding
+     treatment to be provided to a flow. This must not be a standardized 5QI value corresponding to
+     a GBR (guaranteed bit rate) QoS Flow. The illegal GBR 5QI values are: 1, 2, 3, 4, 65, 66, 67,
+     71, 72, 73, 74, 75, 76, 82, 83, 84, and 85. See 3GPP TS23.501 section 5.7.2.1 for a full
+     description of the 5QI parameter, and table 5.7.4-1 for the definition of which are the GBR 5QI
+     values.
     :vartype five_qi: int
     :ivar allocation_and_retention_priority_level: QoS Flow allocation and retention priority (ARP)
      level. Flows with higher priority preempt flows with lower priority, if the settings of
@@ -1642,23 +2047,23 @@ class PccRuleQosPolicy(QosPolicy):
      priority. If this field is not specified then ``5qi`` is used to derive the ARP value. See 3GPP
      TS23.501 section 5.7.2.2 for a full description of the ARP parameters.
     :vartype allocation_and_retention_priority_level: int
-    :ivar preemption_capability: QoS Flow preemption capability.  The Preemption Capability of a
-     QoS Flow controls whether it can preempt another QoS Flow with a lower priority level. See 3GPP
-     TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Possible values include:
+    :ivar preemption_capability: QoS Flow preemption capability. The preemption capability of a QoS
+     Flow controls whether it can preempt another QoS Flow with a lower priority level. See 3GPP
+     TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Known values are:
      "NotPreempt", "MayPreempt".
     :vartype preemption_capability: str or ~azure.mgmt.mobilenetwork.models.PreemptionCapability
-    :ivar preemption_vulnerability: QoS Flow preemption vulnerability.  The Preemption
-     Vulnerability of a QoS Flow controls whether it can be preempted by QoS Flow with a higher
-     priority level. See 3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters.
-     Possible values include: "NotPreemptable", "Preemptable".
+    :ivar preemption_vulnerability: QoS Flow preemption vulnerability. The preemption vulnerability
+     of a QoS Flow controls whether it can be preempted by a QoS Flow with a higher priority level.
+     See 3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Known values
+     are: "NotPreemptable", "Preemptable".
     :vartype preemption_vulnerability: str or
      ~azure.mgmt.mobilenetwork.models.PreemptionVulnerability
-    :ivar maximum_bit_rate: Required. The Maximum Bit Rate (MBR) for all service data flows that
-     use this PCC Rule or Service.
+    :ivar maximum_bit_rate: Required. The maximum bit rate (MBR) for all service data flows that
+     use this data flow policy rule or service.
     :vartype maximum_bit_rate: ~azure.mgmt.mobilenetwork.models.Ambr
-    :ivar guaranteed_bit_rate: The Guaranteed Bit Rate (GBR) for all service data flows that use
-     this PCC Rule. This is an optional setting. If you do not provide a value, there will be no GBR
-     set for the PCC Rule that uses this QoS definition.
+    :ivar guaranteed_bit_rate: The guaranteed bit rate (GBR) for all service data flows that use
+     this data flow policy rule. This is an optional setting. If you do not provide a value, there
+     will be no GBR set for the data flow policy rule that uses this QoS definition.
     :vartype guaranteed_bit_rate: ~azure.mgmt.mobilenetwork.models.Ambr
     """
 
@@ -1680,20 +2085,20 @@ class PccRuleQosPolicy(QosPolicy):
     def __init__(
         self,
         *,
-        maximum_bit_rate: "Ambr",
+        maximum_bit_rate: "_models.Ambr",
         five_qi: Optional[int] = None,
         allocation_and_retention_priority_level: Optional[int] = None,
-        preemption_capability: Optional[Union[str, "PreemptionCapability"]] = None,
-        preemption_vulnerability: Optional[Union[str, "PreemptionVulnerability"]] = None,
-        guaranteed_bit_rate: Optional["Ambr"] = None,
+        preemption_capability: Optional[Union[str, "_models.PreemptionCapability"]] = None,
+        preemption_vulnerability: Optional[Union[str, "_models.PreemptionVulnerability"]] = None,
+        guaranteed_bit_rate: Optional["_models.Ambr"] = None,
         **kwargs
     ):
         """
-        :keyword five_qi: QoS Flow 5G QoS Indicator value.  The 5QI identifies a specific QoS
-         forwarding treatment to be provided to a flow. This must not be a standardized 5QI value
-         selecting a GBR (Guaranteed Bit Rate) QoS.  The illegal GBR 5QI values are: 1, 2, 3, 4, 65, 66,
-         67, 71, 72, 73, 74, 75, 76, 82, 83, 84, and 85. See 3GPP TS23.501 section 5.7.2.1 for a full
-         description of the 5Qi parameter, and table 5.7.4-1 for the definition of which are the GBR 5QI
+        :keyword five_qi: QoS Flow 5G QoS Indicator value. The 5QI identifies a specific QoS forwarding
+         treatment to be provided to a flow. This must not be a standardized 5QI value corresponding to
+         a GBR (guaranteed bit rate) QoS Flow. The illegal GBR 5QI values are: 1, 2, 3, 4, 65, 66, 67,
+         71, 72, 73, 74, 75, 76, 82, 83, 84, and 85. See 3GPP TS23.501 section 5.7.2.1 for a full
+         description of the 5QI parameter, and table 5.7.4-1 for the definition of which are the GBR 5QI
          values.
         :paramtype five_qi: int
         :keyword allocation_and_retention_priority_level: QoS Flow allocation and retention priority
@@ -1702,23 +2107,23 @@ class PccRuleQosPolicy(QosPolicy):
          priority. If this field is not specified then ``5qi`` is used to derive the ARP value. See 3GPP
          TS23.501 section 5.7.2.2 for a full description of the ARP parameters.
         :paramtype allocation_and_retention_priority_level: int
-        :keyword preemption_capability: QoS Flow preemption capability.  The Preemption Capability of a
+        :keyword preemption_capability: QoS Flow preemption capability. The preemption capability of a
          QoS Flow controls whether it can preempt another QoS Flow with a lower priority level. See 3GPP
-         TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Possible values include:
+         TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Known values are:
          "NotPreempt", "MayPreempt".
         :paramtype preemption_capability: str or ~azure.mgmt.mobilenetwork.models.PreemptionCapability
-        :keyword preemption_vulnerability: QoS Flow preemption vulnerability.  The Preemption
-         Vulnerability of a QoS Flow controls whether it can be preempted by QoS Flow with a higher
+        :keyword preemption_vulnerability: QoS Flow preemption vulnerability. The preemption
+         vulnerability of a QoS Flow controls whether it can be preempted by a QoS Flow with a higher
          priority level. See 3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters.
-         Possible values include: "NotPreemptable", "Preemptable".
+         Known values are: "NotPreemptable", "Preemptable".
         :paramtype preemption_vulnerability: str or
          ~azure.mgmt.mobilenetwork.models.PreemptionVulnerability
-        :keyword maximum_bit_rate: Required. The Maximum Bit Rate (MBR) for all service data flows that
-         use this PCC Rule or Service.
+        :keyword maximum_bit_rate: Required. The maximum bit rate (MBR) for all service data flows that
+         use this data flow policy rule or service.
         :paramtype maximum_bit_rate: ~azure.mgmt.mobilenetwork.models.Ambr
-        :keyword guaranteed_bit_rate: The Guaranteed Bit Rate (GBR) for all service data flows that use
-         this PCC Rule. This is an optional setting. If you do not provide a value, there will be no GBR
-         set for the PCC Rule that uses this QoS definition.
+        :keyword guaranteed_bit_rate: The guaranteed bit rate (GBR) for all service data flows that use
+         this data flow policy rule. This is an optional setting. If you do not provide a value, there
+         will be no GBR set for the data flow policy rule that uses this QoS definition.
         :paramtype guaranteed_bit_rate: ~azure.mgmt.mobilenetwork.models.Ambr
         """
         super(PccRuleQosPolicy, self).__init__(five_qi=five_qi, allocation_and_retention_priority_level=allocation_and_retention_priority_level, preemption_capability=preemption_capability, preemption_vulnerability=preemption_vulnerability, maximum_bit_rate=maximum_bit_rate, **kwargs)
@@ -1728,14 +2133,14 @@ class PccRuleQosPolicy(QosPolicy):
 class PinholeTimeouts(msrest.serialization.Model):
     """Expiry times of inactive NAPT pinholes, in seconds. All timers must be at least 1 second.
 
-    :ivar tcp: Pinhole timeout for TCP pinholes in seconds. Default for TCP is 2 hours 4 minutes
-     per RFC 5382 section 5.
+    :ivar tcp: Pinhole timeout for TCP pinholes in seconds. Default for TCP is 2 hours 4 minutes,
+     as per RFC 5382 section 5.
     :vartype tcp: int
-    :ivar udp: Pinhole timeout for UDP pinholes in seconds. Default for UDP is 5 minutes per RFC
-     4787 section 4.3.
+    :ivar udp: Pinhole timeout for UDP pinholes in seconds. Default for UDP is 5 minutes, as per
+     RFC 4787 section 4.3.
     :vartype udp: int
-    :ivar icmp: Pinhole timeout for ICMP pinholes in seconds. Default for ICMP Echo is 60 seconds
-     per RFC 5508 section 3.2.
+    :ivar icmp: Pinhole timeout for ICMP pinholes in seconds. Default for ICMP Echo is 60 seconds,
+     as per RFC 5508 section 3.2.
     :vartype icmp: int
     """
 
@@ -1754,20 +2159,20 @@ class PinholeTimeouts(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        tcp: Optional[int] = 7440,
-        udp: Optional[int] = 300,
-        icmp: Optional[int] = 60,
+        tcp: Optional[int] = 180,
+        udp: Optional[int] = 30,
+        icmp: Optional[int] = 30,
         **kwargs
     ):
         """
-        :keyword tcp: Pinhole timeout for TCP pinholes in seconds. Default for TCP is 2 hours 4 minutes
-         per RFC 5382 section 5.
+        :keyword tcp: Pinhole timeout for TCP pinholes in seconds. Default for TCP is 2 hours 4
+         minutes, as per RFC 5382 section 5.
         :paramtype tcp: int
-        :keyword udp: Pinhole timeout for UDP pinholes in seconds. Default for UDP is 5 minutes per RFC
-         4787 section 4.3.
+        :keyword udp: Pinhole timeout for UDP pinholes in seconds. Default for UDP is 5 minutes, as per
+         RFC 4787 section 4.3.
         :paramtype udp: int
         :keyword icmp: Pinhole timeout for ICMP pinholes in seconds. Default for ICMP Echo is 60
-         seconds per RFC 5508 section 3.2.
+         seconds, as per RFC 5508 section 3.2.
         :paramtype icmp: int
         """
         super(PinholeTimeouts, self).__init__(**kwargs)
@@ -1776,14 +2181,74 @@ class PinholeTimeouts(msrest.serialization.Model):
         self.icmp = icmp
 
 
-class PlmnId(msrest.serialization.Model):
-    """Public Land Mobile Network (PLMN) ID.
+class PlatformConfiguration(msrest.serialization.Model):
+    """The platform where the packet core is deployed.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar mcc: Required. Mobile Country Code (MCC).
+    :ivar type: Required. The platform type where packet core is deployed. Known values are:
+     "AKS-HCI", "BaseVM".
+    :vartype type: str or ~azure.mgmt.mobilenetwork.models.PlatformType
+    :ivar azure_stack_edge_device: The Azure Stack Edge device where where the packet core is
+     deployed. If the device is part of a fault tolerant pair, either device in the pair can be
+     specified.
+    :vartype azure_stack_edge_device:
+     ~azure.mgmt.mobilenetwork.models.AzureStackEdgeDeviceResourceId
+    :ivar connected_cluster: Azure Arc connected cluster where the packet core is deployed.
+    :vartype connected_cluster: ~azure.mgmt.mobilenetwork.models.ConnectedClusterResourceId
+    :ivar custom_location: Azure Arc custom location where the packet core is deployed.
+    :vartype custom_location: ~azure.mgmt.mobilenetwork.models.CustomLocationResourceId
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'azure_stack_edge_device': {'key': 'azureStackEdgeDevice', 'type': 'AzureStackEdgeDeviceResourceId'},
+        'connected_cluster': {'key': 'connectedCluster', 'type': 'ConnectedClusterResourceId'},
+        'custom_location': {'key': 'customLocation', 'type': 'CustomLocationResourceId'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.PlatformType"],
+        azure_stack_edge_device: Optional["_models.AzureStackEdgeDeviceResourceId"] = None,
+        connected_cluster: Optional["_models.ConnectedClusterResourceId"] = None,
+        custom_location: Optional["_models.CustomLocationResourceId"] = None,
+        **kwargs
+    ):
+        """
+        :keyword type: Required. The platform type where packet core is deployed. Known values are:
+         "AKS-HCI", "BaseVM".
+        :paramtype type: str or ~azure.mgmt.mobilenetwork.models.PlatformType
+        :keyword azure_stack_edge_device: The Azure Stack Edge device where where the packet core is
+         deployed. If the device is part of a fault tolerant pair, either device in the pair can be
+         specified.
+        :paramtype azure_stack_edge_device:
+         ~azure.mgmt.mobilenetwork.models.AzureStackEdgeDeviceResourceId
+        :keyword connected_cluster: Azure Arc connected cluster where the packet core is deployed.
+        :paramtype connected_cluster: ~azure.mgmt.mobilenetwork.models.ConnectedClusterResourceId
+        :keyword custom_location: Azure Arc custom location where the packet core is deployed.
+        :paramtype custom_location: ~azure.mgmt.mobilenetwork.models.CustomLocationResourceId
+        """
+        super(PlatformConfiguration, self).__init__(**kwargs)
+        self.type = type
+        self.azure_stack_edge_device = azure_stack_edge_device
+        self.connected_cluster = connected_cluster
+        self.custom_location = custom_location
+
+
+class PlmnId(msrest.serialization.Model):
+    """Public land mobile network (PLMN) ID.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar mcc: Required. Mobile country code (MCC).
     :vartype mcc: str
-    :ivar mnc: Required. Mobile Network Code (MNC).
+    :ivar mnc: Required. Mobile network code (MNC).
     :vartype mnc: str
     """
 
@@ -1805,9 +2270,9 @@ class PlmnId(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword mcc: Required. Mobile Country Code (MCC).
+        :keyword mcc: Required. Mobile country code (MCC).
         :paramtype mcc: str
-        :keyword mnc: Required. Mobile Network Code (MNC).
+        :keyword mnc: Required. Mobile network code (MNC).
         :paramtype mnc: str
         """
         super(PlmnId, self).__init__(**kwargs)
@@ -1817,7 +2282,8 @@ class PlmnId(msrest.serialization.Model):
 
 class PortRange(msrest.serialization.Model):
     """Range of port numbers to use as translated ports on each translated address.
-If not specified and NAPT is enabled, this range defaults to 1,024 - 65,535. (Ports under 1,024 should not be used because these are special purpose ports reserved by IANA.).
+If not specified and NAPT is enabled, this range defaults to 1,024 - 49,999.
+(Ports under 1,024 should not be used because these are special purpose ports reserved by IANA. Ports 50,000 and above are reserved for non-NAPT use.).
 
     :ivar min_port: The minimum port number.
     :vartype min_port: int
@@ -1839,7 +2305,7 @@ If not specified and NAPT is enabled, this range defaults to 1,024 - 65,535. (Po
         self,
         *,
         min_port: Optional[int] = 1024,
-        max_port: Optional[int] = 65535,
+        max_port: Optional[int] = 49999,
         **kwargs
     ):
         """
@@ -1916,18 +2382,18 @@ class Service(TrackedResource):
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
-    :ivar provisioning_state: The provisioning state of the service resource. Possible values
-     include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
+    :ivar provisioning_state: The provisioning state of the service resource. Known values are:
+     "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
     :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
     :ivar service_precedence: Required. A precedence value that is used to decide between services
-     when identifying the QoS values to use for a particular Sim. A lower value means a higher
-     priority. This value should be unique among all services configured in the Mobile Network.
+     when identifying the QoS values to use for a particular SIM. A lower value means a higher
+     priority. This value should be unique among all services configured in the mobile network.
     :vartype service_precedence: int
     :ivar service_qos_policy: The QoS policy to use for packets matching this service. This can be
      overridden for particular flows using the ruleQosPolicy field in a PccRuleConfiguration. If
-     this field is null then the UE's simPolicy will define the QoS settings.
+     this field is null then the UE's SIM policy will define the QoS settings.
     :vartype service_qos_policy: ~azure.mgmt.mobilenetwork.models.QosPolicy
-    :ivar pcc_rules: Required. The set of PCC Rules that make up this service.
+    :ivar pcc_rules: Required. The set of data flow policy rules that make up this service.
     :vartype pcc_rules: list[~azure.mgmt.mobilenetwork.models.PccRuleConfiguration]
     """
 
@@ -1960,9 +2426,9 @@ class Service(TrackedResource):
         *,
         location: str,
         service_precedence: int,
-        pcc_rules: List["PccRuleConfiguration"],
+        pcc_rules: List["_models.PccRuleConfiguration"],
         tags: Optional[Dict[str, str]] = None,
-        service_qos_policy: Optional["QosPolicy"] = None,
+        service_qos_policy: Optional["_models.QosPolicy"] = None,
         **kwargs
     ):
         """
@@ -1971,15 +2437,15 @@ class Service(TrackedResource):
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
         :keyword service_precedence: Required. A precedence value that is used to decide between
-         services when identifying the QoS values to use for a particular Sim. A lower value means a
-         higher priority. This value should be unique among all services configured in the Mobile
-         Network.
+         services when identifying the QoS values to use for a particular SIM. A lower value means a
+         higher priority. This value should be unique among all services configured in the mobile
+         network.
         :paramtype service_precedence: int
         :keyword service_qos_policy: The QoS policy to use for packets matching this service. This can
          be overridden for particular flows using the ruleQosPolicy field in a PccRuleConfiguration. If
-         this field is null then the UE's simPolicy will define the QoS settings.
+         this field is null then the UE's SIM policy will define the QoS settings.
         :paramtype service_qos_policy: ~azure.mgmt.mobilenetwork.models.QosPolicy
-        :keyword pcc_rules: Required. The set of PCC Rules that make up this service.
+        :keyword pcc_rules: Required. The set of data flow policy rules that make up this service.
         :paramtype pcc_rules: list[~azure.mgmt.mobilenetwork.models.PccRuleConfiguration]
         """
         super(Service, self).__init__(tags=tags, location=location, **kwargs)
@@ -1990,16 +2456,16 @@ class Service(TrackedResource):
 
 
 class ServiceDataFlowTemplate(msrest.serialization.Model):
-    """Service data flow (SDF) template.
+    """Data flow template.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar template_name: Required. The name of the SDF template. This must be unique within the
-     parent PccRuleConfiguration. You must not use any of the following reserved strings -
+    :ivar template_name: Required. The name of the data flow template. This must be unique within
+     the parent data flow policy rule. You must not use any of the following reserved strings -
      ``default``\ , ``requested`` or ``service``.
     :vartype template_name: str
-    :ivar direction: Required. The direction of this flow. Possible values include: "Uplink",
-     "Downlink", "Bidirectional".
+    :ivar direction: Required. The direction of this flow. Known values are: "Uplink", "Downlink",
+     "Bidirectional".
     :vartype direction: str or ~azure.mgmt.mobilenetwork.models.SdfDirection
     :ivar protocol: Required. A list of the allowed protocol(s) for this flow. If you want this
      flow to be able to use any protocol within the internet protocol suite, use the value ``ip``.
@@ -2011,9 +2477,9 @@ class ServiceDataFlowTemplate(msrest.serialization.Model):
     :vartype protocol: list[str]
     :ivar remote_ip_list: Required. The remote IP address(es) to which UEs will connect for this
      flow. If you want to allow connections on any IP address, use the value ``any``. Otherwise, you
-     must provide each of the remote IP addresses to which Fusion Core will connect for this flow.
-     You must provide each IP address in CIDR notation, including the netmask (for example,
-     192.0.2.54/24).
+     must provide each of the remote IP addresses to which the packet core instance will connect for
+     this flow. You must provide each IP address in CIDR notation, including the netmask (for
+     example, 192.0.2.54/24).
     :vartype remote_ip_list: list[str]
     :ivar ports: The port(s) to which UEs will connect for this flow. You can specify zero or more
      ports or port ranges. If you specify one or more ports or port ranges then you must specify a
@@ -2043,18 +2509,18 @@ class ServiceDataFlowTemplate(msrest.serialization.Model):
         self,
         *,
         template_name: str,
-        direction: Union[str, "SdfDirection"],
+        direction: Union[str, "_models.SdfDirection"],
         protocol: List[str],
         remote_ip_list: List[str],
         ports: Optional[List[str]] = None,
         **kwargs
     ):
         """
-        :keyword template_name: Required. The name of the SDF template. This must be unique within the
-         parent PccRuleConfiguration. You must not use any of the following reserved strings -
-         ``default``\ , ``requested`` or ``service``.
+        :keyword template_name: Required. The name of the data flow template. This must be unique
+         within the parent data flow policy rule. You must not use any of the following reserved strings
+         - ``default``\ , ``requested`` or ``service``.
         :paramtype template_name: str
-        :keyword direction: Required. The direction of this flow. Possible values include: "Uplink",
+        :keyword direction: Required. The direction of this flow. Known values are: "Uplink",
          "Downlink", "Bidirectional".
         :paramtype direction: str or ~azure.mgmt.mobilenetwork.models.SdfDirection
         :keyword protocol: Required. A list of the allowed protocol(s) for this flow. If you want this
@@ -2067,9 +2533,9 @@ class ServiceDataFlowTemplate(msrest.serialization.Model):
         :paramtype protocol: list[str]
         :keyword remote_ip_list: Required. The remote IP address(es) to which UEs will connect for this
          flow. If you want to allow connections on any IP address, use the value ``any``. Otherwise, you
-         must provide each of the remote IP addresses to which Fusion Core will connect for this flow.
-         You must provide each IP address in CIDR notation, including the netmask (for example,
-         192.0.2.54/24).
+         must provide each of the remote IP addresses to which the packet core instance will connect for
+         this flow. You must provide each IP address in CIDR notation, including the netmask (for
+         example, 192.0.2.54/24).
         :paramtype remote_ip_list: list[str]
         :keyword ports: The port(s) to which UEs will connect for this flow. You can specify zero or
          more ports or port ranges. If you specify one or more ports or port ranges then you must
@@ -2088,11 +2554,11 @@ class ServiceDataFlowTemplate(msrest.serialization.Model):
 
 
 class ServiceListResult(msrest.serialization.Model):
-    """Response for Services API service call.
+    """Response for services API service call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: A list of Services.
+    :ivar value: A list of services.
     :vartype value: list[~azure.mgmt.mobilenetwork.models.Service]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
@@ -2110,11 +2576,11 @@ class ServiceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Service"]] = None,
+        value: Optional[List["_models.Service"]] = None,
         **kwargs
     ):
         """
-        :keyword value: A list of Services.
+        :keyword value: A list of services.
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.Service]
         """
         super(ServiceListResult, self).__init__(**kwargs)
@@ -2123,7 +2589,7 @@ class ServiceListResult(msrest.serialization.Model):
 
 
 class ServiceResourceId(msrest.serialization.Model):
-    """Reference to a Service resource.
+    """Reference to a service resource.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2153,8 +2619,128 @@ class ServiceResourceId(msrest.serialization.Model):
         self.id = id
 
 
-class Sim(TrackedResource):
-    """Sim resource.
+class Sim(ProxyResource):
+    """SIM resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
+    :ivar provisioning_state: The provisioning state of the SIM resource. Known values are:
+     "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
+    :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
+    :ivar sim_state: The state of the SIM resource. Known values are: "Disabled", "Enabled",
+     "Invalid".
+    :vartype sim_state: str or ~azure.mgmt.mobilenetwork.models.SimState
+    :ivar international_mobile_subscriber_identity: Required. The international mobile subscriber
+     identity (IMSI) for the SIM.
+    :vartype international_mobile_subscriber_identity: str
+    :ivar integrated_circuit_card_identifier: The integrated circuit card ID (ICCID) for the SIM.
+    :vartype integrated_circuit_card_identifier: str
+    :ivar authentication_key: The Ki value for the SIM.
+    :vartype authentication_key: str
+    :ivar operator_key_code: The Opc value for the SIM.
+    :vartype operator_key_code: str
+    :ivar device_type: An optional free-form text field that can be used to record the device type
+     this SIM is associated with, for example 'Video camera'. The Azure portal allows SIMs to be
+     grouped and filtered based on this value.
+    :vartype device_type: str
+    :ivar sim_policy: The SIM policy used by this SIM.
+    :vartype sim_policy: ~azure.mgmt.mobilenetwork.models.SimPolicyResourceId
+    :ivar static_ip_configuration: A list of static IP addresses assigned to this SIM. Each address
+     is assigned at a defined network scope, made up of {attached data network, slice}.
+    :vartype static_ip_configuration: list[~azure.mgmt.mobilenetwork.models.SimStaticIpProperties]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'sim_state': {'readonly': True},
+        'international_mobile_subscriber_identity': {'required': True, 'pattern': r'^[0-9]{5,15}$'},
+        'integrated_circuit_card_identifier': {'pattern': r'^89[0-9]{17,18}$'},
+        'authentication_key': {'pattern': r'^[0-9a-fA-F]{32}$'},
+        'operator_key_code': {'pattern': r'^[0-9a-fA-F]{32}$'},
+        'static_ip_configuration': {'min_items': 1, 'unique': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'sim_state': {'key': 'properties.simState', 'type': 'str'},
+        'international_mobile_subscriber_identity': {'key': 'properties.internationalMobileSubscriberIdentity', 'type': 'str'},
+        'integrated_circuit_card_identifier': {'key': 'properties.integratedCircuitCardIdentifier', 'type': 'str'},
+        'authentication_key': {'key': 'properties.authenticationKey', 'type': 'str'},
+        'operator_key_code': {'key': 'properties.operatorKeyCode', 'type': 'str'},
+        'device_type': {'key': 'properties.deviceType', 'type': 'str'},
+        'sim_policy': {'key': 'properties.simPolicy', 'type': 'SimPolicyResourceId'},
+        'static_ip_configuration': {'key': 'properties.staticIpConfiguration', 'type': '[SimStaticIpProperties]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        international_mobile_subscriber_identity: str,
+        integrated_circuit_card_identifier: Optional[str] = None,
+        authentication_key: Optional[str] = None,
+        operator_key_code: Optional[str] = None,
+        device_type: Optional[str] = None,
+        sim_policy: Optional["_models.SimPolicyResourceId"] = None,
+        static_ip_configuration: Optional[List["_models.SimStaticIpProperties"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword international_mobile_subscriber_identity: Required. The international mobile
+         subscriber identity (IMSI) for the SIM.
+        :paramtype international_mobile_subscriber_identity: str
+        :keyword integrated_circuit_card_identifier: The integrated circuit card ID (ICCID) for the
+         SIM.
+        :paramtype integrated_circuit_card_identifier: str
+        :keyword authentication_key: The Ki value for the SIM.
+        :paramtype authentication_key: str
+        :keyword operator_key_code: The Opc value for the SIM.
+        :paramtype operator_key_code: str
+        :keyword device_type: An optional free-form text field that can be used to record the device
+         type this SIM is associated with, for example 'Video camera'. The Azure portal allows SIMs to
+         be grouped and filtered based on this value.
+        :paramtype device_type: str
+        :keyword sim_policy: The SIM policy used by this SIM.
+        :paramtype sim_policy: ~azure.mgmt.mobilenetwork.models.SimPolicyResourceId
+        :keyword static_ip_configuration: A list of static IP addresses assigned to this SIM. Each
+         address is assigned at a defined network scope, made up of {attached data network, slice}.
+        :paramtype static_ip_configuration:
+         list[~azure.mgmt.mobilenetwork.models.SimStaticIpProperties]
+        """
+        super(Sim, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.sim_state = None
+        self.international_mobile_subscriber_identity = international_mobile_subscriber_identity
+        self.integrated_circuit_card_identifier = integrated_circuit_card_identifier
+        self.authentication_key = authentication_key
+        self.operator_key_code = operator_key_code
+        self.device_type = device_type
+        self.sim_policy = sim_policy
+        self.static_ip_configuration = static_ip_configuration
+
+
+class SimGroup(TrackedResource):
+    """SIM group resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2175,32 +2761,15 @@ class Sim(TrackedResource):
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
-    :ivar provisioning_state: The provisioning state of the sim resource. Possible values include:
+    :ivar identity: The identity used to retrieve the encryption key from Azure key vault.
+    :vartype identity: ~azure.mgmt.mobilenetwork.models.ManagedServiceIdentity
+    :ivar provisioning_state: The provisioning state of the SIM group resource. Known values are:
      "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
     :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
-    :ivar sim_state: The state of the sim resource. Possible values include: "Disabled", "Enabled",
-     "Invalid".
-    :vartype sim_state: str or ~azure.mgmt.mobilenetwork.models.SimState
-    :ivar international_mobile_subscriber_identity: Required. The International Mobile Subscriber
-     Identity (IMSI) for the sim.
-    :vartype international_mobile_subscriber_identity: str
-    :ivar integrated_circuit_card_identifier: The Integrated Circuit Card ID (ICC Id) for the sim.
-    :vartype integrated_circuit_card_identifier: str
-    :ivar authentication_key: The ki value for the sim.
-    :vartype authentication_key: str
-    :ivar operator_key_code: The Opc value for the sim.
-    :vartype operator_key_code: str
-    :ivar mobile_network: Mobile network that this sim belongs to.
+    :ivar encryption_key: A key to encrypt the SIM data that belongs to this SIM group.
+    :vartype encryption_key: ~azure.mgmt.mobilenetwork.models.KeyVaultKey
+    :ivar mobile_network: Mobile network that this SIM belongs to.
     :vartype mobile_network: ~azure.mgmt.mobilenetwork.models.MobileNetworkResourceId
-    :ivar device_type: An optional free-form text field that can be used to record the device type
-     this sim is associated with, for example 'Video camera'. The Azure portal allows Sims to be
-     grouped and filtered based on this value.
-    :vartype device_type: str
-    :ivar sim_policy: The simPolicy used by this sim.
-    :vartype sim_policy: ~azure.mgmt.mobilenetwork.models.SimPolicyResourceId
-    :ivar static_ip_configuration: A list of static IP addresses assigned to this sim. Each address
-     is assigned at a defined network scope, made up of {attached data network, slice}.
-    :vartype static_ip_configuration: list[~azure.mgmt.mobilenetwork.models.SimStaticIpProperties]
     """
 
     _validation = {
@@ -2210,12 +2779,6 @@ class Sim(TrackedResource):
         'system_data': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
-        'sim_state': {'readonly': True},
-        'international_mobile_subscriber_identity': {'required': True, 'pattern': r'^[0-9]{5,15}$'},
-        'integrated_circuit_card_identifier': {'pattern': r'^89[0-9]{17,18}$'},
-        'authentication_key': {'pattern': r'^[0-9a-fA-F]{32}$'},
-        'operator_key_code': {'pattern': r'^[0-9a-fA-F]{32}$'},
-        'static_ip_configuration': {'min_items': 1, 'unique': True},
     }
 
     _attribute_map = {
@@ -2225,31 +2788,20 @@ class Sim(TrackedResource):
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'sim_state': {'key': 'properties.simState', 'type': 'str'},
-        'international_mobile_subscriber_identity': {'key': 'properties.internationalMobileSubscriberIdentity', 'type': 'str'},
-        'integrated_circuit_card_identifier': {'key': 'properties.integratedCircuitCardIdentifier', 'type': 'str'},
-        'authentication_key': {'key': 'properties.authenticationKey', 'type': 'str'},
-        'operator_key_code': {'key': 'properties.operatorKeyCode', 'type': 'str'},
+        'encryption_key': {'key': 'properties.encryptionKey', 'type': 'KeyVaultKey'},
         'mobile_network': {'key': 'properties.mobileNetwork', 'type': 'MobileNetworkResourceId'},
-        'device_type': {'key': 'properties.deviceType', 'type': 'str'},
-        'sim_policy': {'key': 'properties.simPolicy', 'type': 'SimPolicyResourceId'},
-        'static_ip_configuration': {'key': 'properties.staticIpConfiguration', 'type': '[SimStaticIpProperties]'},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        international_mobile_subscriber_identity: str,
         tags: Optional[Dict[str, str]] = None,
-        integrated_circuit_card_identifier: Optional[str] = None,
-        authentication_key: Optional[str] = None,
-        operator_key_code: Optional[str] = None,
-        mobile_network: Optional["MobileNetworkResourceId"] = None,
-        device_type: Optional[str] = None,
-        sim_policy: Optional["SimPolicyResourceId"] = None,
-        static_ip_configuration: Optional[List["SimStaticIpProperties"]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        encryption_key: Optional["_models.KeyVaultKey"] = None,
+        mobile_network: Optional["_models.MobileNetworkResourceId"] = None,
         **kwargs
     ):
         """
@@ -2257,48 +2809,92 @@ class Sim(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
-        :keyword international_mobile_subscriber_identity: Required. The International Mobile
-         Subscriber Identity (IMSI) for the sim.
-        :paramtype international_mobile_subscriber_identity: str
-        :keyword integrated_circuit_card_identifier: The Integrated Circuit Card ID (ICC Id) for the
-         sim.
-        :paramtype integrated_circuit_card_identifier: str
-        :keyword authentication_key: The ki value for the sim.
-        :paramtype authentication_key: str
-        :keyword operator_key_code: The Opc value for the sim.
-        :paramtype operator_key_code: str
-        :keyword mobile_network: Mobile network that this sim belongs to.
+        :keyword identity: The identity used to retrieve the encryption key from Azure key vault.
+        :paramtype identity: ~azure.mgmt.mobilenetwork.models.ManagedServiceIdentity
+        :keyword encryption_key: A key to encrypt the SIM data that belongs to this SIM group.
+        :paramtype encryption_key: ~azure.mgmt.mobilenetwork.models.KeyVaultKey
+        :keyword mobile_network: Mobile network that this SIM belongs to.
         :paramtype mobile_network: ~azure.mgmt.mobilenetwork.models.MobileNetworkResourceId
-        :keyword device_type: An optional free-form text field that can be used to record the device
-         type this sim is associated with, for example 'Video camera'. The Azure portal allows Sims to
-         be grouped and filtered based on this value.
-        :paramtype device_type: str
-        :keyword sim_policy: The simPolicy used by this sim.
-        :paramtype sim_policy: ~azure.mgmt.mobilenetwork.models.SimPolicyResourceId
-        :keyword static_ip_configuration: A list of static IP addresses assigned to this sim. Each
-         address is assigned at a defined network scope, made up of {attached data network, slice}.
-        :paramtype static_ip_configuration:
-         list[~azure.mgmt.mobilenetwork.models.SimStaticIpProperties]
         """
-        super(Sim, self).__init__(tags=tags, location=location, **kwargs)
+        super(SimGroup, self).__init__(tags=tags, location=location, **kwargs)
+        self.identity = identity
         self.provisioning_state = None
-        self.sim_state = None
-        self.international_mobile_subscriber_identity = international_mobile_subscriber_identity
-        self.integrated_circuit_card_identifier = integrated_circuit_card_identifier
-        self.authentication_key = authentication_key
-        self.operator_key_code = operator_key_code
+        self.encryption_key = encryption_key
         self.mobile_network = mobile_network
-        self.device_type = device_type
-        self.sim_policy = sim_policy
-        self.static_ip_configuration = static_ip_configuration
 
 
-class SimIdListResult(msrest.serialization.Model):
-    """Response for list sim ids API service call.
+class SimGroupListResult(msrest.serialization.Model):
+    """Response for list SIM groups API service call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: A list of sim profile ids in a resource group.
+    :ivar value: A list of SIM groups in a resource group.
+    :vartype value: list[~azure.mgmt.mobilenetwork.models.SimGroup]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SimGroup]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.SimGroup"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: A list of SIM groups in a resource group.
+        :paramtype value: list[~azure.mgmt.mobilenetwork.models.SimGroup]
+        """
+        super(SimGroupListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class SimGroupResourceId(msrest.serialization.Model):
+    """Reference to a SIM group resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Required. SIM group resource ID.
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'required': True, 'pattern': r'^/[sS][uU][bB][sS][cC][rR][iI][pP][tT][iI][oO][nN][sS]/[^/?#]+/[rR][eE][sS][oO][uU][rR][cC][eE][gG][rR][oO][uU][pP][sS]/[^/?#]+/[pP][rR][oO][vV][iI][dD][eE][rR][sS]/[mM][iI][cC][rR][oO][sS][oO][fF][tT]\.[mM][oO][bB][iI][lL][eE][nN][eE][tT][wW][oO][rR][kK]/[mM][oO][bB][iI][lL][eE][nN][eE][tT][wW][oO][rR][kK][sS]/[^/?#]+/[sS][iI][mM][gG][rR][oO][uU][pP][sS]/[^/?#]+$'},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        **kwargs
+    ):
+        """
+        :keyword id: Required. SIM group resource ID.
+        :paramtype id: str
+        """
+        super(SimGroupResourceId, self).__init__(**kwargs)
+        self.id = id
+
+
+class SimIdListResult(msrest.serialization.Model):
+    """Response for list SIM IDs API service call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: A list of SIM IDs.
     :vartype value: list[~azure.mgmt.mobilenetwork.models.SubResource]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
@@ -2316,11 +2912,11 @@ class SimIdListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["SubResource"]] = None,
+        value: Optional[List["_models.SubResource"]] = None,
         **kwargs
     ):
         """
-        :keyword value: A list of sim profile ids in a resource group.
+        :keyword value: A list of SIM IDs.
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.SubResource]
         """
         super(SimIdListResult, self).__init__(**kwargs)
@@ -2329,11 +2925,11 @@ class SimIdListResult(msrest.serialization.Model):
 
 
 class SimListResult(msrest.serialization.Model):
-    """Response for list Sims API service call.
+    """Response for list SIMs API service call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: A list of Sims in a resource group.
+    :ivar value: A list of SIMs in a resource group.
     :vartype value: list[~azure.mgmt.mobilenetwork.models.Sim]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
@@ -2351,11 +2947,11 @@ class SimListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Sim"]] = None,
+        value: Optional[List["_models.Sim"]] = None,
         **kwargs
     ):
         """
-        :keyword value: A list of Sims in a resource group.
+        :keyword value: A list of SIMs in a resource group.
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.Sim]
         """
         super(SimListResult, self).__init__(**kwargs)
@@ -2364,7 +2960,7 @@ class SimListResult(msrest.serialization.Model):
 
 
 class SimPolicy(TrackedResource):
-    """Sim policy resource.
+    """SIM policy resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2385,18 +2981,18 @@ class SimPolicy(TrackedResource):
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
-    :ivar provisioning_state: The provisioning state of the sim policy resource. Possible values
-     include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
+    :ivar provisioning_state: The provisioning state of the SIM policy resource. Known values are:
+     "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
     :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
     :ivar ue_ambr: Required. Aggregate maximum bit rate across all non-GBR QoS flows of all PDU
      sessions of a given UE. See 3GPP TS23.501 section 5.7.2.6 for a full description of the
      UE-AMBR.
     :vartype ue_ambr: ~azure.mgmt.mobilenetwork.models.Ambr
     :ivar default_slice: Required. The default slice to use if the UE does not explicitly specify
-     it.  This slice must exist in the ``sliceConfigurations`` map.
+     it. This slice must exist in the ``sliceConfigurations`` map.
     :vartype default_slice: ~azure.mgmt.mobilenetwork.models.SliceResourceId
-    :ivar rfsp_index: RAT/Frequency Selection Priority Index, defined in 3GPP TS 36.413.  This is
-     an optional setting and by default is unspecified.
+    :ivar rfsp_index: RAT/Frequency Selection Priority Index, defined in 3GPP TS 36.413. This is an
+     optional setting and by default is unspecified.
     :vartype rfsp_index: int
     :ivar registration_timer: Interval for the UE periodic registration update procedure, in
      seconds.
@@ -2439,9 +3035,9 @@ class SimPolicy(TrackedResource):
         self,
         *,
         location: str,
-        ue_ambr: "Ambr",
-        default_slice: "SliceResourceId",
-        slice_configurations: List["SliceConfiguration"],
+        ue_ambr: "_models.Ambr",
+        default_slice: "_models.SliceResourceId",
+        slice_configurations: List["_models.SliceConfiguration"],
         tags: Optional[Dict[str, str]] = None,
         rfsp_index: Optional[int] = None,
         registration_timer: Optional[int] = 3240,
@@ -2457,10 +3053,10 @@ class SimPolicy(TrackedResource):
          UE-AMBR.
         :paramtype ue_ambr: ~azure.mgmt.mobilenetwork.models.Ambr
         :keyword default_slice: Required. The default slice to use if the UE does not explicitly
-         specify it.  This slice must exist in the ``sliceConfigurations`` map.
+         specify it. This slice must exist in the ``sliceConfigurations`` map.
         :paramtype default_slice: ~azure.mgmt.mobilenetwork.models.SliceResourceId
-        :keyword rfsp_index: RAT/Frequency Selection Priority Index, defined in 3GPP TS 36.413.  This
-         is an optional setting and by default is unspecified.
+        :keyword rfsp_index: RAT/Frequency Selection Priority Index, defined in 3GPP TS 36.413. This is
+         an optional setting and by default is unspecified.
         :paramtype rfsp_index: int
         :keyword registration_timer: Interval for the UE periodic registration update procedure, in
          seconds.
@@ -2479,11 +3075,11 @@ class SimPolicy(TrackedResource):
 
 
 class SimPolicyListResult(msrest.serialization.Model):
-    """Response for SimPolicies API service call.
+    """Response for SIM policies API service call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: A list of SimPolicies.
+    :ivar value: A list of SIM policies.
     :vartype value: list[~azure.mgmt.mobilenetwork.models.SimPolicy]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
@@ -2501,11 +3097,11 @@ class SimPolicyListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["SimPolicy"]] = None,
+        value: Optional[List["_models.SimPolicy"]] = None,
         **kwargs
     ):
         """
-        :keyword value: A list of SimPolicies.
+        :keyword value: A list of SIM policies.
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.SimPolicy]
         """
         super(SimPolicyListResult, self).__init__(**kwargs)
@@ -2514,11 +3110,11 @@ class SimPolicyListResult(msrest.serialization.Model):
 
 
 class SimPolicyResourceId(msrest.serialization.Model):
-    """Reference to a SIM Policy resource.
+    """Reference to a SIM policy resource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. SIM Policy resource ID.
+    :ivar id: Required. SIM policy resource ID.
     :vartype id: str
     """
 
@@ -2537,7 +3133,7 @@ class SimPolicyResourceId(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword id: Required. SIM Policy resource ID.
+        :keyword id: Required. SIM policy resource ID.
         :paramtype id: str
         """
         super(SimPolicyResourceId, self).__init__(**kwargs)
@@ -2545,16 +3141,16 @@ class SimPolicyResourceId(msrest.serialization.Model):
 
 
 class SimStaticIpProperties(msrest.serialization.Model):
-    """Static IP configuration for a sim, scoped to a particular attached data network and slice.
+    """Static IP configuration for a SIM, scoped to a particular attached data network and slice.
 
     :ivar attached_data_network: The attached data network on which the static IP address will be
-     used. The combination of attachedDataNetwork and slice defines the network scope of the IP
+     used. The combination of attached data network and slice defines the network scope of the IP
      address.
     :vartype attached_data_network: ~azure.mgmt.mobilenetwork.models.AttachedDataNetworkResourceId
     :ivar slice: The network slice on which the static IP address will be used. The combination of
-     attachedDataNetwork and slice defines the network scope of the IP address.
+     attached data network and slice defines the network scope of the IP address.
     :vartype slice: ~azure.mgmt.mobilenetwork.models.SliceResourceId
-    :ivar static_ip: The static IP configuration for the sim to use at the defined network scope.
+    :ivar static_ip: The static IP configuration for the SIM to use at the defined network scope.
     :vartype static_ip: ~azure.mgmt.mobilenetwork.models.SimStaticIpPropertiesStaticIp
     """
 
@@ -2567,21 +3163,21 @@ class SimStaticIpProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        attached_data_network: Optional["AttachedDataNetworkResourceId"] = None,
-        slice: Optional["SliceResourceId"] = None,
-        static_ip: Optional["SimStaticIpPropertiesStaticIp"] = None,
+        attached_data_network: Optional["_models.AttachedDataNetworkResourceId"] = None,
+        slice: Optional["_models.SliceResourceId"] = None,
+        static_ip: Optional["_models.SimStaticIpPropertiesStaticIp"] = None,
         **kwargs
     ):
         """
         :keyword attached_data_network: The attached data network on which the static IP address will
-         be used. The combination of attachedDataNetwork and slice defines the network scope of the IP
+         be used. The combination of attached data network and slice defines the network scope of the IP
          address.
         :paramtype attached_data_network:
          ~azure.mgmt.mobilenetwork.models.AttachedDataNetworkResourceId
         :keyword slice: The network slice on which the static IP address will be used. The combination
-         of attachedDataNetwork and slice defines the network scope of the IP address.
+         of attached data network and slice defines the network scope of the IP address.
         :paramtype slice: ~azure.mgmt.mobilenetwork.models.SliceResourceId
-        :keyword static_ip: The static IP configuration for the sim to use at the defined network
+        :keyword static_ip: The static IP configuration for the SIM to use at the defined network
          scope.
         :paramtype static_ip: ~azure.mgmt.mobilenetwork.models.SimStaticIpPropertiesStaticIp
         """
@@ -2592,10 +3188,10 @@ class SimStaticIpProperties(msrest.serialization.Model):
 
 
 class SimStaticIpPropertiesStaticIp(msrest.serialization.Model):
-    """The static IP configuration for the sim to use at the defined network scope.
+    """The static IP configuration for the SIM to use at the defined network scope.
 
-    :ivar ipv4_address: The IPv4 address assigned to the sim at this network scope. This address
-     must be in the userEquipmentStaticAddressPoolPrefix defined in the attachedDataNetwork.
+    :ivar ipv4_address: The IPv4 address assigned to the SIM at this network scope. This address
+     must be in the userEquipmentStaticAddressPoolPrefix defined in the attached data network.
     :vartype ipv4_address: str
     """
 
@@ -2614,8 +3210,8 @@ class SimStaticIpPropertiesStaticIp(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword ipv4_address: The IPv4 address assigned to the sim at this network scope. This address
-         must be in the userEquipmentStaticAddressPoolPrefix defined in the attachedDataNetwork.
+        :keyword ipv4_address: The IPv4 address assigned to the SIM at this network scope. This address
+         must be in the userEquipmentStaticAddressPoolPrefix defined in the attached data network.
         :paramtype ipv4_address: str
         """
         super(SimStaticIpPropertiesStaticIp, self).__init__(**kwargs)
@@ -2644,11 +3240,10 @@ class Site(TrackedResource):
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
-    :ivar provisioning_state: The provisioning state of the site resource. **TODO**\ : Confirm if
-     this is needed. Possible values include: "Unknown", "Succeeded", "Accepted", "Deleting",
-     "Failed", "Canceled", "Deleted".
+    :ivar provisioning_state: The provisioning state of the site resource. Known values are:
+     "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
     :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
-    :ivar network_functions: An array of ids of the network functions deployed on the site,
+    :ivar network_functions: An array of IDs of the network functions deployed on the site,
      maintained by the user.
     :vartype network_functions: list[~azure.mgmt.mobilenetwork.models.SubResource]
     """
@@ -2678,7 +3273,7 @@ class Site(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        network_functions: Optional[List["SubResource"]] = None,
+        network_functions: Optional[List["_models.SubResource"]] = None,
         **kwargs
     ):
         """
@@ -2686,7 +3281,7 @@ class Site(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
-        :keyword network_functions: An array of ids of the network functions deployed on the site,
+        :keyword network_functions: An array of IDs of the network functions deployed on the site,
          maintained by the user.
         :paramtype network_functions: list[~azure.mgmt.mobilenetwork.models.SubResource]
         """
@@ -2700,7 +3295,7 @@ class SiteListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: A list of sites in a resource group.
+    :ivar value: A list of sites in a mobile network.
     :vartype value: list[~azure.mgmt.mobilenetwork.models.Site]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
@@ -2718,11 +3313,11 @@ class SiteListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Site"]] = None,
+        value: Optional[List["_models.Site"]] = None,
         **kwargs
     ):
         """
-        :keyword value: A list of sites in a resource group.
+        :keyword value: A list of sites in a mobile network.
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.Site]
         """
         super(SiteListResult, self).__init__(**kwargs)
@@ -2752,11 +3347,11 @@ class Slice(TrackedResource):
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
-    :ivar provisioning_state: The provisioning state of the network slice resource. Possible values
-     include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
+    :ivar provisioning_state: The provisioning state of the network slice resource. Known values
+     are: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
     :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
-    :ivar snssai: Required. The S-NSSAI (single network slice selection assistance information).
-     Unique at the scope of a MobileNetwork.
+    :ivar snssai: Required. Single-network slice selection assistance information (S-NSSAI). Unique
+     at the scope of a mobile network.
     :vartype snssai: ~azure.mgmt.mobilenetwork.models.Snssai
     :ivar description: An optional description for this network slice.
     :vartype description: str
@@ -2788,7 +3383,7 @@ class Slice(TrackedResource):
         self,
         *,
         location: str,
-        snssai: "Snssai",
+        snssai: "_models.Snssai",
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs
@@ -2798,8 +3393,8 @@ class Slice(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
-        :keyword snssai: Required. The S-NSSAI (single network slice selection assistance information).
-         Unique at the scope of a MobileNetwork.
+        :keyword snssai: Required. Single-network slice selection assistance information (S-NSSAI).
+         Unique at the scope of a mobile network.
         :paramtype snssai: ~azure.mgmt.mobilenetwork.models.Snssai
         :keyword description: An optional description for this network slice.
         :paramtype description: str
@@ -2815,10 +3410,10 @@ class SliceConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar slice: Required. A reference to the Slice that these settings apply to.
+    :ivar slice: Required. A reference to the slice that these settings apply to.
     :vartype slice: ~azure.mgmt.mobilenetwork.models.SliceResourceId
     :ivar default_data_network: Required. The default data network to use if the UE does not
-     explicitly specify it.  Configuration for this object must exist in the
+     explicitly specify it. Configuration for this object must exist in the
      ``dataNetworkConfigurations`` map.
     :vartype default_data_network: ~azure.mgmt.mobilenetwork.models.DataNetworkResourceId
     :ivar data_network_configurations: Required. The allowed data networks and the settings to use
@@ -2842,16 +3437,16 @@ class SliceConfiguration(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        slice: "SliceResourceId",
-        default_data_network: "DataNetworkResourceId",
-        data_network_configurations: List["DataNetworkConfiguration"],
+        slice: "_models.SliceResourceId",
+        default_data_network: "_models.DataNetworkResourceId",
+        data_network_configurations: List["_models.DataNetworkConfiguration"],
         **kwargs
     ):
         """
-        :keyword slice: Required. A reference to the Slice that these settings apply to.
+        :keyword slice: Required. A reference to the slice that these settings apply to.
         :paramtype slice: ~azure.mgmt.mobilenetwork.models.SliceResourceId
         :keyword default_data_network: Required. The default data network to use if the UE does not
-         explicitly specify it.  Configuration for this object must exist in the
+         explicitly specify it. Configuration for this object must exist in the
          ``dataNetworkConfigurations`` map.
         :paramtype default_data_network: ~azure.mgmt.mobilenetwork.models.DataNetworkResourceId
         :keyword data_network_configurations: Required. The allowed data networks and the settings to
@@ -2866,11 +3461,11 @@ class SliceConfiguration(msrest.serialization.Model):
 
 
 class SliceListResult(msrest.serialization.Model):
-    """Response for attached data network API service call.
+    """Response for network slice API service call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: A list of data networks in a resource group.
+    :ivar value: A list of network slices in a mobile network.
     :vartype value: list[~azure.mgmt.mobilenetwork.models.Slice]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
@@ -2888,11 +3483,11 @@ class SliceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Slice"]] = None,
+        value: Optional[List["_models.Slice"]] = None,
         **kwargs
     ):
         """
-        :keyword value: A list of data networks in a resource group.
+        :keyword value: A list of network slices in a mobile network.
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.Slice]
         """
         super(SliceListResult, self).__init__(**kwargs)
@@ -2901,7 +3496,7 @@ class SliceListResult(msrest.serialization.Model):
 
 
 class SliceResourceId(msrest.serialization.Model):
-    """Reference to a Slice resource.
+    """Reference to a slice resource.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2932,13 +3527,13 @@ class SliceResourceId(msrest.serialization.Model):
 
 
 class Snssai(msrest.serialization.Model):
-    """Single-Network Slice Selection Assistance Information (S-NSSAI).
+    """Single-network slice selection assistance information (S-NSSAI).
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar sst: Required. Slice/Service Type (SST).
+    :ivar sst: Required. Slice/service type (SST).
     :vartype sst: int
-    :ivar sd: Slice Differentiator (SD).
+    :ivar sd: Slice differentiator (SD).
     :vartype sd: str
     """
 
@@ -2960,9 +3555,9 @@ class Snssai(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword sst: Required. Slice/Service Type (SST).
+        :keyword sst: Required. Slice/service type (SST).
         :paramtype sst: int
-        :keyword sd: Slice Differentiator (SD).
+        :keyword sd: Slice differentiator (SD).
         :paramtype sd: str
         """
         super(Snssai, self).__init__(**kwargs)
@@ -3006,15 +3601,15 @@ class SystemData(msrest.serialization.Model):
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", "Key".
     :vartype created_by_type: str or ~azure.mgmt.mobilenetwork.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.mobilenetwork.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
@@ -3033,25 +3628,25 @@ class SystemData(msrest.serialization.Model):
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", "Key".
         :paramtype created_by_type: str or ~azure.mgmt.mobilenetwork.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", "Key".
         :paramtype last_modified_by_type: str or ~azure.mgmt.mobilenetwork.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
@@ -3088,3 +3683,35 @@ class TagsObject(msrest.serialization.Model):
         """
         super(TagsObject, self).__init__(**kwargs)
         self.tags = tags
+
+
+class UserAssignedIdentity(msrest.serialization.Model):
+    """User assigned identity properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(UserAssignedIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
