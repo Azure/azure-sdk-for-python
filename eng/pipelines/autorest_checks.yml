@@ -52,7 +52,7 @@ jobs:
           pip install $(Build.SourcesDirectory)/$(source_path_azure_core)
           pip install -r requirements.txt
           pip freeze
-          pytest $(Build.SourcesDirectory)/autorest.python/packages/autorest.pythontest/vanilla/legacy
+          pytest $(Build.SourcesDirectory)/autorest.python/packages/autorest.python/test/vanilla/legacy
         displayName: 'Install azure-core and Test Vanilla Legacy'
 
       - script: |
