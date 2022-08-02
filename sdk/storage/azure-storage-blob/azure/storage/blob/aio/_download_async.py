@@ -421,8 +421,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         else:
             data_end = self._file_size
             data_start = self._initial_range[1] + 1  # Start where the first download ended
-            # For encryption V2 only, adjust start to the end of the fetched data rather than download size
-            if is_encryption_v2(self._encryption_data):
+            # For encryption, adjust start to the end of the fetched data rather than download size
+            if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
                 data_start = (self._start_range or 0) + len(self._current_content)
 
             if self._end_range is not None:
@@ -533,8 +533,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             data_end = min(self._file_size, self._end_range + 1)
 
         data_start = self._initial_range[1] + 1  # Start where the first download ended
-        # For encryption V2 only, adjust start to the end of the fetched data rather than download size
-        if is_encryption_v2(self._encryption_data):
+        # For encryption, adjust start to the end of the fetched data rather than download size
+        if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
             data_start = (self._start_range or 0) + len(self._current_content)
 
         downloader = _AsyncChunkDownloader(
