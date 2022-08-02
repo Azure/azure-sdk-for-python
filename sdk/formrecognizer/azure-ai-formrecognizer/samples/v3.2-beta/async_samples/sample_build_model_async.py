@@ -42,7 +42,7 @@ async def sample_build_model_async():
     document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
     async with document_model_admin_client:
         poller = await document_model_admin_client.begin_build_model(
-            container_sas_url, DocumentBuildMode.TEMPLATE, description="my model description"
+            DocumentBuildMode.TEMPLATE, container_sas_url, description="my model description"
         )
         model = await poller.result()
 

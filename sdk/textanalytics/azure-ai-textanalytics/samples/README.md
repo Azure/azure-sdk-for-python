@@ -36,7 +36,7 @@ These sample programs show common scenarios for the Text Analytics client's offe
 |[sample_analyze_healthcare_action.py][sample_analyze_healthcare_action] and [sample_analyze_healthcare_action_async.py][sample_analyze_healthcare_action_async]|Run a healthcare and PII analysis together|
 
 ## Prerequisites
-* Python 3.6 or later is required to use this package
+* Python 3.7 or later is required to use this package
 * You must have an [Azure subscription][azure_subscription] and an
 [Azure Language account][azure_language_account] to run these samples.
 

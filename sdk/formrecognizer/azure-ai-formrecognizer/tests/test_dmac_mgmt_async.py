@@ -110,7 +110,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         set_bodiless_matcher()
         
         async with client:
-            poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template", description="mgmt model")
+            poller = await client.begin_build_model("template", formrecognizer_storage_container_sas_url, description="mgmt model")
             model = await poller.result()
 
             model_from_get = await client.get_model(model.model_id)
