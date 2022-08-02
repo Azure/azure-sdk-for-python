@@ -147,8 +147,6 @@ class BufferedProducer:
                     try:
                         batch = self._buffered_queue.get(block=False)
                     except queue.Empty:
-                        #reset buffered count
-                        self._cur_buffered_len = 0
                         break
                     self._buffered_queue.task_done()
                     try:
@@ -188,6 +186,8 @@ class BufferedProducer:
                     break
             # after finishing flushing, reset cur batch and put it into the buffer
             self._last_send_time = time.time()
+            #reset buffered count
+            self._cur_buffered_len = 0
             self._cur_batch = EventDataBatch(self._max_message_size_on_link)
             _LOGGER.info("Partition %r finished flushing.", self.partition_id)
 
