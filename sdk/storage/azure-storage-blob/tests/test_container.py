@@ -665,27 +665,6 @@ class TestStorageContainer(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_set_container_acl_with_one_signed_identifier(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
-        container = self._create_container(bsc)
-
-        # Act
-        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=datetime.utcnow() + timedelta(hours=1),
-                                     start=datetime.utcnow())
-        signed_identifiers = {'testid': access_policy}
-
-        response = container.set_container_access_policy(signed_identifiers)
-
-        # Assert
-        assert response.get('etag') is not None
-        assert response.get('last_modified') is not None
-
-    @BlobPreparer()
-    @recorded_by_proxy
     def test_set_container_acl_with_lease_id(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

@@ -9,27 +9,23 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Tue, 02 Aug 2022 23:19:34 GMT",
+        "x-ms-date": "Tue, 02 Aug 2022 23:47:39 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
-      "StatusCode": 409,
+      "StatusCode": 201,
       "ResponseHeaders": {
-        "Content-Length": "230",
-        "Content-Type": "application/xml",
-        "Date": "Tue, 02 Aug 2022 23:19:34 GMT",
+        "Content-Length": "0",
+        "Date": "Tue, 02 Aug 2022 23:47:38 GMT",
+        "ETag": "\u00220x8DA74E16291B1A8\u0022",
+        "Last-Modified": "Tue, 02 Aug 2022 23:47:39 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-error-code": "ContainerAlreadyExists",
         "x-ms-version": "2021-08-06"
       },
-      "ResponseBody": [
-        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EContainerAlreadyExists\u003C/Code\u003E\u003CMessage\u003EThe specified container already exists.\n",
-        "RequestId:5c740f58-501e-00a2-01c6-a6cc38000000\n",
-        "Time:2022-08-02T23:19:34.9295964Z\u003C/Message\u003E\u003C/Error\u003E"
-      ]
+      "ResponseBody": null
     },
     {
       "RequestUri": "https://storagename.blob.core.windows.net/containerdd113475?restype=container\u0026comp=acl",
@@ -41,19 +37,19 @@
         "Content-Length": "257",
         "Content-Type": "application/xml",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Tue, 02 Aug 2022 23:19:35 GMT",
+        "x-ms-date": "Tue, 02 Aug 2022 23:47:39 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": [
         "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
-        "\u003CSignedIdentifiers\u003E\u003CSignedIdentifier\u003E\u003CId\u003Etestid\u003C/Id\u003E\u003CAccessPolicy\u003E\u003CStart\u003E2022-08-02T23:19:35Z\u003C/Start\u003E\u003CExpiry\u003E2022-08-03T00:19:35Z\u003C/Expiry\u003E\u003CPermission\u003Er\u003C/Permission\u003E\u003C/AccessPolicy\u003E\u003C/SignedIdentifier\u003E\u003C/SignedIdentifiers\u003E"
+        "\u003CSignedIdentifiers\u003E\u003CSignedIdentifier\u003E\u003CId\u003Etestid\u003C/Id\u003E\u003CAccessPolicy\u003E\u003CStart\u003E2022-08-02T23:47:39Z\u003C/Start\u003E\u003CExpiry\u003E2022-08-03T00:47:39Z\u003C/Expiry\u003E\u003CPermission\u003Er\u003C/Permission\u003E\u003C/AccessPolicy\u003E\u003C/SignedIdentifier\u003E\u003C/SignedIdentifiers\u003E"
       ],
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Tue, 02 Aug 2022 23:19:34 GMT",
-        "ETag": "\u00220x8DA74DD7675146A\u0022",
-        "Last-Modified": "Tue, 02 Aug 2022 23:19:35 GMT",
+        "Date": "Tue, 02 Aug 2022 23:47:38 GMT",
+        "ETag": "\u00220x8DA74E162A0D847\u0022",
+        "Last-Modified": "Tue, 02 Aug 2022 23:47:39 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -63,5 +59,8 @@
       "ResponseBody": null
     }
   ],
-  "Variables": {}
+  "Variables": {
+    "expiry_time": "2022-08-03T00:47:39.303795",
+    "start_time": "2022-08-02T23:47:39.303795"
+  }
 }
