@@ -21,12 +21,8 @@ from azure.eventhub.amqp import (
     AmqpAnnotatedMessage,
     AmqpMessageProperties,
 )
-from ..._test_case import get_decorator
 
-uamqp_transport_vals = get_decorator()
 
-@pytest.mark.parametrize("uamqp_transport",
-                         uamqp_transport_vals)
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_amqp_annotated_message(connstr_receivers, uamqp_transport):

@@ -17,9 +17,6 @@ except ImportError:
 from azure.eventhub.amqp import AmqpAnnotatedMessage, AmqpMessageHeader, AmqpMessageProperties
 from azure.eventhub import _common
 from azure.eventhub._utils import transform_outbound_single_message
-from .._test_case import get_decorator
-
-uamqp_transport_vals = get_decorator()
 
 pytestmark = pytest.mark.skipif(platform.python_implementation() == "PyPy", reason="This is ignored for PyPy")
 
@@ -71,8 +68,6 @@ def test_app_properties():
     assert event_data.properties["a"] == "b"
 
 
-@pytest.mark.parametrize("uamqp_transport",
-                         uamqp_transport_vals)
 def test_sys_properties(uamqp_transport):
     if uamqp_transport:
         properties = uamqp.message.MessageProperties()
@@ -111,8 +106,6 @@ def test_sys_properties(uamqp_transport):
     assert ed.system_properties[_common.PROP_REPLY_TO_GROUP_ID] == properties.reply_to_group_id
 
 
-@pytest.mark.parametrize("uamqp_transport",
-                         uamqp_transport_vals)
 def test_event_data_batch(uamqp_transport):
     if uamqp_transport:
         amqp_transport = UamqpTransport()
@@ -133,7 +126,7 @@ def test_event_data_batch(uamqp_transport):
         batch.add(EventData("A"))
 
 
-@pytest.mark.parametrize("uamqp_transport", uamqp_transport_vals)
+
 def test_event_data_from_message(uamqp_transport):
     if uamqp_transport:
         amqp_transport = UamqpTransport()
@@ -162,8 +155,6 @@ def test_amqp_message_str_repr():
     assert 'AmqpAnnotatedMessage(body=A, body_type=data' in repr(message)
 
 
-@pytest.mark.parametrize("uamqp_transport",
-                         uamqp_transport_vals)
 def test_amqp_message_from_message(uamqp_transport):
     if uamqp_transport:
         header = uamqp.message.MessageHeader()

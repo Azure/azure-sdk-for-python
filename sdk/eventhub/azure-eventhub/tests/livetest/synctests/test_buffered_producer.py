@@ -20,9 +20,6 @@ from azure.eventhub.amqp import (
     AmqpAnnotatedMessage,
 )
 from azure.eventhub.exceptions import EventDataSendError, OperationTimeoutError, EventHubError
-from ..._test_case import get_decorator
-
-uamqp_transport_vals = get_decorator()
 
 
 def random_pkey_generation(partitions):
@@ -42,8 +39,6 @@ def random_pkey_generation(partitions):
     return dic
 
 
-@pytest.mark.parametrize("uamqp_transport",
-                         uamqp_transport_vals)
 @pytest.mark.liveTest()
 def test_producer_client_constructor(connection_str, uamqp_transport):
     def on_success(events, pid):
@@ -78,8 +73,6 @@ def test_producer_client_constructor(connection_str, uamqp_transport):
 
 
 @pytest.mark.liveTest
-@pytest.mark.parametrize("uamqp_transport",
-                         uamqp_transport_vals)
 @pytest.mark.parametrize(
     "flush_after_sending, close_after_sending",
     [
@@ -187,8 +180,6 @@ def test_basic_send_single_events_round_robin(connection_str, flush_after_sendin
 
 
 @pytest.mark.liveTest
-@pytest.mark.parametrize("uamqp_transport",
-                         uamqp_transport_vals)
 @pytest.mark.parametrize(
     "flush_after_sending, close_after_sending",
     [
@@ -305,8 +296,6 @@ def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending
 
 
 @pytest.mark.liveTest
-@pytest.mark.parametrize("uamqp_transport",
-                         uamqp_transport_vals)
 def test_send_with_hybrid_partition_assignment(connection_str, uamqp_transport):
     received_events = defaultdict(list)
 
@@ -397,8 +386,6 @@ def test_send_with_hybrid_partition_assignment(connection_str, uamqp_transport):
     receive_thread.join()
 
 
-@pytest.mark.parametrize("uamqp_transport",
-                         uamqp_transport_vals)
 def test_send_with_timing_configuration(connection_str, uamqp_transport):
     received_events = defaultdict(list)
 
@@ -477,8 +464,6 @@ def test_send_with_timing_configuration(connection_str, uamqp_transport):
 
 
 @pytest.mark.liveTest
-@pytest.mark.parametrize("uamqp_transport",
-                         uamqp_transport_vals)
 def test_long_sleep(connection_str, uamqp_transport):
     received_events = defaultdict(list)
 

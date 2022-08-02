@@ -11,12 +11,8 @@ from azure.identity import EnvironmentCredential
 from azure.eventhub import EventData, EventHubProducerClient, EventHubConsumerClient, EventHubSharedKeyCredential
 from azure.eventhub._client_base import EventHubSASTokenCredential
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
-from ..._test_case import get_decorator
 
-uamqp_transport_vals = get_decorator()
 
-@pytest.mark.parametrize("uamqp_transport",
-                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_client_secret_credential(live_eventhub, uamqp_transport):
     credential = EnvironmentCredential()
@@ -57,8 +53,6 @@ def test_client_secret_credential(live_eventhub, uamqp_transport):
     assert list(on_event.event.body)[0] == 'A single message'.encode('utf-8')
 
 
-@pytest.mark.parametrize("uamqp_transport",
-                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_client_sas_credential(live_eventhub, uamqp_transport):
     # This should "just work" to validate known-good.
@@ -98,8 +92,6 @@ def test_client_sas_credential(live_eventhub, uamqp_transport):
         conn_str_producer_client.send_batch(batch)
 
 
-@pytest.mark.parametrize("uamqp_transport",
-                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_client_azure_sas_credential(live_eventhub, uamqp_transport):
     # This should "just work" to validate known-good.
@@ -127,8 +119,6 @@ def test_client_azure_sas_credential(live_eventhub, uamqp_transport):
         producer_client.send_batch(batch)
 
 
-@pytest.mark.parametrize("uamqp_transport",
-                         uamqp_transport_vals)
 @pytest.mark.liveTest
 def test_client_azure_named_key_credential(live_eventhub, uamqp_transport):
     credential = AzureNamedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
