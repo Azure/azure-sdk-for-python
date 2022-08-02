@@ -27,7 +27,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :mod:`azure.identity`
     """
 
-    # pylint:disable=protected-access
+    # pylint:disable=protected-access,client-list-methods-use-paging
 
     @distributed_trace
     def create_role_assignment(self, scope, definition_id, principal_id, **kwargs):
