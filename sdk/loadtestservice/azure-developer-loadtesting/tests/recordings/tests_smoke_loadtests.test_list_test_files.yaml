@@ -1206,7 +1206,7 @@ interactions:
     uri: https://myservice.azure.com/loadtests/some-unique-test-id/files/unique-image-file-id?api-version=2022-06-01-preview
   response:
     body:
-      string: '{"url":"https://stcntproddataeus.blob.core.windows.net/7119bd1d-cd3f-40be-ab75-0fda8862f6d5/unique-image-file-id?sv=2020-04-08&se=2022-08-02T06%3A08%3A29Z&sr=b&sp=r&sig=nfzk4Ac1BSP9wFc1avFYeRpUHVm7h3gKLiRuJ9LVbaw%3D","fileId":"unique-image-file-id","filename":"sample-image.jpg","fileType":2,"expireTime":"2022-08-02T06:08:29.4941184","validationStatus":""}'
+      string: '{"url":"https://stcntproddataeus.blob.core.windows.net/7119bd1d-cd3f-40be-ab75-0fda8862f6d5/unique-image-file-id","fileId":"unique-image-file-id","filename":"sample-image.jpg","fileType":2,"expireTime":"2022-08-02T06:08:29.4941184","validationStatus":""}'
     headers:
       api-supported-versions:
       - 2021-07-01-preview, 2022-06-01-preview
@@ -1244,7 +1244,7 @@ interactions:
     uri: https://myservice.azure.com/loadtests/some-unique-test-id/files?api-version=2022-06-01-preview
   response:
     body:
-      string: '{"value":[{"url":"https://stcntproddataeus.blob.core.windows.net/7119bd1d-cd3f-40be-ab75-0fda8862f6d5/some-unique-file-id?sv=2020-04-08&se=2022-08-02T06%3A08%3A29Z&sr=b&sp=r&sig=%2BFBRWa%2FmDDfdOJyySvBp6n%2B9hZBBg%2FA3dKAi%2Fqy%2BO1U%3D","fileId":"some-unique-file-id","filename":"sample.jmx","fileType":0,"expireTime":"2022-08-02T06:08:29.8040926","validationStatus":"VALIDATION_INITIATED"},{"url":"https://stcntproddataeus.blob.core.windows.net/7119bd1d-cd3f-40be-ab75-0fda8862f6d5/unique-image-file-id?sv=2020-04-08&se=2022-08-02T06%3A08%3A29Z&sr=b&sp=r&sig=nfzk4Ac1BSP9wFc1avFYeRpUHVm7h3gKLiRuJ9LVbaw%3D","fileId":"unique-image-file-id","filename":"sample-image.jpg","fileType":2,"expireTime":"2022-08-02T06:08:29.8046253","validationStatus":""}],"nextLink":null}'
+      string: '{"value":[{"url":"https://stcntproddataeus.blob.core.windows.net/7119bd1d-cd3f-40be-ab75-0fda8862f6d5/some-unique-file-id","fileId":"some-unique-file-id","filename":"sample.jmx","fileType":0,"expireTime":"2022-08-02T06:08:29.8040926","validationStatus":"VALIDATION_INITIATED"},{"url":"https://stcntproddataeus.blob.core.windows.net/7119bd1d-cd3f-40be-ab75-0fda8862f6d5/unique-image-file-id","fileId":"unique-image-file-id","filename":"sample-image.jpg","fileType":2,"expireTime":"2022-08-02T06:08:29.8046253","validationStatus":""}],"nextLink":null}'
     headers:
       api-supported-versions:
       - 2021-07-01-preview, 2022-06-01-preview
