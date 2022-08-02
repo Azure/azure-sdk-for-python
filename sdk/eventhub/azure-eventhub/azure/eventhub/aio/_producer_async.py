@@ -134,7 +134,7 @@ class EventHubProducer(
         last_exception: Optional[Exception] = None,
     ) -> None:
         if self._unsent_events:
-            self._amqp_transport.send_messages(
+            await self._amqp_transport.send_messages(
                 self, timeout_time, last_exception, _LOGGER
             )
 

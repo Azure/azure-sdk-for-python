@@ -66,15 +66,6 @@ if uamqp_installed:
         """
 
         @staticmethod
-        async def get_batch_message_encoded_size(message):
-            """
-            Gets the batch message encoded size given an underlying Message.
-            :param uamqp.BatchMessage message: Message to get encoded size of.
-            :rtype: int
-            """
-            return await message.gather()[0].get_message_encoded_size()
-
-        @staticmethod
         def create_send_client(*, config, **kwargs): # pylint:disable=unused-argument
             """
             Creates and returns the uamqp SendClient.

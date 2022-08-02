@@ -39,26 +39,16 @@ class AmqpTransportAsync(ABC):
         """
 
     @staticmethod
-    async def get_batch_message_encoded_size(message):
+    def get_batch_message_encoded_size(message):
         """
         Gets the batch message encoded size given an underlying Message.
         :param uamqp.BatchMessage message: Message to get encoded size of.
         :rtype: int
         """
-        return await message.gather()[0].get_message_encoded_size()
 
     @staticmethod
     @abstractmethod
-    async def get_message_encoded_size(message):
-        """
-        Gets the message encoded size given an underlying Message.
-        :param uamqp.Message or pyamqp.Message message: Message to get encoded size of.
-        :rtype: int
-        """
-
-    @staticmethod
-    @abstractmethod
-    async def get_remote_max_message_size(handler):
+    def get_remote_max_message_size(handler):
         """
         Returns max peer message size.
         :param AMQPClient handler: Client to get remote max message size on link from.
@@ -67,7 +57,7 @@ class AmqpTransportAsync(ABC):
 
     @staticmethod
     @abstractmethod
-    async def create_retry_policy(config):
+    def create_retry_policy(config):
         """
         Creates the error retry policy.
         :param ~azure.eventhub._configuration.Configuration config: Configuration.
@@ -75,7 +65,7 @@ class AmqpTransportAsync(ABC):
 
     @staticmethod
     @abstractmethod
-    async def create_link_properties(link_properties):
+    def create_link_properties(link_properties):
         """
         Creates and returns the link properties.
         :param dict[bytes, int] link_properties: The dict of symbols and corresponding values.
@@ -84,7 +74,7 @@ class AmqpTransportAsync(ABC):
 
     @staticmethod
     @abstractmethod
-    async def create_send_client(*, config, **kwargs):
+    def create_send_client(*, config, **kwargs):
         """
         Creates and returns the send client.
         :param ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -113,7 +103,7 @@ class AmqpTransportAsync(ABC):
 
     @staticmethod
     @abstractmethod
-    async def set_message_partition_key(message, partition_key, **kwargs):
+    def set_message_partition_key(message, partition_key, **kwargs):
         """Set the partition key as an annotation on a uamqp message.
 
         :param message: The message to update.
@@ -123,18 +113,7 @@ class AmqpTransportAsync(ABC):
 
     @staticmethod
     @abstractmethod
-    async def add_batch(batch_message, outgoing_event_data, event_data):
-        """
-        Add EventData to the data body of the BatchMessage.
-        :param batch_message: BatchMessage to add data to.
-        :param outgoing_event_data: Transformed EventData for sending.
-        :param event_data: EventData to add to internal batch events. uamqp use only.
-        :rtype: None
-        """
-
-    @staticmethod
-    @abstractmethod
-    async def create_source(source, offset, selector):
+    def create_source(source, offset, selector):
         """
         Creates and returns the Source.
 
@@ -145,7 +124,7 @@ class AmqpTransportAsync(ABC):
 
     @staticmethod
     @abstractmethod
-    async def create_receive_client(*, config, **kwargs):
+    def create_receive_client(*, config, **kwargs):
         """
         Creates and returns the receive client.
         :param ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -192,20 +171,12 @@ class AmqpTransportAsync(ABC):
 
     @staticmethod
     @abstractmethod
-    async def create_mgmt_client(address, mgmt_auth, config):
+    def create_mgmt_client(address, mgmt_auth, config):
         """
         Creates and returns the mgmt AMQP client.
         :param _Address address: Required. The Address.
         :param JWTTokenAuth mgmt_auth: Auth for client.
         :param ~azure.eventhub._configuration.Configuration config: The configuration.
-        """
-
-    @staticmethod
-    @abstractmethod
-    async def get_updated_token(mgmt_auth):
-        """
-        Return updated auth token.
-        :param mgmt_auth: Auth.
         """
 
     @staticmethod
@@ -223,7 +194,7 @@ class AmqpTransportAsync(ABC):
 
     @staticmethod
     @abstractmethod
-    async def get_error(error, message, *, condition=None):
+    def get_error(error, message, *, condition=None):
         """
         Gets error and passes in error message, and, if applicable, condition.
         :param error: The error to raise.
