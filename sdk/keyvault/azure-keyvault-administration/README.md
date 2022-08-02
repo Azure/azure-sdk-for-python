@@ -33,7 +33,7 @@ authentication as demonstrated below.
 
 ### Prerequisites
 * An [Azure subscription][azure_sub]
-* Python 3.6 or later
+* Python 3.7 or later
 * A [managed HSM][managed_hsm]. If you need to create one, see the final two steps in the next section for details on creating the managed HSM with the Azure CLI.
 
 ### Authenticate the client
