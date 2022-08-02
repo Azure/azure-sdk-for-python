@@ -105,6 +105,7 @@ The following sections provide several code snippets covering some of the most c
 
 - [Make a Reverse Address Search to translate coordinate location to street address](#make-a-reverse-address-search-to-translate-coordinate-location-to-street-address)
 - [Translate coordinate location into a human understandable cross street](#translate-coordinate-location-into-a-human-understandable-cross-street)
+- [Get async fuzzy search batch with param and batchid](#get-async-fuzzy-search-batch-with-param-and-batchid)
 
 ### Request latitude and longitude coordinates for an address
 
@@ -155,6 +156,39 @@ coordinates=(47.60323, -122.33028)
 reverse_search_result = client.reverse_search_cross_street_address(coordinates=coordinates);
 
 result_address = reverse_search_result.results[0].address
+```
+
+### Get async fuzzy search batch with param and batchid
+
+This sample demonstrates how to perform fuzzy search by location and lat/lon with async batch method. This function is accepting both `search_queries` and `batch_id` and returning an `AsyncLRO` object. The `batch_id` here can be use to retrieve the LRO object later which last 14 days.
+
+```python
+maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+
+async with maps_search_client:
+    result = await maps_search_client.begin_fuzzy_search_batch(
+        search_queries=[
+            "350 5th Ave, New York, NY 10118&limit=1",
+            "400 Broad St, Seattle, WA 98109&limit=6"
+        ]
+    )
+
+batch_id = result.batch_id
+```
+
+This is the same method which accepting `batch_id` as the parameter.
+
+```python
+maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+
+maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+
+async with maps_search_client:
+    result = await maps_search_client.begin_fuzzy_search_batch(
+        batch_id=batch_id
+    )
+
+result = result.polling_method().response
 ```
 
 ## Troubleshooting

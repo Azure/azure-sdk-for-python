@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-maps-search"
-PACKAGE_PPRINT_NAME = "Azure Maps Search"
+PACKAGE_PPRINT_NAME = "Maps Search"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
