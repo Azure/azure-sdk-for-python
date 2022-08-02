@@ -22,7 +22,6 @@ from ._encryption import (
     adjust_blob_size_for_encryption,
     decrypt_blob,
     get_adjusted_download_range_and_offset,
-    is_encryption_v2,
     parse_encryption_data
 )
 
@@ -487,12 +486,15 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         # If the file is small, the download is complete at this point.
         # If file size is large, download the rest of the file in chunks.
-        # Use less than here for encryption.
-        if response.properties.size < self.size:
-            if self._request_options.get("modified_access_conditions"):
-                self._request_options["modified_access_conditions"].if_match = response.properties.etag
+        # For encryption, calculate based on size of decrypted content, not download size.
+        if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
+            self._download_complete = len(self._current_content) >= self.size
         else:
-            self._download_complete = True
+            self._download_complete = response.properties.size >= self.size
+
+        if not self._download_complete and self._request_options.get("modified_access_conditions"):
+            self._request_options["modified_access_conditions"].if_match = response.properties.etag
+
         return response
 
     def chunks(self):
