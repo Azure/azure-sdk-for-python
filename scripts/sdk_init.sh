@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # install python3.8
-sudo apt-get install python3.8
-sudo apt-get install python3.8-venv
+apt-get install python3.8
+apt-get install python3.8-venv
 
 # init env
 TMPDIR="$(dirname $(dirname $(readlink -f "$0")))/venv"
