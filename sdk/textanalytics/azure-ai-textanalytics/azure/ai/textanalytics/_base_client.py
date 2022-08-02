@@ -17,9 +17,11 @@ from ._version import DEFAULT_API_VERSION
 class TextAnalyticsApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cognitive Service for Language or Text Analytics API versions supported by this package"""
 
-    #: this is the default version
+    #: This is the default version and corresponds to the Cognitive Service for Language API.
     V2022_05_01 = "2022-05-01"
+    #: This version corresponds to Text Analytics API.
     V3_1 = "v3.1"
+    #: This version corresponds to Text Analytics API.
     V3_0 = "v3.0"
 
 
