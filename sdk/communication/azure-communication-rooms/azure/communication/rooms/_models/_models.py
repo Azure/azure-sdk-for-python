@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
+from datetime import datetime
 from typing import Optional, List, Union
 
 from azure.core.exceptions import DeserializationError
@@ -14,6 +15,7 @@ from .._generated.models import (
     RoleType as ParticipantRole
 )
 from .._generated import _serialization
+from .._generated.models import RoomModel
 from .._shared.models import (
     CommunicationIdentifier,
     CommunicationIdentifierKind,
@@ -39,7 +41,7 @@ class CommunicationRoom(_serialization.Model):
     :ivar room_join_policy: The join policy of the room.
     :vartype room_join_policy: ~azure.communication.rooms.RoomJoinPolicy
     :ivar participants: Collection of room participants.
-    :vartype participants: list[~azure.communication.rooms.RoomParticipant]
+    :vartype participants: Optional[list[~azure.communication.rooms.RoomParticipant]]
     """
 
     _attribute_map = {
@@ -53,12 +55,12 @@ class CommunicationRoom(_serialization.Model):
     def __init__(
         self,
         *,
-        id=None, # type: Optional[str] pylint: disable=redefined-builtin
-        created_on=None, # type: Optional[datetime]
-        valid_from=None, # type: Optional[datetime]
-        valid_until=None, # type: Optional[datetime]
-        room_join_policy=None, # type: Optional[RoomJoinPolicy]
-        participants=None, # type: Optional[List[RoomParticipant]]
+        id: str, #pylint: disable=redefined-builtin
+        created_on: datetime,
+        valid_from: datetime,
+        valid_until: datetime,
+        room_join_policy: RoomJoinPolicy,
+        participants: Optional[List['RoomParticipant']] = None,
         **kwargs
     ):
         """
@@ -76,7 +78,7 @@ class CommunicationRoom(_serialization.Model):
         :keyword room_join_policy: The join policy of the room.
         :paramtype room_join_policy: ~azure.communication.rooms.RoomJoinPolicy
         :keyword participants: Collection of room participants.
-        :paramtype participants: list[~azure.communication.rooms.RoomParticipant]
+        :paramtype participants: Optional[list[~azure.communication.rooms.RoomParticipant]]
         """
         super(CommunicationRoom, self).__init__(**kwargs)
         self.id = id
@@ -87,10 +89,9 @@ class CommunicationRoom(_serialization.Model):
         self.participants = participants
 
     @classmethod
-    def from_room_response(cls, get_room_response,  # type: RoomModel
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> CommunicationRoom
+    def from_room_response(cls, get_room_response: RoomModel,
+            **kwargs
+    ) -> 'CommunicationRoom':
         """Create CommunicationRoom from the internal RoomModel.
         :param RoomModel get_room_response:
             Response from get_room API.

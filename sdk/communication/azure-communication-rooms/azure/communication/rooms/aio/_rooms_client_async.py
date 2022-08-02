@@ -4,12 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 import uuid
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.communication.rooms import RoomJoinPolicy
 from azure.communication.rooms._models import CommunicationRoom, RoomParticipant, ParticipantsCollection
+from azure.communication.rooms._shared.models import CommunicationIdentifier
 from .._generated.aio._client import AzureCommunicationRoomsService
 from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._version import SDK_MONIKER
@@ -37,11 +38,10 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         The access key we use to authenticate against the service.
     """
     def __init__(
-            self, endpoint, # type: str
-            credential, # type: str
-            **kwargs # type: Any
+            self, endpoint: str,
+            credential: str,
+            **kwargs
     ):
-        # type: (...) -> None
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
@@ -68,10 +68,9 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
             **kwargs)
 
     @classmethod
-    def from_connection_string(cls, conn_str,  # type: str
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> RoomsClient
+    def from_connection_string(cls, conn_str: str,
+            **kwargs
+    ) -> 'RoomsClient':
         """Create RoomsClient from a Connection String.
 
         :param str conn_str:
@@ -95,13 +94,13 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace_async
     async def create_room(
         self,
-        valid_from=None, # type: Optional[datetime]
-        valid_until=None, # type: Optional[datetime]
-        room_join_policy=None, # type: Optional[RoomJoinPolicy]
-        participants=None, # type: Optional[List[RoomParticipant]]
+        *,
+        valid_from: Optional[datetime] = None,
+        valid_until: Optional[datetime] = None,
+        room_join_policy: Optional[RoomJoinPolicy] = None,
+        participants:Optional[list[RoomParticipant]] = None,
         **kwargs
-    ):
-        # type: (...) -> CommunicationRoom
+    ) -> CommunicationRoom:
         """Create a new room.
 
         :param valid_from: The timestamp from when the room is open for joining. The timestamp is in
@@ -138,10 +137,9 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace_async
     async def delete_room(
         self,
-        room_id, # type: str
+        room_id: str,
         **kwargs
-    ):
-        # type: (...) -> None
+    ) -> None:
         """Delete room.
 
         :param room_id: Required. Id of room to be deleted
@@ -157,13 +155,13 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
     async def update_room(
         self,
         room_id,
-        valid_from=None, # type: Optional[datetime]
-        valid_until=None, # type: Optional[datetime]
-        room_join_policy=None, # type: Optional[RoomJoinPolicy]
-        participants=None, #type: Optional[List[RoomParticipant]]
+        *,
+        valid_from: Optional[datetime] = None,
+        valid_until: Optional[datetime] = None,
+        room_join_policy: Optional[RoomJoinPolicy] = None,
+        participants: Optional[list[RoomParticipant]] = None,
         **kwargs
-    ):
-        # type: (...) -> CommunicationRoom
+    ) -> CommunicationRoom:
         """Update a valid room's attributes
 
         :param room_id: Required. Id of room to be updated
@@ -197,10 +195,9 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace_async
     async def get_room(
         self,
-        room_id, # type: str
+        room_id: str,
         **kwargs
-    ):
-        # type: (...) -> CommunicationRoom
+    ) -> CommunicationRoom:
         """Get a valid room
 
         :param room_id: Required. Id of room to be fetched
@@ -216,11 +213,10 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace_async
     async def add_participants(
         self,
-        room_id, # type: str
-        participants, # type: List[RoomParticipant]
+        room_id: str,
+        participants: list[RoomParticipant],
         **kwargs
-    ):
-        # type: (...) -> None
+    ) -> None:
         """Add participants to a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
@@ -239,11 +235,10 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace_async
     async def update_participants(
         self,
-        room_id, # type: str
-        participants, # type: List[RoomParticipant]
+        room_id: str,
+        participants: list[RoomParticipant],
         **kwargs
-    ):
-        # type: (...) -> None
+    ) -> None:
         """Update participants to a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
@@ -262,11 +257,10 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace_async
     async def remove_participants(
         self,
-        room_id, # type: str
-        communication_identifiers, # type: List[CommunicationIdentifier]
+        room_id: str,
+        communication_identifiers: list[CommunicationIdentifier],
         **kwargs
-    ):
-        # type: (...) -> None
+    ) -> None:
         """Remove participants from a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
@@ -289,10 +283,9 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace_async
     async def get_participants(
         self,
-        room_id, # type: str
+        room_id,
         **kwargs
-    ):
-        # type: (...) -> ParticipantsCollection
+    ) -> ParticipantsCollection:
         """Get participants of a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
