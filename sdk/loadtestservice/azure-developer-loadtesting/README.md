@@ -108,7 +108,7 @@ DISPLAY_NAME = "new_namespace-new-namespace"
 client = LoadTestingClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 
 try:
-    result = client.load_test_runs.create_and_update_test(
+    result = client.load_test_runs.create_or_update_test(
         TEST_RUN_ID,
         {
             "testId": TEST_ID,
