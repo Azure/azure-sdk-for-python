@@ -95,9 +95,9 @@ class AmqpAnnotatedMessage(object):
     def __str__(self) -> str:
         if self._body_type == AmqpMessageBodyType.DATA:
             return "".join(d.decode(self._encoding) for d in self._data_body)
-        elif self._body_type == AmqpMessageBodyType.SEQUENCE:
+        if self._body_type == AmqpMessageBodyType.SEQUENCE:
             return str(self._sequence_body)
-        elif self._body_type == AmqpMessageBodyType.VALUE:
+        if self._body_type == AmqpMessageBodyType.VALUE:
             return str(self._value_body)
         return ""
 
@@ -174,7 +174,6 @@ class AmqpAnnotatedMessage(object):
 
     @property
     def body(self) -> Any:
-        # type: () -> Any
         """The body of the Message. The format may vary depending on the body type:
         For ~azure.eventhub.AmqpMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
         For ~azure.eventhub.AmqpMessageBodyType.SEQUENCE, the body could be List or Iterable[List]

@@ -13,6 +13,7 @@ from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
 from datetime import timedelta
 from urllib.parse import urlparse, quote_plus
 import six
+from uamqp import utils
 
 from azure.core.credentials import (
     AccessToken,
@@ -23,7 +24,6 @@ from azure.core.utils import parse_connection_string as core_parse_connection_st
 from azure.core.pipeline.policies import RetryMode
 
 
-from uamqp import utils
 from ._transport._uamqp_transport import UamqpTransport
 from .exceptions import ClientClosedError
 from ._configuration import Configuration
@@ -47,7 +47,7 @@ if TYPE_CHECKING:
     CredentialTypes = Union[
         AzureSasCredential,
         AzureNamedKeyCredential,
-        EventHubSharedKeyCredential,
+        "EventHubSharedKeyCredential",
         TokenCredential,
     ]
 
@@ -439,9 +439,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     f"Management request error. Status code: {status_code}, Description: {description!r}"
                 )
             except Exception as exception:  # pylint: disable=broad-except
-                last_exception = self._amqp_transport._handle_exception(
+                last_exception = self._amqp_transport._handle_exception(  # pylint: disable=protected-access
                     exception, self
-                )  # pylint: disable=protected-access
+                )
                 self._backoff(
                     retried_times=retried_times, last_exception=last_exception
                 )

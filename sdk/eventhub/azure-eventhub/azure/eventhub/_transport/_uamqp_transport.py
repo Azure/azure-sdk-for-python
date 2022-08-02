@@ -40,8 +40,6 @@ from .._constants import (
 
 from ..exceptions import (
     ConnectError,
-    EventDataError,
-    EventDataSendError,
     OperationTimeoutError,
     EventHubError,
     AuthenticationError,
@@ -322,7 +320,7 @@ if uamqp_installed:
             return source
 
         @staticmethod
-        def create_receive_client(*, config, **kwargs):
+        def create_receive_client(*, config, **kwargs): # pylint: disable=unused-argument
             """
             Creates and returns the receive client.
             :param ~azure.eventhub._configuration.Configuration config: The configuration.

@@ -3,12 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
-import time
-import asyncio
 import uuid
 import logging
 from collections import deque
-from typing import TYPE_CHECKING, Callable, Awaitable, cast, Dict, Optional, Union, List
+from typing import TYPE_CHECKING, Callable, Awaitable, Dict, Optional, Union, List
 
 from ._client_base_async import ConsumerProducerMixin
 from ._async_utils import get_dict_with_loop_if_needed

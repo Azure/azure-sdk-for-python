@@ -7,12 +7,10 @@ import uuid
 import asyncio
 import logging
 from typing import Iterable, Union, Optional, Any, AnyStr, List, TYPE_CHECKING
-import time
 
 from azure.core.tracing import AbstractSpan
 
 from .._common import EventData, EventDataBatch
-from ..exceptions import OperationTimeoutError
 from .._producer import _set_partition_key, _set_trace_message
 from .._utils import (
     create_properties,
@@ -134,7 +132,7 @@ class EventHubProducer(
         last_exception: Optional[Exception] = None,
     ) -> None:
         if self._unsent_events:
-            await self._amqp_transport.send_messages(
+            await self._amqp_transport.send_messages_async(
                 self, timeout_time, last_exception, _LOGGER
             )
 
@@ -200,7 +198,9 @@ class EventHubProducer(
                         event_data, partition_key, self._amqp_transport
                     )
                 event_data = _set_trace_message(event_data, span)
-                wrapper_event_data = EventDataBatch._from_batch(event_data, self._amqp_transport, partition_key)  # type: ignore  # pylint: disable=protected-access
+                wrapper_event_data = EventDataBatch._from_batch(    # type: ignore  # pylint: disable=protected-access
+                    event_data, self._amqp_transport, partition_key
+                )
         return wrapper_event_data
 
     async def send(

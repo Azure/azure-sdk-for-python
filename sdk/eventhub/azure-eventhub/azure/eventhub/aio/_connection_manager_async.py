@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 from typing import TYPE_CHECKING
+from asyncio import Lock
 
 from uamqp import c_uamqp
 from uamqp.async_ops import ConnectionAsync

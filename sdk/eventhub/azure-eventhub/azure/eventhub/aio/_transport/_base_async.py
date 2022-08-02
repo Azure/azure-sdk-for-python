@@ -93,7 +93,7 @@ class AmqpTransportAsync(ABC):
 
     @staticmethod
     @abstractmethod
-    async def send_messages(producer, timeout_time, last_exception, logger):
+    async def send_messages_async(producer, timeout_time, last_exception, logger):
         """
         Handles sending of event data messages.
         :param ~azure.eventhub._producer.EventHubProducer producer: The producer with handler to send messages.
@@ -159,7 +159,7 @@ class AmqpTransportAsync(ABC):
 
     @staticmethod
     @abstractmethod
-    async def create_token_auth(auth_uri, get_token, token_type, config, **kwargs):
+    async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs):
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
@@ -184,7 +184,7 @@ class AmqpTransportAsync(ABC):
 
     @staticmethod
     @abstractmethod
-    async def get_updated_token(mgmt_auth):
+    async def get_updated_token_async(mgmt_auth):
         """
         Return updated auth token.
         :param mgmt_auth: Auth.
@@ -192,7 +192,7 @@ class AmqpTransportAsync(ABC):
 
     @staticmethod
     @abstractmethod
-    async def mgmt_client_request(mgmt_client, mgmt_msg, **kwargs):
+    async def mgmt_client_request_async(mgmt_client, mgmt_msg, **kwargs):
         """
         Send mgmt request.
         :param AMQP Client mgmt_client: Client to send request with.

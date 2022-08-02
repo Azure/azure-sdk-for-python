@@ -28,7 +28,6 @@ from .._eventprocessor.common import LoadBalancingStrategy
 
 if TYPE_CHECKING:
     from ._client_base_async import CredentialTypes
-    from uamqp.constants import TransportType
     from ._eventprocessor.partition_context import PartitionContext
     from ._eventprocessor.checkpoint_store import CheckpointStore
     from .._common import EventData
@@ -233,7 +232,7 @@ class EventHubConsumerClient(
         auth_timeout: float = 60,
         user_agent: Optional[str] = None,
         retry_total: int = 3,
-        transport_type: Optional["TransportType"] = TransportType.Amqp,
+        transport_type: TransportType = TransportType.Amqp,
         checkpoint_store: Optional["CheckpointStore"] = None,
         load_balancing_interval: float = 10,
         **kwargs: Any

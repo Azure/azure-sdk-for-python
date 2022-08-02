@@ -3,13 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals, annotations
-from multiprocessing import Event
 
 import time
 import uuid
 import logging
 from collections import deque
-from typing import TYPE_CHECKING, Callable, Dict, Optional, Any, Deque, Union
+from typing import TYPE_CHECKING, Callable, Dict, Optional, Any, Deque
 
 from ._common import EventData
 from ._client_base import ConsumerProducerMixin
@@ -21,7 +20,6 @@ from ._constants import (
 )
 
 if TYPE_CHECKING:
-    from typing import Deque
     from uamqp import ReceiveClient as uamqp_ReceiveClient, Message as uamqp_Message, types as uamqp_types
     from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
 
@@ -97,7 +95,7 @@ class EventHubConsumer(
         self._auto_reconnect = auto_reconnect
         self._retry_policy = self._amqp_transport.create_retry_policy(self._client._config)
         self._reconnect_backoff = 1
-        link_properties: Dict[uamqp_types.AMQPTypes, uamqp_types.AMQPType] = {}
+        link_properties: Dict[uamqp_types.AMQPType, uamqp_types.AMQPType] = {}
         self._error = None
         self._timeout = 0
         self._idle_timeout = (idle_timeout * self._amqp_transport.IDLE_TIMEOUT_FACTOR) if idle_timeout else None

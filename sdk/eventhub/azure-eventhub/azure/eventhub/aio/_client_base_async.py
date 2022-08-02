@@ -14,8 +14,6 @@ import six
 from uamqp import (
     authentication,
     constants,
-    errors,
-    compat,
     Message,
     AMQPClientAsync,
 )
@@ -32,7 +30,7 @@ from .._client_base import (
     _get_backoff_time,
 )
 from .._utils import utc_from_timestamp, parse_sas_credential
-from ..exceptions import ClientClosedError, ConnectError
+from ..exceptions import ClientClosedError
 from .._constants import (
     JWT_TOKEN_SCOPE,
     MGMT_OPERATION,
@@ -260,14 +258,14 @@ class ClientBaseAsync(ClientBase):
         except AttributeError:
             token_type = b"jwt"
         if token_type == b"servicebus.windows.net:sastoken":
-            return await self._amqp_transport.create_token_auth(
+            return await self._amqp_transport.create_token_auth_async(
                 self._auth_uri,
                 functools.partial(self._credential.get_token, self._auth_uri),
                 token_type=token_type,
                 config=self._config,
                 update_token=True,
             )
-        return await self._amqp_transport.create_token_auth(
+        return await self._amqp_transport.create_token_auth_async(
             self._auth_uri,
             functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE),
             token_type=token_type,
@@ -323,8 +321,8 @@ class ClientBaseAsync(ClientBase):
                     await asyncio.sleep(0.05)
                 mgmt_msg.application_properties[
                     "security_token"
-                ] = await self._amqp_transport.get_updated_token(mgmt_auth)
-                response = await self._amqp_transport.mgmt_client_request(
+                ] = await self._amqp_transport.get_updated_token_async(mgmt_auth)
+                response = await self._amqp_transport.mgmt_client_request_async(
                     mgmt_client,
                     mgmt_msg,
                     operation=READ_OPERATION,
@@ -357,7 +355,7 @@ class ClientBaseAsync(ClientBase):
             except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise
             except Exception as exception:  # pylint:disable=broad-except
-                last_exception = await self._amqp_transport._handle_exception(exception, self)  # pylint: disable=protected-access
+                last_exception = await self._amqp_transport._handle_exception_async(exception, self)  # pylint: disable=protected-access
                 await self._backoff_async(
                     retried_times=retried_times, last_exception=last_exception
                 )
@@ -481,7 +479,7 @@ class ConsumerProducerMixin(_MIXIN_BASE):
                 self._amqp_transport.AUTH_EXCEPTION,
                 "Authorization timeout."
             )
-        return await self._amqp_transport._handle_exception(  # pylint: disable=protected-access
+        return await self._amqp_transport._handle_exception_async(  # pylint: disable=protected-access
             exception, self
         )
 

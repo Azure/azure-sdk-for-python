@@ -24,6 +24,7 @@ from typing import (
 )
 
 import six
+from uamqp import types as uamqp_types
 
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind, Link
@@ -41,15 +42,12 @@ from ._constants import (
     PROP_PARTITION_KEY
 )
 
-# TODO: remove after fixing up async
-from uamqp import types
-PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(PROP_PARTITION_KEY)
+PROP_PARTITION_KEY_AMQP_SYMBOL = uamqp_types.AMQPSymbol(PROP_PARTITION_KEY)
 
 
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
     from ._transport._base import AmqpTransport
-    from uamqp import types as uamqp_types
     from azure.core.tracing import AbstractSpan
     from azure.core.credentials import AzureSasCredential
     from ._common import EventData
@@ -144,7 +142,7 @@ def set_event_partition_key(event, partition_key):
 
     annotations = raw_message.annotations
     if annotations is None:
-        annotations = dict()
+        annotations = {}
     annotations[
         PROP_PARTITION_KEY_AMQP_SYMBOL
     ] = partition_key  # pylint:disable=protected-access
@@ -152,17 +150,6 @@ def set_event_partition_key(event, partition_key):
         raw_message.header = AmqpMessageHeader(header=True)
     else:
         raw_message.header.durable = True
-
-
-@contextmanager
-def send_context_manager():
-    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-
-    if span_impl_type is not None:
-        with span_impl_type(name="Azure.EventHubs.send", kind=SpanKind.CLIENT) as child:
-            yield child
-    else:
-        yield None
 
 
 def trace_message(event, parent_span=None):

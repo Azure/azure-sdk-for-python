@@ -21,7 +21,6 @@ from .._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
     from ._client_base_async import CredentialTypes
-    from uamqp.constants import TransportType  # pylint: disable=ungrouped-imports
 
 SendEventTypes = List[Union[EventData, AmqpAnnotatedMessage]]
 
@@ -406,7 +405,7 @@ class EventHubProducerClient(
         auth_timeout: float = 60,
         user_agent: Optional[str] = None,
         retry_total: int = 3,
-        transport_type: Optional["TransportType"] = TransportType.Amqp,
+        transport_type: TransportType = TransportType.Amqp,
         **kwargs: Any
     ) -> "EventHubProducerClient":
         """Create an EventHubProducerClient from a connection string.
