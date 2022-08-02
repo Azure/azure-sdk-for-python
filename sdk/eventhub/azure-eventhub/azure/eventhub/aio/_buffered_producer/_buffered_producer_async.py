@@ -151,7 +151,6 @@ class BufferedProducer:
         while self._buffered_queue.qsize() > 0:
             remaining_time = timeout_time - time.time() if timeout_time else None
             if (remaining_time and remaining_time > 0) or remaining_time is None:
-                print("Getting an item from the queue to start flush")
                 try:
                     batch = self._buffered_queue.get(block=False)
                 except queue.Empty:
