@@ -2,6 +2,8 @@
 
 ## 5.2.0b5 (Unreleased)
 
+This version of this client library defaults to the service version `2022-05-01`.
+
 ### Features Added
 
 - Added `begin_recognize_custom_entities` client method to recognize custom named entities in documents.

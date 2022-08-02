@@ -2168,6 +2168,9 @@ class RecognizeCustomEntitiesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
+
+        .. versionadded:: 2022-05-01
+            The *RecognizeCustomEntitiesAction* model.
     """
 
     def __init__(
@@ -2284,6 +2287,9 @@ class MultiLabelClassifyAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
+
+        .. versionadded:: 2022-05-01
+            The *MultiLabelClassifyAction* model.
     """
 
     def __init__(
@@ -2398,6 +2404,9 @@ class SingleLabelClassifyAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
+
+        .. versionadded:: 2022-05-01
+            The *SingleLabelClassifyAction* model.
     """
 
     def __init__(
@@ -2491,6 +2500,9 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
+
+        .. versionadded:: 2022-05-01
+            The *AnalyzeHealthcareEntitiesAction* model.
     """
 
     def __init__(self, **kwargs):

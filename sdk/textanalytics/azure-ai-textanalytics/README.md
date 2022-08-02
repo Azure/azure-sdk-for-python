@@ -78,13 +78,13 @@ pip install azure-ai-textanalytics --pre
 ```
 
 > Note that `5.2.0b4` is the first version of the client library that targets the Azure Cognitive Service for Language APIs which includes the existing text analysis and natural language processing features found in the Text Analytics client library.
-In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-04-01-preview`.
+In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-05-01`.
 
 This table shows the relationship between SDK versions and supported API versions of the service
 
 | SDK version  | Supported API version of service  |
 | ------------ | --------------------------------- |
-| 5.2.0b4 - Latest beta release | 3.0, 3.1, 2022-04-01-preview (default) |
+| 5.2.0b5 - Latest beta release | 3.0, 3.1, 2022-05-01 (default) |
 | 5.1.0 - Latest stable release | 3.0, 3.1 (default) |
 | 5.0.0  | 3.0 |
 
@@ -136,7 +136,7 @@ Authentication with AAD requires some initial setup:
 
 - [Install azure-identity][install_azure_identity]
 - [Register a new AAD application][register_aad_app]
-- [Grant access][grant_role_access] to the Language service by assigning the `"Cognitive Services User"` role to your service principal.
+- [Grant access][grant_role_access] to the Language service by assigning the `"Cognitive Services Language Reader"` role to your service principal.
 
 After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
 As an example, [DefaultAzureCredential][default_azure_credential]
