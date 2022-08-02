@@ -15,4 +15,3 @@ pytest-vcr
 azure-mgmt-storage~=19.1.0
 numpy
 scikit-image
-simplification
