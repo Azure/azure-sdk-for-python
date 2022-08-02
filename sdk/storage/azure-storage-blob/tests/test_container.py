@@ -157,7 +157,7 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = self._create_container(bsc)
-        container.acquire_lease()
+        container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         exists = container.get_container_properties()
@@ -440,7 +440,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         metadata = {'hello': 'world', 'number': '43'}
         container = self._create_container(bsc)
-        lease_id = container.acquire_lease()
+        lease_id = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         container.set_container_metadata(metadata, lease=lease_id)
@@ -492,7 +492,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         metadata = {'hello': 'world', 'number': '42'}
         container = self._create_container(bsc)
         container.set_container_metadata(metadata)
-        lease_id = container.acquire_lease()
+        lease_id = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         md = container.get_container_properties(lease=lease_id).metadata
@@ -550,7 +550,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         metadata = {'hello': 'world', 'number': '42'}
         container = self._create_container(bsc)
         container.set_container_metadata(metadata)
-        lease_id = container.acquire_lease()
+        lease_id = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         props = container.get_container_properties(lease=lease_id)
@@ -588,7 +588,7 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = self._create_container(bsc)
-        lease_id = container.acquire_lease()
+        lease_id = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         acl = container.get_container_access_policy(lease=lease_id)
@@ -672,7 +672,7 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = self._create_container(bsc)
-        lease_id = container.acquire_lease()
+        lease_id = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
@@ -837,7 +837,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = self._create_container(bsc)
 
         # Act
-        lease = container.acquire_lease()
+        lease = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
         lease.release()
 
         # Assert
@@ -850,7 +850,7 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = self._create_container(bsc)
-        lease = container.acquire_lease(lease_duration=15)
+        lease = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
         self.sleep(10)
         lease_id_start = lease.id
 
@@ -875,7 +875,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = self._create_container(bsc)
 
         # Act
-        lease = container.acquire_lease(lease_duration=15)
+        lease = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
 
         # Assert
         lease.break_lease(lease_break_period=5)
@@ -891,7 +891,7 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = self._create_container(bsc)
-        lease = container.acquire_lease()
+        lease = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
         lease.release()
 
         # Act
@@ -910,13 +910,13 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = self._create_container(bsc)
 
         # Act
-        lease = container.acquire_lease(lease_duration=15)
+        lease = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
 
         # Assert
         with pytest.raises(HttpResponseError):
             container.acquire_lease()
         self.sleep(17)
-        container.acquire_lease()
+        container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -928,7 +928,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = self._create_container(bsc)
 
         # Act
-        lease = container.acquire_lease(lease_duration=15)
+        lease = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
 
         # Assert
         lease2 = container.acquire_lease(lease_id=lease.id)
@@ -961,7 +961,7 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         # Act
         lease_id = '29e0b239-ecda-4f69-bfa3-95f6af91464c'
-        lease = container.acquire_lease()
+        lease = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
         lease_id1 = lease.id
         lease.change(proposed_lease_id=lease_id)
         lease.renew()
@@ -1016,7 +1016,7 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = self._create_container(bsc)
-        lease = container.acquire_lease(lease_duration=15)
+        lease = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
 
         # Act
         deleted = container.delete_container(lease=lease)
@@ -1228,7 +1228,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
         blob1.upload_blob(data)
-        lease = blob1.acquire_lease()
+        lease = blob1.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         resp = list(container.list_blobs())
