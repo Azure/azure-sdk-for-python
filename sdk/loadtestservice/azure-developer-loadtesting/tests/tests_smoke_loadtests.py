@@ -97,10 +97,8 @@ class TestOperationsSmokeTest(LoadtestingTest):
                 test_id="non-existing-test-id"
             )
 
-
     @LoadtestingPowerShellPreparer()
     def test_get_loadtest(self, loadtesting_endpoint):
-
         # positive testing
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.get_load_test(
@@ -128,5 +126,65 @@ class TestOperationsSmokeTest(LoadtestingTest):
             client.load_test_administration.upload_test_file(
                 "non-existing-test-id",
                 "some-unique-file-id",
-                open(os.path.join(Path(__file__).resolve().parent, "test_picture.png"), "rb")
+                open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb")
+            )
+
+    @LoadtestingPowerShellPreparer()
+    def test_get_file_by_name(self, loadtesting_endpoint):
+        client = self.create_client(endpoint=loadtesting_endpoint)
+        result = client.load_test_administration.get_test_file(
+            "some-unique-test-id",
+            "some-unique-file-id"
+        )
+        print(result)
+        assert result is not None
+
+        with pytest.raises(ResourceNotFoundError):
+            client.load_test_administration.get_test_file(
+                "non-unique-test-id",
+                "some-non-existing-file-id"
+            )
+
+    @LoadtestingPowerShellPreparer()
+    def test_delete_test_file(self, loadtesting_endpoint):
+
+        # pushing a sample file to delete
+        client = self.create_client(endpoint=loadtesting_endpoint)
+        client.load_test_administration.upload_test_file(
+            "some-unique-test-id",
+            "unique-image-file-id",
+            open(os.path.join(Path(__file__).resolve().parent, "sample-image.jpg"), "rb")
+        )
+
+        result = client.load_test_administration.delete_test_file(
+            "some-unique-test-id",
+            "unique-image-file-id"
+        )
+        assert result is None
+
+        with pytest.raises(ResourceNotFoundError):
+            client.load_test_administration.delete_test_file(
+                "some-unique-test-id",
+                "unique-image-file-id"
+            )
+
+    @LoadtestingPowerShellPreparer()
+    def test_list_test_files(self, loadtesting_endpoint):
+
+        # pushing a sample file to test list
+        client = self.create_client(endpoint=loadtesting_endpoint)
+        client.load_test_administration.upload_test_file(
+            "some-unique-test-id",
+            "unique-image-file-id",
+            open(os.path.join(Path(__file__).resolve().parent, "sample-image.jpg"), "rb")
+        )
+
+        result = client.load_test_administration.list_test_files(
+            "some-unique-test-id"
+        )
+        assert result is not None
+
+        with pytest.raises(ResourceNotFoundError):
+            client.load_test_administration.list_test_files(
+                "non-existing-test-id"
             )
