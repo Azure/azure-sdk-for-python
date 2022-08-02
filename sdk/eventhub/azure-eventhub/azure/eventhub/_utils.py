@@ -43,7 +43,6 @@ from ._constants import (
 
 # TODO: remove after fixing up async
 from uamqp import types
-from uamqp.message import MessageHeader
 PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(PROP_PARTITION_KEY)
 
 
@@ -132,7 +131,7 @@ def send_context_manager():
     else:
         yield None
 
-# TODO: delete after async unit tests have been refactored
+
 def set_event_partition_key(event, partition_key):
     # type: (Union[AmqpAnnotatedMessage, EventData], Optional[Union[bytes, str]]) -> None
     if not partition_key:
@@ -153,27 +152,6 @@ def set_event_partition_key(event, partition_key):
         raw_message.header = AmqpMessageHeader(header=True)
     else:
         raw_message.header.durable = True
-
-
-def set_message_partition_key(message, partition_key):
-    # type: (Message, Optional[Union[bytes, str]]) -> None
-    """Set the partition key as an annotation on a uamqp message.
-
-    :param ~uamqp.Message message: The message to update.
-    :param str partition_key: The partition key value.
-    :rtype: None
-    """
-    if partition_key:
-        annotations = message.annotations
-        if annotations is None:
-            annotations = dict()
-        annotations[
-            PROP_PARTITION_KEY_AMQP_SYMBOL
-        ] = partition_key  # pylint:disable=protected-access
-        header = MessageHeader()
-        header.durable = True
-        message.annotations = annotations
-        message.header = header
 
 
 @contextmanager

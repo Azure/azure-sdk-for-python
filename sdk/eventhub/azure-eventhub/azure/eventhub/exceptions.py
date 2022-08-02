@@ -98,28 +98,3 @@ class OperationTimeoutError(EventHubError):
 
 class OwnershipLostError(Exception):
     """Raised when `update_checkpoint` detects the ownership to a partition has been lost."""
-
-# TODO: delete when async unittests have been refactored
-def _create_eventhub_exception(exception):
-    if isinstance(exception, errors.AuthenticationException):
-        error = AuthenticationError(str(exception), exception)
-    elif isinstance(exception, errors.VendorLinkDetach):
-        error = ConnectError(str(exception), exception)
-    elif isinstance(exception, errors.LinkDetach):
-        error = ConnectionLostError(str(exception), exception)
-    elif isinstance(exception, errors.ConnectionClose):
-        error = ConnectionLostError(str(exception), exception)
-    elif isinstance(exception, errors.MessageHandlerError):
-        error = ConnectionLostError(str(exception), exception)
-    elif isinstance(exception, errors.AMQPConnectionError):
-        error_type = (
-            AuthenticationError
-            if str(exception).startswith("Unable to open authentication session")
-            else ConnectError
-        )
-        error = error_type(str(exception), exception)
-    elif isinstance(exception, compat.TimeoutException):
-        error = ConnectionLostError(str(exception), exception)
-    else:
-        error = EventHubError(str(exception), exception)
-    return error

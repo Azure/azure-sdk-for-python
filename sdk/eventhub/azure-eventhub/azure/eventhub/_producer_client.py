@@ -19,8 +19,6 @@ from typing import (
 )
 from typing_extensions import Literal
 
-from .exceptions import ConnectError, EventHubError
-from .amqp import AmqpAnnotatedMessage
 from ._client_base import ClientBase
 from ._producer import EventHubProducer
 from ._constants import ALL_PARTITIONS, MAX_MESSAGE_LENGTH_BYTES

@@ -2,23 +2,20 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from __future__ import annotations
 import uuid
 import asyncio
 import logging
 from typing import Iterable, Union, Optional, Any, AnyStr, List, TYPE_CHECKING
 import time
 
-from uamqp import types, constants, errors
-from uamqp import SendClientAsync
-
 from azure.core.tracing import AbstractSpan
 
 from .._common import EventData, EventDataBatch
-from ..exceptions import _error_handler, OperationTimeoutError
+from ..exceptions import OperationTimeoutError
 from .._producer import _set_partition_key, _set_trace_message
 from .._utils import (
     create_properties,
-    set_message_partition_key,
     trace_message,
     send_context_manager,
     transform_outbound_single_message,
@@ -29,6 +26,9 @@ from ._client_base_async import ConsumerProducerMixin
 from ._async_utils import get_dict_with_loop_if_needed
 
 if TYPE_CHECKING:
+    from uamqp import types, constants, errors
+    from uamqp import SendClientAsync
+
     from uamqp.authentication import JWTTokenAsync  # pylint: disable=ungrouped-imports
     from ._producer_client_async import EventHubProducerClient
 
@@ -60,8 +60,9 @@ class EventHubProducer(
      Default value is `True`.
     """
 
-    def __init__(self, client: "EventHubProducerClient", target: str, **kwargs) -> None:
+    def __init__(self, client: EventHubProducerClient, target: str, **kwargs) -> None:
         super().__init__()
+        self._amqp_transport = kwargs.pop("amqp_transport")
         partition = kwargs.get("partition", None)
         send_timeout = kwargs.get("send_timeout", 60)
         keep_alive = kwargs.get("keep_alive", None)
@@ -79,10 +80,14 @@ class EventHubProducer(
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
         self._timeout = send_timeout
-        self._idle_timeout = (idle_timeout * 1000) if idle_timeout else None
-        self._retry_policy = errors.ErrorPolicy(
-            max_retries=self._client._config.max_retries,
-            on_error=_error_handler,  # pylint:disable=protected-access
+        self._idle_timeout = (
+            (idle_timeout * self._amqp_transport.IDLE_TIMEOUT_FACTOR)
+            if idle_timeout
+            else None
+        )
+
+        self._retry_policy = self._amqp_transport.create_retry_policy(
+            config=self._client._config
         )
         self._reconnect_backoff = 1
         self._name = "EHProducer-{}".format(uuid.uuid4())
@@ -91,29 +96,31 @@ class EventHubProducer(
         if partition:
             self._target += "/Partitions/" + partition
             self._name += "-partition{}".format(partition)
-        self._handler = None  # type: Optional[SendClientAsync]
-        self._outcome = None  # type: Optional[constants.MessageSendResult]
-        self._condition = None  # type: Optional[Exception]
+        self._handler: Optional[SendClientAsync] = None
+        self._outcome: Optional[constants.MessageSendResult] = None
+        self._condition: Optional[Exception] = None
         self._lock = asyncio.Lock(**self._internal_kwargs)
-        self._link_properties = {
-            types.AMQPSymbol(TIMEOUT_SYMBOL): types.AMQPLong(int(self._timeout * 1000))
-        }
+        self._link_properties = self._amqp_transport.create_link_properties(
+            {TIMEOUT_SYMBOL: int(self._timeout * 1000)}
+        )
+
 
     def _create_handler(self, auth: "JWTTokenAsync") -> None:
-        self._handler = SendClientAsync(
-            self._target,
+        self._handler = self._amqp_transport.create_send_client(
+            config=self._client._config,  # pylint:disable=protected-access
+            target=self._target,
             auth=auth,
-            debug=self._client._config.network_tracing,  # pylint:disable=protected-access
-            msg_timeout=self._timeout * 1000,
+            network_trace=self._client._config.network_tracing,  # pylint:disable=protected-access
             idle_timeout=self._idle_timeout,
-            error_policy=self._retry_policy,
+            retry_policy=self._retry_policy,
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
             link_properties=self._link_properties,
             properties=create_properties(
-                self._client._config.user_agent  # pylint:disable=protected-access
+                self._client._config.user_agent,  # pylint: disable=protected-access
+                amqp_transport=self._amqp_transport,
             ),
-            **self._internal_kwargs
+            msg_timeout=self._timeout * 1000,
         )
 
     async def _open_with_retry(self) -> Any:
@@ -121,38 +128,15 @@ class EventHubProducer(
             self._open, operation_need_param=False
         )
 
-    def _set_msg_timeout(
-        self, timeout_time: Optional[float], last_exception: Optional[Exception]
-    ) -> None:
-        if not timeout_time:
-            return
-        remaining_time = timeout_time - time.time()
-        if remaining_time <= 0.0:
-            if last_exception:
-                error = last_exception
-            else:
-                error = OperationTimeoutError("Send operation timed out")
-            _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
-            raise error
-        self._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
-
     async def _send_event_data(
         self,
         timeout_time: Optional[float] = None,
         last_exception: Optional[Exception] = None,
     ) -> None:
-        # TODO: Correct uAMQP type hints
         if self._unsent_events:
-            await self._open()
-            self._set_msg_timeout(timeout_time, last_exception)
-            self._handler.queue_message(*self._unsent_events)  # type: ignore
-            await self._handler.wait_async()  # type: ignore
-            self._unsent_events = self._handler.pending_messages  # type: ignore
-            if self._outcome != constants.MessageSendResult.Ok:
-                if self._outcome == constants.MessageSendResult.Timeout:
-                    self._condition = OperationTimeoutError("Send operation timed out")
-                if self._condition:
-                    raise self._condition
+            self._amqp_transport.send_messages(
+                self, timeout_time, last_exception, _LOGGER
+            )
 
     async def _send_event_data_with_retry(
         self, timeout: Optional[float] = None
@@ -183,16 +167,20 @@ class EventHubProducer(
     ) -> Union[EventData, EventDataBatch]:
         if isinstance(event_data, (EventData, AmqpAnnotatedMessage)):
             outgoing_event_data = transform_outbound_single_message(
-                event_data, EventData
+                event_data, EventData, self._amqp_transport.to_outgoing_amqp_message
             )
             if partition_key:
-                set_message_partition_key(outgoing_event_data.message, partition_key)
+                self._amqp_transport.set_message_partition_key(
+                    outgoing_event_data._message, partition_key  # pylint: disable=protected-access
+                )
             wrapper_event_data = outgoing_event_data
             trace_message(wrapper_event_data, span)
         else:
             if isinstance(
                 event_data, EventDataBatch
             ):  # The partition_key in the param will be omitted.
+                if not event_data:
+                    return event_data
                 if (
                     partition_key
                     and partition_key
@@ -203,15 +191,16 @@ class EventHubProducer(
                     )
                 for (
                     event
-                ) in event_data.message._body_gen:  # pylint: disable=protected-access
+                ) in event_data._message.data:  # pylint: disable=protected-access
                     trace_message(event, span)
                 wrapper_event_data = event_data  # type:ignore
             else:
                 if partition_key:
-                    event_data = _set_partition_key(event_data, partition_key)
+                    event_data = _set_partition_key(
+                        event_data, partition_key, self._amqp_transport
+                    )
                 event_data = _set_trace_message(event_data, span)
-                wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # type: ignore  # pylint: disable=protected-access
-        wrapper_event_data.message.on_send_complete = self._on_outcome
+                wrapper_event_data = EventDataBatch._from_batch(event_data, self._amqp_transport, partition_key)  # type: ignore  # pylint: disable=protected-access
         return wrapper_event_data
 
     async def send(
@@ -253,7 +242,11 @@ class EventHubProducer(
                 wrapper_event_data = self._wrap_eventdata(
                     event_data, child, partition_key
                 )
-                self._unsent_events = [wrapper_event_data.message]
+
+                if not wrapper_event_data:
+                    return
+
+                self._unsent_events = [wrapper_event_data._message]  # pylint: disable=protected-access
 
                 if child:
                     self._client._add_span_request_attributes(  # pylint: disable=protected-access

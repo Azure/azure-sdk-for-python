@@ -194,7 +194,6 @@ class EventHubSharedKeyCredential(object):
         # type: (str, Any) -> AccessToken
         if not scopes:
             raise ValueError("No token scope provided.")
-
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
@@ -291,7 +290,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         **kwargs: Any,
     ) -> None:
         self._uamqp_transport = kwargs.pop("uamqp_transport", True)
-        self._amqp_transport = UamqpTransport if self._uamqp_transport else None
+        self._amqp_transport = kwargs.pop("amqp_transport", UamqpTransport)
 
         self.eventhub_name = eventhub_name
         if not eventhub_name:
@@ -302,7 +301,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         if isinstance(credential, AzureSasCredential):
             self._credential = EventhubAzureSasTokenCredential(credential)
         elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential = EventhubAzureNamedKeyTokenCredential(credential)
+            self._credential = EventhubAzureNamedKeyTokenCredential(credential)  # type: ignore
         else:
             self._credential = credential  # type: ignore
         self._keep_alive = kwargs.get("keep_alive", 30)

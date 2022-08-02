@@ -16,7 +16,7 @@ from ._client_base_async import ClientBaseAsync
 from ._producer_async import EventHubProducer
 from ._buffered_producer import BufferedProducerDispatcher
 from .._utils import set_event_partition_key
-from .._constants import ALL_PARTITIONS
+from .._constants import ALL_PARTITIONS, TransportType
 from .._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
@@ -232,6 +232,7 @@ class EventHubProducerClient(
                 self._max_message_size_on_link,
                 max_wait_time=self._max_wait_time,
                 max_buffer_length=self._max_buffer_length,
+                amqp_transport=self._amqp_transport,
             )
             await self._buffered_producer_dispatcher.enqueue_events(events, **kwargs)
 
@@ -301,9 +302,11 @@ class EventHubProducerClient(
                     EventHubProducer, self._producers[ALL_PARTITIONS]
                 )._open_with_retry()
                 self._max_message_size_on_link = (
-                    cast(  # type: ignore
+                    self._amqp_transport.get_remote_max_message_size(
+                        cast(  # type: ignore
                         EventHubProducer, self._producers[ALL_PARTITIONS]
-                    )._handler.message_handler._link.peer_max_message_size
+                        )._handler
+                    )
                     or constants.MAX_MESSAGE_LENGTH_BYTES
                 )
 
@@ -350,6 +353,7 @@ class EventHubProducerClient(
             partition=partition_id,
             send_timeout=send_timeout,
             idle_timeout=self._idle_timeout,
+            amqp_transport = self._amqp_transport,
             **self._internal_kwargs
         )
         return handler
@@ -402,7 +406,7 @@ class EventHubProducerClient(
         auth_timeout: float = 60,
         user_agent: Optional[str] = None,
         retry_total: int = 3,
-        transport_type: Optional["TransportType"] = None,
+        transport_type: Optional["TransportType"] = TransportType.Amqp,
         **kwargs: Any
     ) -> "EventHubProducerClient":
         """Create an EventHubProducerClient from a connection string.
@@ -719,6 +723,7 @@ class EventHubProducerClient(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
             partition_id=partition_id,
             partition_key=partition_key,
+            amqp_transport=self._amqp_transport,
         )
 
         return event_data_batch

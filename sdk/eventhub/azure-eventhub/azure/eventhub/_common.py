@@ -511,8 +511,9 @@ class EventDataBatch(object):
         **kwargs,
     ) -> None:
         # TODO: this changes API, check with Anna if valid -
-        # If possible, move out message creation to right before sending.
+        # Need move out message creation to right before sending.
         # Might take more time to loop through events and add them all to batch in `send` than in `add` here
+        # Default async vs sync might cause issues.
         self._amqp_transport = kwargs.pop("amqp_transport", UamqpTransport)
 
 
