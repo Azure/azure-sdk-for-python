@@ -7,7 +7,7 @@
       "ubuntu-20.04": { "OSVmImage": "MMSUbuntu20.04", "Pool": "azsdk-pool-mms-ubuntu-2004-general" },
       "macOS-10.15": { "OSVmImage": "macOS-10.15", "Pool": "Azure Pipelines" }
     },
-    "PythonVersion": [ "pypy3.7", "3.8", "3.9"],
+    "PythonVersion": [ "pypy3.7", "3.8"],
     "CoverageArg": "--disablecov"
   },
   "include": [
