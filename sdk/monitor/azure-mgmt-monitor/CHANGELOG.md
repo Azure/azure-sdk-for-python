@@ -1,5 +1,11 @@
 # Release History
 
+## 4.0.1 (2022-08-02)
+
+**Other Change**
+
+  - Fix package structure
+
 ## 4.0.0 (2022-08-02)
 
 **Features**

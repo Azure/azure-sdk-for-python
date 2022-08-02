@@ -16,7 +16,7 @@ from azure.mgmt.core import AsyncARMPipelineClient
 
 from .. import models
 from ._configuration import MonitorManagementClientConfiguration
-from .operations import ActionGroupsOperations
+from .operations import ActionGroupsOperations, BaselinesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -28,6 +28,8 @@ class MonitorManagementClient:
     :ivar action_groups: ActionGroupsOperations operations
     :vartype action_groups:
      $(python-base-namespace).v2018_09_01.aio.operations.ActionGroupsOperations
+    :ivar baselines: BaselinesOperations operations
+    :vartype baselines: $(python-base-namespace).v2018_09_01.aio.operations.BaselinesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
@@ -54,6 +56,9 @@ class MonitorManagementClient:
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.action_groups = ActionGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.baselines = BaselinesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
