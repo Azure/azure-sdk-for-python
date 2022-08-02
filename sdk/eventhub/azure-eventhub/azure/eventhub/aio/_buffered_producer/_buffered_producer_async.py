@@ -98,7 +98,6 @@ class BufferedProducer:
             # flush the buffer
             await self.flush(timeout_time=timeout_time)
         if timeout_time and time.time() > timeout_time:
-            print("Failed to enqueue events into buffer due to timeout.")
             raise OperationTimeoutError(
                 "Failed to enqueue events into buffer due to timeout."
             )
