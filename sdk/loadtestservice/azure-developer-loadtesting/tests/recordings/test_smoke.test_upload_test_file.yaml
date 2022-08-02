@@ -135,7 +135,7 @@ interactions:
     uri: https://myservice.azure.com/loadtests/TEST_ID/files/FILE_ID?api-version=2022-06-01-preview
   response:
     body:
-      string: '{"url":"https://stcntproddataeus.blob.core.windows.net/041c60a4-d25f-4102-b324-4f30261785e3/FILE_ID?sv=2020-04-08&se=2022-07-27T08%3A30%3A22Z&sr=b&sp=r&sig=wMK5eiIYYYKYeqhTSB6LLIlykWvTXzTw9j2r0l31a3Y%3D","fileId":"FILE_ID","filename":"sample.jmx","fileType":0,"expireTime":"2022-07-27T08:30:22.4468578","validationStatus":"VALIDATION_INITIATED"}'
+      string: '{"url":"https://stcntproddataeus.blob.core.windows.net/041c60a4-d25f-4102-b324-4f30261785e3/FILE_ID?sv=2020-04-08&se=2022-07-27T08%3A30%3A22ZwMK5eiIYYYKYeqhTSB6LLIlykWvTXzTw9j2r0l31a3Y%3D","fileId":"FILE_ID","filename":"sample.jmx","fileType":0,"expireTime":"2022-07-27T08:30:22.4468578","validationStatus":"VALIDATION_INITIATED"}'
     headers:
       api-supported-versions:
       - 2021-07-01-preview, 2022-06-01-preview

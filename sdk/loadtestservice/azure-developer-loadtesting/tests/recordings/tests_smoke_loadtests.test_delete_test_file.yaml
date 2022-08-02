@@ -1206,7 +1206,7 @@ interactions:
     uri: https://myservice.azure.com/loadtests/some-unique-test-id/files/unique-image-file-id?api-version=2022-06-01-preview
   response:
     body:
-      string: '{"url":"https://stcntproddataeus.blob.core.windows.net/7119bd1d-cd3f-40be-ab75-0fda8862f6d5/unique-image-file-id?sv=2020-04-08&se=2022-08-02T05%3A58%3A21Z&sr=b&sp=r&sig=Zp8TpXq8JWwvIUWPKLvU8rUrnfqa6UvZAEuUdAL5buc%3D","fileId":"unique-image-file-id","filename":"sample-image.jpg","fileType":2,"expireTime":"2022-08-02T05:58:21.7220194","validationStatus":""}'
+      string: '{"url":"https://stcntproddataeus.blob.core.windows.net/7119bd1d-cd3f-40be-ab75-0fda8862f6d5/unique-image-file-id","fileId":"unique-image-file-id","filename":"sample-image.jpg","fileType":2,"expireTime":"2022-08-02T05:58:21.7220194","validationStatus":""}'
     headers:
       api-supported-versions:
       - 2021-07-01-preview, 2022-06-01-preview
