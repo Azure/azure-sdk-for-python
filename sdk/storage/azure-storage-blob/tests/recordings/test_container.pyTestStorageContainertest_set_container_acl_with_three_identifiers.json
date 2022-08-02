@@ -9,16 +9,16 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Mon, 01 Aug 2022 23:13:04 GMT",
+        "x-ms-date": "Tue, 02 Aug 2022 23:18:17 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Mon, 01 Aug 2022 23:13:04 GMT",
-        "ETag": "\u00220x8DA7413639276B0\u0022",
-        "Last-Modified": "Mon, 01 Aug 2022 23:13:05 GMT",
+        "Date": "Tue, 02 Aug 2022 23:18:17 GMT",
+        "ETag": "\u00220x8DA74DD4859CF5B\u0022",
+        "Last-Modified": "Tue, 02 Aug 2022 23:18:17 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -37,19 +37,19 @@
         "Content-Length": "600",
         "Content-Type": "application/xml",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Mon, 01 Aug 2022 23:13:04 GMT",
+        "x-ms-date": "Tue, 02 Aug 2022 23:18:17 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": [
         "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
-        "\u003CSignedIdentifiers\u003E\u003CSignedIdentifier\u003E\u003CId\u003E0\u003C/Id\u003E\u003CAccessPolicy\u003E\u003CStart\u003E2022-08-01T23:12:04Z\u003C/Start\u003E\u003CExpiry\u003E2022-08-02T00:13:04Z\u003C/Expiry\u003E\u003CPermission\u003Er\u003C/Permission\u003E\u003C/AccessPolicy\u003E\u003C/SignedIdentifier\u003E\u003CSignedIdentifier\u003E\u003CId\u003E1\u003C/Id\u003E\u003CAccessPolicy\u003E\u003CStart\u003E2022-08-01T23:12:04Z\u003C/Start\u003E\u003CExpiry\u003E2022-08-02T00:13:04Z\u003C/Expiry\u003E\u003CPermission\u003Er\u003C/Permission\u003E\u003C/AccessPolicy\u003E\u003C/SignedIdentifier\u003E\u003CSignedIdentifier\u003E\u003CId\u003E2\u003C/Id\u003E\u003CAccessPolicy\u003E\u003CStart\u003E2022-08-01T23:12:04Z\u003C/Start\u003E\u003CExpiry\u003E2022-08-02T00:13:04Z\u003C/Expiry\u003E\u003CPermission\u003Er\u003C/Permission\u003E\u003C/AccessPolicy\u003E\u003C/SignedIdentifier\u003E\u003C/SignedIdentifiers\u003E"
+        "\u003CSignedIdentifiers\u003E\u003CSignedIdentifier\u003E\u003CId\u003E0\u003C/Id\u003E\u003CAccessPolicy\u003E\u003CStart\u003E2022-08-02T23:17:17Z\u003C/Start\u003E\u003CExpiry\u003E2022-08-03T00:18:17Z\u003C/Expiry\u003E\u003CPermission\u003Er\u003C/Permission\u003E\u003C/AccessPolicy\u003E\u003C/SignedIdentifier\u003E\u003CSignedIdentifier\u003E\u003CId\u003E1\u003C/Id\u003E\u003CAccessPolicy\u003E\u003CStart\u003E2022-08-02T23:17:17Z\u003C/Start\u003E\u003CExpiry\u003E2022-08-03T00:18:17Z\u003C/Expiry\u003E\u003CPermission\u003Er\u003C/Permission\u003E\u003C/AccessPolicy\u003E\u003C/SignedIdentifier\u003E\u003CSignedIdentifier\u003E\u003CId\u003E2\u003C/Id\u003E\u003CAccessPolicy\u003E\u003CStart\u003E2022-08-02T23:17:17Z\u003C/Start\u003E\u003CExpiry\u003E2022-08-03T00:18:17Z\u003C/Expiry\u003E\u003CPermission\u003Er\u003C/Permission\u003E\u003C/AccessPolicy\u003E\u003C/SignedIdentifier\u003E\u003C/SignedIdentifiers\u003E"
       ],
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Mon, 01 Aug 2022 23:13:04 GMT",
-        "ETag": "\u00220x8DA741363A308C2\u0022",
-        "Last-Modified": "Mon, 01 Aug 2022 23:13:05 GMT",
+        "Date": "Tue, 02 Aug 2022 23:18:17 GMT",
+        "ETag": "\u00220x8DA74DD486BAFC3\u0022",
+        "Last-Modified": "Tue, 02 Aug 2022 23:18:17 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -66,25 +66,29 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Mon, 01 Aug 2022 23:13:05 GMT",
+        "x-ms-date": "Tue, 02 Aug 2022 23:18:18 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/xml",
-        "Date": "Mon, 01 Aug 2022 23:13:04 GMT",
-        "ETag": "\u00220x8DA741363A308C2\u0022",
-        "Last-Modified": "Mon, 01 Aug 2022 23:13:05 GMT",
+        "Date": "Tue, 02 Aug 2022 23:18:17 GMT",
+        "ETag": "\u00220x8DA74DD486BAFC3\u0022",
+        "Last-Modified": "Tue, 02 Aug 2022 23:18:17 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
+        "Vary": "Origin",
         "x-ms-version": "2021-08-06"
       },
-      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CSignedIdentifiers\u003E\u003CSignedIdentifier\u003E\u003CId\u003E0\u003C/Id\u003E\u003CAccessPolicy\u003E\u003CStart\u003E2022-08-01T23:12:04.0000000Z\u003C/Start\u003E\u003CExpiry\u003E2022-08-02T00:13:04.0000000Z\u003C/Expiry\u003E\u003CPermission\u003Er\u003C/Permission\u003E\u003C/AccessPolicy\u003E\u003C/SignedIdentifier\u003E\u003CSignedIdentifier\u003E\u003CId\u003E1\u003C/Id\u003E\u003CAccessPolicy\u003E\u003CStart\u003E2022-08-01T23:12:04.0000000Z\u003C/Start\u003E\u003CExpiry\u003E2022-08-02T00:13:04.0000000Z\u003C/Expiry\u003E\u003CPermission\u003Er\u003C/Permission\u003E\u003C/AccessPolicy\u003E\u003C/SignedIdentifier\u003E\u003CSignedIdentifier\u003E\u003CId\u003E2\u003C/Id\u003E\u003CAccessPolicy\u003E\u003CStart\u003E2022-08-01T23:12:04.0000000Z\u003C/Start\u003E\u003CExpiry\u003E2022-08-02T00:13:04.0000000Z\u003C/Expiry\u003E\u003CPermission\u003Er\u003C/Permission\u003E\u003C/AccessPolicy\u003E\u003C/SignedIdentifier\u003E\u003C/SignedIdentifiers\u003E"
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CSignedIdentifiers\u003E\u003CSignedIdentifier\u003E\u003CId\u003E0\u003C/Id\u003E\u003CAccessPolicy\u003E\u003CStart\u003E2022-08-02T23:17:17.0000000Z\u003C/Start\u003E\u003CExpiry\u003E2022-08-03T00:18:17.0000000Z\u003C/Expiry\u003E\u003CPermission\u003Er\u003C/Permission\u003E\u003C/AccessPolicy\u003E\u003C/SignedIdentifier\u003E\u003CSignedIdentifier\u003E\u003CId\u003E1\u003C/Id\u003E\u003CAccessPolicy\u003E\u003CStart\u003E2022-08-02T23:17:17.0000000Z\u003C/Start\u003E\u003CExpiry\u003E2022-08-03T00:18:17.0000000Z\u003C/Expiry\u003E\u003CPermission\u003Er\u003C/Permission\u003E\u003C/AccessPolicy\u003E\u003C/SignedIdentifier\u003E\u003CSignedIdentifier\u003E\u003CId\u003E2\u003C/Id\u003E\u003CAccessPolicy\u003E\u003CStart\u003E2022-08-02T23:17:17.0000000Z\u003C/Start\u003E\u003CExpiry\u003E2022-08-03T00:18:17.0000000Z\u003C/Expiry\u003E\u003CPermission\u003Er\u003C/Permission\u003E\u003C/AccessPolicy\u003E\u003C/SignedIdentifier\u003E\u003C/SignedIdentifiers\u003E"
     }
   ],
-  "Variables": {}
+  "Variables": {
+    "expiry_time": "2022-08-03T00:18:17.350238",
+    "start_time": "2022-08-02T23:17:17.350238"
+  }
 }

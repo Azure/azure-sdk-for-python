@@ -603,13 +603,21 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
+        variables = kwargs.pop('variables')
+        if self.is_live:
+            expiry_time = datetime.utcnow() + timedelta(hours=1)
+            start_time = datetime.utcnow()
+            variables = {"expiry_time": expiry_time.isoformat(), "start_time": start_time.isoformat()}
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = self._create_container(bsc)
 
         # Act
+        expires = datetime.strptime(variables["expiry_time"], "%Y-%m-%dT%H:%M:%S.%f")
+        starts = datetime.strptime(variables["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=datetime.utcnow() + timedelta(hours=1),
-                                     start=datetime.utcnow())
+                                     expiry=expires,
+                                     start=starts)
         signed_identifier = {'testid': access_policy}
         response = container.set_container_access_policy(signed_identifier)
 
@@ -622,19 +630,29 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert len(acl.get('signed_identifiers')) == 1
         assert acl.get('public_access') is None
 
+        return variables
+
     @BlobPreparer()
     @recorded_by_proxy
     def test_set_container_acl_with_one_signed_identifier(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
+        variables = kwargs.pop('variables')
+        if self.is_live:
+            expiry_time = datetime.utcnow() + timedelta(hours=1)
+            start_time = datetime.utcnow()
+            variables = {"expiry_time": expiry_time.isoformat(), "start_time": start_time.isoformat()}
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = self._create_container(bsc)
 
         # Act
+        expires = datetime.strptime(variables["expiry_time"], "%Y-%m-%dT%H:%M:%S.%f")
+        starts = datetime.strptime(variables["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=datetime.utcnow() + timedelta(hours=1),
-                                     start=datetime.utcnow())
+                                     expiry=expires,
+                                     start=starts)
         signed_identifier = {'testid': access_policy}
 
         response = container.set_container_access_policy(signed_identifier)
@@ -642,6 +660,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         # Assert
         assert response.get('etag') is not None
         assert response.get('last_modified') is not None
+
+        return variables
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -670,14 +690,22 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
+        variables = kwargs.pop('variables')
+        if self.is_live:
+            expiry_time = datetime.utcnow() + timedelta(hours=1)
+            start_time = datetime.utcnow()
+            variables = {"expiry_time": expiry_time.isoformat(), "start_time": start_time.isoformat()}
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = self._create_container(bsc)
         lease_id = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
+        expires = datetime.strptime(variables["expiry_time"], "%Y-%m-%dT%H:%M:%S.%f")
+        starts = datetime.strptime(variables["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=datetime.utcnow() + timedelta(hours=1),
-                                     start=datetime.utcnow())
+                                     expiry=expires,
+                                     start=starts)
         signed_identifiers = {'testid': access_policy}
 
         container.set_container_access_policy(signed_identifiers, lease=lease_id)
@@ -686,6 +714,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         acl = container.get_container_access_policy()
         assert acl is not None
         assert acl.get('public_access') is None
+
+        return variables
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -747,13 +777,21 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
+        variables = kwargs.pop('variables')
+        if self.is_live:
+            expiry_time = datetime.utcnow() + timedelta(hours=1)
+            start_time = datetime.utcnow() - timedelta(minutes=1)
+            variables = {"expiry_time": expiry_time.isoformat(), "start_time": start_time.isoformat()}
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = self._create_container(bsc)
 
         # Act
+        expires = datetime.strptime(variables["expiry_time"], "%Y-%m-%dT%H:%M:%S.%f")
+        starts = datetime.strptime(variables["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=datetime.utcnow() + timedelta(hours=1),
-                                     start=datetime.utcnow() - timedelta(minutes=1))
+                                     expiry=expires,
+                                     start=starts)
         identifiers = {'testid': access_policy}
         container.set_container_access_policy(identifiers)
 
@@ -762,6 +800,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert acl is not None
         assert 'testid' == acl.get('signed_identifiers')[0].id
         assert acl.get('public_access') is None
+
+        return variables
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -790,11 +830,20 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
+        variables = kwargs.pop('variables')
+        if self.is_live:
+            expiry_time = datetime.utcnow() + timedelta(hours=1)
+            start_time = datetime.utcnow() - timedelta(minutes=1)
+            variables = {"expiry_time": expiry_time.isoformat(), "start_time": start_time.isoformat()}
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = self._create_container(bsc)
+
+        expires = datetime.strptime(variables["expiry_time"], "%Y-%m-%dT%H:%M:%S.%f")
+        starts = datetime.strptime(variables["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=datetime.utcnow() + timedelta(hours=1),
-                                     start=datetime.utcnow() - timedelta(minutes=1))
+                                     expiry=expires,
+                                     start=starts)
         identifiers = {i: access_policy for i in range(3)}
 
         # Act
@@ -806,6 +855,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert '0' == acl.get('signed_identifiers')[0].id
         assert acl.get('signed_identifiers')[0].access_policy is not None
         assert acl.get('public_access') is None
+
+        return variables
 
 
     @BlobPreparer()
