@@ -85,39 +85,41 @@ class BufferedProducer:
         # Put single event or EventDataBatch into the queue.
         # This method would raise OperationTimeout if the queue does not have enough space for the input and
         # flush cannot finish in timeout.
-        with self._lock:
-            try:
-                new_events_len = len(events)
-            except TypeError:
-                new_events_len = 1
-            if self._max_buffer_len - self._cur_buffered_len < new_events_len:
-                _LOGGER.info(
-                    "The buffer for partition %r is full. Attempting to flush before adding %r events.",
-                    self.partition_id,
-                    new_events_len,
-                )
-                # flush the buffer
-                self.flush(timeout_time=timeout_time)
-            if timeout_time and time.time() > timeout_time:
-                raise OperationTimeoutError(
-                    "Failed to enqueue events into buffer due to timeout."
-                )
-            try:
-                # add single event into current batch
-                self._cur_batch.add(events)
-            except AttributeError:  # if the input events is a EventDataBatch, put the whole into the buffer
-                # if there are events in cur_batch, enqueue cur_batch to the buffer
+        
+        try:
+            new_events_len = len(events)
+        except TypeError:
+            new_events_len = 1
+        if self._max_buffer_len - self._cur_buffered_len < new_events_len:
+            _LOGGER.info(
+                "The buffer for partition %r is full. Attempting to flush before adding %r events.",
+                self.partition_id,
+                new_events_len,
+            )
+            # flush the buffer
+            self.flush(timeout_time=timeout_time)
+        if timeout_time and time.time() > timeout_time:
+            raise OperationTimeoutError(
+                "Failed to enqueue events into buffer due to timeout."
+            )
+        try:
+            # add single event into current batch
+            self._cur_batch.add(events)
+        except AttributeError:  # if the input events is a EventDataBatch, put the whole into the buffer
+            # if there are events in cur_batch, enqueue cur_batch to the buffer
+            with self._lock:
                 if self._cur_batch:
                     self._buffered_queue.put(self._cur_batch)
                 self._buffered_queue.put(events)
-                # create a new batch for incoming events
-                self._cur_batch = EventDataBatch(self._max_message_size_on_link)
-            except ValueError:
-                # add single event exceeds the cur batch size, create new batch
+            # create a new batch for incoming events
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
+        except ValueError:
+            # add single event exceeds the cur batch size, create new batch
+            with self._lock:
                 self._buffered_queue.put(self._cur_batch)
-                self._cur_batch = EventDataBatch(self._max_message_size_on_link)
-                self._cur_batch.add(events)
-            self._cur_buffered_len += new_events_len
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
+            self._cur_batch.add(events)
+        self._cur_buffered_len += new_events_len
 
     def failsafe_callback(self, callback):
         def wrapper_callback(*args, **kwargs):
