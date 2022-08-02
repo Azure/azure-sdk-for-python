@@ -75,7 +75,7 @@ class SenderLink(Link):
         self.update_pending_deliveries()
 
     def _incoming_detach(self, frame):
-        super(SenderLink, self)._incoming_attach(frame)
+        super(SenderLink, self)._incoming_detach(frame)
         self._remove_pending_deliveries()
 
     def _incoming_flow(self, frame):
