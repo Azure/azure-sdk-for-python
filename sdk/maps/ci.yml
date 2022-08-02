@@ -32,4 +32,5 @@ extends:
       safeName: azuremgmtmaps
     - name: azure-maps-search
       safeName: azuremapssearch
-
+    - name: azure-maps-geolocation
+      safeName: azuremapsgeolocation
