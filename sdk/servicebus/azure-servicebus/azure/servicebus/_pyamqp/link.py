@@ -99,10 +99,6 @@ class Link(object):
         self.network_trace_params['link'] = self.name
         self._session = session
         self._is_closed = False
-        self._send_links = {}
-        self._receive_links = {}
-        self._pending_deliveries = {}
-        self._received_payload = bytearray()
         self._on_link_state_change = kwargs.get('on_link_state_change')
         self._on_attach = kwargs.get('on_attach')
         self._error = None
@@ -150,11 +146,6 @@ class Link(object):
             pass
         except Exception as e:  # pylint: disable=broad-except
             _LOGGER.error("Link state change callback failed: '%r'", e, extra=self.network_trace_params)
-
-    def _remove_pending_deliveries(self):  # TODO: move to sender
-        for delivery in self._pending_deliveries.values():
-            delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None)
-        self._pending_deliveries = {}
     
     def _on_session_state_change(self):
         if self._session.state == SessionState.MAPPED:
@@ -162,7 +153,6 @@ class Link(object):
                 self._outgoing_attach()
                 self._set_state(LinkState.ATTACH_SENT)
         elif self._session.state == SessionState.DISCARDING:
-            self._remove_pending_deliveries()
             self._set_state(LinkState.DETACHED)
 
     def _outgoing_attach(self):
@@ -194,7 +184,6 @@ class Link(object):
             raise ValueError("Invalid link")
         elif not frame[5] or not frame[6]:  # TODO: not sure if we should source + target check here
             _LOGGER.info("Cannot get source or target. Detaching link")
-            self._remove_pending_deliveries()
             self._set_state(LinkState.DETACHED)  # TODO: Send detach now?
             raise ValueError("Invalid link")
         self.remote_handle = frame[1]  # handle
@@ -254,7 +243,6 @@ class Link(object):
             # In this case, we MUST signal that we closed by reattaching and then sending a closing detach.
             self._outgoing_attach()
             self._outgoing_detach(close=True)
-        self._remove_pending_deliveries()
         # TODO: on_detach_hook
         if frame[2]:  # error
             # frame[2][0] is condition, frame[2][1] is description, frame[2][2] is info
@@ -269,14 +257,12 @@ class Link(object):
             raise ValueError("Link already closed.")
         self._outgoing_attach()
         self._set_state(LinkState.ATTACH_SENT)
-        self._received_payload = bytearray()
 
     def detach(self, close=False, error=None):
         if self.state in (LinkState.DETACHED, LinkState.ERROR):
             return
         try:
             self._check_if_closed()
-            self._remove_pending_deliveries()  # TODO: Keep?
             if self.state in [LinkState.ATTACH_SENT, LinkState.ATTACH_RCVD]:
                 self._outgoing_detach(close=close, error=error)
                 self._set_state(LinkState.DETACHED)

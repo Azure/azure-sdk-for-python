@@ -49,6 +49,7 @@ class ReceiverLink(Link):
             kwargs['target_address'] = "receiver-link-{}".format(name)
         super(ReceiverLink, self).__init__(session, handle, name, role, source_address=source_address, **kwargs)
         self._on_transfer = kwargs.pop('on_transfer')
+        self._received_payload = bytearray()
 
     def _process_incoming_message(self, frame, message):
         try:
@@ -61,7 +62,6 @@ class ReceiverLink(Link):
         super(ReceiverLink, self)._incoming_attach(frame)
         if frame[9] is None:  # initial_delivery_count
             _LOGGER.info("Cannot get initial-delivery-count. Detaching link")
-            self._remove_pending_deliveries()
             self._set_state(LinkState.DETACHED)  # TODO: Send detach now?
         self.delivery_count = frame[9]
         self.current_link_credit = self.link_credit
@@ -111,6 +111,10 @@ class ReceiverLink(Link):
         if self.network_trace:
             _LOGGER.info("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
         self._session._outgoing_disposition(disposition_frame)
+
+    def attach(self):
+        super().attach()
+        self._received_payload = bytearray()
 
     def send_disposition(
             self,
