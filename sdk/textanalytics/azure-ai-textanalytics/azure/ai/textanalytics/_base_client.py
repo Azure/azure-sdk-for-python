@@ -3,17 +3,15 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Union, Any, TYPE_CHECKING
+from typing import Union, Any
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, HttpLoggingPolicy
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from ._generated import TextAnalyticsClient as _TextAnalyticsClient
 from ._policies import TextAnalyticsResponseHookPolicy
 from ._user_agent import USER_AGENT
 from ._version import DEFAULT_API_VERSION
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
 
 class TextAnalyticsApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -45,7 +43,7 @@ class TextAnalyticsClientBase:
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, "TokenCredential"],
+        credential: Union[AzureKeyCredential, TokenCredential],
         **kwargs: Any
     ) -> None:
         http_logging_policy = HttpLoggingPolicy(**kwargs)
