@@ -4,17 +4,14 @@
 # ------------------------------------
 
 # pylint: disable=unused-import,ungrouped-imports, R0904, C0302
-from typing import TYPE_CHECKING, Union, Any
+from typing import Union, Any
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 
 from ._base_client import MapsGeolocationClientBase
 from .models import (
     IpAddressToLocationResult
 )
-
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
 
 # By default, use the latest supported API version
@@ -31,10 +28,9 @@ class MapsGeolocationClient(MapsGeolocationClientBase):
 
     def __init__(
         self,
-        credential, # type: Union[AzureKeyCredential, TokenCredential]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: Union[AzureKeyCredential, TokenCredential],
+        **kwargs: Any
+    ) -> None:
 
         super().__init__(
             credential=credential, **kwargs

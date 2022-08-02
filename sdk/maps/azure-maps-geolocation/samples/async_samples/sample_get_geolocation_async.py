@@ -31,8 +31,8 @@ async def get_geolocation_async():
     async with maps_geolocation_client:
         result = await maps_geolocation_client.get_geolocation(ip_address="2001:4898:80e8:b::189")
 
-    print("Get Geolocation:")
-    print(result)
+    print("Get Country code with Geolocation:")
+    print(result.country_region.iso_code)
     # [END get_geolocation_async]
 
 if __name__ == '__main__':

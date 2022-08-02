@@ -30,8 +30,8 @@ def get_geolocation():
 
     result = maps_geolocation_client.get_geolocation(ip_address="2001:4898:80e8:b::189")
 
-    print("Get Geolocation:")
-    print(result)
+    print("Get Country code with Geolocation:")
+    print(result.country_region.iso_code)
 
     # [END get_geolocation]
 

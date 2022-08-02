@@ -7,8 +7,6 @@ except ImportError:  # python < 3.3
 
 from devtools_testutils import AzureTestCase
 from azure.core.pipeline.transport import HttpTransport, HttpResponse
-from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
 from azure.maps.geolocation import MapsGeolocationClient
 
@@ -48,9 +46,15 @@ class AzureMapsGeolocationClientUnitTest(AzureTestCase):
 
 
     def test_get_geolocation(self):
-        client = create_mock_client()
-        with pytest.raises(TypeError):
-            result = client.get_geolocation(ip_address="2001:4898:80e8:b::189")
+        body ='''{
+            "countryRegion": {
+                "isoCode": "US"
+            },
+            "ipAddress": "2001:4898:80e8:b::189"
+        }'''
+        client = create_mock_client(status_code=200, body=body)
+        result = client.get_geolocation(ip_address="2001:4898:80e8:b::189")
+        assert result.country_region.iso_code == "US"
 
 
 if __name__ == "__main__" :

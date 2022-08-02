@@ -5,18 +5,15 @@
 # ---------------------------------------------------------------------
 
 # pylint: disable=unused-import,ungrouped-imports, R0904, C0302, too-many-function-args, W0212
-from typing import TYPE_CHECKING
+from typing import Any, Union
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 
 from ._base_client_async import AsyncMapsGeolocationClientBase
 from ..models import (
     IpAddressToLocationResult
 )
-
-if TYPE_CHECKING:
-    from typing import Any, Union
-    from azure.core.credentials_async import AsyncTokenCredential
 
 # By default, use the latest supported API version
 class MapsGeolocationClient(AsyncMapsGeolocationClientBase):
@@ -31,10 +28,9 @@ class MapsGeolocationClient(AsyncMapsGeolocationClientBase):
     """
     def __init__(
         self,
-        credential, # type: Union[AzureKeyCredential, AsyncTokenCredential]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
+        **kwargs: Any
+    ) -> None:
         super().__init__(
             credential=credential, **kwargs
         )
