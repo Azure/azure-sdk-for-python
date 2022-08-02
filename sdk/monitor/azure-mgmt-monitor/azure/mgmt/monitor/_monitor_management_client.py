@@ -79,7 +79,6 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
             'management_group_diagnostic_settings': '2021-05-01-preview',
             'metric_alerts': '2018-03-01',
             'metric_alerts_status': '2018-03-01',
-            'metric_baseline': '2017-11-01-preview',
             'metric_definitions': '2018-01-01',
             'metric_namespaces': '2017-12-01-preview',
             'metrics': '2018-01-01',
@@ -130,7 +129,6 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
            * 2017-03-01-preview: :mod:`v2017_03_01_preview.models<azure.mgmt.monitor.v2017_03_01_preview.models>`
            * 2017-04-01: :mod:`v2017_04_01.models<azure.mgmt.monitor.v2017_04_01.models>`
            * 2017-05-01-preview: :mod:`v2017_05_01_preview.models<azure.mgmt.monitor.v2017_05_01_preview.models>`
-           * 2017-11-01-preview: :mod:`v2017_11_01_preview.models<azure.mgmt.monitor.v2017_11_01_preview.models>`
            * 2017-12-01-preview: :mod:`v2017_12_01_preview.models<azure.mgmt.monitor.v2017_12_01_preview.models>`
            * 2018-01-01: :mod:`v2018_01_01.models<azure.mgmt.monitor.v2018_01_01.models>`
            * 2018-03-01: :mod:`v2018_03_01.models<azure.mgmt.monitor.v2018_03_01.models>`
@@ -172,9 +170,6 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
             return models
         elif api_version == '2017-05-01-preview':
             from .v2017_05_01_preview import models
-            return models
-        elif api_version == '2017-11-01-preview':
-            from .v2017_11_01_preview import models
             return models
         elif api_version == '2017-12-01-preview':
             from .v2017_12_01_preview import models
@@ -356,10 +351,13 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
     def baselines(self):
         """Instance depends on the API version:
 
+           * 2018-09-01: :class:`BaselinesOperations<azure.mgmt.monitor.v2018_09_01.operations.BaselinesOperations>`
            * 2019-03-01: :class:`BaselinesOperations<azure.mgmt.monitor.v2019_03_01.operations.BaselinesOperations>`
         """
         api_version = self._get_api_version('baselines')
-        if api_version == '2019-03-01':
+        if api_version == '2018-09-01':
+            from .v2018_09_01.operations import BaselinesOperations as OperationClass
+        elif api_version == '2019-03-01':
             from .v2019_03_01.operations import BaselinesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'baselines'".format(api_version))
@@ -543,19 +541,6 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2018_03_01.operations import MetricAlertsStatusOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'metric_alerts_status'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
-    def metric_baseline(self):
-        """Instance depends on the API version:
-
-           * 2017-11-01-preview: :class:`MetricBaselineOperations<azure.mgmt.monitor.v2017_11_01_preview.operations.MetricBaselineOperations>`
-        """
-        api_version = self._get_api_version('metric_baseline')
-        if api_version == '2017-11-01-preview':
-            from .v2017_11_01_preview.operations import MetricBaselineOperations as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation group 'metric_baseline'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
