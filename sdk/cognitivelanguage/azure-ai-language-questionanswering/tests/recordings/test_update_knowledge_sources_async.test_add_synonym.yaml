@@ -10,28 +10,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: PATCH
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
   response:
     body:
       string: "{\n  \"projectName\": \"IssacNewton\",\n  \"description\": \"biography
         of Sir Issac Newton\",\n  \"language\": \"en\",\n  \"multilingualResource\":
-        false,\n  \"createdDateTime\": \"2022-02-10T19:42:15Z\",\n  \"lastModifiedDateTime\":
-        \"2022-02-10T19:44:56Z\",\n  \"settings\": {\n    \"defaultAnswer\": \"no
+        false,\n  \"createdDateTime\": \"2022-08-02T17:53:48Z\",\n  \"lastModifiedDateTime\":
+        \"2022-08-02T17:57:17Z\",\n  \"settings\": {\n    \"defaultAnswer\": \"no
         answer\"\n  }\n}"
     headers:
-      apim-request-id: 1687d833-9ff7-46d1-9ec3-e9643ba8f408
+      apim-request-id: 8c65e569-7c65-4b10-8389-a39cc316055e
       content-length: '286'
       content-type: application/json; charset=utf-8
-      date: Thu, 10 Feb 2022 19:44:55 GMT
+      date: Tue, 02 Aug 2022 17:57:16 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '27'
+      x-envoy-upstream-service-time: '25'
     status:
       code: 200
       message: OK
-    url: https://leithyta-sdktesting.cognitiveservices.azure.com/language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
+    url: https://languagesdkresource.cognitiveservices.azure.com//language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
 - request:
     body: '{"value": [{"alterations": ["qnamaker", "qna maker"]}]}'
     headers:
@@ -42,30 +42,30 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/synonyms?api-version=2021-10-01
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 443629a9-a508-418e-97a4-c81fe0240709
+      apim-request-id: f3b40c2c-f606-4412-b60a-4be2b50496de
       content-length: '0'
-      date: Thu, 10 Feb 2022 19:44:56 GMT
+      date: Tue, 02 Aug 2022 17:57:18 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '94'
+      x-envoy-upstream-service-time: '2315'
     status:
       code: 204
       message: No Content
-    url: https://leithyta-sdktesting.cognitiveservices.azure.com/language/query-knowledgebases/projects/IssacNewton/synonyms?api-version=2021-10-01
+    url: https://languagesdkresource.cognitiveservices.azure.com//language/query-knowledgebases/projects/IssacNewton/synonyms?api-version=2021-10-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/synonyms?api-version=2021-10-01
   response:
@@ -73,15 +73,15 @@ interactions:
       string: "{\n  \"value\": [\n    {\n      \"alterations\": [\n        \"qnamaker\",\n
         \       \"qna maker\"\n      ]\n    }\n  ]\n}"
     headers:
-      apim-request-id: 68d730c6-32e6-446a-935d-e6e2bcad0418
+      apim-request-id: a3a09342-3a9a-4844-b178-f2b0cabf7921
       content-length: '103'
       content-type: application/json; charset=utf-8
-      date: Thu, 10 Feb 2022 19:44:56 GMT
+      date: Tue, 02 Aug 2022 17:57:18 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '142'
+      x-envoy-upstream-service-time: '108'
     status:
       code: 200
       message: OK
-    url: https://leithyta-sdktesting.cognitiveservices.azure.com/language/query-knowledgebases/projects/IssacNewton/synonyms?api-version=2021-10-01
+    url: https://languagesdkresource.cognitiveservices.azure.com//language/query-knowledgebases/projects/IssacNewton/synonyms?api-version=2021-10-01
 version: 1

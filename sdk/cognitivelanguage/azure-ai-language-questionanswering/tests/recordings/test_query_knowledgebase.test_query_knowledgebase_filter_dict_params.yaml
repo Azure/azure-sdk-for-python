@@ -16,44 +16,35 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-10-01
   response:
     body:
-      string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Check
-        the battery level\"\n      ],\n      \"answer\": \"**Check the battery level**\\n\\nYou
-        can check the battery level from the lock screen or the desktop:\",\n      \"confidenceScore\":
-        0.6544,\n      \"id\": 133,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
-        \     \"metadata\": {\n        \"explicitlytaggedheading\": \"check the battery
-        level\"\n      },\n      \"dialog\": {\n        \"isContextOnly\": false,\n
-        \       \"prompts\": []\n      }\n    },\n    {\n      \"questions\": [\n
-        \       \"Make your battery last\"\n      ],\n      \"answer\": \"**Make your
-        battery last**\\n\\nFor info on how to care for your battery and power supply,
-        conserve power, and make your Surface battery last longer, see [Surface battery
-        and power](http://www.microsoft.com/surface/support/hardware-and-drivers/battery-and-power)
-        on Surface.com.\",\n      \"confidenceScore\": 0.42950000000000005,\n      \"id\":
-        136,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
-        {\n        \"explicitlytaggedheading\": \"make your battery last\"\n      },\n
+      string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Battery
+        life\"\n      ],\n      \"answer\": \"check the battery level\",\n      \"confidenceScore\":
+        1.0,\n      \"id\": 158,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n
+        \     \"metadata\": {\n        \"system_metadata_qna_edited_manually\": \"true\",\n
+        \       \"explicitlytaggedheading\": \"check the battery level\"\n      },\n
         \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
         []\n      }\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 8f7d7edb-0b56-4b37-9009-7199bc538d62
+      - f732fb93-0e40-4d5d-9701-c7644a449518
       content-length:
-      - '1143'
+      - '452'
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
       date:
-      - Thu, 28 Oct 2021 03:30:13 GMT
+      - Tue, 02 Aug 2022 17:54:24 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '953'
+      - '84'
     status:
       code: 200
       message: OK

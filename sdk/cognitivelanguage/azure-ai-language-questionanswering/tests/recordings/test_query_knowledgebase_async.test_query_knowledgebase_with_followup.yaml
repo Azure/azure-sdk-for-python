@@ -12,42 +12,51 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-10-01
   response:
     body:
-      string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Make
-        your battery last\"\n      ],\n      \"answer\": \"**Make your battery last**\\n\\nFor
-        info on how to care for your battery and power supply, conserve power, and
-        make your Surface battery last longer, see [Surface battery and power](http://www.microsoft.com/surface/support/hardware-and-drivers/battery-and-power)
-        on Surface.com.\",\n      \"confidenceScore\": 0.9079,\n      \"id\": 136,\n
-        \     \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
-        {\n        \"explicitlytaggedheading\": \"make your battery last\"\n      },\n
-        \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
+      string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Making
+        your battery last\"\n      ],\n      \"answer\": \"**Making your battery last**\\n\\nTo
+        learn ways to conserve power and make your battery last longer, see [Surface
+        battery and power](https://www.microsoft.com/surface/support/hardware-and-drivers/battery-and-power-pro)
+        on Surface.com.\",\n      \"confidenceScore\": 0.7223,\n      \"id\": 26,\n
+        \     \"source\": \"surface-book-user-guide-EN.pdf\",\n      \"metadata\":
+        {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
         []\n      }\n    },\n    {\n      \"questions\": [\n        \"Check the battery
         level\"\n      ],\n      \"answer\": \"**Check the battery level**\\n\\nYou
-        can check the battery level from the lock screen or the desktop:\",\n      \"confidenceScore\":
-        0.48469999999999996,\n      \"id\": 133,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
-        \     \"metadata\": {\n        \"explicitlytaggedheading\": \"check the battery
-        level\"\n      },\n      \"dialog\": {\n        \"isContextOnly\": false,\n
+        can check the battery level from the lock screen or on the desktop. Lock screen\\n\\nWhen
+        you wake your Surface Book, the battery status appears in the lower-right
+        corner of the lock screen. \u272A\",\n      \"confidenceScore\": 0.5649000000000001,\n
+        \     \"id\": 24,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n
+        \     \"metadata\": {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n
+        \       \"prompts\": [\n          {\n            \"displayOrder\": 0,\n            \"qnaId\":
+        25,\n            \"displayText\": \"Desktop taskbar\"\n          }\n        ]\n
+        \     }\n    },\n    {\n      \"questions\": [\n        \"Desktop taskbar\"\n
+        \     ],\n      \"answer\": \"**Desktop taskbar**\\n\\nOn the desktop, select
+        the battery status icon on the right side of the taskbar. The battery status
+        pane shows the charging level for both batteries. \u272A\\n\\nWhen your Surface
+        Book is fully charged, it should last up to 10 hours for web browsing.\",\n
+        \     \"confidenceScore\": 0.4836,\n      \"id\": 25,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n
+        \     \"metadata\": {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n
         \       \"prompts\": []\n      }\n    }\n  ]\n}"
     headers:
-      apim-request-id: 363ebd94-3a69-4c77-8850-6dccbe406498
-      content-length: '1143'
+      apim-request-id: 3ac6fa2c-957e-46bc-8a8d-42fea3a4d567
+      content-length: '1781'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
-      date: Thu, 28 Oct 2021 03:30:29 GMT
+      date: Tue, 02 Aug 2022 17:54:47 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '544'
+      x-envoy-upstream-service-time: '422'
     status:
       code: 200
       message: OK
-    url: https://wuppe.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c&deploymentName=test&api-version=2021-10-01
+    url: https://languagesdkresource.cognitiveservices.azure.com//language/:query-knowledgebases?projectName=testQA&deploymentName=test&api-version=2021-10-01
 - request:
     body: '{"question": "How long it takes to charge Surface?", "top": 3, "userId":
-      "sd53lsY=", "confidenceScoreThreshold": 0.2, "context": {"previousQnaId": 136,
+      "sd53lsY=", "confidenceScoreThreshold": 0.2, "context": {"previousQnaId": 26,
       "previousUserQuery": "How long should my Surface battery last?"}, "answerSpanRequest":
       {"enable": true, "confidenceScoreThreshold": 0.2, "topAnswersWithSpan": 1},
       "includeUnstructuredSources": true}'
@@ -55,48 +64,80 @@ interactions:
       Accept:
       - application/json
       Content-Length:
-      - '350'
+      - '349'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-10-01
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Power
-        and charging\"\n      ],\n      \"answer\": \"**Power and charging**\\n\\nIt
-        takes two to four hours to charge the Surface Pro 4 battery fully from an
-        empty state. It can take longer if you\u2019re using your Surface for power-intensive
+        and charging\"\n      ],\n      \"answer\": \"**Power and charging**\\n\\nSurface
+        Book has two batteries\u2014one in the keyboard and one in the Clipboard.
+        It takes two to four hours to charge Surface Book fully from an empty state.
+        It can take longer if you\u2019re using your Surface Book for power-intensive
         activities like gaming or video streaming while you\u2019re charging it.\\n\\nYou
-        can use the USB port on your Surface Pro 4 power supply to charge other devices,
-        like a phone, while your Surface charges. The USB port on the power supply
-        is only for charging, not for data transfer. If you want to use a USB device,
-        plug it into the USB port on your Surface.\",\n      \"confidenceScore\":
-        0.6015,\n      \"id\": 132,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
-        \     \"metadata\": {\n        \"explicitlytaggedheading\": \"power and charging\"\n
-        \     },\n      \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
-        [\n          {\n            \"displayOrder\": 0,\n            \"qnaId\": 133,\n
-        \           \"displayText\": \"Check the battery level\"\n          },\n          {\n
-        \           \"displayOrder\": 1,\n            \"qnaId\": 134,\n            \"displayText\":
-        \"Lock screen.\"\n          },\n          {\n            \"displayOrder\":
-        2,\n            \"qnaId\": 135,\n            \"displayText\": \"Desktop taskbar.\"\n
-        \         },\n          {\n            \"displayOrder\": 3,\n            \"qnaId\":
-        136,\n            \"displayText\": \"Make your battery last\"\n          }\n
-        \       ]\n      },\n      \"answerSpan\": {\n        \"text\": \" two to
-        four hours\",\n        \"confidenceScore\": 0.3795,\n        \"offset\": 32,\n
-        \       \"length\": 19\n      }\n    }\n  ]\n}"
+        can use the USB port on your power supply to charge other devices, like a
+        phone, while your Surface Book charges. Note that the USB port on the power
+        supply is only for charging, not for data transfer. If you want to use a USB
+        device, plug it into the USB port on your Surface Book.\",\n      \"confidenceScore\":
+        0.48450000000000004,\n      \"id\": 23,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n
+        \     \"metadata\": {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n
+        \       \"prompts\": [\n          {\n            \"displayOrder\": 0,\n            \"qnaId\":
+        24,\n            \"displayText\": \"Check the battery level\"\n          },\n
+        \         {\n            \"displayOrder\": 1,\n            \"qnaId\": 26,\n
+        \           \"displayText\": \"Making your battery last\"\n          }\n        ]\n
+        \     },\n      \"answerSpan\": {\n        \"text\": \" two to four hours\",\n
+        \       \"confidenceScore\": 0.4114,\n        \"offset\": 109,\n        \"length\":
+        19\n      }\n    },\n    {\n      \"questions\": [\n        \"Charge your
+        Surface Book\"\n      ],\n      \"answer\": \"**Charge your Surface Book**\\n\\n1.
+        \ Connect the two parts of the power cord.\\n2.  Connect the power cord securely
+        to the charging port on your Surface Book. A light appears at the end of the
+        connector when your Surface is getting power.\u272A\\n3.  Plug the power supply
+        into an electrical outlet.\",\n      \"confidenceScore\": 0.4029,\n      \"id\":
+        19,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n      \"metadata\":
+        {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
+        []\n      }\n    },\n    {\n      \"questions\": [\n        \"Set up your
+        workspace with Surface Dock\"\n      ],\n      \"answer\": \"**Set up your
+        workspace with Surface Dock**\\n\\nSurface Dock supports high-speed transfer
+        of video, audio, and data. Its compact design gives you flexibility and keeps
+        your desktop clutter-free. The external power supply recharges your Surface
+        and provides plenty of additional power to charge connected USB devices.\\n\\nHere's
+        how to set up your Surface Dock:\\n\\n1.  Plug the AC end of the Surface Dock
+        power cord into an electrical outlet or power strip and plug the other end
+        into the power port on your Surface Dock.\\n2.  If you want to use a wired
+        network connection, connect a network cable to the Ethernet port on your Surface
+        Dock.\\n3.  Connect your computer peripherals to the USB ports on your Surface
+        Dock.\\n4.  Connect a cable from your monitor to a Mini DisplayPort on your
+        Surface Dock.If your monitor cable doesn\u2019t have a Mini DisplayPort connector,
+        you\u2019ll need to buy another cable or an adapter. For more info on adapters,
+        see [Connect Surface to a TV, monitor, or](http://www.microsoft.com/surface/support/music-photos-and-video/connect-surface-to-a-tv-display-or-projector)
+        [projector](http://www.microsoft.com/surface/support/music-photos-and-video/connect-surface-to-a-tv-display-or-projector)
+        on Surface.com.\\n5.  Connect any audio accessories like speakers or headphones.Without
+        external speakers, you may not hear audio when you\u2019re using your Surface.
+        If this is the case, see [Troubleshoot Surface Dock](https://www.microsoft.com/surface/support/hardware-and-drivers/troubleshoot-docking-station-surface-dock)
+        on Surface.com to learn how to switch to the built-in speakers on your Surface.\\n6.
+        \ Unplug the Surface power supply and remove any attached accessories from
+        your Surface. You can leave an SD card in the SD card slot.\\n7.  Connect
+        your Surface Dock to the charging port of your Surface, using the cable provided.\\n\\nFor
+        more info, see [Using Surface Dock](http://www.microsoft.com/surface/support/hardware-and-drivers/docking-station-surface-dock)
+        on Surface.com.\",\n      \"confidenceScore\": 0.2511,\n      \"id\": 88,\n
+        \     \"source\": \"surface-book-user-guide-EN.pdf\",\n      \"metadata\":
+        {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
+        []\n      }\n    }\n  ]\n}"
     headers:
-      apim-request-id: 535319e1-aef0-4d6a-9487-459f65599282
-      content-length: '1594'
+      apim-request-id: e4727805-b136-4c03-a6bc-e67d095da905
+      content-length: '4276'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
-      date: Thu, 28 Oct 2021 03:30:29 GMT
+      date: Tue, 02 Aug 2022 17:54:47 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '605'
+      x-envoy-upstream-service-time: '478'
     status:
       code: 200
       message: OK
-    url: https://wuppe.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c&deploymentName=test&api-version=2021-10-01
+    url: https://languagesdkresource.cognitiveservices.azure.com//language/:query-knowledgebases?projectName=testQA&deploymentName=test&api-version=2021-10-01
 version: 1

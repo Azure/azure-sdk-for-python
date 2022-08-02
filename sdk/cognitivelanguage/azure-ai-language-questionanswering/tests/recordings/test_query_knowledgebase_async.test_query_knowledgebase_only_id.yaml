@@ -9,25 +9,31 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-10-01
   response:
     body:
-      string: "{\n  \"answers\": [\n    {\n      \"questions\": [],\n      \"answer\":
-        \"No good match found in KB\",\n      \"confidenceScore\": 0.0,\n      \"id\":
-        -1,\n      \"metadata\": {}\n    }\n  ]\n}"
+      string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Charge
+        your Surface Book\"\n      ],\n      \"answer\": \"**Charge your Surface Book**\\n\\n1.
+        \ Connect the two parts of the power cord.\\n2.  Connect the power cord securely
+        to the charging port on your Surface Book. A light appears at the end of the
+        connector when your Surface is getting power.\u272A\\n3.  Plug the power supply
+        into an electrical outlet.\",\n      \"confidenceScore\": 1.0,\n      \"id\":
+        19,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n      \"metadata\":
+        {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
+        []\n      }\n    }\n  ]\n}"
     headers:
-      apim-request-id: a9b84106-3ca9-434d-8295-4256bafc7d95
-      content-length: '169'
+      apim-request-id: a74909c6-9156-4d74-9860-e1aabdcfcae1
+      content-length: '610'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
-      date: Thu, 28 Oct 2021 03:30:25 GMT
+      date: Tue, 02 Aug 2022 17:54:41 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '129'
+      x-envoy-upstream-service-time: '33'
     status:
       code: 200
       message: OK
-    url: https://wuppe.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c&deploymentName=test&api-version=2021-10-01
+    url: https://languagesdkresource.cognitiveservices.azure.com//language/:query-knowledgebases?projectName=testQA&deploymentName=test&api-version=2021-10-01
 version: 1
