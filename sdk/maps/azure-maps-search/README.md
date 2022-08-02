@@ -124,6 +124,8 @@ You can use Fuzzy Search to search an address or a point of interest (POI). The 
 from azure.maps.search import MapsSearchClient
 
 fuzzy_search_result = client.fuzzy_search({ query: "pizza", country_filter: "fr" });
+
+result_address = fuzzy_search_result.results[0].address
 ```
 
 ### Make a Reverse Address Search to translate coordinate location to street address
@@ -134,9 +136,11 @@ This is often used for applications that consume GPS feeds and want to discover 
 ```python
 from azure.maps.search import MapsSearchClient
 
-coordinates=LatLon(47.60323, -122.33028)
+coordinates=(47.60323, -122.33028)
 
 reverse_search_result = client.reverse_search_address(coordinates=coordinates);
+
+result_summary = reverse_search_result.summary
 ```
 
 ### Translate coordinate location into a human understandable cross street
@@ -146,9 +150,11 @@ Translate coordinate location into a human understandable cross street by using 
 ```python
 from azure.maps.search import MapsSearchClient
 
-coordinates=LatLon(47.60323, -122.33028)
+coordinates=(47.60323, -122.33028)
 
 reverse_search_result = client.reverse_search_cross_street_address(coordinates=coordinates);
+
+result_address = reverse_search_result.results[0].address
 ```
 
 ## Troubleshooting

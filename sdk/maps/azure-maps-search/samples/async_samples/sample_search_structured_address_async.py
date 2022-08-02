@@ -17,18 +17,9 @@ USAGE:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
 """
 import asyncio
-import json
 import os
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
-
-def to_json(self):
-    return json.dumps(
-        self,
-        default=lambda o: o.__dict__,
-        sort_keys=True,
-        indent=4
-    )
 
 # cSpell:disable
 async def search_structured_address_async():
@@ -44,15 +35,13 @@ async def search_structured_address_async():
         street_name="Sec. 2, Zhishan Rd.",
         municipality_subdivision="Shilin Dist.",
         municipality="Taipei City",
+        country_code="TW")
 
     async with maps_search_client:
         result = await maps_search_client.search_structured_address(addr)
 
     print("Get Search Address Structured:")
     print(result)
-    print("------------------------------")
-    print("Get Search Address Structured result in Json format:")
-    print(to_json(result))
     # [END search_structured_address_async]
 
 if __name__ == '__main__':

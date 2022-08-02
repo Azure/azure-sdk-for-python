@@ -18,15 +18,6 @@ USAGE:
 """
 
 import os
-import json
-
-def to_json(self):
-    return json.dumps(
-        self,
-        default=lambda o: o.__dict__,
-        sort_keys=True,
-        indent=4
-    )
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
@@ -38,13 +29,10 @@ def search_nearby_point_of_interest():
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
-    result = maps_search_client.search_nearby_point_of_interest(coordinates=LatLon(25.0338053, 121.5640089))
+    result = maps_search_client.search_nearby_point_of_interest(coordinates=(25.0338053, 121.5640089))
 
     print("Get Search Nearby point of interest:")
     print(result)
-    print("------------------------------")
-    print("Get Search Nearby point of interest result in Json format:")
-    print(to_json(result))
     # [END search_nearby_point_of_interest]
 
 if __name__ == '__main__':

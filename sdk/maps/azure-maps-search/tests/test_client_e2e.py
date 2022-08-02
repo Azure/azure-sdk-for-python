@@ -6,7 +6,7 @@ from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests import RecordingProcessor
 from azure.core.credentials import AzureKeyCredential
 from azure.maps.search import MapsSearchClient
-from azure.maps.search.models import LatLon, StructuredAddress
+from azure.maps.search.models import StructuredAddress
 
 
 # cSpell:disable
@@ -45,7 +45,7 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
 
     @pytest.mark.live_test_only
     def test_fuzzy_search_poi_coordinates(self):
-        result = self.client.fuzzy_search("Taipei 101", coordinates=LatLon(25.0338053, 121.5640089))
+        result = self.client.fuzzy_search("Taipei 101", coordinates=(25.0338053, 121.5640089))
         assert len(result.results) > 0
         top_answer = result.results[0]
         assert top_answer.point_of_interest.name == "Taipei 101"
@@ -83,8 +83,8 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
         result = self.client.fuzzy_search("Taiwan High Speed Rail")
         assert len(result.results) > 0
 
-        assert result.summary.total_results > result.summary.num_results
-        result2 = self.client.fuzzy_search("Taiwan High Speed Rail", skip=result.summary.num_results)
+        assert result.total_results > result.num_results
+        result2 = self.client.fuzzy_search("Taiwan High Speed Rail", skip=result.num_results)
         assert len(result2.results) > 0 and result2.results[0] != result.results[0]
 
     @pytest.mark.live_test_only
@@ -92,8 +92,8 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
         result = self.client.fuzzy_search("Taiwan High Speed Rail")
         assert len(result.results) > 0
 
-        assert result.summary.total_results > result.summary.num_results
-        result2 = self.client.fuzzy_search("Taiwan High Speed Rail", skip=result.summary.num_results)
+        assert result.total_results > result.num_results
+        result2 = self.client.fuzzy_search("Taiwan High Speed Rail", skip=result.num_results)
         assert len(result2.results) > 0 and result2.results[0] != result.results[0]
 
     @pytest.mark.live_test_only
@@ -112,14 +112,16 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
 
     @pytest.mark.live_test_only
     def test_search_nearby_point_of_interest(self):
-        result = self.client.search_nearby_point_of_interest(coordinates=LatLon(25.0338053, 121.5640089))
+        result = self.client.search_nearby_point_of_interest(coordinates=(25.0338053, 121.5640089))
         assert len(result.results) > 0
         for item in result.results:
             assert item.type == "POI"
 
     @pytest.mark.live_test_only
     def test_search_point_of_interest_category(self):
-        result = self.client.search_point_of_interest_category("RESTAURANT", coordinates=LatLon(25.0338053, 121.5640089))
+        result = self.client.search_point_of_interest_category(
+            "RESTAURANT", coordinates=(25.0338053, 121.5640089)
+        )
         assert len(result.results) > 0
         for item in result.results:
             assert item.type == "POI"

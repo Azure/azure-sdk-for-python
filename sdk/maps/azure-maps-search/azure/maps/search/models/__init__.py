@@ -1,13 +1,11 @@
 
 from .._generated.models import (
     ReverseSearchCrossStreetAddressResult,
-    BatchRequest,
     BatchResultSummary,
     Polygon,
     ReverseSearchAddressBatchItem,
     PointOfInterestCategory,
     SearchAlongRouteRequest,
-    SearchAddressBatchResult,
     SearchIndexes,
     GeographicEntityType,
     LocalizedMapView,
@@ -39,6 +37,9 @@ from ._models import (
     SearchSummary,
     Address,
     SearchAddressResult,
+    SearchAddressBatchItem,
+    SearchAlongRouteOptions,
+    SearchAddressBatchResult,
     ReverseSearchAddressResult,
     ReverseSearchAddressBatchProcessResult
 )
@@ -46,7 +47,6 @@ from ._models import (
 
 __all__ = [
     'RoadUseType',
-    'BatchRequest',
     'LatLon',
     'AddressRanges',
     'StructuredAddress',
@@ -67,6 +67,8 @@ __all__ = [
     'SearchAlongRouteRequest',
     'SearchAddressBatchResult',
     'SearchIndexes',
+    'SearchAddressBatchItem',
+    'SearchAlongRouteOptions',
     'GeographicEntityType',
     'LocalizedMapView',
     'ElectricVehicleConnector',

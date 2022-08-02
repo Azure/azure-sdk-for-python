@@ -10,7 +10,10 @@ import msrest.serialization
 from .._generated.models import (
     PointOfInterest,
     DataSource,
-    ReverseSearchAddressBatchItem,
+    SearchAlongRouteRequest,
+    SearchAddressBatchItem as _SearchAddressBatchItem,
+    SearchAddressBatchItemResponse,
+    ReverseSearchAddressBatchItem as _ReverseSearchAddressBatchItem,
     BatchResultSummary,
     GeoJsonObjectType
 )
@@ -46,10 +49,10 @@ class BoundingBox(object):
 
     def __init__(
         self,
-        top_left: LatLon = None,
-        bottom_right: LatLon = None,
-        top_right: LatLon = None,
-        bottom_left: LatLon = None
+        top_left: LatLon = LatLon(),
+        bottom_right: LatLon = LatLon(),
+        top_right: LatLon = LatLon(),
+        bottom_left: LatLon = LatLon()
     ):
         self.top_left = top_left
         self.bottom_right = bottom_right
@@ -217,10 +220,10 @@ class AddressRanges(object):
 class EntryPoint(object):
     def __init__(
         self,
-        _type: str = None,
+        type_: str = None,
         position: LatLon = None
     ):
-        self.type = _type
+        self.type = type_
         self.position = LatLon() if not position else LatLon(
             position.lat, position.lon
         )
@@ -323,10 +326,10 @@ class SearchAddressResult(object):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar summary: Summary object for a Search API response.
-    :vartype summary: ~azure.maps.search.models.SearchSummary
-    :ivar results: A list of Search API results.
-    :vartype results: list[~azure.maps.search.models.SearchAddressResultItem]
+    :keyword summary: Summary object for a Search API response.
+    :paramtype summary: ~azure.maps.search.models.SearchSummary
+    :keyword results: A list of Search API results.
+    :paramtype results: list[~azure.maps.search.models.SearchAddressResultItem]
     """
 
     def __init__(
@@ -353,20 +356,20 @@ class ReverseSearchAddressResultItem(object):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar address: The address of the result.
-    :vartype address: ~azure.maps.search.models.Address
-    :ivar position: Position property in the form of "latitude,longitude".
-    :vartype position: str
-    :ivar road_use:
-    :vartype road_use: list[str]
-    :ivar match_type: Information on the type of match.
-    :vartype match_type: str or ~azure.maps.search.models.MatchType
+    :keyword address: The address of the result.
+    :paramtype address: ~azure.maps.search.models.Address
+    :keyword position: Position property in the form of "latitude,longitude".
+    :paramtype position: LatLon
+    :keyword road_use:
+    :paramtype road_use: list[str]
+    :keyword match_type: Information on the type of match.
+    :paramtype match_type: str or ~azure.maps.search.models.MatchType
     """
 
     def __init__(
         self,
         address: Address = None,
-        position: str = None,
+        position: LatLon = None,
         road_use: List[str] = None,
         match_type: str = None
     ):
@@ -383,10 +386,10 @@ class ReverseSearchAddressResult(object):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar summary: Summary object for a Search Address Reverse response.
-    :vartype summary: ~azure.maps.search.models.SearchSummary
-    :ivar addresses: Addresses array.
-    :vartype addresses: list[~azure.maps.search.models.ReverseSearchAddressResultItem]
+    :keyword summary: Summary object for a Search Address Reverse response.
+    :paramtype summary: ~azure.maps.search.models.SearchSummary
+    :keyword results: Addresses array.
+    :paramtype results: list[~azure.maps.search.models.ReverseSearchAddressResultItem]
     """
 
     def __init__(
@@ -399,15 +402,33 @@ class ReverseSearchAddressResult(object):
         self.results = results
 
 
+class ReverseSearchAddressBatchItem(_ReverseSearchAddressBatchItem):
+    """An item returned from Search Address Reverse Batch service call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :keyword response: The result of the query. SearchAddressReverseResponse if the query completed
+     successfully, ErrorResponse otherwise.
+    :paramtype response: ~azure.maps.search.models.ReverseSearchAddressBatchItemResponse
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ReverseSearchAddressBatchItem, self).__init__(**kwargs)
+        self.response = None
+
+
 class ReverseSearchAddressBatchProcessResult(object):
     """This object is returned from a successful Search Address Reverse Batch service call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar summary: Summary of the results for the batch request.
-    :vartype batch_summary: ~azure.maps.search._generated.models.BatchResultSummary
-    :ivar items: Array containing the batch results.
-    :vartype batch_items: list[~azure.maps.search._generated.models.ReverseSearchAddressBatchItem]
+    :keyword summary: Summary of the results for the batch request.
+    :paramtype summary: ~azure.maps.search._generated.models.BatchResultSummary
+    :keyword items: Array containing the batch results.
+    :paramtype items: list[ReverseSearchAddressBatchItem]
     """
 
     def __init__(
@@ -456,11 +477,11 @@ class GeoJsonObject(msrest.serialization.Model):
 
     def __init__(
         self,
-        _type: Union[str, GeoJsonObjectType] = None,
+        type_: Union[str, GeoJsonObjectType] = None,
         **kwargs
     ):
         super(GeoJsonObject, self).__init__(**kwargs)
-        self.type = _type  # type: Optional[Union[str, GeoJsonObjectType]]
+        self.type = type_  # type: Optional[Union[str, GeoJsonObjectType]]
 
 class GeoJsonFeatureData(msrest.serialization.Model):
     """GeoJsonFeatureData.
@@ -524,22 +545,10 @@ class GeoJsonFeature(GeoJsonObject, GeoJsonFeatureData):
     :type type: str or ~azure.maps.search._generated.models.GeoJsonObjectType
     """
 
-    _validation = {
-        'geometry': {'required': True},
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'geometry': {'key': 'geometry', 'type': 'GeoJsonObject'},
-        'properties': {'key': 'properties', 'type': 'object'},
-        'feature_type': {'key': 'featureType', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
     def __init__(
         self,
         *,
-        geometry: "GeoJsonObject",
+        geometry: GeoJsonObject,
         properties: Optional[object] = None,
         feature_type: Optional[str] = None,
         **kwargs
@@ -1112,3 +1121,54 @@ class GeoJsonPolygon(GeoJsonObject, GeoJsonPolygonData):
         self.coordinates = coordinates
         self.type = 'Polygon'  # type: str
         self.type = 'Polygon'  # type: str
+
+
+class SearchAlongRouteOptions(object):
+    def __init__(
+        self,
+        *,
+        route: Optional["GeoJsonLineString"] = None,
+        **kwargs
+    ):
+        super(SearchAlongRouteOptions, self).__init__(**kwargs)
+        self.route = route
+
+
+class SearchAddressBatchItem(object):
+    """An item returned from Search Address Batch service call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :keyword status_code: HTTP request status code.
+    :paramtype status_code: int
+    :keyword response: The result of the query. SearchAddressResponse if the query completed
+     successfully, ErrorResponse otherwise.
+    :paramtype response: ~azure.maps.search.models.SearchAddressBatchItemResponse
+    """
+
+    def __init__(
+        self,
+        response: SearchAddressBatchItemResponse = None,
+        **kwargs
+    ):
+        super(SearchAddressBatchItem, self).__init__(**kwargs)
+        self.response = response
+
+class SearchAddressBatchResult(object):
+    """This object is returned from a successful Search Address Batch service call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :keyword summary: Summary of the results for the batch request.
+    :paramtype summary: ~azure.maps.search._generated.models.BatchResultSummary
+    :keyword items: Array containing the batch results.
+    :paramtype items: list[~azure.maps.search._generated.models.SearchAddressBatchItem]
+    """
+
+    def __init__(
+        self,
+        summary: BatchResultSummary = None,
+        items: List[SearchAddressBatchItem] = None
+    ):
+        self.summary = summary
+        self.items = items

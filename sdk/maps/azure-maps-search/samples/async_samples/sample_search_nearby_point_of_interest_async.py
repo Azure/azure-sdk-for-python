@@ -17,35 +17,23 @@ USAGE:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
 """
 import asyncio
-import json
 import os
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
-def to_json(self):
-    return json.dumps(
-        self,
-        default=lambda o: o.__dict__,
-        sort_keys=True,
-        indent=4
-    )
 
 async def search_nearby_point_of_interest_async():
     # [START search_nearby_point_of_interest_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search.aio import MapsSearchClient
-    from azure.maps.search.models import LatLon
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
     async with maps_search_client:
-        result = await maps_search_client.search_nearby_point_of_interest(coordinates=LatLon(25.0338053, 121.5640089))
+        result = await maps_search_client.search_nearby_point_of_interest(coordinates=(25.0338053, 121.5640089))
 
     print("Get Search Nearby point of interest:")
     print(result)
-    print("------------------------------")
-    print("Get Search Nearby point of interest result in Json format:")
-    print(to_json(result))
     # [END search_nearby_point_of_interest_async]
 
 

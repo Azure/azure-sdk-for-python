@@ -11,7 +11,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
 from azure.maps.search import MapsSearchClient
-from azure.maps.search.models import LatLon, StructuredAddress
+from azure.maps.search.models import StructuredAddress
 
 
 # cSpell:disable
@@ -134,7 +134,6 @@ class AzureMapsSearchClientUnitTest(AzureTestCase):
 }'''
         client = create_mock_client(status_code=200, body=body)
         result = client.fuzzy_search(query="Taipei 101")
-        assert len(result.results) == 1 and result.summary.total_results == 1
         top_answer = result.results[0]
         assert top_answer.type == "POI"
         assert top_answer.point_of_interest.name == "Taipei 101"
@@ -175,8 +174,8 @@ class AzureMapsSearchClientUnitTest(AzureTestCase):
 
     def test_search_nearby_point_of_interest_invalid_coordinates(self):
         client = create_mock_client()
-        with pytest.raises(ValueError):
-            result = client.search_nearby_point_of_interest(coordinates=LatLon())
+        with pytest.raises(TypeError):
+            result = client.search_nearby_point_of_interest(coordinates=(0, "x"))
 
     def test_search_point_of_interest_category(self):
         body = '''{

@@ -17,18 +17,9 @@ USAGE:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
 """
 import asyncio
-import json
 import os
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
-
-def to_json(self):
-    return json.dumps(
-        self,
-        default=lambda o: o.__dict__,
-        sort_keys=True,
-        indent=4
-    )
 
 async def get_point_of_interest_categories_async():
     # [START get_point_of_interest_categories_async]
@@ -42,9 +33,6 @@ async def get_point_of_interest_categories_async():
 
     print("Get Search POI Categories:")
     print(result)
-    print("------------------------------")
-    print("Get Search POI Categories result in Json format:")
-    print(to_json(result))
     # [END get_point_of_interest_categories_async]
 
 if __name__ == '__main__':

@@ -18,16 +18,7 @@ USAGE:
 """
 
 import asyncio
-import json
 import os
-
-def to_json(self):
-    return json.dumps(
-        self,
-        default=lambda o: o.__dict__,
-        sort_keys=True,
-        indent=4
-    )
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
@@ -43,9 +34,6 @@ async def search_point_of_interest_async():
 
     print("Get Search POI:")
     print(result)
-    print("--------------------")
-    print("Get Search POI result in Json format:")
-    print(to_json(result))
     # [END search_point_of_interest_async]
 
 if __name__ == '__main__':

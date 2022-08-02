@@ -18,15 +18,6 @@ USAGE:
 """
 
 import os
-import json
-
-def to_json(self):
-    return json.dumps(
-        self,
-        default=lambda o: o.__dict__,
-        sort_keys=True,
-        indent=4
-    )
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
@@ -40,9 +31,6 @@ def search_point_of_interest():
     result = maps_search_client.search_point_of_interest("juice bars")
     print("Get Search POI:")
     print(result)
-    print("------------------------------")
-    print("Get Search POI result in Json format:")
-    print(to_json(result))
     # [END search_point_of_interest]
 
 if __name__ == '__main__':

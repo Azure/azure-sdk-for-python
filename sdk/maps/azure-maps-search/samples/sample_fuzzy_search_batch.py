@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_fuzzy_search.py
+FILE: sample_fuzzy_search_batch.py
 DESCRIPTION:
     This sample demonstrates how to perform fuzzy search by location and lat/lon.
 USAGE:
-    python sample_fuzzy_search.py
+    python sample_fuzzy_search_batch.py
 
     Set the environment variables with your own values before running the sample:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
@@ -20,21 +20,24 @@ import os
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
-def fuzzy_search():
-    # [START fuzzy_search]
+def fuzzy_search_batch():
+    # [START fuzzy_search_batch]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
-    result = maps_search_client.fuzzy_search(query="starbucks", coordinates=(25.105497, 121.597366))
+    result = maps_search_client.fuzzy_search_batch(
+        search_queries=[
+            "350 5th Ave, New York, NY 10118&limit=1",
+            "400 Broad St, Seattle, WA 98109&limit=3"
+        ]
+    )
 
-    print("Get Search Fuzzy with coordinates with search query: " + result.query)
-    print("Fuzzy level: {}".format(result.fuzzy_level))
-    print("Total results: {}".format(result.num_results))
-    print("Address from the first item in results: ")
-    print(result.results[0].address)
-    # [END fuzzy_search]
+    print(result.summary)
+    for item in result.items:
+        print(result.items[0])
+    # [END fuzzy_search_batch]
 
 if __name__ == '__main__':
-    fuzzy_search()
+    fuzzy_search_batch()

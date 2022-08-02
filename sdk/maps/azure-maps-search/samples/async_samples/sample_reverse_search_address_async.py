@@ -17,18 +17,10 @@ USAGE:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
 """
 import asyncio
-import json
 import os
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
-def to_json(self):
-    return json.dumps(
-        self,
-        default=lambda o: o.__dict__,
-        sort_keys=True,
-        indent=4
-    )
 
 async def reverse_search_address_async():
     # [START reverse_search_address_async]
@@ -39,13 +31,10 @@ async def reverse_search_address_async():
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
     async with maps_search_client:
-        result = await maps_search_client.reverse_search_address(coordinates=LatLon(25.0338053, 121.5640089))
+        result = await maps_search_client.reverse_search_address(coordinates=(25.0338053, 121.5640089))
 
     print("Get Search Address Reverse:")
     print(result)
-    print("------------------------------")
-    print("Get Search Address Reverse result in Json format:")
-    print(to_json(result))
     # [END reverse_search_address_async]
 
 if __name__ == '__main__':
