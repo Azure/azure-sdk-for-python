@@ -38,19 +38,19 @@ interactions:
         8,\n        \"length\": 18\n      },\n      \"offset\": 20,\n      \"length\":
         225\n    },\n    {\n      \"answer\": \"It can take longer if you\u2019re
         using your Surface for power-intensive activities like gaming or video streaming
-        while you\u2019re charging it.\",\n      \"confidenceScore\": 0.11520536988973618,\n
+        while you\u2019re charging it.\",\n      \"confidenceScore\": 0.11520539969205856,\n
         \     \"id\": \"0\",\n      \"answerSpan\": {\n        \"text\": \"longer\",\n
         \       \"confidenceScore\": 0.68131536,\n        \"offset\": 11,\n        \"length\":
         7\n      },\n      \"offset\": 110,\n      \"length\": 135\n    }\n  ]\n}"
     headers:
-      apim-request-id: 8b3411e8-a86b-46d2-bcac-bad22752316e
+      apim-request-id: 6fd2aa7f-e7fd-4bc8-af90-3ab0470d2bde
       content-length: '1476'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=2
-      date: Tue, 02 Aug 2022 17:54:59 GMT
+      date: Tue, 02 Aug 2022 22:08:35 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '642'
+      x-envoy-upstream-service-time: '600'
     status:
       code: 200
       message: OK

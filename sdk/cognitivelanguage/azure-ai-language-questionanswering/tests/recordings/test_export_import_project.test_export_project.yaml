@@ -21,24 +21,24 @@ interactions:
     body:
       string: "{\n  \"projectName\": \"IssacNewton\",\n  \"description\": \"biography
         of Sir Issac Newton\",\n  \"language\": \"en\",\n  \"multilingualResource\":
-        false,\n  \"createdDateTime\": \"2022-08-02T12:42:27Z\",\n  \"lastModifiedDateTime\":
-        \"2022-08-02T17:51:02Z\",\n  \"lastDeployedDateTime\": \"2022-08-02T17:50:34Z\",\n
+        false,\n  \"createdDateTime\": \"2022-08-02T22:07:25Z\",\n  \"lastModifiedDateTime\":
+        \"2022-08-02T22:31:09Z\",\n  \"lastDeployedDateTime\": \"2022-08-02T22:29:41Z\",\n
         \ \"settings\": {\n    \"defaultAnswer\": \"no answer\"\n  }\n}"
     headers:
       apim-request-id:
-      - ad338449-4807-4629-bd4f-baa652feaa24
+      - 75775e70-124f-474f-b0a4-f9986e96ef6a
       content-length:
       - '336'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Aug 2022 17:51:02 GMT
+      - Tue, 02 Aug 2022 22:31:08 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '25'
+      - '24'
     status:
       code: 200
       message: OK
@@ -62,19 +62,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 514325d3-d593-4510-b1b5-2b083be38540
+      - e6296ace-9b79-4b1b-a728-788c0ff29fe2
       content-length:
       - '0'
       date:
-      - Tue, 02 Aug 2022 17:51:02 GMT
+      - Tue, 02 Aug 2022 22:31:08 GMT
       operation-location:
-      - https://languagesdkresource.cognitiveservices.azure.com:443/language/query-knowledgebases/projects/IssacNewton/export/jobs/e7c76aef-cf47-4966-b249-5cd82aab0545?api-version=2021-10-01
+      - https://languagesdkresource.cognitiveservices.azure.com:443/language/query-knowledgebases/projects/IssacNewton/export/jobs/443ca922-4230-40c7-8ab1-cbe723f2197d?api-version=2021-10-01
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '19'
+      - '24'
     status:
       code: 202
       message: Accepted
@@ -90,27 +90,27 @@ interactions:
       User-Agent:
       - azsdk-python-ai-language-questionanswering/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://test-resource.api.cognitive.microsoft.comlanguage/query-knowledgebases/projects/IssacNewton/export/jobs/e7c76aef-cf47-4966-b249-5cd82aab0545?api-version=2021-10-01
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/export/jobs/443ca922-4230-40c7-8ab1-cbe723f2197d?api-version=2021-10-01
   response:
     body:
-      string: "{\n  \"createdDateTime\": \"2022-08-02T17:51:02+00:00\",\n  \"expirationDateTime\":
-        \"2022-08-02T23:51:02+00:00\",\n  \"jobId\": \"e7c76aef-cf47-4966-b249-5cd82aab0545\",\n
-        \ \"lastUpdatedDateTime\": \"2022-08-02T17:51:02+00:00\",\n  \"status\": \"notStarted\"\n}"
+      string: "{\n  \"createdDateTime\": \"2022-08-02T22:31:09+00:00\",\n  \"expirationDateTime\":
+        \"2022-08-03T04:31:09+00:00\",\n  \"jobId\": \"443ca922-4230-40c7-8ab1-cbe723f2197d\",\n
+        \ \"lastUpdatedDateTime\": \"2022-08-02T22:31:09+00:00\",\n  \"status\": \"notStarted\"\n}"
     headers:
       apim-request-id:
-      - 9c6b869d-7545-419a-95e1-3947559d33ad
+      - dc32a434-ab7c-41a3-9409-afbc5a779cea
       content-length:
       - '236'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Aug 2022 17:51:02 GMT
+      - Tue, 02 Aug 2022 22:31:08 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '8'
+      - '25'
     status:
       code: 200
       message: OK
@@ -126,28 +126,28 @@ interactions:
       User-Agent:
       - azsdk-python-ai-language-questionanswering/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://test-resource.api.cognitive.microsoft.comlanguage/query-knowledgebases/projects/IssacNewton/export/jobs/e7c76aef-cf47-4966-b249-5cd82aab0545?api-version=2021-10-01
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/export/jobs/443ca922-4230-40c7-8ab1-cbe723f2197d?api-version=2021-10-01
   response:
     body:
-      string: "{\n  \"createdDateTime\": \"2022-08-02T17:51:02+00:00\",\n  \"expirationDateTime\":
-        \"2022-08-02T23:51:02+00:00\",\n  \"jobId\": \"e7c76aef-cf47-4966-b249-5cd82aab0545\",\n
-        \ \"lastUpdatedDateTime\": \"2022-08-02T17:51:05+00:00\",\n  \"status\": \"succeeded\",\n
-        \ \"resultUrl\": \"https://languagesdkresource.cognitiveservices.azure.com:443/language/query-knowledgebases/projects/IssacNewton/export/jobs/e7c76aef-cf47-4966-b249-5cd82aab0545/result?api-version=2021-10-01\"\n}"
+      string: "{\n  \"createdDateTime\": \"2022-08-02T22:31:09+00:00\",\n  \"expirationDateTime\":
+        \"2022-08-03T04:31:09+00:00\",\n  \"jobId\": \"443ca922-4230-40c7-8ab1-cbe723f2197d\",\n
+        \ \"lastUpdatedDateTime\": \"2022-08-02T22:31:12+00:00\",\n  \"status\": \"succeeded\",\n
+        \ \"resultUrl\": \"https://languagesdkresource.cognitiveservices.azure.com:443/language/query-knowledgebases/projects/IssacNewton/export/jobs/443ca922-4230-40c7-8ab1-cbe723f2197d/result?api-version=2021-10-01\"\n}"
     headers:
       apim-request-id:
-      - 8e4ce1b7-a98c-47d5-b359-d3a894bf154c
+      - 8be0c85b-9004-40d2-b402-be91070b2560
       content-length:
       - '443'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Aug 2022 17:51:32 GMT
+      - Tue, 02 Aug 2022 22:31:39 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '23'
+      - '10'
     status:
       code: 200
       message: OK

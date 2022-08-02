@@ -38,16 +38,16 @@ interactions:
         8,\n        \"length\": 18\n      },\n      \"offset\": 20,\n      \"length\":
         225\n    },\n    {\n      \"answer\": \"It can take longer if you\u2019re
         using your Surface for power-intensive activities like gaming or video streaming
-        while you\u2019re charging it.\",\n      \"confidenceScore\": 0.11520539969205856,\n
+        while you\u2019re charging it.\",\n      \"confidenceScore\": 0.11520536988973618,\n
         \     \"id\": \"1\",\n      \"answerSpan\": {\n        \"text\": \"longer\",\n
         \       \"confidenceScore\": 0.68131536,\n        \"offset\": 11,\n        \"length\":
         7\n      },\n      \"offset\": 110,\n      \"length\": 135\n    }\n  ]\n}"
     headers:
-      apim-request-id: fd875cd0-1307-4e89-9aab-41d9a910ed74
+      apim-request-id: 0df0ecec-e8b6-4beb-995f-6485526d350e
       content-length: '1476'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=2
-      date: Tue, 02 Aug 2022 17:55:01 GMT
+      date: Tue, 02 Aug 2022 22:08:37 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
       x-envoy-upstream-service-time: '570'

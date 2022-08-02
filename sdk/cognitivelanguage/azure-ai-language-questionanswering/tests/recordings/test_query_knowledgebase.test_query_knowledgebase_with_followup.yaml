@@ -27,16 +27,19 @@ interactions:
         battery and power](https://www.microsoft.com/surface/support/hardware-and-drivers/battery-and-power-pro)
         on Surface.com.\",\n      \"confidenceScore\": 0.7223,\n      \"id\": 26,\n
         \     \"source\": \"surface-book-user-guide-EN.pdf\",\n      \"metadata\":
-        {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
-        []\n      }\n    },\n    {\n      \"questions\": [\n        \"Check the battery
-        level\"\n      ],\n      \"answer\": \"**Check the battery level**\\n\\nYou
-        can check the battery level from the lock screen or on the desktop. Lock screen\\n\\nWhen
-        you wake your Surface Book, the battery status appears in the lower-right
-        corner of the lock screen. \u272A\",\n      \"confidenceScore\": 0.5649000000000001,\n
-        \     \"id\": 24,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n
-        \     \"metadata\": {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n
-        \       \"prompts\": [\n          {\n            \"displayOrder\": 0,\n            \"qnaId\":
-        25,\n            \"displayText\": \"Desktop taskbar\"\n          }\n        ]\n
+        {\n        \"system_metadata_qna_edited_manually\": \"true\",\n        \"explicitlytaggedheading\":
+        \"make your battery last\"\n      },\n      \"dialog\": {\n        \"isContextOnly\":
+        false,\n        \"prompts\": []\n      }\n    },\n    {\n      \"questions\":
+        [\n        \"Check the battery level\"\n      ],\n      \"answer\": \"**Check
+        the battery level**\\n\\nYou can check the battery level from the lock screen
+        or on the desktop. Lock screen\\n\\nWhen you wake your Surface Book, the battery
+        status appears in the lower-right corner of the lock screen. \u272A\",\n      \"confidenceScore\":
+        0.5649000000000001,\n      \"id\": 24,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n
+        \     \"metadata\": {\n        \"system_metadata_qna_edited_manually\": \"true\",\n
+        \       \"explicitlytaggedheading\": \"check the battery level\"\n      },\n
+        \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
+        [\n          {\n            \"displayOrder\": 0,\n            \"qnaId\": 25,\n
+        \           \"displayText\": \"Desktop taskbar\"\n          }\n        ]\n
         \     }\n    },\n    {\n      \"questions\": [\n        \"Desktop taskbar\"\n
         \     ],\n      \"answer\": \"**Desktop taskbar**\\n\\nOn the desktop, select
         the battery status icon on the right side of the taskbar. The battery status
@@ -47,21 +50,21 @@ interactions:
         \       \"prompts\": []\n      }\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 5d6b88af-f0ea-4a0e-84b1-776135b8517b
+      - 557e5c73-fb51-4de5-9ae4-9e483c413552
       content-length:
-      - '1781'
+      - '2026'
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
       date:
-      - Tue, 02 Aug 2022 17:54:33 GMT
+      - Tue, 02 Aug 2022 22:08:09 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '422'
+      - '380'
     status:
       code: 200
       message: OK
@@ -144,7 +147,7 @@ interactions:
         []\n      }\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - c6988f05-549c-4e71-aff9-55cb57f7275f
+      - ffef8ded-23b2-49a3-ba3b-eed703d34e80
       content-length:
       - '4276'
       content-type:
@@ -152,13 +155,13 @@ interactions:
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
       date:
-      - Tue, 02 Aug 2022 17:54:34 GMT
+      - Tue, 02 Aug 2022 22:08:09 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '458'
+      - '597'
     status:
       code: 200
       message: OK

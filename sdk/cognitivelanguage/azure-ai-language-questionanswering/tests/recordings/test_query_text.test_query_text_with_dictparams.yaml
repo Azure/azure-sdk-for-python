@@ -42,13 +42,13 @@ interactions:
         8,\n        \"length\": 18\n      },\n      \"offset\": 20,\n      \"length\":
         225\n    },\n    {\n      \"answer\": \"It can take longer if you\u2019re
         using your Surface for power-intensive activities like gaming or video streaming
-        while you\u2019re charging it.\",\n      \"confidenceScore\": 0.11520536988973618,\n
+        while you\u2019re charging it.\",\n      \"confidenceScore\": 0.11520539969205856,\n
         \     \"id\": \"1\",\n      \"answerSpan\": {\n        \"text\": \"longer\",\n
         \       \"confidenceScore\": 0.68131536,\n        \"offset\": 11,\n        \"length\":
         7\n      },\n      \"offset\": 110,\n      \"length\": 135\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 19a4b619-b30b-4ab8-82a3-d97d7c83b497
+      - 60e7d3fc-54db-4538-b19e-79b44e0fa69c
       content-length:
       - '1476'
       content-type:
@@ -56,13 +56,13 @@ interactions:
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=2
       date:
-      - Tue, 02 Aug 2022 17:54:54 GMT
+      - Tue, 02 Aug 2022 22:08:28 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '570'
+      - '456'
     status:
       code: 200
       message: OK

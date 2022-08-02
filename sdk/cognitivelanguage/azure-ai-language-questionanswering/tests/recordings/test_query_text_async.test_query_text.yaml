@@ -135,17 +135,17 @@ interactions:
         about. A selfie I snapped in my dimly lit room was covered in a haze of visual
         noise.\",\n      \"confidenceScore\": 0.010868429206311703,\n      \"id\":
         \"doc3\",\n      \"answerSpan\": {\n        \"text\": \"Longest Last\",\n
-        \       \"confidenceScore\": 0.21728806,\n        \"offset\": 38,\n        \"length\":
+        \       \"confidenceScore\": 0.21728747,\n        \"offset\": 38,\n        \"length\":
         13\n      },\n      \"offset\": 2086,\n      \"length\": 399\n    }\n  ]\n}"
     headers:
-      apim-request-id: 09d554d7-7285-44ca-90e2-dd19685b692f
+      apim-request-id: 48883305-df3a-4581-abd1-15dd8b901f05
       content-length: '2201'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=9
-      date: Tue, 02 Aug 2022 17:54:57 GMT
+      date: Tue, 02 Aug 2022 22:08:32 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '902'
+      x-envoy-upstream-service-time: '917'
     status:
       code: 200
       message: OK

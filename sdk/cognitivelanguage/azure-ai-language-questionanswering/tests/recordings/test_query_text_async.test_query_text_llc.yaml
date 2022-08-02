@@ -115,9 +115,9 @@ interactions:
         Battery Life - Longest Lasting Laptop Batteries  Competing laptops like the
         ZenBook S UX391UA (7:05), Surface Laptop 2 (9:22) and Notebook 9 Pro (8:53)
         outstayed the 4K Envy 13 but powered down long before the 1080p version.\",\n
-        \     \"confidenceScore\": 0.047717876732349396,\n      \"id\": \"doc3\",\n
+        \     \"confidenceScore\": 0.0477178618311882,\n      \"id\": \"doc3\",\n
         \     \"answerSpan\": {\n        \"text\": \"continuous web browsing over
-        Wi-Fi at 150 nits of brightness\",\n        \"confidenceScore\": 0.29168424,\n
+        Wi-Fi at 150 nits of brightness\",\n        \"confidenceScore\": 0.29168442,\n
         \       \"offset\": 242,\n        \"length\": 61\n      },\n      \"offset\":
         1779,\n      \"length\": 555\n    },\n    {\n      \"answer\": \"Along with
         11-plus hours of battery life (on the FHD model), the Envy 13 has a sleek,
@@ -138,14 +138,14 @@ interactions:
         \       \"confidenceScore\": 0.21728747,\n        \"offset\": 38,\n        \"length\":
         13\n      },\n      \"offset\": 2086,\n      \"length\": 399\n    }\n  ]\n}"
     headers:
-      apim-request-id: 5589d0db-4298-4904-8eea-b4787031cb8b
-      content-length: '2203'
+      apim-request-id: 481e6302-6942-4491-a910-7e094655f340
+      content-length: '2201'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=9
-      date: Tue, 02 Aug 2022 17:54:58 GMT
+      date: Tue, 02 Aug 2022 22:08:34 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '1069'
+      x-envoy-upstream-service-time: '1093'
     status:
       code: 200
       message: OK

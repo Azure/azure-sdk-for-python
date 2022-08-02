@@ -29,7 +29,7 @@ interactions:
         []\n      }\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 9a19def3-70cb-470a-957e-fa8825c6f697
+      - 19df78d0-fa85-4f13-8234-a79d966fb124
       content-length:
       - '610'
       content-type:
@@ -37,13 +37,13 @@ interactions:
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
       date:
-      - Tue, 02 Aug 2022 17:54:27 GMT
+      - Tue, 02 Aug 2022 22:08:03 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '35'
+      - '33'
     status:
       code: 200
       message: OK

@@ -23,16 +23,19 @@ interactions:
         battery and power](https://www.microsoft.com/surface/support/hardware-and-drivers/battery-and-power-pro)
         on Surface.com.\",\n      \"confidenceScore\": 0.7223,\n      \"id\": 26,\n
         \     \"source\": \"surface-book-user-guide-EN.pdf\",\n      \"metadata\":
-        {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
-        []\n      }\n    },\n    {\n      \"questions\": [\n        \"Check the battery
-        level\"\n      ],\n      \"answer\": \"**Check the battery level**\\n\\nYou
-        can check the battery level from the lock screen or on the desktop. Lock screen\\n\\nWhen
-        you wake your Surface Book, the battery status appears in the lower-right
-        corner of the lock screen. \u272A\",\n      \"confidenceScore\": 0.5649000000000001,\n
-        \     \"id\": 24,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n
-        \     \"metadata\": {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n
-        \       \"prompts\": [\n          {\n            \"displayOrder\": 0,\n            \"qnaId\":
-        25,\n            \"displayText\": \"Desktop taskbar\"\n          }\n        ]\n
+        {\n        \"system_metadata_qna_edited_manually\": \"true\",\n        \"explicitlytaggedheading\":
+        \"make your battery last\"\n      },\n      \"dialog\": {\n        \"isContextOnly\":
+        false,\n        \"prompts\": []\n      }\n    },\n    {\n      \"questions\":
+        [\n        \"Check the battery level\"\n      ],\n      \"answer\": \"**Check
+        the battery level**\\n\\nYou can check the battery level from the lock screen
+        or on the desktop. Lock screen\\n\\nWhen you wake your Surface Book, the battery
+        status appears in the lower-right corner of the lock screen. \u272A\",\n      \"confidenceScore\":
+        0.5649000000000001,\n      \"id\": 24,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n
+        \     \"metadata\": {\n        \"system_metadata_qna_edited_manually\": \"true\",\n
+        \       \"explicitlytaggedheading\": \"check the battery level\"\n      },\n
+        \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
+        [\n          {\n            \"displayOrder\": 0,\n            \"qnaId\": 25,\n
+        \           \"displayText\": \"Desktop taskbar\"\n          }\n        ]\n
         \     }\n    },\n    {\n      \"questions\": [\n        \"Desktop taskbar\"\n
         \     ],\n      \"answer\": \"**Desktop taskbar**\\n\\nOn the desktop, select
         the battery status icon on the right side of the taskbar. The battery status
@@ -42,14 +45,14 @@ interactions:
         \     \"metadata\": {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n
         \       \"prompts\": []\n      }\n    }\n  ]\n}"
     headers:
-      apim-request-id: f2e88c85-9b39-4b39-96a5-56147b932221
-      content-length: '1781'
+      apim-request-id: 473556a4-7ea3-40b3-9f0e-061bc328bb66
+      content-length: '2026'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
-      date: Tue, 02 Aug 2022 17:54:45 GMT
+      date: Tue, 02 Aug 2022 22:08:21 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '301'
+      x-envoy-upstream-service-time: '376'
     status:
       code: 200
       message: OK

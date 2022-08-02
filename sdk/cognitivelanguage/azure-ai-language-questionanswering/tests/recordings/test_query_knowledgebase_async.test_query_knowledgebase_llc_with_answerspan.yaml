@@ -74,14 +74,14 @@ interactions:
         {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
         []\n      }\n    }\n  ]\n}"
     headers:
-      apim-request-id: 04324c7b-fdbf-4fc0-9985-b4ed4d27e70f
+      apim-request-id: 691ecdae-933c-4eed-82e8-6710c8d7d95f
       content-length: '4257'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
-      date: Tue, 02 Aug 2022 17:54:40 GMT
+      date: Tue, 02 Aug 2022 22:08:15 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '731'
+      x-envoy-upstream-service-time: '610'
     status:
       code: 200
       message: OK

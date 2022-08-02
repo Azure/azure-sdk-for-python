@@ -17,22 +17,35 @@ interactions:
     uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-10-01
   response:
     body:
-      string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Battery
-        life\"\n      ],\n      \"answer\": \"check the battery level\",\n      \"confidenceScore\":
-        1.0,\n      \"id\": 158,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n
+      string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Check
+        the battery level\"\n      ],\n      \"answer\": \"**Check the battery level**\\n\\nYou
+        can check the battery level from the lock screen or on the desktop. Lock screen\\n\\nWhen
+        you wake your Surface Book, the battery status appears in the lower-right
+        corner of the lock screen. \u272A\",\n      \"confidenceScore\": 0.8101999999999999,\n
+        \     \"id\": 24,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n
         \     \"metadata\": {\n        \"system_metadata_qna_edited_manually\": \"true\",\n
         \       \"explicitlytaggedheading\": \"check the battery level\"\n      },\n
         \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
-        []\n      }\n    }\n  ]\n}"
+        [\n          {\n            \"displayOrder\": 0,\n            \"qnaId\": 25,\n
+        \           \"displayText\": \"Desktop taskbar\"\n          }\n        ]\n
+        \     }\n    },\n    {\n      \"questions\": [\n        \"Making your battery
+        last\"\n      ],\n      \"answer\": \"**Making your battery last**\\n\\nTo
+        learn ways to conserve power and make your battery last longer, see [Surface
+        battery and power](https://www.microsoft.com/surface/support/hardware-and-drivers/battery-and-power-pro)
+        on Surface.com.\",\n      \"confidenceScore\": 0.39399999999999996,\n      \"id\":
+        26,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n      \"metadata\":
+        {\n        \"system_metadata_qna_edited_manually\": \"true\",\n        \"explicitlytaggedheading\":
+        \"make your battery last\"\n      },\n      \"dialog\": {\n        \"isContextOnly\":
+        false,\n        \"prompts\": []\n      }\n    }\n  ]\n}"
     headers:
-      apim-request-id: eee384a1-bf43-408b-83c5-f99f392b8b02
-      content-length: '452'
+      apim-request-id: a4ae08d5-51bb-4d31-89bf-0c3932a4a13d
+      content-length: '1481'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
-      date: Tue, 02 Aug 2022 17:54:37 GMT
+      date: Tue, 02 Aug 2022 22:08:12 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '71'
+      x-envoy-upstream-service-time: '74'
     status:
       code: 200
       message: OK

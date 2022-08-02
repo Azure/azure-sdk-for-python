@@ -23,16 +23,19 @@ interactions:
         battery and power](https://www.microsoft.com/surface/support/hardware-and-drivers/battery-and-power-pro)
         on Surface.com.\",\n      \"confidenceScore\": 0.7223,\n      \"id\": 26,\n
         \     \"source\": \"surface-book-user-guide-EN.pdf\",\n      \"metadata\":
-        {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
-        []\n      }\n    },\n    {\n      \"questions\": [\n        \"Check the battery
-        level\"\n      ],\n      \"answer\": \"**Check the battery level**\\n\\nYou
-        can check the battery level from the lock screen or on the desktop. Lock screen\\n\\nWhen
-        you wake your Surface Book, the battery status appears in the lower-right
-        corner of the lock screen. \u272A\",\n      \"confidenceScore\": 0.5649000000000001,\n
-        \     \"id\": 24,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n
-        \     \"metadata\": {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n
-        \       \"prompts\": [\n          {\n            \"displayOrder\": 0,\n            \"qnaId\":
-        25,\n            \"displayText\": \"Desktop taskbar\"\n          }\n        ]\n
+        {\n        \"system_metadata_qna_edited_manually\": \"true\",\n        \"explicitlytaggedheading\":
+        \"make your battery last\"\n      },\n      \"dialog\": {\n        \"isContextOnly\":
+        false,\n        \"prompts\": []\n      }\n    },\n    {\n      \"questions\":
+        [\n        \"Check the battery level\"\n      ],\n      \"answer\": \"**Check
+        the battery level**\\n\\nYou can check the battery level from the lock screen
+        or on the desktop. Lock screen\\n\\nWhen you wake your Surface Book, the battery
+        status appears in the lower-right corner of the lock screen. \u272A\",\n      \"confidenceScore\":
+        0.5649000000000001,\n      \"id\": 24,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n
+        \     \"metadata\": {\n        \"system_metadata_qna_edited_manually\": \"true\",\n
+        \       \"explicitlytaggedheading\": \"check the battery level\"\n      },\n
+        \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
+        [\n          {\n            \"displayOrder\": 0,\n            \"qnaId\": 25,\n
+        \           \"displayText\": \"Desktop taskbar\"\n          }\n        ]\n
         \     }\n    },\n    {\n      \"questions\": [\n        \"Desktop taskbar\"\n
         \     ],\n      \"answer\": \"**Desktop taskbar**\\n\\nOn the desktop, select
         the battery status icon on the right side of the taskbar. The battery status
@@ -42,14 +45,14 @@ interactions:
         \     \"metadata\": {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n
         \       \"prompts\": []\n      }\n    }\n  ]\n}"
     headers:
-      apim-request-id: 3ac6fa2c-957e-46bc-8a8d-42fea3a4d567
-      content-length: '1781'
+      apim-request-id: dd5d7cc2-beed-49b1-9b05-76baffc382d8
+      content-length: '2026'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
-      date: Tue, 02 Aug 2022 17:54:47 GMT
+      date: Tue, 02 Aug 2022 22:08:22 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '422'
+      x-envoy-upstream-service-time: '402'
     status:
       code: 200
       message: OK
@@ -128,14 +131,14 @@ interactions:
         {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
         []\n      }\n    }\n  ]\n}"
     headers:
-      apim-request-id: e4727805-b136-4c03-a6bc-e67d095da905
+      apim-request-id: 6c9664c5-194d-4321-935b-826296c4f815
       content-length: '4276'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
-      date: Tue, 02 Aug 2022 17:54:47 GMT
+      date: Tue, 02 Aug 2022 22:08:22 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '478'
+      x-envoy-upstream-service-time: '387'
     status:
       code: 200
       message: OK
