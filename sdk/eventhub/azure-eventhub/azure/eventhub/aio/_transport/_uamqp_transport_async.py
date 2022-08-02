@@ -5,8 +5,9 @@
 
 from __future__ import annotations
 import asyncio
+import time
 import logging
-from typing import Optional, Union, Any, cast, TYPE_CHECKING
+from typing import Union, cast, TYPE_CHECKING, List
 
 try:
     from uamqp import (
@@ -53,6 +54,7 @@ from ...exceptions import (
 
 if TYPE_CHECKING:
     from .._client_base_async import ClientBaseAsync, ConsumerProducerMixin
+    from ..._common import EventData
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -115,44 +117,7 @@ if uamqp_installed:
                     raise producer._condition
 
         @staticmethod
-        def set_message_partition_key(message, partition_key, **kwargs):  # pylint:disable=unused-argument
-            # type: (Message, Optional[Union[bytes, str]], Any) -> Message
-            """Set the partition key as an annotation on a uamqp message.
-
-            :param ~uamqp.Message message: The message to update.
-            :param str partition_key: The partition key value.
-            :rtype: Message
-            """
-            if partition_key:
-                annotations = message.annotations
-                if annotations is None:
-                    annotations = {}
-                annotations[
-                    UamqpTransport.PROP_PARTITION_KEY_AMQP_SYMBOL   # TODO: see if setting non-amqp symbol is valid
-                ] = partition_key
-                header = MessageHeader()
-                header.durable = True
-                message.annotations = annotations
-                message.header = header
-            return message
-
-        @staticmethod
-        async def add_batch(batch_message, outgoing_event_data, event_data):
-            """
-            Add EventData to the data body of the BatchMessage.
-            :param batch_message: BatchMessage to add data to.
-            :param outgoing_event_data: Transformed EventData for sending.
-            :param event_data: EventData to add to internal batch events. uamqp use only.
-            :rtype: None
-            """
-            # pylint: disable=protected-access
-            batch_message._internal_events.append(event_data)
-            batch_message._message._body_gen.append(
-                outgoing_event_data._message
-            )
-
-        @staticmethod
-        async def create_receive_client(*, config, **kwargs):
+        def create_receive_client(*, config, **kwargs):
             """
             Creates and returns the receive client.
             :param ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -203,16 +168,68 @@ if uamqp_installed:
             return client
 
         @staticmethod
-        async def open_receive_client(*, handler, client, auth):
+        async def receive_messages(handler, batch, max_batch_size, max_wait_time):
             """
-            Opens the receive client and returns ready status.
+            Receives messages, creates events, and returns them by calling the on received callback.
             :param ReceiveClient handler: The receive client.
-            :param ~azure.eventhub.EventHubConsumerClient client: The consumer client.
-            :param auth: Auth.
-            :rtype: bool
+            :param bool batch: If receive batch or single event.
+            :param int max_batch_size: Max batch size.
+            :param int or None max_wait_time: Max wait time.
             """
             # pylint:disable=protected-access
-            await handler.open()
+            max_retries = (
+                handler._client._config.max_retries  # pylint:disable=protected-access
+            )
+            has_not_fetched_once = True  # ensure one trip when max_wait_time is very small
+            deadline = time.time() + (max_wait_time or 0)  # max_wait_time can be None
+            while len(handler._message_buffer) < max_batch_size and (
+                time.time() < deadline or has_not_fetched_once
+            ):
+                retried_times = 0
+                has_not_fetched_once = False
+                while retried_times <= max_retries:
+                    try:
+                        await handler._open()
+                        await cast(
+                            ReceiveClientAsync, handler._handler
+                        ).do_work_async()  # uamqp sleeps 0.05 if none received
+                        break
+                    except asyncio.CancelledError:  # pylint: disable=try-except-raise
+                        raise
+                    except Exception as exception:  # pylint: disable=broad-except
+                        if (
+                            isinstance(exception, UamqpTransportAsync.AMQP_LINK_ERROR)
+                            and exception.condition == UamqpTransportAsync.LINK_STOLEN_CONDITION  # pylint: disable=no-member
+                        ):
+                            raise await handler._handle_exception(exception)
+                        if not handler.running:  # exit by close
+                            return
+                        if handler._last_received_event:
+                            handler._offset = handler._last_received_event.offset
+                        last_exception = await handler._handle_exception(exception)
+                        retried_times += 1
+                        if retried_times > max_retries:
+                            _LOGGER.info(
+                                "%r operation has exhausted retry. Last exception: %r.",
+                                handler._name,
+                                last_exception,
+                            )
+                            raise last_exception
+
+            if handler._message_buffer:
+                while handler._message_buffer:
+                    if batch:
+                        events_for_callback: List[EventData] = []
+                        for _ in range(min(max_batch_size, len(handler._message_buffer))):
+                            events_for_callback.append(handler._next_message_in_buffer())
+                        await handler._on_event_received(events_for_callback)
+                    else:
+                        await handler._on_event_received(handler._next_message_in_buffer())
+            elif max_wait_time:
+                if batch:
+                    await handler._on_event_received([])
+                else:
+                    await handler._on_event_received(None)
 
         @staticmethod
         async def create_token_auth(auth_uri, get_token, token_type, config, **kwargs):

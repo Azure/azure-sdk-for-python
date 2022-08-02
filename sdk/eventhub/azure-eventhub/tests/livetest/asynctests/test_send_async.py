@@ -21,12 +21,17 @@ from azure.eventhub.amqp import (
     AmqpAnnotatedMessage,
     AmqpMessageProperties,
 )
+from ..._test_case import get_decorator
 
+uamqp_transport_vals = get_decorator()
+
+@pytest.mark.parametrize("uamqp_transport",
+                         uamqp_transport_vals)
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_send_amqp_annotated_message(connstr_receivers):
+async def test_send_amqp_annotated_message(connstr_receivers, uamqp_transport):
     connection_str, receivers = connstr_receivers
-    client = EventHubProducerClient.from_connection_string(connection_str)
+    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
     async with client:
         sequence_body = [b'message', 123.456, True]
         footer = {'footer_key': 'footer_value'}
@@ -126,7 +131,7 @@ async def test_send_amqp_annotated_message(connstr_receivers):
 
     on_event.received = []
     client = EventHubConsumerClient.from_connection_string(connection_str,
-                                                        consumer_group='$default')
+                                                        consumer_group='$default', uamqp_transport=uamqp_transport)
     async with client:
         task = asyncio.ensure_future(client.receive(on_event, starting_position="-1"))
         await asyncio.sleep(15)

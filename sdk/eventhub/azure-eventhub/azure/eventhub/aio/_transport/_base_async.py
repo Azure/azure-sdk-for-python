@@ -39,6 +39,7 @@ class AmqpTransportAsync(ABC):
         """
 
     @staticmethod
+    @abstractmethod
     def get_batch_message_encoded_size(message):
         """
         Gets the batch message encoded size given an underlying Message.
@@ -147,11 +148,13 @@ class AmqpTransportAsync(ABC):
 
     @staticmethod
     @abstractmethod
-    async def open_receive_client(*, handler, client, auth):
+    async def receive_messages(handler, batch, max_batch_size, max_wait_time):
         """
-        Opens the receive client.
+        Receives messages, creates events, and returns them by calling the on received callback.
         :param ReceiveClient handler: The receive client.
-        :param ~azure.eventhub.EventHubConsumerClient client: The consumer client.
+        :param bool batch: If receive batch or single event.
+        :param int max_batch_size: Max batch size.
+        :param int or None max_wait_time: Max wait time.
         """
 
     @staticmethod
@@ -177,6 +180,14 @@ class AmqpTransportAsync(ABC):
         :param _Address address: Required. The Address.
         :param JWTTokenAuth mgmt_auth: Auth for client.
         :param ~azure.eventhub._configuration.Configuration config: The configuration.
+        """
+
+    @staticmethod
+    @abstractmethod
+    async def get_updated_token(mgmt_auth):
+        """
+        Return updated auth token.
+        :param mgmt_auth: Auth.
         """
 
     @staticmethod
