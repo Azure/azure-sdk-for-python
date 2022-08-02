@@ -395,7 +395,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = self._create_container(bsc)
 
-        sas_token = generate_account_sas(
+        sas_token = self.generate_sas(
+            generate_account_sas,
             account_name=storage_account_name,
             account_key=storage_account_key,
             resource_types=ResourceTypes(service=True),
@@ -1061,7 +1062,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # TODO: container soft delete should enabled by SRP call or use ARM, so make this test as playback only.
-        token = generate_account_sas(
+        token = self.generate_sas(
+            generate_account_sas,
             storage_account_name,
             storage_account_key,
             ResourceTypes(service=True, container=True),
@@ -1529,7 +1531,8 @@ class TestStorageContainer(StorageRecordedTestCase):
             sleep(10)
 
         # Act
-        sas_token = generate_container_sas(
+        sas_token = self.generate_sas(
+            generate_container_sas,
             container.account_name,
             container.container_name,
             account_key=storage_account_key,
@@ -1631,7 +1634,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container_name = self._get_container_reference()
-        sas_token = generate_container_sas(
+        sas_token = self.generate_sas(
+            generate_container_sas,
             storage_account_name,
             container_name,
             account_key=storage_account_key,
@@ -1713,7 +1717,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        sas_token = generate_account_sas(
+        sas_token = self.generate_sas(
+            generate_account_sas,
             storage_account_name,
             account_key=storage_account_key,
             resource_types=ResourceTypes(object=True, container=True),
@@ -2011,7 +2016,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        sas_token = generate_account_sas(
+        sas_token = self.generate_sas(
+            generate_account_sas,
             storage_account_name,
             account_key=storage_account_key,
             resource_types=ResourceTypes(object=True, container=True),
