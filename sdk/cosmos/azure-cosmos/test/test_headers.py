@@ -80,8 +80,8 @@ class HeadersTest(unittest.TestCase):
         try:
             self.container.read_item(item="id-1", partition_key="pk-1",
                                      max_integrated_cache_staleness_in_ms=self.dedicated_gateway_max_age_zero)
-        except Exception as exception:
-            assert isinstance(exception, ValueError)
+        except StopIteration:
+            pass
 
 
 if __name__ == "__main__":
