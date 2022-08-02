@@ -1,5 +1,10 @@
 # Release History
 
+## 12.13.1 (2022-08-04)
+
+### Bugs Fixed
+- Fixed two rare issues with ranged blob download when using client-side encryption V1 or V2.
+
 ## 12.13.0 (2022-07-07)
 
 ### Bugs Fixed
