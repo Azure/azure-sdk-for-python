@@ -2,7 +2,7 @@
 
 ## 4.0.1 (2022-08-02)
 
-**Other change**
+**Other Change**
 
   - Fix package structure
 
