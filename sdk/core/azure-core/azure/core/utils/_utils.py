@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import collections
+import collections.abc as collections
 import datetime
 from typing import Any, Dict, Iterator, Mapping, MutableMapping
 
