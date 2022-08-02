@@ -417,7 +417,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
                 )
 
     @GlobalQuestionAnsweringAccountPreparer()
-    async def test_query_knowledgebase_filter(selft, qna_account, qna_key, qna_project):
+    async def test_query_knowledgebase_filter(self, qna_account, qna_key, qna_project):
         """Thanks to @heaths for this test!"""
         filters = QueryFilters(
             metadata_filter=MetadataFilter(
