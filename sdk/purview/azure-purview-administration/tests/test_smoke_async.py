@@ -7,20 +7,20 @@
 from testcase import PurviewAccountPowerShellPreparer, PurviewMetaPolicyPowerShellPreparer
 from testcase_async import PurviewAccountTestAsync, PurviewMetaPolicyTestAsync
 from _util import PurviewAccountRecordingProcessor, PurviewAccountCollectionsRecordingProcessor
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils.aio import recorded_by_proxy_async
 
 
 class TestPurviewAccountSmokeAsync(PurviewAccountTestAsync):
 
     @PurviewAccountPowerShellPreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_async
     async def test_basic_smoke_test(self, purviewaccount_endpoint):
-        client = self.create_aio_client(endpoint=purviewaccount_endpoint)
-        response = await self.to_list(client.accounts.get_access_keys())
+        client = self.create_async_client(endpoint=purviewaccount_endpoint)
+        response = await client.accounts.get_access_keys()
         assert set(response.keys()) == set(['atlasKafkaPrimaryEndpoint', 'atlasKafkaSecondaryEndpoint'])
 
     @PurviewAccountPowerShellPreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_async
     async def test_collections_list(self, purviewaccount_endpoint):
         client = self.create_async_client(endpoint=purviewaccount_endpoint)
         response = client.collections.list_collections()
@@ -32,7 +32,7 @@ class TestPurviewAccountSmokeAsync(PurviewAccountTestAsync):
 class TestPurviewMetaDataPolicySmokeAsync(PurviewMetaPolicyTestAsync):
 
     @PurviewMetaPolicyPowerShellPreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_async
     async def test_metadata_policy_smoke_async(self, purviewmetapolicy_endpoint):
         client = self.create_async_client(endpoint=purviewmetapolicy_endpoint)
         response = client.metadata_policy.list_all()
@@ -40,7 +40,7 @@ class TestPurviewMetaDataPolicySmokeAsync(PurviewMetaPolicyTestAsync):
         assert len(result) >= 1
 
     @PurviewMetaPolicyPowerShellPreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_async
     async def test_metadata_role_smoke_async(self, purviewmetapolicy_endpoint):
         client = self.create_async_client(endpoint=purviewmetapolicy_endpoint)
         response = client.metadata_roles.list()
