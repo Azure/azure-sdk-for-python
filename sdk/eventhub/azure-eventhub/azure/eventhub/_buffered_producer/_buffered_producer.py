@@ -85,7 +85,6 @@ class BufferedProducer:
         # Put single event or EventDataBatch into the queue.
         # This method would raise OperationTimeout if the queue does not have enough space for the input and
         # flush cannot finish in timeout.
-        
         try:
             new_events_len = len(events)
         except TypeError:
