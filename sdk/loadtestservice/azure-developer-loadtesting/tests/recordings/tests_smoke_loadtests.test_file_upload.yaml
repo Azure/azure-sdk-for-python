@@ -1,0 +1,242 @@
+interactions:
+- request:
+    body: "--b6bde773a7dc665a182c8acd3db0962c\r\nContent-Disposition: form-data; name=\"file\";
+      filename=\"sample.jmx\"\r\nContent-Type: application/octet-stream\r\n\r\n<?xml
+      version=\"1.0\" encoding=\"UTF-8\"?>\r\n<jmeterTestPlan version=\"1.2\" properties=\"5.0\"
+      jmeter=\"5.4.3\">\r\n  <hashTree>\r\n    <TestPlan guiclass=\"TestPlanGui\"
+      testclass=\"TestPlan\" testname=\"Test Plan\" enabled=\"true\">\r\n      <stringProp
+      name=\"TestPlan.comments\"></stringProp>\r\n      <boolProp name=\"TestPlan.functional_mode\">false</boolProp>\r\n
+      \     <boolProp name=\"TestPlan.tearDown_on_shutdown\">true</boolProp>\r\n      <boolProp
+      name=\"TestPlan.serialize_threadgroups\">false</boolProp>\r\n      <elementProp
+      name=\"TestPlan.user_defined_variables\" elementType=\"Arguments\" guiclass=\"ArgumentsPanel\"
+      testclass=\"Arguments\" testname=\"User Defined Variables\" enabled=\"true\">\r\n
+      \       <collectionProp name=\"Arguments.arguments\"/>\r\n      </elementProp>\r\n
+      \     <stringProp name=\"TestPlan.user_define_classpath\"></stringProp>\r\n
+      \   </TestPlan>\r\n    <hashTree>\r\n      <kg.apc.jmeter.threads.UltimateThreadGroup
+      guiclass=\"kg.apc.jmeter.threads.UltimateThreadGroupGui\" testclass=\"kg.apc.jmeter.threads.UltimateThreadGroup\"
+      testname=\"jp@gc - Ultimate Thread Group\" enabled=\"true\">\r\n        <collectionProp
+      name=\"ultimatethreadgroupdata\">\r\n          <collectionProp name=\"-1108691518\">\r\n
+      \           <stringProp name=\"1567\">10</stringProp>\r\n            <stringProp
+      name=\"48\">0</stringProp>\r\n            <stringProp name=\"48873\">180</stringProp>\r\n
+      \           <stringProp name=\"49710\">240</stringProp>\r\n            <stringProp
+      name=\"10\">5</stringProp>\r\n          </collectionProp>\r\n        </collectionProp>\r\n
+      \       <elementProp name=\"ThreadGroup.main_controller\" elementType=\"LoopController\"
+      guiclass=\"LoopControlPanel\" testclass=\"LoopController\" testname=\"Loop Controller\"
+      enabled=\"true\">\r\n          <boolProp name=\"LoopController.continue_forever\">false</boolProp>\r\n
+      \         <intProp name=\"LoopController.loops\">-1</intProp>\r\n        </elementProp>\r\n
+      \       <stringProp name=\"ThreadGroup.on_sample_error\">continue</stringProp>\r\n
+      \     </kg.apc.jmeter.threads.UltimateThreadGroup>\r\n      <hashTree>\r\n        <HTTPSamplerProxy
+      guiclass=\"HttpTestSampleGui\" testclass=\"HTTPSamplerProxy\" testname=\"GET\"
+      enabled=\"true\">\r\n          <elementProp name=\"HTTPsampler.Arguments\" elementType=\"Arguments\"
+      guiclass=\"HTTPArgumentsPanel\" testclass=\"Arguments\" testname=\"User Defined
+      Variables\" enabled=\"true\">\r\n            <collectionProp name=\"Arguments.arguments\"/>\r\n
+      \         </elementProp>\r\n          <stringProp name=\"HTTPSampler.domain\">app-service-sample-demo.azurewebsites.net</stringProp>\r\n
+      \         <stringProp name=\"HTTPSampler.port\"></stringProp>\r\n          <stringProp
+      name=\"HTTPSampler.protocol\">https</stringProp>\r\n          <stringProp name=\"HTTPSampler.contentEncoding\"></stringProp>\r\n
+      \         <stringProp name=\"HTTPSampler.path\"></stringProp>\r\n          <stringProp
+      name=\"HTTPSampler.method\">GET</stringProp>\r\n          <boolProp name=\"HTTPSampler.follow_redirects\">true</boolProp>\r\n
+      \         <boolProp name=\"HTTPSampler.auto_redirects\">false</boolProp>\r\n
+      \         <boolProp name=\"HTTPSampler.use_keepalive\">true</boolProp>\r\n          <boolProp
+      name=\"HTTPSampler.DO_MULTIPART_POST\">false</boolProp>\r\n          <stringProp
+      name=\"HTTPSampler.embedded_url_re\"></stringProp>\r\n          <stringProp
+      name=\"HTTPSampler.implementation\">HttpClient4</stringProp>\r\n          <stringProp
+      name=\"HTTPSampler.connect_timeout\">60000</stringProp>\r\n          <stringProp
+      name=\"HTTPSampler.response_timeout\">60000</stringProp>\r\n        </HTTPSamplerProxy>\r\n
+      \       <hashTree/>\r\n        <kg.apc.jmeter.timers.VariableThroughputTimer
+      guiclass=\"kg.apc.jmeter.timers.VariableThroughputTimerGui\" testclass=\"kg.apc.jmeter.timers.VariableThroughputTimer\"
+      testname=\"jp@gc - Throughput Shaping Timer\" enabled=\"true\">\r\n          <collectionProp
+      name=\"load_profile\">\r\n            <collectionProp name=\"1543912173\">\r\n
+      \             <stringProp name=\"1567\">10</stringProp>\r\n              <stringProp
+      name=\"1691\">50</stringProp>\r\n              <stringProp name=\"48873\">180</stringProp>\r\n
+      \           </collectionProp>\r\n            <collectionProp name=\"1582355627\">\r\n
+      \             <stringProp name=\"1691\">50</stringProp>\r\n              <stringProp
+      name=\"1691\">50</stringProp>\r\n              <stringProp name=\"49710\">240</stringProp>\r\n
+      \           </collectionProp>\r\n          </collectionProp>\r\n        </kg.apc.jmeter.timers.VariableThroughputTimer>\r\n
+      \       <hashTree/>\r\n        <ResultCollector guiclass=\"ViewResultsFullVisualizer\"
+      testclass=\"ResultCollector\" testname=\"View Results Tree\" enabled=\"true\">\r\n
+      \         <boolProp name=\"ResultCollector.error_logging\">false</boolProp>\r\n
+      \         <objProp>\r\n            <name>saveConfig</name>\r\n            <value
+      class=\"SampleSaveConfiguration\">\r\n              <time>true</time>\r\n              <latency>true</latency>\r\n
+      \             <timestamp>true</timestamp>\r\n              <success>true</success>\r\n
+      \             <label>true</label>\r\n              <code>true</code>\r\n              <message>true</message>\r\n
+      \             <threadName>true</threadName>\r\n              <dataType>true</dataType>\r\n
+      \             <encoding>false</encoding>\r\n              <assertions>true</assertions>\r\n
+      \             <subresults>true</subresults>\r\n              <responseData>false</responseData>\r\n
+      \             <samplerData>false</samplerData>\r\n              <xml>false</xml>\r\n
+      \             <fieldNames>true</fieldNames>\r\n              <responseHeaders>false</responseHeaders>\r\n
+      \             <requestHeaders>false</requestHeaders>\r\n              <responseDataOnError>false</responseDataOnError>\r\n
+      \             <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>\r\n
+      \             <assertionsResultsToSave>0</assertionsResultsToSave>\r\n              <bytes>true</bytes>\r\n
+      \             <sentBytes>true</sentBytes>\r\n              <url>true</url>\r\n
+      \             <threadCounts>true</threadCounts>\r\n              <idleTime>true</idleTime>\r\n
+      \             <connectTime>true</connectTime>\r\n            </value>\r\n          </objProp>\r\n
+      \         <stringProp name=\"filename\"></stringProp>\r\n        </ResultCollector>\r\n
+      \       <hashTree/>\r\n        <ResultCollector guiclass=\"TableVisualizer\"
+      testclass=\"ResultCollector\" testname=\"View Results in Table\" enabled=\"true\">\r\n
+      \         <boolProp name=\"ResultCollector.error_logging\">false</boolProp>\r\n
+      \         <objProp>\r\n            <name>saveConfig</name>\r\n            <value
+      class=\"SampleSaveConfiguration\">\r\n              <time>true</time>\r\n              <latency>true</latency>\r\n
+      \             <timestamp>true</timestamp>\r\n              <success>true</success>\r\n
+      \             <label>true</label>\r\n              <code>true</code>\r\n              <message>true</message>\r\n
+      \             <threadName>true</threadName>\r\n              <dataType>true</dataType>\r\n
+      \             <encoding>false</encoding>\r\n              <assertions>true</assertions>\r\n
+      \             <subresults>true</subresults>\r\n              <responseData>false</responseData>\r\n
+      \             <samplerData>false</samplerData>\r\n              <xml>false</xml>\r\n
+      \             <fieldNames>true</fieldNames>\r\n              <responseHeaders>false</responseHeaders>\r\n
+      \             <requestHeaders>false</requestHeaders>\r\n              <responseDataOnError>false</responseDataOnError>\r\n
+      \             <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>\r\n
+      \             <assertionsResultsToSave>0</assertionsResultsToSave>\r\n              <bytes>true</bytes>\r\n
+      \             <sentBytes>true</sentBytes>\r\n              <url>true</url>\r\n
+      \             <threadCounts>true</threadCounts>\r\n              <idleTime>true</idleTime>\r\n
+      \             <connectTime>true</connectTime>\r\n            </value>\r\n          </objProp>\r\n
+      \         <stringProp name=\"filename\"></stringProp>\r\n        </ResultCollector>\r\n
+      \       <hashTree/>\r\n        <ResultCollector guiclass=\"ViewResultsFullVisualizer\"
+      testclass=\"ResultCollector\" testname=\"View Results Tree\" enabled=\"true\">\r\n
+      \         <boolProp name=\"ResultCollector.error_logging\">false</boolProp>\r\n
+      \         <objProp>\r\n            <name>saveConfig</name>\r\n            <value
+      class=\"SampleSaveConfiguration\">\r\n              <time>true</time>\r\n              <latency>true</latency>\r\n
+      \             <timestamp>true</timestamp>\r\n              <success>true</success>\r\n
+      \             <label>true</label>\r\n              <code>true</code>\r\n              <message>true</message>\r\n
+      \             <threadName>true</threadName>\r\n              <dataType>true</dataType>\r\n
+      \             <encoding>false</encoding>\r\n              <assertions>true</assertions>\r\n
+      \             <subresults>true</subresults>\r\n              <responseData>false</responseData>\r\n
+      \             <samplerData>false</samplerData>\r\n              <xml>false</xml>\r\n
+      \             <fieldNames>true</fieldNames>\r\n              <responseHeaders>false</responseHeaders>\r\n
+      \             <requestHeaders>false</requestHeaders>\r\n              <responseDataOnError>false</responseDataOnError>\r\n
+      \             <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>\r\n
+      \             <assertionsResultsToSave>0</assertionsResultsToSave>\r\n              <bytes>true</bytes>\r\n
+      \             <sentBytes>true</sentBytes>\r\n              <url>true</url>\r\n
+      \             <threadCounts>true</threadCounts>\r\n              <idleTime>true</idleTime>\r\n
+      \             <connectTime>true</connectTime>\r\n            </value>\r\n          </objProp>\r\n
+      \         <stringProp name=\"filename\"></stringProp>\r\n        </ResultCollector>\r\n
+      \       <hashTree/>\r\n      </hashTree>\r\n      <Arguments guiclass=\"ArgumentsPanel\"
+      testclass=\"Arguments\" testname=\"User Defined Variables\" enabled=\"true\">\r\n
+      \       <collectionProp name=\"Arguments.arguments\">\r\n          <elementProp
+      name=\"udv_webapp\" elementType=\"Argument\">\r\n            <stringProp name=\"Argument.name\">udv_webapp</stringProp>\r\n
+      \           <stringProp name=\"Argument.value\">${__BeanShell( System.getenv(&quot;webapp&quot;)
+      )}</stringProp>\r\n            <stringProp name=\"Argument.desc\">Web App URL</stringProp>\r\n
+      \           <stringProp name=\"Argument.metadata\">=</stringProp>\r\n          </elementProp>\r\n
+      \       </collectionProp>\r\n      </Arguments>\r\n      <hashTree/>\r\n    </hashTree>\r\n
+      \ </hashTree>\r\n</jmeterTestPlan>\r\n\r\n--b6bde773a7dc665a182c8acd3db0962c--\r\n"
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '10320'
+      Content-Type:
+      - multipart/form-data; boundary=b6bde773a7dc665a182c8acd3db0962c
+      User-Agent:
+      - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.10.2 (Windows-10-10.0.22000-SP0)
+    method: PUT
+    uri: https://myservice.azure.com/loadtests/some-unique-test-id/files/some-unique-file-id?api-version=2022-06-01-preview
+  response:
+    body:
+      string: '{"url":"https://stcntproddataeus.blob.core.windows.net/7119bd1d-cd3f-40be-ab75-0fda8862f6d5/some-unique-file-id?sv=2020-04-08&se=2022-08-02T04%3A57%3A03Z&sr=b&sp=r&sig=Jnihk6TWvH36hcaWzmSkxq187H3rW%2FiUaiBhi4N%2FTAI%3D","fileId":"some-unique-file-id","filename":"sample.jmx","fileType":0,"expireTime":"2022-08-02T04:57:03.470588","validationStatus":"VALIDATION_INITIATED"}'
+    headers:
+      api-supported-versions:
+      - 2021-07-01-preview, 2022-06-01-preview
+      connection:
+      - keep-alive
+      content-length:
+      - '372'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 02 Aug 2022 04:47:03 GMT
+      location:
+      - https://myservice.azure.com/loadtests/some-unique-test-id/files/some-unique-file-id?resourceId=%2fsubscriptions%2fSUBSCRIPTION_ID%2fresourcegroups%2fyashika-rg%2fproviders%2fmicrosoft.loadtestservice%2floadtests%2floadtestsdk&api-version=2022-06-01-preview
+      mise-correlation-id:
+      - d027c884-e21e-402b-b09b-8d4dfb9d2aee
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 201
+      message: Created
+- request:
+    body: !!binary |
+      LS1mZWNhMmMyNDZjZGZkNTU2YWIzYWM1ZDIwMTAzY2U3Mw0KQ29udGVudC1EaXNwb3NpdGlvbjog
+      Zm9ybS1kYXRhOyBuYW1lPSJmaWxlIjsgZmlsZW5hbWU9InRlc3RfcGljdHVyZS5wbmciDQpDb250
+      ZW50LVR5cGU6IGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbQ0KDQqJUE5HDQoaCgAAAA1JSERSAAAF
+      AAAAAtAIBAAAAGV0Fd0AAAAEZ0FNQQAAsY8L/GEFAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1
+      MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAAAqo0jMgAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0
+      SU1FB+QGBg4ZI9jTrCgAAAcRSURBVHja7cEBAQAAAIIg/69uSEABAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      wK8BJHQAAZdu6FUAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDYtMDZUMTQ6MjU6MzUrMDA6MDD9
+      ldUkAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTA2LTA2VDE0OjI1OjM1KzAwOjAwjMhtmAAAAABJ
+      RU5ErkJggg0KLS1mZWNhMmMyNDZjZGZkNTU2YWIzYWM1ZDIwMTAzY2U3My0tDQo=
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2270'
+      Content-Type:
+      - multipart/form-data; boundary=feca2c246cdfd556ab3ac5d20103ce73
+      User-Agent:
+      - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.10.2 (Windows-10-10.0.22000-SP0)
+    method: PUT
+    uri: https://myservice.azure.com/loadtests/non-existing-test-id/files/some-unique-file-id?api-version=2022-06-01-preview
+  response:
+    body:
+      string: '{"error":{"code":"TestNotFound","message":"Test not found with given
+        identifier \"non-existing-test-id\".","target":null,"details":null}}'
+    headers:
+      api-supported-versions:
+      - 2021-07-01-preview, 2022-06-01-preview
+      connection:
+      - keep-alive
+      content-length:
+      - '137'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 02 Aug 2022 04:47:04 GMT
+      mise-correlation-id:
+      - 91d45a19-d839-4b07-9c62-f256119b99f8
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 404
+      message: Not Found
+version: 1

@@ -5,6 +5,8 @@
 # license information.
 # -------------------------------------------------------------------------
 import pytest
+import os
+from pathlib import Path
 
 from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
 from azure.core.exceptions import HttpResponseError
@@ -110,4 +112,21 @@ class TestOperationsSmokeTest(LoadtestingTest):
         with pytest.raises(ResourceNotFoundError):
             client.load_test_administration.get_load_test(
                 test_id="non-existing-test-id"
+            )
+
+    @LoadtestingPowerShellPreparer()
+    def test_file_upload(self, loadtesting_endpoint):
+        client = self.create_client(endpoint=loadtesting_endpoint)
+        result = client.load_test_administration.upload_test_file(
+            "some-unique-test-id",
+            "some-unique-file-id",
+            open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb")
+        )
+        assert result is not None
+
+        with pytest.raises(ResourceNotFoundError):
+            client.load_test_administration.upload_test_file(
+                "non-existing-test-id",
+                "some-unique-file-id",
+                open(os.path.join(Path(__file__).resolve().parent, "test_picture.png"), "rb")
             )
