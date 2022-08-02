@@ -4,13 +4,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import pytest
 import os
 from pathlib import Path
 
-from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
-from azure.core.exceptions import HttpResponseError
+import pytest
 from azure.core.exceptions import ResourceNotFoundError
+
+from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
 
 DISPLAY_NAME = "TestingResource"
 
@@ -41,12 +41,11 @@ class TestRunSmokeTest(LoadtestingTest):
 
         client.load_test_administration.upload_test_file(
             "some-unique-test-id",
-            "unique-image-file-id",
-            open(os.path.join(Path(__file__).resolve().parent, "sample-image.jpg"), "rb")
+            "some-unique-file-id",
+            open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb")
         )
 
     def create_test_run(self, endpoint, test_run_name):
-
         self.create_run_prerequisite(endpoint=endpoint)
 
         client = self.create_client(endpoint=endpoint)
@@ -57,7 +56,6 @@ class TestRunSmokeTest(LoadtestingTest):
                 "displayName": DISPLAY_NAME
             }
         )
-
 
     @LoadtestingPowerShellPreparer()
     def test_create_or_update_loadtest(self, loadtesting_endpoint):
@@ -85,7 +83,6 @@ class TestRunSmokeTest(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     def test_delete_test_run(self, loadtesting_endpoint):
-
         # creating test run
         self.create_test_run(endpoint=loadtesting_endpoint, test_run_name="some-unique-test-run-id")
 
@@ -100,7 +97,6 @@ class TestRunSmokeTest(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     def test_get_test_run(self, loadtesting_endpoint):
-
         # creating test run
         self.create_test_run(endpoint=loadtesting_endpoint, test_run_name="some-unique-test-run-id")
 
@@ -113,4 +109,69 @@ class TestRunSmokeTest(LoadtestingTest):
         with pytest.raises(ResourceNotFoundError):
             client.load_test_runs.get_test_run("some-non-existing-test-run-id")
 
-    
+    @LoadtestingPowerShellPreparer()
+    def test_get_test_run_file(self, loadtesting_endpoint):
+        # creating test run
+        self.create_test_run(endpoint=loadtesting_endpoint, test_run_name="some-unique-test-run-id")
+
+        # positive test
+        client = self.create_client(endpoint=loadtesting_endpoint)
+        result = client.load_test_runs.get_test_run_file("some-unique-test-run-id", "some-unique-file-id")
+        assert result is not None
+
+        # negative test
+        with pytest.raises(ResourceNotFoundError):
+            client.load_test_runs.get_test_run_file("some-non-existing-test-run-id", "some-unique-file-id")
+
+    @LoadtestingPowerShellPreparer()
+    def test_stop_test_run(self, loadtesting_endpoint):
+        # creating test run
+        self.create_test_run(endpoint=loadtesting_endpoint, test_run_name="some-unique-test-run-id")
+
+        # positive test
+        client = self.create_client(endpoint=loadtesting_endpoint)
+        result = client.load_test_runs.stop_test_run("some-unique-test-run-id")
+        assert result is not None
+
+        # negative test
+        with pytest.raises(ResourceNotFoundError):
+            client.load_test_runs.stop_test_run("some-non-existing-test-run-id")
+
+    @LoadtestingPowerShellPreparer()
+    def test_get_test_run_client_metrics(self, loadtesting_endpoint):
+        # creating test run
+        self.create_test_run(endpoint=loadtesting_endpoint, test_run_name="some-unique-test-run-id")
+
+        client = self.create_client(endpoint=loadtesting_endpoint)
+        result = client.load_test_runs.get_test_run_client_metrics_filters(
+            "some-unique-test-run-id"
+        )
+        assert result is not None
+
+        result_metrics = client.load_test_runs.get_test_run_client_metrics(
+            "some-unique-test-run-id",
+            {
+                "requestSamplers": ["GET"],
+                "startTime": result['timeRange']['startTime'],
+                "endTime": result['timeRange']['endTime']
+
+            }
+        )
+        assert result_metrics is not None
+
+        # negative test
+        with pytest.raises(ResourceNotFoundError):
+            client.load_test_runs.get_test_run_client_metrics_filters(
+                "some-non-existing-test-run-id"
+            )
+
+        # negative test
+        with pytest.raises(ResourceNotFoundError):
+            client.load_test_runs.get_test_run_client_metrics(
+                "some-non-existing-test-run-id",
+                {
+                    "requestSamplers": ["GET"],
+                    "startTime": result['timeRange']['startTime'],
+                    "endTime": result['timeRange']['endTime']
+                }
+            )
