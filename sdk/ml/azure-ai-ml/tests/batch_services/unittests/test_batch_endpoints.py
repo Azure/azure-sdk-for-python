@@ -217,6 +217,7 @@ class TestBatchEndpointOperations:
         assert mock_batch_endpoint_operations._batch_operation.get.call_count == 2
 
     @patch.object(BatchEndpoint, "_from_rest_object")
+    @pytest.mark.skip("TODO (1907973): To re-enable once it's fixed")
     def test_batch_invoke_failed(
         self,
         mock_from_rest,

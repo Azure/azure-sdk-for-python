@@ -128,7 +128,7 @@ class TestCommandJob:
 
         assert internal_representation.inputs["test1"].path == input_path
         # Validate default dataset is mounted
-        assert internal_representation.inputs["test1"].mode == "ro_mount"
+        assert internal_representation.inputs["test1"].mode is None
         assert internal_representation.code == code
 
     def test_deserialize_amltoken_identity(self):
@@ -209,10 +209,10 @@ class TestCommandJob:
         rest_representation = to_rest_job_object(original_entity)
         reconstructed_entity = Job._from_rest_object(rest_representation)
 
-        assert original_entity.inputs["test_dataset"].mode == InputOutputModes.RO_MOUNT
+        assert original_entity.inputs["test_dataset"].mode is None
         assert rest_representation.properties.inputs["test_dataset"].job_input_type == JobInputType.URI_FOLDER
-        assert rest_representation.properties.inputs["test_dataset"].mode == InputDeliveryMode.READ_ONLY_MOUNT
-        assert reconstructed_entity.inputs["test_dataset"].mode == InputOutputModes.RO_MOUNT
+        assert rest_representation.properties.inputs["test_dataset"].mode is None
+        assert reconstructed_entity.inputs["test_dataset"].mode is None
 
         assert original_entity.inputs["test_url"].mode == InputOutputModes.RO_MOUNT
         assert original_entity.inputs["test_url"].type == AssetTypes.URI_FILE
@@ -243,7 +243,7 @@ class TestCommandJob:
 
         # assert original_entity.outputs["test1"] is None
         assert rest_representation.properties.outputs["test1"].job_output_type == JobOutputType.URI_FOLDER
-        assert rest_representation.properties.outputs["test1"].mode == OutputDeliveryMode.READ_WRITE_MOUNT
+        assert rest_representation.properties.outputs["test1"].mode is None
 
         assert original_entity.outputs["test2"].mode == InputOutputModes.UPLOAD
         assert rest_representation.properties.outputs["test2"].job_output_type == JobOutputType.URI_FOLDER
