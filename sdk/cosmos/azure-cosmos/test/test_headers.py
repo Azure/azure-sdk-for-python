@@ -40,6 +40,7 @@ class HeadersTest(unittest.TestCase):
     dedicated_gateway_max_age_thousand = 1000
     dedicated_gateway_max_age_million = 1000000
     dedicated_gateway_max_age_zero = 0
+    dedicated_gateway_max_age_negative = -1
 
     @classmethod
     def setUpClass(cls):
@@ -82,6 +83,13 @@ class HeadersTest(unittest.TestCase):
                                      max_integrated_cache_staleness_in_ms=self.dedicated_gateway_max_age_zero)
         except StopIteration:
             pass
+
+    def test_negative_max_integrated_cache_staleness(self):
+        try:
+            self.container.read_item(item="id-1", partition_key="pk-1",
+                                     max_integrated_cache_staleness_in_ms=self.dedicated_gateway_max_age_negative)
+        except Exception as exception:
+            assert isinstance(exception, ValueError)
 
 
 if __name__ == "__main__":
