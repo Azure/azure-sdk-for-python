@@ -1,0 +1,75 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.10.2 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://myservice.azure.com/loadtests/some-unique-test-id/files/some-unique-file-id?api-version=2022-06-01-preview
+  response:
+    body:
+      string: '{"url":"https://stcntproddataeus.blob.core.windows.net/7119bd1d-cd3f-40be-ab75-0fda8862f6d5/some-unique-file-id","fileId":"some-unique-file-id","filename":"sample.jmx","fileType":0,"expireTime":"2022-08-02T06:38:35.5182889","validationStatus":"VALIDATION_INITIATED"}'
+    headers:
+      api-supported-versions:
+      - 2021-07-01-preview, 2022-06-01-preview
+      connection:
+      - keep-alive
+      content-length:
+      - '371'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 02 Aug 2022 06:28:35 GMT
+      mise-correlation-id:
+      - 2827027e-3bc6-4f06-8591-228ef0ee5198
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.10.2 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://myservice.azure.com/loadtests/non-unique-test-id/files/some-non-existing-file-id?api-version=2022-06-01-preview
+  response:
+    body:
+      string: '{"error":{"code":"TestNotFound","message":"Test not found with given
+        identifier \"non-unique-test-id\".","target":null,"details":null}}'
+    headers:
+      api-supported-versions:
+      - 2021-07-01-preview, 2022-06-01-preview
+      connection:
+      - keep-alive
+      content-length:
+      - '135'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 02 Aug 2022 06:28:35 GMT
+      mise-correlation-id:
+      - 1f867402-8061-4a59-a79f-75029c97ae31
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 404
+      message: Not Found
+version: 1

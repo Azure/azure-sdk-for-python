@@ -1,0 +1,75 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.10.2 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://myservice.azure.com/loadtests/some-unique-test-id?api-version=2022-06-01-preview
+  response:
+    body:
+      string: '{"testId":"some-unique-test-id","description":"","displayName":"TestingResource","resourceId":"/subscriptions/SUBSCRIPTION_ID/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk","loadTestConfig":{"engineInstances":1,"splitAllCSVs":false},"passFailCriteria":{"passFailMetrics":{}},"createdDateTime":"2022-08-01T11:43:59.118Z","createdBy":null,"lastModifiedDateTime":"2022-08-02T05:31:52.85Z","lastModifiedBy":"niveditjain@microsoft.com","inputArtifacts":{"configUrl":null,"testScriptUrl":{"url":"https://stcntproddataeus.blob.core.windows.net/7119bd1d-cd3f-40be-ab75-0fda8862f6d5/some-unique-file-id","fileId":"some-unique-file-id","filename":"sample.jmx","fileType":0,"expireTime":"2022-08-02T06:38:36.9720699+00:00","validationStatus":"VALIDATION_INITIATED"},"userPropUrl":null,"inputArtifactsZipFileurl":null,"additionalUrls":[]},"secrets":null,"environmentVariables":null,"subnetId":null,"keyvaultReferenceIdentityType":"SystemAssigned","keyvaultReferenceIdentityId":null}'
+    headers:
+      api-supported-versions:
+      - 2021-07-01-preview, 2022-06-01-preview
+      connection:
+      - keep-alive
+      content-length:
+      - '1132'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 02 Aug 2022 06:28:36 GMT
+      mise-correlation-id:
+      - 35006295-d1f7-4f46-aa97-9676714836fa
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.10.2 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://myservice.azure.com/loadtests/non-existing-test-id?api-version=2022-06-01-preview
+  response:
+    body:
+      string: '{"error":{"code":"TestNotFound","message":"Test not found with given
+        identifier \"non-existing-test-id\".","target":null,"details":null}}'
+    headers:
+      api-supported-versions:
+      - 2021-07-01-preview, 2022-06-01-preview
+      connection:
+      - keep-alive
+      content-length:
+      - '137'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 02 Aug 2022 06:28:37 GMT
+      mise-correlation-id:
+      - 7bb42a4c-8d19-4e8a-b1cf-30eca3b97300
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 404
+      message: Not Found
+version: 1
