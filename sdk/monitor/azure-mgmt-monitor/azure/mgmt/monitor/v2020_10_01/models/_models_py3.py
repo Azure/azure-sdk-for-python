@@ -6,10 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ActionGroup(msrest.serialization.Model):
@@ -68,7 +72,7 @@ class ActionList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        action_groups: Optional[List["ActionGroup"]] = None,
+        action_groups: Optional[List["_models.ActionGroup"]] = None,
         **kwargs
     ):
         """
@@ -189,8 +193,8 @@ class ActivityLogAlertResource(AzureResource):
         location: Optional[str] = "global",
         tags: Optional[Dict[str, str]] = None,
         scopes: Optional[List[str]] = None,
-        condition: Optional["AlertRuleAllOfCondition"] = None,
-        actions: Optional["ActionList"] = None,
+        condition: Optional["_models.AlertRuleAllOfCondition"] = None,
+        actions: Optional["_models.ActionList"] = None,
         enabled: Optional[bool] = True,
         description: Optional[str] = None,
         **kwargs
@@ -244,7 +248,7 @@ class AlertRuleAllOfCondition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        all_of: List["AlertRuleAnyOfOrLeafCondition"],
+        all_of: List["_models.AlertRuleAnyOfOrLeafCondition"],
         **kwargs
     ):
         """
@@ -347,7 +351,7 @@ Each condition can be of one of the following types:
         field: Optional[str] = None,
         equals: Optional[str] = None,
         contains_any: Optional[List[str]] = None,
-        any_of: Optional[List["AlertRuleLeafCondition"]] = None,
+        any_of: Optional[List["_models.AlertRuleLeafCondition"]] = None,
         **kwargs
     ):
         """
@@ -387,7 +391,7 @@ class AlertRuleList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ActivityLogAlertResource"]] = None,
+        value: Optional[List["_models.ActivityLogAlertResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
