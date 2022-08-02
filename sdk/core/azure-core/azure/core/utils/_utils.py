@@ -101,6 +101,10 @@ class _ItemsView(collections.ItemsView):
                 return True
         return False
 
+    def __repr__(self):
+        return "ItemsView({})".format(dict(self.__iter__()))
+
+
 class CaseInsensitiveDict(MutableMapping):
     """
     NOTE: This implementation is heavily inspired from the case insensitive dictionary from the requests library.
