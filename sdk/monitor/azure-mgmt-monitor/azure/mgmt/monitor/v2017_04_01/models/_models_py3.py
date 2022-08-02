@@ -6,10 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ActionGroupList(msrest.serialization.Model):
@@ -29,7 +33,7 @@ class ActionGroupList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ActionGroupResource"]] = None,
+        value: Optional[List["_models.ActionGroupResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -204,12 +208,12 @@ class ActionGroupResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         group_short_name: Optional[str] = None,
         enabled: Optional[bool] = True,
-        email_receivers: Optional[List["EmailReceiver"]] = None,
-        sms_receivers: Optional[List["SmsReceiver"]] = None,
-        webhook_receivers: Optional[List["WebhookReceiver"]] = None,
-        itsm_receivers: Optional[List["ItsmReceiver"]] = None,
-        azure_app_push_receivers: Optional[List["AzureAppPushReceiver"]] = None,
-        automation_runbook_receivers: Optional[List["AutomationRunbookReceiver"]] = None,
+        email_receivers: Optional[List["_models.EmailReceiver"]] = None,
+        sms_receivers: Optional[List["_models.SmsReceiver"]] = None,
+        webhook_receivers: Optional[List["_models.WebhookReceiver"]] = None,
+        itsm_receivers: Optional[List["_models.ItsmReceiver"]] = None,
+        azure_app_push_receivers: Optional[List["_models.AzureAppPushReceiver"]] = None,
+        automation_runbook_receivers: Optional[List["_models.AutomationRunbookReceiver"]] = None,
         **kwargs
     ):
         """
@@ -309,7 +313,7 @@ class ActivityLogAlertActionList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        action_groups: Optional[List["ActivityLogAlertActionGroup"]] = None,
+        action_groups: Optional[List["_models.ActivityLogAlertActionGroup"]] = None,
         **kwargs
     ):
         """
@@ -342,7 +346,7 @@ class ActivityLogAlertAllOfCondition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        all_of: List["ActivityLogAlertLeafCondition"],
+        all_of: List["_models.ActivityLogAlertLeafCondition"],
         **kwargs
     ):
         """
@@ -418,7 +422,7 @@ class ActivityLogAlertList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ActivityLogAlertResource"]] = None,
+        value: Optional[List["_models.ActivityLogAlertResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -526,8 +530,8 @@ class ActivityLogAlertResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         scopes: Optional[List[str]] = None,
         enabled: Optional[bool] = True,
-        condition: Optional["ActivityLogAlertAllOfCondition"] = None,
-        actions: Optional["ActivityLogAlertActionList"] = None,
+        condition: Optional["_models.ActivityLogAlertAllOfCondition"] = None,
+        actions: Optional["_models.ActivityLogAlertActionList"] = None,
         description: Optional[str] = None,
         **kwargs
     ):
@@ -683,8 +687,8 @@ class EmailReceiver(msrest.serialization.Model):
     :vartype name: str
     :ivar email_address: Required. The email address of this receiver.
     :vartype email_address: str
-    :ivar status: The receiver status of the e-mail. Possible values include: "NotSpecified",
-     "Enabled", "Disabled".
+    :ivar status: The receiver status of the e-mail. Known values are: "NotSpecified", "Enabled",
+     "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2017_04_01.models.ReceiverStatus
     """
 
@@ -868,7 +872,7 @@ class SmsReceiver(msrest.serialization.Model):
     :vartype country_code: str
     :ivar phone_number: Required. The phone number of the SMS receiver.
     :vartype phone_number: str
-    :ivar status: The status of the receiver. Possible values include: "NotSpecified", "Enabled",
+    :ivar status: The status of the receiver. Known values are: "NotSpecified", "Enabled",
      "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2017_04_01.models.ReceiverStatus
     """
