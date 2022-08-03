@@ -669,6 +669,7 @@ class ReceiveClient(AMQPClient):
         :rtype: bool
         """
         try:
+            self._link.flow()
             self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
             _logger.info("Timeout reached, closing receiver.")
@@ -850,5 +851,6 @@ class ReceiveClient(AMQPClient):
             last_delivery_id=last,
             settled=True,
             delivery_state=state,
-            batchable=batchable
+            batchable=batchable,
+            wait=True
         )

@@ -6,7 +6,6 @@
 
 import uuid
 import logging
-from io import BytesIO
 from typing import Optional, Union
 
 from ._decode import decode_payload
@@ -88,9 +87,16 @@ class ReceiverLink(Link):
             delivery_state = self._process_incoming_message(frame, message)
             if not frame[4] and delivery_state:  # settled
                 self._outgoing_disposition(first=frame[1], settled=True, state=delivery_state)
-        if self.current_link_credit <= 0:
-            self.current_link_credit = self.link_credit
-            self._outgoing_flow()
+
+    def _wait_for_response(self, wait: Union[bool, float]) -> None:
+        if wait == True:
+            self._session._connection.listen(wait=False)
+            if self.state == LinkState.ERROR:
+                raise self._error    
+        elif wait:
+            self._session._connection.listen(wait=wait)
+            if self.state == LinkState.ERROR:
+                raise self._error   
 
     def _outgoing_disposition(
             self,
@@ -119,6 +125,7 @@ class ReceiverLink(Link):
     def send_disposition(
             self,
             *,
+            wait: Union[bool, float] = False,
             first_delivery_id: int,
             last_delivery_id: Optional[int] = None,
             settled: Optional[bool] = None,
@@ -134,3 +141,4 @@ class ReceiverLink(Link):
             delivery_state,
             batchable
         )
+        self._wait_for_response(wait)

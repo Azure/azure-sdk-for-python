@@ -279,6 +279,5 @@ class Link(object):
             link_credit: Optional[int] = None,
             **kwargs
         ) -> None:
-        if link_credit:
-            self.current_link_credit = link_credit
+        self.current_link_credit = link_credit if link_credit is not None else self.link_credit
         self._outgoing_flow(**kwargs)
