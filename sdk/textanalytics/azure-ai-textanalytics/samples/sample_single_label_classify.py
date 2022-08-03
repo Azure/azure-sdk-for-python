@@ -68,7 +68,7 @@ def sample_classify_document_single_label() -> None:
             print("The document text '{}' was classified as '{}' with confidence score {}.".format(
                 doc, classification.category, classification.confidence_score)
             )
-        elif classification_result.kind == "DocumentError":
+        elif classification_result.is_error is True:
             print("Document text '{}' has an error with code '{}' and message '{}'".format(
                 doc, classification_result.code, classification_result.message
             ))

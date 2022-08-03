@@ -65,7 +65,7 @@ def sample_model_version() -> None:
         if action_result.kind == "EntityRecognition":
             for entity in action_result.entities:
                 print(f"......Entity '{entity.text}' has category '{entity.category}'")
-        elif action_result.kind == "DocumentError":
+        elif action_result.is_error is True:
             print("......Is an error with code '{}' and message '{}'".format(
                 action_result.code, action_result.message
             ))

@@ -72,6 +72,21 @@ class DictMixin:
         return default
 
 
+class TextAnalysisKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enumeration of supported Text Analysis kinds.
+    """
+
+    SENTIMENT_ANALYSIS = "SentimentAnalysis"
+    ENTITY_RECOGNITION = "EntityRecognition"
+    PII_ENTITY_RECOGNITION = "PiiEntityRecognition"
+    KEY_PHRASE_EXTRACTION = "KeyPhraseExtraction"
+    ENTITY_LINKING = "EntityLinking"
+    HEALTHCARE = "Healthcare"
+    CUSTOM_ENTITY_RECOGNITION = "CustomEntityRecognition"
+    CUSTOM_DOCUMENT_CLASSIFICATION = "CustomDocumentClassification"
+    LANGUAGE_DETECTION = "LanguageDetection"
+
+
 class EntityAssociation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes if the entity is the subject of the text or if it describes someone else."""
 

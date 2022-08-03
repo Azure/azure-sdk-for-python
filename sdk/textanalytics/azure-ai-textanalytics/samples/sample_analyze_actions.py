@@ -118,7 +118,7 @@ def sample_analyze_actions() -> None:
                     negative={result.confidence_scores.negative} \n"
                 )
 
-            elif result.kind == "DocumentError":
+            elif result.is_error is True:
                 print(
                     f"...Is an error with code '{result.code}' and message '{result.message}'"
                 )

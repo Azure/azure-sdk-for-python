@@ -72,7 +72,7 @@ async def sample_recognize_custom_entities_async() -> None:
                             entity.text, entity.category, entity.confidence_score
                         )
                     )
-            elif custom_entities_result.kind == "DocumentError":
+            elif custom_entities_result.is_error is True:
                 print("...Is an error with code '{}' and message '{}'".format(
                     custom_entities_result.code, custom_entities_result.message
                     )

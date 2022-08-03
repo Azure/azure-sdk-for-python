@@ -13,6 +13,7 @@
 - Added property `kind` to `RecognizeEntitiesResult`, `RecognizePiiEntitiesResult`, `AnalyzeHealthcareEntitiesResult`,
   `DetectLanguageResult`, `ExtractKeyPhrasesResult`, `RecognizeLinkedEntitiesResult`, `AnalyzeSentimentResult`,
   `RecognizeCustomEntitiesResult`, `ClassifyDocumentResult`, and `DocumentError`.
+- Added enum `TextAnalysisKind`.
 
 ### Breaking Changes
 

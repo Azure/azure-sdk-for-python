@@ -211,15 +211,18 @@ response = text_analytics_client.analyze_sentiment(documents)
 successful_responses = [doc for doc in response if not doc.is_error]
 ```
 
-You can also use the `kind` attribute to filter between result types and document errors:
+You can also use the `kind` attribute to filter between result types:
 
 ```python
-response = text_analytics_client.analyze_sentiment(documents)
-for item in response:
-    if item.kind == "SentimentAnalysis":
-        print(item.sentiment)
-    elif item.kind == "DocumentError":
-        print(item.code, item.message)
+poller = text_analytics_client.begin_analyze_actions(documents, actions)
+response = poller.result()
+for result in response:
+    if result.kind == "SentimentAnalysis":
+        print(f"Sentiment is {result.sentiment}")
+    elif result.kind == "KeyPhraseExtraction":
+        print(f"Key phrases: {result.key_phrases}")
+    elif result.is_error is True:
+        print(f"Document error: {result.code}, {result.message}")
 ```
 
 

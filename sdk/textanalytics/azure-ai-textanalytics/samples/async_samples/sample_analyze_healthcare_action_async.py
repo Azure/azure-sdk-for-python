@@ -106,7 +106,7 @@ async def sample_analyze_healthcare_action() -> None:
                         print(f".........Category: {entity.category}")
                         print(f".........Confidence Score: {entity.confidence_score}")
 
-                elif result.kind == "DocumentError":
+                elif result.is_error is True:
                     print(f"...Is an error with code '{result.code}' and message '{result.message}'")
 
                 print("------------------------------------------")

@@ -77,7 +77,7 @@ async def sample_classify_document_multi_label_async() -> None:
                 print("'{}' with confidence score {}.".format(
                     classification.category, classification.confidence_score
                 ))
-        elif classification_result.kind == "DocumentError":
+        elif classification_result.is_error is True:
             print("Movie plot '{}' has an error with code '{}' and message '{}'".format(
                 doc, classification_result.code, classification_result.message
             ))
