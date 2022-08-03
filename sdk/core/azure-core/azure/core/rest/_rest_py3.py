@@ -155,7 +155,9 @@ class HttpRequest(HttpRequestBackcompatMixin):
         :return: The request's content
         :rtype: any
         """
-        return self._data or self._files
+        if self._data is not None:
+            return self._data
+        return self._files
 
     def __repr__(self) -> str:
         return "<HttpRequest [{}], url: '{}'>".format(
