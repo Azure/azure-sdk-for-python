@@ -14,31 +14,31 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: PATCH
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
   response:
     body:
       string: "{\n  \"projectName\": \"IssacNewton\",\n  \"description\": \"biography
         of Sir Issac Newton\",\n  \"language\": \"en\",\n  \"multilingualResource\":
-        false,\n  \"createdDateTime\": \"2022-02-10T19:42:15Z\",\n  \"lastModifiedDateTime\":
-        \"2022-02-10T19:43:50Z\",\n  \"settings\": {\n    \"defaultAnswer\": \"no
+        false,\n  \"createdDateTime\": \"2022-08-02T22:32:19Z\",\n  \"lastModifiedDateTime\":
+        \"2022-08-02T23:41:22Z\",\n  \"settings\": {\n    \"defaultAnswer\": \"no
         answer\"\n  }\n}"
     headers:
       apim-request-id:
-      - b5a86ba1-da22-487c-9ab4-09c16c16f2a0
+      - c8fba1a1-3afc-4d46-a2e0-90202128e0bf
       content-length:
       - '286'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 10 Feb 2022 19:43:49 GMT
+      - Tue, 02 Aug 2022 23:41:21 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '25'
+      - '29'
     status:
       code: 200
       message: OK
@@ -56,7 +56,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/synonyms?api-version=2021-10-01
   response:
@@ -64,17 +64,17 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - a6059796-577a-4d74-adec-c649c3846d2d
+      - 5469462d-b163-40a5-8606-715344ec9fac
       content-length:
       - '0'
       date:
-      - Thu, 10 Feb 2022 19:43:49 GMT
+      - Tue, 02 Aug 2022 23:41:23 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '176'
+      - '2382'
     status:
       code: 204
       message: No Content
@@ -88,7 +88,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/synonyms?api-version=2021-10-01
   response:
@@ -97,19 +97,19 @@ interactions:
         \       \"qna maker\"\n      ]\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 7b01b648-9406-408e-aaa1-bc2ea47dd01c
+      - bed818bf-0583-4670-bf2b-d234d6c009de
       content-length:
       - '103'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 10 Feb 2022 19:43:50 GMT
+      - Tue, 02 Aug 2022 23:41:25 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '270'
+      - '468'
     status:
       code: 200
       message: OK
