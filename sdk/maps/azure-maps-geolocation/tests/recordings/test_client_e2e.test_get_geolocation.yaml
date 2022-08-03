@@ -1,0 +1,42 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-maps-geolocation/1.0-preview Python/3.10.5 (macOS-12.5-x86_64-i386-64bit)
+      subscription-key:
+      - <RealSubscriptionKey>
+      x-ms-client-id:
+      - <RealClientId>
+    method: GET
+    uri: https://atlas.microsoft.com/geolocation/ip/json?api-version=1.0.0b1&ip=2001%3A4898%3A80e8%3Ab%3A%3A189
+  response:
+    body:
+      string: '{"countryRegion":{"isoCode":"US"},"ipAddress":"2001:4898:80e8:b::189"}'
+    headers:
+      content-length:
+      - '70'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Aug 2022 03:22:50 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-cache:
+      - CONFIG_NOCACHE
+      x-content-type-options:
+      - nosniff
+      x-ms-azuremaps-region:
+      - West US 2
+      x-msedge-ref:
+      - 'Ref A: 1B96F13DE7264E2C9EF64826578C8054 Ref B: TPE30EDGE0715 Ref C: 2022-08-03T03:22:51Z'
+    status:
+      code: 200
+      message: OK
+version: 1

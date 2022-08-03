@@ -101,9 +101,8 @@ The following sections provide several code snippets covering some of the most c
 
 - [Get Geolocation](#get-geolocation)
 
-### Geolocation for an address or Point of Interest
-
-You can use Fuzzy Geolocation to geolocation an address or a point of interest (POI). The following examples demostrate how to geolocation for `pizza` over the scope of a specific country (`France`, in this example).
+### Get Geolocation
+This service will return the ISO country code for the provided IP address. Developers can use this information  to block or alter certain content based on geographical locations where the application is being viewed from.
 
 ```python
 from azure.maps.geolocation import MapsGeolocationClient

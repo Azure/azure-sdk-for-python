@@ -40,7 +40,7 @@ Then for common Azure Maps Geolocation operations:
 
 1. Open a terminal window and `cd` to the directory that the samples are saved in.
 2. Set the environment variables specified in the sample file you wish to run.
-3. Follow the usage described in the file, e.g. `python sample_fuzzy_geolocation.py`
+3. Follow the usage described in the file, e.g. `python sample_get_geolocation.py`
 
 ## Next steps
 

@@ -46,7 +46,7 @@ class AzureMapsGeolocationClientE2ETest(AzureTestCase):
     def test_get_geolocation(self):
         result = self.client.get_geolocation(ip_address="2001:4898:80e8:b::189")
         assert result.country_region is not None
-        assert result.country_region.iso_code is "US"
+        assert result.country_region.iso_code == 'US'
 
 
 if __name__ == "__main__" :
