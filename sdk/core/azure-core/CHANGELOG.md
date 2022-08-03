@@ -14,6 +14,7 @@ Azure-core is supported on Python 3.7 or later. For more details, please read ou
 
 - Fixed the bug that azure-core could not be imported under Python 3.11.0b3  #24928
 - `ContentDecodePolicy` can now correctly deserialize more JSON bodies with different mime types #22410
+- Fixed the bug where `HttpRequest.content` would return None when initialized with `content=b""` #25489
 
 ## 1.24.1 (2022-06-01)
 
