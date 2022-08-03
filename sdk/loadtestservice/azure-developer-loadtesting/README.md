@@ -47,7 +47,7 @@ from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
 TEST_ID = "some-test-id"  
-DISPLAY_NAME = "new_namespace-new-namespace"  
+DISPLAY_NAME = "my-load-test"  
 SUBSCRIPTION_ID = os.environ["SUBSCRIPTION_ID"]  
 
 client = LoadTestingClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
@@ -71,7 +71,7 @@ try:
     )
     print(result)
 except HttpResponseError as e:
-     print('service responds error: {}'.format(e.response.json()))
+     print('Service responded with error: {}'.format(e.response.json()))
 
 ```
 
@@ -91,7 +91,7 @@ try:
     result = client.load_test_administration.upload_test_file(TEST_ID, FILE_ID, open("sample.jmx", "rb"))
     print(result)
 except HttpResponseError as e:
-    print("Failed to send JSON message: {}".format(e.response.json()))
+    print("Failed with error: {}".format(e.response.json()))
 ```
 
 ### Running a Test
@@ -102,7 +102,7 @@ from azure.core.exceptions import HttpResponseError
 
 TEST_ID = "some-test-id"  
 TEST_RUN_ID = "some-testrun-id" 
-DISPLAY_NAME = "new_namespace-new-namespace"  
+DISPLAY_NAME = "my-load-test-run"  
 
 client = LoadTestingClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 
@@ -120,7 +120,7 @@ try:
     )
     print(result)
 except HttpResponseError as e:
-    print("Failed to send JSON message: {}".format(e.response.json()))
+    print("Failed with error: {}".format(e.response.json()))
 ```
 ## Key concepts
 The following components make up the Azure Load Testing Service. The Azure Load Test client library for Python allows you to interact with each of these components through the use of a dedicated client object.
