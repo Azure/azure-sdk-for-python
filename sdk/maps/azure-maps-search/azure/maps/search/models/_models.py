@@ -10,7 +10,6 @@ import msrest.serialization
 from .._generated.models import (
     PointOfInterest,
     DataSource,
-    SearchAlongRouteRequest,
     SearchAddressBatchItem as _SearchAddressBatchItem,
     SearchAddressBatchItemResponse,
     ReverseSearchAddressBatchItem as _ReverseSearchAddressBatchItem,

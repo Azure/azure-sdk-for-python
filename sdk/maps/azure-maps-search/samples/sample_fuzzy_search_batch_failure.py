@@ -36,8 +36,14 @@ def fuzzy_search_batch_failure():
     )
 
     print(result.summary)
-    print(result.items[1])
-    print(result.items[1].response)
+    print(result.items[0].response.summary)
+    print("--------------------------")
+    for item in result.items:
+        count = 0
+        if item.response.error is not None:
+            count = count+1
+            print(f"Error: {item.response.error.message}")
+    print(f"There are total of {count} search queries failed.")
     # [END fuzzy_search_batch_failure]
 
 if __name__ == '__main__':

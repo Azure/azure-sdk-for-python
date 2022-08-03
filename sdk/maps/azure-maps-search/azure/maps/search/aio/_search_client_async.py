@@ -15,7 +15,7 @@ from ._base_client_async import AsyncMapsSearchClientBase
 from .._generated.models import (
     PointOfInterestCategory,
     ReverseSearchCrossStreetAddressResult,
-    SearchAlongRouteRequest,
+    SearchAlongRouteOptions,
     GeoJsonObject,
     SearchAddressBatchResult,
     Polygon,
@@ -797,7 +797,6 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         batch_items = [{"query": f"?query={query}"} for query in search_queries] if search_queries else []
         batch_poller = await self._search_client.begin_fuzzy_search_batch(
             batch_request={"batch_items": batch_items},
-            polling=True,
             **kwargs
         )
 

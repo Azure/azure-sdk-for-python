@@ -34,7 +34,8 @@ async def fuzzy_search_batch_with_search_queries():
             search_queries=[
                 "350 5th Ave, New York, NY 10118&limit=1",
                 "400 Broad St, Seattle, WA 98109&limit=6"
-            ]
+            ],
+            polling=True,
         )
 
     print(result)
@@ -51,7 +52,7 @@ async def fuzzy_search_batch_with_batch_id(batch_id=None):
 
     async with maps_search_client:
         result = await maps_search_client.begin_fuzzy_search_batch(
-            batch_id=batch_id
+            batch_id=batch_id,
         )
 
     print(result.__dict__)

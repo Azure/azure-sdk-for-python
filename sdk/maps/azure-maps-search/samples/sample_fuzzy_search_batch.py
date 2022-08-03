@@ -36,7 +36,7 @@ def fuzzy_search_batch():
 
     print(result.summary)
     for item in result.items:
-        print(result.items[0])
+        print(item.response.results[0])
     # [END fuzzy_search_batch]
 
 if __name__ == '__main__':
