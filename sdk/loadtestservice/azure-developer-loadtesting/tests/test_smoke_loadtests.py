@@ -4,9 +4,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import json
+
 import pytest
 import os
 from pathlib import Path
+import uuid
 
 from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
 from azure.core.exceptions import HttpResponseError
@@ -188,3 +191,32 @@ class TestOperationsSmokeTest(LoadtestingTest):
             client.load_test_administration.list_test_files(
                 "non-existing-test-id"
             )
+
+    # @LoadtestingPowerShellPreparer()
+    # def test_loadtests_list_test_files_pagination(self, loadtesting_endpoint):
+    #
+    #     files = os.listdir(os.path.join(Path(__file__).resolve().parent, "files"))
+    #     client = self.create_client(endpoint=loadtesting_endpoint)
+    #
+    #     for file in files:
+    #         print(client.load_test_administration.upload_test_file(
+    #             "some-unique-test-id",
+    #             str(uuid.uuid4()),
+    #             open(os.path.join(Path(__file__).resolve().parent, "files", file), "rb")
+    #         ))
+    #
+    #     result = client.load_test_administration.list_test_files(
+    #         "some-unique-test-id"
+    #     )
+    #
+    #     print(result)
+        # assert result["nextLink"] is not None
+
+    # @LoadtestingPowerShellPreparer()
+    # def test_list_load_test_search(self, loadtesting_endpoint):
+    #     client = self.create_client(endpoint=loadtesting_endpoint)
+    #     result = client.load_test_administration.list_load_test_search(
+    #         order_by="displayName asc",
+    #         max_page_size=3
+    #     )
+    #     print(result)

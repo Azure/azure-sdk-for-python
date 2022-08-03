@@ -175,3 +175,13 @@ class TestRunSmokeTest(LoadtestingTest):
                     "endTime": result['timeRange']['endTime']
                 }
             )
+
+    # @LoadtestingPowerShellPreparer()
+    # def test_list_test_runs(self, loadtesting_endpoint):
+
+    #     client = self.create_client(endpoint=loadtesting_endpoint)
+    #     result = client.load_test_runs.list_test_runs(
+    #         order_by="displayName asc",
+    #     )
+
+    #     print(result)
