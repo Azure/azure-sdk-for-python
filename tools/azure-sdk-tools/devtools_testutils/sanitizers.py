@@ -6,6 +6,7 @@
 from typing import TYPE_CHECKING
 from urllib.error import HTTPError
 import requests
+import os
 
 from .config import PROXY_URL
 from .helpers import get_recording_id, is_live, is_live_and_not_recording
@@ -596,6 +597,15 @@ def _send_reset_request(headers: dict) -> None:
         headers=headers
     )
     response.raise_for_status()
+
+    headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id"
+    add_remove_header_sanitizer(headers=headers_to_ignore)
+    set_custom_default_matcher(excluded_headers=headers_to_ignore)
+
+    client_id = os.environ.get("AZURE_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
+    client_secret = os.environ.get("AZURE_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=client_secret, value="00000000-0000-0000-0000-000000000000")
 
 
 def _send_sanitizer_request(sanitizer: str, parameters: dict) -> None:

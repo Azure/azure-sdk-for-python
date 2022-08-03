@@ -18,7 +18,7 @@ import subprocess
 
 from .config import PROXY_URL
 from .helpers import is_live_and_not_recording
-from .sanitizers import add_remove_header_sanitizer, set_custom_default_matcher
+from .sanitizers import add_remove_header_sanitizer, set_custom_default_matcher, add_general_regex_sanitizer, _send_reset_request
 
 if TYPE_CHECKING:
     from typing import Optional
@@ -173,11 +173,8 @@ def start_test_proxy() -> None:
 
     # Wait for the proxy server to become available
     check_proxy_availability()
-    # remove headers from recordings if we don't need them, and ignore them if present
-    # Authorization, for example, can contain sensitive info and can cause matching failures during challenge auth
-    headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id"
-    add_remove_header_sanitizer(headers=headers_to_ignore)
-    set_custom_default_matcher(excluded_headers=headers_to_ignore)
+    # Call reset to ensure default matcher and sanitizers are set
+    _send_reset_request({})
 
 
 def stop_test_proxy() -> None:
