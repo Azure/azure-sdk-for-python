@@ -12,7 +12,7 @@ from .._generated.models import (
     CommunicationIdentifierModel,
     CommunicationUserIdentifierModel,
     RoomJoinPolicy,
-    RoleType as ParticipantRole
+    RoleType
 )
 from .._generated import _serialization
 from .._generated.models import RoomModel
@@ -120,7 +120,7 @@ class RoomParticipant(_serialization.Model):
     :vartype communication_identifier:
     ~azure.communication.rooms._shared.models.CommunicationIdentifier
     :ivar role: Role Name.
-    :vartype role: Optional[Union[str, ParticipantRole]
+    :vartype role: Optional[Union[str, RoleType]
     """
 
     _validation = {
@@ -129,14 +129,14 @@ class RoomParticipant(_serialization.Model):
 
     _attribute_map = {
         "communication_identifier": {"key": "communicationIdentifier", "type": "CommunicationIdentifier"},
-        "role": {"key": "role", "type": "Optional[Union[str, ParticipantRole]"},
+        "role": {"key": "role", "type": "Optional[Union[str, RoleType]"},
     }
 
     def __init__(
         self,
         *,
         communication_identifier: CommunicationIdentifier,
-        role: Optional[Union[str, ParticipantRole]]=None,
+        role: Optional[Union[str, RoleType]]=None,
         **kwargs
     ):
         """
@@ -147,7 +147,7 @@ class RoomParticipant(_serialization.Model):
          ~azure.communication.rooms._shared.models.CommunicationIdentifier
         :param role: The Role of a room participant. Known values are: "Presenter", "Attendee", and
          "Consumer".
-        :type role: Optional[Union[str, ParticipantRole]]
+        :type role: Optional[Union[str, RoleType]]
         """
         super().__init__(**kwargs)
         self.communication_identifier = communication_identifier
