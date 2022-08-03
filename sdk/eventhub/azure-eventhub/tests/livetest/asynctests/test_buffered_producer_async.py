@@ -528,7 +528,6 @@ async def test_long_wait_small_buffer(connection_str):
     async with producer:
         for i in range(100):
             await producer.send_event(EventData("test"))
-            await asyncio.sleep(.1)
 
     await asyncio.sleep(60)
 
