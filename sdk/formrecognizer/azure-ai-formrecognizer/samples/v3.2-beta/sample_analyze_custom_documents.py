@@ -117,7 +117,7 @@ if __name__ == "__main__":
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         model = document_model_admin_client.begin_build_model(
-            os.getenv("CONTAINER_SAS_URL"), DocumentBuildMode.TEMPLATE
+            DocumentBuildMode.TEMPLATE, os.getenv("CONTAINER_SAS_URL")
         ).result()
         model_id = model.model_id
 
