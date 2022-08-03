@@ -26,7 +26,7 @@
 import os
 import pytest
 
-from devtools_testutils import recorded_test, test_proxy, variable_recorder
+from devtools_testutils import recorded_test, test_proxy, variable_recorder, add_general_regex_sanitizer
 
 
 def pytest_configure(config):
@@ -74,3 +74,11 @@ def pytest_runtest_makereport(item, call) -> None:
         error = call.excinfo.value
         # set a test_error attribute on the item (available to other fixtures from request.node)
         setattr(item, "test_error", error)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def add_sanitizers(test_proxy):
+    client_id = os.environ.get("AZURE_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
+    client_secret = os.environ.get("AZURE_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=client_secret, value="00000000-0000-0000-0000-000000000000")
