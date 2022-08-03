@@ -1,11 +1,11 @@
 
-# Azure Developer LoadTesting client library for Python
-Azure Developer LoadTesting provides client library in python to the user by which they can interact natively with Load Test Service.The service is for performing the load test to optimize application performance, scalability or capacity. The user can get the client-side and server-side metrices to see the details reported by the test engine and information about your Azure application components.
+# Azure Load Testing client library for Python
+Azure Load Testing provides client library in python to the user by which they can interact natively with Azure Load Testing service. Azure Load Testing is a fully managed load-testing service that enables you to generate high-scale load. The service simulates traffic for your applications, regardless of where they're hosted. Developers, testers, and quality assurance (QA) engineers can use it to optimize application performance, scalability, or capacity.
 
 
 ## Getting started
 
-### Installating the package
+### Installing the package
 
 ```bash
 python -m pip install azure-developer-loadtesting
@@ -16,7 +16,9 @@ python -m pip install azure-developer-loadtesting
 - Python 3.7 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Azure Developer LoadTesting instance.
+
 #### Create with an Azure Active Directory Credential
+
 To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
 provide an instance of the desired credential type obtained from the
 [azure-identity][azure_identity_credentials] library.
@@ -24,12 +26,12 @@ provide an instance of the desired credential type obtained from the
 To authenticate with AAD, you must first [pip][pip] install [`azure-identity`][azure_identity_pip]
 
 After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
-As an example, [DefaultAzureCredential][default_azure_credential] can be used to authenticate the client:
 
-Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`
+As an example, sign in via the Azure CLI `az login` command and DefaultAzureCredential will authenticate as that user.
 
-Use the returned token credential to authenticate the client:
+Use the returned token credential to authenticate the client.
+
+#### Create the client
 
 ```python
 from azure.developer.loadtesting import LoadTestingClient
@@ -46,7 +48,7 @@ from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
 TEST_ID = "some-test-id"  
-DISPLAY_NAME = "new_namespace-new-namespace"  
+DISPLAY_NAME = "my-load-test"  
 SUBSCRIPTION_ID = os.environ["SUBSCRIPTION_ID"]  
 
 client = LoadTestingClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
@@ -55,11 +57,9 @@ try:
     result = client.load_test_administration.create_or_update_test(
         TEST_ID,
         {
-            "resourceId": f"/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
             "description": "",
             "displayName": DISPLAY_NAME,
             "loadTestConfig": {
-                "engineSize": "m",
                 "engineInstances": 1,
                 "splitAllCSVs": False,
             },
@@ -72,7 +72,7 @@ try:
     )
     print(result)
 except HttpResponseError as e:
-     print('service responds error: {}'.format(e.response.json()))
+     print('Service responded with error: {}'.format(e.response.json()))
 
 ```
 
@@ -92,7 +92,7 @@ try:
     result = client.load_test_administration.upload_test_file(TEST_ID, FILE_ID, open("sample.jmx", "rb"))
     print(result)
 except HttpResponseError as e:
-    print("Failed to send JSON message: {}".format(e.response.json()))
+    print("Failed with error: {}".format(e.response.json()))
 ```
 
 ### Running a Test
@@ -103,7 +103,7 @@ from azure.core.exceptions import HttpResponseError
 
 TEST_ID = "some-test-id"  
 TEST_RUN_ID = "some-testrun-id" 
-DISPLAY_NAME = "new_namespace-new-namespace"  
+DISPLAY_NAME = "my-load-test-run"  
 
 client = LoadTestingClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 
@@ -121,7 +121,7 @@ try:
     )
     print(result)
 except HttpResponseError as e:
-    print("Failed to send JSON message: {}".format(e.response.json()))
+    print("Failed with error: {}".format(e.response.json()))
 ```
 ## Key concepts
 The following components make up the Azure Load Testing Service. The Azure Load Test client library for Python allows you to interact with each of these components through the use of a dedicated client object.
@@ -153,7 +153,7 @@ More about it is coming soon...
 
 ## Next steps
 
-More examples are coming soon...
+More samples can be found [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/loadtestservice/azure-developer-loadtesting/samples).
 
 ## Contributing
 
