@@ -13,5 +13,4 @@ pytest
 pydash
 pytest-vcr
 azure-mgmt-storage~=19.1.0
-numpy
-scikit-image
+pywin32==227 ; sys_platform == 'win32'
