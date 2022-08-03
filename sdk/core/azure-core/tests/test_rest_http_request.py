@@ -494,6 +494,12 @@ def test_stream_input():
     data_stream = Stream(length=4)
     HttpRequest(method="PUT", url="http://www.example.com", content=data_stream) # ensure we can make this HttpRequest
 
+def test_empty_bytestring():
+    """The content property of a request should resolve to an empty bytestring when the data
+    is an empty bytestring.
+    """
+    request = HttpRequest(method="PUT", url="https://www.example.com", content=b"")
+    assert request.content == b""
 
 # NOTE: For files, we don't allow list of tuples yet, just dict. Will uncomment when we add this capability
 # def test_multipart_multiple_files_single_input_content():
