@@ -2,7 +2,7 @@
 
 ## 5.2.0b5 (Unreleased)
 
-This version of this client library defaults to the service version `2022-05-01`.
+The version of this client library defaults to the API version `2022-05-01`.
 
 ### Features Added
 

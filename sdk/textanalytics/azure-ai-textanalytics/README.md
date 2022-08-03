@@ -77,7 +77,7 @@ Install the Azure Text Analytics client library for Python with [pip][pip]:
 pip install azure-ai-textanalytics --pre
 ```
 
-> Note that `5.2.0b4` is the first version of the client library that targets the Azure Cognitive Service for Language APIs which includes the existing text analysis and natural language processing features found in the Text Analytics client library.
+> Note that `5.2.0b4` was the first version of the client library that targeted the Azure Cognitive Service for Language APIs which include the existing text analysis and natural language processing features found in the Text Analytics client library.
 In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-05-01`.
 
 This table shows the relationship between SDK versions and supported API versions of the service
