@@ -83,8 +83,5 @@ setup(
         'msrest>=0.6.21',
         'azure-common~=1.1',
         'azure-mgmt-core<2.0.0,>=1.3.0'
-    ],
-    extras_require={
-        ":python_version<'3.0'": ['azure-maps-nspkg~=3.0.2'],
-    }
+    ]
 )

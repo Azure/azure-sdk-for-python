@@ -11,7 +11,6 @@ from azure.core.credentials import AzureKeyCredential
 from azure.maps.geolocation import MapsGeolocationClient
 
 
-
 # cSpell:disable
 class MockTransport(HttpTransport):
     def __init__(self, status_code, body, **kwargs):
@@ -43,7 +42,6 @@ class AzureMapsGeolocationClientUnitTest(AzureTestCase):
 
     def setUp(self):
         super(AzureMapsGeolocationClientUnitTest, self).setUp()
-
 
     def test_get_geolocation(self):
         body ='''{
