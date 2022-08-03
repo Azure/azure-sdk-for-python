@@ -195,21 +195,20 @@ result = result.polling_method().response
 This sample demonstrates how to check if there are failures in search of fuzzy_search_batch.
 
 ```python
-    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
-    result = maps_search_client.fuzzy_search_batch(
-        search_queries=[
-            "350 5th Ave, New York, NY 10118&limit=1",
-            "400 Broad St, Seattle, WA 98109&limi"
-        ]
-    )
-    for item in result.items:
-        count = 0
-        if item.response.error is not None:
-            count = count+1
-            print(f"Error: {item.response.error.message}")
-    print(f"There are total of {count} search queries failed.")
-
+result = maps_search_client.fuzzy_search_batch(
+    search_queries=[
+        "350 5th Ave, New York, NY 10118&limit=1",
+        "400 Broad St, Seattle, WA 98109&lim"
+    ]
+)
+for item in result.items:
+    count = 0
+    if item.response.error is not None:
+        count = count+1
+        print(f"Error: {item.response.error.message}")
+print(f"There are total of {count} search queries failed.")
 ```
 
 ## Troubleshooting

@@ -15,7 +15,6 @@ from ._base_client_async import AsyncMapsSearchClientBase
 from .._generated.models import (
     PointOfInterestCategory,
     ReverseSearchCrossStreetAddressResult,
-    SearchAlongRouteOptions,
     GeoJsonObject,
     SearchAddressBatchResult,
     Polygon,
@@ -24,6 +23,7 @@ from ..models import (
     BoundingBox,
     StructuredAddress,
     SearchAddressResult,
+    SearchAlongRouteOptions,
     ReverseSearchAddressResult,
     ReverseSearchAddressBatchProcessResult,
 )
