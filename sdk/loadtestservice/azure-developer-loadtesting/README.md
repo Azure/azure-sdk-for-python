@@ -153,7 +153,7 @@ More about it is coming soon...
 
 ## Next steps
 
-More examples are coming soon...
+More samples can be found [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/loadtestservice/azure-developer-loadtesting/samples).
 
 ## Contributing
 
