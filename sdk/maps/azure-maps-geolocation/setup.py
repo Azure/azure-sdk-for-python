@@ -63,8 +63,8 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
@@ -75,13 +75,14 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=[
         'tests',
+        # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
         'azure.maps',
     ]),
     install_requires=[
         'msrest>=0.6.21',
         'azure-common~=1.1',
-        'azure-mgmt-core>=1.3.0,<2.0.0',
+        'azure-mgmt-core<2.0.0,>=1.3.0'
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-maps-nspkg~=3.0.2'],
