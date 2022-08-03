@@ -100,7 +100,7 @@ class CaseInsensitiveDict(MutableMapping):
     case_insensitive_dict['key'] == 'some_value' #True
     """
 
-    def __init__(self, data: Optional[Union[MutableMapping[str, Any], Iterable[tuple]]]= None, **kwargs: Any) -> None:
+    def __init__(self, data: Optional[Union[Mapping[str, Any], Iterable[tuple]]]= None, **kwargs: Any) -> None:
         self._store: Dict[str, Any] = {}
         if data is None:
             data = {}
