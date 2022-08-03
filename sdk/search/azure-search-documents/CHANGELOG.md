@@ -10,6 +10,7 @@
 - Fixed issue where async `search` call would fail with a 403 error when retrieving large number of documents.
 
 ### Other Changes
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later.
 
 ## 11.3.0b8 (2022-03-08)
 
