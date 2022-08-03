@@ -536,7 +536,7 @@ def test_long_wait_small_buffer(connection_str):
             producer.send_event(EventData("test"))
             time.sleep(.1)
 
-    time.sleep(11)
+    time.sleep(60)
 
     assert not on_error.err
     assert sum([len(sent_events[key]) for key in sent_events]) == 100
