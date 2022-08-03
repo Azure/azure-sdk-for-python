@@ -85,7 +85,7 @@ if __name__ == '__main__':
         document_model_admin_client = DocumentModelAdministrationClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
-        model = document_model_admin_client.begin_build_model(os.getenv("CONTAINER_SAS_URL"), DocumentBuildMode.TEMPLATE).result()
+        model = document_model_admin_client.begin_build_model(DocumentBuildMode.TEMPLATE, os.getenv("CONTAINER_SAS_URL")).result()
         model_id = model.model_id
 
     sample_copy_model_to(model_id)

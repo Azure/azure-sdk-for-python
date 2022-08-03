@@ -78,7 +78,7 @@ class CollectionPartitionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.PartitionMetricListResult]
 
         error_map = {
@@ -185,7 +185,7 @@ class CollectionPartitionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.PartitionUsagesResult]
 
         error_map = {
