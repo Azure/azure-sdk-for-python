@@ -6,10 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ActionDetail(msrest.serialization.Model):
@@ -89,7 +93,7 @@ class ActionGroupList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ActionGroupResource"]] = None,
+        value: Optional[List["_models.ActionGroupResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -151,10 +155,6 @@ class AzureResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar kind: Azure resource kind.
-    :vartype kind: str
-    :ivar identity: Azure resource identity.
-    :vartype identity: str
     :ivar location: Required. Resource location.
     :vartype location: str
     :ivar tags: A set of tags. Resource tags.
@@ -165,8 +165,6 @@ class AzureResource(msrest.serialization.Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'readonly': True},
-        'identity': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -174,8 +172,6 @@ class AzureResource(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
@@ -197,8 +193,6 @@ class AzureResource(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
-        self.kind = None
-        self.identity = None
         self.location = location
         self.tags = tags
 
@@ -216,10 +210,6 @@ class ActionGroupResource(AzureResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar kind: Azure resource kind.
-    :vartype kind: str
-    :ivar identity: Azure resource identity.
-    :vartype identity: str
     :ivar location: Required. Resource location.
     :vartype location: str
     :ivar tags: A set of tags. Resource tags.
@@ -266,8 +256,6 @@ class ActionGroupResource(AzureResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'readonly': True},
-        'identity': {'readonly': True},
         'location': {'required': True},
         'group_short_name': {'max_length': 12, 'min_length': 0},
     }
@@ -276,8 +264,6 @@ class ActionGroupResource(AzureResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'group_short_name': {'key': 'properties.groupShortName', 'type': 'str'},
@@ -302,17 +288,17 @@ class ActionGroupResource(AzureResource):
         tags: Optional[Dict[str, str]] = None,
         group_short_name: Optional[str] = None,
         enabled: Optional[bool] = True,
-        email_receivers: Optional[List["EmailReceiver"]] = None,
-        sms_receivers: Optional[List["SmsReceiver"]] = None,
-        webhook_receivers: Optional[List["WebhookReceiver"]] = None,
-        itsm_receivers: Optional[List["ItsmReceiver"]] = None,
-        azure_app_push_receivers: Optional[List["AzureAppPushReceiver"]] = None,
-        automation_runbook_receivers: Optional[List["AutomationRunbookReceiver"]] = None,
-        voice_receivers: Optional[List["VoiceReceiver"]] = None,
-        logic_app_receivers: Optional[List["LogicAppReceiver"]] = None,
-        azure_function_receivers: Optional[List["AzureFunctionReceiver"]] = None,
-        arm_role_receivers: Optional[List["ArmRoleReceiver"]] = None,
-        event_hub_receivers: Optional[List["EventHubReceiver"]] = None,
+        email_receivers: Optional[List["_models.EmailReceiver"]] = None,
+        sms_receivers: Optional[List["_models.SmsReceiver"]] = None,
+        webhook_receivers: Optional[List["_models.WebhookReceiver"]] = None,
+        itsm_receivers: Optional[List["_models.ItsmReceiver"]] = None,
+        azure_app_push_receivers: Optional[List["_models.AzureAppPushReceiver"]] = None,
+        automation_runbook_receivers: Optional[List["_models.AutomationRunbookReceiver"]] = None,
+        voice_receivers: Optional[List["_models.VoiceReceiver"]] = None,
+        logic_app_receivers: Optional[List["_models.LogicAppReceiver"]] = None,
+        azure_function_receivers: Optional[List["_models.AzureFunctionReceiver"]] = None,
+        arm_role_receivers: Optional[List["_models.ArmRoleReceiver"]] = None,
+        event_hub_receivers: Optional[List["_models.EventHubReceiver"]] = None,
         **kwargs
     ):
         """
@@ -619,8 +605,8 @@ class Context(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'notification_source': {'key': 'NotificationSource', 'type': 'str'},
-        'context_type': {'key': 'ContextType', 'type': 'str'},
+        'notification_source': {'key': 'notificationSource', 'type': 'str'},
+        'context_type': {'key': 'contextType', 'type': 'str'},
     }
 
     def __init__(
@@ -655,8 +641,8 @@ class EmailReceiver(msrest.serialization.Model):
     :vartype email_address: str
     :ivar use_common_alert_schema: Indicates whether to use common alert schema.
     :vartype use_common_alert_schema: bool
-    :ivar status: The receiver status of the e-mail. Possible values include: "NotSpecified",
-     "Enabled", "Disabled".
+    :ivar status: The receiver status of the e-mail. Known values are: "NotSpecified", "Enabled",
+     "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2021_09_01.models.ReceiverStatus
     """
 
@@ -1021,17 +1007,17 @@ class NotificationRequestBody(msrest.serialization.Model):
         self,
         *,
         alert_type: str,
-        email_receivers: Optional[List["EmailReceiver"]] = None,
-        sms_receivers: Optional[List["SmsReceiver"]] = None,
-        webhook_receivers: Optional[List["WebhookReceiver"]] = None,
-        itsm_receivers: Optional[List["ItsmReceiver"]] = None,
-        azure_app_push_receivers: Optional[List["AzureAppPushReceiver"]] = None,
-        automation_runbook_receivers: Optional[List["AutomationRunbookReceiver"]] = None,
-        voice_receivers: Optional[List["VoiceReceiver"]] = None,
-        logic_app_receivers: Optional[List["LogicAppReceiver"]] = None,
-        azure_function_receivers: Optional[List["AzureFunctionReceiver"]] = None,
-        arm_role_receivers: Optional[List["ArmRoleReceiver"]] = None,
-        event_hub_receivers: Optional[List["EventHubReceiver"]] = None,
+        email_receivers: Optional[List["_models.EmailReceiver"]] = None,
+        sms_receivers: Optional[List["_models.SmsReceiver"]] = None,
+        webhook_receivers: Optional[List["_models.WebhookReceiver"]] = None,
+        itsm_receivers: Optional[List["_models.ItsmReceiver"]] = None,
+        azure_app_push_receivers: Optional[List["_models.AzureAppPushReceiver"]] = None,
+        automation_runbook_receivers: Optional[List["_models.AutomationRunbookReceiver"]] = None,
+        voice_receivers: Optional[List["_models.VoiceReceiver"]] = None,
+        logic_app_receivers: Optional[List["_models.LogicAppReceiver"]] = None,
+        azure_function_receivers: Optional[List["_models.AzureFunctionReceiver"]] = None,
+        arm_role_receivers: Optional[List["_models.ArmRoleReceiver"]] = None,
+        event_hub_receivers: Optional[List["_models.EventHubReceiver"]] = None,
         **kwargs
     ):
         """
@@ -1102,7 +1088,7 @@ class SmsReceiver(msrest.serialization.Model):
     :vartype country_code: str
     :ivar phone_number: Required. The phone number of the SMS receiver.
     :vartype phone_number: str
-    :ivar status: The status of the receiver. Possible values include: "NotSpecified", "Enabled",
+    :ivar status: The status of the receiver. Known values are: "NotSpecified", "Enabled",
      "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2021_09_01.models.ReceiverStatus
     """
@@ -1167,21 +1153,21 @@ class TestNotificationDetailsResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'context': {'key': 'Context', 'type': 'Context'},
-        'state': {'key': 'State', 'type': 'str'},
-        'completed_time': {'key': 'CompletedTime', 'type': 'str'},
-        'created_time': {'key': 'CreatedTime', 'type': 'str'},
-        'action_details': {'key': 'ActionDetails', 'type': '[ActionDetail]'},
+        'context': {'key': 'context', 'type': 'Context'},
+        'state': {'key': 'state', 'type': 'str'},
+        'completed_time': {'key': 'completedTime', 'type': 'str'},
+        'created_time': {'key': 'createdTime', 'type': 'str'},
+        'action_details': {'key': 'actionDetails', 'type': '[ActionDetail]'},
     }
 
     def __init__(
         self,
         *,
         state: str,
-        context: Optional["Context"] = None,
+        context: Optional["_models.Context"] = None,
         completed_time: Optional[str] = None,
         created_time: Optional[str] = None,
-        action_details: Optional[List["ActionDetail"]] = None,
+        action_details: Optional[List["_models.ActionDetail"]] = None,
         **kwargs
     ):
         """
@@ -1202,53 +1188,6 @@ class TestNotificationDetailsResponse(msrest.serialization.Model):
         self.completed_time = completed_time
         self.created_time = created_time
         self.action_details = action_details
-
-
-class TestNotificationResponse(msrest.serialization.Model):
-    """The response when test notification succeeded.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar notification_id: Required. The notification id.
-    :vartype notification_id: str
-    :ivar correlation_id: Required. The correlation id.
-    :vartype correlation_id: str
-    :ivar created_time: Required. The created time.
-    :vartype created_time: str
-    """
-
-    _validation = {
-        'notification_id': {'required': True},
-        'correlation_id': {'required': True},
-        'created_time': {'required': True},
-    }
-
-    _attribute_map = {
-        'notification_id': {'key': 'notificationId', 'type': 'str'},
-        'correlation_id': {'key': 'correlationId', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        notification_id: str,
-        correlation_id: str,
-        created_time: str,
-        **kwargs
-    ):
-        """
-        :keyword notification_id: Required. The notification id.
-        :paramtype notification_id: str
-        :keyword correlation_id: Required. The correlation id.
-        :paramtype correlation_id: str
-        :keyword created_time: Required. The created time.
-        :paramtype created_time: str
-        """
-        super(TestNotificationResponse, self).__init__(**kwargs)
-        self.notification_id = notification_id
-        self.correlation_id = correlation_id
-        self.created_time = created_time
 
 
 class VoiceReceiver(msrest.serialization.Model):

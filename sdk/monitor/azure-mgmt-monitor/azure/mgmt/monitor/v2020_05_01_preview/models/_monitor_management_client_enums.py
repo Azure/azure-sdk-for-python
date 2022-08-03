@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AlertSeverity(with_metaclass(CaseInsensitiveEnumMeta, float, Enum)):
+class AlertSeverity(float, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Severity of the alert. Should be an integer between [0-4]. Value of 0 is severest
     """
 
@@ -21,7 +20,7 @@ class AlertSeverity(with_metaclass(CaseInsensitiveEnumMeta, float, Enum)):
     THREE = 3
     FOUR = 4
 
-class ConditionOperator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The criteria operator.
     """
 
@@ -31,14 +30,14 @@ class ConditionOperator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     LESS_THAN = "LessThan"
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
 
-class DimensionOperator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DimensionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Operator for dimension values
     """
 
     INCLUDE = "Include"
     EXCLUDE = "Exclude"
 
-class TimeAggregation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TimeAggregation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Aggregation type
     """
 
