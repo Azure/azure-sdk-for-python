@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 import uuid
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -23,10 +23,6 @@ from .._generated.models import (
     UpdateParticipantsRequest
 )
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
-
 class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Rooms gateway.
 
@@ -41,7 +37,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
             self, endpoint: str,
             credential: str,
             **kwargs
-    ):
+    ) -> None:
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
@@ -76,7 +72,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
         :returns: Instance of RoomsClient.
-        :rtype: ~azure.communication.RoomsClient
+        :rtype: ~azure.communication.room.RoomsClient
 
         .. admonition:: Example:
 
@@ -105,14 +101,14 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
 
         :param valid_from: The timestamp from when the room is open for joining. The timestamp is in
          RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-        :type valid_from: ~datetime
+        :type valid_from: (Optional)datetime
         :param valid_until: The timestamp from when the room can no longer be joined. The timestamp
          is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-        :type valid_until: ~datetime
+        :type valid_until: (Optional)datetime
         :param room_join_policy: (Optional)The join policy of the room.
         :type room_join_policy: (Optional)RoomJoinPolicy
         :param participants: (Optional) Collection of identities invited to the room.
-        :type participants: (Optional)List[RoomParticipant]
+        :type participants: (Optional)list[RoomParticipant]
         :returns: Created room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -154,8 +150,8 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace_async
     async def update_room(
         self,
-        room_id,
         *,
+        room_id: str,
         valid_from: Optional[datetime] = None,
         valid_until: Optional[datetime] = None,
         room_join_policy: Optional[RoomJoinPolicy] = None,
@@ -168,10 +164,10 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :type room_id: str
         :param valid_from: The timestamp from when the room is open for joining. The timestamp is in
          RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-        :type valid_from: ~datetime
+        :type valid_from: (Optional)datetime
         :param valid_until: The timestamp from when the room can no longer be joined. The timestamp
          is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-        :type valid_until: ~datetime
+        :type valid_until: (Optional)datetime
         :param room_join_policy: (Optional)The join policy of the room.
         :type room_join_policy: (Optional)RoomJoinPolicy
         :param participants: (Optional) Collection of identities invited to the room.
@@ -213,6 +209,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace_async
     async def add_participants(
         self,
+        *,
         room_id: str,
         participants: list[RoomParticipant],
         **kwargs
@@ -221,9 +218,8 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :param room_id: Required. Id of room to be updated
         :type room_id: str
         :param participants: Required. Collection of identities invited to the room.
-        :paramtype participants: List[RoomParticipant]
-        :return: ParticipantsCollection
-        :rtype: ~azure.communication.rooms.ParticipantsCollection
+        :type participants: list[RoomParticipant]
+        :return: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         add_participants_request = AddParticipantsRequest(
@@ -235,6 +231,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace_async
     async def update_participants(
         self,
+        *,
         room_id: str,
         participants: list[RoomParticipant],
         **kwargs
@@ -243,9 +240,8 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :param room_id: Required. Id of room to be updated
         :type room_id: str
         :param participants: Required. Collection of identities invited to the room.
-        :paramtype participants: List[RoomParticipant]
-        :return: ParticipantsCollection
-        :rtype: ~azure.communication.rooms.ParticipantsCollection
+        :type participants: list[RoomParticipant]
+        :return: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         update_participants_request = UpdateParticipantsRequest(
@@ -257,6 +253,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace_async
     async def remove_participants(
         self,
+        *,
         room_id: str,
         communication_identifiers: list[CommunicationIdentifier],
         **kwargs
@@ -265,9 +262,8 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :param room_id: Required. Id of room to be updated
         :type room_id: str
         :param participants: Required. Collection of identities invited to the room.
-        :paramtype participants: List[RoomParticipant]
-        :return: ParticipantsCollection
-        :rtype: ~azure.communication.rooms.ParticipantsCollection
+        :type participants: list[RoomParticipant]
+        :return: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         participants = [
@@ -283,7 +279,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace_async
     async def get_participants(
         self,
-        room_id,
+        room_id: str,
         **kwargs
     ) -> ParticipantsCollection:
         """Get participants of a room

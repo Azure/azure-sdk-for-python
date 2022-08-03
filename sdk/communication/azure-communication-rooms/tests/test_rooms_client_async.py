@@ -11,7 +11,7 @@ from azure.communication.rooms.aio import RoomsClient
 from azure.communication.rooms import (
     RoomParticipant,
     RoomJoinPolicy,
-    ParticipantRole
+    RoleType
 )
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier, UnknownIdentifier
 from unittest_helpers import mock_response
@@ -28,7 +28,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
         communication_identifier=CommunicationUserIdentifier(
             id=raw_id
         ),
-        role=ParticipantRole.ATTENDEE
+        role=RoleType.ATTENDEE
     )
     json_participant = {
         "communicationIdentifier": {

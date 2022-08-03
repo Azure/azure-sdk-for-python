@@ -15,7 +15,7 @@ from azure.communication.rooms import (
     RoomsClient,
     RoomParticipant,
     RoomJoinPolicy,
-    ParticipantRole
+    RoleType
 )
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier
 
@@ -53,19 +53,19 @@ class RoomsClientTest(CommunicationTestCase):
                 communication_identifier=CommunicationUserIdentifier(
                     self.identity_client.create_user().properties["id"]
                 ),
-                role=ParticipantRole.PRESENTER
+                role=RoleType.PRESENTER
             ),
             "fred" : RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(
                     self.identity_client.create_user().properties["id"]
                 ),
-                role=ParticipantRole.CONSUMER
+                role=RoleType.CONSUMER
             ),
             "chris" : RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(
                     self.identity_client.create_user().properties["id"]
                 ),
-                role=ParticipantRole.ATTENDEE
+                role=RoleType.ATTENDEE
             )
         }
         self.rooms_client = RoomsClient.from_connection_string(
@@ -391,8 +391,8 @@ class RoomsClientTest(CommunicationTestCase):
         create_response = self.rooms_client.create_room(participants=create_participants)
 
         # participants to be updated
-        self.users["john"].role = ParticipantRole.CONSUMER
-        self.users["chris"].role = ParticipantRole.CONSUMER
+        self.users["john"].role = RoleType.CONSUMER
+        self.users["chris"].role = RoleType.CONSUMER
 
         update_participants = [
             self.users["john"],
@@ -437,7 +437,7 @@ class RoomsClientTest(CommunicationTestCase):
         participants = [
             RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier("wrong_mri"),
-                role=ParticipantRole.ATTENDEE),
+                role=RoleType.ATTENDEE),
             self.users["john"]
         ]
 

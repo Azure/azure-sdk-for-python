@@ -1,7 +1,7 @@
 from ._rooms_client import RoomsClient
 from ._generated.models._enums import (
     RoomJoinPolicy,
-    RoleType as ParticipantRole
+    RoleType
 )
 from ._models import (
     CommunicationRoom,
@@ -14,6 +14,6 @@ __all__ = [
     'RoomsClient',
     'RoomParticipant',
     'RoomJoinPolicy',
-    'ParticipantRole',
+    'RoleType',
     'ParticipantsCollection'
 ]

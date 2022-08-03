@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 from datetime import datetime
-from typing import Optional, List, Union
+from typing import Optional, Union
 
 from azure.core.exceptions import DeserializationError
 from .._generated.models import (
@@ -60,25 +60,25 @@ class CommunicationRoom(_serialization.Model):
         valid_from: datetime,
         valid_until: datetime,
         room_join_policy: RoomJoinPolicy,
-        participants: Optional[List['RoomParticipant']] = None,
+        participants: Optional[list['RoomParticipant']]=None,
         **kwargs
     ):
         """
-        :keyword id: Unique identifier of a room. This id is server generated.
-        :paramtype id: str
-        :keyword created_on: The timestamp when the room was created at the server. The
+        :param id: Unique identifier of a room. This id is server generated.
+        :type id: str
+        :param created_on: The timestamp when the room was created at the server. The
          timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-        :paramtype created_on: ~datetime
-        :keyword valid_from: The timestamp from when the room is open for joining. The timestamp is in
+        :type created_on: ~datetime
+        :param valid_from: The timestamp from when the room is open for joining. The timestamp is in
          RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-        :paramtype valid_from: ~datetime
-        :keyword valid_until: The timestamp from when the room can no longer be joined. The timestamp
+        :type valid_from: ~datetime
+        :param valid_until: The timestamp from when the room can no longer be joined. The timestamp
          is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-        :paramtype valid_until: ~datetime
-        :keyword room_join_policy: The join policy of the room.
-        :paramtype room_join_policy: ~azure.communication.rooms.RoomJoinPolicy
-        :keyword participants: Collection of room participants.
-        :paramtype participants: Optional[list[~azure.communication.rooms.RoomParticipant]]
+        :type valid_until: ~datetime
+        :param room_join_policy: The join policy of the room.
+        :type room_join_policy: ~azure.communication.rooms.RoomJoinPolicy
+        :param participants: Collection of room participants.
+        :type participants: Optional[list[~azure.communication.rooms.RoomParticipant]]
         """
         super(CommunicationRoom, self).__init__(**kwargs)
         self.id = id
@@ -120,7 +120,7 @@ class RoomParticipant(_serialization.Model):
     :vartype communication_identifier:
     ~azure.communication.rooms._shared.models.CommunicationIdentifier
     :ivar role: Role Name.
-    :vartype role: str or ~azure.communication.rooms.ParticipantRole
+    :vartype role: Optional[Union[str, ParticipantRole]
     """
 
     _validation = {
@@ -133,7 +133,11 @@ class RoomParticipant(_serialization.Model):
     }
 
     def __init__(
-        self, communication_identifier: CommunicationIdentifier, role: Optional[Union[str, ParticipantRole]] = None, **kwargs
+        self,
+        *,
+        communication_identifier: CommunicationIdentifier,
+        role: Optional[Union[str, ParticipantRole]]=None,
+        **kwargs
     ):
         """
         :param communication_identifier: Identifies a participant in Azure Communication services. A
@@ -143,7 +147,7 @@ class RoomParticipant(_serialization.Model):
          ~azure.communication.rooms._shared.models.CommunicationIdentifier
         :param role: The Role of a room participant. Known values are: "Presenter", "Attendee", and
          "Consumer".
-        :type role: str or ~azure.communication.rooms.ParticipantRole
+        :type role: Optional[Union[str, ParticipantRole]]
         """
         super().__init__(**kwargs)
         self.communication_identifier = communication_identifier
@@ -212,9 +216,9 @@ class ParticipantsCollection(_serialization.Model):
     }
 
     _attribute_map = {
-        "participants": {"key": "participants", "type": "List[RoomParticipant]"},
+        "participants": {"key": "participants", "type": "list[RoomParticipant]"},
     }
 
-    def __init__(self, *, participants: List[RoomParticipantInternal], **kwargs):
+    def __init__(self, *, participants: list[RoomParticipantInternal], **kwargs):
         super().__init__(**kwargs)
         self.participants = [RoomParticipant.from_room_participant_internal(p) for p in participants]
