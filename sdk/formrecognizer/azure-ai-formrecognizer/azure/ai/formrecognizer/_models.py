@@ -5,7 +5,7 @@
 
 # pylint: disable=protected-access, too-many-lines
 
-from typing import Any, Dict, Iterable, List, NewType
+from typing import Dict, Iterable, List, NewType
 from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
@@ -2717,7 +2717,7 @@ class DocumentLine:
             else [],
         )
 
-    def get_words(self, **kwargs: Any) -> Iterable["DocumentWord"]:  # pylint: disable=unused-argument
+    def get_words(self) -> Iterable["DocumentWord"]:
         """Get the words found in the spans of this DocumentLine.
 
         :return: iterable[DocumentWord]
@@ -3268,7 +3268,7 @@ class DocumentTableCell:
         )
 
 
-class ModelOperationInfo:
+class ModelOperationSummary:
     """Model operation information, including the kind and status of the operation, when it was
     created, and more.
 
@@ -3314,14 +3314,14 @@ class ModelOperationInfo:
 
     def __repr__(self):
         return (
-            f"ModelOperationInfo(operation_id={self.operation_id}, status={self.status}, "
+            f"ModelOperationSummary(operation_id={self.operation_id}, status={self.status}, "
             f"percent_completed={self.percent_completed}, created_on={self.created_on}, "
             f"last_updated_on={self.last_updated_on}, kind={self.kind}, "
             f"resource_location={self.resource_location}, api_version={self.api_version}, tags={self.tags})"
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of ModelOperationInfo.
+        """Returns a dict representation of ModelOperationSummary.
 
         :return: dict
         :rtype: dict
@@ -3339,12 +3339,12 @@ class ModelOperationInfo:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "ModelOperationInfo":
-        """Converts a dict in the shape of a ModelOperationInfo to the model itself.
+    def from_dict(cls, data: dict) -> "ModelOperationSummary":
+        """Converts a dict in the shape of a ModelOperationSummary to the model itself.
 
-        :param dict data: A dictionary in the shape of ModelOperationInfo.
-        :return: ModelOperationInfo
-        :rtype: ModelOperationInfo
+        :param dict data: A dictionary in the shape of ModelOperationSummary.
+        :return: ModelOperationSummary
+        :rtype: ModelOperationSummary
         """
         return cls(
             operation_id=data.get("operation_id", None),
@@ -3373,8 +3373,8 @@ class ModelOperationInfo:
         )
 
 
-class ModelOperation(ModelOperationInfo):
-    """ModelOperation consists of information about the model operation, including the result or
+class ModelOperationDetails(ModelOperationSummary):
+    """ModelOperationDetails consists of information about the model operation, including the result or
     error of the operation if it has completed.
 
     Note that operation information only persists for 24 hours. If the operation was successful,
@@ -3399,10 +3399,10 @@ class ModelOperation(ModelOperationInfo):
     :ivar error: Encountered error, includes the error code, message, and details for why
         the operation failed.
     :vartype error: Optional[~azure.ai.formrecognizer.DocumentAnalysisError]
-    :ivar result: Operation result upon success. Returns a DocumentModelInfo which contains
+    :ivar result: Operation result upon success. Returns a DocumentModelDetails which contains
         all information about the model including the doc types
         and fields it can analyze from documents.
-    :vartype result: Optional[~azure.ai.formrecognizer.DocumentModelInfo]
+    :vartype result: Optional[~azure.ai.formrecognizer.DocumentModelDetails]
     :ivar api_version: API version used to create this operation.
     :vartype api_version: Optional[str]
     :ivar tags: List of user defined key-value tag attributes associated with the model.
@@ -3419,7 +3419,7 @@ class ModelOperation(ModelOperationInfo):
 
     def __repr__(self):
         return (
-            f"ModelOperation(operation_id={self.operation_id}, status={self.status}, "
+            f"ModelOperationDetails(operation_id={self.operation_id}, status={self.status}, "
             f"percent_completed={self.percent_completed}, created_on={self.created_on}, "
             f"last_updated_on={self.last_updated_on}, kind={self.kind}, "
             f"resource_location={self.resource_location}, result={repr(self.result)}, "
@@ -3427,7 +3427,7 @@ class ModelOperation(ModelOperationInfo):
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of ModelOperation.
+        """Returns a dict representation of ModelOperationDetails.
 
         :return: dict
         :rtype: dict
@@ -3447,12 +3447,12 @@ class ModelOperation(ModelOperationInfo):
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "ModelOperation":
-        """Converts a dict in the shape of a ModelOperation to the model itself.
+    def from_dict(cls, data: dict) -> "ModelOperationDetails":
+        """Converts a dict in the shape of a ModelOperationDetails to the model itself.
 
-        :param dict data: A dictionary in the shape of ModelOperation.
-        :return: ModelOperation
-        :rtype: ModelOperation
+        :param dict data: A dictionary in the shape of ModelOperationDetails.
+        :return: ModelOperationDetails
+        :rtype: ModelOperationDetails
         """
         return cls(
             operation_id=data.get("operation_id", None),
@@ -3462,7 +3462,7 @@ class ModelOperation(ModelOperationInfo):
             last_updated_on=data.get("last_updated_on", None),
             kind=data.get("kind", None),
             resource_location=data.get("resource_location", None),
-            result=DocumentModelInfo.from_dict(data.get("result")) if data.get("result") else None,  # type: ignore
+            result=DocumentModelDetails.from_dict(data.get("result")) if data.get("result") else None,  # type: ignore
             error=DocumentAnalysisError.from_dict(data.get("error")) if data.get("error") else None,  # type: ignore
             api_version=data.get("api_version", None),
             tags=data.get("tags", {}),
@@ -3479,7 +3479,7 @@ class ModelOperation(ModelOperationInfo):
             last_updated_on=op.last_updated_date_time,
             kind=op.kind,
             resource_location=op.resource_location,
-            result=DocumentModelInfo._from_generated(deserialize(ModelInfo, op.result))
+            result=DocumentModelDetails._from_generated(deserialize(ModelInfo, op.result))
             if op.result else None,
             error=DocumentAnalysisError._from_generated(deserialize(Error, op.error))
             if op.error else None,
@@ -3787,7 +3787,7 @@ class DocumentModelSummary:
         )
 
 
-class DocumentModelInfo(DocumentModelSummary):
+class DocumentModelDetails(DocumentModelSummary):
     """Document model information. Includes the doc types that the model can analyze.
 
     :ivar str model_id: Unique model id.
@@ -3799,7 +3799,7 @@ class DocumentModelInfo(DocumentModelSummary):
     :ivar tags: List of user defined key-value tag attributes associated with the model.
     :vartype tags: Optional[dict[str, str]]
     :ivar doc_types: Supported document types, including the fields for each document and their types.
-    :vartype doc_types: Optional[dict[str, ~azure.ai.formrecognizer.DocTypeInfo]]
+    :vartype doc_types: Optional[dict[str, ~azure.ai.formrecognizer.DocTypeDetails]]
 
     .. versionadded:: v2022-01-30-preview
         The *api_version* and *tags* properties
@@ -3814,7 +3814,7 @@ class DocumentModelInfo(DocumentModelSummary):
 
     def __repr__(self):
         return (
-            f"DocumentModelInfo(model_id={self.model_id}, description={self.description}, "
+            f"DocumentModelDetails(model_id={self.model_id}, description={self.description}, "
             f"created_on={self.created_on}, api_version={self.api_version}, tags={self.tags}, "
             f"doc_types={repr(self.doc_types)})"
         )
@@ -3827,12 +3827,12 @@ class DocumentModelInfo(DocumentModelSummary):
             created_on=model.created_date_time,
             api_version=model.api_version,
             tags=model.tags,
-            doc_types={k: DocTypeInfo._from_generated(v) for k, v in model.doc_types.items()}
+            doc_types={k: DocTypeDetails._from_generated(v) for k, v in model.doc_types.items()}
             if model.doc_types else {}
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of DocumentModelInfo.
+        """Returns a dict representation of DocumentModelDetails.
 
         :return: dict
         :rtype: dict
@@ -3847,12 +3847,12 @@ class DocumentModelInfo(DocumentModelSummary):
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "DocumentModelInfo":
-        """Converts a dict in the shape of a DocumentModelInfo to the model itself.
+    def from_dict(cls, data: dict) -> "DocumentModelDetails":
+        """Converts a dict in the shape of a DocumentModelDetails to the model itself.
 
-        :param dict data: A dictionary in the shape of DocumentModelInfo.
-        :return: DocumentModelInfo
-        :rtype: DocumentModelInfo
+        :param dict data: A dictionary in the shape of DocumentModelDetails.
+        :return: DocumentModelDetails
+        :rtype: DocumentModelDetails
         """
         return cls(
             model_id=data.get("model_id", None),
@@ -3860,14 +3860,14 @@ class DocumentModelInfo(DocumentModelSummary):
             created_on=data.get("created_on", None),
             api_version=data.get("api_version", None),
             tags=data.get("tags", {}),
-            doc_types={k: DocTypeInfo.from_dict(v) for k, v in data.get("doc_types").items()}  # type: ignore
+            doc_types={k: DocTypeDetails.from_dict(v) for k, v in data.get("doc_types").items()}  # type: ignore
             if data.get("doc_types")
             else {},
         )
 
 
-class DocTypeInfo:
-    """DocTypeInfo represents a document type that a model can recognize, including its
+class DocTypeDetails:
+    """DocTypeDetails represents a document type that a model can recognize, including its
     fields and types, and the confidence for those fields.
 
     :ivar Optional[str] description: A description for the model.
@@ -3894,7 +3894,7 @@ class DocTypeInfo:
 
     def __repr__(self):
         return (
-            f"DocTypeInfo(description={self.description}, build_mode={self.build_mode}, "
+            f"DocTypeDetails(description={self.description}, build_mode={self.build_mode}, "
             f"field_schema={self.field_schema}, field_confidence={self.field_confidence})"
         )
 
@@ -3909,7 +3909,7 @@ class DocTypeInfo:
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of DocTypeInfo.
+        """Returns a dict representation of DocTypeDetails.
 
         :return: dict
         :rtype: dict
@@ -3922,12 +3922,12 @@ class DocTypeInfo:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "DocTypeInfo":
-        """Converts a dict in the shape of a DocTypeInfo to the model itself.
+    def from_dict(cls, data: dict) -> "DocTypeDetails":
+        """Converts a dict in the shape of a DocTypeDetails to the model itself.
 
-        :param dict data: A dictionary in the shape of DocTypeInfo.
-        :return: DocTypeInfo
-        :rtype: DocTypeInfo
+        :param dict data: A dictionary in the shape of DocTypeDetails.
+        :return: DocTypeDetails
+        :rtype: DocTypeDetails
         """
         return cls(
             description=data.get("description", None),
@@ -3937,8 +3937,8 @@ class DocTypeInfo:
         )
 
 
-class ResourceInfo:
-    """Info regarding models under the Form Recognizer resource.
+class ResourceDetails:
+    """Details regarding models under the Form Recognizer resource.
 
     :ivar int document_model_count: Number of custom models in the current resource.
     :ivar int document_model_limit: Maximum number of custom models supported in the current resource.
@@ -3953,7 +3953,7 @@ class ResourceInfo:
 
     def __repr__(self):
         return (
-            f"ResourceInfo(document_model_count={self.document_model_count}, "
+            f"ResourceDetails(document_model_count={self.document_model_count}, "
             f"document_model_limit={self.document_model_limit})"
         )
 
@@ -3966,7 +3966,7 @@ class ResourceInfo:
 
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of ResourceInfo.
+        """Returns a dict representation of ResourceDetails.
 
         :return: dict
         :rtype: dict
@@ -3977,12 +3977,12 @@ class ResourceInfo:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "ResourceInfo":
-        """Converts a dict in the shape of a ResourceInfo to the model itself.
+    def from_dict(cls, data: dict) -> "ResourceDetails":
+        """Converts a dict in the shape of a ResourceDetails to the model itself.
 
-        :param dict data: A dictionary in the shape of ResourceInfo.
-        :return: ResourceInfo
-        :rtype: ResourceInfo
+        :param dict data: A dictionary in the shape of ResourceDetails.
+        :return: ResourceDetails
+        :rtype: ResourceDetails
         """
         return cls(
             document_model_count=data.get("document_model_count", None),

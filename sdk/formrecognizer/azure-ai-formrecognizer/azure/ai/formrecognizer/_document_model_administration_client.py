@@ -26,11 +26,11 @@ from ._form_base_client import FormRecognizerClientBase
 from ._document_analysis_client import DocumentAnalysisClient
 from ._models import (
     DocumentBuildMode,
-    DocumentModelInfo,
+    DocumentModelDetails,
     DocumentModelSummary,
-    ModelOperation,
-    ModelOperationInfo,
-    ResourceInfo,
+    ModelOperationDetails,
+    ModelOperationSummary,
+    ResourceDetails,
     TargetAuthorization,
 )
 
@@ -93,11 +93,11 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
     @distributed_trace
     def begin_build_model(
-        self, source: str, build_mode: Union[str, DocumentBuildMode], **kwargs: Any
-    ) -> DocumentModelAdministrationLROPoller[DocumentModelInfo]:
+        self, build_mode: Union[str, DocumentBuildMode], blob_container_url: str, **kwargs: Any
+    ) -> DocumentModelAdministrationLROPoller[DocumentModelDetails]:
         """Build a custom model.
 
-        The request must include a `source` parameter that is an
+        The request must include a `blob_container_url` parameter that is an
         externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
         a container URI (without SAS) is accepted only when the container is public or has a managed identity
         configured, see more about configuring managed identities to work with Form Recognizer here:
@@ -105,22 +105,22 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         Models are built using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff', or 'image/bmp'. Other types of content in the container is ignored.
 
-        :param str source: An Azure Storage blob container's SAS URI. A container URI (without SAS)
-            can be used if the container is public or has a managed identity configured. For more information on
-            setting up a training data set, see: https://aka.ms/azsdk/formrecognizer/buildtrainingset.
         :param build_mode: The custom model build mode. Possible values include: "template", "neural".
             For more information about build modes, see: https://aka.ms/azsdk/formrecognizer/buildmode.
+        :param str blob_container_url: An Azure Storage blob container's SAS URI. A container URI (without SAS)
+            can be used if the container is public or has a managed identity configured. For more information on
+            setting up a training data set, see: https://aka.ms/azsdk/formrecognizer/buildtrainingset.
         :type build_mode: str or :class:`~azure.ai.formrecognizer.DocumentBuildMode`
         :keyword str model_id: A unique ID for your model. If not specified, a model ID will be created for you.
         :keyword str description: An optional description to add to the model.
-        :keyword str prefix: A case-sensitive prefix string to filter documents in the source path.
+        :keyword str prefix: A case-sensitive prefix string to filter documents in the blob container url path.
             For example, when using an Azure storage blob URI, use the prefix to restrict sub folders.
             `prefix` should end in '/' to avoid cases where filenames share the same prefix.
         :keyword tags: List of user defined key-value tag attributes associated with the model.
         :paramtype tags: dict[str, str]
         :return: An instance of an DocumentModelAdministrationLROPoller. Call `result()` on the poller
-            object to return a :class:`~azure.ai.formrecognizer.DocumentModelInfo`.
-        :rtype: ~azure.ai.formrecognizer.DocumentModelAdministrationLROPoller[DocumentModelInfo]
+            object to return a :class:`~azure.ai.formrecognizer.DocumentModelDetails`.
+        :rtype: ~azure.ai.formrecognizer.DocumentModelAdministrationLROPoller[DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2022-01-30-preview
@@ -143,7 +143,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
             model_info = self._deserialize(
                 self._generated_models.ModelInfo, op_response.result
             )
-            return DocumentModelInfo._from_generated(model_info)
+            return DocumentModelDetails._from_generated(model_info)
 
         description = kwargs.pop("description", None)
         model_id = kwargs.pop("model_id", None)
@@ -164,7 +164,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
                 description=description,
                 tags=tags,
                 azure_blob_source=self._generated_models.AzureBlobContentSource(
-                    container_url=source,
+                    container_url=blob_container_url,
                     prefix=kwargs.pop("prefix", None),
                 ),
             ),
@@ -181,7 +181,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
     @distributed_trace
     def begin_compose_model(
         self, component_model_ids: List[str], **kwargs: Any
-    ) -> DocumentModelAdministrationLROPoller[DocumentModelInfo]:
+    ) -> DocumentModelAdministrationLROPoller[DocumentModelDetails]:
         """Creates a composed model from a collection of existing models.
 
         A composed model allows multiple models to be called with a single model ID. When a document is
@@ -195,8 +195,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         :keyword tags: List of user defined key-value tag attributes associated with the model.
         :paramtype tags: dict[str, str]
         :return: An instance of an DocumentModelAdministrationLROPoller. Call `result()` on the poller
-            object to return a :class:`~azure.ai.formrecognizer.DocumentModelInfo`.
-        :rtype: ~azure.ai.formrecognizer.DocumentModelAdministrationLROPoller[DocumentModelInfo]
+            object to return a :class:`~azure.ai.formrecognizer.DocumentModelDetails`.
+        :rtype: ~azure.ai.formrecognizer.DocumentModelAdministrationLROPoller[DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2022-01-30-preview
@@ -221,7 +221,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
             model_info = self._deserialize(
                 self._generated_models.ModelInfo, op_response.result
             )
-            return DocumentModelInfo._from_generated(model_info)
+            return DocumentModelDetails._from_generated(model_info)
 
         model_id = kwargs.pop("model_id", None)
         description = kwargs.pop("description", None)
@@ -298,7 +298,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         model_id: str,
         target: TargetAuthorization,
         **kwargs: Any
-    ) -> DocumentModelAdministrationLROPoller[DocumentModelInfo]:
+    ) -> DocumentModelAdministrationLROPoller[DocumentModelDetails]:
         """Copy a model stored in this resource (the source) to the user specified
         target Form Recognizer resource.
 
@@ -311,8 +311,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
             The copy authorization generated from the target resource's call to
             :func:`~get_copy_authorization()`.
         :return: An instance of a DocumentModelAdministrationLROPoller. Call `result()` on the poller
-            object to return a :class:`~azure.ai.formrecognizer.DocumentModelInfo`.
-        :rtype: ~azure.ai.formrecognizer.DocumentModelAdministrationLROPoller[DocumentModelInfo]
+            object to return a :class:`~azure.ai.formrecognizer.DocumentModelDetails`.
+        :rtype: ~azure.ai.formrecognizer.DocumentModelAdministrationLROPoller[DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -332,7 +332,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
             model_info = self._deserialize(
                 self._generated_models.ModelInfo, op_response.result
             )
-            return DocumentModelInfo._from_generated(model_info)
+            return DocumentModelDetails._from_generated(model_info)
 
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
@@ -416,33 +416,33 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def get_resource_info(self, **kwargs: Any) -> ResourceInfo:
+    def get_resource_details(self, **kwargs: Any) -> ResourceDetails:
         """Get information about the models under the Form Recognizer resource.
 
         :return: Summary of models under the resource - model count and limit.
-        :rtype: ~azure.ai.formrecognizer.ResourceInfo
+        :rtype: ~azure.ai.formrecognizer.ResourceDetails
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/sample_manage_models.py
-                :start-after: [START get_resource_info]
-                :end-before: [END get_resource_info]
+                :start-after: [START get_resource_details]
+                :end-before: [END get_resource_details]
                 :language: python
                 :dedent: 4
                 :caption: Get model counts and limits under the Form Recognizer resource.
         """
 
         response = self._client.get_info(**kwargs)
-        return ResourceInfo._from_generated(response.custom_document_models)
+        return ResourceDetails._from_generated(response.custom_document_models)
 
     @distributed_trace
-    def get_model(self, model_id: str, **kwargs: Any) -> DocumentModelInfo:
+    def get_model(self, model_id: str, **kwargs: Any) -> DocumentModelDetails:
         """Get a model by its ID.
 
         :param str model_id: Model identifier.
-        :return: DocumentModelInfo
-        :rtype: ~azure.ai.formrecognizer.DocumentModelInfo
+        :return: DocumentModelDetails
+        :rtype: ~azure.ai.formrecognizer.DocumentModelDetails
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
 
         .. admonition:: Example:
@@ -459,18 +459,18 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
             raise ValueError("model_id cannot be None or empty.")
 
         response = self._client.get_model(model_id=model_id, **kwargs)
-        return DocumentModelInfo._from_generated(response)
+        return DocumentModelDetails._from_generated(response)
 
     @distributed_trace
-    def list_operations(self, **kwargs: Any) -> ItemPaged[ModelOperationInfo]:
+    def list_operations(self, **kwargs: Any) -> ItemPaged[ModelOperationSummary]:
         """List information for each document model operation.
 
         Lists all document model operations associated with the Form Recognizer resource.
         Note that operation information only persists for 24 hours. If the operation was successful,
         the document model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
 
-        :return: A pageable of ModelOperationInfo.
-        :rtype: ~azure.core.paging.ItemPaged[ModelOperationInfo]
+        :return: A pageable of ModelOperationSummary.
+        :rtype: ~azure.core.paging.ItemPaged[ModelOperationSummary]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -486,13 +486,13 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         return self._client.get_operations(  # type: ignore
             cls=kwargs.pop(
                 "cls",
-                lambda objs: [ModelOperationInfo._from_generated(x) for x in objs],
+                lambda objs: [ModelOperationSummary._from_generated(x) for x in objs],
             ),
             **kwargs
         )
 
     @distributed_trace
-    def get_operation(self, operation_id: str, **kwargs: Any) -> ModelOperation:
+    def get_operation(self, operation_id: str, **kwargs: Any) -> ModelOperationDetails:
         """Get a document model operation by its ID.
 
         Get a document model operation associated with the Form Recognizer resource.
@@ -500,8 +500,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         the document model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
 
         :param str operation_id: The operation ID.
-        :return: ModelOperation
-        :rtype: ~azure.ai.formrecognizer.ModelOperation
+        :return: ModelOperationDetails
+        :rtype: ~azure.ai.formrecognizer.ModelOperationDetails
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -517,7 +517,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if not operation_id:
             raise ValueError("'operation_id' cannot be None or empty.")
 
-        return ModelOperation._from_generated(
+        return ModelOperationDetails._from_generated(
             self._client.get_operation(operation_id, **kwargs),
             api_version=self._api_version,
         )

@@ -52,7 +52,7 @@ setup(
     author_email="accledgerdevs@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",

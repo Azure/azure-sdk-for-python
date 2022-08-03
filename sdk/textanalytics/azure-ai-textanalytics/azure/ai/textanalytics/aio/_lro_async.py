@@ -9,7 +9,7 @@ import json
 from typing import Mapping, Any, TypeVar, Generator, Awaitable, cast
 from typing_extensions import Protocol, runtime_checkable
 from azure.core.exceptions import HttpResponseError
-from azure.core.polling import AsyncLROPoller, AsyncPollingMethod
+from azure.core.polling import AsyncLROPoller
 from azure.core.polling.base_polling import OperationFailed, BadStatus
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from .._lro import TextAnalyticsOperationResourcePolling
@@ -20,7 +20,7 @@ _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted",
 _FAILED = frozenset(["failed"])
 _SUCCEEDED = frozenset(["succeeded", "partiallycompleted", "partiallysucceeded"])
 
-PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType = TypeVar("PollingReturnType", covariant=True)
 
 
 @runtime_checkable
@@ -30,31 +30,56 @@ class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType], Awaitable):
 
     @property
     def details(self) -> Mapping[str, Any]:
-        ...
+        """Long-running operation metadata.
 
-    def polling_method(self) -> AsyncPollingMethod[PollingReturnType]:  # pylint: disable=no-self-use
-        ...
+        :return: A mapping of details about the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
 
     def continuation_token(self) -> str:  # pylint: disable=no-self-use
-        ...
+        """Return a continuation token that allows to restart the poller later.
+
+        :returns: An opaque continuation token
+        :rtype: str
+        """
 
     def status(self) -> str:  # pylint: disable=no-self-use
-        ...
+        """Returns the current status string.
+
+        :returns: The current status string
+        :rtype: str
+        """
 
     async def result(self) -> PollingReturnType:
-        ...
+        """Return the result of the long running operation.
+
+        :returns: The deserialized resource of the long running operation, if one is available.
+        :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
+        """
 
     async def wait(self) -> None:
-        ...
+        """Wait on the long running operation.
+
+        :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
+        """
 
     def done(self) -> bool:  # pylint: disable=no-self-use
-        ...
+        """Check status of the long running operation.
+
+        :returns: 'True' if the process has completed, else 'False'.
+        :rtype: bool
+        """
 
     def __await__(self) -> Generator[Any, None, PollingReturnType]:
         ...
 
     async def cancel(self) -> None:  # pylint: disable=no-self-use
-        ...
+        """Cancel the operation currently being polled.
+
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
+        """
 
 
 class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
@@ -185,11 +210,20 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
 
 class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType]):
     def polling_method(self) -> AsyncAnalyzeHealthcareEntitiesLROPollingMethod:  # type: ignore
-        """Return the polling method associated to this poller."""
+        """Return the polling method associated to this poller.
+
+        :return: AsyncAnalyzeHealthcareEntitiesLROPollingMethod
+        :rtype: AsyncAnalyzeHealthcareEntitiesLROPollingMethod
+        """
         return self._polling_method  # type: ignore
 
     @property
     def details(self) -> Mapping[str, Any]:
+        """Long-running operation metadata.
+
+        :return: A mapping of details about the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
         return {
             "id": self.polling_method().id,
             "created_on": self.polling_method().created_on,
@@ -217,7 +251,14 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
         continuation_token: str,
         **kwargs: Any
     ) -> "AsyncAnalyzeHealthcareEntitiesLROPoller":
-        """
+        """Internal use only.
+
+        :param polling_method: Polling method to use.
+        :type polling_method: AsyncAnalyzeHealthcareEntitiesLROPollingMethod
+        :param str continuation_token: Opaque token.
+        :return: AsyncAnalyzeHealthcareEntitiesLROPoller
+        :rtype: AsyncAnalyzeHealthcareEntitiesLROPoller
+
         :meta private:
         """
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
@@ -355,11 +396,20 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
 
 class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
     def polling_method(self) -> AsyncAnalyzeActionsLROPollingMethod:  # type: ignore
-        """Return the polling method associated to this poller."""
+        """Return the polling method associated to this poller.
+
+        :return: AsyncAnalyzeActionsLROPollingMethod
+        :rtype: AsyncAnalyzeActionsLROPollingMethod
+        """
         return self._polling_method  # type: ignore
 
     @property
     def details(self) -> Mapping[str, Any]:
+        """Long-running operation metadata.
+
+        :return: A mapping of details about the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
         return {
             "id": self.polling_method().id,
             "created_on": self.polling_method().created_on,
@@ -395,7 +445,14 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
         continuation_token: str,
         **kwargs: Any
     ) -> "AsyncAnalyzeActionsLROPoller":  # type: ignore
-        """
+        """Internal use only.
+
+        :param polling_method: Polling method to use.
+        :type polling_method: AsyncAnalyzeActionsLROPollingMethod
+        :param str continuation_token: Opaque token.
+        :return: AsyncAnalyzeActionsLROPoller
+        :rtype: AsyncAnalyzeActionsLROPoller
+
         :meta private:
         """
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(

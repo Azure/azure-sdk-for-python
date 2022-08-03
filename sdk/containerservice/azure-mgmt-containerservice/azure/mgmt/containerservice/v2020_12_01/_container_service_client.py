@@ -72,13 +72,27 @@ class ContainerServiceClient:    # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.managed_clusters = ManagedClustersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.maintenance_configurations = MaintenanceConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.agent_pools = AgentPoolsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.resolve_private_link_service_id = ResolvePrivateLinkServiceIdOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_clusters = ManagedClustersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.maintenance_configurations = MaintenanceConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.agent_pools = AgentPoolsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.resolve_private_link_service_id = ResolvePrivateLinkServiceIdOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(
