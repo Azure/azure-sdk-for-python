@@ -25,6 +25,7 @@ from azure.storage.filedatalake import (
     DataLakeDirectoryClient,
     DataLakeFileClient,
     DataLakeServiceClient,
+    EncryptionScopeOptions,
     FileSasPermissions,
     FileSystemClient,
     FileSystemSasPermissions,
@@ -33,7 +34,6 @@ from azure.storage.filedatalake import (
     generate_file_system_sas,
     ResourceTypes,
 )
-from azure.storage.filedatalake._models import FileSystemEncryptionScope
 from settings.testcase import DataLakePreparer
 from devtools_testutils.storage import StorageTestCase
 
@@ -931,10 +931,10 @@ class FileTest(StorageTestCase):
         self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key, logging_enable=True)
         self.file_system_name = self.get_resource_name('filesystem')
         file_name = 'testfile'
-        encryption_scope = FileSystemEncryptionScope(default_encryption_scope="hnstestscope1")
+        encryption_scope = EncryptionScopeOptions(default_encryption_scope="hnstestscope1")
 
         file_system = self.dsc.get_file_system_client(self.file_system_name)
-        file_system.create_file_system(file_system_encryption_scope=encryption_scope)
+        file_system.create_file_system(encryption_scope_options=encryption_scope)
 
         file_client = file_system.create_file(file_name)
         props = file_client.get_file_properties()

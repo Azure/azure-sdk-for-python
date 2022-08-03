@@ -18,9 +18,17 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ServiceRequestError
 )
-from azure.storage.filedatalake import ContentSettings, DataLakeDirectoryClient, DirectorySasPermissions, FileSystemSasPermissions, generate_file_system_sas
-from azure.storage.filedatalake import DataLakeServiceClient, generate_directory_sas
-from azure.storage.filedatalake._models import AccessControlChangeCounters, AccessControlChangeResult, FileSystemEncryptionScope
+from azure.storage.filedatalake import (
+    ContentSettings,
+    DataLakeDirectoryClient,
+    DataLakeServiceClient,
+    DirectorySasPermissions,
+    EncryptionScopeOptions,
+    FileSystemSasPermissions,
+    generate_directory_sas,
+    generate_file_system_sas
+)
+from azure.storage.filedatalake._models import AccessControlChangeCounters, AccessControlChangeResult
 from azure.storage.filedatalake._serialize import _SUPPORTED_API_VERSIONS
 
 from settings.testcase import DataLakePreparer
@@ -1110,9 +1118,9 @@ class DirectoryTest(StorageTestCase):
         self.file_system_name = self.get_resource_name('filesystem')
         dir_name = 'testdir'
         file_system = self.dsc.get_file_system_client(self.file_system_name)
-        encryption_scope = FileSystemEncryptionScope(default_encryption_scope="hnstestscope1")
+        encryption_scope = EncryptionScopeOptions(default_encryption_scope="hnstestscope1")
 
-        file_system.create_file_system(file_system_encryption_scope=encryption_scope)
+        file_system.create_file_system(encryption_scope_options=encryption_scope)
         file_system.create_directory(dir_name)
 
         directory_client = file_system.get_directory_client(dir_name)

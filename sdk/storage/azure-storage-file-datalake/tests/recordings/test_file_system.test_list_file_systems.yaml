@@ -13,15 +13,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 27 Jul 2022 00:31:29 GMT
-      x-ms-default-encryption-scope:
-      - hnstestscope1
-      x-ms-deny-encryption-scope-override:
-      - 'false'
+      - Wed, 27 Jul 2022 00:58:51 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/filesystemabc617ab?restype=container
+    uri: https://storagename.blob.core.windows.net/filesystem43da1043?restype=container
   response:
     body:
       string: ''
@@ -29,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 27 Jul 2022 00:31:30 GMT
+      - Wed, 27 Jul 2022 00:58:52 GMT
       etag:
-      - '"0x8DA6F675A263FE8"'
+      - '"0x8DA6F6B2C9EE912"'
       last-modified:
-      - Wed, 27 Jul 2022 00:31:31 GMT
+      - Wed, 27 Jul 2022 00:58:52 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,41 +47,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 27 Jul 2022 00:31:30 GMT
+      - Wed, 27 Jul 2022 00:58:52 GMT
       x-ms-version:
       - '2021-08-06'
     method: GET
-    uri: https://storagename.blob.core.windows.net/filesystemabc617ab?restype=container
+    uri: https://storagename.blob.core.windows.net/?comp=list&include=
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Containers><Container><Name>filesystem43da1043</Name><Properties><Last-Modified>Wed,
+        27 Jul 2022 00:58:52 GMT</Last-Modified><Etag>\"0x8DA6F6B2C9EE912\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><ImmutableStorageWithVersioningEnabled>false</ImmutableStorageWithVersioningEnabled></Properties></Container></Containers><NextMarker
+        /></EnumerationResults>"
     headers:
-      content-length:
-      - '0'
+      content-type:
+      - application/xml
       date:
-      - Wed, 27 Jul 2022 00:31:30 GMT
-      etag:
-      - '"0x8DA6F675A263FE8"'
-      last-modified:
-      - Wed, 27 Jul 2022 00:31:31 GMT
+      - Wed, 27 Jul 2022 00:58:52 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-default-encryption-scope:
-      - hnstestscope1
-      x-ms-deny-encryption-scope-override:
-      - 'false'
-      x-ms-has-immutability-policy:
-      - 'false'
-      x-ms-has-legal-hold:
-      - 'false'
-      x-ms-immutable-storage-with-versioning-enabled:
-      - 'false'
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
+      transfer-encoding:
+      - chunked
       x-ms-version:
       - '2021-08-06'
     status:
@@ -105,11 +88,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 27 Jul 2022 00:31:30 GMT
+      - Wed, 27 Jul 2022 00:58:52 GMT
       x-ms-version:
       - '2021-08-06'
     method: DELETE
-    uri: https://storagename.blob.core.windows.net/filesystemabc617ab?restype=container
+    uri: https://storagename.blob.core.windows.net/filesystem43da1043?restype=container
   response:
     body:
       string: ''
@@ -117,7 +100,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 27 Jul 2022 00:31:30 GMT
+      - Wed, 27 Jul 2022 00:58:52 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
