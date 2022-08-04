@@ -172,7 +172,6 @@ class TestTableAADAsync(AzureRecordedTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_aad_batch_all_operations_together(self, tables_storage_account_name):

@@ -10,6 +10,7 @@
 * Fix handling of client-side exceptions that get raised during service requests (such as [#21416](https://github.com/Azure/azure-sdk-for-python/issues/21416)) ([#24788](https://github.com/Azure/azure-sdk-for-python/pull/24788))
 
 ### Other Changes
+* Python 3.6 is no longer supported. Please use Python version 3.7 or later.
 
 ## 12.4.0 (2022-05-10)
 

@@ -52,7 +52,6 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
         for table in tables:
             count += 1
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @recorded_by_proxy
     def test_user_agent_custom(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -90,7 +89,6 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
         for table in tables:
             count += 1
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @recorded_by_proxy
     def test_user_agent_append(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
