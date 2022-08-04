@@ -9,6 +9,7 @@
 
 import argparse
 import sys
+import re
 import os
 import logging
 import glob
@@ -109,7 +110,9 @@ def process_requires(setup_py_path):
             version = get_version(pkg_name)
             base_version = get_base_version(pkg_name)
             logging.info("Updating version {0} in requirement {1} to dev build version".format(version, old_req))
-            new_req = old_req.replace(version, "{}{}".format(base_version, DEV_BUILD_IDENTIFIER))
+            # to properly replace the version, we must replace the entire version, not a partial piece of it
+            rx = r'{}(((a|b|rc)\d+)?(\.post\d+)?)?'.format(base_version)
+            new_req = re.sub(rx, "{}{}".format(base_version, DEV_BUILD_IDENTIFIER), str(req), flags=re.IGNORECASE)
             logging.info("New requirement for package {0}: {1}".format(pkg_name, new_req))
             requirement_to_update[old_req] = new_req
 

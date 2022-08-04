@@ -70,6 +70,12 @@ steps:
       twine check $(Build.ArtifactStagingDirectory)/**/*.zip
     displayName: 'Verify Readme'
 
+
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - template: ../steps/auth-dev-feed.yml
+      parameters:
+        DevFeedName: ${{ parameters.DevFeedName }}
+
   - task: PythonScript@0
     displayName: 'Generate Docs'
     condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
