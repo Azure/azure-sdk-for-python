@@ -152,7 +152,7 @@ def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
         return value.value_country_region
     return None
 
-class DocumentBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ModelBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode used when building custom models.
 
     For more information, see https://aka.ms/azsdk/formrecognizer/buildmode.

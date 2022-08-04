@@ -10,6 +10,7 @@
 - Changed argument order on `begin_build_model()`. `build_mode` is the first expected argument, followed by `blob_container_url`.
 - Renamed `begin_create_composed_model()` on `DocumentModelAdministrationClient` to `begin_compose_model()`.
 - Renamed `get_account_info()` on `DocumentModelAdministrationClient` to `get_resource_details()`.
+- Renamed `DocumentBuildMode` to `ModelBuildMode`.
 - Renamed `AccountInfo` model to `ResourceDetails`.
 - Renamed `DocTypeInfo` model to `DocTypeDetails`.
 - Renamed `DocumentModelInfo` model to `DocumentModelSummary`.
