@@ -4,7 +4,7 @@ from packaging.version import Version, parse
 from pkg_resources import Requirement
 
 from ci_tools.variables import discover_repo_root, get_artifact_directory, DEV_BUILD_IDENTIFIER
-import os, sys, platform, glob
+import os, sys, platform, glob, re
 
 from ci_tools.parsing import ParsedSetup
 from pypi_tools.pypi import PyPIClient
@@ -242,7 +242,7 @@ def process_requires(setup_py_path: str):
     Examples:
     azure-storage-blob >= 1.0.1b1
     <there is no azure-storage-blob with any 1.0.1 patch version>
-    update to require 1.0.1a to allow previously published dev versions to be allowed.
+    update to require 1.0.1a1 to allow previously published dev versions to be allowed.
     """
 
     pkg_details = ParsedSetup.from_path(setup_py_path)
@@ -259,7 +259,19 @@ def process_requires(setup_py_path: str):
             version = get_version_from_repo(pkg_name)
             base_version = get_base_version(pkg_name)
             logging.info("Updating version {0} in requirement {1} to dev build version".format(version, old_req))
-            new_req = old_req.replace(version, "{}{}".format(base_version, DEV_BUILD_IDENTIFIER))
+            #       {} =             <must have a base version>
+            #       (                <optionally, we have a prerelease version>
+            #        (               <we must have 0 or 1 prerelease versions>
+            #            (a|b|rc)    <we must have a prelease identifier>
+            #            \d+         <followed by a number of digits N>
+            #        )?
+            #        (               <optionally, we have a postrelease version>
+            #            \.post      <which is ".post">
+            #            \d+         <followed by number of digits N>
+            #        )?
+            #       )?
+            rx = r'{}(((a|b|rc)\d+)?(\.post\d+)?)?'.format(base_version)
+            new_req = re.sub(rx, "{}{}1".format(base_version, DEV_BUILD_IDENTIFIER), str(req), flags=re.IGNORECASE)
             logging.info("New requirement for package {0}: {1}".format(pkg_name, new_req))
             requirement_to_update[old_req] = new_req
 
