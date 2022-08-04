@@ -7,7 +7,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 04 Aug 2022 18:44:25 GMT
+      - Thu, 04 Aug 2022 23:00:33 GMT
       x-ms-default-encryption-scope:
       - hnstestscope1
       x-ms-deny-encryption-scope-override:
@@ -15,21 +15,21 @@ interactions:
       x-ms-version:
       - '2021-08-06'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/testfs3?restype=container
+    uri: https://storagename.blob.core.windows.net/esd1121c60?restype=container
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 04 Aug 2022 18:44:22 GMT
-      etag: '"0x8DA7649597535AD"'
-      last-modified: Thu, 04 Aug 2022 18:44:23 GMT
+      date: Thu, 04 Aug 2022 23:00:34 GMT
+      etag: '"0x8DA766D2352759C"'
+      last-modified: Thu, 04 Aug 2022 23:00:34 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2021-08-06'
     status:
       code: 201
       message: Created
-    url: https://vincenttranhnscanary.blob.core.windows.net/testfs3?restype=container
+    url: https://vincenttranhns.blob.core.windows.net/esd1121c60?restype=container
 - request:
     body: null
     headers:
@@ -38,7 +38,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 04 Aug 2022 18:44:25 GMT
+      - Thu, 04 Aug 2022 23:00:34 GMT
       x-ms-default-encryption-scope:
       - hnstestscope1
       x-ms-deny-encryption-scope-override:
@@ -46,21 +46,21 @@ interactions:
       x-ms-version:
       - '2021-08-06'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/testfs4?restype=container
+    uri: https://storagename.blob.core.windows.net/es2d1121c60?restype=container
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 04 Aug 2022 18:44:22 GMT
-      etag: '"0x8DA764959869840"'
-      last-modified: Thu, 04 Aug 2022 18:44:23 GMT
+      date: Thu, 04 Aug 2022 23:00:34 GMT
+      etag: '"0x8DA766D236C1451"'
+      last-modified: Thu, 04 Aug 2022 23:00:34 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2021-08-06'
     status:
       code: 201
       message: Created
-    url: https://vincenttranhnscanary.blob.core.windows.net/testfs4?restype=container
+    url: https://vincenttranhns.blob.core.windows.net/es2d1121c60?restype=container
 - request:
     body: null
     headers:
@@ -69,7 +69,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 04 Aug 2022 18:44:26 GMT
+      - Thu, 04 Aug 2022 23:00:34 GMT
       x-ms-version:
       - '2021-08-06'
     method: GET
@@ -77,20 +77,69 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Containers><Container><Name>testfs1</Name><Properties><Last-Modified>Thu,
-        04 Aug 2022 18:43:29 GMT</Last-Modified><Etag>\"0x8DA7649396BD4A4\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>hnstestscope1</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><ImmutableStorageWithVersioningEnabled>false</ImmutableStorageWithVersioningEnabled></Properties></Container><Container><Name>testfs2</Name><Properties><Last-Modified>Thu,
-        04 Aug 2022 18:43:29 GMT</Last-Modified><Etag>\"0x8DA7649397DAC5A\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>hnstestscope1</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><ImmutableStorageWithVersioningEnabled>false</ImmutableStorageWithVersioningEnabled></Properties></Container><Container><Name>testfs3</Name><Properties><Last-Modified>Thu,
-        04 Aug 2022 18:44:23 GMT</Last-Modified><Etag>\"0x8DA7649597535AD\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>hnstestscope1</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><ImmutableStorageWithVersioningEnabled>false</ImmutableStorageWithVersioningEnabled></Properties></Container><Container><Name>testfs4</Name><Properties><Last-Modified>Thu,
-        04 Aug 2022 18:44:23 GMT</Last-Modified><Etag>\"0x8DA764959869840\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>hnstestscope1</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><ImmutableStorageWithVersioningEnabled>false</ImmutableStorageWithVersioningEnabled></Properties></Container></Containers><NextMarker
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Containers><Container><Name>anonymooose</Name><Properties><Last-Modified>Thu,
+        04 Aug 2022 22:55:47 GMT</Last-Modified><Etag>\"0x8DA766C7893D92F\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><ImmutableStorageWithVersioningEnabled>false</ImmutableStorageWithVersioningEnabled></Properties></Container><Container><Name>es2d1121c60</Name><Properties><Last-Modified>Thu,
+        04 Aug 2022 23:00:34 GMT</Last-Modified><Etag>\"0x8DA766D236C1451\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>hnstestscope1</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><ImmutableStorageWithVersioningEnabled>false</ImmutableStorageWithVersioningEnabled></Properties></Container><Container><Name>esd1121c60</Name><Properties><Last-Modified>Thu,
+        04 Aug 2022 23:00:34 GMT</Last-Modified><Etag>\"0x8DA766D2352759C\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>hnstestscope1</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><ImmutableStorageWithVersioningEnabled>false</ImmutableStorageWithVersioningEnabled></Properties></Container></Containers><NextMarker
         /></EnumerationResults>"
     headers:
       content-type: application/xml
-      date: Thu, 04 Aug 2022 18:44:22 GMT
+      date: Thu, 04 Aug 2022 23:00:34 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2021-08-06'
     status:
       code: 200
       message: OK
-    url: https://vincenttranhnscanary.blob.core.windows.net/?comp=list&include=
+    url: https://vincenttranhns.blob.core.windows.net/?comp=list&include=
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Thu, 04 Aug 2022 23:00:34 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/esd1121c60?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 04 Aug 2022 23:00:34 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-08-06'
+    status:
+      code: 202
+      message: Accepted
+    url: https://vincenttranhns.blob.core.windows.net/esd1121c60?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Thu, 04 Aug 2022 23:00:34 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/es2d1121c60?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 04 Aug 2022 23:00:34 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-08-06'
+    status:
+      code: 202
+      message: Accepted
+    url: https://vincenttranhns.blob.core.windows.net/es2d1121c60?restype=container
 version: 1

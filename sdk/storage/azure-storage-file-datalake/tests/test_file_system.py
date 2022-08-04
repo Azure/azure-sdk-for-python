@@ -319,22 +319,21 @@ class FileSystemTest(StorageTestCase):
     def test_list_file_systems_encryption_scope(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
-        file_system_name1 = "testfs1"
-        file_system_name2 = "testfs2"
+        file_system_name1 = self._get_file_system_reference(prefix='es')
+        file_system_name2 = self._get_file_system_reference(prefix='es2')
         encryption_scope = EncryptionScopeOptions(default_encryption_scope="hnstestscope1")
-        file_system1 = self.dsc.create_file_system(file_system_name1, encryption_scope_options=encryption_scope)
-        file_system2 = self.dsc.create_file_system(file_system_name2, encryption_scope_options=encryption_scope)
+        self.dsc.create_file_system(file_system_name1, encryption_scope_options=encryption_scope)
+        self.dsc.create_file_system(file_system_name2, encryption_scope_options=encryption_scope)
 
         # Act
-        file_systems = list(self.dsc.list_file_systems())
+        file_systems = []
+        for filesystem in self.dsc.list_file_systems():
+            if filesystem['name'] in [file_system_name1, file_system_name2]:
+                file_systems.append(filesystem)
 
         # Assert
         self.assertIsNotNone(file_systems)
-        self.assertGreaterEqual(len(file_systems), 2)
-        self.assertIsNotNone(file_systems[0])
-        self.assertIsNotNone(file_systems[1])
-        self.assertNamedItemInContainer(file_systems, file_system1.file_system_name)
-        self.assertNamedItemInContainer(file_systems, file_system2.file_system_name)
+        self.assertEqual(len(file_systems), 2)
         self.assertEqual(file_systems[0].encryption_scope.default_encryption_scope, encryption_scope.default_encryption_scope)
         self.assertEqual(file_systems[1].encryption_scope.default_encryption_scope, encryption_scope.default_encryption_scope)
 
