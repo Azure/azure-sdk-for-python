@@ -423,7 +423,7 @@ document_model_admin_client = DocumentModelAdministrationClient(endpoint, creden
 container_sas_url = "<container-sas-url>"  # training documents uploaded to blob storage
 poller = document_model_admin_client.begin_build_model(
     # For more information about build_mode, see: https://aka.ms/azsdk/formrecognizer/buildmode
-    source=container_sas_url, build_mode="template", model_id="my-first-model"
+    build_mode="template", blob_container_url=container_sas_url, model_id="my-first-model"
 )
 model = poller.result()
 

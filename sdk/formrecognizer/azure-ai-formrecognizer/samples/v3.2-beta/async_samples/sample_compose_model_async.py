@@ -55,16 +55,16 @@ async def sample_compose_model_async():
     document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     async with document_model_admin_client:
         supplies_poller = await document_model_admin_client.begin_build_model(
-            po_supplies, DocumentBuildMode.TEMPLATE, description="Purchase order-Office supplies"
+            DocumentBuildMode.TEMPLATE, po_supplies, description="Purchase order-Office supplies"
         )
         equipment_poller = await document_model_admin_client.begin_build_model(
-            po_equipment, DocumentBuildMode.TEMPLATE, description="Purchase order-Office Equipment"
+            DocumentBuildMode.TEMPLATE, po_equipment, description="Purchase order-Office Equipment"
         )
         furniture_poller = await document_model_admin_client.begin_build_model(
-            po_furniture, DocumentBuildMode.TEMPLATE, description="Purchase order-Furniture"
+            DocumentBuildMode.TEMPLATE, po_furniture, description="Purchase order-Furniture"
         )
         cleaning_supplies_poller = await document_model_admin_client.begin_build_model(
-            po_cleaning_supplies, DocumentBuildMode.TEMPLATE, description="Purchase order-Cleaning Supplies"
+            DocumentBuildMode.TEMPLATE, po_cleaning_supplies, description="Purchase order-Cleaning Supplies"
         )
         supplies_model = await supplies_poller.result()
         equipment_model = await equipment_poller.result()

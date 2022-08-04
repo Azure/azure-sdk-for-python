@@ -21,7 +21,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 ### Prerequisites
 
-- Python 3.6 later is required to use this package.
+- Python 3.7 later is required to use this package.
 - You must have an [Azure subscription][azure_subscription] and a
   [Cognitive Services or Language service resource][ta_or_cs_resource] to use this package.
 

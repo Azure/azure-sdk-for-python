@@ -22,7 +22,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._cassandra_resources_operations import build_create_update_cassandra_keyspace_request_initial, build_create_update_cassandra_table_request_initial, build_delete_cassandra_keyspace_request_initial, build_delete_cassandra_table_request_initial, build_get_cassandra_keyspace_request, build_get_cassandra_keyspace_throughput_request, build_get_cassandra_table_request, build_get_cassandra_table_throughput_request, build_list_cassandra_keyspaces_request, build_list_cassandra_tables_request, build_migrate_cassandra_keyspace_to_autoscale_request_initial, build_migrate_cassandra_keyspace_to_manual_throughput_request_initial, build_migrate_cassandra_table_to_autoscale_request_initial, build_migrate_cassandra_table_to_manual_throughput_request_initial, build_update_cassandra_keyspace_throughput_request_initial, build_update_cassandra_table_throughput_request_initial
+from ...operations._cassandra_resources_operations import build_create_update_cassandra_keyspace_request_initial, build_create_update_cassandra_table_request_initial, build_create_update_cassandra_view_request_initial, build_delete_cassandra_keyspace_request_initial, build_delete_cassandra_table_request_initial, build_delete_cassandra_view_request_initial, build_get_cassandra_keyspace_request, build_get_cassandra_keyspace_throughput_request, build_get_cassandra_table_request, build_get_cassandra_table_throughput_request, build_get_cassandra_view_request, build_get_cassandra_view_throughput_request, build_list_cassandra_keyspaces_request, build_list_cassandra_tables_request, build_list_cassandra_views_request, build_migrate_cassandra_keyspace_to_autoscale_request_initial, build_migrate_cassandra_keyspace_to_manual_throughput_request_initial, build_migrate_cassandra_table_to_autoscale_request_initial, build_migrate_cassandra_table_to_manual_throughput_request_initial, build_migrate_cassandra_view_to_autoscale_request_initial, build_migrate_cassandra_view_to_manual_throughput_request_initial, build_update_cassandra_keyspace_throughput_request_initial, build_update_cassandra_table_throughput_request_initial, build_update_cassandra_view_throughput_request_initial
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -69,7 +69,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.CassandraKeyspaceListResult]
 
         error_map = {
@@ -166,7 +166,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.CassandraKeyspaceGetResults]
 
         
@@ -220,7 +220,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.CassandraKeyspaceGetResults]]
 
@@ -302,7 +302,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.CassandraKeyspaceGetResults]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -368,7 +368,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
@@ -433,7 +433,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop(
@@ -509,7 +509,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ThroughputSettingsGetResults]
 
         
@@ -563,7 +563,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.ThroughputSettingsGetResults]]
 
@@ -645,7 +645,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ThroughputSettingsGetResults]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -711,7 +711,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.ThroughputSettingsGetResults]]
 
         
@@ -784,7 +784,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ThroughputSettingsGetResults]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop(
@@ -847,7 +847,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.ThroughputSettingsGetResults]]
 
         
@@ -920,7 +920,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ThroughputSettingsGetResults]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop(
@@ -994,7 +994,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.CassandraTableListResult]
 
         error_map = {
@@ -1095,7 +1095,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.CassandraTableGetResults]
 
         
@@ -1151,7 +1151,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.CassandraTableGetResults]]
 
@@ -1237,7 +1237,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.CassandraTableGetResults]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1305,7 +1305,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
@@ -1374,7 +1374,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop(
@@ -1454,7 +1454,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ThroughputSettingsGetResults]
 
         
@@ -1510,7 +1510,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.ThroughputSettingsGetResults]]
 
@@ -1596,7 +1596,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ThroughputSettingsGetResults]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1664,7 +1664,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.ThroughputSettingsGetResults]]
 
         
@@ -1741,7 +1741,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ThroughputSettingsGetResults]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop(
@@ -1806,7 +1806,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.ThroughputSettingsGetResults]]
 
         
@@ -1883,7 +1883,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ThroughputSettingsGetResults]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop(
@@ -1931,3 +1931,966 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_migrate_cassandra_table_to_manual_throughput.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/tables/{tableName}/throughputSettings/default/migrateToManualThroughput"}  # type: ignore
+
+    @distributed_trace
+    def list_cassandra_views(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        keyspace_name: str,
+        **kwargs: Any
+    ) -> AsyncIterable[_models.CassandraViewListResult]:
+        """Lists the Cassandra materialized views under an existing Azure Cosmos DB database account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either CassandraViewListResult or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.CassandraViewListResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CassandraViewListResult]
+
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
+        def prepare_request(next_link=None):
+            if not next_link:
+                
+                request = build_list_cassandra_views_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    keyspace_name=keyspace_name,
+                    api_version=api_version,
+                    template_url=self.list_cassandra_views.metadata['url'],
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)  # type: ignore
+
+            else:
+                
+                request = build_list_cassandra_views_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    keyspace_name=keyspace_name,
+                    api_version=api_version,
+                    template_url=next_link,
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)  # type: ignore
+                request.method = "GET"
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("CassandraViewListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    list_cassandra_views.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views"}  # type: ignore
+
+    @distributed_trace_async
+    async def get_cassandra_view(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        keyspace_name: str,
+        view_name: str,
+        **kwargs: Any
+    ) -> _models.CassandraViewGetResults:
+        """Gets the Cassandra view under an existing Azure Cosmos DB database account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
+        :param view_name: Cosmos DB view name.
+        :type view_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: CassandraViewGetResults, or the result of cls(response)
+        :rtype: ~azure.mgmt.cosmosdb.models.CassandraViewGetResults
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CassandraViewGetResults]
+
+        
+        request = build_get_cassandra_view_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            keyspace_name=keyspace_name,
+            view_name=view_name,
+            api_version=api_version,
+            template_url=self.get_cassandra_view.metadata['url'],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('CassandraViewGetResults', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get_cassandra_view.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views/{viewName}"}  # type: ignore
+
+
+    async def _create_update_cassandra_view_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        keyspace_name: str,
+        view_name: str,
+        create_update_cassandra_view_parameters: _models.CassandraViewCreateUpdateParameters,
+        **kwargs: Any
+    ) -> Optional[_models.CassandraViewGetResults]:
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.CassandraViewGetResults]]
+
+        _json = self._serialize.body(create_update_cassandra_view_parameters, 'CassandraViewCreateUpdateParameters')
+
+        request = build_create_update_cassandra_view_request_initial(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            keyspace_name=keyspace_name,
+            view_name=view_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self._create_update_cassandra_view_initial.metadata['url'],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('CassandraViewGetResults', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    _create_update_cassandra_view_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views/{viewName}"}  # type: ignore
+
+
+    @distributed_trace_async
+    async def begin_create_update_cassandra_view(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        keyspace_name: str,
+        view_name: str,
+        create_update_cassandra_view_parameters: _models.CassandraViewCreateUpdateParameters,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.CassandraViewGetResults]:
+        """Create or update an Azure Cosmos DB Cassandra View.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
+        :param view_name: Cosmos DB view name.
+        :type view_name: str
+        :param create_update_cassandra_view_parameters: The parameters to provide for the current
+         Cassandra View.
+        :type create_update_cassandra_view_parameters:
+         ~azure.mgmt.cosmosdb.models.CassandraViewCreateUpdateParameters
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either CassandraViewGetResults or the
+         result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.CassandraViewGetResults]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CassandraViewGetResults]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_update_cassandra_view_initial(  # type: ignore
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                keyspace_name=keyspace_name,
+                view_name=view_name,
+                create_update_cassandra_view_parameters=create_update_cassandra_view_parameters,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x,y,z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('CassandraViewGetResults', pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+
+        if polling is True:
+            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(
+                lro_delay,
+                
+                
+                **kwargs
+        ))  # type: AsyncPollingMethod
+        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_create_update_cassandra_view.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views/{viewName}"}  # type: ignore
+
+    async def _delete_cassandra_view_initial(  # pylint: disable=inconsistent-return-statements
+        self,
+        resource_group_name: str,
+        account_name: str,
+        keyspace_name: str,
+        view_name: str,
+        **kwargs: Any
+    ) -> None:
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+
+        
+        request = build_delete_cassandra_view_request_initial(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            keyspace_name=keyspace_name,
+            view_name=view_name,
+            api_version=api_version,
+            template_url=self._delete_cassandra_view_initial.metadata['url'],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    _delete_cassandra_view_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views/{viewName}"}  # type: ignore
+
+
+    @distributed_trace_async
+    async def begin_delete_cassandra_view(  # pylint: disable=inconsistent-return-statements
+        self,
+        resource_group_name: str,
+        account_name: str,
+        keyspace_name: str,
+        view_name: str,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes an existing Azure Cosmos DB Cassandra view.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
+        :param view_name: Cosmos DB view name.
+        :type view_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._delete_cassandra_view_initial(  # type: ignore
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                keyspace_name=keyspace_name,
+                view_name=view_name,
+                api_version=api_version,
+                cls=lambda x,y,z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+
+        if polling is True:
+            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(
+                lro_delay,
+                
+                
+                **kwargs
+        ))  # type: AsyncPollingMethod
+        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_delete_cassandra_view.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views/{viewName}"}  # type: ignore
+
+    @distributed_trace_async
+    async def get_cassandra_view_throughput(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        keyspace_name: str,
+        view_name: str,
+        **kwargs: Any
+    ) -> _models.ThroughputSettingsGetResults:
+        """Gets the RUs per second of the Cassandra view under an existing Azure Cosmos DB database
+        account with the provided name.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
+        :param view_name: Cosmos DB view name.
+        :type view_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ThroughputSettingsGetResults, or the result of cls(response)
+        :rtype: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ThroughputSettingsGetResults]
+
+        
+        request = build_get_cassandra_view_throughput_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            keyspace_name=keyspace_name,
+            view_name=view_name,
+            api_version=api_version,
+            template_url=self.get_cassandra_view_throughput.metadata['url'],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('ThroughputSettingsGetResults', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get_cassandra_view_throughput.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views/{viewName}/throughputSettings/default"}  # type: ignore
+
+
+    async def _update_cassandra_view_throughput_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        keyspace_name: str,
+        view_name: str,
+        update_throughput_parameters: _models.ThroughputSettingsUpdateParameters,
+        **kwargs: Any
+    ) -> Optional[_models.ThroughputSettingsGetResults]:
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.ThroughputSettingsGetResults]]
+
+        _json = self._serialize.body(update_throughput_parameters, 'ThroughputSettingsUpdateParameters')
+
+        request = build_update_cassandra_view_throughput_request_initial(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            keyspace_name=keyspace_name,
+            view_name=view_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self._update_cassandra_view_throughput_initial.metadata['url'],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ThroughputSettingsGetResults', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    _update_cassandra_view_throughput_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views/{viewName}/throughputSettings/default"}  # type: ignore
+
+
+    @distributed_trace_async
+    async def begin_update_cassandra_view_throughput(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        keyspace_name: str,
+        view_name: str,
+        update_throughput_parameters: _models.ThroughputSettingsUpdateParameters,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ThroughputSettingsGetResults]:
+        """Update RUs per second of an Azure Cosmos DB Cassandra view.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
+        :param view_name: Cosmos DB view name.
+        :type view_name: str
+        :param update_throughput_parameters: The RUs per second of the parameters to provide for the
+         current Cassandra view.
+        :type update_throughput_parameters:
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either ThroughputSettingsGetResults or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ThroughputSettingsGetResults]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._update_cassandra_view_throughput_initial(  # type: ignore
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                keyspace_name=keyspace_name,
+                view_name=view_name,
+                update_throughput_parameters=update_throughput_parameters,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x,y,z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('ThroughputSettingsGetResults', pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+
+        if polling is True:
+            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(
+                lro_delay,
+                
+                
+                **kwargs
+        ))  # type: AsyncPollingMethod
+        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_update_cassandra_view_throughput.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views/{viewName}/throughputSettings/default"}  # type: ignore
+
+    async def _migrate_cassandra_view_to_autoscale_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        keyspace_name: str,
+        view_name: str,
+        **kwargs: Any
+    ) -> Optional[_models.ThroughputSettingsGetResults]:
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.ThroughputSettingsGetResults]]
+
+        
+        request = build_migrate_cassandra_view_to_autoscale_request_initial(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            keyspace_name=keyspace_name,
+            view_name=view_name,
+            api_version=api_version,
+            template_url=self._migrate_cassandra_view_to_autoscale_initial.metadata['url'],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ThroughputSettingsGetResults', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    _migrate_cassandra_view_to_autoscale_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views/{viewName}/throughputSettings/default/migrateToAutoscale"}  # type: ignore
+
+
+    @distributed_trace_async
+    async def begin_migrate_cassandra_view_to_autoscale(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        keyspace_name: str,
+        view_name: str,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ThroughputSettingsGetResults]:
+        """Migrate an Azure Cosmos DB Cassandra view from manual throughput to autoscale.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
+        :param view_name: Cosmos DB view name.
+        :type view_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either ThroughputSettingsGetResults or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ThroughputSettingsGetResults]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._migrate_cassandra_view_to_autoscale_initial(  # type: ignore
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                keyspace_name=keyspace_name,
+                view_name=view_name,
+                api_version=api_version,
+                cls=lambda x,y,z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('ThroughputSettingsGetResults', pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+
+        if polling is True:
+            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(
+                lro_delay,
+                
+                
+                **kwargs
+        ))  # type: AsyncPollingMethod
+        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_migrate_cassandra_view_to_autoscale.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views/{viewName}/throughputSettings/default/migrateToAutoscale"}  # type: ignore
+
+    async def _migrate_cassandra_view_to_manual_throughput_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        keyspace_name: str,
+        view_name: str,
+        **kwargs: Any
+    ) -> Optional[_models.ThroughputSettingsGetResults]:
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.ThroughputSettingsGetResults]]
+
+        
+        request = build_migrate_cassandra_view_to_manual_throughput_request_initial(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            keyspace_name=keyspace_name,
+            view_name=view_name,
+            api_version=api_version,
+            template_url=self._migrate_cassandra_view_to_manual_throughput_initial.metadata['url'],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ThroughputSettingsGetResults', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    _migrate_cassandra_view_to_manual_throughput_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views/{viewName}/throughputSettings/default/migrateToManualThroughput"}  # type: ignore
+
+
+    @distributed_trace_async
+    async def begin_migrate_cassandra_view_to_manual_throughput(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        keyspace_name: str,
+        view_name: str,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ThroughputSettingsGetResults]:
+        """Migrate an Azure Cosmos DB Cassandra view from autoscale to manual throughput.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
+        :param view_name: Cosmos DB view name.
+        :type view_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either ThroughputSettingsGetResults or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ThroughputSettingsGetResults]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._migrate_cassandra_view_to_manual_throughput_initial(  # type: ignore
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                keyspace_name=keyspace_name,
+                view_name=view_name,
+                api_version=api_version,
+                cls=lambda x,y,z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('ThroughputSettingsGetResults', pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+
+        if polling is True:
+            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(
+                lro_delay,
+                
+                
+                **kwargs
+        ))  # type: AsyncPollingMethod
+        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_migrate_cassandra_view_to_manual_throughput.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views/{viewName}/throughputSettings/default/migrateToManualThroughput"}  # type: ignore

@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.1 Python/3.7.12 (Darwin-21.5.0-x86_64-i386-64bit)
     method: POST
     uri: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
   response:
@@ -28,9 +28,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 01 Jun 2022 08:16:05 GMT
+      - Wed, 03 Aug 2022 09:14:52 GMT
       ms-cv:
-      - tpMBpgfL4k2T3OzJVpwslg.2.0
+      - BMxGIFuPyk69RodcGvUanw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -38,7 +38,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 916ms
+      - 209ms
     status:
       code: 201
       message: Created

@@ -7,12 +7,131 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._fluid_relay_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
+
+
+class CustomerManagedKeyEncryptionProperties(msrest.serialization.Model):
+    """All Customer-managed key encryption properties for the resource.
+
+    :ivar key_encryption_key_identity: All identity configuration for Customer-managed key settings
+     defining which identity should be used to auth to Key Vault.
+    :vartype key_encryption_key_identity:
+     ~azure.mgmt.fluidrelay.models.CustomerManagedKeyEncryptionPropertiesKeyEncryptionKeyIdentity
+    :ivar key_encryption_key_url: key encryption key Url, with or without a version. Ex:
+     https://contosovault.vault.azure.net/keys/contosokek/562a4bb76b524a1493a6afe8e536ee78 or
+     https://contosovault.vault.azure.net/keys/contosokek. Key auto rotation is enabled by providing
+     a key uri without version. Otherwise, customer is responsible for rotating the key. The
+     keyEncryptionKeyIdentity(either SystemAssigned or UserAssigned) should have permission to
+     access this key url.
+    :vartype key_encryption_key_url: str
+    """
+
+    _attribute_map = {
+        'key_encryption_key_identity': {'key': 'keyEncryptionKeyIdentity', 'type': 'CustomerManagedKeyEncryptionPropertiesKeyEncryptionKeyIdentity'},
+        'key_encryption_key_url': {'key': 'keyEncryptionKeyUrl', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        key_encryption_key_identity: Optional["_models.CustomerManagedKeyEncryptionPropertiesKeyEncryptionKeyIdentity"] = None,
+        key_encryption_key_url: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword key_encryption_key_identity: All identity configuration for Customer-managed key
+         settings defining which identity should be used to auth to Key Vault.
+        :paramtype key_encryption_key_identity:
+         ~azure.mgmt.fluidrelay.models.CustomerManagedKeyEncryptionPropertiesKeyEncryptionKeyIdentity
+        :keyword key_encryption_key_url: key encryption key Url, with or without a version. Ex:
+         https://contosovault.vault.azure.net/keys/contosokek/562a4bb76b524a1493a6afe8e536ee78 or
+         https://contosovault.vault.azure.net/keys/contosokek. Key auto rotation is enabled by providing
+         a key uri without version. Otherwise, customer is responsible for rotating the key. The
+         keyEncryptionKeyIdentity(either SystemAssigned or UserAssigned) should have permission to
+         access this key url.
+        :paramtype key_encryption_key_url: str
+        """
+        super(CustomerManagedKeyEncryptionProperties, self).__init__(**kwargs)
+        self.key_encryption_key_identity = key_encryption_key_identity
+        self.key_encryption_key_url = key_encryption_key_url
+
+
+class CustomerManagedKeyEncryptionPropertiesKeyEncryptionKeyIdentity(msrest.serialization.Model):
+    """All identity configuration for Customer-managed key settings defining which identity should be used to auth to Key Vault.
+
+    :ivar identity_type: Values can be SystemAssigned or UserAssigned. Known values are:
+     "SystemAssigned", "UserAssigned".
+    :vartype identity_type: str or ~azure.mgmt.fluidrelay.models.CmkIdentityType
+    :ivar user_assigned_identity_resource_id: user assigned identity to use for accessing key
+     encryption key Url. Ex:
+     /subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/:code:`<resource
+     group>`/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId. Mutually exclusive
+     with identityType systemAssignedIdentity.
+    :vartype user_assigned_identity_resource_id: str
+    """
+
+    _attribute_map = {
+        'identity_type': {'key': 'identityType', 'type': 'str'},
+        'user_assigned_identity_resource_id': {'key': 'userAssignedIdentityResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        identity_type: Optional[Union[str, "_models.CmkIdentityType"]] = None,
+        user_assigned_identity_resource_id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword identity_type: Values can be SystemAssigned or UserAssigned. Known values are:
+         "SystemAssigned", "UserAssigned".
+        :paramtype identity_type: str or ~azure.mgmt.fluidrelay.models.CmkIdentityType
+        :keyword user_assigned_identity_resource_id: user assigned identity to use for accessing key
+         encryption key Url. Ex:
+         /subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/:code:`<resource
+         group>`/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId. Mutually exclusive
+         with identityType systemAssignedIdentity.
+        :paramtype user_assigned_identity_resource_id: str
+        """
+        super(CustomerManagedKeyEncryptionPropertiesKeyEncryptionKeyIdentity, self).__init__(**kwargs)
+        self.identity_type = identity_type
+        self.user_assigned_identity_resource_id = user_assigned_identity_resource_id
+
+
+class EncryptionProperties(msrest.serialization.Model):
+    """All encryption configuration for a resource.
+
+    :ivar customer_managed_key_encryption: All Customer-managed key encryption properties for the
+     resource.
+    :vartype customer_managed_key_encryption:
+     ~azure.mgmt.fluidrelay.models.CustomerManagedKeyEncryptionProperties
+    """
+
+    _attribute_map = {
+        'customer_managed_key_encryption': {'key': 'customerManagedKeyEncryption', 'type': 'CustomerManagedKeyEncryptionProperties'},
+    }
+
+    def __init__(
+        self,
+        *,
+        customer_managed_key_encryption: Optional["_models.CustomerManagedKeyEncryptionProperties"] = None,
+        **kwargs
+    ):
+        """
+        :keyword customer_managed_key_encryption: All Customer-managed key encryption properties for
+         the resource.
+        :paramtype customer_managed_key_encryption:
+         ~azure.mgmt.fluidrelay.models.CustomerManagedKeyEncryptionProperties
+        """
+        super(EncryptionProperties, self).__init__(**kwargs)
+        self.customer_managed_key_encryption = customer_managed_key_encryption
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):
@@ -40,6 +159,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -57,9 +178,9 @@ class ErrorDetail(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~fluid_relay_management_client.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.fluidrelay.models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~fluid_relay_management_client.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.fluidrelay.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -82,6 +203,8 @@ class ErrorDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -93,8 +216,8 @@ class ErrorDetail(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~fluid_relay_management_client.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.fluidrelay.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -104,41 +227,15 @@ class ErrorResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["ErrorDetail"] = None,
+        error: Optional["_models.ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.fluidrelay.models.ErrorDetail
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
-
-
-class FluidRelayEndpoints(msrest.serialization.Model):
-    """The Fluid Relay endpoints for this server.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar orderer_endpoints: The Fluid Relay Orderer endpoints.
-    :vartype orderer_endpoints: list[str]
-    :ivar storage_endpoints: The Fluid Relay storage endpoints.
-    :vartype storage_endpoints: list[str]
-    """
-
-    _validation = {
-        'orderer_endpoints': {'readonly': True},
-        'storage_endpoints': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'orderer_endpoints': {'key': 'ordererEndpoints', 'type': '[str]'},
-        'storage_endpoints': {'key': 'storageEndpoints', 'type': '[str]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(FluidRelayEndpoints, self).__init__(**kwargs)
-        self.orderer_endpoints = None
-        self.storage_endpoints = None
 
 
 class Resource(msrest.serialization.Model):
@@ -172,10 +269,188 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class FluidRelayContainer(ProxyResource):
+    """A FluidRelay Container.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: System meta data for this resource, including creation and modification
+     information.
+    :vartype system_data: ~azure.mgmt.fluidrelay.models.SystemData
+    :ivar frs_tenant_id: The Fluid tenantId for this container.
+    :vartype frs_tenant_id: str
+    :ivar frs_container_id: The frsContainerId for this container.
+    :vartype frs_container_id: str
+    :ivar provisioning_state: Provision states for FluidRelay RP. Known values are: "Succeeded",
+     "Failed", "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.fluidrelay.models.ProvisioningState
+    :ivar creation_time: The creation time of this resource.
+    :vartype creation_time: ~datetime.datetime
+    :ivar last_access_time: Last time when user access this resource.
+    :vartype last_access_time: ~datetime.datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'frs_tenant_id': {'readonly': True},
+        'frs_container_id': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'creation_time': {'readonly': True},
+        'last_access_time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'frs_tenant_id': {'key': 'properties.frsTenantId', 'type': 'str'},
+        'frs_container_id': {'key': 'properties.frsContainerId', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
+        'last_access_time': {'key': 'properties.lastAccessTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(FluidRelayContainer, self).__init__(**kwargs)
+        self.system_data = None
+        self.frs_tenant_id = None
+        self.frs_container_id = None
+        self.provisioning_state = None
+        self.creation_time = None
+        self.last_access_time = None
+
+
+class FluidRelayContainerList(msrest.serialization.Model):
+    """Paged response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: A sequence of FluidRelay containers.
+    :vartype value: list[~azure.mgmt.fluidrelay.models.FluidRelayContainer]
+    :ivar next_link: A link to the next page of results, if any.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[FluidRelayContainer]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.FluidRelayContainer"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: A sequence of FluidRelay containers.
+        :paramtype value: list[~azure.mgmt.fluidrelay.models.FluidRelayContainer]
+        """
+        super(FluidRelayContainerList, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class FluidRelayEndpoints(msrest.serialization.Model):
+    """The Fluid Relay endpoints for this server.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar orderer_endpoints: The Fluid Relay Orderer endpoints.
+    :vartype orderer_endpoints: list[str]
+    :ivar storage_endpoints: The Fluid Relay storage endpoints.
+    :vartype storage_endpoints: list[str]
+    :ivar service_endpoints: The Fluid Relay service endpoints.
+    :vartype service_endpoints: list[str]
+    """
+
+    _validation = {
+        'orderer_endpoints': {'readonly': True},
+        'storage_endpoints': {'readonly': True},
+        'service_endpoints': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'orderer_endpoints': {'key': 'ordererEndpoints', 'type': '[str]'},
+        'storage_endpoints': {'key': 'storageEndpoints', 'type': '[str]'},
+        'service_endpoints': {'key': 'serviceEndpoints', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(FluidRelayEndpoints, self).__init__(**kwargs)
+        self.orderer_endpoints = None
+        self.storage_endpoints = None
+        self.service_endpoints = None
 
 
 class TrackedResource(Resource):
@@ -193,10 +468,10 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
@@ -221,6 +496,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -241,22 +522,27 @@ class FluidRelayServer(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     :ivar system_data: System meta data for this resource, including creation and modification
      information.
-    :vartype system_data: ~fluid_relay_management_client.models.SystemData
-    :param identity: The type of identity used for the resource.
-    :type identity: ~fluid_relay_management_client.models.Identity
+    :vartype system_data: ~azure.mgmt.fluidrelay.models.SystemData
+    :ivar identity: The type of identity used for the resource.
+    :vartype identity: ~azure.mgmt.fluidrelay.models.Identity
     :ivar frs_tenant_id: The Fluid tenantId for this server.
     :vartype frs_tenant_id: str
     :ivar fluid_relay_endpoints: The Fluid Relay Service endpoints for this server.
-    :vartype fluid_relay_endpoints: ~fluid_relay_management_client.models.FluidRelayEndpoints
-    :param provisioning_state: Provision states for FluidRelay RP. Possible values include:
-     "Succeeded", "Failed", "Canceled".
-    :type provisioning_state: str or ~fluid_relay_management_client.models.ProvisioningState
+    :vartype fluid_relay_endpoints: ~azure.mgmt.fluidrelay.models.FluidRelayEndpoints
+    :ivar provisioning_state: Provision states for FluidRelay RP. Known values are: "Succeeded",
+     "Failed", "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.fluidrelay.models.ProvisioningState
+    :ivar encryption: All encryption configuration for a resource.
+    :vartype encryption: ~azure.mgmt.fluidrelay.models.EncryptionProperties
+    :ivar storagesku: Sku of the storage associated with the resource. Known values are:
+     "standard", "basic".
+    :vartype storagesku: str or ~azure.mgmt.fluidrelay.models.StorageSKU
     """
 
     _validation = {
@@ -280,6 +566,8 @@ class FluidRelayServer(TrackedResource):
         'frs_tenant_id': {'key': 'properties.frsTenantId', 'type': 'str'},
         'fluid_relay_endpoints': {'key': 'properties.fluidRelayEndpoints', 'type': 'FluidRelayEndpoints'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
+        'storagesku': {'key': 'properties.storagesku', 'type': 'str'},
     }
 
     def __init__(
@@ -287,16 +575,36 @@ class FluidRelayServer(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["Identity"] = None,
-        provisioning_state: Optional[Union[str, "ProvisioningState"]] = None,
+        identity: Optional["_models.Identity"] = None,
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
+        encryption: Optional["_models.EncryptionProperties"] = None,
+        storagesku: Optional[Union[str, "_models.StorageSKU"]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword identity: The type of identity used for the resource.
+        :paramtype identity: ~azure.mgmt.fluidrelay.models.Identity
+        :keyword provisioning_state: Provision states for FluidRelay RP. Known values are: "Succeeded",
+         "Failed", "Canceled".
+        :paramtype provisioning_state: str or ~azure.mgmt.fluidrelay.models.ProvisioningState
+        :keyword encryption: All encryption configuration for a resource.
+        :paramtype encryption: ~azure.mgmt.fluidrelay.models.EncryptionProperties
+        :keyword storagesku: Sku of the storage associated with the resource. Known values are:
+         "standard", "basic".
+        :paramtype storagesku: str or ~azure.mgmt.fluidrelay.models.StorageSKU
+        """
         super(FluidRelayServer, self).__init__(tags=tags, location=location, **kwargs)
         self.system_data = None
         self.identity = identity
         self.frs_tenant_id = None
         self.fluid_relay_endpoints = None
         self.provisioning_state = provisioning_state
+        self.encryption = encryption
+        self.storagesku = storagesku
 
 
 class FluidRelayServerKeys(msrest.serialization.Model):
@@ -324,6 +632,8 @@ class FluidRelayServerKeys(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(FluidRelayServerKeys, self).__init__(**kwargs)
         self.key1 = None
         self.key2 = None
@@ -334,10 +644,10 @@ class FluidRelayServerList(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. A sequence of FluidRelay servers.
-    :type value: list[~fluid_relay_management_client.models.FluidRelayServer]
-    :param next_link: A link to the next page of results, if any.
-    :type next_link: str
+    :ivar value: Required. A sequence of FluidRelay servers.
+    :vartype value: list[~azure.mgmt.fluidrelay.models.FluidRelayServer]
+    :ivar next_link: A link to the next page of results, if any.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -352,10 +662,16 @@ class FluidRelayServerList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["FluidRelayServer"],
+        value: List["_models.FluidRelayServer"],
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. A sequence of FluidRelay servers.
+        :paramtype value: list[~azure.mgmt.fluidrelay.models.FluidRelayServer]
+        :keyword next_link: A link to the next page of results, if any.
+        :paramtype next_link: str
+        """
         super(FluidRelayServerList, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -364,27 +680,47 @@ class FluidRelayServerList(msrest.serialization.Model):
 class FluidRelayServerUpdate(msrest.serialization.Model):
     """The updatable properties of a Fluid Relay server.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param identity: The type of identity used for the resource.
-    :type identity: ~fluid_relay_management_client.models.Identity
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: The type of identity used for the resource.
+    :vartype identity: ~azure.mgmt.fluidrelay.models.Identity
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
+    :ivar encryption: All encryption configuration for a resource.
+    :vartype encryption: ~azure.mgmt.fluidrelay.models.EncryptionProperties
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'identity': {'key': 'identity', 'type': 'Identity'},
+        'location': {'key': 'location', 'type': 'str'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["Identity"] = None,
+        identity: Optional["_models.Identity"] = None,
+        location: Optional[str] = None,
+        encryption: Optional["_models.EncryptionProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword identity: The type of identity used for the resource.
+        :paramtype identity: ~azure.mgmt.fluidrelay.models.Identity
+        :keyword location: The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword encryption: All encryption configuration for a resource.
+        :paramtype encryption: ~azure.mgmt.fluidrelay.models.EncryptionProperties
+        """
         super(FluidRelayServerUpdate, self).__init__(**kwargs)
         self.tags = tags
         self.identity = identity
+        self.location = location
+        self.encryption = encryption
 
 
 class Identity(msrest.serialization.Model):
@@ -396,8 +732,12 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :param type: The identity type. Possible values include: "SystemAssigned", "None".
-    :type type: str or ~fluid_relay_management_client.models.ResourceIdentityType
+    :ivar type: The identity type. Known values are: "SystemAssigned", "UserAssigned",
+     "SystemAssigned, UserAssigned", "None".
+    :vartype type: str or ~azure.mgmt.fluidrelay.models.ResourceIdentityType
+    :ivar user_assigned_identities: The list of user identities associated with the resource.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.fluidrelay.models.UserAssignedIdentitiesValue]
     """
 
     _validation = {
@@ -409,31 +749,42 @@ class Identity(msrest.serialization.Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentitiesValue}'},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "ResourceIdentityType"]] = None,
+        type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentitiesValue"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: The identity type. Known values are: "SystemAssigned", "UserAssigned",
+         "SystemAssigned, UserAssigned", "None".
+        :paramtype type: str or ~azure.mgmt.fluidrelay.models.ResourceIdentityType
+        :keyword user_assigned_identities: The list of user identities associated with the resource.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.fluidrelay.models.UserAssignedIdentitiesValue]
+        """
         super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
+        self.user_assigned_identities = user_assigned_identities
 
 
 class OperationDisplay(msrest.serialization.Model):
     """The object that represents the operation.
 
-    :param provider: Service provider: Microsoft.FluidRelay.
-    :type provider: str
-    :param resource: Type on which the operation is performed, e.g., 'servers'.
-    :type resource: str
-    :param operation: Operation type, e.g., read, write, delete, etc.
-    :type operation: str
-    :param description: Description of the operation, e.g., 'Write confluent'.
-    :type description: str
+    :ivar provider: Service provider: Microsoft.FluidRelay.
+    :vartype provider: str
+    :ivar resource: Type on which the operation is performed, e.g., 'servers'.
+    :vartype resource: str
+    :ivar operation: Operation type, e.g., read, write, delete, etc.
+    :vartype operation: str
+    :ivar description: Description of the operation, e.g., 'Write confluent'.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -452,6 +803,16 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Service provider: Microsoft.FluidRelay.
+        :paramtype provider: str
+        :keyword resource: Type on which the operation is performed, e.g., 'servers'.
+        :paramtype resource: str
+        :keyword operation: Operation type, e.g., read, write, delete, etc.
+        :paramtype operation: str
+        :keyword description: Description of the operation, e.g., 'Write confluent'.
+        :paramtype description: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -462,10 +823,10 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """Result of GET request to list FluidRelay operations.
 
-    :param value: List of FluidRelay operations supported by the Microsoft.FluidRelay provider.
-    :type value: list[~fluid_relay_management_client.models.OperationResult]
-    :param next_link: URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: List of FluidRelay operations supported by the Microsoft.FluidRelay provider.
+    :vartype value: list[~azure.mgmt.fluidrelay.models.OperationResult]
+    :ivar next_link: URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -476,10 +837,16 @@ class OperationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["OperationResult"]] = None,
+        value: Optional[List["_models.OperationResult"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of FluidRelay operations supported by the Microsoft.FluidRelay provider.
+        :paramtype value: list[~azure.mgmt.fluidrelay.models.OperationResult]
+        :keyword next_link: URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -488,12 +855,12 @@ class OperationListResult(msrest.serialization.Model):
 class OperationResult(msrest.serialization.Model):
     """A FluidRelay REST API operation.
 
-    :param name: Operation name: {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The object that represents the operation.
-    :type display: ~fluid_relay_management_client.models.OperationDisplay
-    :param is_data_action: Indicates whether the operation is a data action.
-    :type is_data_action: bool
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.fluidrelay.models.OperationDisplay
+    :ivar is_data_action: Indicates whether the operation is a data action.
+    :vartype is_data_action: bool
     """
 
     _attribute_map = {
@@ -506,10 +873,18 @@ class OperationResult(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         is_data_action: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword name: Operation name: {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.fluidrelay.models.OperationDisplay
+        :keyword is_data_action: Indicates whether the operation is a data action.
+        :paramtype is_data_action: bool
+        """
         super(OperationResult, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -521,8 +896,8 @@ class RegenerateKeyRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_name: Required. The key to regenerate. Possible values include: "key1", "key2".
-    :type key_name: str or ~fluid_relay_management_client.models.KeyName
+    :ivar key_name: Required. The key to regenerate. Known values are: "key1", "key2".
+    :vartype key_name: str or ~azure.mgmt.fluidrelay.models.KeyName
     """
 
     _validation = {
@@ -536,9 +911,13 @@ class RegenerateKeyRequest(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        key_name: Union[str, "KeyName"],
+        key_name: Union[str, "_models.KeyName"],
         **kwargs
     ):
+        """
+        :keyword key_name: Required. The key to regenerate. Known values are: "key1", "key2".
+        :paramtype key_name: str or ~azure.mgmt.fluidrelay.models.KeyName
+        """
         super(RegenerateKeyRequest, self).__init__(**kwargs)
         self.key_name = key_name
 
@@ -546,20 +925,20 @@ class RegenerateKeyRequest(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~fluid_relay_management_client.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~fluid_relay_management_client.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.fluidrelay.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.fluidrelay.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -575,13 +954,29 @@ class SystemData(msrest.serialization.Model):
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.fluidrelay.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.fluidrelay.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -589,3 +984,35 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_by = last_modified_by
         self.last_modified_by_type = last_modified_by_type
         self.last_modified_at = last_modified_at
+
+
+class UserAssignedIdentitiesValue(msrest.serialization.Model):
+    """UserAssignedIdentitiesValue.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(UserAssignedIdentitiesValue, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
