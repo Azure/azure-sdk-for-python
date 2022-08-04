@@ -3,10 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# cSpell:ignore aiounittest
 import aiounittest
 import datetime
 
-from azure.core.credentials import AccessToken
 from azure.communication.rooms.aio import RoomsClient
 from azure.communication.rooms import (
     RoomParticipant,

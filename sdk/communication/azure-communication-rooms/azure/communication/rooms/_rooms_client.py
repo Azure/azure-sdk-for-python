@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 import uuid
 from azure.core.tracing.decorator import distributed_trace
 from azure.communication.rooms._models import (
@@ -98,7 +98,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         valid_from: Optional[datetime] = None,
         valid_until: Optional[datetime] = None,
         room_join_policy: Optional[RoomJoinPolicy] = None,
-        participants: Optional[list[RoomParticipant]]=None,
+        participants: Optional[List[RoomParticipant]]=None,
         **kwargs
     ) -> CommunicationRoom:
         """Create a new room.
@@ -112,7 +112,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :param room_join_policy: (Optional)The join policy of the room.
         :type room_join_policy: (Optional)RoomJoinPolicy
         :param participants: (Optional) Collection of identities invited to the room.
-        :type participants: (Optional)list[RoomParticipant]
+        :type participants: (Optional)List[RoomParticipant]
         :returns: Created room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -160,7 +160,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         valid_from: Optional[datetime] = None,
         valid_until: Optional[datetime] = None,
         room_join_policy: Optional[RoomJoinPolicy] = None,
-        participants: Optional[list[RoomParticipant]] = None,
+        participants: Optional[List[RoomParticipant]] = None,
         **kwargs
     ) -> CommunicationRoom:
         """Update a valid room's attributes
@@ -176,7 +176,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :param room_join_policy: (Optional)The join policy of the room.
         :type room_join_policy: (Optional)RoomJoinPolicy
         :param participants: (Optional) Collection of identities invited to the room.
-        :type participants: (Optional)list[RoomParticipant]
+        :type participants: (Optional)List[RoomParticipant]
         :returns: Updated room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -216,14 +216,14 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         self,
         *,
         room_id: str,
-        participants: list[RoomParticipant],
+        participants: List[RoomParticipant],
         **kwargs
     ) -> None:
         """Add participants to a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
         :param participants: Required. Collection of identities invited to the room.
-        :type participants: list[RoomParticipant]
+        :type participants: List[RoomParticipant]
         :return: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -238,14 +238,14 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         self,
         *,
         room_id: str,
-        participants: list[RoomParticipant],
+        participants: List[RoomParticipant],
         **kwargs
     ) -> None:
         """Update participants to a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
         :param participants: Required. Collection of identities invited to the room.
-        :type participants: list[RoomParticipant]
+        :type participants: List[RoomParticipant]
         :return: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -260,14 +260,14 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         self,
         *,
         room_id: str,
-        communication_identifiers: list[CommunicationIdentifier],
+        communication_identifiers: List[CommunicationIdentifier],
         **kwargs
     ) -> None:
         """Remove participants from a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
         :param communication_identifiers: Required. Collection of identities invited to the room.
-        :type communication_identifiers: list[CommunicationIdentifier]
+        :type communication_identifiers: List[CommunicationIdentifier]
         :return: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """

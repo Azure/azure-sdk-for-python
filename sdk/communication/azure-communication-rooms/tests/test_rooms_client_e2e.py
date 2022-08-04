@@ -152,7 +152,7 @@ class RoomsClientTest(CommunicationTestCase):
         # delete created room
         self.rooms_client.delete_room(room_id=response.id)
 
-    def test_create_room_incorretMri(self):
+    def test_create_room_incorrectMri(self):
         # room attributes
         participants = [
             RoomParticipant(
@@ -430,7 +430,7 @@ class RoomsClientTest(CommunicationTestCase):
 
         self.assertListEqual(participants, update_response.participants)
 
-    def test_add_participants_incorretMri(self):
+    def test_add_participants_incorrectMri(self):
         # room with no attributes
         create_response = self.rooms_client.create_room()
 

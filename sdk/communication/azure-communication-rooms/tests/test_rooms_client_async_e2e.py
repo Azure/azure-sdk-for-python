@@ -165,7 +165,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until)
 
     @AsyncCommunicationTestCase.await_prepared_test
-    async def test_create_room_incorretMri_async(self):
+    async def test_create_room_incorrectMri_async(self):
         # room attributes
         participants = [
             RoomParticipant(
@@ -467,7 +467,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             self.assertListEqual(participants, update_response.participants)
 
     @AsyncCommunicationTestCase.await_prepared_test
-    async def test_add_participants_incorretMri_async(self):
+    async def test_add_participants_incorrectMri_async(self):
         # room with no attributes
         async with self.rooms_client:
             create_response = await self.rooms_client.create_room()

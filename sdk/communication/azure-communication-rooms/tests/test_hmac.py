@@ -17,6 +17,8 @@ class HMACTest(AzureTestCase):
         auth_policy = HMACCredentialsPolicy("contoso.communicationservices.azure.com", "pw==")
 
         sha_val = auth_policy._compute_hmac("banana")
+
+        #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="unit test with fake keys")]
         assert sha_val == "88EC05aAS9iXnaimtNO78JLjiPtfWryQB/5QYEzEsu8="
 
     def test_correct_utf16_hmac(self):
@@ -24,4 +26,5 @@ class HMACTest(AzureTestCase):
 
         sha_val = auth_policy._compute_hmac(u"😀")
 
-        assert sha_val == "1rudJKjn2Zi+3hRrBG29wIF6pD6YyAeQR1ZcFtXoKAU=" 
+        #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="unit test with fake keys")]
+        assert sha_val == "1rudJKjn2Zi+3hRrBG29wIF6pD6YyAeQR1ZcFtXoKAU="
