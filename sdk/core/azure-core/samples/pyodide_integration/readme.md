@@ -5,7 +5,7 @@
 Once you have set up your Azure Resources and your `.env` file, navigate to the `/sdk/core/azure-core`. Make a wheel of core by running
 
 ```bash
-python setup.py bdist-wheel
+python setup.py bdist_wheel
 ```
 
 and run

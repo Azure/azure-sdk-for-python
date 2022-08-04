@@ -64,9 +64,9 @@ class TestPyodideTransportClass:
             ("js", mock_js_module),
         )
         with mock.patch.dict(sys.modules, patch_dict):
-            import azure.core.pipeline.transport._pyodide
+            import azure.core.pipeline.transport
 
-            yield azure.core.pipeline.transport._pyodide
+            yield azure.core.pipeline.transport
 
     @pytest.fixture()
     def pipeline(self, transport):
