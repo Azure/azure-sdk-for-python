@@ -14,7 +14,9 @@ parameters:
   - name: Artifacts
     type: object
     default: []
-
+  - name: DevFeedName
+    type: string
+    default: 'public/azure-sdk-for-python'
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
 #     eng/pipelines/templates/jobs/ci.yml
