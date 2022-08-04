@@ -123,20 +123,21 @@
         "local_network_gateways": "LocalNetworkGatewaysOperations"
     },
     "operation_mixins": {
-        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
-        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"local\": {\".\": [[\"models\", \"_models\"]]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"local\": {\"..\": [[\"models\", \"_models\"]]}}}",
         "operations": {
             "check_dns_name_availability" : {
                 "sync": {
-                    "signature": "def check_dns_name_availability(\n    self,\n    location,  # type: str\n    domain_name_label=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.DnsNameAvailabilityResult\"\n",
-                    "doc": "\"\"\"Checks whether a domain name in the cloudapp.net zone is available for use.\n\n:param location: The location of the domain name.\n:type location: str\n:param domain_name_label: The domain name to be verified. It must conform to the following\n regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$. Default value is None.\n:type domain_name_label: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DnsNameAvailabilityResult, or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2016_12_01.models.DnsNameAvailabilityResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def check_dns_name_availability(\n    self,\n    location,  # type: str\n    domain_name_label=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e _models.DnsNameAvailabilityResult\n",
+                    "doc": "\"\"\"Checks whether a domain name in the cloudapp.net zone is available for use.\n\n:param location: The location of the domain name.\n:type location: str\n:param domain_name_label: The domain name to be verified. It must conform to the following\n regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$. Default value is None.\n:type domain_name_label: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DnsNameAvailabilityResult, or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2016_12_01.models.DnsNameAvailabilityResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "location, domain_name_label, **kwargs"
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def check_dns_name_availability(\n    self,\n    location: str,\n    domain_name_label: Optional[str] = None,\n    **kwargs: Any\n) -\u003e \"_models.DnsNameAvailabilityResult\":\n",
-                    "doc": "\"\"\"Checks whether a domain name in the cloudapp.net zone is available for use.\n\n:param location: The location of the domain name.\n:type location: str\n:param domain_name_label: The domain name to be verified. It must conform to the following\n regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$. Default value is None.\n:type domain_name_label: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DnsNameAvailabilityResult, or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2016_12_01.models.DnsNameAvailabilityResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": "location, domain_name_label"
+                    "signature": "async def check_dns_name_availability(\n    self,\n    location: str,\n    domain_name_label: Optional[str] = None,\n    **kwargs: Any\n) -\u003e _models.DnsNameAvailabilityResult:\n",
+                    "doc": "\"\"\"Checks whether a domain name in the cloudapp.net zone is available for use.\n\n:param location: The location of the domain name.\n:type location: str\n:param domain_name_label: The domain name to be verified. It must conform to the following\n regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$. Default value is None.\n:type domain_name_label: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DnsNameAvailabilityResult, or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2016_12_01.models.DnsNameAvailabilityResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "location, domain_name_label, **kwargs"
+                }
             }
         }
     }
