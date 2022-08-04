@@ -112,7 +112,7 @@ def process_requires(setup_py_path):
             logging.info("Updating version {0} in requirement {1} to dev build version".format(version, old_req))
             # to properly replace the version, we must replace the entire version, not a partial piece of it
             rx = r'{}(((a|b|rc)\d+)?(\.post\d+)?)?'.format(base_version)
-            new_req = re.sub(rx, "{}{}".format(base_version, DEV_BUILD_IDENTIFIER), str(req), flags=re.IGNORECASE)
+            new_req = re.sub(rx, "{}{}1".format(base_version, DEV_BUILD_IDENTIFIER), str(req), flags=re.IGNORECASE)
             logging.info("New requirement for package {0}: {1}".format(pkg_name, new_req))
             requirement_to_update[old_req] = new_req
 
