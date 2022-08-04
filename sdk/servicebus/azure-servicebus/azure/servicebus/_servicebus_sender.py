@@ -273,6 +273,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         # type: (Union[ServiceBusMessage, ServiceBusMessageBatch], Optional[float], Exception) -> None
         self._open()
         try:
+            # TODO This is not batch message sending?
             if isinstance(message, ServiceBusMessageBatch):
                 for batch_message in message._messages: # pylint:disable=protected-access
                     self._handler.send_message(batch_message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout) # pylint:disable=line-too-long, protected-access

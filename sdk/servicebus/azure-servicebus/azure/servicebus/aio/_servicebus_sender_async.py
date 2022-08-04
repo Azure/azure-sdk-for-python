@@ -8,10 +8,11 @@ import datetime
 import warnings
 from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
 
-import uamqp
-from uamqp import SendClientAsync, types
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
+from .._pyamqp.aio import SendClientAsync
+from .._pyamqp.utils import amqp_long_value, amqp_array_value
+from .._pyamqp.error import MessageException
 from .._common.message import (
     ServiceBusMessage,
     ServiceBusMessageBatch,
@@ -24,12 +25,18 @@ from .._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
     MGMT_REQUEST_SEQUENCE_NUMBERS,
     SPAN_NAME_SCHEDULE,
+    MAX_MESSAGE_LENGTH_BYTES
 )
 from .._common import mgmt_handlers
 from .._common.utils import (
     transform_messages_if_needed,
     send_trace_context_manager,
     trace_message,
+)
+from ..exceptions import (
+    OperationTimeoutError,
+    _ServiceBusErrorPolicy,
+    _create_servicebus_exception
 )
 from ._async_utils import create_authentication
 
@@ -162,15 +169,25 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return cls(**constructor_args)
 
     def _create_handler(self, auth):
+        custom_endpoint_address = self._config.custom_endpoint_address # pylint:disable=protected-access
+        transport_type = self._config.transport_type # pylint:disable=protected-access
+        hostname = self.fully_qualified_namespace
+        if transport_type.name == 'AmqpOverWebsocket':
+            hostname += '/$servicebus/websocket/'
+            if custom_endpoint_address:
+                custom_endpoint_address += '/$servicebus/websocket/'
+
         self._handler = SendClientAsync(
+            hostname,
             self._entity_uri,
             auth=auth,
-            debug=self._config.logging_enable,
+            network_trace=self._config.logging_enable,
             properties=self._properties,
-            error_policy=self._error_policy,
+            retry_policy=self._error_policy,
             client_name=self._name,
             keep_alive_interval=self._config.keep_alive,
-            encoding=self._config.encoding,
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy
         )
 
     async def _open(self):
@@ -187,8 +204,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 await asyncio.sleep(0.05)
             self._running = True
             self._max_message_size_on_link = (
-                self._handler.message_handler._link.peer_max_message_size
-                or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
+                self._handler._link.remote_max_message_size
+                or MAX_MESSAGE_LENGTH_BYTES
             )
         except:
             await self._close_handler()
@@ -196,12 +213,17 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
     async def _send(self, message, timeout=None, last_exception=None):
         await self._open()
-        default_timeout = self._handler._msg_timeout  # pylint: disable=protected-access
         try:
-            self._set_msg_timeout(timeout, last_exception)
-            await self._handler.send_message_async(message.message)
-        finally:  # reset the timeout of the handler back to the default value
-            self._set_msg_timeout(default_timeout, None)
+            # TODO This is not batch message sending?
+            if isinstance(message, ServiceBusMessageBatch):
+                for batch_message in message._messages: # pylint:disable=protected-access
+                    self._handler.send_message(batch_message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout) # pylint:disable=line-too-long, protected-access
+            else:
+                self._handler.send_message(message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout) # pylint:disable=protected-access
+        except TimeoutError:
+            raise OperationTimeoutError(message="Send operation timed out")
+        except MessageException as e:
+            raise _create_servicebus_exception(_LOGGER, e)
 
     async def schedule_messages(
         self,
@@ -289,12 +311,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         if isinstance(sequence_numbers, int):
-            numbers = [types.AMQPLong(sequence_numbers)]
+            numbers = [amqp_long_value(sequence_numbers)]
         else:
-            numbers = [types.AMQPLong(s) for s in sequence_numbers]
+            numbers = [amqp_long_value(s) for s in sequence_numbers]
         if len(numbers) == 0:
             return None  # no-op on empty list.
-        request_body = {MGMT_REQUEST_SEQUENCE_NUMBERS: types.AMQPArray(numbers)}
+        request_body = {MGMT_REQUEST_SEQUENCE_NUMBERS: amqp_array_value(numbers)}
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
             request_body,
@@ -363,13 +385,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
             if send_span:
                 await self._add_span_request_attributes(send_span)
-
-            await self._do_retryable_operation(
-                self._send,
+            await self._send(
                 message=obj_message,
-                timeout=timeout,
-                operation_requires_timeout=True,
-                require_last_exception=True,
+                timeout=timeout
             )
 
     async def create_message_batch(

@@ -11,9 +11,6 @@ import uuid
 import pytest
 
 collect_ignore = []
-# Skip async for now
-collect_ignore.append("tests/async_tests")
-collect_ignore.append("samples/async_samples")
 
 # Only run stress tests on request.
 if not any([arg.startswith('test_stress') or arg.endswith('StressTest') for arg in sys.argv]):

@@ -6,8 +6,9 @@ from typing import Any, Union, Optional, TYPE_CHECKING
 import logging
 from weakref import WeakSet
 from typing_extensions import Literal
+import certifi
 
-import uamqp
+from .._pyamqp.aio import Connection
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 from .._base_handler import _parse_conn_str
@@ -69,6 +70,14 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
     :keyword retry_mode: The delay behavior between retry attempts. Supported values are "fixed" or "exponential",
      where default is "exponential".
     :paramtype retry_mode: str
+    :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+     the Service Bus service, allowing network requests to be routed through any application gateways or
+     other paths needed for the host environment. Default is None.
+     The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+     If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
+    :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+     authenticate the identity of the connection endpoint.
+     Default is None in which case `certifi.where()` will be used.
 
     .. admonition:: Example:
 
@@ -115,6 +124,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
         self._connection_sharing = False
         self._handlers = WeakSet()  # type: WeakSet
+        self._custom_endpoint_address = kwargs.get('custom_endpoint_address')
+        self._connection_verify = kwargs.get("connection_verify")
 
     async def __aenter__(self):
         if self._connection_sharing:
@@ -126,10 +137,14 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
 
     async def _create_uamqp_connection(self):
         auth = await create_authentication(self)
-        self._connection = uamqp.ConnectionAsync(
-            hostname=self.fully_qualified_namespace,
-            sasl=auth,
-            debug=self._config.logging_enable,
+        self._connection = self._connection = Connection(
+            endpoint=self.fully_qualified_namespace,
+            sasl_credential=auth.sasl,
+            network_trace=self._config.logging_enable,
+            custom_endpoint_address=self._custom_endpoint_address,
+            ssl={'ca_certs':self._connection_verify or certifi.where()},
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy,
         )
 
     @classmethod
@@ -165,6 +180,14 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
          where default is 'exponential'.
         :paramtype retry_mode: str
+        :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+         the Service Bus service, allowing network requests to be routed through any application gateways or
+         other paths needed for the host environment. Default is None.
+         The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+         If port is not specified in the custom_endpoint_address, by default port 443 will be used.
+        :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+         authenticate the identity of the connection endpoint.
+         Default is None in which case `certifi.where()` will be used.
         :rtype: ~azure.servicebus.aio.ServiceBusClient
 
         .. admonition:: Example:
@@ -214,7 +237,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self._handlers.clear()
 
         if self._connection_sharing and self._connection:
-            await self._connection.destroy_async()
+            await self._connection.close()
 
     def get_queue_sender(self, queue_name: str, **kwargs: Any) -> ServiceBusSender:
         """Get ServiceBusSender for the specific queue.
@@ -253,6 +276,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
             **kwargs
         )
         self._handlers.add(handler)
@@ -361,6 +386,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             max_wait_time=max_wait_time,
             auto_lock_renewer=auto_lock_renewer,
             prefetch_count=prefetch_count,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
             **kwargs
         )
         self._handlers.add(handler)
@@ -402,6 +429,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
             **kwargs
         )
         self._handlers.add(handler)
@@ -510,6 +539,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
                 prefetch_count=prefetch_count,
+                custom_endpoint_address=self._custom_endpoint_address,
+                connection_verify=self._connection_verify,
                 **kwargs
             )
         except ValueError:

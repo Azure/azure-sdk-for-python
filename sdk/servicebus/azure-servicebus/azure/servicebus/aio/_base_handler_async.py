@@ -8,9 +8,8 @@ import uuid
 import time
 from typing import TYPE_CHECKING, Any, Callable, Optional, Dict, Union
 
-import uamqp
-from uamqp import compat
-from uamqp.message import MessageProperties
+from .._pyamqp.utils import generate_sas_token, amqp_string_value
+from .._pyamqp.message import Message, Properties
 
 from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 
@@ -323,29 +322,26 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         if keep_alive_associated_link:
             try:
                 application_properties = {
-                    ASSOCIATEDLINKPROPERTYNAME: self._handler.message_handler.name
+                    ASSOCIATEDLINKPROPERTYNAME: self._handler._link.name  # pylint: disable=protected-access
                 }
             except AttributeError:
                 pass
-
-        mgmt_msg = uamqp.Message(
-            body=message,
-            properties=MessageProperties(
-                reply_to=self._mgmt_target, encoding=self._config.encoding, **kwargs
-            ),
+        mgmt_msg = Message(
+            value=message,
+            properties=Properties(reply_to=self._mgmt_target, **kwargs),
             application_properties=application_properties,
         )
         try:
-            return await self._handler.mgmt_request_async(
+            status, description, response = await self._handler.mgmt_request_async(
                 mgmt_msg,
-                mgmt_operation,
-                op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
+                operation=amqp_string_value(mgmt_operation),
+                operation_type=amqp_string_value(MGMT_REQUEST_OP_TYPE_ENTITY_MGMT),
                 node=self._mgmt_target.encode(self._config.encoding),
-                timeout=timeout * 1000 if timeout else None,
-                callback=callback,
+                timeout=timeout,  # TODO: check if this should be seconds * 1000 if timeout else None,
             )
+            return callback(status, response, description)
         except Exception as exp:  # pylint: disable=broad-except
-            if isinstance(exp, compat.TimeoutException):
+            if isinstance(exp, TimeoutError): #TODO: was compat.TimeoutException
                 raise OperationTimeoutError(error=exp)
             raise
 
@@ -355,7 +351,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any
         return await self._do_retryable_operation(
             self._mgmt_request_response,
-            mgmt_operation=mgmt_operation,
+            mgmt_operation=mgmt_operation.decode("UTF-8"),
             message=message,
             callback=callback,
             timeout=timeout,
