@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+* Python 3.6 is no longer supported. Please use Python version 3.7 or later.
 
 ## 1.1.0b1 (2022-05-10)
 
