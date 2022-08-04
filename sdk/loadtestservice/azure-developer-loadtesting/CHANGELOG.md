@@ -2,6 +2,7 @@
 
 ## 1.0.0b1 (2022-07-28)
 
+### Features Added
 - Initial version
 
 ## 1.0.0b2 (2022-08-04)
