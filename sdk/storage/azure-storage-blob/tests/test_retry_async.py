@@ -482,6 +482,7 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
             return func(*args, **kwargs)
         return wrapper
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_streaming_retry_async(self, storage_account_name, storage_account_key):
