@@ -19,9 +19,9 @@ from ..constants import (
     Role
 )
 from ..endpoints import Source, Target
-from ._management_link_async import ManagementLink
 from ._sender_async import SenderLink
 from ._receiver_async import ReceiverLink
+from ._management_link_async import ManagementLink
 from ..performatives import (
     BeginFrame,
     EndFrame,
@@ -97,7 +97,6 @@ class Session(object):
         previous_state = self.state
         self.state = new_state
         _LOGGER.info("Session state changed: %r -> %r", previous_state, new_state, extra=self.network_trace_params)
-
         futures = []
         for link in self.links.values():
             futures.append(asyncio.ensure_future(link._on_session_state_change()))
@@ -139,12 +138,12 @@ class Session(object):
     async def _incoming_begin(self, frame):
         if self.network_trace:
             _LOGGER.info("<- %r", BeginFrame(*frame), extra=self.network_trace_params)
-        self.handle_max = frame[4]
-        self.next_incoming_id = frame[1]
-        self.remote_incoming_window = frame[2]
-        self.remote_outgoing_window = frame[3]
+        self.handle_max = frame[4]  # handle_max
+        self.next_incoming_id = frame[1]  # next_outgoing_id
+        self.remote_incoming_window = frame[2]  # incoming_window
+        self.remote_outgoing_window = frame[3]  # outgoing_window
         if self.state == SessionState.BEGIN_SENT:
-            self.remote_channel = frame[0]
+            self.remote_channel = frame[0]  # remote_channel
             await self._set_state(SessionState.MAPPED)
         elif self.state == SessionState.UNMAPPED:
             await self._set_state(SessionState.BEGIN_RCVD)
@@ -163,6 +162,7 @@ class Session(object):
         if self.state not in [SessionState.END_RCVD, SessionState.END_SENT, SessionState.DISCARDING]:
             await self._set_state(SessionState.END_RCVD)
             # TODO: Clean up all links
+            # TODO: handling error
             await self._outgoing_end()
         await self._set_state(SessionState.UNMAPPED)
 
@@ -171,11 +171,11 @@ class Session(object):
 
     async def _incoming_attach(self, frame):
         try:
-            self._input_handles[frame[1]] = self.links[frame[0].decode('utf-8')]
+            self._input_handles[frame[1]] = self.links[frame[0].decode('utf-8')]  # name and handle
             await self._input_handles[frame[1]]._incoming_attach(frame)
         except KeyError:
             outgoing_handle = self._get_next_output_handle()  # TODO: catch max-handles error
-            if frame[2] == Role.Sender:
+            if frame[2] == Role.Sender:  # role
                 new_link = ReceiverLink.from_incoming_frame(self, outgoing_handle, frame)
             else:
                 new_link = SenderLink.from_incoming_frame(self, outgoing_handle, frame)
@@ -202,11 +202,11 @@ class Session(object):
     async def _incoming_flow(self, frame):
         if self.network_trace:
             _LOGGER.info("<- %r", FlowFrame(*frame), extra=self.network_trace_params)
-        self.next_incoming_id = frame[2]
-        remote_incoming_id = frame[0] or self.next_outgoing_id  # TODO "initial-outgoing-id"
-        self.remote_incoming_window = remote_incoming_id + frame[1] - self.next_outgoing_id
-        self.remote_outgoing_window = frame[3]
-        if frame[4] is not None:
+        self.next_incoming_id = frame[2]  # next_outgoing_id
+        remote_incoming_id = frame[0] or self.next_outgoing_id  #  next_incoming_id  TODO "initial-outgoing-id"
+        self.remote_incoming_window = remote_incoming_id + frame[1] - self.next_outgoing_id  # incoming_window
+        self.remote_outgoing_window = frame[3]  # outgoing_window
+        if frame[4] is not None:  # handle
             await self._input_handles[frame[4]]._incoming_flow(frame)
         else:
             futures = []
@@ -221,7 +221,6 @@ class Session(object):
         if self.remote_incoming_window <= 0:
             delivery.transfer_state = SessionTransferState.BUSY
         else:
-
             payload = delivery.frame['payload']
             payload_size = len(payload)
 
@@ -277,6 +276,7 @@ class Session(object):
             self.next_outgoing_id += 1
             self.remote_incoming_window -= 1
             self.outgoing_window -= 1
+            # TODO: We should probably handle an error at the connection and update state accordingly
             delivery.transfer_state = SessionTransferState.OKAY
 
     async def _incoming_transfer(self, frame):
@@ -284,7 +284,7 @@ class Session(object):
         self.remote_outgoing_window -= 1
         self.incoming_window -= 1
         try:
-            await self._input_handles[frame[0]]._incoming_transfer(frame)
+            await self._input_handles[frame[0]]._incoming_transfer(frame)  # handle
         except KeyError:
             pass  #TODO: "unattached handle"
         if self.incoming_window == 0:
@@ -295,6 +295,8 @@ class Session(object):
         await self._connection._process_outgoing_frame(self.channel, frame)
 
     async def _incoming_disposition(self, frame):
+        if self.network_trace:
+            _LOGGER.info("<- %r", DispositionFrame(*frame), extra=self.network_trace_params)
         futures = []
         for link in self._input_handles.values():
             asyncio.ensure_future(link._incoming_disposition(frame))
@@ -305,7 +307,7 @@ class Session(object):
 
     async def _incoming_detach(self, frame):
         try:
-            link = self._input_handles[frame[0]]
+            link = self._input_handles[frame[0]]  # handle
             await link._incoming_detach(frame)
             # if link._is_closed:  TODO
             #     self.links.pop(link.name, None)
@@ -339,7 +341,7 @@ class Session(object):
             raise ValueError("Connection has been configured to not allow piplined-open. Please set 'wait' parameter.")
 
     async def end(self, error=None, wait=False):
-        # type: (Optional[AMQPError]) -> None
+        # type: (Optional[AMQPError], bool) -> None
         try:
             if self.state not in [SessionState.UNMAPPED, SessionState.DISCARDING]:
                 await self._outgoing_end(error=error)

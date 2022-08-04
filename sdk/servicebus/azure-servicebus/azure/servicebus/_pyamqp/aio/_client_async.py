@@ -10,12 +10,14 @@
 import asyncio
 import collections.abc
 import logging
+from typing import Dict, Literal, Optional, Tuple, Union, overload
 import uuid
 import time
 import queue
 import certifi
 from functools import partial
 
+from ..outcomes import Accepted, Modified, Received, Rejected, Released
 from ._connection_async import Connection
 from ._management_operation_async import ManagementOperation
 from ._receiver_async import ReceiverLink
@@ -38,6 +40,7 @@ from ..constants import (
     AUTH_TYPE_CBS,
 )
 from ..error import (
+    AMQPError,
     ErrorResponse,
     ErrorCondition,
     AMQPException,
@@ -175,7 +178,7 @@ class AMQPClientAsync(AMQPClientSync):
                     absolute_timeout -= (end_time - start_time)
         raise retry_settings['history'][-1]
 
-    async def open_async(self):
+    async def open_async(self, connection=None):
         """Asynchronously open the client. The client can create a new Connection
         or an existing Connection can be passed in. This existing Connection
         may have an existing CBS authentication Session, which will be
@@ -184,12 +187,15 @@ class AMQPClientAsync(AMQPClientSync):
 
         :param connection: An existing Connection that may be shared between
          multiple clients.
-        :type connetion: ~uamqp.async_ops.connection_async.ConnectionAsync
+        :type connetion: ~pyamqp.aio.Connection
         """
         # pylint: disable=protected-access
         if self._session:
             return  # already open.
         _logger.debug("Opening client connection.")
+        if connection:
+            self._connection = connection
+            self._external_connection = True
         if not self._connection:
             self._connection = Connection(
                 "amqps://" + self._hostname,
@@ -310,7 +316,6 @@ class AMQPClientAsync(AMQPClientSync):
         try:
             mgmt_link = self._mgmt_links[node]
         except KeyError:
-
             mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
             self._mgmt_links[node] = mgmt_link
             await mgmt_link.open()
@@ -325,7 +330,7 @@ class AMQPClientAsync(AMQPClientSync):
             operation_type=operation_type,
             timeout=timeout
         )
-        return response
+        return status, description, response
 
 
 class SendClientAsync(SendClientSync, AMQPClientAsync):
@@ -364,6 +369,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         :rtype: bool
         """
         try:
+            await self._link.update_pending_deliveries()
             await self._connection.listen(**kwargs)
         except ValueError:
             _logger.info("Timeout reached, closing sender.")
@@ -377,10 +383,10 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         delivery = await self._link.send_transfer(
             message_delivery.message,
             on_send_complete=on_send_complete,
-            timeout=timeout
+            timeout=timeout,
+            send_async=True
         )
-        if not delivery.sent:
-            raise RuntimeError("Message is not sent.")
+        return delivery
 
     async def _on_send_complete_async(self, message_delivery, reason, state):
         # TODO: check whether the callback would be called in case of message expiry or link going down
@@ -432,9 +438,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
 
         running = True
         while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-            await self.do_work_async()
-            if message_delivery.expiry and time.time() > message_delivery.expiry:
-                await self._on_send_complete_async(message_delivery, LinkDeliverySettleReason.TIMEOUT, None)
+            running = await self.do_work_async()
 
         if message_delivery.state in (
             MessageDeliveryState.Error,
@@ -565,7 +569,8 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                 max_message_size=self._max_message_size,
                 on_message_received=self._message_received,
                 properties=self._link_properties,
-                desired_capabilities=self._desired_capabilities
+                desired_capabilities=self._desired_capabilities,
+                on_attach=self._on_attach
             )
             await self._link.attach()
             return False
@@ -581,6 +586,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :rtype: bool
         """
         try:
+            await self._link.flow()
             await self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
             _logger.info("Timeout reached, closing receiver.")
@@ -588,7 +594,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             return False
         return True
 
-    async def _message_received(self, message):
+    async def _message_received(self, frame, message):
         """Callback run on receipt of every message. If there is
         a user-defined callback, this will be called.
         Additionally if the client is retrieving messages for a batch
@@ -600,7 +606,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         if self._message_received_callback:
             await self._message_received_callback(message)
         if not self._streaming_receive:
-            self._received_messages.put(message)
+            self._received_messages.put((frame, message))
         # TODO: do we need settled property for a message?
         # elif not message.settled:
         #    # Message was received with callback processing and wasn't settled.
@@ -615,7 +621,9 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         await self.open_async()
         while len(batch) < max_batch_size:
             try:
-                batch.append(self._received_messages.get_nowait())
+                # TODO: This looses the transfer frame data
+                _, message = self._received_messages.get_nowait()
+                batch.append(message)
                 self._received_messages.task_done()
             except queue.Empty:
                 break
@@ -631,14 +639,13 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                 break
 
             try:
-                await asyncio.wait_for(
+                receiving = await asyncio.wait_for(
                     self.do_work_async(batch=to_receive_size),
                     timeout=timeout_time - now_time if timeout else None
                 )
             except asyncio.TimeoutError:
-                pass
+                break
 
-            receiving = await self.do_work_async(batch=to_receive_size)
             cur_queue_size = self._received_messages.qsize()
             # after do_work, check how many new messages have been received since previous iteration
             received = cur_queue_size - before_queue_size
@@ -652,7 +659,8 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
 
         while len(batch) < max_batch_size:
             try:
-                batch.append(self._received_messages.get_nowait())
+                _, message = self._received_messages.get_nowait()
+                batch.append(message)
                 self._received_messages.task_done()
             except queue.Empty:
                 break
@@ -687,7 +695,91 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
          default is 0.
         :type timeout: float
         """
-        return await self._do_retryable_operation(
+        return await self._do_retryable_operation_async(
             self._receive_message_batch_impl_async,
             **kwargs
+        )
+
+    @overload
+    async def settle_messages(
+        self,
+        delivery_id: Union[int, Tuple[int, int]],
+        outcome: Literal["accepted"],
+        *,
+        batchable: Optional[bool] = None
+    ):
+        ...
+
+    @overload
+    async def settle_messages(
+        self,
+        delivery_id: Union[int, Tuple[int, int]],
+        outcome: Literal["released"],
+        *,
+        batchable: Optional[bool] = None
+    ):
+        ...
+
+    @overload
+    async def settle_messages(
+        self,
+        delivery_id: Union[int, Tuple[int, int]],
+        outcome: Literal["rejected"],
+        *,
+        error: Optional[AMQPError] = None,
+        batchable: Optional[bool] = None
+    ):
+        ...
+
+    @overload
+    async def settle_messages(
+        self,
+        delivery_id: Union[int, Tuple[int, int]],
+        outcome: Literal["modified"],
+        *,
+        delivery_failed: Optional[bool] = None,
+        undeliverable_here: Optional[bool] = None,
+        message_annotations: Optional[Dict[Union[str, bytes], Any]] = None,
+        batchable: Optional[bool] = None
+    ):
+        ...
+
+    @overload
+    async def settle_messages(
+        self,
+        delivery_id: Union[int, Tuple[int, int]],
+        outcome: Literal["received"],
+        *,
+        section_number: int,
+        section_offset: int,
+        batchable: Optional[bool] = None
+    ):
+        ...
+
+    async def settle_messages(self, delivery_id: Union[int, Tuple[int, int]], outcome: str, **kwargs):
+        batchable = kwargs.pop('batchable', None)
+        if outcome.lower() == 'accepted':
+            state = Accepted()
+        elif outcome.lower() == 'released':
+            state = Released()
+        elif outcome.lower() == 'rejected':
+            state = Rejected(**kwargs)
+        elif outcome.lower() == 'modified':
+            state = Modified(**kwargs)
+        elif outcome.lower() == 'received':
+            state = Received(**kwargs)
+        else:
+            raise ValueError("Unrecognized message output: {}".format(outcome))
+        try:
+            first, last = delivery_id
+        except TypeError:
+            first = delivery_id
+            last = None
+        await self._link.send_disposition(
+            first_delivery_id=first,
+            last_delivery_id=last,
+            settled=True,
+            delivery_state=state,
+            batchable=batchable,
+            wait=True
         )

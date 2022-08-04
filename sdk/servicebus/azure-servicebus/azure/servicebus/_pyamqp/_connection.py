@@ -140,7 +140,7 @@ class Connection(object): # pylint:disable=too-many-instance-attributes
         self._allow_pipelined_open = kwargs.pop('allow_pipelined_open', True)  # type: bool
         self._remote_idle_timeout = None  # type: Optional[int]
         self._remote_idle_timeout_send_frame = None  # type: Optional[int]
-        self._idle_timeout_empty_frame_send_ratio = kwargs.get('idle_timeout_empty_frame_send_ratio', 0.5)  # type: float, line-too-long
+        self._idle_timeout_empty_frame_send_ratio = kwargs.get('idle_timeout_empty_frame_send_ratio', 0.5)
         self._last_frame_received_time = None  # type: Optional[float]
         self._last_frame_sent_time = None  # type: Optional[float]
         self._idle_wait_time = kwargs.get('idle_wait_time', 0.1)  # type: float
@@ -501,8 +501,8 @@ class Connection(object): # pylint:disable=too-many-instance-attributes
             self._incoming_endpoints[channel]._incoming_end(frame)  # pylint:disable=protected-access
         except KeyError:
             pass  # TODO: channel error
-        #self._incoming_endpoints.pop(channel)  # TODO
-        #self._outgoing_endpoints.pop(channel)  # TODO
+        #self._incoming_endpoints.pop(channel)  # TODO If we don't clean up channels - this will
+        #self._outgoing_endpoints.pop(channel)  # TODO eventually crash
 
     def _process_incoming_frame(self, channel, frame): # pylint:disable=too-many-return-statements
         # type: (int, Optional[Union[bytes, Tuple[int, Tuple[Any, ...]]]]) -> bool
@@ -567,8 +567,6 @@ class Connection(object): # pylint:disable=too-many-instance-attributes
 
         :raises ValueError: If the connection is not open or not in a valid state.
         """
-        if self._network_trace:
-            _LOGGER.info("-> %r", frame, extra=self._network_trace_params)
         if not self._allow_pipelined_open and self.state in [ConnectionState.OPEN_PIPE, ConnectionState.OPEN_SENT]:
             raise ValueError("Connection not configured to allow pipeline send.")
         if self.state not in [ConnectionState.OPEN_PIPE, ConnectionState.OPEN_SENT, ConnectionState.OPENED]:
@@ -750,7 +748,7 @@ class Connection(object): # pylint:disable=too-many-instance-attributes
             if error:
                 self._error = AMQPConnectionError(
                     condition=error.condition,
-                    description=error.descrption,
+                    description=error.description,
                     info=error.info
                 )
             if self.state == ConnectionState.OPEN_PIPE:

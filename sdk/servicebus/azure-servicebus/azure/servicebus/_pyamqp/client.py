@@ -244,7 +244,7 @@ class AMQPClient(object):
 
         :param connection: An existing Connection that may be shared between
          multiple clients.
-        :type connetion: ~uamqp.Connection
+        :type connetion: ~pyamqp.Connection
         """
         # pylint: disable=protected-access
         if self._session:
@@ -379,7 +379,6 @@ class AMQPClient(object):
         try:
             mgmt_link = self._mgmt_links[node]
         except KeyError:
-
             mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
             self._mgmt_links[node] = mgmt_link
             mgmt_link.open()

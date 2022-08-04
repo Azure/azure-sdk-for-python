@@ -1,13 +1,14 @@
-# -------------------------------------------------------------------------
+#-------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-# --------------------------------------------------------------------------
+#--------------------------------------------------------------------------
 
-import logging
 import time
+import logging
 from functools import partial
 
+from ..management_link import PendingManagementOperation
 from ._sender_async import SenderLink
 from ._receiver_async import ReceiverLink
 from ..constants import (
@@ -17,23 +18,20 @@ from ..constants import (
     ReceiverSettleMode,
     ManagementExecuteOperationResult,
     ManagementOpenResult,
-    MessageDeliveryState,
-    SEND_DISPOSITION_REJECT
+    SEND_DISPOSITION_ACCEPT,
+    SEND_DISPOSITION_REJECT,
+    MessageDeliveryState
 )
-from ..message import Properties, _MessageDelivery
-from ..management_link import PendingManagementOperation
-from ..error import AMQPException, ErrorCondition
+from ..error import ErrorResponse, AMQPException, ErrorCondition
+from ..message import Message, Properties, _MessageDelivery
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class ManagementLink(object):
+class ManagementLink(object): # pylint:disable=too-many-instance-attributes
     """
-    # TODO: this is more of a general design question
-    #  should the async ManagementLink/Link/Session/Connection inherit from
-    #  class in the sync module
+       # TODO: Fill in docstring
     """
-
     def __init__(self, session, endpoint, **kwargs):
         self.next_message_id = 0
         self.state = ManagementLinkState.IDLE
@@ -41,22 +39,24 @@ class ManagementLink(object):
         self._session = session
         self._request_link: SenderLink = session.create_sender_link(
             endpoint,
+            source_address=endpoint,
             on_link_state_change=self._on_sender_state_change,
             send_settle_mode=SenderSettleMode.Unsettled,
             rcv_settle_mode=ReceiverSettleMode.First
         )
         self._response_link: ReceiverLink = session.create_receiver_link(
             endpoint,
+            target_address=endpoint,
             on_link_state_change=self._on_receiver_state_change,
-            on_message_received=self._on_message_received,
+            on_transfer=self._on_message_received,
             send_settle_mode=SenderSettleMode.Unsettled,
             rcv_settle_mode=ReceiverSettleMode.First
         )
         self._on_amqp_management_error = kwargs.get('on_amqp_management_error')
         self._on_amqp_management_open_complete = kwargs.get('on_amqp_management_open_complete')
 
-        self._status_code_field = kwargs.pop('status_code_field', b'statusCode')
-        self._status_description_field = kwargs.pop('status_description_field', b'statusDescription')
+        self._status_code_field = kwargs.get('status_code_field', b'statusCode')
+        self._status_description_field = kwargs.get('status_description_field', b'statusDescription')
 
         self._sender_connected = False
         self._receiver_connected = False
@@ -118,7 +118,7 @@ class ManagementLink(object):
             # All state transitions shall be ignored.
             return
 
-    async def _on_message_received(self, message):
+    async def _on_message_received(self, _, message):
         message_properties = message.properties
         correlation_id = message_properties[5]
         response_detail = message.application_properties
@@ -180,10 +180,33 @@ class ManagementLink(object):
         on_execute_operation_complete,
         **kwargs
     ):
+        """Execute a request and wait on a response.
+
+        :param message: The message to send in the management request.
+        :type message: ~uamqp.message.Message
+        :param on_execute_operation_complete: Callback to be called when the operation is complete.
+         The following value will be passed to the callback: operation_id, operation_result, status_code,
+         status_description, raw_message and error.
+        :type on_execute_operation_complete: Callable[[str, str, int, str, ~uamqp.message.Message, Exception], None]
+        :keyword operation: The type of operation to be performed. This value will
+         be service-specific, but common values include READ, CREATE and UPDATE.
+         This value will be added as an application property on the message.
+        :paramtype operation: bytes or str
+        :keyword type: The type on which to carry out the operation. This will
+         be specific to the entities of the service. This value will be added as
+         an application property on the message.
+        :paramtype type: bytes or str
+        :keyword str locales: A list of locales that the sending peer permits for incoming
+         informational text in response messages.
+        :keyword float timeout: Provide an optional timeout in seconds within which a response
+         to the management request must be received.
+        :rtype: None
+        """
         timeout = kwargs.get("timeout")
         message.application_properties["operation"] = kwargs.get("operation")
         message.application_properties["type"] = kwargs.get("type")
-        message.application_properties["locales"] = kwargs.get("locales")
+        if "locales" in kwargs:
+            message.application_properties["locales"] = kwargs.get("locales")
         try:
             # TODO: namedtuple is immutable, which may push us to re-think about the namedtuple approach for Message
             new_properties = message.properties._replace(message_id=self.next_message_id)

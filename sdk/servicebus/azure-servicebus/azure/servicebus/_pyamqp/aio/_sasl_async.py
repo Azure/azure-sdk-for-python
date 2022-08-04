@@ -9,7 +9,7 @@ from enum import Enum
 
 from ._transport_async import AsyncTransport, WebSocketTransportAsync
 from ..types import AMQPTypes, TYPE, VALUE
-from ..constants import FIELD, SASLCode, SASL_HEADER_FRAME, WEBSOCKET_PORT, TransportType
+from ..constants import FIELD, SASLCode, SASL_HEADER_FRAME, TransportType, WEBSOCKET_PORT
 from .._transport import AMQPS_PORT
 from ..performatives import (
     SASLOutcome,
@@ -78,11 +78,11 @@ class SASLTransportMixinAsync():
         await self.write(SASL_HEADER_FRAME)
         _, returned_header = await self.receive_frame()
         if returned_header[1] != SASL_HEADER_FRAME:
-            raise ValueError("Mismatching AMQP header protocol. Excpected: {}, received: {}".format(
+            raise ValueError("Mismatching AMQP header protocol. Expected: {}, received: {}".format(
                 SASL_HEADER_FRAME, returned_header[1]))
 
-        _, supported_mechanisms = await self.receive_frame(verify_frame_type=1)
-        if self.credential.mechanism not in supported_mechanisms[1][0]:  # sasl_server_mechanisms
+        _, supported_mechansisms = await self.receive_frame(verify_frame_type=1)
+        if self.credential.mechanism not in supported_mechansisms[1][0]:  # sasl_server_mechanisms
             raise ValueError("Unsupported SASL credential type: {}".format(self.credential.mechanism))
         sasl_init = SASLInit(
             mechanism=self.credential.mechanism,
@@ -94,7 +94,7 @@ class SASLTransportMixinAsync():
         frame_type, fields = next_frame
         if frame_type != 0x00000044:  # SASLOutcome
             raise NotImplementedError("Unsupported SASL challenge")
-        if fields[0] == SASLCode.Ok:
+        if fields[0] == SASLCode.Ok:  # code
             return
         else:
             raise ValueError("SASL negotiation failed.\nOutcome: {}\nDetails: {}".format(*fields))
@@ -112,9 +112,8 @@ class SASLTransport(AsyncTransport, SASLTransportMixinAsync):
 
 
 class SASLWithWebSocket(WebSocketTransportAsync, SASLTransportMixinAsync):
-    def __init__(
-        self, host, credential, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs
-    ):
+
+    def __init__(self, host, credential, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
         self.credential = credential
         ssl = ssl or True
         http_proxy = kwargs.pop('http_proxy', None)
