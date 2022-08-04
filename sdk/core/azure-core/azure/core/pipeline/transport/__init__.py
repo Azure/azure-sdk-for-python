@@ -102,6 +102,18 @@ def __getattr__(name):
             transport = TrioRequestsTransportResponse
         except ImportError:
             raise ImportError("trio package is not installed")
+    if name == 'PyodideTransport':
+        try:
+            from ._pyodide import PyodideTransport
+            transport = PyodideTransport
+        except ImportError:
+            raise ImportError("pyodide package is not installed")
+    if name == 'PyodideTransportResponse':
+        try:
+            from ._pyodide import PyodideTransportResponse
+            transport = PyodideTransportResponse
+        except ImportError:
+            raise ImportError("pyodide package is not installed")
     if transport:
         return transport
     raise AttributeError(f"module 'azure.core.pipeline.transport' has no attribute {name}")
