@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class Unit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Unit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit of the metric.
     """
 

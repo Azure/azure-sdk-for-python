@@ -10,12 +10,12 @@ from typing import (
     List,
     Dict,
     cast,
-    TYPE_CHECKING
 )
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import TokenCredential
 from ._base_client import TextAnalyticsClientBase
 from ._lro import AnalyzeActionsLROPoller, AnalyzeHealthcareEntitiesLROPoller, TextAnalysisLROPoller
 from ._request_handlers import (
@@ -68,8 +68,6 @@ from ._models import (
 )
 from ._check import is_language_api, string_index_type_compatibility
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
 AnalyzeActionsResponse = TextAnalysisLROPoller[
     ItemPaged[
@@ -133,7 +131,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, "TokenCredential"],
+        credential: Union[AzureKeyCredential, TokenCredential],
         **kwargs: Any
     ) -> None:
         super().__init__(
