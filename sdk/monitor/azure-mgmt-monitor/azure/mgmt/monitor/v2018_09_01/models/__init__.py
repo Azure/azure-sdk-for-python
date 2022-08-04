@@ -13,32 +13,31 @@ from ._models_py3 import ArmRoleReceiver
 from ._models_py3 import AutomationRunbookReceiver
 from ._models_py3 import AzureAppPushReceiver
 from ._models_py3 import AzureFunctionReceiver
-from ._models_py3 import Baseline
-from ._models_py3 import BaselineMetadataValue
-from ._models_py3 import BaselineResponse
-from ._models_py3 import CalculateBaselineResponse
-from ._models_py3 import CalculateBaselineResponseStatistics
+from ._models_py3 import BaselineMetadata
 from ._models_py3 import EmailReceiver
 from ._models_py3 import EnableRequest
 from ._models_py3 import ErrorResponse
 from ._models_py3 import ItsmReceiver
-from ._models_py3 import LocalizableString
 from ._models_py3 import LogicAppReceiver
+from ._models_py3 import MetricBaselinesResponse
+from ._models_py3 import MetricSingleDimension
 from ._models_py3 import Resource
+from ._models_py3 import SingleBaseline
+from ._models_py3 import SingleMetricBaseline
 from ._models_py3 import SmsReceiver
-from ._models_py3 import TimeSeriesInformation
+from ._models_py3 import TimeSeriesBaseline
 from ._models_py3 import VoiceReceiver
 from ._models_py3 import WebhookReceiver
 
 
 from ._monitor_management_client_enums import (
-    ErrorType,
-    PredictionResultType,
+    BaselineSensitivity,
     ReceiverStatus,
     ResultType,
-    Sensitivity,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'ActionGroupList',
     'ActionGroupPatchBody',
@@ -47,25 +46,24 @@ __all__ = [
     'AutomationRunbookReceiver',
     'AzureAppPushReceiver',
     'AzureFunctionReceiver',
-    'Baseline',
-    'BaselineMetadataValue',
-    'BaselineResponse',
-    'CalculateBaselineResponse',
-    'CalculateBaselineResponseStatistics',
+    'BaselineMetadata',
     'EmailReceiver',
     'EnableRequest',
     'ErrorResponse',
     'ItsmReceiver',
-    'LocalizableString',
     'LogicAppReceiver',
+    'MetricBaselinesResponse',
+    'MetricSingleDimension',
     'Resource',
+    'SingleBaseline',
+    'SingleMetricBaseline',
     'SmsReceiver',
-    'TimeSeriesInformation',
+    'TimeSeriesBaseline',
     'VoiceReceiver',
     'WebhookReceiver',
-    'ErrorType',
-    'PredictionResultType',
+    'BaselineSensitivity',
     'ReceiverStatus',
     'ResultType',
-    'Sensitivity',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
