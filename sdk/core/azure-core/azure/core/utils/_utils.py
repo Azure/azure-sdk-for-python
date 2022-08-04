@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Dict, Iterator, Mapping, MutableMapping
+from typing import Any, Dict, Iterable, Iterator, Mapping, MutableMapping, Optional, Tuple, Union
 
 
 class _FixedOffset(datetime.tzinfo):
@@ -89,7 +89,7 @@ def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping:
     """
     return CaseInsensitiveDict(*args, **kwargs)
 
-class CaseInsensitiveDict(MutableMapping):
+class CaseInsensitiveDict(MutableMapping[str, Any]):
     """
     NOTE: This implementation is heavily inspired from the case insensitive dictionary from the requests library.
     Thank you !!
@@ -100,7 +100,11 @@ class CaseInsensitiveDict(MutableMapping):
     case_insensitive_dict['key'] == 'some_value' #True
     """
 
-    def __init__(self, data=None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        data: Optional[Union[Mapping[str, Any], Iterable[Tuple[str, Any]]]] = None,
+        **kwargs: Any
+    ) -> None:
         self._store: Dict[str, Any] = {}
         if data is None:
             data = {}
@@ -110,7 +114,7 @@ class CaseInsensitiveDict(MutableMapping):
     def copy(self) -> "CaseInsensitiveDict":
         return CaseInsensitiveDict(self._store.values())
 
-    def __setitem__(self, key: str, value: str) -> None:
+    def __setitem__(self, key: str, value: Any) -> None:
         """
         Set the `key` to `value`. The original key will be stored with the value
         """
@@ -122,7 +126,7 @@ class CaseInsensitiveDict(MutableMapping):
     def __delitem__(self, key: str) -> None:
         del self._store[key.lower()]
 
-    def __iter__(self) -> Iterator[Any]:
+    def __iter__(self) -> Iterator[str]:
         return (key for key, _ in self._store.values())
 
     def __len__(self) -> int:
