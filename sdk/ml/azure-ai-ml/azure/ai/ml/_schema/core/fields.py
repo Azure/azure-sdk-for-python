@@ -402,7 +402,7 @@ class UnionField(fields.Field):
                 errors.append([str(e)])
             finally:
                 # Revert base path to original path when job schema fail to deserialize job. For example, when load
-                # parallel job with component file reference starting with FILE prefex, maybe first CommandSchema will
+                # parallel job with component file reference starting with FILE prefix, maybe first CommandSchema will
                 # load component yaml according to AnonymousCommandComponentSchema, and YamlFileSchema will update base
                 # path. When CommandSchema fail to load, then Parallelschema will load component yaml according to
                 # AnonymousParallelComponentSchema, but base path now is incorrect, and will raise path not found error

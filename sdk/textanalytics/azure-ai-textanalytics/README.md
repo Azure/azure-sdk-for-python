@@ -21,7 +21,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 ### Prerequisites
 
-- Python 3.6 later is required to use this package.
+- Python 3.7 later is required to use this package.
 - You must have an [Azure subscription][azure_subscription] and a
   [Cognitive Services or Language service resource][ta_or_cs_resource] to use this package.
 
@@ -210,6 +210,21 @@ For example, to filter out all DocumentErrors you might use list comprehension:
 response = text_analytics_client.analyze_sentiment(documents)
 successful_responses = [doc for doc in response if not doc.is_error]
 ```
+
+You can also use the `kind` attribute to filter between result types:
+
+```python
+poller = text_analytics_client.begin_analyze_actions(documents, actions)
+response = poller.result()
+for result in response:
+    if result.kind == "SentimentAnalysis":
+        print(f"Sentiment is {result.sentiment}")
+    elif result.kind == "KeyPhraseExtraction":
+        print(f"Key phrases: {result.key_phrases}")
+    elif result.is_error is True:
+        print(f"Document error: {result.code}, {result.message}")
+```
+
 
 ### Long-Running Operations
 
@@ -545,28 +560,27 @@ poller = text_analytics_client.begin_analyze_actions(
 # returns multiple actions results in the same order as the inputted actions
 document_results = poller.result()
 for doc, action_results in zip(documents, document_results):
-    recognize_entities_result, analyze_sentiment_result = action_results
     print(f"\nDocument text: {doc}")
-    print("...Results of Recognize Entities Action:")
-    if recognize_entities_result.is_error:
-        print(f"......Is an error with code '{recognize_entities_result.code}' "
-              f"and message '{recognize_entities_result.message}'")
-    else:
-        for entity in recognize_entities_result.entities:
-            print(f"......Entity: {entity.text}")
-            print(f".........Category: {entity.category}")
-            print(f".........Confidence Score: {entity.confidence_score}")
-            print(f".........Offset: {entity.offset}")
+    for result in action_results:
+        if result.kind == "EntityRecognition":
+            print("...Results of Recognize Entities Action:")
+            for entity in result.entities:
+                print(f"......Entity: {entity.text}")
+                print(f".........Category: {entity.category}")
+                print(f".........Confidence Score: {entity.confidence_score}")
+                print(f".........Offset: {entity.offset}")
 
-    print("...Results of Analyze Sentiment action:")
-    if analyze_sentiment_result.is_error:
-        print(f"......Is an error with code '{analyze_sentiment_result.code}' "
-              f"and message '{analyze_sentiment_result.message}'")
-    else:
-        print(f"......Overall sentiment: {analyze_sentiment_result.sentiment}")
-        print(f"......Scores: positive={analyze_sentiment_result.confidence_scores.positive}; "
-              f"neutral={analyze_sentiment_result.confidence_scores.neutral}; "
-              f"negative={analyze_sentiment_result.confidence_scores.negative}\n")
+        elif result.kind == "SentimentAnalysis":
+            print("...Results of Analyze Sentiment action:")
+            print(f"......Overall sentiment: {result.sentiment}")
+            print(f"......Scores: positive={result.confidence_scores.positive}; "
+                  f"neutral={result.confidence_scores.neutral}; "
+                  f"negative={result.confidence_scores.negative}\n")
+
+        elif result.is_error is True:
+            print(f"......Is an error with code '{result.code}' "
+                  f"and message '{result.message}'")
+
     print("------------------------------------------")
 ```
 

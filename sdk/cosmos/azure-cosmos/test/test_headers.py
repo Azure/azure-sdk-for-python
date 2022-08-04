@@ -44,7 +44,7 @@ class HeadersTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.database = cls.client.create_database(test_config._test_config.TEST_DATABASE_ID)
+        cls.database = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
         cls.container = cls.database.create_container(id=test_config._test_config.TEST_COLLECTION_MULTI_PARTITION_ID,
                                                       partition_key=PartitionKey(path="/id"))
 
