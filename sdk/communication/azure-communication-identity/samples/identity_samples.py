@@ -21,8 +21,8 @@ USAGE:
     5) COMMUNICATION_M365_APP_ID - the application id of Microsoft 365
     6) COMMUNICATION_M365_AAD_AUTHORITY - the Azure AD authority of Microsoft 365  
     7) COMMUNICATION_M365_AAD_TENANT - the tenant ID of Microsoft 365 application
-    9) COMMUNICATION_MSAL_USERNAME - the username for authenticating via MSAL library
-    10) COMMUNICATION_MSAL_PASSWORD - the password for authenticating via MSAL library
+    8) COMMUNICATION_MSAL_USERNAME - the username for authenticating via MSAL library
+    9) COMMUNICATION_MSAL_PASSWORD - the password for authenticating via MSAL library
 """
 import os
 from azure.communication.identity._shared.utils import parse_connection_str
