@@ -5,7 +5,7 @@
 
 # pylint: disable=protected-access, too-many-lines
 
-from typing import Dict, Iterable, List, NewType
+from typing import Dict, Iterable, List, NewType, Sequence
 from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
@@ -1974,7 +1974,7 @@ class TextAppearance:
 class BoundingRegion:
     """The bounding region corresponding to a page.
 
-    :ivar Optional[list[~azure.ai.formrecognizer.Point]] polygon:
+    :ivar Optional[Sequence[~azure.ai.formrecognizer.Point]] polygon:
         A list of points representing the bounding polygon
         that outlines the document component. The points are listed in
         clockwise order relative to the document component orientation
@@ -2175,7 +2175,7 @@ class DocumentContentElement:
     :ivar content: Text content of the document content element.
     :vartype content: str
     :ivar polygon: Bounding polygon of the document content element.
-    :vartype polygon: Optional[list[~azure.ai.formrecognizer.Point]]
+    :vartype polygon: Optional[Sequence[~azure.ai.formrecognizer.Point]]
     :ivar span: Location of the element in the full document content.
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
     :ivar confidence: Confidence of accurately extracting the document content element.
@@ -2660,7 +2660,7 @@ class DocumentLine:
     :ivar content: Concatenated content of the contained elements in reading order.
     :vartype content: str
     :ivar polygon: Bounding polygon of the line.
-    :vartype polygon: Optional[list[~azure.ai.formrecognizer.Point]]
+    :vartype polygon: Optional[Sequence[~azure.ai.formrecognizer.Point]]
     :ivar spans: Location of the line in the reading order concatenated content.
     :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
     """
@@ -2949,7 +2949,7 @@ class DocumentSelectionMark(DocumentContentElement):
     :ivar content: The text content - not returned for DocumentSelectionMark.
     :vartype content: str
     :ivar polygon: Bounding polygon of the selection mark.
-    :vartype polygon: Optional[list[~azure.ai.formrecognizer.Point]]
+    :vartype polygon: Optional[Sequence[~azure.ai.formrecognizer.Point]]
     :ivar span: Location of the selection mark in the reading order concatenated
      content.
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
@@ -3495,7 +3495,7 @@ class DocumentWord(DocumentContentElement):
     :ivar content: Text content of the word.
     :vartype content: str
     :ivar polygon: Bounding polygon of the word.
-    :vartype polygon: Optional[list[~azure.ai.formrecognizer.Point]]
+    :vartype polygon: Optional[Sequence[~azure.ai.formrecognizer.Point]]
     :ivar span: Location of the word in the reading order concatenated content.
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
     :ivar confidence: Confidence of correctly extracting the word.
