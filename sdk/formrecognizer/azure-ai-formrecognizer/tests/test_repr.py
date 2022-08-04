@@ -363,13 +363,13 @@ def document_table(bounding_region, document_span, document_table_cell):
 
 @pytest.fixture
 def doc_type_info():
-    model = _models.DocTypeInfo(
+    model = _models.DocTypeDetails(
             description="my description",
             build_mode="neural",
             field_confidence={"CustomerName": 95},
             field_schema={"prebuilt-invoice": {"CustomerName": {"type": "string"}}}
     )
-    model_repr = "DocTypeInfo(description={}, build_mode={}, field_schema={{'prebuilt-invoice': {}}}, field_confidence={{'CustomerName': {}}})".format(
+    model_repr = "DocTypeDetails(description={}, build_mode={}, field_schema={{'prebuilt-invoice': {}}}, field_confidence={{'CustomerName': {}}})".format(
                 "my description",
                 "neural",
                 {"CustomerName": {"type": "string"}},
@@ -380,7 +380,7 @@ def doc_type_info():
 
 @pytest.fixture
 def document_model(doc_type_info):
-    model = _models.DocumentModelInfo(
+    model = _models.DocumentModelDetails(
             api_version="2022-06-30-preview",
             tags={"awesome": "tag"},
             description="my description",
@@ -388,7 +388,7 @@ def document_model(doc_type_info):
             model_id="prebuilt-invoice",
             doc_types={"prebuilt-invoice": doc_type_info[0]}
     )
-    model_repr = "DocumentModelInfo(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}})".format(
+    model_repr = "DocumentModelDetails(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}})".format(
                 "prebuilt-invoice",
                 "my description",
                 datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
@@ -511,7 +511,7 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_model_operation(self, document_analysis_error, document_model):
-        model = _models.ModelOperation(
+        model = _models.ModelOperationDetails(
                 api_version="2022-06-30-preview",
                 tags={"awesome": "tag"},
                 operation_id="id",
@@ -524,7 +524,7 @@ class TestRepr():
                 error=document_analysis_error[0],
                 result=document_model[0],
             )
-        model_repr = "ModelOperation(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, result={}, error={}, api_version={}, tags={})".format(
+        model_repr = "ModelOperationDetails(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, result={}, error={}, api_version={}, tags={})".format(
                     "id",
                     "succeeded",
                     99,
@@ -540,7 +540,7 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_model_operation_info(self):
-        model = _models.ModelOperationInfo(
+        model = _models.ModelOperationSummary(
                 operation_id="id",
                 status="succeeded",
                 percent_completed=100,
@@ -551,7 +551,7 @@ class TestRepr():
                 api_version="2022-06-30-preview",
                 tags={"test": "value"},
             )
-        model_repr = "ModelOperationInfo(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, api_version={}, tags={})".format(
+        model_repr = "ModelOperationSummary(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, api_version={}, tags={})".format(
                     "id",
                     "succeeded",
                     100,
@@ -565,7 +565,7 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_document_model(self, doc_type_info):
-        model = _models.DocumentModelInfo(
+        model = _models.DocumentModelDetails(
             description="my description",
             created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
             model_id="prebuilt-invoice",
@@ -575,7 +575,7 @@ class TestRepr():
                 "prebuilt-invoice": doc_type_info[0],
             }
         )
-        model_repr = "DocumentModelInfo(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}})".format(
+        model_repr = "DocumentModelDetails(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}})".format(
             "prebuilt-invoice",
             "my description",
             datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
@@ -603,10 +603,10 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_account_info(self):
-        model = _models.ResourceInfo(
+        model = _models.ResourceDetails(
             document_model_limit=5000, document_model_count=10
         )
-        model_repr = "ResourceInfo(document_model_count={}, document_model_limit={})".format(
+        model_repr = "ResourceDetails(document_model_count={}, document_model_limit={})".format(
             10, 5000
         )
         assert repr(model) == model_repr
@@ -621,3 +621,15 @@ class TestRepr():
             "$",
         )
         assert repr(model) == model_repr
+
+    def test_currency_value_str(self):
+        model = _models.CurrencyValue(
+            amount=10.5,
+            symbol="$",
+        )
+        assert str(model) == "$10.5"
+
+        model = _models.CurrencyValue(
+            amount=10.5,
+        )
+        assert str(model) == "10.5"

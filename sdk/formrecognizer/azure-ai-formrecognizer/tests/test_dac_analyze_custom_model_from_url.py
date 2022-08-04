@@ -24,7 +24,7 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
-            client.begin_analyze_document_from_url(model=None, document_url="https://badurl.jpg")
+            client.begin_analyze_document_from_url(model_id=None, document_url="https://badurl.jpg")
 
     @FormRecognizerPreparer()
     def test_document_analysis_empty_model_id(self, **kwargs):
@@ -32,7 +32,7 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
-            client.begin_analyze_document_from_url(model="", document_url="https://badurl.jpg")
+            client.begin_analyze_document_from_url(model_id="", document_url="https://badurl.jpg")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -41,7 +41,7 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
-        poller = client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url, "template")
+        poller = client.begin_build_model("template", formrecognizer_selection_mark_storage_container_sas_url)
         model = poller.result()
 
         responses = []
@@ -53,7 +53,7 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
             responses.append(document)
 
         poller = da_client.begin_analyze_document_from_url(
-            model=model.model_id,
+            model_id=model.model_id,
             document_url=self.selection_mark_url_pdf,
             cls=callback
         )
@@ -83,7 +83,7 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
-        build_poller = client.begin_build_model(formrecognizer_table_variable_rows_container_sas_url, "template")
+        build_poller = client.begin_build_model("template", formrecognizer_table_variable_rows_container_sas_url)
         model = build_poller.result()
 
         responses = []
@@ -124,7 +124,7 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
-        build_poller = client.begin_build_model(formrecognizer_table_fixed_rows_container_sas_url, "template")
+        build_poller = client.begin_build_model("template", formrecognizer_table_fixed_rows_container_sas_url)
         model = build_poller.result()
 
         responses = []

@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ContainerServiceStorageProfileTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ContainerServiceStorageProfileTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage profile specifies what kind of storage used. Choose from StorageAccount and
     ManagedDisks. Leave it empty, we will choose for you based on the orchestrator choice.
     """
@@ -19,7 +18,7 @@ class ContainerServiceStorageProfileTypes(with_metaclass(CaseInsensitiveEnumMeta
     STORAGE_ACCOUNT = "StorageAccount"
     MANAGED_DISKS = "ManagedDisks"
 
-class ContainerServiceVMSizeTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ContainerServiceVMSizeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Size of agent VMs.
     """
 
@@ -198,7 +197,7 @@ class ContainerServiceVMSizeTypes(with_metaclass(CaseInsensitiveEnumMeta, str, E
     STANDARD_NV24 = "Standard_NV24"
     STANDARD_NV6 = "Standard_NV6"
 
-class Count(with_metaclass(CaseInsensitiveEnumMeta, int, Enum)):
+class Count(int, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Number of masters (VMs) in the container service cluster. Allowed values are 1, 3, and 5. The
     default value is 1.
     """
@@ -207,20 +206,20 @@ class Count(with_metaclass(CaseInsensitiveEnumMeta, int, Enum)):
     THREE = 3
     FIVE = 5
 
-class NetworkPlugin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class NetworkPlugin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Network plugin used for building Kubernetes network.
     """
 
     AZURE = "azure"
     KUBENET = "kubenet"
 
-class NetworkPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class NetworkPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Network policy used for building Kubernetes network.
     """
 
     CALICO = "calico"
 
-class OSType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """OsType to be used to specify os type. Choose from Linux and Windows. Default to Linux.
     """
 

@@ -9,7 +9,7 @@ import sys
 import warnings
 from io import BytesIO
 from itertools import islice
-from typing import AsyncIterator
+from typing import AsyncIterator, Generic, TypeVar
 
 import asyncio
 from aiohttp import ClientPayloadError
@@ -25,6 +25,8 @@ from .._encryption import (
     is_encryption_v2,
     parse_encryption_data
 )
+
+T = TypeVar('T', bytes, str)
 
 
 async def process_content(data, start_offset, end_offset, encryption):
@@ -189,7 +191,7 @@ class _AsyncChunkIterator(object):
         return chunk_data
 
 
-class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
+class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-attributes
     """A streaming object to download from Azure Storage.
 
     :ivar str name:
@@ -205,18 +207,19 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
     """
 
     def __init__(
-            self,
-            clients=None,
-            config=None,
-            start_range=None,
-            end_range=None,
-            validate_content=None,
-            encryption_options=None,
-            max_concurrency=1,
-            name=None,
-            container=None,
-            encoding=None,
-            **kwargs
+        self,
+        clients=None,
+        config=None,
+        start_range=None,
+        end_range=None,
+        validate_content=None,
+        encryption_options=None,
+        max_concurrency=1,
+        name=None,
+        container=None,
+        encoding=None,
+        download_cls=None,
+        **kwargs
     ):
         self.name = name
         self.container = container
@@ -243,6 +246,10 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         self._initial_range = None
         self._initial_offset = None
+
+        # The cls is passed in via download_cls to avoid conflicting arg name with Generic.__new__
+        # but needs to be changed to cls in the request options.
+        self._request_options['cls'] = download_cls
 
         # The service only provides transactional MD5s for chunks under 4MB.
         # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
@@ -450,10 +457,11 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             chunk_size=self._config.max_chunk_get_size)
 
     async def readall(self):
+        # type: () -> T
         """Download the contents of this blob.
 
         This operation is blocking until all data is downloaded.
-        :rtype: bytes or str
+        :rtype: T
         """
         stream = BytesIO()
         await self.readinto(stream)

@@ -19,7 +19,7 @@ from datetime import datetime, timedelta
 from azure.mgmt.storage.aio import StorageManagementClient
 
 from azure.core import MatchConditions
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -2036,6 +2036,20 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertEqual(blob_name, blob_properties.name)
         self.assertEqual(self.container_name, container_properties.name)
+
+    @BlobPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_azure_named_key_credential_access(self, storage_account_name, storage_account_key):
+        named_key = AzureNamedKeyCredential(storage_account_name, storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), named_key)
+        container_name = self._get_container_reference()
+
+        # Act
+        container = bsc.get_container_client(container_name)
+        created = await container.create_container()
+
+        # Assert
+        self.assertTrue(created)
 
     @pytest.mark.live_test_only
     @BlobPreparer()

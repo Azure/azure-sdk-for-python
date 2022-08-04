@@ -3,25 +3,25 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Union, Any, TYPE_CHECKING
+from typing import Union, Any
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, HttpLoggingPolicy
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from ._generated import TextAnalyticsClient as _TextAnalyticsClient
 from ._policies import TextAnalyticsResponseHookPolicy
 from ._user_agent import USER_AGENT
 from ._version import DEFAULT_API_VERSION
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
 
 class TextAnalyticsApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cognitive Service for Language or Text Analytics API versions supported by this package"""
 
-    #: this is the default version
+    #: This is the default version and corresponds to the Cognitive Service for Language API.
     V2022_05_01 = "2022-05-01"
+    #: This version corresponds to Text Analytics API.
     V3_1 = "v3.1"
+    #: This version corresponds to Text Analytics API.
     V3_0 = "v3.0"
 
 
@@ -45,7 +45,7 @@ class TextAnalyticsClientBase:
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, "TokenCredential"],
+        credential: Union[AzureKeyCredential, TokenCredential],
         **kwargs: Any
     ) -> None:
         http_logging_policy = HttpLoggingPolicy(**kwargs)

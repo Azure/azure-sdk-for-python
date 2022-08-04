@@ -55,14 +55,15 @@ from ._models import (
     DocumentTable,
     DocumentTableCell,
     DocumentWord,
-    ModelOperationInfo,
-    ModelOperation,
-    DocumentModelInfo,
+    ModelOperationSummary,
+    ModelOperationDetails,
+    DocumentModelDetails,
     DocumentModelSummary,
-    DocTypeInfo,
-    ResourceInfo,
+    DocTypeDetails,
+    ResourceDetails,
     DocumentAnalysisError,
     DocumentAnalysisInnerError,
+    TargetAuthorization,
 )
 from ._api_versions import FormRecognizerApiVersion, DocumentAnalysisApiVersion
 
@@ -119,15 +120,16 @@ __all__ = [
     "DocumentTableCell",
     "DocumentWord",
     "DocumentModelAdministrationLROPoller",
-    "ModelOperationInfo",
-    "ModelOperation",
+    "ModelOperationSummary",
+    "ModelOperationDetails",
     "DocumentAnalysisApiVersion",
-    "DocumentModelInfo",
+    "DocumentModelDetails",
     "DocumentModelSummary",
-    "DocTypeInfo",
-    "ResourceInfo",
+    "DocTypeDetails",
+    "ResourceDetails",
     "DocumentAnalysisError",
     "DocumentAnalysisInnerError",
+    "TargetAuthorization",
 ]
 
 __VERSION__ = VERSION

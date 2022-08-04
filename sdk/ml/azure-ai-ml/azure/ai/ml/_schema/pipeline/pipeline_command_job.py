@@ -8,7 +8,7 @@ from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._schema.job.input_output_entry import OutputSchema
 from azure.ai.ml.constants import AzureMLResourceType
-from azure.ai.ml._schema.core.fields import ComputeField, ArmVersionedStr
+from azure.ai.ml._schema.core.fields import ComputeField, ArmVersionedStr, RegistryStr
 from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema
 from marshmallow import fields, post_load
 
@@ -19,6 +19,7 @@ class PipelineCommandJobSchema(CommandJobSchema):
     compute = ComputeField()
     environment = UnionField(
         [
+            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
             NestedField(AnonymousEnvironmentSchema),
             ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
         ],
