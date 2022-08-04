@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 07 Jul 2022 16:26:22 GMT
+      - Thu, 28 Jul 2022 15:16:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -32,9 +32,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 07 Jul 2022 16:26:21 GMT
+      - Thu, 28 Jul 2022 15:16:25 GMT
       ms-cv:
-      - XEb4hkIwnkC2LwzCTm9JIQ.0
+      - 42wNfE1X3Uad/q3c36uWiw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 30ms
+      - 33ms
     status:
       code: 201
       message: Created
@@ -62,7 +62,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 07 Jul 2022 16:26:22 GMT
+      - Thu, 28 Jul 2022 15:16:27 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -79,9 +79,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 07 Jul 2022 16:26:21 GMT
+      - Thu, 28 Jul 2022 15:16:25 GMT
       ms-cv:
-      - gQWrkQNYkU6/5EibItzIPw.0
+      - QshLwzpae0KxcEEFb/17dw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -89,7 +89,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 30ms
+      - 39ms
     status:
       code: 201
       message: Created
@@ -109,7 +109,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 07 Jul 2022 16:26:22 GMT
+      - Thu, 28 Jul 2022 15:16:27 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -126,9 +126,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 07 Jul 2022 16:26:21 GMT
+      - Thu, 28 Jul 2022 15:16:25 GMT
       ms-cv:
-      - upuSqwAxOEC3Q1XtnmBUqQ.0
+      - mT5XXelohU6QG+nuhkPyWA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -136,7 +136,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 37ms
+      - 42ms
     status:
       code: 201
       message: Created
@@ -154,29 +154,29 @@ interactions:
       Content-Type:
       - application/json
       Repeatability-First-Sent:
-      - '2022-07-07T16:26:22.752699Z'
+      - '2022-07-28T15:16:27.525483Z'
       Repeatability-Request-ID:
-      - 8a29a556-fe11-11ec-8727-a864f132484d
+      - 40498636-0e88-11ed-8f16-a864f132484d
       User-Agent:
       - azsdk-python-communication-rooms/1.1.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 07 Jul 2022 16:26:22 GMT
+      - Thu, 28 Jul 2022 15:16:27 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.ppe.communication.azure.net/rooms?api-version=2022-02-01
   response:
     body:
-      string: '{"id":"99414604317330106","createdDateTime":"2022-07-07T16:26:23.3308043+00:00","validFrom":"2022-07-07T16:26:23.2455841+00:00","validUntil":"2023-01-03T16:26:23.2455841+00:00","roomJoinPolicy":"InviteOnly","participants":[]}'
+      string: '{"id":"99470343245470122","createdDateTime":"2022-07-28T15:16:26.6620241+00:00","validFrom":"2022-07-28T15:16:26.6226254+00:00","validUntil":"2023-01-24T15:16:26.6226254+00:00","roomJoinPolicy":"InviteOnly","participants":[]}'
     headers:
       api-supported-versions:
       - 2021-04-07, 2022-02-01
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 07 Jul 2022 16:26:23 GMT
+      - Thu, 28 Jul 2022 15:16:25 GMT
       ms-cv:
-      - 4rlrL0KSc0uK6c8gdo7Y0Q.0
+      - g5FPzOOjuEyNaQ9rJ/KpFA.0
       repeatability-result:
       - accepted
       transfer-encoding:
@@ -187,7 +187,7 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: '{"validUntil": "2023-02-07T12:26:23.32013Z"}'
+    body: '{"validUntil": "2023-02-28T11:16:27.962033Z"}'
     headers:
       Accept:
       - application/json
@@ -196,29 +196,29 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '44'
+      - '45'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-communication-rooms/1.1.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 07 Jul 2022 16:26:23 GMT
+      - Thu, 28 Jul 2022 15:16:27 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.ppe.communication.azure.net/rooms/99414604317330106?api-version=2022-02-01
+    uri: https://sanitized.ppe.communication.azure.net/rooms/99470343245470122?api-version=2022-02-01
   response:
     body:
       string: '{"type":"https://tools.ietf.org/html/rfc7231#section-6.5.1","title":"One
-        or more validation errors occurred.","status":400,"traceId":"00-487f9861a2954c7a8e6b8cac55b9f6d5-35ef4b12492e8b36-00","errors":{"":["validFrom
+        or more validation errors occurred.","status":400,"traceId":"00-cedf51887f10e3ecc6ca217d6328ef67-2a5dd4300b18fbb7-00","errors":{"":["validFrom
         and validUntil should be set together."]}}'
     headers:
       content-type:
       - application/problem+json; charset=utf-8
       date:
-      - Thu, 07 Jul 2022 16:26:23 GMT
+      - Thu, 28 Jul 2022 15:16:26 GMT
       ms-cv:
-      - xfaFNw0AAEuYbWhScTgo/g.0
+      - p0LQ25yA8E69s755fI0uJQ.0
       transfer-encoding:
       - chunked
       x-cache:
@@ -240,11 +240,11 @@ interactions:
       User-Agent:
       - azsdk-python-communication-rooms/1.1.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 07 Jul 2022 16:26:23 GMT
+      - Thu, 28 Jul 2022 15:16:28 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.ppe.communication.azure.net/rooms/99414604317330106?api-version=2022-02-01
+    uri: https://sanitized.ppe.communication.azure.net/rooms/99470343245470122?api-version=2022-02-01
   response:
     body:
       string: ''
@@ -252,9 +252,9 @@ interactions:
       api-supported-versions:
       - 2021-04-07, 2022-02-01
       date:
-      - Thu, 07 Jul 2022 16:26:23 GMT
+      - Thu, 28 Jul 2022 15:16:26 GMT
       ms-cv:
-      - 4JxtrIL5ZUihXfkw0BQziw.0
+      - PbYZECHhn0C1J2ysJ72xxg.0
       x-cache:
       - CONFIG_NOCACHE
     status:
@@ -274,7 +274,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 07 Jul 2022 16:26:23 GMT
+      - Thu, 28 Jul 2022 15:16:28 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -287,9 +287,9 @@ interactions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
         2021-11-01, 2022-06-01
       date:
-      - Thu, 07 Jul 2022 16:26:23 GMT
+      - Thu, 28 Jul 2022 15:16:26 GMT
       ms-cv:
-      - syRro/VCaEmVGDi3HE7lIA.0
+      - dpnnUcz7nk+i7mtrAyk4VA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -297,7 +297,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 142ms
+      - 126ms
     status:
       code: 204
       message: No Content
@@ -315,7 +315,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 07 Jul 2022 16:26:24 GMT
+      - Thu, 28 Jul 2022 15:16:28 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -328,9 +328,9 @@ interactions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
         2021-11-01, 2022-06-01
       date:
-      - Thu, 07 Jul 2022 16:26:23 GMT
+      - Thu, 28 Jul 2022 15:16:27 GMT
       ms-cv:
-      - 03SI1H9v906Mtk25nLwA6A.0
+      - Tk6fec7dCE+YQTSrgrCGMw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -338,7 +338,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 106ms
+      - 139ms
     status:
       code: 204
       message: No Content
@@ -356,7 +356,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 07 Jul 2022 16:26:24 GMT
+      - Thu, 28 Jul 2022 15:16:28 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -369,9 +369,9 @@ interactions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
         2021-11-01, 2022-06-01
       date:
-      - Thu, 07 Jul 2022 16:26:23 GMT
+      - Thu, 28 Jul 2022 15:16:27 GMT
       ms-cv:
-      - 96esU6EuLkCEuLl/Ui75PA.0
+      - KZ7RlyTJgUGZ4FHcavpBvg.0
       request-context:
       - appId=
       strict-transport-security:
@@ -379,7 +379,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 148ms
+      - 133ms
     status:
       code: 204
       message: No Content

@@ -374,7 +374,8 @@ class RoomsClientTest(CommunicationTestCase):
         participants = [
             self.users["john"]
         ]
-        update_response = self.rooms_client.add_participants(room_id=create_response.id, participants=participants)
+        self.rooms_client.add_participants(room_id=create_response.id, participants=participants)
+        update_response = self.rooms_client.get_participants(room_id=create_response.id)
 
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
@@ -398,7 +399,8 @@ class RoomsClientTest(CommunicationTestCase):
             self.users["chris"]
         ]
 
-        update_response = self.rooms_client.update_participants(room_id=create_response.id, participants=update_participants)
+        self.rooms_client.update_participants(room_id=create_response.id, participants=update_participants)
+        update_response = self.rooms_client.get_participants(room_id=create_response.id)
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
 
@@ -418,7 +420,8 @@ class RoomsClientTest(CommunicationTestCase):
             self.users["john"].communication_identifier
         ]
 
-        update_response = self.rooms_client.remove_participants(room_id=create_response.id, communication_identifiers=removed_participants)
+        self.rooms_client.remove_participants(room_id=create_response.id, communication_identifiers=removed_participants)
+        update_response = self.rooms_client.get_participants(room_id=create_response.id)
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
         participants = [
@@ -462,27 +465,6 @@ class RoomsClientTest(CommunicationTestCase):
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
-    @pytest.mark.live_test_only
-    def test_remove_all_participants(self):
-        # add john and chris to the room
-        participants = [
-            self.users["john"],
-            self.users["chris"]
-        ]
-        create_response = self.rooms_client.create_room(participants=participants)
-
-        # clear participants
-        update_response = self.rooms_client.remove_all_participants(room_id=create_response.id)
-
-        # delete created room
-        self.rooms_client.delete_room(room_id=create_response.id)
-        self.verify_successful_room_response(
-            response=update_response,
-            valid_from=create_response.valid_from,
-            valid_until=create_response.valid_until,
-            room_id=create_response.id,
-            participants=[])
-
     def test_update_room_incorrect_roomId(self):
         # try to update room with random room_id
         with pytest.raises(HttpResponseError) as ex:
@@ -505,7 +487,7 @@ class RoomsClientTest(CommunicationTestCase):
         assert str(ex.value.status_code) == "404"
         assert ex.value.message is not None
 
-    def verify_successful_room_response(self, response, valid_from=None, valid_until=None, room_id=None, participants=None):
+    def verify_successful_room_response(self, response, valid_from=None, valid_until=None, room_id=None, participants=None, room_join_policy=None):
         if room_id is not None:
             self.assertEqual(room_id, response.id)
         if valid_from is not None:
@@ -514,3 +496,5 @@ class RoomsClientTest(CommunicationTestCase):
             self.assertEqual(valid_until.replace(tzinfo=None), response.valid_until.replace(tzinfo=None))
         if participants is not None:
             self.assertListEqual(participants, response.participants)
+        if room_join_policy is not None:
+            self.assertEqual(room_join_policy, response.room_join_policy)

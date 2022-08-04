@@ -4,13 +4,13 @@ from ._generated.models._enums import (
     RoleType
 )
 from ._models import (
-    RoomModel,
+    CommunicationRoom,
     RoomParticipant,
     ParticipantsCollection
 )
 
 __all__ = [
-    'RoomModel',
+    'CommunicationRoom',
     'RoomsClient',
     'RoomParticipant',
     'RoomJoinPolicy',

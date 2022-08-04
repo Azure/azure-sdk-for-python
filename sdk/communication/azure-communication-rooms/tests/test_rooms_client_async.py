@@ -18,13 +18,6 @@ from unittest_helpers import mock_response
 
 from unittest.mock import Mock
 
-class FakeTokenCredential(object):
-    def __init__(self):
-        self.token = AccessToken("Fake Token", 0)
-
-    async def get_token(self, *args):
-        return self.token
-
 class TestRoomsClient(aiounittest.AsyncTestCase):
     room_id = "999126454"
     valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
@@ -58,7 +51,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                 "participants": [self.json_participant]
             })
 
-        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
 
         response = None
         try:
@@ -87,7 +80,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                 "participants": []
             })
 
-        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
 
         response = None
         try:
@@ -111,7 +104,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
         raised = False
         async def mock_send(*_, **__):
             return mock_response(status_code=404, json_payload={"msg": "some error"})
-        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
         try:
             await rooms_client.delete_room(room_id=self.room_id)
         except:
@@ -131,7 +124,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                 "participants": []
             })
 
-        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
 
         response = None
         try:
@@ -151,7 +144,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
         raised = False
         async def mock_send(*_, **__):
             return mock_response(status_code=404, json_payload={"msg": "some error"})
-        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
         try:
             await rooms_client.get_room(room_id=self.room_id)
         except:
@@ -178,7 +171,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
             })
 
         response = None
-        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
         try:
             response = await rooms_client.add_participants(room_id=self.room_id, participants=[additional_participant])
         except:
@@ -186,17 +179,10 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertListEqual(response.participants, [self.room_participant, additional_participant])
+        self.assertEqual(None, response)
 
     async def test_update_participants(self):
         raised = False
-        updated_participant_json = {
-            "communicationIdentifier": {
-                "rawId": self.raw_id,
-                "communicationUser": {"id": self.raw_id}
-            },
-            "role": ""
-        }
         updated_participant = RoomParticipant(
             communication_identifier=CommunicationUserIdentifier(
                 id=self.raw_id
@@ -206,10 +192,10 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
 
         async def mock_send(*_, **__):
             return mock_response(status_code=200, json_payload={
-                "participants": [updated_participant_json]
+                "participants": [self.json_participant]
             })
 
-        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
 
         response = None
         try:
@@ -219,7 +205,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertListEqual(response.participants, [updated_participant])
+        self.assertEqual(None, response)
 
     async def test_remove_participants(self):
         raised = False
@@ -230,17 +216,17 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                 "participants": []
             })
 
-        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
 
         response = None
         try:
-            response = await rooms_client.remove_all_participants(room_id=self.room_id, participants=[user_to_remove])
+            response = await rooms_client.remove_participants(room_id=self.room_id, communication_identifiers=[user_to_remove])
         except:
             raised = True
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertListEqual(response.participants, [])
+        self.assertEqual(None, response)
 
     async def test_get_participants(self):
         raised = False
@@ -250,7 +236,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                 "participants": [self.json_participant]
             })
 
-        rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
 
         response = None
         try:

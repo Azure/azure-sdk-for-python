@@ -97,8 +97,7 @@ class RoomsSample(object):
         participants = [RoomParticipant(CommunicationUserIdentifier("<PARTICIPANT_MRI>"))]
 
         try:
-            add_participants_response = self.rooms_client.add_participants(room_id=room_id, participants=participants)
-            self.printRoom(response=add_participants_response)
+            self.rooms_client.add_participants(room_id=room_id, participants=participants)
         except HttpResponseError as ex:
             print(ex)
 
@@ -106,8 +105,7 @@ class RoomsSample(object):
         participants = [RoomParticipant(CommunicationUserIdentifier("<PARTICIPANT_MRI>"), RoleType.PRESENTER)]
 
         try:
-            update_participants_response = self.rooms_client.update_participants(room_id=room_id, participants=participants)
-            self.printRoom(response=update_participants_response)
+            self.rooms_client.update_participants(room_id=room_id, participants=participants)
         except HttpResponseError as ex:
             print(ex)
 
@@ -122,15 +120,7 @@ class RoomsSample(object):
         participants = [CommunicationUserIdentifier("<PARTICIPANT_MRI>")]
 
         try:
-            remove_participants_response = self.rooms_client.remove_participants(room_id=room_id, communication_identifiers=participants)
-            self.printRoom(response=remove_participants_response)
-        except HttpResponseError as ex:
-            print(ex)
-
-    def clear_all_participants(self, room_id):
-        try:
-            update_room_response = self.rooms_client.remove_all_participants(room_id=room_id)
-            self.printRoom(response=update_room_response)
+            self.rooms_client.remove_participants(room_id=room_id, communication_identifiers=participants)
         except HttpResponseError as ex:
             print(ex)
 
@@ -150,7 +140,7 @@ class RoomsSample(object):
 
     def printRoom(self, response):
         print("room_id: ", response.id)
-        print("created_date_time: ", response.created_date_time)
+        print("created_on: ", response.created_on)
         print("valid_from: ", response.valid_from)
         print("valid_until: ", response.valid_until)
         print("participants: ", response.participants)
@@ -167,6 +157,5 @@ if __name__ == '__main__':
         sample.update_participants(room_id=sample.rooms[0])
         sample.get_participants(room_id=sample.rooms[0])
         sample.remove_participants(room_id=sample.rooms[0])
-        sample.clear_all_participants(room_id=sample.rooms[0])
         sample.get_room(room_id=sample.rooms[0])
     sample.tearDown()

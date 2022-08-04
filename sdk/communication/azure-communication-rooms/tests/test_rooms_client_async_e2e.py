@@ -31,9 +31,6 @@ class FakeTokenCredential(object):
     def __init__(self):
         self.token = AccessToken("Fake Token", 0)
 
-    def get_token(self, *args):
-        return self.token
-
 class RoomsClientTestAsync(AsyncCommunicationTestCase):
     def __init__(self, method_name):
         super(RoomsClientTestAsync, self).__init__(method_name)
@@ -419,10 +416,11 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             participants = [
                 self.users["john"]
             ]
-            update_response = await self.rooms_client.add_participants(room_id=create_response.id, participants=participants)
+            await self.rooms_client.add_participants(room_id=create_response.id, participants=participants)
+            updated_participants = await self.rooms_client.get_participants(room_id=create_response.id)
             # delete created room
             await self.rooms_client.delete_room(room_id=create_response.id)
-            self.assertListEqual(participants, update_response.participants)
+            self.assertListEqual(participants, updated_participants.participants)
 
     @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
@@ -441,8 +439,8 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
         ]
         async with self.rooms_client:
             create_response = await self.rooms_client.create_room(participants=create_participants)
-
-            update_response = await self.rooms_client.update_participants(room_id=create_response.id, participants=update_participants)
+            await self.rooms_client.update_participants(room_id=create_response.id, participants=update_participants)
+            update_response = await self.rooms_client.get_participants(room_id=create_response.id)
             # delete created room
             await self.rooms_client.delete_room(room_id=create_response.id)
             self.assertListEqual(update_participants, update_response.participants)
@@ -461,7 +459,8 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
         async with self.rooms_client:
             create_response = await self.rooms_client.create_room(participants=create_participants)
 
-            update_response = await self.rooms_client.remove_participants(room_id=create_response.id, communication_identifiers=remove_participants)
+            await self.rooms_client.remove_participants(room_id=create_response.id, communication_identifiers=remove_participants)
+            update_response = await self.rooms_client.get_participants(room_id=create_response.id)
             # delete created room
             await self.rooms_client.delete_room(room_id=create_response.id)
             participants = [self.users["chris"]]
@@ -507,29 +506,6 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             assert str(ex.value.status_code) == "400"
             assert ex.value.message is not None
 
-    @pytest.mark.live_test_only
-    @AsyncCommunicationTestCase.await_prepared_test
-    async def test_remove_all_participant_async(self):
-        # add john and chris to the room
-        participants = [
-            self.users["john"],
-            self.users["chris"]
-        ]
-        async with self.rooms_client:
-            create_response = await self.rooms_client.create_room(participants=participants)
-
-            # clear participants
-            update_response = await self.rooms_client.remove_all_participants(room_id=create_response.id)
-
-            # delete created room
-            await self.rooms_client.delete_room(room_id=create_response.id)
-            self.verify_successful_room_response(
-                response=update_response,
-                valid_from=create_response.valid_from,
-                valid_until=create_response.valid_until,
-                room_id=create_response.id,
-                participants=[])
-
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_room_incorrect_roomId_async(self):
         # try to update room with random room_id
@@ -557,7 +533,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             assert str(ex.value.status_code) == "404"
             assert ex.value.message is not None
 
-    def verify_successful_room_response(self, response, valid_from=None, valid_until=None, room_id=None, participants=None):
+    def verify_successful_room_response(self, response, valid_from=None, valid_until=None, room_id=None, participants=None, room_join_policy=None):
 
         if room_id is not None:
             self.assertEqual(room_id, response.id)
@@ -567,3 +543,5 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             self.assertEqual(valid_until.replace(tzinfo=None), response.valid_until.replace(tzinfo=None))
         if participants is not None:
             self.assertListEqual(participants, response.participants)
+        if room_join_policy is not None:
+            self.assertEqual(room_join_policy, response.room_join_policy)
