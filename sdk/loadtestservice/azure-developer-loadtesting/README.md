@@ -65,9 +65,7 @@ try:
             },
             "secrets": {},
             "environmentVariables": {},
-            "passFailCriteria": {"passFailMetrics": {}},
-            "keyvaultReferenceIdentityType": "SystemAssigned",
-            "keyvaultReferenceIdentityId": None,
+            "passFailCriteria": {"passFailMetrics": {}}
         },
     )
     print(result)
@@ -113,10 +111,6 @@ try:
         {
             "testId": TEST_ID,
             "displayName": DISPLAY_NAME,
-            "requestSamplers": [],
-            "errors": [],
-            "percentiles": ["90"],
-            "groupByInterval": "5s",
         },
     )
     print(result)
