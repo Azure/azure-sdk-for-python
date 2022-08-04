@@ -9,16 +9,16 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Mon, 01 Aug 2022 23:14:56 GMT",
+        "x-ms-date": "Thu, 04 Aug 2022 23:15:53 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Mon, 01 Aug 2022 23:14:56 GMT",
-        "ETag": "\u00220x8DA7413A631A5FF\u0022",
-        "Last-Modified": "Mon, 01 Aug 2022 23:14:56 GMT",
+        "Date": "Thu, 04 Aug 2022 23:15:53 GMT",
+        "ETag": "\u00220x8DA766F47D0B830\u0022",
+        "Last-Modified": "Thu, 04 Aug 2022 23:15:54 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -39,7 +39,7 @@
         "If-None-Match": "*",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-date": "Mon, 01 Aug 2022 23:14:56 GMT",
+        "x-ms-date": "Thu, 04 Aug 2022 23:15:54 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": "aGVsbG8gd29ybGQ=",
@@ -47,9 +47,9 @@
       "ResponseHeaders": {
         "Content-Length": "0",
         "Content-MD5": "XrY7u\u002BAe7tCTyyK7j1rNww==",
-        "Date": "Mon, 01 Aug 2022 23:14:56 GMT",
-        "ETag": "\u00220x8DA7413A6451AB6\u0022",
-        "Last-Modified": "Mon, 01 Aug 2022 23:14:56 GMT",
+        "Date": "Thu, 04 Aug 2022 23:15:53 GMT",
+        "ETag": "\u00220x8DA766F47E0E38C\u0022",
+        "Last-Modified": "Thu, 04 Aug 2022 23:15:54 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -72,7 +72,7 @@
         "If-None-Match": "*",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-date": "Mon, 01 Aug 2022 23:14:56 GMT",
+        "x-ms-date": "Thu, 04 Aug 2022 23:15:54 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": "aGVsbG8gd29ybGQ=",
@@ -80,9 +80,9 @@
       "ResponseHeaders": {
         "Content-Length": "0",
         "Content-MD5": "XrY7u\u002BAe7tCTyyK7j1rNww==",
-        "Date": "Mon, 01 Aug 2022 23:14:56 GMT",
-        "ETag": "\u00220x8DA7413A655279A\u0022",
-        "Last-Modified": "Mon, 01 Aug 2022 23:14:57 GMT",
+        "Date": "Thu, 04 Aug 2022 23:15:53 GMT",
+        "ETag": "\u00220x8DA766F47EEEC1C\u0022",
+        "Last-Modified": "Thu, 04 Aug 2022 23:15:54 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -105,7 +105,7 @@
         "If-None-Match": "*",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-date": "Mon, 01 Aug 2022 23:14:56 GMT",
+        "x-ms-date": "Thu, 04 Aug 2022 23:15:54 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": "aGVsbG8gd29ybGQ=",
@@ -113,9 +113,9 @@
       "ResponseHeaders": {
         "Content-Length": "0",
         "Content-MD5": "XrY7u\u002BAe7tCTyyK7j1rNww==",
-        "Date": "Mon, 01 Aug 2022 23:14:56 GMT",
-        "ETag": "\u00220x8DA7413A664E96A\u0022",
-        "Last-Modified": "Mon, 01 Aug 2022 23:14:57 GMT",
+        "Date": "Thu, 04 Aug 2022 23:15:53 GMT",
+        "ETag": "\u00220x8DA766F47FBE356\u0022",
+        "Last-Modified": "Thu, 04 Aug 2022 23:15:54 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -133,17 +133,17 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "1215",
-        "Content-Type": "multipart/mixed; boundary=batch_c224425a-11ef-11ed-996c-4851c58829e0",
+        "Content-Length": "1212",
+        "Content-Type": "multipart/mixed; boundary=batch_63c2f561-144b-11ed-bab4-4851c58829e3",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Mon, 01 Aug 2022 23:14:57 GMT",
+        "x-ms-date": "Thu, 04 Aug 2022 23:15:54 GMT",
         "x-ms-version": "2021-08-06"
       },
-      "RequestBody": "LS1iYXRjaF9jMjI0NDI1YS0xMWVmLTExZWQtOTk2Yy00ODUxYzU4ODI5ZTANCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vaHR0cA0KQ29udGVudC1JRDogMA0KQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5DQoNCkRFTEVURSAvY29udGFpbmVyYjdjMjJkZGQvYmxvYjE/IEhUVFAvMS4xDQp4LW1zLWRhdGU6IE1vbiwgMDEgQXVnIDIwMjIgMjM6MTQ6NTcgR01UDQp4LW1zLWNsaWVudC1yZXF1ZXN0LWlkOiBjMjI0Njk1YS0xMWVmLTExZWQtYjEwNy00ODUxYzU4ODI5ZTANCkF1dGhvcml6YXRpb246IFNoYXJlZEtleSB2aW5jZW50dHJhbmNhbmFyeTpPT2dNYnhYcUhyY0hnWVdPKzNoSkl5NndYK28yUUE1TDNYTHlxSHNqZ2hZPQ0KQ29udGVudC1MZW5ndGg6IDANCg0KDQotLWJhdGNoX2MyMjQ0MjVhLTExZWYtMTFlZC05OTZjLTQ4NTFjNTg4MjllMA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LUlEOiAxDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCg0KREVMRVRFIC9jb250YWluZXJiN2MyMmRkZC9ibG9iMj8gSFRUUC8xLjENCngtbXMtZGF0ZTogTW9uLCAwMSBBdWcgMjAyMiAyMzoxNDo1NyBHTVQNCngtbXMtY2xpZW50LXJlcXVlc3QtaWQ6IGMyMjQ5MDUzLTExZWYtMTFlZC05OTk4LTQ4NTFjNTg4MjllMA0KQXV0aG9yaXphdGlvbjogU2hhcmVkS2V5IHZpbmNlbnR0cmFuY2FuYXJ5OjZ6L3o0bHdZQ1JMcWh3NUJJeU1LdHJOWUVVSlhhQzBJYkcvTk43WGIwc1U9DQpDb250ZW50LUxlbmd0aDogMA0KDQoNCi0tYmF0Y2hfYzIyNDQyNWEtMTFlZi0xMWVkLTk5NmMtNDg1MWM1ODgyOWUwDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2h0dHANCkNvbnRlbnQtSUQ6IDINCkNvbnRlbnQtVHJhbnNmZXItRW5jb2Rpbmc6IGJpbmFyeQ0KDQpERUxFVEUgL2NvbnRhaW5lcmI3YzIyZGRkL2Jsb2IzPyBIVFRQLzEuMQ0KeC1tcy1kYXRlOiBNb24sIDAxIEF1ZyAyMDIyIDIzOjE0OjU3IEdNVA0KeC1tcy1jbGllbnQtcmVxdWVzdC1pZDogYzIyNDkwNTQtMTFlZi0xMWVkLTgzNWEtNDg1MWM1ODgyOWUwDQpBdXRob3JpemF0aW9uOiBTaGFyZWRLZXkgdmluY2VudHRyYW5jYW5hcnk6TmFpNjJZdWFmQmNRRXV4ZzFnb0R0WFoyUnplMHVDUElKWFlmc0pLV1grRT0NCkNvbnRlbnQtTGVuZ3RoOiAwDQoNCg0KLS1iYXRjaF9jMjI0NDI1YS0xMWVmLTExZWQtOTk2Yy00ODUxYzU4ODI5ZTAtLQ0K",
+      "RequestBody": "LS1iYXRjaF82M2MyZjU2MS0xNDRiLTExZWQtYmFiNC00ODUxYzU4ODI5ZTMNCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vaHR0cA0KQ29udGVudC1JRDogMA0KQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5DQoNCkRFTEVURSAvY29udGFpbmVyYjdjMjJkZGQvYmxvYjE/IEhUVFAvMS4xDQp4LW1zLWRhdGU6IFRodSwgMDQgQXVnIDIwMjIgMjM6MTU6NTQgR01UDQp4LW1zLWNsaWVudC1yZXF1ZXN0LWlkOiA2M2MzMzA4NS0xNDRiLTExZWQtYWFlZS00ODUxYzU4ODI5ZTMNCkF1dGhvcml6YXRpb246IFNoYXJlZEtleSB2aW5jZW50dHJhbnN0b2NrOnBYZTJjTUZVUE1vd1dzYy9uVm5XcnRaeTV4MkpCY0NYWVdHQzB0OUZLbHc9DQpDb250ZW50LUxlbmd0aDogMA0KDQoNCi0tYmF0Y2hfNjNjMmY1NjEtMTQ0Yi0xMWVkLWJhYjQtNDg1MWM1ODgyOWUzDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2h0dHANCkNvbnRlbnQtSUQ6IDENCkNvbnRlbnQtVHJhbnNmZXItRW5jb2Rpbmc6IGJpbmFyeQ0KDQpERUxFVEUgL2NvbnRhaW5lcmI3YzIyZGRkL2Jsb2IyPyBIVFRQLzEuMQ0KeC1tcy1kYXRlOiBUaHUsIDA0IEF1ZyAyMDIyIDIzOjE1OjU0IEdNVA0KeC1tcy1jbGllbnQtcmVxdWVzdC1pZDogNjNjMzU3YTUtMTQ0Yi0xMWVkLWJjZmYtNDg1MWM1ODgyOWUzDQpBdXRob3JpemF0aW9uOiBTaGFyZWRLZXkgdmluY2VudHRyYW5zdG9jazpTN2tFV3BvdDVCVWdtQXFQT3YxdVFrdWZ5bjlmSndKY0Rma1c4U0RKWElFPQ0KQ29udGVudC1MZW5ndGg6IDANCg0KDQotLWJhdGNoXzYzYzJmNTYxLTE0NGItMTFlZC1iYWI0LTQ4NTFjNTg4MjllMw0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LUlEOiAyDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCg0KREVMRVRFIC9jb250YWluZXJiN2MyMmRkZC9ibG9iMz8gSFRUUC8xLjENCngtbXMtZGF0ZTogVGh1LCAwNCBBdWcgMjAyMiAyMzoxNTo1NCBHTVQNCngtbXMtY2xpZW50LXJlcXVlc3QtaWQ6IDYzYzM1N2E2LTE0NGItMTFlZC1iYTUwLTQ4NTFjNTg4MjllMw0KQXV0aG9yaXphdGlvbjogU2hhcmVkS2V5IHZpbmNlbnR0cmFuc3RvY2s6Njg5Si9LQXF0UlJXV1JSblJacDlhRDlieTNYZDNmRWgzU3hGOWdJWmQ3TT0NCkNvbnRlbnQtTGVuZ3RoOiAwDQoNCg0KLS1iYXRjaF82M2MyZjU2MS0xNDRiLTExZWQtYmFiNC00ODUxYzU4ODI5ZTMtLQ0K",
       "StatusCode": 202,
       "ResponseHeaders": {
-        "Content-Type": "multipart/mixed; boundary=batchresponse_f8a27ab0-4851-415c-ab2f-b85a29427830",
-        "Date": "Mon, 01 Aug 2022 23:14:56 GMT",
+        "Content-Type": "multipart/mixed; boundary=batchresponse_be249e33-3939-4702-bb9d-f61b608eb2b8",
+        "Date": "Thu, 04 Aug 2022 23:15:54 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -151,7 +151,7 @@
         "Transfer-Encoding": "chunked",
         "x-ms-version": "2021-08-06"
       },
-      "ResponseBody": "LS1iYXRjaHJlc3BvbnNlX2Y4YTI3YWIwLTQ4NTEtNDE1Yy1hYjJmLWI4NWEyOTQyNzgzMA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LUlEOiAwDQoNCkhUVFAvMS4xIDIwMiBBY2NlcHRlZA0KeC1tcy1kZWxldGUtdHlwZS1wZXJtYW5lbnQ6IHRydWUNCngtbXMtcmVxdWVzdC1pZDogNmI2MzE3MWItYzAxZS0wMDE0LTA5ZmMtYTU5MmFkMWU4ODZlDQp4LW1zLXZlcnNpb246IDIwMjEtMDgtMDYNCngtbXMtY2xpZW50LXJlcXVlc3QtaWQ6IGMyMjQ2OTVhLTExZWYtMTFlZC1iMTA3LTQ4NTFjNTg4MjllMA0KU2VydmVyOiBXaW5kb3dzLUF6dXJlLUJsb2IvMS4wDQoNCi0tYmF0Y2hyZXNwb25zZV9mOGEyN2FiMC00ODUxLTQxNWMtYWIyZi1iODVhMjk0Mjc4MzANCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vaHR0cA0KQ29udGVudC1JRDogMQ0KDQpIVFRQLzEuMSAyMDIgQWNjZXB0ZWQNCngtbXMtZGVsZXRlLXR5cGUtcGVybWFuZW50OiB0cnVlDQp4LW1zLXJlcXVlc3QtaWQ6IDZiNjMxNzFiLWMwMWUtMDAxNC0wOWZjLWE1OTJhZDFlODg3MA0KeC1tcy12ZXJzaW9uOiAyMDIxLTA4LTA2DQp4LW1zLWNsaWVudC1yZXF1ZXN0LWlkOiBjMjI0OTA1My0xMWVmLTExZWQtOTk5OC00ODUxYzU4ODI5ZTANClNlcnZlcjogV2luZG93cy1BenVyZS1CbG9iLzEuMA0KDQotLWJhdGNocmVzcG9uc2VfZjhhMjdhYjAtNDg1MS00MTVjLWFiMmYtYjg1YTI5NDI3ODMwDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2h0dHANCkNvbnRlbnQtSUQ6IDINCg0KSFRUUC8xLjEgMjAyIEFjY2VwdGVkDQp4LW1zLWRlbGV0ZS10eXBlLXBlcm1hbmVudDogdHJ1ZQ0KeC1tcy1yZXF1ZXN0LWlkOiA2YjYzMTcxYi1jMDFlLTAwMTQtMDlmYy1hNTkyYWQxZTg4NzENCngtbXMtdmVyc2lvbjogMjAyMS0wOC0wNg0KeC1tcy1jbGllbnQtcmVxdWVzdC1pZDogYzIyNDkwNTQtMTFlZi0xMWVkLTgzNWEtNDg1MWM1ODgyOWUwDQpTZXJ2ZXI6IFdpbmRvd3MtQXp1cmUtQmxvYi8xLjANCg0KLS1iYXRjaHJlc3BvbnNlX2Y4YTI3YWIwLTQ4NTEtNDE1Yy1hYjJmLWI4NWEyOTQyNzgzMC0t"
+      "ResponseBody": "LS1iYXRjaHJlc3BvbnNlX2JlMjQ5ZTMzLTM5MzktNDcwMi1iYjlkLWY2MWI2MDhlYjJiOA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LUlEOiAwDQoNCkhUVFAvMS4xIDIwMiBBY2NlcHRlZA0KeC1tcy1kZWxldGUtdHlwZS1wZXJtYW5lbnQ6IHRydWUNCngtbXMtcmVxdWVzdC1pZDogMjQyMzM1MzctZTAxZS0wMDZjLTQ1NTgtYTgxZGI2MWU4MzgwDQp4LW1zLXZlcnNpb246IDIwMjEtMDgtMDYNCngtbXMtY2xpZW50LXJlcXVlc3QtaWQ6IDYzYzMzMDg1LTE0NGItMTFlZC1hYWVlLTQ4NTFjNTg4MjllMw0KU2VydmVyOiBXaW5kb3dzLUF6dXJlLUJsb2IvMS4wDQoNCi0tYmF0Y2hyZXNwb25zZV9iZTI0OWUzMy0zOTM5LTQ3MDItYmI5ZC1mNjFiNjA4ZWIyYjgNCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vaHR0cA0KQ29udGVudC1JRDogMQ0KDQpIVFRQLzEuMSAyMDIgQWNjZXB0ZWQNCngtbXMtZGVsZXRlLXR5cGUtcGVybWFuZW50OiB0cnVlDQp4LW1zLXJlcXVlc3QtaWQ6IDI0MjMzNTM3LWUwMWUtMDA2Yy00NTU4LWE4MWRiNjFlODM4Mg0KeC1tcy12ZXJzaW9uOiAyMDIxLTA4LTA2DQp4LW1zLWNsaWVudC1yZXF1ZXN0LWlkOiA2M2MzNTdhNS0xNDRiLTExZWQtYmNmZi00ODUxYzU4ODI5ZTMNClNlcnZlcjogV2luZG93cy1BenVyZS1CbG9iLzEuMA0KDQotLWJhdGNocmVzcG9uc2VfYmUyNDllMzMtMzkzOS00NzAyLWJiOWQtZjYxYjYwOGViMmI4DQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2h0dHANCkNvbnRlbnQtSUQ6IDINCg0KSFRUUC8xLjEgMjAyIEFjY2VwdGVkDQp4LW1zLWRlbGV0ZS10eXBlLXBlcm1hbmVudDogdHJ1ZQ0KeC1tcy1yZXF1ZXN0LWlkOiAyNDIzMzUzNy1lMDFlLTAwNmMtNDU1OC1hODFkYjYxZTgzODMNCngtbXMtdmVyc2lvbjogMjAyMS0wOC0wNg0KeC1tcy1jbGllbnQtcmVxdWVzdC1pZDogNjNjMzU3YTYtMTQ0Yi0xMWVkLWJhNTAtNDg1MWM1ODgyOWUzDQpTZXJ2ZXI6IFdpbmRvd3MtQXp1cmUtQmxvYi8xLjANCg0KLS1iYXRjaHJlc3BvbnNlX2JlMjQ5ZTMzLTM5MzktNDcwMi1iYjlkLWY2MWI2MDhlYjJiOC0t"
     }
   ],
   "Variables": {}

@@ -1586,10 +1586,7 @@ class TestStorageContainer(StorageRecordedTestCase):
     @BlobPreparer()
     @recorded_by_proxy
     def test_delete_blobs_simple(self, **kwargs):
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
-        # set_bodiless_matcher()
+        set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -1621,6 +1618,7 @@ class TestStorageContainer(StorageRecordedTestCase):
     @BlobPreparer()
     @recorded_by_proxy
     def test_delete_blobs_with_version_id(self, **kwargs):
+        set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
@@ -1705,8 +1703,9 @@ class TestStorageContainer(StorageRecordedTestCase):
     @BlobPreparer()
     @recorded_by_proxy
     def test_delete_blobs_with_if_tags(self, **kwargs):
-        blob_storage_account_name = kwargs.pop("blob_storage_account_name")
-        blob_storage_account_key = kwargs.pop("blob_storage_account_key")
+        set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
+        blob_storage_account_name = kwargs.pop("storage_account_name")
+        blob_storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
         bsc = BlobServiceClient(self.account_url(blob_storage_account_name, "blob"), blob_storage_account_key)
@@ -1803,6 +1802,7 @@ class TestStorageContainer(StorageRecordedTestCase):
     @BlobPreparer()
     @recorded_by_proxy
     def test_delete_blobs_simple_no_raise(self, **kwargs):
+        set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -1833,6 +1833,7 @@ class TestStorageContainer(StorageRecordedTestCase):
     @BlobPreparer()
     @recorded_by_proxy
     def test_delete_blobs_snapshot(self, **kwargs):
+        set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -1873,6 +1874,7 @@ class TestStorageContainer(StorageRecordedTestCase):
     @BlobPreparer()
     @recorded_by_proxy
     def test_standard_blob_tier_set_tier_api_batch(self, **kwargs):
+        set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -1926,7 +1928,9 @@ class TestStorageContainer(StorageRecordedTestCase):
 
     @pytest.mark.playback_test_only
     @BlobPreparer()
+    @recorded_by_proxy
     def test_batch_set_standard_blob_tier_for_version(self, **kwargs):
+        set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -1990,8 +1994,9 @@ class TestStorageContainer(StorageRecordedTestCase):
     @BlobPreparer()
     @recorded_by_proxy
     def test_standard_blob_tier_with_if_tags(self, **kwargs):
-        blob_storage_account_name = kwargs.pop("blob_storage_account_name")
-        blob_storage_account_key = kwargs.pop("blob_storage_account_key")
+        set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
+        blob_storage_account_name = kwargs.pop("storage_account_name")
+        blob_storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(blob_storage_account_name, "blob"), blob_storage_account_key)
         container = self._create_container(bsc)
