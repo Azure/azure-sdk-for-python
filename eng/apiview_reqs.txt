@@ -1,5 +1,5 @@
 api-stub-generator==0.3.3
-astroid 2.11.5
+astroid==2.11.5
 async-generator==1.10
 cffi==1.15.1
 chardet==5.0.0
