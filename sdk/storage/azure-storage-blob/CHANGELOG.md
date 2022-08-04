@@ -8,7 +8,8 @@ This version and all future versions will require Python 3.7+. Python 3.6 is no 
 - Added support for `AzureNamedKeyCredential` as a valid `credential` type.
 
 ### Bugs Fixed
-- Updated exception catching of `StorageStreamDownloader`'s retry mechanism.
+- Removed dead retry meachism from async `azure.storage.blob.aio.StorageStreamDownloader`.
+- Updated exception catching of `azure.storage.blob.StorageStreamDownloader`'s retry mechanism.
 - Adjusted type hints for `upload_blob` and `StorageStreamDownloader.readall`.
 
 ## 12.13.0 (2022-07-07)
