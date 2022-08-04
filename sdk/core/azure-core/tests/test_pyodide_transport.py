@@ -64,9 +64,9 @@ class TestPyodideTransportClass:
             ("js", mock_js_module),
         )
         with mock.patch.dict(sys.modules, patch_dict):
-            import azure.core.pipeline.transport.pyodide
+            import azure.core.pipeline.transport._pyodide
 
-            yield azure.core.pipeline.transport.pyodide
+            yield azure.core.pipeline.transport._pyodide
 
     @pytest.fixture()
     def pipeline(self, transport):
@@ -202,3 +202,21 @@ class TestPyodideTransportClass:
         transport.PyodideStreamDownloadGenerator(pipeline=None, response=response, decompress=True)
         mock_js_module.DecompressionStream.new.assert_called_once_with("gzip")
  
+    def test_valid_import(self, transport):
+        """Test that we can import Pyodide classes from `azure.core.pipeline.transport`
+        Adding the transport fixture will mock the Pyodide modules in `sys.modules`.
+        """
+        # Use patch so we don't clutter up the `sys.modules` namespace.
+        import azure.core.pipeline.transport as transport
+        assert transport.PyodideTransport
+        assert transport.PyodideTransportResponse
+    
+    def test_invalid_import(self):
+        """Test that correct errors are thrown when importing Pyodide class in the wrong
+        context.
+        """
+        import azure.core.pipeline.transport as transport
+        with pytest.raises(ImportError):
+            transport.PyodideTransport
+        with pytest.raises(ImportError):
+            transport.PyodideTransportResponse

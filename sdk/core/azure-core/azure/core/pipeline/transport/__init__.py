@@ -43,6 +43,8 @@ __all__ = [
     'TrioRequestsTransportResponse',
     'AioHttpTransport',
     'AioHttpTransportResponse',
+    'PyodideTransport',
+    'PyodideTransportResponse',
 ]
 
 # pylint: disable=unused-import, redefined-outer-name, no-member, too-many-statements, too-many-branches
