@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 from datetime import datetime
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 from azure.core.exceptions import DeserializationError
 from .._generated.models import (
@@ -41,7 +41,7 @@ class CommunicationRoom(_serialization.Model):
     :ivar room_join_policy: The join policy of the room.
     :vartype room_join_policy: ~azure.communication.rooms.RoomJoinPolicy
     :ivar participants: Collection of room participants.
-    :vartype participants: Optional[list[~azure.communication.rooms.RoomParticipant]]
+    :vartype participants: Optional[List[~azure.communication.rooms.RoomParticipant]]
     """
 
     _attribute_map = {
@@ -60,7 +60,7 @@ class CommunicationRoom(_serialization.Model):
         valid_from: datetime,
         valid_until: datetime,
         room_join_policy: RoomJoinPolicy,
-        participants: Optional[list['RoomParticipant']]=None,
+        participants: Optional[List['RoomParticipant']]=None,
         **kwargs
     ):
         """
@@ -78,7 +78,7 @@ class CommunicationRoom(_serialization.Model):
         :param room_join_policy: The join policy of the room.
         :type room_join_policy: ~azure.communication.rooms.RoomJoinPolicy
         :param participants: Collection of room participants.
-        :type participants: Optional[list[~azure.communication.rooms.RoomParticipant]]
+        :type participants: Optional[List[~azure.communication.rooms.RoomParticipant]]
         """
         super(CommunicationRoom, self).__init__(**kwargs)
         self.id = id
@@ -208,7 +208,7 @@ class ParticipantsCollection(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar participants: Room Participants. Required.
-    :vartype participants: list[~azure.communication.rooms.RoomParticipant]
+    :vartype participants: List[~azure.communication.rooms.RoomParticipant]
     """
 
     _validation = {
@@ -216,9 +216,9 @@ class ParticipantsCollection(_serialization.Model):
     }
 
     _attribute_map = {
-        "participants": {"key": "participants", "type": "list[RoomParticipant]"},
+        "participants": {"key": "participants", "type": "List[RoomParticipant]"},
     }
 
-    def __init__(self, *, participants: list[RoomParticipantInternal], **kwargs):
+    def __init__(self, *, participants: List[RoomParticipantInternal], **kwargs):
         super().__init__(**kwargs)
         self.participants = [RoomParticipant.from_room_participant_internal(p) for p in participants]
