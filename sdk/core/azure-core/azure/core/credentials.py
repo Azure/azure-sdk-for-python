@@ -6,7 +6,6 @@
 from collections import namedtuple
 from typing import Any, NamedTuple, Optional
 from typing_extensions import Protocol
-import six
 
 
 class AccessToken(NamedTuple):
@@ -54,7 +53,7 @@ class AzureKeyCredential(object):
 
     def __init__(self, key):
         # type: (str) -> None
-        if not isinstance(key, six.string_types):
+        if not isinstance(key, str):
             raise TypeError("key must be a string.")
         self._key = key  # type: str
 
@@ -79,7 +78,7 @@ class AzureKeyCredential(object):
         """
         if not key:
             raise ValueError("The key used for updating can not be None or empty")
-        if not isinstance(key, six.string_types):
+        if not isinstance(key, str):
             raise TypeError("The key used for updating must be a string.")
         self._key = key
 
@@ -94,7 +93,7 @@ class AzureSasCredential(object):
 
     def __init__(self, signature):
         # type: (str) -> None
-        if not isinstance(signature, six.string_types):
+        if not isinstance(signature, str):
             raise TypeError("signature must be a string.")
         self._signature = signature  # type: str
 
@@ -119,7 +118,7 @@ class AzureSasCredential(object):
         """
         if not signature:
             raise ValueError("The signature used for updating can not be None or empty")
-        if not isinstance(signature, six.string_types):
+        if not isinstance(signature, str):
             raise TypeError("The signature used for updating must be a string.")
         self._signature = signature
 
@@ -135,7 +134,7 @@ class AzureNamedKeyCredential(object):
 
     def __init__(self, name, key):
         # type: (str, str) -> None
-        if not isinstance(name, six.string_types) or not isinstance(key, six.string_types):
+        if not isinstance(name, str) or not isinstance(key, str):
             raise TypeError("Both name and key must be strings.")
         self._credential = AzureNamedKey(name, key)
 
@@ -158,6 +157,6 @@ class AzureNamedKeyCredential(object):
         :param str name: The name of the credential used to authenticate to an Azure service.
         :param str key: The key used to authenticate to an Azure service.
         """
-        if not isinstance(name, six.string_types) or not isinstance(key, six.string_types):
+        if not isinstance(name, str) or not isinstance(key, str):
             raise TypeError("Both name and key must be strings.")
         self._credential = AzureNamedKey(name, key)

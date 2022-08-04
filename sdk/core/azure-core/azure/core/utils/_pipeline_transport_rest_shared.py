@@ -16,7 +16,7 @@ except ImportError:  # 2.7
 import os
 from typing import TYPE_CHECKING, cast, IO
 
-from six.moves.http_client import HTTPConnection
+from http.client import HTTPConnection
 
 try:
     binary_type = str

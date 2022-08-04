@@ -41,7 +41,6 @@ from typing import (
     AsyncIterable
 )
 import xml.etree.ElementTree as ET
-import six
 try:
     binary_type = str
     from urlparse import urlparse  # type: ignore
@@ -78,13 +77,13 @@ ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 ########################### HELPER SECTION #################################
 
 def _verify_data_object(name, value):
-    if not isinstance(name, six.string_types):
+    if not isinstance(name, str):
         raise TypeError(
             "Invalid type for data name. Expected str, got {}: {}".format(
                 type(name), name
             )
         )
-    if value is not None and not isinstance(value, (six.string_types, bytes, int, float)):
+    if value is not None and not isinstance(value, (str, bytes, int, float)):
         raise TypeError(
             "Invalid type for data value. Expected primitive type, got {}: {}".format(
                 type(name), name
@@ -129,10 +128,10 @@ def set_content_body(content: Any) -> Tuple[MutableMapping[str, str], Optional[C
     if isinstance(content, ET.Element):
         # XML body
         return set_xml_body(content)
-    if isinstance(content, (six.string_types, bytes)):
+    if isinstance(content, (str, bytes)):
         headers = {}
         body = content
-        if isinstance(content, six.string_types):
+        if isinstance(content, str):
             headers["Content-Type"] = "text/plain"
         if body:
             headers["Content-Length"] = str(len(body))

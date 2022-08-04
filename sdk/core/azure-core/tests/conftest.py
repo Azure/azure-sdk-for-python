@@ -30,7 +30,7 @@ import os
 import subprocess
 import random
 import platform
-from six.moves import urllib
+import urllib
 from rest_client import TestRestClient
 import sys
 

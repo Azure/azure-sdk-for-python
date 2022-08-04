@@ -55,7 +55,7 @@ from typing import (
     Type
 )
 
-from six.moves.http_client import HTTPResponse as _HTTPResponse
+from http.client import HTTPResponse as _HTTPResponse
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import (

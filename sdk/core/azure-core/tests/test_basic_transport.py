@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from six.moves.http_client import HTTPConnection
+from http.client import HTTPConnection
 from collections import OrderedDict
 import sys
 

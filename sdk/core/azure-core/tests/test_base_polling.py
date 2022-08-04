@@ -30,7 +30,6 @@ import re
 import types
 import pickle
 import platform
-import six
 
 try:
     from unittest import mock
@@ -157,7 +156,7 @@ def test_base_polling_continuation_token(client, polling_response, http_response
     polling = polling_response(http_response)
 
     continuation_token = polling.get_continuation_token()
-    assert isinstance(continuation_token, six.string_types)
+    assert isinstance(continuation_token, str)
 
     polling_args = LROBasePolling.from_continuation_token(
         continuation_token,
