@@ -336,11 +336,19 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
+        variables = kwargs.pop('variables')
+        if self.is_live:
+            expiry_time = datetime.utcnow() + timedelta(hours=1)
+            start_time = datetime.utcnow()
+            variables = {"expiry_time": expiry_time.isoformat(), "start_time": start_time.isoformat()}
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = self._create_container(bsc)
+        expires = datetime.strptime(variables["expiry_time"], "%Y-%m-%dT%H:%M:%S.%f")
+        starts = datetime.strptime(variables["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=datetime.utcnow() + timedelta(hours=1),
-                                     start=datetime.utcnow())
+                                     expiry=expires,
+                                     start=starts)
         signed_identifiers = {'testid': access_policy}
         resp = container.set_container_access_policy(signed_identifiers, public_access=PublicAccess.Blob)
 
@@ -353,6 +361,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert containers[0] is not None
         self.assertNamedItemInContainer(containers, container.container_name)
         assert containers[0].public_access == PublicAccess.Blob
+
+        return variables
 
     @BlobPreparer()
     @recorded_by_proxy

@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/container3f95629d9?restype=container",
+      "RequestUri": "https://storagename.blob.core.windows.net/zazaf95629d9?restype=container",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -9,16 +9,16 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Thu, 04 Aug 2022 00:02:15 GMT",
+        "x-ms-date": "Thu, 04 Aug 2022 23:56:35 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 04 Aug 2022 00:02:13 GMT",
-        "ETag": "\u00220x8DA75AC96490081\u0022",
-        "Last-Modified": "Thu, 04 Aug 2022 00:02:14 GMT",
+        "Date": "Thu, 04 Aug 2022 23:56:35 GMT",
+        "ETag": "\u00220x8DA7674F6DC8E84\u0022",
+        "Last-Modified": "Thu, 04 Aug 2022 23:56:35 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -28,7 +28,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/container3f95629d9?restype=container",
+      "RequestUri": "https://storagename.blob.core.windows.net/zazaf95629d9?restype=container",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -36,14 +36,14 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Thu, 04 Aug 2022 00:02:16 GMT",
+        "x-ms-date": "Thu, 04 Aug 2022 23:56:35 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 04 Aug 2022 00:02:15 GMT",
+        "Date": "Thu, 04 Aug 2022 23:56:35 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -53,14 +53,14 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/container3f95629d9?restype=container",
+      "RequestUri": "https://storagename.blob.core.windows.net/zazaf95629d9?restype=container",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Thu, 04 Aug 2022 00:02:47 GMT",
+        "x-ms-date": "Thu, 04 Aug 2022 23:57:05 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
@@ -68,7 +68,7 @@
       "ResponseHeaders": {
         "Content-Length": "225",
         "Content-Type": "application/xml",
-        "Date": "Thu, 04 Aug 2022 00:02:45 GMT",
+        "Date": "Thu, 04 Aug 2022 23:57:05 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -78,8 +78,8 @@
       },
       "ResponseBody": [
         "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EContainerNotFound\u003C/Code\u003E\u003CMessage\u003EThe specified container does not exist.\n",
-        "RequestId:1395640b-f01e-004a-6d95-a77256000000\n",
-        "Time:2022-08-04T00:02:45.8266750Z\u003C/Message\u003E\u003C/Error\u003E"
+        "RequestId:e4ef0ccf-c01e-002f-515d-a8c30b000000\n",
+        "Time:2022-08-04T23:57:05.8425937Z\u003C/Message\u003E\u003C/Error\u003E"
       ]
     },
     {
@@ -90,14 +90,14 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Thu, 04 Aug 2022 00:02:47 GMT",
+        "x-ms-date": "Thu, 04 Aug 2022 23:57:05 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/xml",
-        "Date": "Thu, 04 Aug 2022 00:02:45 GMT",
+        "Date": "Thu, 04 Aug 2022 23:57:05 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -105,10 +105,10 @@
         "Transfer-Encoding": "chunked",
         "x-ms-version": "2021-08-06"
       },
-      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagename.blob.core.windows.net/\u0022\u003E\u003CContainers\u003E\u003CContainer\u003E\u003CName\u003E1f95629d9\u003C/Name\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CVersion\u003E01D8A794EB6F43B2\u003C/Version\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 03 Aug 2022 23:58:25 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DA75AC0DE4AD60\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eexpired\u003C/LeaseState\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003CHasImmutabilityPolicy\u003Efalse\u003C/HasImmutabilityPolicy\u003E\u003CHasLegalHold\u003Efalse\u003C/HasLegalHold\u003E\u003CImmutableStorageWithVersioningEnabled\u003Efalse\u003C/ImmutableStorageWithVersioningEnabled\u003E\u003CDeletedTime\u003EWed, 03 Aug 2022 23:58:25 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E1\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003C/Container\u003E\u003CContainer\u003E\u003CName\u003Econtainer2f95629d9\u003C/Name\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CVersion\u003E01D8A7955C3F3A2C\u003C/Version\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 04 Aug 2022 00:01:34 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DA75AC7EB5B325\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eexpired\u003C/LeaseState\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003CHasImmutabilityPolicy\u003Efalse\u003C/HasImmutabilityPolicy\u003E\u003CHasLegalHold\u003Efalse\u003C/HasLegalHold\u003E\u003CImmutableStorageWithVersioningEnabled\u003Efalse\u003C/ImmutableStorageWithVersioningEnabled\u003E\u003CDeletedTime\u003EThu, 04 Aug 2022 00:01:34 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E1\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003C/Container\u003E\u003CContainer\u003E\u003CName\u003Econtainer3f95629d9\u003C/Name\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CVersion\u003E01D8A79573D268DD\u003C/Version\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 04 Aug 2022 00:02:14 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DA75AC96490081\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eexpired\u003C/LeaseState\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003CHasImmutabilityPolicy\u003Efalse\u003C/HasImmutabilityPolicy\u003E\u003CHasLegalHold\u003Efalse\u003C/HasLegalHold\u003E\u003CImmutableStorageWithVersioningEnabled\u003Efalse\u003C/ImmutableStorageWithVersioningEnabled\u003E\u003CDeletedTime\u003EThu, 04 Aug 2022 00:02:14 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E1\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003C/Container\u003E\u003CContainer\u003E\u003CName\u003Econtainerf95629d9\u003C/Name\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CVersion\u003E01D8A793D447921C\u003C/Version\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 03 Aug 2022 23:50:37 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DA75AAF6BDB144\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eexpired\u003C/LeaseState\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003CHasImmutabilityPolicy\u003Efalse\u003C/HasImmutabilityPolicy\u003E\u003CHasLegalHold\u003Efalse\u003C/HasLegalHold\u003E\u003CImmutableStorageWithVersioningEnabled\u003Efalse\u003C/ImmutableStorageWithVersioningEnabled\u003E\u003CDeletedTime\u003EWed, 03 Aug 2022 23:50:37 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E1\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003C/Container\u003E\u003CContainer\u003E\u003CName\u003Econtainerf95629d9\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 03 Aug 2022 23:54:49 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DA75AB8D162539\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003CHasImmutabilityPolicy\u003Efalse\u003C/HasImmutabilityPolicy\u003E\u003CHasLegalHold\u003Efalse\u003C/HasLegalHold\u003E\u003CImmutableStorageWithVersioningEnabled\u003Efalse\u003C/ImmutableStorageWithVersioningEnabled\u003E\u003C/Properties\u003E\u003C/Container\u003E\u003C/Containers\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagename.blob.core.windows.net/\u0022\u003E\u003CContainers\u003E\u003CContainer\u003E\u003CName\u003E1f95629d9\u003C/Name\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CVersion\u003E01D8A794EB6F43B2\u003C/Version\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 03 Aug 2022 23:58:25 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DA75AC0DE4AD60\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eexpired\u003C/LeaseState\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003CHasImmutabilityPolicy\u003Efalse\u003C/HasImmutabilityPolicy\u003E\u003CHasLegalHold\u003Efalse\u003C/HasLegalHold\u003E\u003CImmutableStorageWithVersioningEnabled\u003Efalse\u003C/ImmutableStorageWithVersioningEnabled\u003E\u003CDeletedTime\u003EWed, 03 Aug 2022 23:58:25 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E0\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003C/Container\u003E\u003CContainer\u003E\u003CName\u003Econtainer2f95629d9\u003C/Name\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CVersion\u003E01D8A7955C3F3A2C\u003C/Version\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 04 Aug 2022 00:01:34 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DA75AC7EB5B325\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eexpired\u003C/LeaseState\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003CHasImmutabilityPolicy\u003Efalse\u003C/HasImmutabilityPolicy\u003E\u003CHasLegalHold\u003Efalse\u003C/HasLegalHold\u003E\u003CImmutableStorageWithVersioningEnabled\u003Efalse\u003C/ImmutableStorageWithVersioningEnabled\u003E\u003CDeletedTime\u003EThu, 04 Aug 2022 00:01:34 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E0\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003C/Container\u003E\u003CContainer\u003E\u003CName\u003Econtainer3f95629d9\u003C/Name\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CVersion\u003E01D8A79586CA4F84\u003C/Version\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 04 Aug 2022 00:02:46 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DA75ACA94205A5\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eexpired\u003C/LeaseState\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003CHasImmutabilityPolicy\u003Efalse\u003C/HasImmutabilityPolicy\u003E\u003CHasLegalHold\u003Efalse\u003C/HasLegalHold\u003E\u003CImmutableStorageWithVersioningEnabled\u003Efalse\u003C/ImmutableStorageWithVersioningEnabled\u003E\u003CDeletedTime\u003EThu, 04 Aug 2022 23:55:26 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E1\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003C/Container\u003E\u003CContainer\u003E\u003CName\u003Econtainera6d12926\u003C/Name\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CVersion\u003E01D8A7960201FF66\u003C/Version\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 04 Aug 2022 00:06:12 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DA75AD2479C058\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eexpired\u003C/LeaseState\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003CHasImmutabilityPolicy\u003Efalse\u003C/HasImmutabilityPolicy\u003E\u003CHasLegalHold\u003Efalse\u003C/HasLegalHold\u003E\u003CImmutableStorageWithVersioningEnabled\u003Efalse\u003C/ImmutableStorageWithVersioningEnabled\u003E\u003CDeletedTime\u003EThu, 04 Aug 2022 23:55:23 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E1\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003C/Container\u003E\u003CContainer\u003E\u003CName\u003Econtainerf95629d9\u003C/Name\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CVersion\u003E01D8A793D447921C\u003C/Version\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 03 Aug 2022 23:50:37 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DA75AAF6BDB144\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eexpired\u003C/LeaseState\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003CHasImmutabilityPolicy\u003Efalse\u003C/HasImmutabilityPolicy\u003E\u003CHasLegalHold\u003Efalse\u003C/HasLegalHold\u003E\u003CImmutableStorageWithVersioningEnabled\u003Efalse\u003C/ImmutableStorageWithVersioningEnabled\u003E\u003CDeletedTime\u003EWed, 03 Aug 2022 23:50:37 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E0\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003C/Container\u003E\u003CContainer\u003E\u003CName\u003Econtainerf95629d9\u003C/Name\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CVersion\u003E01D8A7946A9E90C5\u003C/Version\u003E\u003CProperties\u003E\u003CLast-Modified\u003EWed, 03 Aug 2022 23:54:49 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DA75AB8D162539\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eexpired\u003C/LeaseState\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003CHasImmutabilityPolicy\u003Efalse\u003C/HasImmutabilityPolicy\u003E\u003CHasLegalHold\u003Efalse\u003C/HasLegalHold\u003E\u003CImmutableStorageWithVersioningEnabled\u003Efalse\u003C/ImmutableStorageWithVersioningEnabled\u003E\u003CDeletedTime\u003EThu, 04 Aug 2022 23:55:24 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E1\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003C/Container\u003E\u003CContainer\u003E\u003CName\u003Ezaf95629d9\u003C/Name\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CVersion\u003E01D8A85DBB97058C\u003C/Version\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 04 Aug 2022 23:55:54 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DA7674DE0D83D9\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eexpired\u003C/LeaseState\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003CHasImmutabilityPolicy\u003Efalse\u003C/HasImmutabilityPolicy\u003E\u003CHasLegalHold\u003Efalse\u003C/HasLegalHold\u003E\u003CImmutableStorageWithVersioningEnabled\u003Efalse\u003C/ImmutableStorageWithVersioningEnabled\u003E\u003CDeletedTime\u003EThu, 04 Aug 2022 23:55:54 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E1\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003C/Container\u003E\u003CContainer\u003E\u003CName\u003Ezazaf95629d9\u003C/Name\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CVersion\u003E01D8A85DD4660B3E\u003C/Version\u003E\u003CProperties\u003E\u003CLast-Modified\u003EThu, 04 Aug 2022 23:56:35 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DA7674F6DC8E84\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eexpired\u003C/LeaseState\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003CHasImmutabilityPolicy\u003Efalse\u003C/HasImmutabilityPolicy\u003E\u003CHasLegalHold\u003Efalse\u003C/HasLegalHold\u003E\u003CImmutableStorageWithVersioningEnabled\u003Efalse\u003C/ImmutableStorageWithVersioningEnabled\u003E\u003CDeletedTime\u003EThu, 04 Aug 2022 23:56:35 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E1\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003C/Container\u003E\u003C/Containers\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
     },
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/container3f95629d9?restype=container\u0026comp=undelete",
+      "RequestUri": "https://storagename.blob.core.windows.net/zazaf95629d9?restype=container\u0026comp=undelete",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -116,16 +116,16 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Thu, 04 Aug 2022 00:02:47 GMT",
-        "x-ms-deleted-container-name": "container3f95629d9",
-        "x-ms-deleted-container-version": "01D8A79573D268DD",
+        "x-ms-date": "Thu, 04 Aug 2022 23:57:05 GMT",
+        "x-ms-deleted-container-name": "zazaf95629d9",
+        "x-ms-deleted-container-version": "01D8A85DD4660B3E",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 04 Aug 2022 00:02:46 GMT",
+        "Date": "Thu, 04 Aug 2022 23:57:05 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -135,23 +135,23 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/container3f95629d9?restype=container",
+      "RequestUri": "https://storagename.blob.core.windows.net/zazaf95629d9?restype=container",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Thu, 04 Aug 2022 00:02:49 GMT",
+        "x-ms-date": "Thu, 04 Aug 2022 23:57:06 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 04 Aug 2022 00:02:46 GMT",
-        "ETag": "\u00220x8DA75ACA94205A5\u0022",
-        "Last-Modified": "Thu, 04 Aug 2022 00:02:46 GMT",
+        "Date": "Thu, 04 Aug 2022 23:57:06 GMT",
+        "ETag": "\u00220x8DA7675090AA2DA\u0022",
+        "Last-Modified": "Thu, 04 Aug 2022 23:57:06 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
