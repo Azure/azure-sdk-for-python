@@ -11,7 +11,13 @@ import pytest
 from azure.core.exceptions import ResourceNotFoundError
 
 from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
+from devtools_testutils import recorded_by_proxy
 
+test_id = os.environ.get("TEST_ID", "000")
+file_id = os.environ.get("FILE_ID", "000")
+test_run_id = os.environ.get("TEST_RUN_ID", "000")
+non_existing_test_run_id = "0000-0000"
+subscription_id = os.environ.get("LOADTESTING_SUBSCRIPTION_ID", "000")
 DISPLAY_NAME = "TestingResource"
 
 
@@ -21,9 +27,9 @@ class TestRunSmokeTest(LoadtestingTest):
         client = self.create_client(endpoint=endpoint)
 
         client.load_test_administration.create_or_update_test(
-            "some-unique-test-id",
+            test_id,
             {
-                "resourceId": f"/subscriptions/{self.subscription_id}/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
+                "resourceId": f"/subscriptions/{subscription_id}/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
                 "description": "",
                 "displayName": DISPLAY_NAME,
                 "loadTestConfig": {
@@ -40,8 +46,8 @@ class TestRunSmokeTest(LoadtestingTest):
         )
 
         client.load_test_administration.upload_test_file(
-            "some-unique-test-id",
-            "some-unique-file-id",
+            test_id,
+            file_id,
             open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb")
         )
 
@@ -52,21 +58,22 @@ class TestRunSmokeTest(LoadtestingTest):
         client.load_test_runs.create_or_update_test(
             test_run_name,
             {
-                "testId": "some-unique-test-id",
+                "testId": test_id,
                 "displayName": DISPLAY_NAME
             }
         )
 
     @LoadtestingPowerShellPreparer()
+    @recorded_by_proxy
     def test_create_or_update_loadtest(self, loadtesting_endpoint):
         # create prerequisites
         self.create_run_prerequisite(endpoint=loadtesting_endpoint)
 
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_runs.create_or_update_test(
-            "some-unique-test-run-id",
+            test_run_id,
             {
-                "testId": "some-unique-test-id",
+                "testId": test_id,
                 "displayName": DISPLAY_NAME
             }
         )
@@ -82,74 +89,79 @@ class TestRunSmokeTest(LoadtestingTest):
             )
 
     @LoadtestingPowerShellPreparer()
+    @recorded_by_proxy
     def test_delete_test_run(self, loadtesting_endpoint):
         # creating test run
-        self.create_test_run(endpoint=loadtesting_endpoint, test_run_name="some-unique-test-run-id")
+        self.create_test_run(endpoint=loadtesting_endpoint, test_run_name=test_run_id)
 
         # positive test
         client = self.create_client(endpoint=loadtesting_endpoint)
-        result = client.load_test_runs.delete_test_run("some-unique-test-run-id")
+        result = client.load_test_runs.delete_test_run(test_run_id)
         assert result is None
 
         # negative test
         with pytest.raises(ResourceNotFoundError):
-            client.load_test_runs.delete_test_run("some-non-existing-test-run-id")
+            client.load_test_runs.delete_test_run(non_existing_test_run_id)
 
     @LoadtestingPowerShellPreparer()
+    @recorded_by_proxy
     def test_get_test_run(self, loadtesting_endpoint):
         # creating test run
-        self.create_test_run(endpoint=loadtesting_endpoint, test_run_name="some-unique-test-run-id")
+        self.create_test_run(endpoint=loadtesting_endpoint, test_run_name=test_run_id)
 
         # positive test
         client = self.create_client(endpoint=loadtesting_endpoint)
-        result = client.load_test_runs.get_test_run("some-unique-test-run-id")
+        result = client.load_test_runs.get_test_run(test_run_id)
         assert result is not None
 
         # negative test
         with pytest.raises(ResourceNotFoundError):
-            client.load_test_runs.get_test_run("some-non-existing-test-run-id")
+            client.load_test_runs.get_test_run(non_existing_test_run_id)
 
     @LoadtestingPowerShellPreparer()
+    @recorded_by_proxy
     def test_get_test_run_file(self, loadtesting_endpoint):
         # creating test run
-        self.create_test_run(endpoint=loadtesting_endpoint, test_run_name="some-unique-test-run-id")
+        self.create_test_run(endpoint=loadtesting_endpoint, test_run_name=test_run_id)
 
         # positive test
         client = self.create_client(endpoint=loadtesting_endpoint)
-        result = client.load_test_runs.get_test_run_file("some-unique-test-run-id", "some-unique-file-id")
+        result = client.load_test_runs.get_test_run_file(test_run_id, file_id)
         assert result is not None
 
         # negative test
         with pytest.raises(ResourceNotFoundError):
-            client.load_test_runs.get_test_run_file("some-non-existing-test-run-id", "some-unique-file-id")
+            client.load_test_runs.get_test_run_file(non_existing_test_run_id, file_id)
 
     @LoadtestingPowerShellPreparer()
+    @recorded_by_proxy
     def test_stop_test_run(self, loadtesting_endpoint):
         # creating test run
-        self.create_test_run(endpoint=loadtesting_endpoint, test_run_name="some-unique-test-run-id")
+        self.create_test_run(endpoint=loadtesting_endpoint, test_run_name=test_run_id)
 
         # positive test
         client = self.create_client(endpoint=loadtesting_endpoint)
-        result = client.load_test_runs.stop_test_run("some-unique-test-run-id")
+        result = client.load_test_runs.stop_test_run(test_run_id)
         assert result is not None
 
         # negative test
         with pytest.raises(ResourceNotFoundError):
-            client.load_test_runs.stop_test_run("some-non-existing-test-run-id")
+            client.load_test_runs.stop_test_run(non_existing_test_run_id)
 
     @LoadtestingPowerShellPreparer()
+    @recorded_by_proxy
     def test_get_test_run_client_metrics(self, loadtesting_endpoint):
         # creating test run
-        self.create_test_run(endpoint=loadtesting_endpoint, test_run_name="some-unique-test-run-id")
+        self.create_test_run(endpoint=loadtesting_endpoint, test_run_name=test_run_id)
 
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_runs.get_test_run_client_metrics_filters(
-            "some-unique-test-run-id"
+            test_run_id
         )
         assert result is not None
 
         result_metrics = client.load_test_runs.get_test_run_client_metrics(
-            "some-unique-test-run-id",
+            test_run_id,
             {
                 "requestSamplers": ["GET"],
                 "startTime": result['timeRange']['startTime'],
@@ -162,13 +174,13 @@ class TestRunSmokeTest(LoadtestingTest):
         # negative test
         with pytest.raises(ResourceNotFoundError):
             client.load_test_runs.get_test_run_client_metrics_filters(
-                "some-non-existing-test-run-id"
+                non_existing_test_run_id
             )
 
         # negative test
         with pytest.raises(ResourceNotFoundError):
             client.load_test_runs.get_test_run_client_metrics(
-                "some-non-existing-test-run-id",
+                non_existing_test_run_id,
                 {
                     "requestSamplers": ["GET"],
                     "startTime": result['timeRange']['startTime'],
