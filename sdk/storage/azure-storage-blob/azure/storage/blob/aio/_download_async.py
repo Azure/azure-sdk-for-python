@@ -13,7 +13,7 @@ from typing import AsyncIterator, Generic, TypeVar
 
 import asyncio
 
-from azure.core.exceptions import HttpResponseError, ServiceResponseError, IncompleteReadError
+from azure.core.exceptions import HttpResponseError
 
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
