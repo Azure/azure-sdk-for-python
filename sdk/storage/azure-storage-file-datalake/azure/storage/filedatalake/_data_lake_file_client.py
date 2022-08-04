@@ -57,10 +57,12 @@ class DataLakeFileClient(PathClient):
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -78,7 +80,7 @@ class DataLakeFileClient(PathClient):
         self, account_url,  # type: str
         file_system_name,  # type: str
         file_path,  # type: str
-        credential=None,  # type: Optional[Any]
+        credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -91,7 +93,7 @@ class DataLakeFileClient(PathClient):
             conn_str,  # type: str
             file_system_name,  # type: str
             file_path,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):  # type: (...) -> ClassType
         """
@@ -109,9 +111,11 @@ class DataLakeFileClient(PathClient):
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
         :return a DataLakeFileClient
         :rtype ~azure.storage.filedatalake.DataLakeFileClient
         """
@@ -322,7 +326,7 @@ class DataLakeFileClient(PathClient):
             .set_expiry(expiry_options, expires_on=expires_on, **kwargs)  # pylint: disable=protected-access
 
     def _upload_options(  # pylint:disable=too-many-statements
-            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             **kwargs
         ):
@@ -367,7 +371,7 @@ class DataLakeFileClient(PathClient):
 
         return kwargs
 
-    def upload_data(self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+    def upload_data(self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
                     length=None,  # type: Optional[int]
                     overwrite=False,  # type: Optional[bool]
                     **kwargs):
@@ -444,7 +448,7 @@ class DataLakeFileClient(PathClient):
 
     @staticmethod
     def _append_data_options(
-            data, # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+            data, # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
             offset, # type: int
             scheme, # type: str
             length=None, # type: Optional[int]
@@ -476,7 +480,7 @@ class DataLakeFileClient(PathClient):
         options.update(kwargs)
         return options
 
-    def append_data(self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+    def append_data(self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
                     offset,  # type: int
                     length=None,  # type: Optional[int]
                     **kwargs):

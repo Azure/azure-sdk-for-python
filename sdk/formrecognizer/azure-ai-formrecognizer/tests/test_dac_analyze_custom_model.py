@@ -24,7 +24,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
-            client.begin_analyze_document(model=None, document=b"xx")
+            client.begin_analyze_document(model_id=None, document=b"xx")
 
     @FormRecognizerPreparer()
     def test_analyze_document_empty_model_id(self, **kwargs):
@@ -32,7 +32,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
-            client.begin_analyze_document(model="", document=b"xx")
+            client.begin_analyze_document(model_id="", document=b"xx")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -41,7 +41,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+        poller = client.begin_build_model("template", formrecognizer_storage_container_sas_url)
         model = poller.result()
 
         responses = []
@@ -86,7 +86,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
-        poller = client.begin_build_model(formrecognizer_multipage_storage_container_sas_url, "template")
+        poller = client.begin_build_model("template", formrecognizer_multipage_storage_container_sas_url)
         model = poller.result()
 
         responses = []
@@ -131,7 +131,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
-        poller = client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url, "template")
+        poller = client.begin_build_model("template", formrecognizer_selection_mark_storage_container_sas_url)
         model = poller.result()
 
         with open(self.selection_form_pdf, "rb") as fd:
@@ -179,7 +179,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             my_file = fd.read()
 
-        build_poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+        build_poller = client.begin_build_model("template", formrecognizer_storage_container_sas_url)
         model = build_poller.result()
 
         poller = da_client.begin_analyze_document(model.model_id, my_file, pages="1")
@@ -197,7 +197,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             my_file = fd.read()
 
-        build_polling = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+        build_polling = client.begin_build_model("template", formrecognizer_storage_container_sas_url)
         model = build_polling.result()
 
         poller = da_client.begin_analyze_document(
@@ -210,3 +210,26 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         assert result.documents[0].fields.get("FullSignature").value_type == "signature"
         # this will notify us of changes in the service, currently expecting to get a None content for signature type fields
         assert result.documents[0].fields.get("FullSignature").content == None
+
+    @FormRecognizerPreparer()
+    @DocumentModelAdministrationClientPreparer()
+    @recorded_by_proxy
+    def test_custom_document_blank_pdf(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()
+        da_client = client.get_document_analysis_client()
+
+        with open(self.blank_pdf, "rb") as fd:
+            my_file = fd.read()
+
+        build_polling = client.begin_build_model("template", formrecognizer_storage_container_sas_url)
+        model = build_polling.result()
+
+        poller = da_client.begin_analyze_document(
+            model.model_id,
+            my_file,
+        )
+        result = poller.result()
+
+        assert result is not None
+        assert len(result.pages) == 1
+        assert len(result.pages[0].lines) == 0

@@ -32,7 +32,7 @@ import asyncio
 async def sample_build_model_async():
     # [START build_model_async]
     from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
-    from azure.ai.formrecognizer import DocumentBuildMode
+    from azure.ai.formrecognizer import ModelBuildMode
     from azure.core.credentials import AzureKeyCredential
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
@@ -42,7 +42,7 @@ async def sample_build_model_async():
     document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
     async with document_model_admin_client:
         poller = await document_model_admin_client.begin_build_model(
-            container_sas_url, DocumentBuildMode.TEMPLATE, description="my model description"
+            ModelBuildMode.TEMPLATE, container_sas_url, description="my model description"
         )
         model = await poller.result()
 

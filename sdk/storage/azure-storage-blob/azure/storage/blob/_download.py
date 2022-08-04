@@ -9,10 +9,9 @@ import threading
 import time
 import warnings
 from io import BytesIO
-from typing import Iterator, Union
+from typing import Generic, Iterator, TypeVar
 
-import requests
-from azure.core.exceptions import HttpResponseError, ServiceResponseError
+from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError
 from azure.core.tracing.common import with_current_context
 
 from ._shared.request_handlers import validate_and_format_range_headers
@@ -25,6 +24,8 @@ from ._encryption import (
     is_encryption_v2,
     parse_encryption_data
 )
+
+T = TypeVar('T', bytes, str)
 
 
 def process_range_and_offset(start_range, end_range, length, encryption_options, encryption_data):
@@ -211,10 +212,10 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                 try:
                     chunk_data = process_content(response, offset[0], offset[1], self.encryption_options)
                     retry_active = False
-                except (requests.exceptions.ChunkedEncodingError, requests.exceptions.ConnectionError) as error:
+                except (IncompleteReadError, HttpResponseError, DecodeError) as error:
                     retry_total -= 1
                     if retry_total <= 0:
-                        raise ServiceResponseError(error, error=error)
+                        raise HttpResponseError(error, error=error)
                     time.sleep(1)
 
             # This makes sure that if_match is set so that we can validate
@@ -281,7 +282,7 @@ class _ChunkIterator(object):
         return chunk_data
 
 
-class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
+class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-attributes
     """A streaming object to download from Azure Storage.
 
     :ivar str name:
@@ -308,6 +309,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         name=None,
         container=None,
         encoding=None,
+        download_cls=None,
         **kwargs
     ):
         self.name = name
@@ -332,6 +334,10 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._non_empty_ranges = None
         self._response = None
         self._encryption_data = None
+
+        # The cls is passed in via download_cls to avoid conflicting arg name with Generic.__new__
+        # but needs to be changed to cls in the request options.
+        self._request_options['cls'] = download_cls
 
         if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
             self._get_encryption_data_request()
@@ -467,10 +473,10 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                         self._encryption_options
                     )
                 retry_active = False
-            except (requests.exceptions.ChunkedEncodingError, requests.exceptions.ConnectionError) as error:
+            except (IncompleteReadError, HttpResponseError, DecodeError) as error:
                 retry_total -= 1
                 if retry_total <= 0:
-                    raise ServiceResponseError(error, error=error)
+                    raise HttpResponseError(error, error=error)
                 time.sleep(1)
 
         # get page ranges to optimize downloading sparse page blob
@@ -549,11 +555,11 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             chunk_size=self._config.max_chunk_get_size)
 
     def readall(self):
-        # type: () -> Union[bytes, str]
+        # type: () -> T
         """Download the contents of this blob.
 
         This operation is blocking until all data is downloaded.
-        :rtype: bytes or str
+        :rtype: T
         """
         stream = BytesIO()
         self.readinto(stream)

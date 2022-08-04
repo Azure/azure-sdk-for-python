@@ -8,7 +8,7 @@ import logging
 from pathlib import Path
 import time
 from typing import Any, Dict, Iterable, Union, TYPE_CHECKING
-from azure.ai.ml._azure_environments import ENDPOINT_URLS, _get_cloud_details, resource_to_scopes
+from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
 from azure.core.polling import LROPoller
 from azure.identity import ChainedTokenCredential
 from azure.ai.ml._restclient.v2022_05_01 import (
@@ -266,8 +266,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         )
 
         headers = EndpointInvokeFields.DEFAULT_HEADER
-        cloud_details = _get_cloud_details()
-        ml_audience_scopes = resource_to_scopes(cloud_details.get(ENDPOINT_URLS.AML_RESOURCE_ID))
+        ml_audience_scopes = _resource_to_scopes(_get_aml_resource_id_from_metadata())
         module_logger.debug(f"ml_audience_scopes used: `{ml_audience_scopes}`\n")
         key = self._credentials.get_token(*ml_audience_scopes).token
         headers[EndpointInvokeFields.AUTHORIZATION] = f"Bearer {key}"

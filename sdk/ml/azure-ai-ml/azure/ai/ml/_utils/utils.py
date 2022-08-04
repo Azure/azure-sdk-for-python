@@ -7,6 +7,7 @@ import json
 import logging
 import os
 import re
+from pathlib import PosixPath, PureWindowsPath
 import pydash
 import requests
 import sys
@@ -636,3 +637,7 @@ def parse_args_description_from_docstring(docstring):
                     args[arg] += " " + args_region[0]
                     args_region.pop(0)
     return args
+
+
+def convert_windows_path_to_unix(path: Union[str, PathLike]) -> PosixPath:
+    return PureWindowsPath(path).as_posix()

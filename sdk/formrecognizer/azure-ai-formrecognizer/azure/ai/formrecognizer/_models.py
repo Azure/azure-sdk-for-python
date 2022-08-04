@@ -5,7 +5,7 @@
 
 # pylint: disable=protected-access, too-many-lines
 
-from typing import Any, Iterable, List
+from typing import Dict, Iterable, List, NewType
 from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
@@ -18,6 +18,8 @@ from ._helpers import (
     _get_deserialize,
 )
 
+
+TargetAuthorization = NewType('TargetAuthorization', Dict[str, str])
 
 def prepare_document_spans(spans):
     return [DocumentSpan._from_generated(span) for span in spans] if spans else []
@@ -150,7 +152,7 @@ def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
         return value.value_country_region
     return None
 
-class DocumentBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ModelBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode used when building custom models.
 
     For more information, see https://aka.ms/azsdk/formrecognizer/buildmode.
@@ -1972,7 +1974,7 @@ class TextAppearance:
 class BoundingRegion:
     """The bounding region corresponding to a page.
 
-    :ivar list[~azure.ai.formrecognizer.Point] polygon:
+    :ivar Optional[Sequence[~azure.ai.formrecognizer.Point]] polygon:
         A list of points representing the bounding polygon
         that outlines the document component. The points are listed in
         clockwise order relative to the document component orientation
@@ -2029,22 +2031,22 @@ class AddressValue:
     """An address field value.
 
     :ivar house_number: House or building number.
-    :vartype house_number: str
+    :vartype house_number: Optional[str]
     :ivar po_box: Post office box number.
-    :vartype po_box: str
+    :vartype po_box: Optional[str]
     :ivar road: Street name.
-    :vartype road: str
+    :vartype road: Optional[str]
     :ivar city: Name of city, town, village, etc.
-    :vartype city: str
+    :vartype city: Optional[str]
     :ivar state: First-level administrative division.
-    :vartype state: str
+    :vartype state: Optional[str]
     :ivar postal_code: Postal code used for mail sorting.
-    :vartype postal_code: str
+    :vartype postal_code: Optional[str]
     :ivar country_region: Country/region.
-    :vartype country_region: str
+    :vartype country_region: Optional[str]
     :ivar street_address: Street-level address, excluding city, state, countryRegion, and
      postalCode.
-    :vartype street_address: str
+    :vartype street_address: Optional[str]
     """
 
     def __init__(self, **kwargs):
@@ -2120,7 +2122,7 @@ class CurrencyValue:
     :ivar amount: The currency amount.
     :vartype: float
     :ivar symbol: The currency symbol, if found.
-    :vartype: str
+    :vartype: Optional[str]
     """
 
     def __init__(self, **kwargs):
@@ -2133,6 +2135,11 @@ class CurrencyValue:
             amount=data.amount,
             symbol=data.currency_symbol,
         )
+
+    def __str__(self):
+        if self.symbol is not None:
+            return f"{self.symbol}{self.amount}"
+        return f"{self.amount}"
 
     def __repr__(self):
         return f"CurrencyValue(amount={self.amount}, symbol={self.symbol})"
@@ -2168,7 +2175,7 @@ class DocumentContentElement:
     :ivar content: Text content of the document content element.
     :vartype content: str
     :ivar polygon: Bounding polygon of the document content element.
-    :vartype polygon: list[~azure.ai.formrecognizer.Point]
+    :vartype polygon: Optional[Sequence[~azure.ai.formrecognizer.Point]]
     :ivar span: Location of the element in the full document content.
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
     :ivar confidence: Confidence of accurately extracting the document content element.
@@ -2292,11 +2299,11 @@ class AnalyzedDocument:
     :ivar doc_type: The type of document that was analyzed.
     :vartype doc_type: str
     :ivar bounding_regions: Bounding regions covering the document.
-    :vartype bounding_regions: list[~azure.ai.formrecognizer.BoundingRegion]
+    :vartype bounding_regions: Optional[list[~azure.ai.formrecognizer.BoundingRegion]]
     :ivar spans: The location of the document in the reading order concatenated content.
     :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
     :ivar fields: A dictionary of named field values.
-    :vartype fields: dict[str, ~azure.ai.formrecognizer.DocumentField]
+    :vartype fields: Optional[dict[str, ~azure.ai.formrecognizer.DocumentField]]
     :ivar confidence: Confidence of correctly extracting the document.
     :vartype confidence: float
     """
@@ -2387,11 +2394,11 @@ class DocumentField:
         dict[str, :class:`~azure.ai.formrecognizer.DocumentField`],
         or list[:class:`~azure.ai.formrecognizer.DocumentField`]
     :ivar content: The field's content.
-    :vartype content: str
+    :vartype content: Optional[str]
     :ivar bounding_regions: Bounding regions covering the field.
-    :vartype bounding_regions: list[~azure.ai.formrecognizer.BoundingRegion]
+    :vartype bounding_regions: Optional[list[~azure.ai.formrecognizer.BoundingRegion]]
     :ivar spans: Location of the field in the reading order concatenated content.
-    :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
+    :vartype spans: Optional[list[~azure.ai.formrecognizer.DocumentSpan]]
     :ivar confidence: The confidence of correctly extracting the field.
     :vartype confidence: float
     """
@@ -2515,7 +2522,7 @@ class DocumentKeyValueElement:
     :ivar content: Concatenated content of the key-value element in reading order.
     :vartype content: str
     :ivar bounding_regions: Bounding regions covering the key-value element.
-    :vartype bounding_regions: list[~azure.ai.formrecognizer.BoundingRegion]
+    :vartype bounding_regions: Optional[list[~azure.ai.formrecognizer.BoundingRegion]]
     :ivar spans: Location of the key-value element in the reading order of the concatenated
      content.
     :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
@@ -2653,7 +2660,7 @@ class DocumentLine:
     :ivar content: Concatenated content of the contained elements in reading order.
     :vartype content: str
     :ivar polygon: Bounding polygon of the line.
-    :vartype polygon: list[~azure.ai.formrecognizer.Point]
+    :vartype polygon: Optional[Sequence[~azure.ai.formrecognizer.Point]]
     :ivar spans: Location of the line in the reading order concatenated content.
     :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
     """
@@ -2710,7 +2717,7 @@ class DocumentLine:
             else [],
         )
 
-    def get_words(self, **kwargs: Any) -> Iterable["DocumentWord"]:  # pylint: disable=unused-argument
+    def get_words(self) -> Iterable["DocumentWord"]:
         """Get the words found in the spans of this DocumentLine.
 
         :return: iterable[DocumentWord]
@@ -2733,11 +2740,11 @@ class DocumentParagraph:
 
     :ivar role: Semantic role of the paragraph. Known values are: "pageHeader", "pageFooter",
      "pageNumber", "title", "sectionHeading", "footnote".
-    :vartype role: str
+    :vartype role: Optional[str]
     :ivar content: Concatenated content of the paragraph in reading order.
     :vartype content: str
     :ivar bounding_regions: Bounding regions covering the paragraph.
-    :vartype bounding_regions: list[~azure.ai.formrecognizer.BoundingRegion]
+    :vartype bounding_regions: Optional[list[~azure.ai.formrecognizer.BoundingRegion]]
     :ivar spans: Location of the paragraph in the reading order concatenated content.
     :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
     """
@@ -2810,25 +2817,25 @@ class DocumentPage:
     :vartype page_number: int
     :ivar angle: The general orientation of the content in clockwise direction, measured
      in degrees between (-180, 180].
-    :vartype angle: float
+    :vartype angle: Optional[float]
     :ivar width: The width of the image/PDF in pixels/inches, respectively.
-    :vartype width: float
+    :vartype width: Optional[float]
     :ivar height: The height of the image/PDF in pixels/inches, respectively.
-    :vartype height: float
+    :vartype height: Optional[float]
     :ivar unit: The unit used by the width, height, and bounding box properties. For
      images, the unit is "pixel". For PDF, the unit is "inch". Possible values include: "pixel",
      "inch".
-    :vartype unit: str
+    :vartype unit: Optional[str]
     :ivar spans: Location of the page in the reading order concatenated content.
     :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
     :ivar words: Extracted words from the page.
-    :vartype words: list[~azure.ai.formrecognizer.DocumentWord]
+    :vartype words: Optional[list[~azure.ai.formrecognizer.DocumentWord]]
     :ivar selection_marks: Extracted selection marks from the page.
     :vartype selection_marks:
-     list[~azure.ai.formrecognizer.DocumentSelectionMark]
+     Optional[list[~azure.ai.formrecognizer.DocumentSelectionMark]]
     :ivar lines: Extracted lines from the page, potentially containing both textual and
      visual elements.
-    :vartype lines: list[~azure.ai.formrecognizer.DocumentLine]
+    :vartype lines: Optional[list[~azure.ai.formrecognizer.DocumentLine]]
     """
 
     def __init__(self, **kwargs):
@@ -2942,7 +2949,7 @@ class DocumentSelectionMark(DocumentContentElement):
     :ivar content: The text content - not returned for DocumentSelectionMark.
     :vartype content: str
     :ivar polygon: Bounding polygon of the selection mark.
-    :vartype polygon: list[~azure.ai.formrecognizer.Point]
+    :vartype polygon: Optional[Sequence[~azure.ai.formrecognizer.Point]]
     :ivar span: Location of the selection mark in the reading order concatenated
      content.
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
@@ -3012,7 +3019,7 @@ class DocumentStyle:
     """An object representing observed text styles.
 
     :ivar is_handwritten: Is content handwritten?.
-    :vartype is_handwritten: bool
+    :vartype is_handwritten: Optional[bool]
     :ivar spans: Location of the text elements in the concatenated content the style
      applies to.
     :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
@@ -3082,7 +3089,7 @@ class DocumentTable:
     :ivar cells: Cells contained within the table.
     :vartype cells: list[~azure.ai.formrecognizer.DocumentTableCell]
     :ivar bounding_regions: Bounding regions covering the table.
-    :vartype bounding_regions: list[~azure.ai.formrecognizer.BoundingRegion]
+    :vartype bounding_regions: Optional[list[~azure.ai.formrecognizer.BoundingRegion]]
     :ivar spans: Location of the table in the reading order concatenated content.
     :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
     """
@@ -3161,19 +3168,19 @@ class DocumentTableCell:
 
     :ivar kind: Table cell kind. Possible values include: "content", "rowHeader", "columnHeader",
      "stubHead", "description". Default value: "content".
-    :vartype kind: str
+    :vartype kind: Optional[str]
     :ivar row_index: Row index of the cell.
     :vartype row_index: int
     :ivar column_index: Column index of the cell.
     :vartype column_index: int
     :ivar row_span: Number of rows spanned by this cell.
-    :vartype row_span: int
+    :vartype row_span: Optional[int]
     :ivar column_span: Number of columns spanned by this cell.
-    :vartype column_span: int
+    :vartype column_span: Optional[int]
     :ivar content: Concatenated content of the table cell in reading order.
     :vartype content: str
     :ivar bounding_regions: Bounding regions covering the table cell.
-    :vartype bounding_regions: list[~azure.ai.formrecognizer.BoundingRegion]
+    :vartype bounding_regions: Optional[list[~azure.ai.formrecognizer.BoundingRegion]]
     :ivar spans: Location of the table cell in the reading order concatenated content.
     :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
     """
@@ -3261,7 +3268,7 @@ class DocumentTableCell:
         )
 
 
-class ModelOperationInfo:
+class DocumentModelOperationSummary:
     """Model operation information, including the kind and status of the operation, when it was
     created, and more.
 
@@ -3275,7 +3282,7 @@ class ModelOperationInfo:
         "failed", "succeeded", "canceled".
     :vartype status: str
     :ivar percent_completed: Operation progress (0-100).
-    :vartype percent_completed: int
+    :vartype percent_completed: Optional[int]
     :ivar created_on: Date and time (UTC) when the operation was created.
     :vartype created_on: ~datetime.datetime
     :ivar last_updated_on: Date and time (UTC) when the operation was last updated.
@@ -3286,9 +3293,9 @@ class ModelOperationInfo:
     :ivar resource_location: URL of the resource targeted by this operation.
     :vartype resource_location: str
     :ivar api_version: API version used to create this operation.
-    :vartype api_version: str
+    :vartype api_version: Optional[str]
     :ivar tags: List of user defined key-value tag attributes associated with the model.
-    :vartype tags: dict[str, str]
+    :vartype tags: Optional[dict[str, str]]
 
     .. versionadded:: v2022-01-30-preview
         The *api_version* and *tags* properties
@@ -3307,14 +3314,14 @@ class ModelOperationInfo:
 
     def __repr__(self):
         return (
-            f"ModelOperationInfo(operation_id={self.operation_id}, status={self.status}, "
+            f"DocumentModelOperationSummary(operation_id={self.operation_id}, status={self.status}, "
             f"percent_completed={self.percent_completed}, created_on={self.created_on}, "
             f"last_updated_on={self.last_updated_on}, kind={self.kind}, "
             f"resource_location={self.resource_location}, api_version={self.api_version}, tags={self.tags})"
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of ModelOperationInfo.
+        """Returns a dict representation of DocumentModelOperationSummary.
 
         :return: dict
         :rtype: dict
@@ -3332,12 +3339,12 @@ class ModelOperationInfo:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "ModelOperationInfo":
-        """Converts a dict in the shape of a ModelOperationInfo to the model itself.
+    def from_dict(cls, data: dict) -> "DocumentModelOperationSummary":
+        """Converts a dict in the shape of a DocumentModelOperationSummary to the model itself.
 
-        :param dict data: A dictionary in the shape of ModelOperationInfo.
-        :return: ModelOperationInfo
-        :rtype: ModelOperationInfo
+        :param dict data: A dictionary in the shape of DocumentModelOperationSummary.
+        :return: DocumentModelOperationSummary
+        :rtype: DocumentModelOperationSummary
         """
         return cls(
             operation_id=data.get("operation_id", None),
@@ -3366,8 +3373,8 @@ class ModelOperationInfo:
         )
 
 
-class ModelOperation(ModelOperationInfo):
-    """ModelOperation consists of information about the model operation, including the result or
+class DocumentModelOperationDetails(DocumentModelOperationSummary):
+    """DocumentModelOperationDetails consists of information about the model operation, including the result or
     error of the operation if it has completed.
 
     Note that operation information only persists for 24 hours. If the operation was successful,
@@ -3391,15 +3398,15 @@ class ModelOperation(ModelOperationInfo):
     :vartype resource_location: str
     :ivar error: Encountered error, includes the error code, message, and details for why
         the operation failed.
-    :vartype error: ~azure.ai.formrecognizer.DocumentAnalysisError
-    :ivar result: Operation result upon success. Returns a DocumentModelInfo which contains
+    :vartype error: Optional[~azure.ai.formrecognizer.DocumentAnalysisError]
+    :ivar result: Operation result upon success. Returns a DocumentModelDetails which contains
         all information about the model including the doc types
         and fields it can analyze from documents.
-    :vartype result: ~azure.ai.formrecognizer.DocumentModelInfo
+    :vartype result: Optional[~azure.ai.formrecognizer.DocumentModelDetails]
     :ivar api_version: API version used to create this operation.
-    :vartype api_version: str
+    :vartype api_version: Optional[str]
     :ivar tags: List of user defined key-value tag attributes associated with the model.
-    :vartype tags: dict[str, str]
+    :vartype tags: Optional[dict[str, str]]
 
     .. versionadded:: v2022-01-30-preview
         The *api_version* and *tags* properties
@@ -3412,7 +3419,7 @@ class ModelOperation(ModelOperationInfo):
 
     def __repr__(self):
         return (
-            f"ModelOperation(operation_id={self.operation_id}, status={self.status}, "
+            f"DocumentModelOperationDetails(operation_id={self.operation_id}, status={self.status}, "
             f"percent_completed={self.percent_completed}, created_on={self.created_on}, "
             f"last_updated_on={self.last_updated_on}, kind={self.kind}, "
             f"resource_location={self.resource_location}, result={repr(self.result)}, "
@@ -3420,7 +3427,7 @@ class ModelOperation(ModelOperationInfo):
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of ModelOperation.
+        """Returns a dict representation of DocumentModelOperationDetails.
 
         :return: dict
         :rtype: dict
@@ -3440,12 +3447,12 @@ class ModelOperation(ModelOperationInfo):
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "ModelOperation":
-        """Converts a dict in the shape of a ModelOperation to the model itself.
+    def from_dict(cls, data: dict) -> "DocumentModelOperationDetails":
+        """Converts a dict in the shape of a DocumentModelOperationDetails to the model itself.
 
-        :param dict data: A dictionary in the shape of ModelOperation.
-        :return: ModelOperation
-        :rtype: ModelOperation
+        :param dict data: A dictionary in the shape of DocumentModelOperationDetails.
+        :return: DocumentModelOperationDetails
+        :rtype: DocumentModelOperationDetails
         """
         return cls(
             operation_id=data.get("operation_id", None),
@@ -3455,7 +3462,7 @@ class ModelOperation(ModelOperationInfo):
             last_updated_on=data.get("last_updated_on", None),
             kind=data.get("kind", None),
             resource_location=data.get("resource_location", None),
-            result=DocumentModelInfo.from_dict(data.get("result")) if data.get("result") else None,  # type: ignore
+            result=DocumentModelDetails.from_dict(data.get("result")) if data.get("result") else None,  # type: ignore
             error=DocumentAnalysisError.from_dict(data.get("error")) if data.get("error") else None,  # type: ignore
             api_version=data.get("api_version", None),
             tags=data.get("tags", {}),
@@ -3472,7 +3479,7 @@ class ModelOperation(ModelOperationInfo):
             last_updated_on=op.last_updated_date_time,
             kind=op.kind,
             resource_location=op.resource_location,
-            result=DocumentModelInfo._from_generated(deserialize(ModelInfo, op.result))
+            result=DocumentModelDetails._from_generated(deserialize(ModelInfo, op.result))
             if op.result else None,
             error=DocumentAnalysisError._from_generated(deserialize(Error, op.error))
             if op.error else None,
@@ -3488,7 +3495,7 @@ class DocumentWord(DocumentContentElement):
     :ivar content: Text content of the word.
     :vartype content: str
     :ivar polygon: Bounding polygon of the word.
-    :vartype polygon: list[~azure.ai.formrecognizer.Point]
+    :vartype polygon: Optional[Sequence[~azure.ai.formrecognizer.Point]]
     :ivar span: Location of the word in the reading order concatenated content.
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
     :ivar confidence: Confidence of correctly extracting the word.
@@ -3561,21 +3568,21 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
     :ivar content: Concatenate string representation of all textual and visual elements
      in reading order.
     :vartype content: str
-    :ivar languages: Detected languages in the document.
-    :vartype languages: list[~azure.ai.formrecognizer.DocumentLanguage]
     :ivar pages: Analyzed pages.
     :vartype pages: list[~azure.ai.formrecognizer.DocumentPage]
+    :ivar languages: Detected languages in the document.
+    :vartype languages: Optional[list[~azure.ai.formrecognizer.DocumentLanguage]]
     :ivar paragraphs: Extracted paragraphs.
-    :vartype paragraphs: list[~azure.ai.formrecognizer.DocumentParagraph]
+    :vartype paragraphs: Optional[list[~azure.ai.formrecognizer.DocumentParagraph]]
     :ivar tables: Extracted tables.
-    :vartype tables: list[~azure.ai.formrecognizer.DocumentTable]
+    :vartype tables: Optional[list[~azure.ai.formrecognizer.DocumentTable]]
     :ivar key_value_pairs: Extracted key-value pairs.
     :vartype key_value_pairs:
-     list[~azure.ai.formrecognizer.DocumentKeyValuePair]
+     Optional[list[~azure.ai.formrecognizer.DocumentKeyValuePair]]
     :ivar styles: Extracted font styles.
-    :vartype styles: list[~azure.ai.formrecognizer.DocumentStyle]
+    :vartype styles: Optional[list[~azure.ai.formrecognizer.DocumentStyle]]
     :ivar documents: Extracted documents.
-    :vartype documents: list[~azure.ai.formrecognizer.AnalyzedDocument]
+    :vartype documents: Optional[list[~azure.ai.formrecognizer.AnalyzedDocument]]
 
     .. versionadded:: v2022-01-30-preview
         The *languages* property
@@ -3711,13 +3718,13 @@ class DocumentModelSummary:
     its description, and when the model was created.
 
     :ivar str model_id: Unique model id.
-    :ivar str description: A description for the model.
+    :ivar Optional[str] description: A description for the model.
     :ivar created_on: Date and time (UTC) when the model was created.
     :vartype created_on: ~datetime.datetime
     :ivar api_version: API version used to create this model.
-    :vartype api_version: str
+    :vartype api_version: Optional[str]
     :ivar tags: List of user defined key-value tag attributes associated with the model.
-    :vartype tags: dict[str, str]
+    :vartype tags: Optional[dict[str, str]]
 
     .. versionadded:: v2022-01-30-preview
         The *api_version* and *tags* properties
@@ -3780,19 +3787,19 @@ class DocumentModelSummary:
         )
 
 
-class DocumentModelInfo(DocumentModelSummary):
+class DocumentModelDetails(DocumentModelSummary):
     """Document model information. Includes the doc types that the model can analyze.
 
     :ivar str model_id: Unique model id.
-    :ivar str description: A description for the model.
+    :ivar Optional[str] description: A description for the model.
     :ivar created_on: Date and time (UTC) when the model was created.
     :vartype created_on: ~datetime.datetime
     :ivar api_version: API version used to create this model.
-    :vartype api_version: str
+    :vartype api_version: Optional[str]
     :ivar tags: List of user defined key-value tag attributes associated with the model.
-    :vartype tags: dict[str, str]
+    :vartype tags: Optional[dict[str, str]]
     :ivar doc_types: Supported document types, including the fields for each document and their types.
-    :vartype doc_types: dict[str, ~azure.ai.formrecognizer.DocTypeInfo]
+    :vartype doc_types: Optional[dict[str, ~azure.ai.formrecognizer.DocumentTypeDetails]]
 
     .. versionadded:: v2022-01-30-preview
         The *api_version* and *tags* properties
@@ -3807,7 +3814,7 @@ class DocumentModelInfo(DocumentModelSummary):
 
     def __repr__(self):
         return (
-            f"DocumentModelInfo(model_id={self.model_id}, description={self.description}, "
+            f"DocumentModelDetails(model_id={self.model_id}, description={self.description}, "
             f"created_on={self.created_on}, api_version={self.api_version}, tags={self.tags}, "
             f"doc_types={repr(self.doc_types)})"
         )
@@ -3820,12 +3827,12 @@ class DocumentModelInfo(DocumentModelSummary):
             created_on=model.created_date_time,
             api_version=model.api_version,
             tags=model.tags,
-            doc_types={k: DocTypeInfo._from_generated(v) for k, v in model.doc_types.items()}
+            doc_types={k: DocumentTypeDetails._from_generated(v) for k, v in model.doc_types.items()}
             if model.doc_types else {}
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of DocumentModelInfo.
+        """Returns a dict representation of DocumentModelDetails.
 
         :return: dict
         :rtype: dict
@@ -3840,12 +3847,12 @@ class DocumentModelInfo(DocumentModelSummary):
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "DocumentModelInfo":
-        """Converts a dict in the shape of a DocumentModelInfo to the model itself.
+    def from_dict(cls, data: dict) -> "DocumentModelDetails":
+        """Converts a dict in the shape of a DocumentModelDetails to the model itself.
 
-        :param dict data: A dictionary in the shape of DocumentModelInfo.
-        :return: DocumentModelInfo
-        :rtype: DocumentModelInfo
+        :param dict data: A dictionary in the shape of DocumentModelDetails.
+        :return: DocumentModelDetails
+        :rtype: DocumentModelDetails
         """
         return cls(
             model_id=data.get("model_id", None),
@@ -3853,24 +3860,24 @@ class DocumentModelInfo(DocumentModelSummary):
             created_on=data.get("created_on", None),
             api_version=data.get("api_version", None),
             tags=data.get("tags", {}),
-            doc_types={k: DocTypeInfo.from_dict(v) for k, v in data.get("doc_types").items()}  # type: ignore
+            doc_types={k: DocumentTypeDetails.from_dict(v) for k, v in data.get("doc_types").items()}  # type: ignore
             if data.get("doc_types")
             else {},
         )
 
 
-class DocTypeInfo:
-    """DocTypeInfo represents a document type that a model can recognize, including its
+class DocumentTypeDetails:
+    """DocumentTypeDetails represents a document type that a model can recognize, including its
     fields and types, and the confidence for those fields.
 
-    :ivar str description: A description for the model.
+    :ivar Optional[str] description: A description for the model.
     :ivar build_mode: The build mode used when building the custom model.
      Possible values include: "template", "neural".
-    :vartype build_mode: str
+    :vartype build_mode: Optional[str]
     :ivar field_schema: Description of the document semantic schema.
     :vartype field_schema: dict[str, Any]
     :ivar field_confidence: Estimated confidence for each field.
-    :vartype field_confidence: dict[str, float]
+    :vartype field_confidence: Optional[dict[str, float]]
 
     .. versionadded:: v2022-01-30-preview
         The *build_mode* property
@@ -3887,7 +3894,7 @@ class DocTypeInfo:
 
     def __repr__(self):
         return (
-            f"DocTypeInfo(description={self.description}, build_mode={self.build_mode}, "
+            f"DocumentTypeDetails(description={self.description}, build_mode={self.build_mode}, "
             f"field_schema={self.field_schema}, field_confidence={self.field_confidence})"
         )
 
@@ -3902,7 +3909,7 @@ class DocTypeInfo:
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of DocTypeInfo.
+        """Returns a dict representation of DocumentTypeDetails.
 
         :return: dict
         :rtype: dict
@@ -3915,12 +3922,12 @@ class DocTypeInfo:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "DocTypeInfo":
-        """Converts a dict in the shape of a DocTypeInfo to the model itself.
+    def from_dict(cls, data: dict) -> "DocumentTypeDetails":
+        """Converts a dict in the shape of a DocumentTypeDetails to the model itself.
 
-        :param dict data: A dictionary in the shape of DocTypeInfo.
-        :return: DocTypeInfo
-        :rtype: DocTypeInfo
+        :param dict data: A dictionary in the shape of DocumentTypeDetails.
+        :return: DocumentTypeDetails
+        :rtype: DocumentTypeDetails
         """
         return cls(
             description=data.get("description", None),
@@ -3930,8 +3937,8 @@ class DocTypeInfo:
         )
 
 
-class ResourceInfo:
-    """Info regarding models under the Form Recognizer resource.
+class ResourceDetails:
+    """Details regarding models under the Form Recognizer resource.
 
     :ivar int document_model_count: Number of custom models in the current resource.
     :ivar int document_model_limit: Maximum number of custom models supported in the current resource.
@@ -3946,7 +3953,7 @@ class ResourceInfo:
 
     def __repr__(self):
         return (
-            f"ResourceInfo(document_model_count={self.document_model_count}, "
+            f"ResourceDetails(document_model_count={self.document_model_count}, "
             f"document_model_limit={self.document_model_limit})"
         )
 
@@ -3959,7 +3966,7 @@ class ResourceInfo:
 
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of ResourceInfo.
+        """Returns a dict representation of ResourceDetails.
 
         :return: dict
         :rtype: dict
@@ -3970,12 +3977,12 @@ class ResourceInfo:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "ResourceInfo":
-        """Converts a dict in the shape of a ResourceInfo to the model itself.
+    def from_dict(cls, data: dict) -> "ResourceDetails":
+        """Converts a dict in the shape of a ResourceDetails to the model itself.
 
-        :param dict data: A dictionary in the shape of ResourceInfo.
-        :return: ResourceInfo
-        :rtype: ResourceInfo
+        :param dict data: A dictionary in the shape of ResourceDetails.
+        :return: ResourceDetails
+        :rtype: ResourceDetails
         """
         return cls(
             document_model_count=data.get("document_model_count", None),
@@ -3991,11 +3998,11 @@ class DocumentAnalysisError:
     :ivar message: Error message.
     :vartype message: str
     :ivar target: Target of the error.
-    :vartype target: str
+    :vartype target: Optional[str]
     :ivar details: List of detailed errors.
-    :vartype details: list[~azure.ai.formrecognizer.DocumentAnalysisError]
+    :vartype details: Optional[list[~azure.ai.formrecognizer.DocumentAnalysisError]]
     :ivar innererror: Detailed error.
-    :vartype innererror: ~azure.ai.formrecognizer.DocumentAnalysisInnerError
+    :vartype innererror: Optional[~azure.ai.formrecognizer.DocumentAnalysisInnerError]
     """
 
     def __init__(
@@ -4062,9 +4069,9 @@ class DocumentAnalysisInnerError:
 
     :ivar code: Error code.
     :vartype code: str
-    :ivar message: Error message.
+    :ivar Optional[str] message: Error message.
     :ivar innererror: Detailed error.
-    :vartype innererror: ~azure.ai.formrecognizer.DocumentAnalysisInnerError
+    :vartype innererror: Optional[~azure.ai.formrecognizer.DocumentAnalysisInnerError]
     """
 
     def __init__(

@@ -5,8 +5,7 @@ import yaml
 from copy import deepcopy
 from marshmallow import fields, post_load, INCLUDE
 from azure.ai.ml._schema import StringTransformedEnum, UnionField, NestedField, ArmVersionedStr
-from azure.ai.ml._schema.assets.code_asset import AnonymousCodeAssetSchema
-from azure.ai.ml._schema.core.fields import FileRefField, RegistryStr, LocalPathField, SerializeValidatedUrl
+from azure.ai.ml._schema.core.fields import FileRefField, RegistryStr, LocalPathField, SerializeValidatedUrl, GitStr
 from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import BaseComponentSchema
 from azure.ai.ml._schema.component.resource import ComponentResourceSchema
@@ -27,6 +26,8 @@ class CommandComponentSchema(BaseComponentSchema):
             SerializeValidatedUrl(),
             LocalPathField(),
             RegistryStr(azureml_type=AzureMLResourceType.CODE),
+            # Accept str to support git paths
+            GitStr(),
             # put arm versioned string at last order as it can deserialize any string into "azureml:<origin>"
             ArmVersionedStr(azureml_type=AzureMLResourceType.CODE),
         ],
