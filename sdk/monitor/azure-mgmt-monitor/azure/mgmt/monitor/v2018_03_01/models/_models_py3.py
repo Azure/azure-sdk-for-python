@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ActionGroupList(msrest.serialization.Model):
@@ -32,7 +34,7 @@ class ActionGroupList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ActionGroupResource"]] = None,
+        value: Optional[List["_models.ActionGroupResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -219,15 +221,15 @@ class ActionGroupResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         group_short_name: Optional[str] = None,
         enabled: Optional[bool] = True,
-        email_receivers: Optional[List["EmailReceiver"]] = None,
-        sms_receivers: Optional[List["SmsReceiver"]] = None,
-        webhook_receivers: Optional[List["WebhookReceiver"]] = None,
-        itsm_receivers: Optional[List["ItsmReceiver"]] = None,
-        azure_app_push_receivers: Optional[List["AzureAppPushReceiver"]] = None,
-        automation_runbook_receivers: Optional[List["AutomationRunbookReceiver"]] = None,
-        voice_receivers: Optional[List["VoiceReceiver"]] = None,
-        logic_app_receivers: Optional[List["LogicAppReceiver"]] = None,
-        azure_function_receivers: Optional[List["AzureFunctionReceiver"]] = None,
+        email_receivers: Optional[List["_models.EmailReceiver"]] = None,
+        sms_receivers: Optional[List["_models.SmsReceiver"]] = None,
+        webhook_receivers: Optional[List["_models.WebhookReceiver"]] = None,
+        itsm_receivers: Optional[List["_models.ItsmReceiver"]] = None,
+        azure_app_push_receivers: Optional[List["_models.AzureAppPushReceiver"]] = None,
+        automation_runbook_receivers: Optional[List["_models.AutomationRunbookReceiver"]] = None,
+        voice_receivers: Optional[List["_models.VoiceReceiver"]] = None,
+        logic_app_receivers: Optional[List["_models.LogicAppReceiver"]] = None,
+        azure_function_receivers: Optional[List["_models.AzureFunctionReceiver"]] = None,
         **kwargs
     ):
         """
@@ -464,7 +466,7 @@ class MultiMetricCriteria(msrest.serialization.Model):
      collection.
     :vartype additional_properties: dict[str, any]
     :ivar criterion_type: Required. Specifies the type of threshold criteria.Constant filled by
-     server. Possible values include: "StaticThresholdCriterion", "DynamicThresholdCriterion".
+     server. Known values are: "StaticThresholdCriterion", "DynamicThresholdCriterion".
     :vartype criterion_type: str or ~$(python-base-namespace).v2018_03_01.models.CriterionType
     :ivar name: Required. Name of the criteria.
     :vartype name: str
@@ -472,7 +474,7 @@ class MultiMetricCriteria(msrest.serialization.Model):
     :vartype metric_name: str
     :ivar metric_namespace: Namespace of the metric.
     :vartype metric_namespace: str
-    :ivar time_aggregation: Required. the criteria time aggregation types. Possible values include:
+    :ivar time_aggregation: Required. the criteria time aggregation types. Known values are:
      "Average", "Count", "Minimum", "Maximum", "Total".
     :vartype time_aggregation: str or
      ~$(python-base-namespace).v2018_03_01.models.AggregationTypeEnum
@@ -510,10 +512,10 @@ class MultiMetricCriteria(msrest.serialization.Model):
         *,
         name: str,
         metric_name: str,
-        time_aggregation: Union[str, "AggregationTypeEnum"],
+        time_aggregation: Union[str, "_models.AggregationTypeEnum"],
         additional_properties: Optional[Dict[str, Any]] = None,
         metric_namespace: Optional[str] = None,
-        dimensions: Optional[List["MetricDimension"]] = None,
+        dimensions: Optional[List["_models.MetricDimension"]] = None,
         skip_metric_validation: Optional[bool] = None,
         **kwargs
     ):
@@ -527,8 +529,8 @@ class MultiMetricCriteria(msrest.serialization.Model):
         :paramtype metric_name: str
         :keyword metric_namespace: Namespace of the metric.
         :paramtype metric_namespace: str
-        :keyword time_aggregation: Required. the criteria time aggregation types. Possible values
-         include: "Average", "Count", "Minimum", "Maximum", "Total".
+        :keyword time_aggregation: Required. the criteria time aggregation types. Known values are:
+         "Average", "Count", "Minimum", "Maximum", "Total".
         :paramtype time_aggregation: str or
          ~$(python-base-namespace).v2018_03_01.models.AggregationTypeEnum
         :keyword dimensions: List of dimension conditions.
@@ -557,7 +559,7 @@ class DynamicMetricCriteria(MultiMetricCriteria):
      collection.
     :vartype additional_properties: dict[str, any]
     :ivar criterion_type: Required. Specifies the type of threshold criteria.Constant filled by
-     server. Possible values include: "StaticThresholdCriterion", "DynamicThresholdCriterion".
+     server. Known values are: "StaticThresholdCriterion", "DynamicThresholdCriterion".
     :vartype criterion_type: str or ~$(python-base-namespace).v2018_03_01.models.CriterionType
     :ivar name: Required. Name of the criteria.
     :vartype name: str
@@ -565,7 +567,7 @@ class DynamicMetricCriteria(MultiMetricCriteria):
     :vartype metric_name: str
     :ivar metric_namespace: Namespace of the metric.
     :vartype metric_namespace: str
-    :ivar time_aggregation: Required. the criteria time aggregation types. Possible values include:
+    :ivar time_aggregation: Required. the criteria time aggregation types. Known values are:
      "Average", "Count", "Minimum", "Maximum", "Total".
     :vartype time_aggregation: str or
      ~$(python-base-namespace).v2018_03_01.models.AggregationTypeEnum
@@ -575,11 +577,11 @@ class DynamicMetricCriteria(MultiMetricCriteria):
      emitted, by causing the metric validation to be skipped.
     :vartype skip_metric_validation: bool
     :ivar operator: Required. The operator used to compare the metric value against the threshold.
-     Possible values include: "GreaterThan", "LessThan", "GreaterOrLessThan".
+     Known values are: "GreaterThan", "LessThan", "GreaterOrLessThan".
     :vartype operator: str or ~$(python-base-namespace).v2018_03_01.models.DynamicThresholdOperator
     :ivar alert_sensitivity: Required. The extent of deviation required to trigger an alert. This
-     will affect how tight the threshold is to the metric series pattern. Possible values include:
-     "Low", "Medium", "High".
+     will affect how tight the threshold is to the metric series pattern. Known values are: "Low",
+     "Medium", "High".
     :vartype alert_sensitivity: str or
      ~$(python-base-namespace).v2018_03_01.models.DynamicThresholdSensitivity
     :ivar failing_periods: Required. The minimum number of violations required within the selected
@@ -621,13 +623,13 @@ class DynamicMetricCriteria(MultiMetricCriteria):
         *,
         name: str,
         metric_name: str,
-        time_aggregation: Union[str, "AggregationTypeEnum"],
-        operator: Union[str, "DynamicThresholdOperator"],
-        alert_sensitivity: Union[str, "DynamicThresholdSensitivity"],
-        failing_periods: "DynamicThresholdFailingPeriods",
+        time_aggregation: Union[str, "_models.AggregationTypeEnum"],
+        operator: Union[str, "_models.DynamicThresholdOperator"],
+        alert_sensitivity: Union[str, "_models.DynamicThresholdSensitivity"],
+        failing_periods: "_models.DynamicThresholdFailingPeriods",
         additional_properties: Optional[Dict[str, Any]] = None,
         metric_namespace: Optional[str] = None,
-        dimensions: Optional[List["MetricDimension"]] = None,
+        dimensions: Optional[List["_models.MetricDimension"]] = None,
         skip_metric_validation: Optional[bool] = None,
         ignore_data_before: Optional[datetime.datetime] = None,
         **kwargs
@@ -642,8 +644,8 @@ class DynamicMetricCriteria(MultiMetricCriteria):
         :paramtype metric_name: str
         :keyword metric_namespace: Namespace of the metric.
         :paramtype metric_namespace: str
-        :keyword time_aggregation: Required. the criteria time aggregation types. Possible values
-         include: "Average", "Count", "Minimum", "Maximum", "Total".
+        :keyword time_aggregation: Required. the criteria time aggregation types. Known values are:
+         "Average", "Count", "Minimum", "Maximum", "Total".
         :paramtype time_aggregation: str or
          ~$(python-base-namespace).v2018_03_01.models.AggregationTypeEnum
         :keyword dimensions: List of dimension conditions.
@@ -652,12 +654,12 @@ class DynamicMetricCriteria(MultiMetricCriteria):
          yet emitted, by causing the metric validation to be skipped.
         :paramtype skip_metric_validation: bool
         :keyword operator: Required. The operator used to compare the metric value against the
-         threshold. Possible values include: "GreaterThan", "LessThan", "GreaterOrLessThan".
+         threshold. Known values are: "GreaterThan", "LessThan", "GreaterOrLessThan".
         :paramtype operator: str or
          ~$(python-base-namespace).v2018_03_01.models.DynamicThresholdOperator
         :keyword alert_sensitivity: Required. The extent of deviation required to trigger an alert.
-         This will affect how tight the threshold is to the metric series pattern. Possible values
-         include: "Low", "Medium", "High".
+         This will affect how tight the threshold is to the metric series pattern. Known values are:
+         "Low", "Medium", "High".
         :paramtype alert_sensitivity: str or
          ~$(python-base-namespace).v2018_03_01.models.DynamicThresholdSensitivity
         :keyword failing_periods: Required. The minimum number of violations required within the
@@ -733,8 +735,8 @@ class EmailReceiver(msrest.serialization.Model):
     :vartype name: str
     :ivar email_address: Required. The email address of this receiver.
     :vartype email_address: str
-    :ivar status: The receiver status of the e-mail. Possible values include: "NotSpecified",
-     "Enabled", "Disabled".
+    :ivar status: The receiver status of the e-mail. Known values are: "NotSpecified", "Enabled",
+     "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2018_03_01.models.ReceiverStatus
     """
 
@@ -999,7 +1001,7 @@ class MetricAlertCriteria(msrest.serialization.Model):
      collection.
     :vartype additional_properties: dict[str, any]
     :ivar odata_type: Required. specifies the type of the alert criteria.Constant filled by server.
-     Possible values include: "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+     Known values are: "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
      "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria",
      "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria".
     :vartype odata_type: str or ~$(python-base-namespace).v2018_03_01.models.Odatatype
@@ -1043,7 +1045,7 @@ class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):
      collection.
     :vartype additional_properties: dict[str, any]
     :ivar odata_type: Required. specifies the type of the alert criteria.Constant filled by server.
-     Possible values include: "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+     Known values are: "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
      "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria",
      "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria".
     :vartype odata_type: str or ~$(python-base-namespace).v2018_03_01.models.Odatatype
@@ -1065,7 +1067,7 @@ class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        all_of: Optional[List["MultiMetricCriteria"]] = None,
+        all_of: Optional[List["_models.MultiMetricCriteria"]] = None,
         **kwargs
     ):
         """
@@ -1179,13 +1181,13 @@ class MetricAlertResource(Resource):
         scopes: List[str],
         evaluation_frequency: datetime.timedelta,
         window_size: datetime.timedelta,
-        criteria: "MetricAlertCriteria",
+        criteria: "_models.MetricAlertCriteria",
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
         target_resource_type: Optional[str] = None,
         target_resource_region: Optional[str] = None,
         auto_mitigate: Optional[bool] = None,
-        actions: Optional[List["MetricAlertAction"]] = None,
+        actions: Optional[List["_models.MetricAlertAction"]] = None,
         **kwargs
     ):
         """
@@ -1255,7 +1257,7 @@ class MetricAlertResourceCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["MetricAlertResource"]] = None,
+        value: Optional[List["_models.MetricAlertResource"]] = None,
         **kwargs
     ):
         """
@@ -1342,9 +1344,9 @@ class MetricAlertResourcePatch(msrest.serialization.Model):
         window_size: Optional[datetime.timedelta] = None,
         target_resource_type: Optional[str] = None,
         target_resource_region: Optional[str] = None,
-        criteria: Optional["MetricAlertCriteria"] = None,
+        criteria: Optional["_models.MetricAlertCriteria"] = None,
         auto_mitigate: Optional[bool] = None,
-        actions: Optional[List["MetricAlertAction"]] = None,
+        actions: Optional[List["_models.MetricAlertAction"]] = None,
         **kwargs
     ):
         """
@@ -1406,7 +1408,7 @@ class MetricAlertSingleResourceMultipleMetricCriteria(MetricAlertCriteria):
      collection.
     :vartype additional_properties: dict[str, any]
     :ivar odata_type: Required. specifies the type of the alert criteria.Constant filled by server.
-     Possible values include: "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+     Known values are: "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
      "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria",
      "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria".
     :vartype odata_type: str or ~$(python-base-namespace).v2018_03_01.models.Odatatype
@@ -1428,7 +1430,7 @@ class MetricAlertSingleResourceMultipleMetricCriteria(MetricAlertCriteria):
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        all_of: Optional[List["MetricCriteria"]] = None,
+        all_of: Optional[List["_models.MetricCriteria"]] = None,
         **kwargs
     ):
         """
@@ -1469,7 +1471,7 @@ class MetricAlertStatus(msrest.serialization.Model):
         name: Optional[str] = None,
         id: Optional[str] = None,
         type: Optional[str] = None,
-        properties: Optional["MetricAlertStatusProperties"] = None,
+        properties: Optional["_models.MetricAlertStatusProperties"] = None,
         **kwargs
     ):
         """
@@ -1503,7 +1505,7 @@ class MetricAlertStatusCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["MetricAlertStatus"]] = None,
+        value: Optional[List["_models.MetricAlertStatus"]] = None,
         **kwargs
     ):
         """
@@ -1562,7 +1564,7 @@ class MetricCriteria(MultiMetricCriteria):
      collection.
     :vartype additional_properties: dict[str, any]
     :ivar criterion_type: Required. Specifies the type of threshold criteria.Constant filled by
-     server. Possible values include: "StaticThresholdCriterion", "DynamicThresholdCriterion".
+     server. Known values are: "StaticThresholdCriterion", "DynamicThresholdCriterion".
     :vartype criterion_type: str or ~$(python-base-namespace).v2018_03_01.models.CriterionType
     :ivar name: Required. Name of the criteria.
     :vartype name: str
@@ -1570,7 +1572,7 @@ class MetricCriteria(MultiMetricCriteria):
     :vartype metric_name: str
     :ivar metric_namespace: Namespace of the metric.
     :vartype metric_namespace: str
-    :ivar time_aggregation: Required. the criteria time aggregation types. Possible values include:
+    :ivar time_aggregation: Required. the criteria time aggregation types. Known values are:
      "Average", "Count", "Minimum", "Maximum", "Total".
     :vartype time_aggregation: str or
      ~$(python-base-namespace).v2018_03_01.models.AggregationTypeEnum
@@ -1579,8 +1581,8 @@ class MetricCriteria(MultiMetricCriteria):
     :ivar skip_metric_validation: Allows creating an alert rule on a custom metric that isn't yet
      emitted, by causing the metric validation to be skipped.
     :vartype skip_metric_validation: bool
-    :ivar operator: Required. the criteria operator. Possible values include: "Equals",
-     "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
+    :ivar operator: Required. the criteria operator. Known values are: "Equals", "GreaterThan",
+     "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
     :vartype operator: str or ~$(python-base-namespace).v2018_03_01.models.Operator
     :ivar threshold: Required. the criteria threshold value that activates the alert.
     :vartype threshold: float
@@ -1613,12 +1615,12 @@ class MetricCriteria(MultiMetricCriteria):
         *,
         name: str,
         metric_name: str,
-        time_aggregation: Union[str, "AggregationTypeEnum"],
-        operator: Union[str, "Operator"],
+        time_aggregation: Union[str, "_models.AggregationTypeEnum"],
+        operator: Union[str, "_models.Operator"],
         threshold: float,
         additional_properties: Optional[Dict[str, Any]] = None,
         metric_namespace: Optional[str] = None,
-        dimensions: Optional[List["MetricDimension"]] = None,
+        dimensions: Optional[List["_models.MetricDimension"]] = None,
         skip_metric_validation: Optional[bool] = None,
         **kwargs
     ):
@@ -1632,8 +1634,8 @@ class MetricCriteria(MultiMetricCriteria):
         :paramtype metric_name: str
         :keyword metric_namespace: Namespace of the metric.
         :paramtype metric_namespace: str
-        :keyword time_aggregation: Required. the criteria time aggregation types. Possible values
-         include: "Average", "Count", "Minimum", "Maximum", "Total".
+        :keyword time_aggregation: Required. the criteria time aggregation types. Known values are:
+         "Average", "Count", "Minimum", "Maximum", "Total".
         :paramtype time_aggregation: str or
          ~$(python-base-namespace).v2018_03_01.models.AggregationTypeEnum
         :keyword dimensions: List of dimension conditions.
@@ -1641,8 +1643,8 @@ class MetricCriteria(MultiMetricCriteria):
         :keyword skip_metric_validation: Allows creating an alert rule on a custom metric that isn't
          yet emitted, by causing the metric validation to be skipped.
         :paramtype skip_metric_validation: bool
-        :keyword operator: Required. the criteria operator. Possible values include: "Equals",
-         "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
+        :keyword operator: Required. the criteria operator. Known values are: "Equals", "GreaterThan",
+         "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
         :paramtype operator: str or ~$(python-base-namespace).v2018_03_01.models.Operator
         :keyword threshold: Required. the criteria threshold value that activates the alert.
         :paramtype threshold: float
@@ -1715,7 +1717,7 @@ class SmsReceiver(msrest.serialization.Model):
     :vartype country_code: str
     :ivar phone_number: Required. The phone number of the SMS receiver.
     :vartype phone_number: str
-    :ivar status: The status of the receiver. Possible values include: "NotSpecified", "Enabled",
+    :ivar status: The status of the receiver. Known values are: "NotSpecified", "Enabled",
      "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2018_03_01.models.ReceiverStatus
     """
@@ -1857,7 +1859,7 @@ class WebtestLocationAvailabilityCriteria(MetricAlertCriteria):
      collection.
     :vartype additional_properties: dict[str, any]
     :ivar odata_type: Required. specifies the type of the alert criteria.Constant filled by server.
-     Possible values include: "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+     Known values are: "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
      "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria",
      "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria".
     :vartype odata_type: str or ~$(python-base-namespace).v2018_03_01.models.Odatatype

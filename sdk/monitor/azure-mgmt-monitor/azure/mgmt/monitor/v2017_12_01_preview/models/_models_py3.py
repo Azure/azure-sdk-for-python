@@ -6,12 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, Union
+from typing import List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -55,7 +57,7 @@ class MetricNamespace(msrest.serialization.Model):
     :vartype type: str
     :ivar name: The escaped name of the namespace.
     :vartype name: str
-    :ivar classification: Kind of namespace. Possible values include: "Platform", "Custom", "Qos".
+    :ivar classification: Kind of namespace. Known values are: "Platform", "Custom", "Qos".
     :vartype classification: str or
      ~$(python-base-namespace).v2017_12_01_preview.models.NamespaceClassification
     :ivar properties: Properties which include the fully qualified namespace name.
@@ -76,8 +78,8 @@ class MetricNamespace(msrest.serialization.Model):
         id: Optional[str] = None,
         type: Optional[str] = None,
         name: Optional[str] = None,
-        classification: Optional[Union[str, "NamespaceClassification"]] = None,
-        properties: Optional["MetricNamespaceName"] = None,
+        classification: Optional[Union[str, "_models.NamespaceClassification"]] = None,
+        properties: Optional["_models.MetricNamespaceName"] = None,
         **kwargs
     ):
         """
@@ -87,8 +89,7 @@ class MetricNamespace(msrest.serialization.Model):
         :paramtype type: str
         :keyword name: The escaped name of the namespace.
         :paramtype name: str
-        :keyword classification: Kind of namespace. Possible values include: "Platform", "Custom",
-         "Qos".
+        :keyword classification: Kind of namespace. Known values are: "Platform", "Custom", "Qos".
         :paramtype classification: str or
          ~$(python-base-namespace).v2017_12_01_preview.models.NamespaceClassification
         :keyword properties: Properties which include the fully qualified namespace name.
@@ -122,7 +123,7 @@ class MetricNamespaceCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["MetricNamespace"],
+        value: List["_models.MetricNamespace"],
         **kwargs
     ):
         """
