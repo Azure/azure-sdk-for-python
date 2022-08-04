@@ -910,7 +910,7 @@ class TestToDict(FormRecognizerTest):
         assert d == final
 
     def test_model_operation_info_to_dict(self):
-        model = _models.ModelOperationSummary(
+        model = _models.DocumentModelOperationSummary(
             operation_id="id123",
             status="succeeded",
             percent_completed=100,
@@ -1503,7 +1503,7 @@ class TestToDict(FormRecognizerTest):
         assert d == final
 
     def test_model_operation_to_dict(self):
-        model = _models.ModelOperationDetails(
+        model = _models.DocumentModelOperationDetails(
             api_version="2022-06-30-preview",
             tags={},
             operation_id="id123",

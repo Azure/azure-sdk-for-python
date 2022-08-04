@@ -152,7 +152,7 @@ def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
         return value.value_country_region
     return None
 
-class DocumentBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ModelBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode used when building custom models.
 
     For more information, see https://aka.ms/azsdk/formrecognizer/buildmode.
@@ -1974,7 +1974,7 @@ class TextAppearance:
 class BoundingRegion:
     """The bounding region corresponding to a page.
 
-    :ivar Optional[list[~azure.ai.formrecognizer.Point]] polygon:
+    :ivar Optional[Sequence[~azure.ai.formrecognizer.Point]] polygon:
         A list of points representing the bounding polygon
         that outlines the document component. The points are listed in
         clockwise order relative to the document component orientation
@@ -2175,7 +2175,7 @@ class DocumentContentElement:
     :ivar content: Text content of the document content element.
     :vartype content: str
     :ivar polygon: Bounding polygon of the document content element.
-    :vartype polygon: Optional[list[~azure.ai.formrecognizer.Point]]
+    :vartype polygon: Optional[Sequence[~azure.ai.formrecognizer.Point]]
     :ivar span: Location of the element in the full document content.
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
     :ivar confidence: Confidence of accurately extracting the document content element.
@@ -2660,7 +2660,7 @@ class DocumentLine:
     :ivar content: Concatenated content of the contained elements in reading order.
     :vartype content: str
     :ivar polygon: Bounding polygon of the line.
-    :vartype polygon: Optional[list[~azure.ai.formrecognizer.Point]]
+    :vartype polygon: Optional[Sequence[~azure.ai.formrecognizer.Point]]
     :ivar spans: Location of the line in the reading order concatenated content.
     :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
     """
@@ -2949,7 +2949,7 @@ class DocumentSelectionMark(DocumentContentElement):
     :ivar content: The text content - not returned for DocumentSelectionMark.
     :vartype content: str
     :ivar polygon: Bounding polygon of the selection mark.
-    :vartype polygon: Optional[list[~azure.ai.formrecognizer.Point]]
+    :vartype polygon: Optional[Sequence[~azure.ai.formrecognizer.Point]]
     :ivar span: Location of the selection mark in the reading order concatenated
      content.
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
@@ -3268,7 +3268,7 @@ class DocumentTableCell:
         )
 
 
-class ModelOperationSummary:
+class DocumentModelOperationSummary:
     """Model operation information, including the kind and status of the operation, when it was
     created, and more.
 
@@ -3314,14 +3314,14 @@ class ModelOperationSummary:
 
     def __repr__(self):
         return (
-            f"ModelOperationSummary(operation_id={self.operation_id}, status={self.status}, "
+            f"DocumentModelOperationSummary(operation_id={self.operation_id}, status={self.status}, "
             f"percent_completed={self.percent_completed}, created_on={self.created_on}, "
             f"last_updated_on={self.last_updated_on}, kind={self.kind}, "
             f"resource_location={self.resource_location}, api_version={self.api_version}, tags={self.tags})"
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of ModelOperationSummary.
+        """Returns a dict representation of DocumentModelOperationSummary.
 
         :return: dict
         :rtype: dict
@@ -3339,12 +3339,12 @@ class ModelOperationSummary:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "ModelOperationSummary":
-        """Converts a dict in the shape of a ModelOperationSummary to the model itself.
+    def from_dict(cls, data: dict) -> "DocumentModelOperationSummary":
+        """Converts a dict in the shape of a DocumentModelOperationSummary to the model itself.
 
-        :param dict data: A dictionary in the shape of ModelOperationSummary.
-        :return: ModelOperationSummary
-        :rtype: ModelOperationSummary
+        :param dict data: A dictionary in the shape of DocumentModelOperationSummary.
+        :return: DocumentModelOperationSummary
+        :rtype: DocumentModelOperationSummary
         """
         return cls(
             operation_id=data.get("operation_id", None),
@@ -3373,8 +3373,8 @@ class ModelOperationSummary:
         )
 
 
-class ModelOperationDetails(ModelOperationSummary):
-    """ModelOperationDetails consists of information about the model operation, including the result or
+class DocumentModelOperationDetails(DocumentModelOperationSummary):
+    """DocumentModelOperationDetails consists of information about the model operation, including the result or
     error of the operation if it has completed.
 
     Note that operation information only persists for 24 hours. If the operation was successful,
@@ -3419,7 +3419,7 @@ class ModelOperationDetails(ModelOperationSummary):
 
     def __repr__(self):
         return (
-            f"ModelOperationDetails(operation_id={self.operation_id}, status={self.status}, "
+            f"DocumentModelOperationDetails(operation_id={self.operation_id}, status={self.status}, "
             f"percent_completed={self.percent_completed}, created_on={self.created_on}, "
             f"last_updated_on={self.last_updated_on}, kind={self.kind}, "
             f"resource_location={self.resource_location}, result={repr(self.result)}, "
@@ -3427,7 +3427,7 @@ class ModelOperationDetails(ModelOperationSummary):
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of ModelOperationDetails.
+        """Returns a dict representation of DocumentModelOperationDetails.
 
         :return: dict
         :rtype: dict
@@ -3447,12 +3447,12 @@ class ModelOperationDetails(ModelOperationSummary):
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "ModelOperationDetails":
-        """Converts a dict in the shape of a ModelOperationDetails to the model itself.
+    def from_dict(cls, data: dict) -> "DocumentModelOperationDetails":
+        """Converts a dict in the shape of a DocumentModelOperationDetails to the model itself.
 
-        :param dict data: A dictionary in the shape of ModelOperationDetails.
-        :return: ModelOperationDetails
-        :rtype: ModelOperationDetails
+        :param dict data: A dictionary in the shape of DocumentModelOperationDetails.
+        :return: DocumentModelOperationDetails
+        :rtype: DocumentModelOperationDetails
         """
         return cls(
             operation_id=data.get("operation_id", None),
@@ -3495,7 +3495,7 @@ class DocumentWord(DocumentContentElement):
     :ivar content: Text content of the word.
     :vartype content: str
     :ivar polygon: Bounding polygon of the word.
-    :vartype polygon: Optional[list[~azure.ai.formrecognizer.Point]]
+    :vartype polygon: Optional[Sequence[~azure.ai.formrecognizer.Point]]
     :ivar span: Location of the word in the reading order concatenated content.
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
     :ivar confidence: Confidence of correctly extracting the word.
