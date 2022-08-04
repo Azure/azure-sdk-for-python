@@ -8,7 +8,7 @@ dill==0.3.5.1
 distlib==0.3.5
 filelock==3.7.1
 isort==5.10.1
-lazy==object-proxy-1.7.1
+lazy-object-proxy==1.7.1
 mccabe==0.7.0
 outcome==1.2.0
 pylint==2.13.9
