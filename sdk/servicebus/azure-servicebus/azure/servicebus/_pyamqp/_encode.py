@@ -711,6 +711,11 @@ def encode_payload(output, payload):
     if payload[0]:  # header
         # TODO: Header and Properties encoding can be optimized to
         #  1. not encoding trailing None fields
+        #  Possible fix 1:
+        #  header = payload[0]
+        #  header = header[0:max(i for i, v in enumerate(header) if v is not None) + 1]
+        #  Possible fix 2:
+        #  itertools.dropwhile(lambda x: x is None, header[::-1]))[::-1]
         #  2. encoding bool without constructor
         encode_value(output, describe_performative(payload[0]))
 
