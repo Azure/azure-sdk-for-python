@@ -10,12 +10,13 @@
 - Changed argument order on `begin_build_model()`. `build_mode` is the first expected argument, followed by `blob_container_url`.
 - Renamed `begin_create_composed_model()` on `DocumentModelAdministrationClient` to `begin_compose_model()`.
 - Renamed `get_account_info()` on `DocumentModelAdministrationClient` to `get_resource_details()`.
+- Renamed `DocumentBuildMode` to `ModelBuildMode`.
 - Renamed `AccountInfo` model to `ResourceDetails`.
 - Renamed `DocTypeInfo` model to `DocumentTypeDetails`.
 - Renamed `DocumentModelInfo` model to `DocumentModelSummary`.
 - Renamed `DocumentModel` to `DocumentModelDetails`.
-- Renamed `ModelOperation` to `ModelOperationDetails`.
-- Renamed `ModelOperationInfo` to `ModelOperationSummary`.
+- Renamed `ModelOperation` to `DocumentModelOperationDetails`.
+- Renamed `ModelOperationInfo` to `DocumentModelOperationSummary`.
 - Renamed `model` parameter to `model_id` on `begin_analyze_document()` and `begin_analyze_document_from_url()`.
 - Removed `continuation_token` keyword from `begin_analyze_document()` and `begin_analyze_document_from_url()` on `DocumentAnalysisClient` and from `begin_build_model()`, `begin_compose_model()` and `begin_copy_model_to()` on `DocumentModelAdministrationClient`.
 - Changed return type of `get_copy_authorization()` from `dict[str, str]` to `TargetAuthorization`.
