@@ -1520,7 +1520,7 @@ class TestToDict(FormRecognizerTest):
                 created_on="1994-11-05T13:15:30Z",
                 model_id="prebuilt-invoice",
                 doc_types={
-                    "prebuilt-invoice": _models.DocTypeDetails(
+                    "prebuilt-invoice": _models.DocumentTypeDetails(
                         build_mode="template",
                         description="my description",
                         field_confidence={"CustomerName": 95},
@@ -1693,7 +1693,7 @@ class TestToDict(FormRecognizerTest):
         assert d == final
 
     def test_doc_type_info_to_dict(self):
-        model = _models.DocTypeDetails(
+        model = _models.DocumentTypeDetails(
             description="my description",
             build_mode="neural",
             field_confidence={"CustomerName": 95},
@@ -1809,7 +1809,7 @@ class TestToDict(FormRecognizerTest):
             api_version="2022-06-30-preview",
             tags={"test": "value"},
             doc_types={
-                "prebuilt-invoice": _models.DocTypeDetails(
+                "prebuilt-invoice": _models.DocumentTypeDetails(
                     build_mode="template",
                     description="my description",
                     field_confidence={"CustomerName": 95},

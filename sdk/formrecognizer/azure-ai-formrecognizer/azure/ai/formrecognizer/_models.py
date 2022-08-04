@@ -3799,7 +3799,7 @@ class DocumentModelDetails(DocumentModelSummary):
     :ivar tags: List of user defined key-value tag attributes associated with the model.
     :vartype tags: Optional[dict[str, str]]
     :ivar doc_types: Supported document types, including the fields for each document and their types.
-    :vartype doc_types: Optional[dict[str, ~azure.ai.formrecognizer.DocTypeDetails]]
+    :vartype doc_types: Optional[dict[str, ~azure.ai.formrecognizer.DocumentTypeDetails]]
 
     .. versionadded:: v2022-01-30-preview
         The *api_version* and *tags* properties
@@ -3827,7 +3827,7 @@ class DocumentModelDetails(DocumentModelSummary):
             created_on=model.created_date_time,
             api_version=model.api_version,
             tags=model.tags,
-            doc_types={k: DocTypeDetails._from_generated(v) for k, v in model.doc_types.items()}
+            doc_types={k: DocumentTypeDetails._from_generated(v) for k, v in model.doc_types.items()}
             if model.doc_types else {}
         )
 
@@ -3860,14 +3860,14 @@ class DocumentModelDetails(DocumentModelSummary):
             created_on=data.get("created_on", None),
             api_version=data.get("api_version", None),
             tags=data.get("tags", {}),
-            doc_types={k: DocTypeDetails.from_dict(v) for k, v in data.get("doc_types").items()}  # type: ignore
+            doc_types={k: DocumentTypeDetails.from_dict(v) for k, v in data.get("doc_types").items()}  # type: ignore
             if data.get("doc_types")
             else {},
         )
 
 
-class DocTypeDetails:
-    """DocTypeDetails represents a document type that a model can recognize, including its
+class DocumentTypeDetails:
+    """DocumentTypeDetails represents a document type that a model can recognize, including its
     fields and types, and the confidence for those fields.
 
     :ivar Optional[str] description: A description for the model.
@@ -3894,7 +3894,7 @@ class DocTypeDetails:
 
     def __repr__(self):
         return (
-            f"DocTypeDetails(description={self.description}, build_mode={self.build_mode}, "
+            f"DocumentTypeDetails(description={self.description}, build_mode={self.build_mode}, "
             f"field_schema={self.field_schema}, field_confidence={self.field_confidence})"
         )
 
@@ -3909,7 +3909,7 @@ class DocTypeDetails:
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of DocTypeDetails.
+        """Returns a dict representation of DocumentTypeDetails.
 
         :return: dict
         :rtype: dict
@@ -3922,12 +3922,12 @@ class DocTypeDetails:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "DocTypeDetails":
-        """Converts a dict in the shape of a DocTypeDetails to the model itself.
+    def from_dict(cls, data: dict) -> "DocumentTypeDetails":
+        """Converts a dict in the shape of a DocumentTypeDetails to the model itself.
 
-        :param dict data: A dictionary in the shape of DocTypeDetails.
-        :return: DocTypeDetails
-        :rtype: DocTypeDetails
+        :param dict data: A dictionary in the shape of DocumentTypeDetails.
+        :return: DocumentTypeDetails
+        :rtype: DocumentTypeDetails
         """
         return cls(
             description=data.get("description", None),
