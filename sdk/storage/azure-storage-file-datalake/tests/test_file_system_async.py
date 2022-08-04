@@ -316,8 +316,8 @@ class FileSystemTest(StorageTestCase):
     async def test_list_file_systems_encryption_scope_async(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
-        file_system_name1 = "testfs1"
-        file_system_name2 = "testfs2"
+        file_system_name1 = "testfs3"
+        file_system_name2 = "testfs4"
         encryption_scope = EncryptionScopeOptions(default_encryption_scope="hnstestscope1")
         file_system1 = await self.dsc.create_file_system(file_system_name1, encryption_scope_options=encryption_scope)
         file_system2 = await self.dsc.create_file_system(file_system_name2, encryption_scope_options=encryption_scope)

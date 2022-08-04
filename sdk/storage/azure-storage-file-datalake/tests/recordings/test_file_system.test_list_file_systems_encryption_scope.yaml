@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 27 Jul 2022 01:06:36 GMT
+      - Thu, 04 Aug 2022 18:43:31 GMT
       x-ms-default-encryption-scope:
       - hnstestscope1
       x-ms-deny-encryption-scope-override:
@@ -29,11 +29,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 27 Jul 2022 01:06:37 GMT
+      - Thu, 04 Aug 2022 18:43:29 GMT
       etag:
-      - '"0x8DA6F6C41C379A7"'
+      - '"0x8DA7649396BD4A4"'
       last-modified:
-      - Wed, 27 Jul 2022 01:06:37 GMT
+      - Thu, 04 Aug 2022 18:43:29 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -55,7 +55,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 27 Jul 2022 01:06:37 GMT
+      - Thu, 04 Aug 2022 18:43:32 GMT
       x-ms-default-encryption-scope:
       - hnstestscope1
       x-ms-deny-encryption-scope-override:
@@ -71,11 +71,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 27 Jul 2022 01:06:37 GMT
+      - Thu, 04 Aug 2022 18:43:29 GMT
       etag:
-      - '"0x8DA6F6C41D9E49F"'
+      - '"0x8DA7649397DAC5A"'
       last-modified:
-      - Wed, 27 Jul 2022 01:06:37 GMT
+      - Thu, 04 Aug 2022 18:43:29 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -95,7 +95,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 27 Jul 2022 01:06:37 GMT
+      - Thu, 04 Aug 2022 18:43:32 GMT
       x-ms-version:
       - '2021-08-06'
     method: GET
@@ -103,15 +103,15 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Containers><Container><Name>testfs1</Name><Properties><Last-Modified>Wed,
-        27 Jul 2022 01:06:37 GMT</Last-Modified><Etag>\"0x8DA6F6C41C379A7\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>hnstestscope1</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><ImmutableStorageWithVersioningEnabled>false</ImmutableStorageWithVersioningEnabled></Properties></Container><Container><Name>testfs2</Name><Properties><Last-Modified>Wed,
-        27 Jul 2022 01:06:37 GMT</Last-Modified><Etag>\"0x8DA6F6C41D9E49F\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>hnstestscope1</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><ImmutableStorageWithVersioningEnabled>false</ImmutableStorageWithVersioningEnabled></Properties></Container></Containers><NextMarker
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Containers><Container><Name>testfs1</Name><Properties><Last-Modified>Thu,
+        04 Aug 2022 18:43:29 GMT</Last-Modified><Etag>\"0x8DA7649396BD4A4\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>hnstestscope1</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><ImmutableStorageWithVersioningEnabled>false</ImmutableStorageWithVersioningEnabled></Properties></Container><Container><Name>testfs2</Name><Properties><Last-Modified>Thu,
+        04 Aug 2022 18:43:29 GMT</Last-Modified><Etag>\"0x8DA7649397DAC5A\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>hnstestscope1</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><ImmutableStorageWithVersioningEnabled>false</ImmutableStorageWithVersioningEnabled></Properties></Container></Containers><NextMarker
         /></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Wed, 27 Jul 2022 01:06:37 GMT
+      - Thu, 04 Aug 2022 18:43:29 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
