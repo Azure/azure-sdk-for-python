@@ -2,7 +2,6 @@ from ci_tools.parsing import parse_require, ParsedSetup
 from packaging.specifiers import SpecifierSet
 import pdb
 from unittest.mock import patch
-import ci_tools
 
 def test_parse_require():
     test_scenarios = [
@@ -32,7 +31,7 @@ def test_parse_require_with_no_spec():
         assert(result[0] == scenario.replace("_", "-"))
         assert(result[1] is None)
 
-@patch.object(ci_tools.parsing, 'read_setup_py_content')
+@patch('ci_tools.parsing.read_setup_py_content')
 def test_sdk_sample_setup(test_patch):
     test_patch.return_value = """import re
     import os.path
