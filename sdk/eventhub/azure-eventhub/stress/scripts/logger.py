@@ -40,8 +40,8 @@ def get_logger(log_filename, logger_name, level=logging.INFO, print_console=Fals
     stress_logger.setLevel(level)
     eventhub_logger = logging.getLogger("azure.eventhub")
     eventhub_logger.setLevel(level)
-    uamqp_logger = logging.getLogger("uamqp")
-    uamqp_logger.setLevel(level)
+    pyamqp_logger = logging.getLogger("pyamqp")
+    pyamqp_logger.setLevel(level)
 
     formatter = log_format or logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
     if print_console:
@@ -49,8 +49,8 @@ def get_logger(log_filename, logger_name, level=logging.INFO, print_console=Fals
         console_handler.setFormatter(formatter)
         if not eventhub_logger.handlers:
             eventhub_logger.addHandler(console_handler)
-        if not uamqp_logger.handlers:
-            uamqp_logger.addHandler(console_handler)
+        if not pyamqp_logger.handlers:
+            pyamqp_logger.addHandler(console_handler)
         if not stress_logger.handlers:
             stress_logger.addHandler(console_handler)
 
@@ -74,7 +74,7 @@ def get_logger(log_filename, logger_name, level=logging.INFO, print_console=Fals
         uamqp_file_handler.setFormatter(formatter)
         stress_file_handler.setFormatter(formatter)
         eventhub_logger.addHandler(eventhub_file_handler)
-        uamqp_logger.addHandler(uamqp_file_handler)
+        pyamqp_logger.addHandler(uamqp_file_handler)
         stress_logger.addHandler(stress_file_handler)
 
     return stress_logger
