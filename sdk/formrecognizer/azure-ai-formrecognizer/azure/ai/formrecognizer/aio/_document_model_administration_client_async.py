@@ -28,8 +28,8 @@ from .._models import (
     DocumentBuildMode,
     DocumentModelDetails,
     DocumentModelSummary,
-    ModelOperationDetails,
-    ModelOperationSummary,
+    DocumentModelOperationDetails,
+    DocumentModelOperationSummary,
     ResourceDetails,
     TargetAuthorization,
 )
@@ -464,15 +464,15 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         return DocumentModelDetails._from_generated(response)
 
     @distributed_trace
-    def list_operations(self, **kwargs: Any) -> AsyncItemPaged[ModelOperationSummary]:
+    def list_operations(self, **kwargs: Any) -> AsyncItemPaged[DocumentModelOperationSummary]:
         """List information for each document model operation.
 
         Lists all document model operations associated with the Form Recognizer resource.
         Note that operation information only persists for 24 hours. If the operation was successful,
         the document model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
 
-        :return: A pageable of ModelOperationSummary.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[ModelOperationSummary]
+        :return: A pageable of DocumentModelOperationSummary.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[DocumentModelOperationSummary]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -488,13 +488,13 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         return self._client.get_operations(  # type: ignore
             cls=kwargs.pop(
                 "cls",
-                lambda objs: [ModelOperationSummary._from_generated(x) for x in objs],
+                lambda objs: [DocumentModelOperationSummary._from_generated(x) for x in objs],
             ),
             **kwargs
         )
 
     @distributed_trace_async
-    async def get_operation(self, operation_id: str, **kwargs: Any) -> ModelOperationDetails:
+    async def get_operation(self, operation_id: str, **kwargs: Any) -> DocumentModelOperationDetails:
         """Get a document model operation by its ID.
 
         Get a document model operation associated with the Form Recognizer resource.
@@ -502,8 +502,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         the document model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
 
         :param str operation_id: The operation ID.
-        :return: ModelOperationDetails
-        :rtype: ~azure.ai.formrecognizer.ModelOperationDetails
+        :return: DocumentModelOperationDetails
+        :rtype: ~azure.ai.formrecognizer.DocumentModelOperationDetails
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -519,7 +519,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         if not operation_id:
             raise ValueError("'operation_id' cannot be None or empty.")
 
-        return ModelOperationDetails._from_generated(
+        return DocumentModelOperationDetails._from_generated(
             await self._client.get_operation(operation_id, **kwargs),
             api_version=self._api_version,
         )
