@@ -6,7 +6,6 @@
 # -------------------------------------------------------------------------
 from testcase import PurviewAccountPowerShellPreparer, PurviewMetaPolicyPowerShellPreparer
 from testcase_async import PurviewAccountTestAsync, PurviewMetaPolicyTestAsync
-from _util import PurviewAccountRecordingProcessor, PurviewAccountCollectionsRecordingProcessor
 from devtools_testutils.aio import recorded_by_proxy_async
 
 

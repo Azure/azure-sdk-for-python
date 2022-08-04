@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 02 Aug 2022 08:04:50 GMT",
+        "Date": "Thu, 04 Aug 2022 03:10:00 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13355.6 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.13418.9 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -111,7 +111,7 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 02 Aug 2022 08:04:50 GMT",
+        "Date": "Thu, 04 Aug 2022 03:10:00 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -172,7 +172,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "f1debbb6-6519-40dc-80f8-ad1efccc0497",
+        "client-request-id": "15b5f512-d84d-4cd8-8068-3a6d3f1cb590",
         "Connection": "keep-alive",
         "Content-Length": "285",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -190,10 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "f1debbb6-6519-40dc-80f8-ad1efccc0497",
+        "client-request-id": "15b5f512-d84d-4cd8-8068-3a6d3f1cb590",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 02 Aug 2022 08:04:50 GMT",
+        "Date": "Thu, 04 Aug 2022 03:10:00 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.13355.6 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13418.9 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -226,10 +226,10 @@
         "api-supported-versions": "2021-01-01-preview, 2021-07-01-preview, 2021-07-01",
         "Content-Length": "4083",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 02 Aug 2022 08:04:51 GMT",
+        "Date": "Thu, 04 Aug 2022 03:10:00 GMT",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-correlation-request-id": "718cdb54-8ea9-485c-b49d-60a36f228c0e"
+        "x-ms-correlation-request-id": "72f34cda-da4b-4b16-9b31-fe7e99c20e65"
       },
       "ResponseBody": {
         "values": [

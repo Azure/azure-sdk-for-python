@@ -16,14 +16,14 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 02 Aug 2022 03:34:00 GMT",
+        "Date": "Thu, 04 Aug 2022 03:10:01 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13355.6 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.13418.9 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -48,10 +48,10 @@
         "api-supported-versions": "2019-11-01-preview",
         "Content-Length": "71",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 02 Aug 2022 03:34:02 GMT",
+        "Date": "Thu, 04 Aug 2022 03:10:01 GMT",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-correlation-request-id": "08f62c56-8f0e-4639-9d6c-a607599431e2"
+        "x-ms-correlation-request-id": "fad10782-fb86-4a2b-aa59-8f56a5cd925e"
       },
       "ResponseBody": {
         "atlasKafkaPrimaryEndpoint": "000",

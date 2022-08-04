@@ -16,14 +16,14 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 02 Aug 2022 03:34:05 GMT",
+        "Date": "Thu, 04 Aug 2022 03:10:03 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13355.6 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.13418.9 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -45,19 +45,19 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2021-07-01",
-        "Content-Length": "3608",
+        "Content-Length": "6481",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 02 Aug 2022 03:34:05 GMT",
+        "Date": "Thu, 04 Aug 2022 03:10:03 GMT",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-correlation-request-id": "b578c017-e920-4613-a078-16b3f49ac1a7"
+        "x-ms-correlation-request-id": "3e11648f-ca4d-4bea-a107-b2d192377c94"
       },
       "ResponseBody": {
         "values": [
           {
             "name": "policy_purview-msyyc",
             "id": "2b6db6a7-2955-43ed-8372-0982730e48ef",
-            "version": 7,
+            "version": 15,
             "properties": {
               "description": "",
               "decisionRules": [
@@ -91,7 +91,8 @@
                         "attributeValueIncludedIn": [
                           "3bd37d68-b234-4fcd-bc83-0fedb27ccf5c",
                           "a7a853f3-da55-40e9-a48a-e5a5717e8b98",
-                          "887c42b1-7946-4c22-baa6-15043e4b1323"
+                          "887c42b1-7946-4c22-baa6-15043e4b1323",
+                          "654c2665-5097-4c83-82d1-cbe468a5f89a"
                         ]
                       },
                       {
@@ -112,7 +113,8 @@
                         "attributeName": "principal.microsoft.id",
                         "attributeValueIncludedIn": [
                           "3bd37d68-b234-4fcd-bc83-0fedb27ccf5c",
-                          "a7a853f3-da55-40e9-a48a-e5a5717e8b98"
+                          "a7a853f3-da55-40e9-a48a-e5a5717e8b98",
+                          "654c2665-5097-4c83-82d1-cbe468a5f89a"
                         ]
                       },
                       {
@@ -134,7 +136,8 @@
                         "attributeValueIncludedIn": [
                           "3bd37d68-b234-4fcd-bc83-0fedb27ccf5c",
                           "a7a853f3-da55-40e9-a48a-e5a5717e8b98",
-                          "887c42b1-7946-4c22-baa6-15043e4b1323"
+                          "887c42b1-7946-4c22-baa6-15043e4b1323",
+                          "654c2665-5097-4c83-82d1-cbe468a5f89a"
                         ]
                       },
                       {
@@ -155,7 +158,8 @@
                         "attributeName": "principal.microsoft.id",
                         "attributeValueIncludedIn": [
                           "3bd37d68-b234-4fcd-bc83-0fedb27ccf5c",
-                          "a7a853f3-da55-40e9-a48a-e5a5717e8b98"
+                          "a7a853f3-da55-40e9-a48a-e5a5717e8b98",
+                          "654c2665-5097-4c83-82d1-cbe468a5f89a"
                         ]
                       },
                       {
@@ -197,6 +201,114 @@
                         "fromRule": "purviewmetadatarole_builtin_data-source-administrator:purview-msyyc",
                         "attributeName": "derived.purview.permission",
                         "attributeValueIncludes": "purviewmetadatarole_builtin_data-source-administrator:purview-msyyc"
+                      }
+                    ],
+                    [
+                      {
+                        "fromRule": "purviewmetadatarole_builtin_workflow-administrator:purview-msyyc",
+                        "attributeName": "derived.purview.permission",
+                        "attributeValueIncludes": "purviewmetadatarole_builtin_workflow-administrator:purview-msyyc"
+                      }
+                    ],
+                    [
+                      {
+                        "fromRule": "purviewmetadatarole_builtin_policy-author:purview-msyyc",
+                        "attributeName": "derived.purview.permission",
+                        "attributeValueIncludes": "purviewmetadatarole_builtin_policy-author:purview-msyyc"
+                      }
+                    ],
+                    [
+                      {
+                        "fromRule": "purviewmetadatarole_builtin_insights-reader:purview-msyyc",
+                        "attributeName": "derived.purview.permission",
+                        "attributeValueIncludes": "purviewmetadatarole_builtin_insights-reader:purview-msyyc"
+                      }
+                    ],
+                    [
+                      {
+                        "fromRule": "purviewmetadatarole_builtin_data-share-contributor:purview-msyyc",
+                        "attributeName": "derived.purview.permission",
+                        "attributeValueIncludes": "purviewmetadatarole_builtin_data-share-contributor:purview-msyyc"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "kind": "attributerule",
+                  "id": "purviewmetadatarole_builtin_workflow-administrator:purview-msyyc",
+                  "name": "purviewmetadatarole_builtin_workflow-administrator:purview-msyyc",
+                  "dnfCondition": [
+                    [
+                      {
+                        "fromRule": "purviewmetadatarole_builtin_workflow-administrator",
+                        "attributeName": "derived.purview.role",
+                        "attributeValueIncludes": "purviewmetadatarole_builtin_workflow-administrator"
+                      },
+                      {
+                        "attributeName": "principal.microsoft.id",
+                        "attributeValueIncludedIn": [
+                          "654c2665-5097-4c83-82d1-cbe468a5f89a"
+                        ]
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "kind": "attributerule",
+                  "id": "purviewmetadatarole_builtin_policy-author:purview-msyyc",
+                  "name": "purviewmetadatarole_builtin_policy-author:purview-msyyc",
+                  "dnfCondition": [
+                    [
+                      {
+                        "fromRule": "purviewmetadatarole_builtin_policy-author",
+                        "attributeName": "derived.purview.role",
+                        "attributeValueIncludes": "purviewmetadatarole_builtin_policy-author"
+                      },
+                      {
+                        "attributeName": "principal.microsoft.id",
+                        "attributeValueIncludedIn": [
+                          "654c2665-5097-4c83-82d1-cbe468a5f89a"
+                        ]
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "kind": "attributerule",
+                  "id": "purviewmetadatarole_builtin_insights-reader:purview-msyyc",
+                  "name": "purviewmetadatarole_builtin_insights-reader:purview-msyyc",
+                  "dnfCondition": [
+                    [
+                      {
+                        "fromRule": "purviewmetadatarole_builtin_insights-reader",
+                        "attributeName": "derived.purview.role",
+                        "attributeValueIncludes": "purviewmetadatarole_builtin_insights-reader"
+                      },
+                      {
+                        "attributeName": "principal.microsoft.id",
+                        "attributeValueIncludedIn": [
+                          "654c2665-5097-4c83-82d1-cbe468a5f89a"
+                        ]
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "kind": "attributerule",
+                  "id": "purviewmetadatarole_builtin_data-share-contributor:purview-msyyc",
+                  "name": "purviewmetadatarole_builtin_data-share-contributor:purview-msyyc",
+                  "dnfCondition": [
+                    [
+                      {
+                        "fromRule": "purviewmetadatarole_builtin_data-share-contributor",
+                        "attributeName": "derived.purview.role",
+                        "attributeValueIncludes": "purviewmetadatarole_builtin_data-share-contributor"
+                      },
+                      {
+                        "attributeName": "principal.microsoft.id",
+                        "attributeValueIncludedIn": [
+                          "654c2665-5097-4c83-82d1-cbe468a5f89a"
+                        ]
                       }
                     ]
                   ]
