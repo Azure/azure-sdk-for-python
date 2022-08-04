@@ -14,7 +14,7 @@ from time import sleep
 import pytest
 import requests
 
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, set_custom_default_matcher, set_bodiless_matcher
 from settings.testcase import BlobPreparer
 from devtools_testutils.storage import LogCaptured, StorageRecordedTestCase
 
@@ -1058,6 +1058,7 @@ class TestStorageContainer(StorageRecordedTestCase):
 
     @pytest.mark.playback_test_only
     @BlobPreparer()
+    @recorded_by_proxy
     def test_undelete_container(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1084,9 +1085,9 @@ class TestStorageContainer(StorageRecordedTestCase):
                 props = restored_ctn_client.get_container_properties()
                 assert props is not None
 
-    @pytest.mark.live_test_only  # sas token is dynamically generated
     @pytest.mark.playback_test_only  # we need container soft delete enabled account
     @BlobPreparer()
+    @recorded_by_proxy
     def test_restore_with_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1141,6 +1142,7 @@ class TestStorageContainer(StorageRecordedTestCase):
 
     @pytest.mark.playback_test_only
     @BlobPreparer()
+    @recorded_by_proxy
     def test_list_blobs_contains_last_access_time(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1221,19 +1223,18 @@ class TestStorageContainer(StorageRecordedTestCase):
 
     @pytest.mark.playback_test_only
     @BlobPreparer()
+    @recorded_by_proxy
     def test_list_blobs_with_object_replication_policy(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
-        container = self._create_container(bsc)
+        container = bsc.get_container_client('orp-source')
         data = b'hello world'
         b_c = container.get_blob_client('blob1')
         b_c.upload_blob(data, overwrite=True)
         metadata = {'hello': 'world', 'number': '42'}
         b_c.set_blob_metadata(metadata)
-
-        prop = b_c.get_blob_properties()
 
         container.get_blob_client('blob2').upload_blob(data, overwrite=True)
 
@@ -1241,7 +1242,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         blobs_list = container.list_blobs()
         number_of_blobs_with_policy = 0
         for blob in blobs_list:
-            if blob.object_replication_source_properties != None:
+            if blob.object_replication_source_properties:
                 number_of_blobs_with_policy += 1
 
         # Assert
@@ -1585,6 +1586,10 @@ class TestStorageContainer(StorageRecordedTestCase):
     @BlobPreparer()
     @recorded_by_proxy
     def test_delete_blobs_simple(self, **kwargs):
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+        # set_bodiless_matcher()
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
