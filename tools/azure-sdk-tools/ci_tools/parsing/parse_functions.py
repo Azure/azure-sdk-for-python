@@ -109,7 +109,11 @@ def parse_setup(setup_filename: str) -> Tuple[str, str, List[str], List[str], bo
     """
     )
     parsed_mock_setup = ast.parse(mock_setup, filename=setup_filename)
+
+    pdb.set_trace()
     content = read_setup_py_content(setup_filename)
+
+    pdb.set_trace()
     parsed = ast.parse(content)
 
     for index, node in enumerate(parsed.body[:]):
