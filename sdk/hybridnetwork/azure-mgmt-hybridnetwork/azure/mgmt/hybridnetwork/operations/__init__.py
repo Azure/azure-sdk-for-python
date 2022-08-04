@@ -6,26 +6,31 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._network_functions_operations import NetworkFunctionsOperations
 from ._devices_operations import DevicesOperations
+from ._network_functions_operations import NetworkFunctionsOperations
+from ._network_function_vendors_operations import NetworkFunctionVendorsOperations
+from ._network_function_vendor_skus_operations import NetworkFunctionVendorSkusOperations
 from ._operations import Operations
 from ._vendors_operations import VendorsOperations
 from ._vendor_skus_operations import VendorSkusOperations
 from ._vendor_sku_preview_operations import VendorSkuPreviewOperations
-from ._network_function_vendors_operations import NetworkFunctionVendorsOperations
-from ._network_function_vendor_skus_operations import NetworkFunctionVendorSkusOperations
 from ._vendor_network_functions_operations import VendorNetworkFunctionsOperations
 from ._role_instances_operations import RoleInstancesOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
-    'NetworkFunctionsOperations',
     'DevicesOperations',
+    'NetworkFunctionsOperations',
+    'NetworkFunctionVendorsOperations',
+    'NetworkFunctionVendorSkusOperations',
     'Operations',
     'VendorsOperations',
     'VendorSkusOperations',
     'VendorSkuPreviewOperations',
-    'NetworkFunctionVendorsOperations',
-    'NetworkFunctionVendorSkusOperations',
     'VendorNetworkFunctionsOperations',
     'RoleInstancesOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
