@@ -1,6 +1,6 @@
 # Release History
 
-## 3.2.0b6 (Unreleased)
+## 3.2.0b6 (2022-08-09)
 
 ### Features Added
 - Added `TargetAuthorization` of type `dict[str, str]`.
@@ -22,8 +22,6 @@
 - Changed return type of `get_copy_authorization()` from `dict[str, str]` to `TargetAuthorization`.
 - Changed expected `target` parameter in `begin_copy_to()` from `dict[str, str]` to `TargetAuthorization`.
 - Long-running operation metadata is now accessible through the `details` property on the returned `DocumentModelAdministrationLROPoller` and `AsyncDocumentModelAdministrationLROPoller` instances.
-
-### Bugs Fixed
 
 ### Other Changes
 - Python 3.6 is no longer supported in this release. Please use Python 3.7 or later.
