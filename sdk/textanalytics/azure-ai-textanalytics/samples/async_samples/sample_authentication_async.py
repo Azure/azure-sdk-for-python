@@ -32,7 +32,7 @@ import os
 import asyncio
 
 
-async def sample_authentication_with_api_key_credential_async():
+async def sample_authentication_with_api_key_credential_async() -> None:
     print("\n.. authentication_with_api_key_credential_async")
     # [START create_ta_client_with_key_async]
     from azure.core.credentials import AzureKeyCredential
@@ -56,7 +56,7 @@ async def sample_authentication_with_api_key_credential_async():
     print(f"Confidence score: {result[0].primary_language.confidence_score}")
 
 
-async def sample_authentication_with_azure_active_directory_async():
+async def sample_authentication_with_azure_active_directory_async() -> None:
     """DefaultAzureCredential will use the values from these environment
     variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
     """
