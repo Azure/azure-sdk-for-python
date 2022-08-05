@@ -78,7 +78,7 @@ async def main():
 
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
-        from azure.ai.formrecognizer import DocumentBuildMode
+        from azure.ai.formrecognizer import ModelBuildMode
 
         endpoint = os.getenv("AZURE_FORM_RECOGNIZER_SOURCE_ENDPOINT")
         key = os.getenv("AZURE_FORM_RECOGNIZER_SOURCE_KEY")
@@ -90,7 +90,7 @@ async def main():
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         async with document_model_admin_client:
-            model = await (await document_model_admin_client.begin_build_model(os.getenv("CONTAINER_SAS_URL"), DocumentBuildMode.TEMPLATE)).result()
+            model = await (await document_model_admin_client.begin_build_model(ModelBuildMode.TEMPLATE, os.getenv("CONTAINER_SAS_URL"))).result()
             model_id = model.model_id
 
     await sample_copy_model_to_async(model_id)

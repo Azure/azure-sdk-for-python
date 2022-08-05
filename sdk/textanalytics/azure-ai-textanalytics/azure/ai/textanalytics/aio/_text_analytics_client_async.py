@@ -4,11 +4,12 @@
 # ------------------------------------
 # pylint: disable=too-many-lines
 
-from typing import Union, Any, List, Dict, TYPE_CHECKING, cast
+from typing import Union, Any, List, Dict, cast
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from ._base_client_async import AsyncTextAnalyticsClientBase
 from .._request_handlers import (
     _validate_input,
@@ -47,7 +48,7 @@ from .._models import (
     RecognizeCustomEntitiesAction,
     RecognizeCustomEntitiesResult,
     SingleLabelClassifyAction,
-    MultiCategoryClassifyAction,
+    MultiLabelClassifyAction,
     ClassifyDocumentResult,
     AnalyzeHealthcareEntitiesAction
 )
@@ -58,14 +59,11 @@ from ._lro_async import (
     AsyncAnalyzeActionsLROPollingMethod,
     AsyncAnalyzeHealthcareEntitiesLROPoller,
     AsyncAnalyzeActionsLROPoller,
-    AsyncTextAnalyticsLROPoller,
+    AsyncTextAnalysisLROPoller,
 )
 
 
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
-
-AsyncAnalyzeActionsResponse = AsyncAnalyzeActionsLROPoller[
+AsyncAnalyzeActionsResponse = AsyncTextAnalysisLROPoller[
     AsyncItemPaged[
         List[
             Union[
@@ -127,7 +125,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any
     ) -> None:
         super().__init__(
@@ -895,8 +893,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. versionadded:: v3.1
             The *begin_analyze_healthcare_entities* client method.
-        .. versionadded:: 2022-04-01-preview
-            The *display_name* keyword arguments.
+        .. versionadded:: 2022-05-01
+            The *display_name* keyword argument.
 
         .. admonition:: Example:
 
@@ -1053,12 +1051,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 AnalyzeSentimentAction,
                 RecognizeCustomEntitiesAction,
                 SingleLabelClassifyAction,
-                MultiCategoryClassifyAction,
+                MultiLabelClassifyAction,
                 AnalyzeHealthcareEntitiesAction,
             ]
         ],
         **kwargs: Any,
-    ) -> AsyncAnalyzeActionsLROPoller[
+    ) -> AsyncTextAnalysisLROPoller[
         AsyncItemPaged[
             List[
                 Union[
@@ -1098,7 +1096,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
             RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or
             RecognizeCustomEntitiesAction or SingleLabelClassifyAction or
-            MultiCategoryClassifyAction or AnalyzeHealthcareEntitiesAction]
+            MultiLabelClassifyAction or AnalyzeHealthcareEntitiesAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -1112,7 +1110,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             Call `continuation_token()` on the poller object to save the long-running operation (LRO)
             state into an opaque token. Pass the value as the `continuation_token` keyword argument
             to restart the LRO from a saved state.
-        :return: An instance of an AsyncAnalyzeActionsLROPoller. Call `result()` on the poller
+        :return: An instance of an AsyncTextAnalysisLROPoller. Call `result()` on the poller
             object to return a pageable heterogeneous list of lists. This list of lists is first ordered
             by the documents you input, then ordered by the actions you input. For example,
             if you have documents input ["Hello", "world"], and actions
@@ -1124,7 +1122,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             Then, you will get the :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` and
             :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` of "world".
         :rtype:
-            ~azure.ai.textanalytics.aio.AsyncAnalyzeActionsLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.aio.AsyncTextAnalysisLROPoller[~azure.core.async_paging.AsyncItemPaged[
             list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
             ExtractKeyPhrasesResult or AnalyzeSentimentResult or RecognizeCustomEntitiesResult
             or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or DocumentError]]]
@@ -1132,9 +1130,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. versionadded:: v3.1
             The *begin_analyze_actions* client method.
-        .. versionadded:: 2022-04-01-preview
+        .. versionadded:: 2022-05-01
             The *RecognizeCustomEntitiesAction*, *SingleLabelClassifyAction*,
-            *MultiCategoryClassifyAction*, and *AnalyzeHealthcareEntitiesAction* input options and the
+            *MultiLabelClassifyAction*, and *AnalyzeHealthcareEntitiesAction* input options and the
             corresponding *RecognizeCustomEntitiesResult*, *ClassifyDocumentResult*,
             and *AnalyzeHealthcareEntitiesResult* result objects
 
@@ -1156,7 +1154,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", None)
         polling_interval = kwargs.pop("polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
-        poller_cls = kwargs.pop("poller_cls", AsyncAnalyzeActionsLROPoller)
         bespoke = kwargs.pop("bespoke", False)
 
         if continuation_token:
@@ -1167,6 +1164,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     continuation_token,
                     AsyncAnalyzeActionsLROPoller,
                     AsyncAnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
                         timeout=polling_interval,
                         **kwargs
                     ),
@@ -1217,6 +1215,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         ),
                         cls=response_cls,
                         polling=AsyncAnalyzeActionsLROPollingMethod(
+                            text_analytics_client=self._client,
                             timeout=polling_interval,
                             show_stats=show_stats,
                             doc_id_order=doc_id_order,
@@ -1229,7 +1228,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                             **kwargs
                         ),
                         continuation_token=continuation_token,
-                        poller_cls=poller_cls,
                         **kwargs
                     )
                 )
@@ -1266,6 +1264,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     body=analyze_body,
                     cls=response_cls,
                     polling=AsyncAnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
                         timeout=polling_interval,
                         show_stats=show_stats,
                         doc_id_order=doc_id_order,
@@ -1284,7 +1283,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         except HttpResponseError as error:
             return process_http_response_error(error)
 
-
     @distributed_trace_async
     @validate_multiapi_args(
         version_method_added="2022-05-01"
@@ -1295,7 +1293,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         project_name: str,
         deployment_name: str,
         **kwargs: Any,
-    ) -> AsyncTextAnalyticsLROPoller[AsyncItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]]:
+    ) -> AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]]:
         """Start a long-running custom named entity recognition operation.
 
         For information on regional support of custom features and how to train a model to
@@ -1335,12 +1333,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             state into an opaque token. Pass the value as the `continuation_token` keyword argument
             to restart the LRO from a saved state.
         :keyword str display_name: An optional display name to set for the requested analysis.
-        :return: An instance of an AsyncTextAnalyticsLROPoller. Call `result()` on the this
+        :return: An instance of an AsyncTextAnalysisLROPoller. Call `result()` on the this
             object to return a heterogeneous pageable of
             :class:`~azure.ai.textanalytics.RecognizeCustomEntitiesResult` and
             :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
-            ~azure.ai.textanalytics.aio.AsyncTextAnalyticsLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.aio.AsyncTextAnalysisLROPoller[~azure.core.async_paging.AsyncItemPaged[
             ~azure.ai.textanalytics.RecognizeCustomEntitiesResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -1364,12 +1362,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         if continuation_token:
             return cast(
-                AsyncTextAnalyticsLROPoller[AsyncItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]],
+                AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]],
                 _get_result_from_continuation_token(
                     self._client._client,  # pylint: disable=protected-access
                     continuation_token,
-                    AsyncTextAnalyticsLROPoller,
+                    AsyncAnalyzeActionsLROPoller,
                     AsyncAnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
                         timeout=polling_interval,
                         **kwargs
                     ),
@@ -1380,7 +1379,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         try:
             return cast(
-                AsyncTextAnalyticsLROPoller[
+                AsyncTextAnalysisLROPoller[
                     AsyncItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]
                 ],
                 await self.begin_analyze_actions(
@@ -1394,7 +1393,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         )
                     ],
                     polling_interval=polling_interval,
-                    poller_cls=AsyncTextAnalyticsLROPoller,
                     bespoke=True,
                     **kwargs
                 )
@@ -1413,7 +1411,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         project_name: str,
         deployment_name: str,
         **kwargs: Any,
-    ) -> AsyncTextAnalyticsLROPoller[AsyncItemPaged[Union[ClassifyDocumentResult, DocumentError]]]:
+    ) -> AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[ClassifyDocumentResult, DocumentError]]]:
         """Start a long-running custom single label classification operation.
 
         For information on regional support of custom features and how to train a model to
@@ -1449,12 +1447,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             state into an opaque token. Pass the value as the `continuation_token` keyword argument
             to restart the LRO from a saved state.
         :keyword str display_name: An optional display name to set for the requested analysis.
-        :return: An instance of an AsyncTextAnalyticsLROPoller. Call `result()` on the this
+        :return: An instance of an AsyncTextAnalysisLROPoller. Call `result()` on the this
             object to return a heterogeneous pageable of
             :class:`~azure.ai.textanalytics.ClassifyDocumentResult` and
             :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
-            ~azure.ai.textanalytics.aio.AsyncTextAnalyticsLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.aio.AsyncTextAnalysisLROPoller[~azure.core.async_paging.AsyncItemPaged[
             ~azure.ai.textanalytics.ClassifyDocumentResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -1477,12 +1475,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         if continuation_token:
             return cast(
-                AsyncTextAnalyticsLROPoller[AsyncItemPaged[Union[ClassifyDocumentResult, DocumentError]]],
+                AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[ClassifyDocumentResult, DocumentError]]],
                 _get_result_from_continuation_token(
                     self._client._client,  # pylint: disable=protected-access
                     continuation_token,
-                    AsyncTextAnalyticsLROPoller,
+                    AsyncAnalyzeActionsLROPoller,
                     AsyncAnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
                         timeout=polling_interval,
                         **kwargs
                     ),
@@ -1493,7 +1492,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         try:
             return cast(
-                AsyncTextAnalyticsLROPoller[
+                AsyncTextAnalysisLROPoller[
                     AsyncItemPaged[Union[ClassifyDocumentResult, DocumentError]]
                 ],
                 await self.begin_analyze_actions(
@@ -1506,7 +1505,118 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         )
                     ],
                     polling_interval=polling_interval,
-                    poller_cls=AsyncTextAnalyticsLROPoller,
+                    bespoke=True,
+                    **kwargs
+                )
+            )
+
+        except HttpResponseError as error:
+            return process_http_response_error(error)
+
+    @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="2022-05-01"
+    )
+    async def begin_multi_label_classify(
+        self,
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        project_name: str,
+        deployment_name: str,
+        **kwargs: Any,
+    ) -> AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[ClassifyDocumentResult, DocumentError]]]:
+        """Start a long-running custom multi label classification operation.
+
+        For information on regional support of custom features and how to train a model to
+        classify your documents, see https://aka.ms/azsdk/textanalytics/customfunctionalities
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
+        :param str project_name: Required. This field indicates the project name for the model.
+        :param str deployment_name: This field indicates the deployment name for the model.
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            If not set, uses "en" for English as default. Per-document language will
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Language API.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+            logged on the service side for troubleshooting. By default, the Language service logs your
+            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+            the service's natural language processing functions. Setting this parameter to true,
+            disables input logging and may limit our ability to remediate issues that occur. Please see
+            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+            additional details, and Microsoft Responsible AI principles at
+            https://www.microsoft.com/ai/responsible-ai.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token:
+            Call `continuation_token()` on the poller object to save the long-running operation (LRO)
+            state into an opaque token. Pass the value as the `continuation_token` keyword argument
+            to restart the LRO from a saved state.
+        :keyword str display_name: An optional display name to set for the requested analysis.
+        :return: An instance of an AsyncTextAnalysisLROPoller. Call `result()` on the this
+            object to return a heterogeneous pageable of
+            :class:`~azure.ai.textanalytics.ClassifyDocumentResult` and
+            :class:`~azure.ai.textanalytics.DocumentError`.
+        :rtype:
+            ~azure.ai.textanalytics.aio.AsyncTextAnalysisLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.ClassifyDocumentResult or ~azure.ai.textanalytics.DocumentError]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: 2022-05-01
+            The *begin_multi_label_classify* client method.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_multi_label_classify_async.py
+                :start-after: [START multi_label_classify_async]
+                :end-before: [END multi_label_classify_async]
+                :language: python
+                :dedent: 4
+                :caption: Perform multi label classification on a batch of documents.
+        """
+
+        continuation_token = kwargs.pop("continuation_token", None)
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
+        polling_interval = kwargs.pop("polling_interval", 5)
+
+        if continuation_token:
+            return cast(
+                AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[ClassifyDocumentResult, DocumentError]]],
+                _get_result_from_continuation_token(
+                    self._client._client,  # pylint: disable=protected-access
+                    continuation_token,
+                    AsyncAnalyzeActionsLROPoller,
+                    AsyncAnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
+                        timeout=polling_interval,
+                        **kwargs
+                    ),
+                    self._analyze_result_callback,
+                    bespoke=True
+                )
+            )
+
+        try:
+            return cast(
+                AsyncTextAnalysisLROPoller[
+                    AsyncItemPaged[Union[ClassifyDocumentResult, DocumentError]]
+                ],
+                await self.begin_analyze_actions(
+                    documents,
+                    actions=[
+                        MultiLabelClassifyAction(
+                            project_name=project_name,
+                            deployment_name=deployment_name,
+                            disable_service_logs=disable_service_logs
+                        )
+                    ],
+                    polling_interval=polling_interval,
                     bespoke=True,
                     **kwargs
                 )

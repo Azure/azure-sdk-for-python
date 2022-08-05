@@ -128,7 +128,7 @@ class CosmosDBManagementClient:    # pylint: disable=too-many-instance-attribute
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-02-15-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-05-15-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -149,45 +149,123 @@ class CosmosDBManagementClient:    # pylint: disable=too-many-instance-attribute
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.database_accounts = DatabaseAccountsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.database = DatabaseOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.collection = CollectionOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.collection_region = CollectionRegionOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.database_account_region = DatabaseAccountRegionOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.percentile_source_target = PercentileSourceTargetOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.percentile_target = PercentileTargetOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.percentile = PercentileOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.collection_partition_region = CollectionPartitionRegionOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.collection_partition = CollectionPartitionOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.partition_key_range_id = PartitionKeyRangeIdOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.partition_key_range_id_region = PartitionKeyRangeIdRegionOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.graph_resources = GraphResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.sql_resources = SqlResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.mongo_db_resources = MongoDBResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.table_resources = TableResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.cassandra_resources = CassandraResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gremlin_resources = GremlinResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.locations = LocationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.data_transfer_jobs = DataTransferJobsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.cassandra_clusters = CassandraClustersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.cassandra_data_centers = CassandraDataCentersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.notebook_workspaces = NotebookWorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.restorable_database_accounts = RestorableDatabaseAccountsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.restorable_sql_databases = RestorableSqlDatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.restorable_sql_containers = RestorableSqlContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.restorable_sql_resources = RestorableSqlResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.restorable_mongodb_databases = RestorableMongodbDatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.restorable_mongodb_collections = RestorableMongodbCollectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.restorable_mongodb_resources = RestorableMongodbResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.restorable_gremlin_databases = RestorableGremlinDatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.restorable_gremlin_graphs = RestorableGremlinGraphsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.restorable_gremlin_resources = RestorableGremlinResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.restorable_tables = RestorableTablesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.restorable_table_resources = RestorableTableResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.database_accounts = DatabaseAccountsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.database = DatabaseOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.collection = CollectionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.collection_region = CollectionRegionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.database_account_region = DatabaseAccountRegionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.percentile_source_target = PercentileSourceTargetOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.percentile_target = PercentileTargetOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.percentile = PercentileOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.collection_partition_region = CollectionPartitionRegionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.collection_partition = CollectionPartitionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.partition_key_range_id = PartitionKeyRangeIdOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.partition_key_range_id_region = PartitionKeyRangeIdRegionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.graph_resources = GraphResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sql_resources = SqlResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.mongo_db_resources = MongoDBResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.table_resources = TableResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.cassandra_resources = CassandraResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gremlin_resources = GremlinResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.locations = LocationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.data_transfer_jobs = DataTransferJobsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.cassandra_clusters = CassandraClustersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.cassandra_data_centers = CassandraDataCentersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.notebook_workspaces = NotebookWorkspacesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.restorable_database_accounts = RestorableDatabaseAccountsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.restorable_sql_databases = RestorableSqlDatabasesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.restorable_sql_containers = RestorableSqlContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.restorable_sql_resources = RestorableSqlResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.restorable_mongodb_databases = RestorableMongodbDatabasesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.restorable_mongodb_collections = RestorableMongodbCollectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.restorable_mongodb_resources = RestorableMongodbResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.restorable_gremlin_databases = RestorableGremlinDatabasesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.restorable_gremlin_graphs = RestorableGremlinGraphsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.restorable_gremlin_resources = RestorableGremlinResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.restorable_tables = RestorableTablesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.restorable_table_resources = RestorableTableResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.service = ServiceOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

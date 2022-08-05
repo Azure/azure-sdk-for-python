@@ -11,8 +11,7 @@ import warnings
 from io import BytesIO
 from typing import Generic, Iterator, Optional, TypeVar
 
-import requests
-from azure.core.exceptions import HttpResponseError, ServiceResponseError
+from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError
 from azure.core.tracing.common import with_current_context
 
 from ._shared.request_handlers import validate_and_format_range_headers
@@ -213,10 +212,10 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                 try:
                     chunk_data = process_content(response, offset[0], offset[1], self.encryption_options)
                     retry_active = False
-                except (requests.exceptions.ChunkedEncodingError, requests.exceptions.ConnectionError) as error:
+                except (IncompleteReadError, HttpResponseError, DecodeError) as error:
                     retry_total -= 1
                     if retry_total <= 0:
-                        raise ServiceResponseError(error, error=error)
+                        raise HttpResponseError(error, error=error)
                     time.sleep(1)
 
             # This makes sure that if_match is set so that we can validate
@@ -475,10 +474,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                         self._encryption_options
                     )
                 retry_active = False
-            except (requests.exceptions.ChunkedEncodingError, requests.exceptions.ConnectionError) as error:
+            except (IncompleteReadError, HttpResponseError, DecodeError) as error:
                 retry_total -= 1
                 if retry_total <= 0:
-                    raise ServiceResponseError(error, error=error)
+                    raise HttpResponseError(error, error=error)
                 time.sleep(1)
 
         # get page ranges to optimize downloading sparse page blob
@@ -495,12 +494,15 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         # If the file is small, the download is complete at this point.
         # If file size is large, download the rest of the file in chunks.
-        # Use less than here for encryption.
-        if response.properties.size < self.size:
-            if self._request_options.get("modified_access_conditions"):
-                self._request_options["modified_access_conditions"].if_match = response.properties.etag
+        # For encryption V2, calculate based on size of decrypted content, not download size.
+        if is_encryption_v2(self._encryption_data):
+            self._download_complete = len(self._current_content) >= self.size
         else:
-            self._download_complete = True
+            self._download_complete = response.properties.size >= self.size
+
+        if not self._download_complete and self._request_options.get("modified_access_conditions"):
+            self._request_options["modified_access_conditions"].if_match = response.properties.etag
+
         return response
 
     def chunks(self):
@@ -527,8 +529,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 data_end = min(self._file_size, self._end_range + 1)
 
             data_start = self._initial_range[1] + 1  # Start where the first download ended
-            # For encryption V2 only, adjust start to the end of the fetched data rather than download size
-            if is_encryption_v2(self._encryption_data):
+            # For encryption, adjust start to the end of the fetched data rather than download size
+            if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
                 data_start = (self._start_range or 0) + len(self._current_content)
 
             iter_downloader = _ChunkDownloader(
@@ -701,8 +703,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             data_end = min(self._file_size, self._end_range + 1)
 
         data_start = self._initial_range[1] + 1  # Start where the first download ended
-        # For encryption V2 only, adjust start to the end of the fetched data rather than download size
-        if is_encryption_v2(self._encryption_data):
+        # For encryption, adjust start to the end of the fetched data rather than download size
+        if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
             data_start = (self._start_range or 0) + len(self._current_content)
 
         downloader = _ChunkDownloader(

@@ -495,6 +495,24 @@ class StorageBlobEncryptionTest(StorageTestCase):
         self.assertEqual(content[22:42], blob_content)
 
     @BlobPreparer()
+    def test_get_blob_range_cross_chunk(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        self.bsc.require_encryption = True
+
+        data = b'12345' * 205 * 3  # 3075 bytes
+        blob_name = self._get_blob_reference(BlobType.BlockBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data, overwrite=True)
+
+        # Act
+        offset, length = 501, 2500
+        blob_content = blob.download_blob(offset=offset, length=length).readall()
+
+        # Assert
+        self.assertEqual(data[offset:offset + length], blob_content)
+
+    @BlobPreparer()
     def test_put_blob_strict_mode(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True

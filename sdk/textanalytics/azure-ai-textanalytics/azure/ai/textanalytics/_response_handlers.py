@@ -308,7 +308,7 @@ def _get_deserialization_callback_from_task_type(task_type):  # pylint: disable=
         return custom_entities_result
     if task_type == _AnalyzeActionsType.SINGLE_LABEL_CLASSIFY:
         return classify_document_result
-    if task_type == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY:
+    if task_type == _AnalyzeActionsType.MULTI_LABEL_CLASSIFY:
         return classify_document_result
     if task_type == _AnalyzeActionsType.ANALYZE_HEALTHCARE_ENTITIES:
         return healthcare_result
@@ -353,6 +353,15 @@ def resolve_action_pointer(pointer):
     raise ValueError(
         f"Unexpected response from service - action pointer '{pointer}' is not a valid action pointer."
     )
+
+
+def pad_result(tasks_obj, doc_id_order):
+    return [
+        DocumentError(
+            id=doc_id,
+            error=TextAnalyticsError(message=f"No result for document. Action returned status '{tasks_obj.status}'.")
+        ) for doc_id in doc_id_order
+    ]
 
 
 def get_ordered_errors(tasks_obj, task_name, doc_id_order):
@@ -400,6 +409,9 @@ def _get_doc_results(task, doc_id_order, returned_tasks_object):
     # if no results present, check for action errors
     if response_task_to_deserialize.results is None:
         return get_ordered_errors(returned_tasks_object, task_name, doc_id_order)
+    # if results obj present, but no document results (likely a canceled scenario)
+    if not response_task_to_deserialize.results.documents:
+        return pad_result(returned_tasks_object, doc_id_order)
     return deserialization_callback(
         doc_id_order, response_task_to_deserialize.results, {}, lro=True
     )
