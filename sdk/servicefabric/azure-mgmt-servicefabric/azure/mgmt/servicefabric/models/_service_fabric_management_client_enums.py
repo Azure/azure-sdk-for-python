@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AddOnFeatures(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AddOnFeatures(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Available cluster add-on features
     """
 
@@ -35,7 +19,7 @@ class AddOnFeatures(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     BACKUP_RESTORE_SERVICE = "BackupRestoreService"
     RESOURCE_MONITOR_SERVICE = "ResourceMonitorService"
 
-class ArmServicePackageActivationMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ArmServicePackageActivationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The activation Mode of the service package
     """
 
@@ -44,7 +28,7 @@ class ArmServicePackageActivationMode(with_metaclass(_CaseInsensitiveEnumMeta, s
     #: Indicates the application package activation mode will use exclusive process.
     EXCLUSIVE_PROCESS = "ExclusiveProcess"
 
-class ArmUpgradeFailureAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ArmUpgradeFailureAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The activation Mode of the service package
     """
 
@@ -55,14 +39,14 @@ class ArmUpgradeFailureAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     #: fails. Service Fabric will not proceed to the next upgrade domain automatically.
     MANUAL = "Manual"
 
-class ClusterEnvironment(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ClusterEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cluster operating system, the default will be Windows
     """
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
-class ClusterState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ClusterState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current state of the cluster.
     
     
@@ -98,7 +82,7 @@ class ClusterState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AUTO_SCALE = "AutoScale"
     READY = "Ready"
 
-class ClusterUpgradeCadence(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ClusterUpgradeCadence(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates when new cluster runtime version upgrades will be applied after they are released. By
     default is Wave0.
     """
@@ -113,7 +97,12 @@ class ClusterUpgradeCadence(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     #: clusters.
     WAVE2 = "Wave2"
 
-class DurabilityLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ClusterVersionsEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+
+    WINDOWS = "Windows"
+    LINUX = "Linux"
+
+class DurabilityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The durability level of the node type. Learn about `DurabilityLevel
     <https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity>`_.
     
@@ -128,12 +117,7 @@ class DurabilityLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SILVER = "Silver"
     GOLD = "Gold"
 
-class Enum14(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    WINDOWS = "Windows"
-    LINUX = "Linux"
-
-class ManagedIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ManagedIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of managed identity for the resource.
     """
 
@@ -147,7 +131,7 @@ class ManagedIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Indicates that no identity is associated with the resource.
     NONE = "None"
 
-class MoveCost(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MoveCost(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the move cost for the service.
     """
 
@@ -160,14 +144,14 @@ class MoveCost(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Specifies the move cost of the service as High. The value is 3.
     HIGH = "High"
 
-class NotificationCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NotificationCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The category of notification.
     """
 
     #: Notification will be regarding wave progress.
     WAVE_PROGRESS = "WaveProgress"
 
-class NotificationChannel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NotificationChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The notification channel indicates the type of receivers subscribed to the notification, either
     user or subscription.
     """
@@ -180,7 +164,7 @@ class NotificationChannel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: notifications.
     EMAIL_SUBSCRIPTION = "EmailSubscription"
 
-class NotificationLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NotificationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The level of notification.
     """
 
@@ -189,7 +173,7 @@ class NotificationLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Receive all notifications.
     ALL = "All"
 
-class PartitionScheme(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PartitionScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumerates the ways that a service can be partitioned.
     """
 
@@ -206,7 +190,7 @@ class PartitionScheme(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: object. The value is 3.
     NAMED = "Named"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state of the cluster resource.
     """
 
@@ -215,7 +199,7 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class ReliabilityLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ReliabilityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reliability level sets the replica set size of system services. Learn about
     `ReliabilityLevel
     <https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity>`_.
@@ -236,7 +220,7 @@ class ReliabilityLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     GOLD = "Gold"
     PLATINUM = "Platinum"
 
-class RollingUpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RollingUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode used to monitor health during a rolling upgrade. The values are UnmonitoredAuto,
     UnmonitoredManual, and Monitored.
     """
@@ -254,7 +238,7 @@ class RollingUpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: before proceeding. The value is 3.
     MONITORED = "Monitored"
 
-class ServiceCorrelationScheme(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServiceCorrelationScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The service correlation scheme.
     """
 
@@ -273,7 +257,7 @@ class ServiceCorrelationScheme(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     #: be collocated. The value is 3.
     NON_ALIGNED_AFFINITY = "NonAlignedAffinity"
 
-class ServiceKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServiceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of service (Stateless or Stateful).
     """
 
@@ -286,7 +270,7 @@ class ServiceKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: value is 2.
     STATEFUL = "Stateful"
 
-class ServiceLoadMetricWeight(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServiceLoadMetricWeight(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines the metric weight relative to the other metrics that are configured for this
     service. During runtime, if two metrics end up in conflict, the Cluster Resource Manager
     prefers the metric with the higher weight.
@@ -301,7 +285,7 @@ class ServiceLoadMetricWeight(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     #: Specifies the metric weight of the service load as High. The value is 3.
     HIGH = "High"
 
-class ServicePlacementPolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServicePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of placement policy for a service fabric service. Following are the possible values.
     """
 
@@ -331,7 +315,7 @@ class ServicePlacementPolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     #: replicas of a particular partition of the service should be placed atomically. The value is 5.
     NON_PARTIALLY_PLACE_SERVICE = "NonPartiallyPlaceService"
 
-class SfZonalUpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SfZonalUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This property controls the logical grouping of VMs in upgrade domains (UDs). This property
     can't be modified if a node type with multiple Availability Zones is already present in the
     cluster.
@@ -348,7 +332,7 @@ class SfZonalUpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: zone. This update process is safer for the cluster and the user application.
     HIERARCHICAL = "Hierarchical"
 
-class StoreName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StoreName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The local certificate store location.
     """
 
@@ -361,7 +345,7 @@ class StoreName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TRUSTED_PEOPLE = "TrustedPeople"
     TRUSTED_PUBLISHER = "TrustedPublisher"
 
-class UpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The upgrade mode of the cluster when new Service Fabric runtime version is available.
     """
 
@@ -372,7 +356,7 @@ class UpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: The cluster is upgraded by setting the **clusterCodeVersion** property in the cluster resource.
     MANUAL = "Manual"
 
-class VmssZonalUpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class VmssZonalUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This property defines the upgrade mode for the virtual machine scale set, it is mandatory if a
     node type with multiple Availability Zones is added.
     """

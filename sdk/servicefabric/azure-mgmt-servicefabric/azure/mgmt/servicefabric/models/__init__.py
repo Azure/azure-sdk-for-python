@@ -6,150 +6,78 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ApplicationDeltaHealthPolicy
-    from ._models_py3 import ApplicationHealthPolicy
-    from ._models_py3 import ApplicationMetricDescription
-    from ._models_py3 import ApplicationResource
-    from ._models_py3 import ApplicationResourceList
-    from ._models_py3 import ApplicationResourceProperties
-    from ._models_py3 import ApplicationResourceUpdate
-    from ._models_py3 import ApplicationResourceUpdateProperties
-    from ._models_py3 import ApplicationTypeResource
-    from ._models_py3 import ApplicationTypeResourceList
-    from ._models_py3 import ApplicationTypeVersionResource
-    from ._models_py3 import ApplicationTypeVersionResourceList
-    from ._models_py3 import ApplicationTypeVersionsCleanupPolicy
-    from ._models_py3 import ApplicationUpgradePolicy
-    from ._models_py3 import ApplicationUserAssignedIdentity
-    from ._models_py3 import ArmApplicationHealthPolicy
-    from ._models_py3 import ArmRollingUpgradeMonitoringPolicy
-    from ._models_py3 import ArmServiceTypeHealthPolicy
-    from ._models_py3 import AvailableOperationDisplay
-    from ._models_py3 import AzureActiveDirectory
-    from ._models_py3 import CertificateDescription
-    from ._models_py3 import ClientCertificateCommonName
-    from ._models_py3 import ClientCertificateThumbprint
-    from ._models_py3 import Cluster
-    from ._models_py3 import ClusterCodeVersionsListResult
-    from ._models_py3 import ClusterCodeVersionsResult
-    from ._models_py3 import ClusterHealthPolicy
-    from ._models_py3 import ClusterListResult
-    from ._models_py3 import ClusterUpdateParameters
-    from ._models_py3 import ClusterUpgradeDeltaHealthPolicy
-    from ._models_py3 import ClusterUpgradePolicy
-    from ._models_py3 import ClusterVersionDetails
-    from ._models_py3 import DiagnosticsStorageAccountConfig
-    from ._models_py3 import EndpointRangeDescription
-    from ._models_py3 import ErrorModel
-    from ._models_py3 import ErrorModelError
-    from ._models_py3 import ManagedIdentity
-    from ._models_py3 import NamedPartitionSchemeDescription
-    from ._models_py3 import NodeTypeDescription
-    from ._models_py3 import Notification
-    from ._models_py3 import NotificationTarget
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import OperationResult
-    from ._models_py3 import PartitionSchemeDescription
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import Resource
-    from ._models_py3 import ServerCertificateCommonName
-    from ._models_py3 import ServerCertificateCommonNames
-    from ._models_py3 import ServiceCorrelationDescription
-    from ._models_py3 import ServiceLoadMetricDescription
-    from ._models_py3 import ServicePlacementPolicyDescription
-    from ._models_py3 import ServiceResource
-    from ._models_py3 import ServiceResourceList
-    from ._models_py3 import ServiceResourceProperties
-    from ._models_py3 import ServiceResourcePropertiesBase
-    from ._models_py3 import ServiceResourceUpdate
-    from ._models_py3 import ServiceResourceUpdateProperties
-    from ._models_py3 import ServiceTypeDeltaHealthPolicy
-    from ._models_py3 import ServiceTypeHealthPolicy
-    from ._models_py3 import SettingsParameterDescription
-    from ._models_py3 import SettingsSectionDescription
-    from ._models_py3 import SingletonPartitionSchemeDescription
-    from ._models_py3 import StatefulServiceProperties
-    from ._models_py3 import StatefulServiceUpdateProperties
-    from ._models_py3 import StatelessServiceProperties
-    from ._models_py3 import StatelessServiceUpdateProperties
-    from ._models_py3 import SystemData
-    from ._models_py3 import UniformInt64RangePartitionSchemeDescription
-    from ._models_py3 import UpgradableVersionPathResult
-    from ._models_py3 import UpgradableVersionsDescription
-    from ._models_py3 import UserAssignedIdentity
-except (SyntaxError, ImportError):
-    from ._models import ApplicationDeltaHealthPolicy  # type: ignore
-    from ._models import ApplicationHealthPolicy  # type: ignore
-    from ._models import ApplicationMetricDescription  # type: ignore
-    from ._models import ApplicationResource  # type: ignore
-    from ._models import ApplicationResourceList  # type: ignore
-    from ._models import ApplicationResourceProperties  # type: ignore
-    from ._models import ApplicationResourceUpdate  # type: ignore
-    from ._models import ApplicationResourceUpdateProperties  # type: ignore
-    from ._models import ApplicationTypeResource  # type: ignore
-    from ._models import ApplicationTypeResourceList  # type: ignore
-    from ._models import ApplicationTypeVersionResource  # type: ignore
-    from ._models import ApplicationTypeVersionResourceList  # type: ignore
-    from ._models import ApplicationTypeVersionsCleanupPolicy  # type: ignore
-    from ._models import ApplicationUpgradePolicy  # type: ignore
-    from ._models import ApplicationUserAssignedIdentity  # type: ignore
-    from ._models import ArmApplicationHealthPolicy  # type: ignore
-    from ._models import ArmRollingUpgradeMonitoringPolicy  # type: ignore
-    from ._models import ArmServiceTypeHealthPolicy  # type: ignore
-    from ._models import AvailableOperationDisplay  # type: ignore
-    from ._models import AzureActiveDirectory  # type: ignore
-    from ._models import CertificateDescription  # type: ignore
-    from ._models import ClientCertificateCommonName  # type: ignore
-    from ._models import ClientCertificateThumbprint  # type: ignore
-    from ._models import Cluster  # type: ignore
-    from ._models import ClusterCodeVersionsListResult  # type: ignore
-    from ._models import ClusterCodeVersionsResult  # type: ignore
-    from ._models import ClusterHealthPolicy  # type: ignore
-    from ._models import ClusterListResult  # type: ignore
-    from ._models import ClusterUpdateParameters  # type: ignore
-    from ._models import ClusterUpgradeDeltaHealthPolicy  # type: ignore
-    from ._models import ClusterUpgradePolicy  # type: ignore
-    from ._models import ClusterVersionDetails  # type: ignore
-    from ._models import DiagnosticsStorageAccountConfig  # type: ignore
-    from ._models import EndpointRangeDescription  # type: ignore
-    from ._models import ErrorModel  # type: ignore
-    from ._models import ErrorModelError  # type: ignore
-    from ._models import ManagedIdentity  # type: ignore
-    from ._models import NamedPartitionSchemeDescription  # type: ignore
-    from ._models import NodeTypeDescription  # type: ignore
-    from ._models import Notification  # type: ignore
-    from ._models import NotificationTarget  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import OperationResult  # type: ignore
-    from ._models import PartitionSchemeDescription  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ServerCertificateCommonName  # type: ignore
-    from ._models import ServerCertificateCommonNames  # type: ignore
-    from ._models import ServiceCorrelationDescription  # type: ignore
-    from ._models import ServiceLoadMetricDescription  # type: ignore
-    from ._models import ServicePlacementPolicyDescription  # type: ignore
-    from ._models import ServiceResource  # type: ignore
-    from ._models import ServiceResourceList  # type: ignore
-    from ._models import ServiceResourceProperties  # type: ignore
-    from ._models import ServiceResourcePropertiesBase  # type: ignore
-    from ._models import ServiceResourceUpdate  # type: ignore
-    from ._models import ServiceResourceUpdateProperties  # type: ignore
-    from ._models import ServiceTypeDeltaHealthPolicy  # type: ignore
-    from ._models import ServiceTypeHealthPolicy  # type: ignore
-    from ._models import SettingsParameterDescription  # type: ignore
-    from ._models import SettingsSectionDescription  # type: ignore
-    from ._models import SingletonPartitionSchemeDescription  # type: ignore
-    from ._models import StatefulServiceProperties  # type: ignore
-    from ._models import StatefulServiceUpdateProperties  # type: ignore
-    from ._models import StatelessServiceProperties  # type: ignore
-    from ._models import StatelessServiceUpdateProperties  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import UniformInt64RangePartitionSchemeDescription  # type: ignore
-    from ._models import UpgradableVersionPathResult  # type: ignore
-    from ._models import UpgradableVersionsDescription  # type: ignore
-    from ._models import UserAssignedIdentity  # type: ignore
+from ._models_py3 import ApplicationDeltaHealthPolicy
+from ._models_py3 import ApplicationHealthPolicy
+from ._models_py3 import ApplicationMetricDescription
+from ._models_py3 import ApplicationResource
+from ._models_py3 import ApplicationResourceList
+from ._models_py3 import ApplicationResourceProperties
+from ._models_py3 import ApplicationResourceUpdate
+from ._models_py3 import ApplicationResourceUpdateProperties
+from ._models_py3 import ApplicationTypeResource
+from ._models_py3 import ApplicationTypeResourceList
+from ._models_py3 import ApplicationTypeVersionResource
+from ._models_py3 import ApplicationTypeVersionResourceList
+from ._models_py3 import ApplicationTypeVersionsCleanupPolicy
+from ._models_py3 import ApplicationUpgradePolicy
+from ._models_py3 import ApplicationUserAssignedIdentity
+from ._models_py3 import ArmApplicationHealthPolicy
+from ._models_py3 import ArmRollingUpgradeMonitoringPolicy
+from ._models_py3 import ArmServiceTypeHealthPolicy
+from ._models_py3 import AvailableOperationDisplay
+from ._models_py3 import AzureActiveDirectory
+from ._models_py3 import CertificateDescription
+from ._models_py3 import ClientCertificateCommonName
+from ._models_py3 import ClientCertificateThumbprint
+from ._models_py3 import Cluster
+from ._models_py3 import ClusterCodeVersionsListResult
+from ._models_py3 import ClusterCodeVersionsResult
+from ._models_py3 import ClusterHealthPolicy
+from ._models_py3 import ClusterListResult
+from ._models_py3 import ClusterUpdateParameters
+from ._models_py3 import ClusterUpgradeDeltaHealthPolicy
+from ._models_py3 import ClusterUpgradePolicy
+from ._models_py3 import ClusterVersionDetails
+from ._models_py3 import DiagnosticsStorageAccountConfig
+from ._models_py3 import EndpointRangeDescription
+from ._models_py3 import ErrorModel
+from ._models_py3 import ErrorModelError
+from ._models_py3 import ManagedIdentity
+from ._models_py3 import NamedPartitionSchemeDescription
+from ._models_py3 import NodeTypeDescription
+from ._models_py3 import Notification
+from ._models_py3 import NotificationTarget
+from ._models_py3 import OperationListResult
+from ._models_py3 import OperationResult
+from ._models_py3 import PartitionSchemeDescription
+from ._models_py3 import ProxyResource
+from ._models_py3 import Resource
+from ._models_py3 import ServerCertificateCommonName
+from ._models_py3 import ServerCertificateCommonNames
+from ._models_py3 import ServiceCorrelationDescription
+from ._models_py3 import ServiceLoadMetricDescription
+from ._models_py3 import ServicePlacementPolicyDescription
+from ._models_py3 import ServiceResource
+from ._models_py3 import ServiceResourceList
+from ._models_py3 import ServiceResourceProperties
+from ._models_py3 import ServiceResourcePropertiesBase
+from ._models_py3 import ServiceResourceUpdate
+from ._models_py3 import ServiceResourceUpdateProperties
+from ._models_py3 import ServiceTypeDeltaHealthPolicy
+from ._models_py3 import ServiceTypeHealthPolicy
+from ._models_py3 import SettingsParameterDescription
+from ._models_py3 import SettingsSectionDescription
+from ._models_py3 import SingletonPartitionSchemeDescription
+from ._models_py3 import StatefulServiceProperties
+from ._models_py3 import StatefulServiceUpdateProperties
+from ._models_py3 import StatelessServiceProperties
+from ._models_py3 import StatelessServiceUpdateProperties
+from ._models_py3 import SystemData
+from ._models_py3 import UniformInt64RangePartitionSchemeDescription
+from ._models_py3 import UpgradableVersionPathResult
+from ._models_py3 import UpgradableVersionsDescription
+from ._models_py3 import UserAssignedIdentity
+
 
 from ._service_fabric_management_client_enums import (
     AddOnFeatures,
@@ -158,8 +86,8 @@ from ._service_fabric_management_client_enums import (
     ClusterEnvironment,
     ClusterState,
     ClusterUpgradeCadence,
+    ClusterVersionsEnvironment,
     DurabilityLevel,
-    Enum14,
     ManagedIdentityType,
     MoveCost,
     NotificationCategory,
@@ -178,7 +106,9 @@ from ._service_fabric_management_client_enums import (
     UpgradeMode,
     VmssZonalUpgradeMode,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'ApplicationDeltaHealthPolicy',
     'ApplicationHealthPolicy',
@@ -257,8 +187,8 @@ __all__ = [
     'ClusterEnvironment',
     'ClusterState',
     'ClusterUpgradeCadence',
+    'ClusterVersionsEnvironment',
     'DurabilityLevel',
-    'Enum14',
     'ManagedIdentityType',
     'MoveCost',
     'NotificationCategory',
@@ -277,3 +207,5 @@ __all__ = [
     'UpgradeMode',
     'VmssZonalUpgradeMode',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
