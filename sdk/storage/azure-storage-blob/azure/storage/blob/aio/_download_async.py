@@ -285,12 +285,14 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         )
 
         self._response = await self._initial_request()
+
         self.properties = self._response.properties
         self.properties.name = self.name
         self.properties.container = self.container
 
         # Set the content length to the download size instead of the size of
         # the last range
+        initial_size = self._response.properties.size
         self.properties.size = self.size
 
         # Overwrite the content range to the user requested range
@@ -314,6 +316,17 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 self._initial_offset[1],
                 self._encryption_options
             )
+
+        # If the file is small, the download is complete at this point.
+        # If file size is large, download the rest of the file in chunks.
+        # For encryption V2, calculate based on size of decrypted content, not download size.
+        if is_encryption_v2(self._encryption_data):
+            self._download_complete = len(self._current_content) >= self.size
+        else:
+            self._download_complete = initial_size >= self.size
+
+        if not self._download_complete and self._request_options.get("modified_access_conditions"):
+            self._request_options["modified_access_conditions"].if_match = self._response.properties.etag
 
     async def _initial_request(self):
         range_header, range_validation = validate_and_format_range_headers(
@@ -378,14 +391,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             except HttpResponseError:
                 pass
 
-        # If the file is small, the download is complete at this point.
-        # If file size is large, download the rest of the file in chunks.
-        # Use less than here for encryption.
-        if response.properties.size < self.size:
-            if self._request_options.get('modified_access_conditions'):
-                self._request_options['modified_access_conditions'].if_match = response.properties.etag
-        else:
-            self._download_complete = True
         return response
 
     def chunks(self):
@@ -408,8 +413,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         else:
             data_end = self._file_size
             data_start = self._initial_range[1] + 1  # Start where the first download ended
-            # For encryption V2 only, adjust start to the end of the fetched data rather than download size
-            if is_encryption_v2(self._encryption_data):
+            # For encryption, adjust start to the end of the fetched data rather than download size
+            if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
                 data_start = (self._start_range or 0) + len(self._current_content)
 
             if self._end_range is not None:
@@ -521,8 +526,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             data_end = min(self._file_size, self._end_range + 1)
 
         data_start = self._initial_range[1] + 1  # Start where the first download ended
-        # For encryption V2 only, adjust start to the end of the fetched data rather than download size
-        if is_encryption_v2(self._encryption_data):
+        # For encryption, adjust start to the end of the fetched data rather than download size
+        if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
             data_start = (self._start_range or 0) + len(self._current_content)
 
         downloader = _AsyncChunkDownloader(
