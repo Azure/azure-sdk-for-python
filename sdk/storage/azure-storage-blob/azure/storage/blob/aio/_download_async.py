@@ -351,7 +351,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 self.size = self._file_size
 
         except HttpResponseError as error:
-            if self._start_range is None and error.response.status_code == 416:
+            if self._start_range is None and error.response and error.response.status_code == 416:
                 # Get range will fail on an empty file. If the user did not
                 # request a range, do a regular get request in order to get
                 # any properties.
