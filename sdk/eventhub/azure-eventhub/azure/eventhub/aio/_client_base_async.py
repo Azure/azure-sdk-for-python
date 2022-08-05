@@ -269,7 +269,7 @@ class ClientBaseAsync(ClientBase):
                 mgmt_msg.application_properties["security_token"] = access_token.token
                 
                 if not access_token.token:
-                    _LOGGER.info("update_token received an empty token")
+                    _LOGGER.debug("update_token received an empty token")
                 
                 response = await mgmt_client.mgmt_request_async(
                     mgmt_msg,
