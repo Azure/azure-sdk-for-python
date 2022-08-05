@@ -6,18 +6,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import sys
-import time
+import requests
 from datetime import datetime, timedelta
 from time import sleep
 
 import pytest
-import requests
-
-from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
-from settings.testcase import BlobPreparer
-from devtools_testutils.storage import LogCaptured, StorageRecordedTestCase
-
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
 from azure.storage.blob import (
@@ -34,8 +27,13 @@ from azure.storage.blob import (
     PremiumPageBlobTier,
     PublicAccess,
     ResourceTypes,
-    StandardBlobTier)
-from devtools_testutils.storage import StorageTestCase
+    StandardBlobTier
+    )
+
+
+from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
+from devtools_testutils.storage import LogCaptured, StorageRecordedTestCase
+from settings.testcase import BlobPreparer
 
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -547,10 +545,6 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert props is not None
         assert props.metadata == metadata
         assert props.immutable_storage_with_versioning_enabled is not None
-        # assert props.lease.duration == 'infinite'
-        # assert props.lease.state == 'leased'
-        # assert props.lease.status == 'locked'
-        # assert props.public_access == 'container'
         assert props.has_immutability_policy is not None
         assert props.has_legal_hold is not None
 
