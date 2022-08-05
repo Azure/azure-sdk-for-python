@@ -93,3 +93,14 @@ def test_case_iter():
     
     for key in my_dict:
         assert key in keys
+
+def test_case_insensitive_dict_items_contains():
+    """Test that cidict.items().__contains__ doesn't raise a ValueError."""
+    my_dict = case_insensitive_dict({"content-length": 3})
+    items = my_dict.items()
+    assert ("Content-Length", 3) in items
+    assert ("content-length", 3) in items
+    assert ("content-length", 3, 4) not in  items
+    assert (4,) not in  items
+    assert () not in  items
+
