@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class Category(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Category(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     HIGH_AVAILABILITY = "HighAvailability"
     SECURITY = "Security"
@@ -34,11 +18,11 @@ class Category(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     COST = "Cost"
     OPERATIONAL_EXCELLENCE = "OperationalExcellence"
 
-class ConfigurationName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ConfigurationName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DEFAULT = "default"
 
-class CpuThreshold(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CpuThreshold(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Minimum percentage threshold for Advisor low CPU utilization evaluation. Valid only for
     subscriptions. Valid values: 5 (default), 10, 15 or 20.
     """
@@ -48,14 +32,26 @@ class CpuThreshold(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FIFTEEN = "15"
     TWENTY = "20"
 
-class DigestConfigState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DigestConfigState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of digest configuration.
     """
 
     ACTIVE = "Active"
     DISABLED = "Disabled"
 
-class Impact(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Duration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Minimum duration for Advisor low CPU utilization evaluation. Valid only for subscriptions.
+    Valid values: 7 (default), 14, 21, 30, 60 or 90.
+    """
+
+    SEVEN = "7"
+    FOURTEEN = "14"
+    TWENTY_ONE = "21"
+    THIRTY = "30"
+    SIXTY = "60"
+    NINETY = "90"
+
+class Impact(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The business impact of the recommendation.
     """
 
@@ -63,7 +59,13 @@ class Impact(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MEDIUM = "Medium"
     LOW = "Low"
 
-class Risk(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PredictionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the prediction.
+    """
+
+    PREDICTIVE_RIGHTSIZING = "PredictiveRightsizing"
+
+class Risk(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The potential risk of not implementing the recommendation.
     """
 
@@ -71,6 +73,6 @@ class Risk(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WARNING = "Warning"
     NONE = "None"
 
-class Scenario(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Scenario(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ALERTS = "Alerts"
