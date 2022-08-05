@@ -24,11 +24,12 @@ _FAILED = frozenset(["failed"])
 _SUCCEEDED = frozenset(["succeeded", "partiallycompleted", "partiallysucceeded"])
 
 
-PollingReturnType = TypeVar("PollingReturnType", covariant=True)
+PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 
 @runtime_checkable
-class TextAnalysisLROPoller(Protocol[PollingReturnType]):
+class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
     """Implements a protocol which returned poller objects are consistent with.
     """
 

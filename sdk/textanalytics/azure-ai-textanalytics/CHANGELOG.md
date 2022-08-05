@@ -2,6 +2,8 @@
 
 ## 5.2.0b5 (Unreleased)
 
+The version of this client library defaults to the API version `2022-05-01`.
+
 ### Features Added
 
 - Added `begin_recognize_custom_entities` client method to recognize custom named entities in documents.
@@ -22,8 +24,6 @@
 - `SingleCategoryClassifyResult` and `MultiCategoryClassifyResult` models have been merged into one model: `ClassifyDocumentResult`.
 - Renamed `SingleCategoryClassifyAction` to `SingleLabelClassifyAction`
 - Renamed `MultiCategoryClassifyAction` to `MultiLabelClassifyAction`.
-
-### Bugs Fixed
 
 ### Other Changes
 
