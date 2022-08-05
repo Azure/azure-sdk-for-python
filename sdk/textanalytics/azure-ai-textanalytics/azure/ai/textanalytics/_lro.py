@@ -10,6 +10,7 @@ from urllib.parse import urlencode
 from typing import Any, Mapping, Optional, Callable, TypeVar, cast
 from typing_extensions import Protocol, runtime_checkable
 from azure.core.exceptions import HttpResponseError
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import (
     LROBasePolling,
@@ -321,6 +322,7 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType]):
             polling_method
         )
 
+    @distributed_trace
     def cancel(self, **kwargs: Any) -> LROPoller[None]:  # type: ignore
         """Cancel the operation currently being polled.
 
@@ -518,6 +520,7 @@ class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
             polling_method
         )
 
+    @distributed_trace
     def cancel(self) -> None:
         """Cancel the operation currently being polled.
 
