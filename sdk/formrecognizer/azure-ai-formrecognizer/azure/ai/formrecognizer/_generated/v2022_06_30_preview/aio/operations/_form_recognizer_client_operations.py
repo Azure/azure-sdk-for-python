@@ -22,7 +22,7 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._form_recognizer_client_operations import build_analyze_document_request_initial, build_authorize_copy_document_model_request, build_build_document_model_request_initial, build_compose_document_model_request_initial, build_copy_document_model_to_request_initial, build_delete_model_request, build_get_analyze_document_result_request, build_get_info_request, build_get_model_request, build_get_models_request, build_get_operation_request, build_get_operations_request
+from ...operations._form_recognizer_client_operations import build_analyze_document_request_initial, build_authorize_copy_document_model_request, build_build_document_model_request_initial, build_compose_document_model_request_initial, build_copy_document_model_to_request_initial, build_delete_document_model_request, build_get_analyze_document_result_request, build_get_document_model_request, build_get_document_models_request, build_get_operation_request, build_get_operations_request, build_get_resource_details_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -117,9 +117,9 @@ class FormRecognizerClientOperationsMixin:
     ) -> AsyncLROPoller[None]:
         """Analyze document.
 
-        Analyzes document with model.
+        Analyzes document with document model.
 
-        :param model_id: Unique model name.
+        :param model_id: Unique document model name.
         :type model_id: str
         :param pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :type pages: str
@@ -220,7 +220,7 @@ class FormRecognizerClientOperationsMixin:
 
         Gets the result of document analysis.
 
-        :param model_id: Unique model name.
+        :param model_id: Unique document model name.
         :type model_id: str
         :param result_id: Analyze operation result ID.
         :type result_id: str
@@ -337,7 +337,7 @@ class FormRecognizerClientOperationsMixin:
         build_request: _models.BuildDocumentModelRequest,
         **kwargs: Any
     ) -> AsyncDocumentModelAdministrationClientLROPoller[None]:
-        """Build model.
+        """Build document model.
 
         Builds a custom document analysis model.
 
@@ -470,9 +470,9 @@ class FormRecognizerClientOperationsMixin:
         compose_request: _models.ComposeDocumentModelRequest,
         **kwargs: Any
     ) -> AsyncDocumentModelAdministrationClientLROPoller[None]:
-        """Compose model.
+        """Compose document model.
 
-        Creates a new model from document types of existing models.
+        Creates a new document model from document types of existing document models.
 
         :param compose_request: Compose request parameters.
         :type compose_request:
@@ -551,8 +551,8 @@ class FormRecognizerClientOperationsMixin:
     ) -> _models.CopyAuthorization:
         """Generate copy authorization.
 
-        Generates authorization to copy a model to this location with specified modelId and optional
-        description.
+        Generates authorization to copy a document model to this location with specified modelId and
+        optional description.
 
         :param authorize_copy_request: Authorize copy request parameters.
         :type authorize_copy_request:
@@ -675,11 +675,11 @@ class FormRecognizerClientOperationsMixin:
         copy_to_request: _models.CopyAuthorization,
         **kwargs: Any
     ) -> AsyncDocumentModelAdministrationClientLROPoller[None]:
-        """Copy model.
+        """Copy document model.
 
-        Copies model to the target resource, region, and modelId.
+        Copies document model to the target resource, region, and modelId.
 
-        :param model_id: Unique model name.
+        :param model_id: Unique document model name.
         :type model_id: str
         :param copy_to_request: Copy to request parameters.
         :type copy_to_request: ~azure.ai.formrecognizer.v2022_06_30_preview.models.CopyAuthorization
@@ -846,7 +846,7 @@ class FormRecognizerClientOperationsMixin:
         self,
         operation_id: str,
         **kwargs: Any
-    ) -> _models.GetOperationResponse:
+    ) -> _models.OperationDetails:
         """Get operation.
 
         Gets operation info.
@@ -854,8 +854,8 @@ class FormRecognizerClientOperationsMixin:
         :param operation_id: Unique operation ID.
         :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: GetOperationResponse, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2022_06_30_preview.models.GetOperationResponse
+        :return: OperationDetails, or the result of cls(response)
+        :rtype: ~azure.ai.formrecognizer.v2022_06_30_preview.models.OperationDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -867,7 +867,7 @@ class FormRecognizerClientOperationsMixin:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.GetOperationResponse]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.OperationDetails]
 
         
         request = build_get_operation_request(
@@ -895,7 +895,7 @@ class FormRecognizerClientOperationsMixin:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('GetOperationResponse', pipeline_response)
+        deserialized = self._deserialize('OperationDetails', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -906,25 +906,26 @@ class FormRecognizerClientOperationsMixin:
 
 
     @distributed_trace
-    def get_models(
+    def get_document_models(
         self,
         **kwargs: Any
-    ) -> AsyncIterable[_models.GetModelsResponse]:
-        """List models.
+    ) -> AsyncIterable[_models.GetDocumentModelsResponse]:
+        """List document models.
 
-        List all models.
+        List all document models.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either GetModelsResponse or the result of cls(response)
+        :return: An iterator like instance of either GetDocumentModelsResponse or the result of
+         cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.formrecognizer.v2022_06_30_preview.models.GetModelsResponse]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.formrecognizer.v2022_06_30_preview.models.GetDocumentModelsResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.GetModelsResponse]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.GetDocumentModelsResponse]
 
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -933,9 +934,9 @@ class FormRecognizerClientOperationsMixin:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_get_models_request(
+                request = build_get_document_models_request(
                     api_version=api_version,
-                    template_url=self.get_models.metadata['url'],
+                    template_url=self.get_document_models.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
@@ -947,7 +948,7 @@ class FormRecognizerClientOperationsMixin:
 
             else:
                 
-                request = build_get_models_request(
+                request = build_get_document_models_request(
                     api_version=api_version,
                     template_url=next_link,
                     headers=_headers,
@@ -966,7 +967,7 @@ class FormRecognizerClientOperationsMixin:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("GetModelsResponse", pipeline_response)
+            deserialized = self._deserialize("GetDocumentModelsResponse", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -993,23 +994,23 @@ class FormRecognizerClientOperationsMixin:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    get_models.metadata = {'url': "/documentModels"}  # type: ignore
+    get_document_models.metadata = {'url': "/documentModels"}  # type: ignore
 
     @distributed_trace_async
-    async def get_model(
+    async def get_document_model(
         self,
         model_id: str,
         **kwargs: Any
-    ) -> _models.ModelInfo:
-        """Get model.
+    ) -> _models.DocumentModelDetails:
+        """Get document model.
 
-        Gets detailed model information.
+        Gets detailed document model information.
 
-        :param model_id: Unique model name.
+        :param model_id: Unique document model name.
         :type model_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ModelInfo, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2022_06_30_preview.models.ModelInfo
+        :return: DocumentModelDetails, or the result of cls(response)
+        :rtype: ~azure.ai.formrecognizer.v2022_06_30_preview.models.DocumentModelDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -1021,13 +1022,13 @@ class FormRecognizerClientOperationsMixin:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ModelInfo]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DocumentModelDetails]
 
         
-        request = build_get_model_request(
+        request = build_get_document_model_request(
             model_id=model_id,
             api_version=api_version,
-            template_url=self.get_model.metadata['url'],
+            template_url=self.get_document_model.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -1049,27 +1050,27 @@ class FormRecognizerClientOperationsMixin:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('ModelInfo', pipeline_response)
+        deserialized = self._deserialize('DocumentModelDetails', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_model.metadata = {'url': "/documentModels/{modelId}"}  # type: ignore
+    get_document_model.metadata = {'url': "/documentModels/{modelId}"}  # type: ignore
 
 
     @distributed_trace_async
-    async def delete_model(  # pylint: disable=inconsistent-return-statements
+    async def delete_document_model(  # pylint: disable=inconsistent-return-statements
         self,
         model_id: str,
         **kwargs: Any
     ) -> None:
-        """Delete model.
+        """Delete document model.
 
-        Deletes model.
+        Deletes document model.
 
-        :param model_id: Unique model name.
+        :param model_id: Unique document model name.
         :type model_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -1088,10 +1089,10 @@ class FormRecognizerClientOperationsMixin:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
-        request = build_delete_model_request(
+        request = build_delete_document_model_request(
             model_id=model_id,
             api_version=api_version,
-            template_url=self.delete_model.metadata['url'],
+            template_url=self.delete_document_model.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -1116,21 +1117,21 @@ class FormRecognizerClientOperationsMixin:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_model.metadata = {'url': "/documentModels/{modelId}"}  # type: ignore
+    delete_document_model.metadata = {'url': "/documentModels/{modelId}"}  # type: ignore
 
 
     @distributed_trace_async
-    async def get_info(
+    async def get_resource_details(
         self,
         **kwargs: Any
-    ) -> _models.GetInfoResponse:
-        """Get info.
+    ) -> _models.ResourceDetails:
+        """Get resource info.
 
-        Return basic info about the current resource.
+        Return information about the current resource.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: GetInfoResponse, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2022_06_30_preview.models.GetInfoResponse
+        :return: ResourceDetails, or the result of cls(response)
+        :rtype: ~azure.ai.formrecognizer.v2022_06_30_preview.models.ResourceDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -1142,12 +1143,12 @@ class FormRecognizerClientOperationsMixin:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.GetInfoResponse]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ResourceDetails]
 
         
-        request = build_get_info_request(
+        request = build_get_resource_details_request(
             api_version=api_version,
-            template_url=self.get_info.metadata['url'],
+            template_url=self.get_resource_details.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -1169,12 +1170,12 @@ class FormRecognizerClientOperationsMixin:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('GetInfoResponse', pipeline_response)
+        deserialized = self._deserialize('ResourceDetails', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_info.metadata = {'url': "/info"}  # type: ignore
+    get_resource_details.metadata = {'url': "/info"}  # type: ignore
 

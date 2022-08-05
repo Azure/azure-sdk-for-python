@@ -53,7 +53,7 @@ class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TEXT_HTML = "text/html"
 
 class DocumentBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Custom model build mode.
+    """Custom document model build mode.
     """
 
     TEMPLATE = "template"

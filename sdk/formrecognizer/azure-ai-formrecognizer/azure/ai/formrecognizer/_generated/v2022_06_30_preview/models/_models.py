@@ -114,7 +114,7 @@ class AnalyzeResult(msrest.serialization.Model):
     :ivar api_version: Required. API version used to produce this result. Known values are:
      "2022-06-30-preview".
     :vartype api_version: str or ~azure.ai.formrecognizer.v2022_06_30_preview.models.ApiVersion
-    :ivar model_id: Required. Model ID used to produce this result.
+    :ivar model_id: Required. Document model ID used to produce this result.
     :vartype model_id: str
     :ivar string_index_type: Required. Method used to compute string offset and length. Known
      values are: "textElements", "unicodeCodePoint", "utf16CodeUnit".
@@ -171,7 +171,7 @@ class AnalyzeResult(msrest.serialization.Model):
         :keyword api_version: Required. API version used to produce this result. Known values are:
          "2022-06-30-preview".
         :paramtype api_version: str or ~azure.ai.formrecognizer.v2022_06_30_preview.models.ApiVersion
-        :keyword model_id: Required. Model ID used to produce this result.
+        :keyword model_id: Required. Document model ID used to produce this result.
         :paramtype model_id: str
         :keyword string_index_type: Required. Method used to compute string offset and length. Known
          values are: "textElements", "unicodeCodePoint", "utf16CodeUnit".
@@ -275,15 +275,15 @@ class AnalyzeResultOperation(msrest.serialization.Model):
 
 
 class AuthorizeCopyRequest(msrest.serialization.Model):
-    """Request body to authorize model copy.
+    """Request body to authorize document model copy.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar model_id: Required. Unique model name.
+    :ivar model_id: Required. Unique document model name.
     :vartype model_id: str
-    :ivar description: Model description.
+    :ivar description: Document model description.
     :vartype description: str
-    :ivar tags: A set of tags. List of key-value tag attributes associated with the model.
+    :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     """
 
@@ -303,11 +303,12 @@ class AuthorizeCopyRequest(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword model_id: Required. Unique model name.
+        :keyword model_id: Required. Unique document model name.
         :paramtype model_id: str
-        :keyword description: Model description.
+        :keyword description: Document model description.
         :paramtype description: str
-        :keyword tags: A set of tags. List of key-value tag attributes associated with the model.
+        :keyword tags: A set of tags. List of key-value tag attributes associated with the document
+         model.
         :paramtype tags: dict[str, str]
         """
         super(AuthorizeCopyRequest, self).__init__(**kwargs)
@@ -388,21 +389,22 @@ class BoundingRegion(msrest.serialization.Model):
 
 
 class BuildDocumentModelRequest(msrest.serialization.Model):
-    """Request body to build a new custom model.
+    """Request body to build a new custom document model.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar model_id: Required. Unique model name.
+    :ivar model_id: Required. Unique document model name.
     :vartype model_id: str
-    :ivar description: Model description.
+    :ivar description: Document model description.
     :vartype description: str
-    :ivar build_mode: Required. Custom model build mode. Known values are: "template", "neural".
+    :ivar build_mode: Required. Custom document model build mode. Known values are: "template",
+     "neural".
     :vartype build_mode: str or
      ~azure.ai.formrecognizer.v2022_06_30_preview.models.DocumentBuildMode
     :ivar azure_blob_source: Azure Blob Storage location containing the training data.
     :vartype azure_blob_source:
      ~azure.ai.formrecognizer.v2022_06_30_preview.models.AzureBlobContentSource
-    :ivar tags: A set of tags. List of key-value tag attributes associated with the model.
+    :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     """
 
@@ -425,17 +427,19 @@ class BuildDocumentModelRequest(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword model_id: Required. Unique model name.
+        :keyword model_id: Required. Unique document model name.
         :paramtype model_id: str
-        :keyword description: Model description.
+        :keyword description: Document model description.
         :paramtype description: str
-        :keyword build_mode: Required. Custom model build mode. Known values are: "template", "neural".
+        :keyword build_mode: Required. Custom document model build mode. Known values are: "template",
+         "neural".
         :paramtype build_mode: str or
          ~azure.ai.formrecognizer.v2022_06_30_preview.models.DocumentBuildMode
         :keyword azure_blob_source: Azure Blob Storage location containing the training data.
         :paramtype azure_blob_source:
          ~azure.ai.formrecognizer.v2022_06_30_preview.models.AzureBlobContentSource
-        :keyword tags: A set of tags. List of key-value tag attributes associated with the model.
+        :keyword tags: A set of tags. List of key-value tag attributes associated with the document
+         model.
         :paramtype tags: dict[str, str]
         """
         super(BuildDocumentModelRequest, self).__init__(**kwargs)
@@ -446,12 +450,12 @@ class BuildDocumentModelRequest(msrest.serialization.Model):
         self.tags = kwargs.get('tags', None)
 
 
-class ComponentModelInfo(msrest.serialization.Model):
-    """A component of a composed model.
+class ComponentDocumentModelDetails(msrest.serialization.Model):
+    """A component of a composed document model.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar model_id: Required. Unique model name.
+    :ivar model_id: Required. Unique document model name.
     :vartype model_id: str
     """
 
@@ -468,26 +472,26 @@ class ComponentModelInfo(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword model_id: Required. Unique model name.
+        :keyword model_id: Required. Unique document model name.
         :paramtype model_id: str
         """
-        super(ComponentModelInfo, self).__init__(**kwargs)
+        super(ComponentDocumentModelDetails, self).__init__(**kwargs)
         self.model_id = kwargs['model_id']
 
 
 class ComposeDocumentModelRequest(msrest.serialization.Model):
-    """Request body to create a composed model from component models.
+    """Request body to create a composed document model from component document models.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar model_id: Required. Unique model name.
+    :ivar model_id: Required. Unique document model name.
     :vartype model_id: str
-    :ivar description: Model description.
+    :ivar description: Document model description.
     :vartype description: str
-    :ivar component_models: Required. List of component models to compose.
+    :ivar component_models: Required. List of component document models to compose.
     :vartype component_models:
-     list[~azure.ai.formrecognizer.v2022_06_30_preview.models.ComponentModelInfo]
-    :ivar tags: A set of tags. List of key-value tag attributes associated with the model.
+     list[~azure.ai.formrecognizer.v2022_06_30_preview.models.ComponentDocumentModelDetails]
+    :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     """
 
@@ -500,7 +504,7 @@ class ComposeDocumentModelRequest(msrest.serialization.Model):
     _attribute_map = {
         'model_id': {'key': 'modelId', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
-        'component_models': {'key': 'componentModels', 'type': '[ComponentModelInfo]'},
+        'component_models': {'key': 'componentModels', 'type': '[ComponentDocumentModelDetails]'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -509,14 +513,15 @@ class ComposeDocumentModelRequest(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword model_id: Required. Unique model name.
+        :keyword model_id: Required. Unique document model name.
         :paramtype model_id: str
-        :keyword description: Model description.
+        :keyword description: Document model description.
         :paramtype description: str
-        :keyword component_models: Required. List of component models to compose.
+        :keyword component_models: Required. List of component document models to compose.
         :paramtype component_models:
-         list[~azure.ai.formrecognizer.v2022_06_30_preview.models.ComponentModelInfo]
-        :keyword tags: A set of tags. List of key-value tag attributes associated with the model.
+         list[~azure.ai.formrecognizer.v2022_06_30_preview.models.ComponentDocumentModelDetails]
+        :keyword tags: A set of tags. List of key-value tag attributes associated with the document
+         model.
         :paramtype tags: dict[str, str]
         """
         super(ComposeDocumentModelRequest, self).__init__(**kwargs)
@@ -527,19 +532,19 @@ class ComposeDocumentModelRequest(msrest.serialization.Model):
 
 
 class CopyAuthorization(msrest.serialization.Model):
-    """Authorization to copy a model to the specified target resource and modelId.
+    """Authorization to copy a document model to the specified target resource and modelId.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target_resource_id: Required. ID of the target Azure resource where the model should be
-     copied to.
-    :vartype target_resource_id: str
-    :ivar target_resource_region: Required. Location of the target Azure resource where the model
+    :ivar target_resource_id: Required. ID of the target Azure resource where the document model
      should be copied to.
+    :vartype target_resource_id: str
+    :ivar target_resource_region: Required. Location of the target Azure resource where the
+     document model should be copied to.
     :vartype target_resource_region: str
-    :ivar target_model_id: Required. Identifier of the target model.
+    :ivar target_model_id: Required. Identifier of the target document model.
     :vartype target_model_id: str
-    :ivar target_model_location: Required. URL of the copied model in the target account.
+    :ivar target_model_location: Required. URL of the copied document model in the target account.
     :vartype target_model_location: str
     :ivar access_token: Required. Token used to authorize the request.
     :vartype access_token: str
@@ -570,15 +575,16 @@ class CopyAuthorization(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword target_resource_id: Required. ID of the target Azure resource where the model should
-         be copied to.
+        :keyword target_resource_id: Required. ID of the target Azure resource where the document model
+         should be copied to.
         :paramtype target_resource_id: str
         :keyword target_resource_region: Required. Location of the target Azure resource where the
-         model should be copied to.
+         document model should be copied to.
         :paramtype target_resource_region: str
-        :keyword target_model_id: Required. Identifier of the target model.
+        :keyword target_model_id: Required. Identifier of the target document model.
         :paramtype target_model_id: str
-        :keyword target_model_location: Required. URL of the copied model in the target account.
+        :keyword target_model_location: Required. URL of the copied document model in the target
+         account.
         :paramtype target_model_location: str
         :keyword access_token: Required. Token used to authorize the request.
         :paramtype access_token: str
@@ -629,14 +635,15 @@ class CurrencyValue(msrest.serialization.Model):
         self.currency_symbol = kwargs.get('currency_symbol', None)
 
 
-class CustomDocumentModelsInfo(msrest.serialization.Model):
-    """Info regarding custom document models.
+class CustomDocumentModelsDetails(msrest.serialization.Model):
+    """Details regarding custom document models.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar count: Required. Number of custom models in the current resource.
+    :ivar count: Required. Number of custom document models in the current resource.
     :vartype count: int
-    :ivar limit: Required. Maximum number of custom models supported in the current resource.
+    :ivar limit: Required. Maximum number of custom document models supported in the current
+     resource.
     :vartype limit: int
     """
 
@@ -655,68 +662,15 @@ class CustomDocumentModelsInfo(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword count: Required. Number of custom models in the current resource.
+        :keyword count: Required. Number of custom document models in the current resource.
         :paramtype count: int
-        :keyword limit: Required. Maximum number of custom models supported in the current resource.
+        :keyword limit: Required. Maximum number of custom document models supported in the current
+         resource.
         :paramtype limit: int
         """
-        super(CustomDocumentModelsInfo, self).__init__(**kwargs)
+        super(CustomDocumentModelsDetails, self).__init__(**kwargs)
         self.count = kwargs['count']
         self.limit = kwargs['limit']
-
-
-class DocTypeInfo(msrest.serialization.Model):
-    """Document type info.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar description: Model description.
-    :vartype description: str
-    :ivar build_mode: Custom model build mode. Known values are: "template", "neural".
-    :vartype build_mode: str or
-     ~azure.ai.formrecognizer.v2022_06_30_preview.models.DocumentBuildMode
-    :ivar field_schema: Required. Description of the document semantic schema using a JSON Schema
-     style syntax.
-    :vartype field_schema: dict[str,
-     ~azure.ai.formrecognizer.v2022_06_30_preview.models.DocumentFieldSchema]
-    :ivar field_confidence: Estimated confidence for each field.
-    :vartype field_confidence: dict[str, float]
-    """
-
-    _validation = {
-        'description': {'max_length': 4096, 'min_length': 0},
-        'field_schema': {'required': True},
-    }
-
-    _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'build_mode': {'key': 'buildMode', 'type': 'str'},
-        'field_schema': {'key': 'fieldSchema', 'type': '{DocumentFieldSchema}'},
-        'field_confidence': {'key': 'fieldConfidence', 'type': '{float}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        :keyword description: Model description.
-        :paramtype description: str
-        :keyword build_mode: Custom model build mode. Known values are: "template", "neural".
-        :paramtype build_mode: str or
-         ~azure.ai.formrecognizer.v2022_06_30_preview.models.DocumentBuildMode
-        :keyword field_schema: Required. Description of the document semantic schema using a JSON
-         Schema style syntax.
-        :paramtype field_schema: dict[str,
-         ~azure.ai.formrecognizer.v2022_06_30_preview.models.DocumentFieldSchema]
-        :keyword field_confidence: Estimated confidence for each field.
-        :paramtype field_confidence: dict[str, float]
-        """
-        super(DocTypeInfo, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.build_mode = kwargs.get('build_mode', None)
-        self.field_schema = kwargs['field_schema']
-        self.field_confidence = kwargs.get('field_confidence', None)
 
 
 class Document(msrest.serialization.Model):
@@ -1299,6 +1253,121 @@ class DocumentLine(msrest.serialization.Model):
         self.spans = kwargs['spans']
 
 
+class DocumentModelSummary(msrest.serialization.Model):
+    """Document model summary.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar model_id: Required. Unique document model name.
+    :vartype model_id: str
+    :ivar description: Document model description.
+    :vartype description: str
+    :ivar created_date_time: Required. Date and time (UTC) when the document model was created.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar api_version: API version used to create this document model.
+    :vartype api_version: str
+    :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        'model_id': {'required': True, 'pattern': r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'},
+        'description': {'max_length': 4096, 'min_length': 0},
+        'created_date_time': {'required': True},
+    }
+
+    _attribute_map = {
+        'model_id': {'key': 'modelId', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'api_version': {'key': 'apiVersion', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword model_id: Required. Unique document model name.
+        :paramtype model_id: str
+        :keyword description: Document model description.
+        :paramtype description: str
+        :keyword created_date_time: Required. Date and time (UTC) when the document model was created.
+        :paramtype created_date_time: ~datetime.datetime
+        :keyword api_version: API version used to create this document model.
+        :paramtype api_version: str
+        :keyword tags: A set of tags. List of key-value tag attributes associated with the document
+         model.
+        :paramtype tags: dict[str, str]
+        """
+        super(DocumentModelSummary, self).__init__(**kwargs)
+        self.model_id = kwargs['model_id']
+        self.description = kwargs.get('description', None)
+        self.created_date_time = kwargs['created_date_time']
+        self.api_version = kwargs.get('api_version', None)
+        self.tags = kwargs.get('tags', None)
+
+
+class DocumentModelDetails(DocumentModelSummary):
+    """Document model info.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar model_id: Required. Unique document model name.
+    :vartype model_id: str
+    :ivar description: Document model description.
+    :vartype description: str
+    :ivar created_date_time: Required. Date and time (UTC) when the document model was created.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar api_version: API version used to create this document model.
+    :vartype api_version: str
+    :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
+    :vartype tags: dict[str, str]
+    :ivar doc_types: Supported document types.
+    :vartype doc_types: dict[str,
+     ~azure.ai.formrecognizer.v2022_06_30_preview.models.DocumentTypeDetails]
+    """
+
+    _validation = {
+        'model_id': {'required': True, 'pattern': r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'},
+        'description': {'max_length': 4096, 'min_length': 0},
+        'created_date_time': {'required': True},
+    }
+
+    _attribute_map = {
+        'model_id': {'key': 'modelId', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'api_version': {'key': 'apiVersion', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'doc_types': {'key': 'docTypes', 'type': '{DocumentTypeDetails}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword model_id: Required. Unique document model name.
+        :paramtype model_id: str
+        :keyword description: Document model description.
+        :paramtype description: str
+        :keyword created_date_time: Required. Date and time (UTC) when the document model was created.
+        :paramtype created_date_time: ~datetime.datetime
+        :keyword api_version: API version used to create this document model.
+        :paramtype api_version: str
+        :keyword tags: A set of tags. List of key-value tag attributes associated with the document
+         model.
+        :paramtype tags: dict[str, str]
+        :keyword doc_types: Supported document types.
+        :paramtype doc_types: dict[str,
+         ~azure.ai.formrecognizer.v2022_06_30_preview.models.DocumentTypeDetails]
+        """
+        super(DocumentModelDetails, self).__init__(**kwargs)
+        self.doc_types = kwargs.get('doc_types', None)
+
+
 class DocumentPage(msrest.serialization.Model):
     """Content and layout elements extracted from a page from the input.
 
@@ -1738,6 +1807,60 @@ class DocumentTableCell(msrest.serialization.Model):
         self.spans = kwargs['spans']
 
 
+class DocumentTypeDetails(msrest.serialization.Model):
+    """Document type info.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar description: Document model description.
+    :vartype description: str
+    :ivar build_mode: Custom document model build mode. Known values are: "template", "neural".
+    :vartype build_mode: str or
+     ~azure.ai.formrecognizer.v2022_06_30_preview.models.DocumentBuildMode
+    :ivar field_schema: Required. Description of the document semantic schema using a JSON Schema
+     style syntax.
+    :vartype field_schema: dict[str,
+     ~azure.ai.formrecognizer.v2022_06_30_preview.models.DocumentFieldSchema]
+    :ivar field_confidence: Estimated confidence for each field.
+    :vartype field_confidence: dict[str, float]
+    """
+
+    _validation = {
+        'description': {'max_length': 4096, 'min_length': 0},
+        'field_schema': {'required': True},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'build_mode': {'key': 'buildMode', 'type': 'str'},
+        'field_schema': {'key': 'fieldSchema', 'type': '{DocumentFieldSchema}'},
+        'field_confidence': {'key': 'fieldConfidence', 'type': '{float}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword description: Document model description.
+        :paramtype description: str
+        :keyword build_mode: Custom document model build mode. Known values are: "template", "neural".
+        :paramtype build_mode: str or
+         ~azure.ai.formrecognizer.v2022_06_30_preview.models.DocumentBuildMode
+        :keyword field_schema: Required. Description of the document semantic schema using a JSON
+         Schema style syntax.
+        :paramtype field_schema: dict[str,
+         ~azure.ai.formrecognizer.v2022_06_30_preview.models.DocumentFieldSchema]
+        :keyword field_confidence: Estimated confidence for each field.
+        :paramtype field_confidence: dict[str, float]
+        """
+        super(DocumentTypeDetails, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.build_mode = kwargs.get('build_mode', None)
+        self.field_schema = kwargs['field_schema']
+        self.field_confidence = kwargs.get('field_confidence', None)
+
+
 class DocumentWord(msrest.serialization.Model):
     """A word object consisting of a contiguous sequence of characters.  For non-space delimited languages, such as Chinese, Japanese, and Korean, each character is represented as its own word.
 
@@ -1870,45 +1993,14 @@ class ErrorResponse(msrest.serialization.Model):
         self.error = kwargs['error']
 
 
-class GetInfoResponse(msrest.serialization.Model):
-    """General information regarding the current resource.
+class GetDocumentModelsResponse(msrest.serialization.Model):
+    """List Document models response object.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar custom_document_models: Required. Info regarding custom document models.
-    :vartype custom_document_models:
-     ~azure.ai.formrecognizer.v2022_06_30_preview.models.CustomDocumentModelsInfo
-    """
-
-    _validation = {
-        'custom_document_models': {'required': True},
-    }
-
-    _attribute_map = {
-        'custom_document_models': {'key': 'customDocumentModels', 'type': 'CustomDocumentModelsInfo'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        :keyword custom_document_models: Required. Info regarding custom document models.
-        :paramtype custom_document_models:
-         ~azure.ai.formrecognizer.v2022_06_30_preview.models.CustomDocumentModelsInfo
-        """
-        super(GetInfoResponse, self).__init__(**kwargs)
-        self.custom_document_models = kwargs['custom_document_models']
-
-
-class GetModelsResponse(msrest.serialization.Model):
-    """List Models response object.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: Required. List of models.
-    :vartype value: list[~azure.ai.formrecognizer.v2022_06_30_preview.models.ModelSummary]
-    :ivar next_link: Link to the next page of models.
+    :ivar value: Required. List of document models.
+    :vartype value: list[~azure.ai.formrecognizer.v2022_06_30_preview.models.DocumentModelSummary]
+    :ivar next_link: Link to the next page of document models.
     :vartype next_link: str
     """
 
@@ -1917,7 +2009,7 @@ class GetModelsResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ModelSummary]'},
+        'value': {'key': 'value', 'type': '[DocumentModelSummary]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -1926,17 +2018,94 @@ class GetModelsResponse(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword value: Required. List of models.
-        :paramtype value: list[~azure.ai.formrecognizer.v2022_06_30_preview.models.ModelSummary]
-        :keyword next_link: Link to the next page of models.
+        :keyword value: Required. List of document models.
+        :paramtype value:
+         list[~azure.ai.formrecognizer.v2022_06_30_preview.models.DocumentModelSummary]
+        :keyword next_link: Link to the next page of document models.
         :paramtype next_link: str
         """
-        super(GetModelsResponse, self).__init__(**kwargs)
+        super(GetDocumentModelsResponse, self).__init__(**kwargs)
         self.value = kwargs['value']
         self.next_link = kwargs.get('next_link', None)
 
 
-class OperationInfo(msrest.serialization.Model):
+class GetOperationsResponse(msrest.serialization.Model):
+    """List Operations response object.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. List of operations.
+    :vartype value: list[~azure.ai.formrecognizer.v2022_06_30_preview.models.OperationSummary]
+    :ivar next_link: Link to the next page of operations.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[OperationSummary]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword value: Required. List of operations.
+        :paramtype value: list[~azure.ai.formrecognizer.v2022_06_30_preview.models.OperationSummary]
+        :keyword next_link: Link to the next page of operations.
+        :paramtype next_link: str
+        """
+        super(GetOperationsResponse, self).__init__(**kwargs)
+        self.value = kwargs['value']
+        self.next_link = kwargs.get('next_link', None)
+
+
+class InnerError(msrest.serialization.Model):
+    """Detailed error.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar code: Required. Error code.
+    :vartype code: str
+    :ivar message: Error message.
+    :vartype message: str
+    :ivar innererror: Detailed error.
+    :vartype innererror: ~azure.ai.formrecognizer.v2022_06_30_preview.models.InnerError
+    """
+
+    _validation = {
+        'code': {'required': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'innererror': {'key': 'innererror', 'type': 'InnerError'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword code: Required. Error code.
+        :paramtype code: str
+        :keyword message: Error message.
+        :paramtype message: str
+        :keyword innererror: Detailed error.
+        :paramtype innererror: ~azure.ai.formrecognizer.v2022_06_30_preview.models.InnerError
+        """
+        super(InnerError, self).__init__(**kwargs)
+        self.code = kwargs['code']
+        self.message = kwargs.get('message', None)
+        self.innererror = kwargs.get('innererror', None)
+
+
+class OperationSummary(msrest.serialization.Model):
     """Operation info.
 
     All required parameters must be populated in order to send to Azure.
@@ -1959,7 +2128,7 @@ class OperationInfo(msrest.serialization.Model):
     :vartype resource_location: str
     :ivar api_version: API version used to create this operation.
     :vartype api_version: str
-    :ivar tags: A set of tags. List of key-value tag attributes associated with the model.
+    :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     """
 
@@ -2009,10 +2178,11 @@ class OperationInfo(msrest.serialization.Model):
         :paramtype resource_location: str
         :keyword api_version: API version used to create this operation.
         :paramtype api_version: str
-        :keyword tags: A set of tags. List of key-value tag attributes associated with the model.
+        :keyword tags: A set of tags. List of key-value tag attributes associated with the document
+         model.
         :paramtype tags: dict[str, str]
         """
-        super(OperationInfo, self).__init__(**kwargs)
+        super(OperationSummary, self).__init__(**kwargs)
         self.operation_id = kwargs['operation_id']
         self.status = kwargs['status']
         self.percent_completed = kwargs.get('percent_completed', None)
@@ -2024,7 +2194,7 @@ class OperationInfo(msrest.serialization.Model):
         self.tags = kwargs.get('tags', None)
 
 
-class GetOperationResponse(OperationInfo):
+class OperationDetails(OperationSummary):
     """Get Operation response object.
 
     All required parameters must be populated in order to send to Azure.
@@ -2047,7 +2217,7 @@ class GetOperationResponse(OperationInfo):
     :vartype resource_location: str
     :ivar api_version: API version used to create this operation.
     :vartype api_version: str
-    :ivar tags: A set of tags. List of key-value tag attributes associated with the model.
+    :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     :ivar error: Encountered error.
     :vartype error: ~azure.ai.formrecognizer.v2022_06_30_preview.models.Error
@@ -2103,36 +2273,35 @@ class GetOperationResponse(OperationInfo):
         :paramtype resource_location: str
         :keyword api_version: API version used to create this operation.
         :paramtype api_version: str
-        :keyword tags: A set of tags. List of key-value tag attributes associated with the model.
+        :keyword tags: A set of tags. List of key-value tag attributes associated with the document
+         model.
         :paramtype tags: dict[str, str]
         :keyword error: Encountered error.
         :paramtype error: ~azure.ai.formrecognizer.v2022_06_30_preview.models.Error
         :keyword result: Operation result upon success.
         :paramtype result: any
         """
-        super(GetOperationResponse, self).__init__(**kwargs)
+        super(OperationDetails, self).__init__(**kwargs)
         self.error = kwargs.get('error', None)
         self.result = kwargs.get('result', None)
 
 
-class GetOperationsResponse(msrest.serialization.Model):
-    """List Operations response object.
+class ResourceDetails(msrest.serialization.Model):
+    """General information regarding the current resource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. List of operations.
-    :vartype value: list[~azure.ai.formrecognizer.v2022_06_30_preview.models.OperationInfo]
-    :ivar next_link: Link to the next page of operations.
-    :vartype next_link: str
+    :ivar custom_document_models: Required. Details regarding custom document models.
+    :vartype custom_document_models:
+     ~azure.ai.formrecognizer.v2022_06_30_preview.models.CustomDocumentModelsDetails
     """
 
     _validation = {
-        'value': {'required': True},
+        'custom_document_models': {'required': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationInfo]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'custom_document_models': {'key': 'customDocumentModels', 'type': 'CustomDocumentModelsDetails'},
     }
 
     def __init__(
@@ -2140,164 +2309,9 @@ class GetOperationsResponse(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword value: Required. List of operations.
-        :paramtype value: list[~azure.ai.formrecognizer.v2022_06_30_preview.models.OperationInfo]
-        :keyword next_link: Link to the next page of operations.
-        :paramtype next_link: str
+        :keyword custom_document_models: Required. Details regarding custom document models.
+        :paramtype custom_document_models:
+         ~azure.ai.formrecognizer.v2022_06_30_preview.models.CustomDocumentModelsDetails
         """
-        super(GetOperationsResponse, self).__init__(**kwargs)
-        self.value = kwargs['value']
-        self.next_link = kwargs.get('next_link', None)
-
-
-class InnerError(msrest.serialization.Model):
-    """Detailed error.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar code: Required. Error code.
-    :vartype code: str
-    :ivar message: Error message.
-    :vartype message: str
-    :ivar innererror: Detailed error.
-    :vartype innererror: ~azure.ai.formrecognizer.v2022_06_30_preview.models.InnerError
-    """
-
-    _validation = {
-        'code': {'required': True},
-    }
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'innererror': {'key': 'innererror', 'type': 'InnerError'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        :keyword code: Required. Error code.
-        :paramtype code: str
-        :keyword message: Error message.
-        :paramtype message: str
-        :keyword innererror: Detailed error.
-        :paramtype innererror: ~azure.ai.formrecognizer.v2022_06_30_preview.models.InnerError
-        """
-        super(InnerError, self).__init__(**kwargs)
-        self.code = kwargs['code']
-        self.message = kwargs.get('message', None)
-        self.innererror = kwargs.get('innererror', None)
-
-
-class ModelSummary(msrest.serialization.Model):
-    """Model summary.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar model_id: Required. Unique model name.
-    :vartype model_id: str
-    :ivar description: Model description.
-    :vartype description: str
-    :ivar created_date_time: Required. Date and time (UTC) when the model was created.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar api_version: API version used to create this model.
-    :vartype api_version: str
-    :ivar tags: A set of tags. List of key-value tag attributes associated with the model.
-    :vartype tags: dict[str, str]
-    """
-
-    _validation = {
-        'model_id': {'required': True, 'pattern': r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'},
-        'description': {'max_length': 4096, 'min_length': 0},
-        'created_date_time': {'required': True},
-    }
-
-    _attribute_map = {
-        'model_id': {'key': 'modelId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        :keyword model_id: Required. Unique model name.
-        :paramtype model_id: str
-        :keyword description: Model description.
-        :paramtype description: str
-        :keyword created_date_time: Required. Date and time (UTC) when the model was created.
-        :paramtype created_date_time: ~datetime.datetime
-        :keyword api_version: API version used to create this model.
-        :paramtype api_version: str
-        :keyword tags: A set of tags. List of key-value tag attributes associated with the model.
-        :paramtype tags: dict[str, str]
-        """
-        super(ModelSummary, self).__init__(**kwargs)
-        self.model_id = kwargs['model_id']
-        self.description = kwargs.get('description', None)
-        self.created_date_time = kwargs['created_date_time']
-        self.api_version = kwargs.get('api_version', None)
-        self.tags = kwargs.get('tags', None)
-
-
-class ModelInfo(ModelSummary):
-    """Model info.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar model_id: Required. Unique model name.
-    :vartype model_id: str
-    :ivar description: Model description.
-    :vartype description: str
-    :ivar created_date_time: Required. Date and time (UTC) when the model was created.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar api_version: API version used to create this model.
-    :vartype api_version: str
-    :ivar tags: A set of tags. List of key-value tag attributes associated with the model.
-    :vartype tags: dict[str, str]
-    :ivar doc_types: Supported document types.
-    :vartype doc_types: dict[str, ~azure.ai.formrecognizer.v2022_06_30_preview.models.DocTypeInfo]
-    """
-
-    _validation = {
-        'model_id': {'required': True, 'pattern': r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'},
-        'description': {'max_length': 4096, 'min_length': 0},
-        'created_date_time': {'required': True},
-    }
-
-    _attribute_map = {
-        'model_id': {'key': 'modelId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'doc_types': {'key': 'docTypes', 'type': '{DocTypeInfo}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        :keyword model_id: Required. Unique model name.
-        :paramtype model_id: str
-        :keyword description: Model description.
-        :paramtype description: str
-        :keyword created_date_time: Required. Date and time (UTC) when the model was created.
-        :paramtype created_date_time: ~datetime.datetime
-        :keyword api_version: API version used to create this model.
-        :paramtype api_version: str
-        :keyword tags: A set of tags. List of key-value tag attributes associated with the model.
-        :paramtype tags: dict[str, str]
-        :keyword doc_types: Supported document types.
-        :paramtype doc_types: dict[str,
-         ~azure.ai.formrecognizer.v2022_06_30_preview.models.DocTypeInfo]
-        """
-        super(ModelInfo, self).__init__(**kwargs)
-        self.doc_types = kwargs.get('doc_types', None)
+        super(ResourceDetails, self).__init__(**kwargs)
+        self.custom_document_models = kwargs['custom_document_models']

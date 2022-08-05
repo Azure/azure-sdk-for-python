@@ -33,8 +33,8 @@ class FormRecognizerClientOperationsMixin(object):
         # type: (...) -> _models.CopyAuthorization
         """Generate copy authorization.
 
-        Generates authorization to copy a model to this location with specified modelId and optional
-        description.
+        Generates authorization to copy a document model to this location with specified modelId and
+        optional description.
 
         :param authorize_copy_request: Authorize copy request parameters.
         :type authorize_copy_request:
@@ -127,9 +127,9 @@ class FormRecognizerClientOperationsMixin(object):
         # type: (...) -> LROPoller[None]
         """Analyze document.
 
-        Analyzes document with model.
+        Analyzes document with document model.
 
-        :param model_id: Unique model name.
+        :param model_id: Unique document model name.
         :type model_id: str
         :param pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :type pages: str
@@ -501,7 +501,7 @@ class FormRecognizerClientOperationsMixin(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> DocumentModelAdministrationClientLROPoller[None]
-        """Build model.
+        """Build document model.
 
         Builds a custom document analysis model.
 
@@ -579,9 +579,9 @@ class FormRecognizerClientOperationsMixin(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> DocumentModelAdministrationClientLROPoller[None]
-        """Compose model.
+        """Compose document model.
 
-        Creates a new model from document types of existing models.
+        Creates a new document model from document types of existing document models.
 
         :param compose_request: Compose request parameters.
         :type compose_request:
@@ -662,11 +662,11 @@ class FormRecognizerClientOperationsMixin(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> DocumentModelAdministrationClientLROPoller[None]
-        """Copy model.
+        """Copy document model.
 
-        Copies model to the target resource, region, and modelId.
+        Copies document model to the target resource, region, and modelId.
 
-        :param model_id: Unique model name.
+        :param model_id: Unique document model name.
         :type model_id: str
         :param copy_to_request: Copy to request parameters.
         :type copy_to_request: ~azure.ai.formrecognizer.v2022_06_30_preview.models.CopyAuthorization
@@ -774,35 +774,35 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.delete_custom_model(model_id, **kwargs)
 
-    def delete_model(  # pylint: disable=inconsistent-return-statements
+    def delete_document_model(  # pylint: disable=inconsistent-return-statements
         self,
         model_id,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Delete model.
+        """Delete document model.
 
-        Deletes model.
+        Deletes document model.
 
-        :param model_id: Unique model name.
+        :param model_id: Unique document model name.
         :type model_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('delete_model')
+        api_version = self._get_api_version('delete_document_model')
         if api_version == '2022-06-30-preview':
             from .v2022_06_30_preview.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'delete_model'".format(api_version))
+            raise ValueError("API version {} does not have operation 'delete_document_model'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.delete_model(model_id, **kwargs)
+        return mixin_instance.delete_document_model(model_id, **kwargs)
 
     def generate_model_copy_authorization(
         self,
@@ -874,7 +874,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         Gets the result of document analysis.
 
-        :param model_id: Unique model name.
+        :param model_id: Unique document model name.
         :type model_id: str
         :param result_id: Analyze operation result ID.
         :type result_id: str
@@ -1158,97 +1158,71 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_custom_models(**kwargs)
 
-    def get_info(
-        self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> _models.GetInfoResponse
-        """Get info.
-
-        Return basic info about the current resource.
-
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: GetInfoResponse, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2022_06_30_preview.models.GetInfoResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = self._get_api_version('get_info')
-        if api_version == '2022-06-30-preview':
-            from .v2022_06_30_preview.operations import FormRecognizerClientOperationsMixin as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation 'get_info'".format(api_version))
-        mixin_instance = OperationClass()
-        mixin_instance._client = self._client
-        mixin_instance._config = self._config
-        mixin_instance._serialize = Serializer(self._models_dict(api_version))
-        mixin_instance._serialize.client_side_validation = False
-        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.get_info(**kwargs)
-
-    def get_model(
+    def get_document_model(
         self,
         model_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> _models.ModelInfo
-        """Get model.
+        # type: (...) -> _models.DocumentModelDetails
+        """Get document model.
 
-        Gets detailed model information.
+        Gets detailed document model information.
 
-        :param model_id: Unique model name.
+        :param model_id: Unique document model name.
         :type model_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ModelInfo, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2022_06_30_preview.models.ModelInfo
+        :return: DocumentModelDetails, or the result of cls(response)
+        :rtype: ~azure.ai.formrecognizer.v2022_06_30_preview.models.DocumentModelDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('get_model')
+        api_version = self._get_api_version('get_document_model')
         if api_version == '2022-06-30-preview':
             from .v2022_06_30_preview.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'get_model'".format(api_version))
+            raise ValueError("API version {} does not have operation 'get_document_model'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.get_model(model_id, **kwargs)
+        return mixin_instance.get_document_model(model_id, **kwargs)
 
-    def get_models(
+    def get_document_models(
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable[_models.GetModelsResponse]
-        """List models.
+        # type: (...) -> Iterable[_models.GetDocumentModelsResponse]
+        """List document models.
 
-        List all models.
+        List all document models.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either GetModelsResponse or the result of cls(response)
+        :return: An iterator like instance of either GetDocumentModelsResponse or the result of
+         cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.formrecognizer.v2022_06_30_preview.models.GetModelsResponse]
+         ~azure.core.paging.ItemPaged[~azure.ai.formrecognizer.v2022_06_30_preview.models.GetDocumentModelsResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('get_models')
+        api_version = self._get_api_version('get_document_models')
         if api_version == '2022-06-30-preview':
             from .v2022_06_30_preview.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'get_models'".format(api_version))
+            raise ValueError("API version {} does not have operation 'get_document_models'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.get_models(**kwargs)
+        return mixin_instance.get_document_models(**kwargs)
 
     def get_operation(
         self,
         operation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> _models.GetOperationResponse
+        # type: (...) -> _models.OperationDetails
         """Get operation.
 
         Gets operation info.
@@ -1256,8 +1230,8 @@ class FormRecognizerClientOperationsMixin(object):
         :param operation_id: Unique operation ID.
         :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: GetOperationResponse, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2022_06_30_preview.models.GetOperationResponse
+        :return: OperationDetails, or the result of cls(response)
+        :rtype: ~azure.ai.formrecognizer.v2022_06_30_preview.models.OperationDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_operation')
@@ -1301,6 +1275,33 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_operations(**kwargs)
+
+    def get_resource_details(
+        self,
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> _models.ResourceDetails
+        """Get resource info.
+
+        Return information about the current resource.
+
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ResourceDetails, or the result of cls(response)
+        :rtype: ~azure.ai.formrecognizer.v2022_06_30_preview.models.ResourceDetails
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('get_resource_details')
+        if api_version == '2022-06-30-preview':
+            from .v2022_06_30_preview.operations import FormRecognizerClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'get_resource_details'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.get_resource_details(**kwargs)
 
     def list_custom_models(
         self,
