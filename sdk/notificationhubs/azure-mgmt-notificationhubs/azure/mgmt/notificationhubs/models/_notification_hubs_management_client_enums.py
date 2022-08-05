@@ -7,24 +7,23 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessRights(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AccessRights(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MANAGE = "Manage"
     SEND = "Send"
     LISTEN = "Listen"
 
-class NamespaceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class NamespaceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The namespace type.
     """
 
     MESSAGING = "Messaging"
     NOTIFICATION_HUB = "NotificationHub"
 
-class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Name of the notification hub sku
     """
 

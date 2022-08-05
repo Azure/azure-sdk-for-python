@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._notification_hubs_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AdmCredential(msrest.serialization.Model):
@@ -232,7 +234,7 @@ class CheckAvailabilityParameters(msrest.serialization.Model):
         name: str,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         is_availiable: Optional[bool] = None,
         **kwargs
     ):
@@ -298,7 +300,7 @@ class Resource(msrest.serialization.Model):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         **kwargs
     ):
         """
@@ -361,7 +363,7 @@ class CheckAvailabilityResult(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         is_availiable: Optional[bool] = None,
         **kwargs
     ):
@@ -428,7 +430,7 @@ class DebugSendResponse(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         success: Optional[float] = None,
         failure: Optional[float] = None,
         results: Optional[Any] = None,
@@ -606,8 +608,7 @@ class NamespaceCreateOrUpdateParameters(Resource):
     :vartype critical: bool
     :ivar data_center: Data center for the namespace.
     :vartype data_center: str
-    :ivar namespace_type: The namespace type. Possible values include: "Messaging",
-     "NotificationHub".
+    :ivar namespace_type: The namespace type. Known values are: "Messaging", "NotificationHub".
     :vartype namespace_type: str or ~azure.mgmt.notificationhubs.models.NamespaceType
     """
 
@@ -646,7 +647,7 @@ class NamespaceCreateOrUpdateParameters(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         name_properties_name: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         region: Optional[str] = None,
@@ -659,7 +660,7 @@ class NamespaceCreateOrUpdateParameters(Resource):
         enabled: Optional[bool] = None,
         critical: Optional[bool] = None,
         data_center: Optional[str] = None,
-        namespace_type: Optional[Union[str, "NamespaceType"]] = None,
+        namespace_type: Optional[Union[str, "_models.NamespaceType"]] = None,
         **kwargs
     ):
         """
@@ -697,8 +698,7 @@ class NamespaceCreateOrUpdateParameters(Resource):
         :paramtype critical: bool
         :keyword data_center: Data center for the namespace.
         :paramtype data_center: str
-        :keyword namespace_type: The namespace type. Possible values include: "Messaging",
-         "NotificationHub".
+        :keyword namespace_type: The namespace type. Known values are: "Messaging", "NotificationHub".
         :paramtype namespace_type: str or ~azure.mgmt.notificationhubs.models.NamespaceType
         """
         super(NamespaceCreateOrUpdateParameters, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
@@ -736,7 +736,7 @@ class NamespaceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["NamespaceResource"]] = None,
+        value: Optional[List["_models.NamespaceResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -770,7 +770,7 @@ class NamespacePatchParameters(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         **kwargs
     ):
         """
@@ -831,8 +831,7 @@ class NamespaceResource(Resource):
     :vartype critical: bool
     :ivar data_center: Data center for the namespace.
     :vartype data_center: str
-    :ivar namespace_type: The namespace type. Possible values include: "Messaging",
-     "NotificationHub".
+    :ivar namespace_type: The namespace type. Known values are: "Messaging", "NotificationHub".
     :vartype namespace_type: str or ~azure.mgmt.notificationhubs.models.NamespaceType
     """
 
@@ -871,7 +870,7 @@ class NamespaceResource(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         name_properties_name: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         region: Optional[str] = None,
@@ -884,7 +883,7 @@ class NamespaceResource(Resource):
         enabled: Optional[bool] = None,
         critical: Optional[bool] = None,
         data_center: Optional[str] = None,
-        namespace_type: Optional[Union[str, "NamespaceType"]] = None,
+        namespace_type: Optional[Union[str, "_models.NamespaceType"]] = None,
         **kwargs
     ):
         """
@@ -922,8 +921,7 @@ class NamespaceResource(Resource):
         :paramtype critical: bool
         :keyword data_center: Data center for the namespace.
         :paramtype data_center: str
-        :keyword namespace_type: The namespace type. Possible values include: "Messaging",
-         "NotificationHub".
+        :keyword namespace_type: The namespace type. Known values are: "Messaging", "NotificationHub".
         :paramtype namespace_type: str or ~azure.mgmt.notificationhubs.models.NamespaceType
         """
         super(NamespaceResource, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
@@ -1010,16 +1008,16 @@ class NotificationHubCreateOrUpdateParameters(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         name_properties_name: Optional[str] = None,
         registration_ttl: Optional[str] = None,
-        authorization_rules: Optional[List["SharedAccessAuthorizationRuleProperties"]] = None,
-        apns_credential: Optional["ApnsCredential"] = None,
-        wns_credential: Optional["WnsCredential"] = None,
-        gcm_credential: Optional["GcmCredential"] = None,
-        mpns_credential: Optional["MpnsCredential"] = None,
-        adm_credential: Optional["AdmCredential"] = None,
-        baidu_credential: Optional["BaiduCredential"] = None,
+        authorization_rules: Optional[List["_models.SharedAccessAuthorizationRuleProperties"]] = None,
+        apns_credential: Optional["_models.ApnsCredential"] = None,
+        wns_credential: Optional["_models.WnsCredential"] = None,
+        gcm_credential: Optional["_models.GcmCredential"] = None,
+        mpns_credential: Optional["_models.MpnsCredential"] = None,
+        adm_credential: Optional["_models.AdmCredential"] = None,
+        baidu_credential: Optional["_models.BaiduCredential"] = None,
         **kwargs
     ):
         """
@@ -1079,7 +1077,7 @@ class NotificationHubListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["NotificationHubResource"]] = None,
+        value: Optional[List["_models.NotificationHubResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1162,16 +1160,16 @@ class NotificationHubPatchParameters(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         name_properties_name: Optional[str] = None,
         registration_ttl: Optional[str] = None,
-        authorization_rules: Optional[List["SharedAccessAuthorizationRuleProperties"]] = None,
-        apns_credential: Optional["ApnsCredential"] = None,
-        wns_credential: Optional["WnsCredential"] = None,
-        gcm_credential: Optional["GcmCredential"] = None,
-        mpns_credential: Optional["MpnsCredential"] = None,
-        adm_credential: Optional["AdmCredential"] = None,
-        baidu_credential: Optional["BaiduCredential"] = None,
+        authorization_rules: Optional[List["_models.SharedAccessAuthorizationRuleProperties"]] = None,
+        apns_credential: Optional["_models.ApnsCredential"] = None,
+        wns_credential: Optional["_models.WnsCredential"] = None,
+        gcm_credential: Optional["_models.GcmCredential"] = None,
+        mpns_credential: Optional["_models.MpnsCredential"] = None,
+        adm_credential: Optional["_models.AdmCredential"] = None,
+        baidu_credential: Optional["_models.BaiduCredential"] = None,
         **kwargs
     ):
         """
@@ -1280,16 +1278,16 @@ class NotificationHubResource(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         name_properties_name: Optional[str] = None,
         registration_ttl: Optional[str] = None,
-        authorization_rules: Optional[List["SharedAccessAuthorizationRuleProperties"]] = None,
-        apns_credential: Optional["ApnsCredential"] = None,
-        wns_credential: Optional["WnsCredential"] = None,
-        gcm_credential: Optional["GcmCredential"] = None,
-        mpns_credential: Optional["MpnsCredential"] = None,
-        adm_credential: Optional["AdmCredential"] = None,
-        baidu_credential: Optional["BaiduCredential"] = None,
+        authorization_rules: Optional[List["_models.SharedAccessAuthorizationRuleProperties"]] = None,
+        apns_credential: Optional["_models.ApnsCredential"] = None,
+        wns_credential: Optional["_models.WnsCredential"] = None,
+        gcm_credential: Optional["_models.GcmCredential"] = None,
+        mpns_credential: Optional["_models.MpnsCredential"] = None,
+        adm_credential: Optional["_models.AdmCredential"] = None,
+        baidu_credential: Optional["_models.BaiduCredential"] = None,
         **kwargs
     ):
         """
@@ -1354,7 +1352,7 @@ class Operation(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         **kwargs
     ):
         """
@@ -1493,13 +1491,13 @@ class PnsCredentialsResource(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
-        apns_credential: Optional["ApnsCredential"] = None,
-        wns_credential: Optional["WnsCredential"] = None,
-        gcm_credential: Optional["GcmCredential"] = None,
-        mpns_credential: Optional["MpnsCredential"] = None,
-        adm_credential: Optional["AdmCredential"] = None,
-        baidu_credential: Optional["BaiduCredential"] = None,
+        sku: Optional["_models.Sku"] = None,
+        apns_credential: Optional["_models.ApnsCredential"] = None,
+        wns_credential: Optional["_models.WnsCredential"] = None,
+        gcm_credential: Optional["_models.GcmCredential"] = None,
+        mpns_credential: Optional["_models.MpnsCredential"] = None,
+        adm_credential: Optional["_models.AdmCredential"] = None,
+        baidu_credential: Optional["_models.BaiduCredential"] = None,
         **kwargs
     ):
         """
@@ -1633,7 +1631,7 @@ class SharedAccessAuthorizationRuleCreateOrUpdateParameters(msrest.serialization
     def __init__(
         self,
         *,
-        properties: "SharedAccessAuthorizationRuleProperties",
+        properties: "_models.SharedAccessAuthorizationRuleProperties",
         **kwargs
     ):
         """
@@ -1663,7 +1661,7 @@ class SharedAccessAuthorizationRuleListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["SharedAccessAuthorizationRuleResource"]] = None,
+        value: Optional[List["_models.SharedAccessAuthorizationRuleResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1733,7 +1731,7 @@ class SharedAccessAuthorizationRuleProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        rights: Optional[List[Union[str, "AccessRights"]]] = None,
+        rights: Optional[List[Union[str, "_models.AccessRights"]]] = None,
         **kwargs
     ):
         """
@@ -1828,8 +1826,8 @@ class SharedAccessAuthorizationRuleResource(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
-        rights: Optional[List[Union[str, "AccessRights"]]] = None,
+        sku: Optional["_models.Sku"] = None,
+        rights: Optional[List[Union[str, "_models.AccessRights"]]] = None,
         **kwargs
     ):
         """
@@ -1859,8 +1857,8 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Name of the notification hub sku. Possible values include: "Free",
-     "Basic", "Standard".
+    :ivar name: Required. Name of the notification hub sku. Known values are: "Free", "Basic",
+     "Standard".
     :vartype name: str or ~azure.mgmt.notificationhubs.models.SkuName
     :ivar tier: The tier of particular sku.
     :vartype tier: str
@@ -1887,7 +1885,7 @@ class Sku(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: Union[str, "SkuName"],
+        name: Union[str, "_models.SkuName"],
         tier: Optional[str] = None,
         size: Optional[str] = None,
         family: Optional[str] = None,
@@ -1895,8 +1893,8 @@ class Sku(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. Name of the notification hub sku. Possible values include: "Free",
-         "Basic", "Standard".
+        :keyword name: Required. Name of the notification hub sku. Known values are: "Free", "Basic",
+         "Standard".
         :paramtype name: str or ~azure.mgmt.notificationhubs.models.SkuName
         :keyword tier: The tier of particular sku.
         :paramtype tier: str

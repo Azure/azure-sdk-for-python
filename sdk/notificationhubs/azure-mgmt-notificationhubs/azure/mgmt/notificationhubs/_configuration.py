@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class NotificationHubsManagementClientConfiguration(Configuration):
+class NotificationHubsManagementClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for NotificationHubsManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -27,8 +27,12 @@ class NotificationHubsManagementClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Gets subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
+    :param subscription_id: Gets subscription credentials which uniquely identify Microsoft Azure
+     subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
+    :keyword api_version: Api Version. Default value is "2017-04-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -38,6 +42,8 @@ class NotificationHubsManagementClientConfiguration(Configuration):
         **kwargs: Any
     ) -> None:
         super(NotificationHubsManagementClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2017-04-01")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
@@ -45,7 +51,7 @@ class NotificationHubsManagementClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2017-04-01"
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-notificationhubs/{}'.format(VERSION))
         self._configure(**kwargs)
