@@ -163,3 +163,16 @@ async def test_create_batch_with_too_large_size_async(connection_str):
     async with client:
         with pytest.raises(ValueError):
             await client.create_batch(max_size_in_bytes=5 * 1024 * 1024)
+
+pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_invalid_proxy_server(connection_str):
+    HTTP_PROXY = {
+    'proxy_hostname': 'fakeproxy',  # proxy hostname.
+    'proxy_port': 3128,  # proxy port.
+    }
+
+    client = EventHubProducerClient.from_connection_string(connection_str)
+    async with client:
+        with pytest.raises(ConnectError):
+            batch = await client.create_batch()
