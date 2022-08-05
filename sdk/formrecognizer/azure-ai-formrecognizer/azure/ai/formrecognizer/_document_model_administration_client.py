@@ -386,7 +386,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        return self._client.delete_model(model_id=model_id, **kwargs)
+        return self._client.delete_document_model(model_id=model_id, **kwargs)
 
     @distributed_trace
     def list_models(self, **kwargs: Any) -> ItemPaged[DocumentModelSummary]:
@@ -458,7 +458,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        response = self._client.get_model(model_id=model_id, **kwargs)
+        response = self._client.get_document_model(model_id=model_id, **kwargs)
         return DocumentModelDetails._from_generated(response)
 
     @distributed_trace

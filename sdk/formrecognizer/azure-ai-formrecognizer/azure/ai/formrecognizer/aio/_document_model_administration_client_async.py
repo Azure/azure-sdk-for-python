@@ -388,7 +388,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        return await self._client.delete_model(model_id=model_id, **kwargs)
+        return await self._client.delete_document_model(model_id=model_id, **kwargs)
 
     @distributed_trace
     def list_models(self, **kwargs: Any) -> AsyncItemPaged[DocumentModelSummary]:
@@ -460,7 +460,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        response = await self._client.get_model(model_id=model_id, **kwargs)
+        response = await self._client.get_document_model(model_id=model_id, **kwargs)
         return DocumentModelDetails._from_generated(response)
 
     @distributed_trace
