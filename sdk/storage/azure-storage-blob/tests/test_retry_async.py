@@ -14,7 +14,6 @@ from azure.core.exceptions import (
     ResourceExistsError,
     AzureError,
     ClientAuthenticationError,
-    ServiceRequestError
 )
 
 from azure.core.pipeline.transport import AsyncHttpResponse, AioHttpTransportResponse, AioHttpTransport
