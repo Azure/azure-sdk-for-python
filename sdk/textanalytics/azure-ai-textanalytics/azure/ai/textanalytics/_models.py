@@ -5,6 +5,7 @@
 # ------------------------------------
 import re
 from enum import Enum
+from typing_extensions import Literal
 from azure.core import CaseInsensitiveEnumMeta
 from ._generated.models import (
     LanguageInput,
@@ -69,6 +70,21 @@ class DictMixin:
         if key in self.__dict__:
             return self.__dict__[key]
         return default
+
+
+class TextAnalysisKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enumeration of supported Text Analysis kinds.
+    """
+
+    SENTIMENT_ANALYSIS = "SentimentAnalysis"
+    ENTITY_RECOGNITION = "EntityRecognition"
+    PII_ENTITY_RECOGNITION = "PiiEntityRecognition"
+    KEY_PHRASE_EXTRACTION = "KeyPhraseExtraction"
+    ENTITY_LINKING = "EntityLinking"
+    HEALTHCARE = "Healthcare"
+    CUSTOM_ENTITY_RECOGNITION = "CustomEntityRecognition"
+    CUSTOM_DOCUMENT_CLASSIFICATION = "CustomDocumentClassification"
+    LANGUAGE_DETECTION = "LanguageDetection"
 
 
 class EntityAssociation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -405,7 +421,8 @@ class RecognizeEntitiesResult(DictMixin):
         self.entities = kwargs.get("entities", None)
         self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
-        self.is_error = False
+        self.is_error: Literal[False] = False
+        self.kind: Literal["EntityRecognition"] = "EntityRecognition"
 
     def __repr__(self):
         return "RecognizeEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})".format(
@@ -449,7 +466,8 @@ class RecognizePiiEntitiesResult(DictMixin):
         self.redacted_text = kwargs.get("redacted_text", None)
         self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
-        self.is_error = False
+        self.is_error: Literal[False] = False
+        self.kind: Literal["PiiEntityRecognition"] = "PiiEntityRecognition"
 
     def __repr__(self):
         return (
@@ -499,7 +517,8 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
         self.entity_relations = kwargs.get("entity_relations", None)
         self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
-        self.is_error = False
+        self.is_error: Literal[False] = False
+        self.kind: Literal["Healthcare"] = "Healthcare"
 
     @classmethod
     def _from_generated(cls, healthcare_result):
@@ -650,7 +669,8 @@ class DetectLanguageResult(DictMixin):
         self.primary_language = kwargs.get("primary_language", None)
         self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
-        self.is_error = False
+        self.is_error: Literal[False] = False
+        self.kind: Literal["LanguageDetection"] = "LanguageDetection"
 
     def __repr__(self):
         return (
@@ -1018,7 +1038,8 @@ class ExtractKeyPhrasesResult(DictMixin):
         self.key_phrases = kwargs.get("key_phrases", None)
         self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
-        self.is_error = False
+        self.is_error: Literal[False] = False
+        self.kind: Literal["KeyPhraseExtraction"] = "KeyPhraseExtraction"
 
     def __repr__(self):
         return "ExtractKeyPhrasesResult(id={}, key_phrases={}, warnings={}, statistics={}, is_error={})".format(
@@ -1059,7 +1080,8 @@ class RecognizeLinkedEntitiesResult(DictMixin):
         self.entities = kwargs.get("entities", None)
         self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
-        self.is_error = False
+        self.is_error: Literal[False] = False
+        self.kind: Literal["EntityLinking"] = "EntityLinking"
 
     def __repr__(self):
         return "RecognizeLinkedEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})".format(
@@ -1111,7 +1133,8 @@ class AnalyzeSentimentResult(DictMixin):
         self.statistics = kwargs.get("statistics", None)
         self.confidence_scores = kwargs.get("confidence_scores", None)
         self.sentences = kwargs.get("sentences", None)
-        self.is_error = False
+        self.is_error: Literal[False] = False
+        self.kind: Literal["SentimentAnalysis"] = "SentimentAnalysis"
 
     def __repr__(self):
         return (
@@ -1177,7 +1200,8 @@ class DocumentError(DictMixin):
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.error = kwargs.get("error", None)
-        self.is_error = True
+        self.is_error: Literal[True] = True
+        self.kind: Literal["DocumentError"] = "DocumentError"
 
     def __getattr__(self, attr):
         result_set = set()
@@ -2226,7 +2250,8 @@ class RecognizeCustomEntitiesResult(DictMixin):
         self.entities = kwargs.get("entities", None)
         self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
-        self.is_error = False
+        self.is_error: Literal[False] = False
+        self.kind: Literal["CustomEntityRecognition"] = "CustomEntityRecognition"
 
     def __repr__(self):
         return "RecognizeCustomEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})".format(
@@ -2328,7 +2353,7 @@ class ClassifyDocumentResult(DictMixin):
         field will contain information about the document payload.
     :vartype statistics: Optional[~azure.ai.textanalytics.TextDocumentStatistics]
     :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a MultiCategoryClassifyResult.
+        results. Always False for an instance of a ClassifyDocumentResult.
     """
 
     def __init__(
@@ -2339,7 +2364,8 @@ class ClassifyDocumentResult(DictMixin):
         self.classifications = kwargs.get('classifications', None)
         self.warnings = kwargs.get('warnings', [])
         self.statistics = kwargs.get('statistics', None)
-        self.is_error = False
+        self.is_error: Literal[False] = False
+        self.kind: Literal["CustomDocumentClassification"] = "CustomDocumentClassification"
 
     def __repr__(self):
         return "ClassifyDocumentResult(id={}, classifications={}, warnings={}, statistics={}, " \
