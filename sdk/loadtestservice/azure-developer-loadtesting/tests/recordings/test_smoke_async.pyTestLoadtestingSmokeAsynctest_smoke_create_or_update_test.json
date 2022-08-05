@@ -1,0 +1,114 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "181",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Floadtest.azure-dev.com%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "93",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 04 Aug 2022 06:58:57 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.13418.9 - SCUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 3599,
+        "ext_expires_in": 3599,
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://myservice.azure.com/loadtests/000?api-version=2022-06-01-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "466",
+        "Content-Type": "application/merge-patch\u002Bjson",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b1 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": {
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
+        "description": "",
+        "displayName": "TestingResource",
+        "loadTestConfig": {
+          "engineSize": "m",
+          "engineInstances": 1,
+          "splitAllCSVs": false
+        },
+        "secrets": {},
+        "environmentVariables": {},
+        "passFailCriteria": {
+          "passFailMetrics": {}
+        },
+        "keyvaultReferenceIdentityType": "SystemAssigned",
+        "keyvaultReferenceIdentityId": null
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
+        "Connection": "keep-alive",
+        "Content-Length": "1067",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 04 Aug 2022 06:58:59 GMT",
+        "mise-correlation-id": "538652cb-009c-4e82-823a-cf1e43ac9f6a",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "aaddcf81-e649-4572-b65b-3a72cfc8e2b3"
+      },
+      "ResponseBody": {
+        "testId": "000",
+        "description": "",
+        "displayName": "TestingResource",
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/python-sdk-test/providers/microsoft.loadtestservice/loadtests/loadtest-jf",
+        "loadTestConfig": {
+          "engineInstances": 1,
+          "splitAllCSVs": false
+        },
+        "passFailCriteria": {
+          "passFailMetrics": {}
+        },
+        "createdDateTime": "2022-07-26T02:38:46.669Z",
+        "createdBy": null,
+        "lastModifiedDateTime": "2022-07-26T02:38:46.669Z",
+        "lastModifiedBy": null,
+        "inputArtifacts": {
+          "configUrl": null,
+          "testScriptUrl": {
+            "url": "https://stcntproddataeus.blob.core.windows.net/041c60a4-d25f-4102-b324-4f30261785e3/000?sv=2020-04-08\u0026se=2022-08-04T07%3A58%3A59Z\u0026sr=b\u0026sp=r\u0026sig=b29mcLaovVdJhPTUB9sDjyaxLLnhLkhXw5axpmA3lps%3D",
+            "fileId": "000",
+            "filename": "sample.jmx",
+            "fileType": 0,
+            "expireTime": "2022-08-04T07:08:59.0297775\u002B00:00",
+            "validationStatus": "VALIDATION_INITIATED"
+          },
+          "userPropUrl": null,
+          "inputArtifactsZipFileurl": null,
+          "additionalUrls": []
+        },
+        "secrets": null,
+        "environmentVariables": null,
+        "subnetId": null,
+        "keyvaultReferenceIdentityType": "SystemAssigned",
+        "keyvaultReferenceIdentityId": null
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -11,19 +11,27 @@ import pytest
 from azure.core.exceptions import ResourceNotFoundError
 
 from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
+from devtools_testutils import recorded_by_proxy
 
+test_id = os.environ.get("TEST_ID", "000")
+file_id = os.environ.get("FILE_ID", "000")
+test_run_id = os.environ.get("TEST_RUN_ID", "000")
+non_existing_test_id = "0000-0000"
+non_existing_test_run_id = "0000-0000"
+non_existing_file_id = "000-000"
+subscription_id = os.environ.get("LOADTESTING_SUBSCRIPTION_ID", "000")
 DISPLAY_NAME = "TestingResource"
 
 
-class ServerMetricsSmokeTest(LoadtestingTest):
+class TestServerMetricsSmoke(LoadtestingTest):
 
     def prepare(self, endpoint):
         client = self.create_client(endpoint=endpoint)
 
         client.load_test_administration.create_or_update_test(
-            "some-unique-test-id",
+            test_id,
             {
-                "resourceId": f"/subscriptions/{self.subscription_id}/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
+                "resourceId": f"/subscriptions/{subscription_id}/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
                 "description": "",
                 "displayName": DISPLAY_NAME,
                 "loadTestConfig": {
@@ -40,20 +48,21 @@ class ServerMetricsSmokeTest(LoadtestingTest):
         )
 
         client.load_test_administration.upload_test_file(
-            "some-unique-test-id",
-            "some-unique-file-id",
+            test_id,
+            file_id,
             open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb")
         )
 
         client.load_test_runs.create_or_update_test(
-            "some-unique-test-run-id",
+            test_run_id,
             {
-                "testId": "some-unique-test-id",
+                "testId": test_id,
                 "displayName": DISPLAY_NAME
             }
         )
 
     @LoadtestingPowerShellPreparer()
+    @recorded_by_proxy
     def test_create_or_update_server_metrics_config(self, loadtesting_endpoint):
         self.prepare(endpoint=loadtesting_endpoint)
 
@@ -62,7 +71,7 @@ class ServerMetricsSmokeTest(LoadtestingTest):
         result = client.load_test_administration.create_or_update_server_metrics_config(
             "some-unique-server-metrics-config-id",
             {
-                "testRunId": "some-unique-test-run-id",
+                "testRunId": test_run_id,
             }
         )
         print(result)
@@ -73,11 +82,12 @@ class ServerMetricsSmokeTest(LoadtestingTest):
             client.load_test_administration.create_or_update_server_metrics_config(
                 "some-unique-server-metrics-config-id",
                 {
-                    "testRunId": "some-non-existing-test-run-id",
+                    "testRunId": non_existing_test_run_id,
                 }
             )
 
     @LoadtestingPowerShellPreparer()
+    @recorded_by_proxy
     def test_delete_server_metrics_config(self, loadtesting_endpoint):
         self.prepare(endpoint=loadtesting_endpoint)
 
@@ -95,6 +105,7 @@ class ServerMetricsSmokeTest(LoadtestingTest):
             )
 
     @LoadtestingPowerShellPreparer()
+    @recorded_by_proxy
     def test_get_server_metrics_config(self, loadtesting_endpoint):
         self.prepare(endpoint=loadtesting_endpoint)
 
@@ -102,17 +113,18 @@ class ServerMetricsSmokeTest(LoadtestingTest):
         client = self.create_client(endpoint=loadtesting_endpoint)
 
         result = client.load_test_administration.get_server_metrics_config(
-            test_id="some-unique-test-id",
+            test_id=test_id,
         )
         assert result is not None
 
         # negative test
         with pytest.raises(ResourceNotFoundError):
             client.load_test_administration.get_server_metrics_config(
-                test_id="some-non-existing-test-id",
+                test_id=non_existing_test_id,
             )
 
     @LoadtestingPowerShellPreparer()
+    @recorded_by_proxy
     def test_get_server_default_metrics_config(self, loadtesting_endpoint):
         self.prepare(endpoint=loadtesting_endpoint)
 
@@ -123,6 +135,7 @@ class ServerMetricsSmokeTest(LoadtestingTest):
         assert result is not None
 
     @LoadtestingPowerShellPreparer()
+    @recorded_by_proxy
     def test_list_supported_resource_types(self, loadtesting_endpoint):
         self.prepare(endpoint=loadtesting_endpoint)
 

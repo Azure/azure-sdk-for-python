@@ -1,0 +1,567 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "1753",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 04 Aug 2022 08:44:46 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.13418.9 - WUS2 ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": [
+          "client_secret_post",
+          "private_key_jwt",
+          "client_secret_basic"
+        ],
+        "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "subject_types_supported": [
+          "pairwise"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "response_types_supported": [
+          "code",
+          "id_token",
+          "code id_token",
+          "id_token token"
+        ],
+        "scopes_supported": [
+          "openid",
+          "profile",
+          "email",
+          "offline_access"
+        ],
+        "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
+        "request_uri_parameter_supported": false,
+        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
+        "http_logout_supported": true,
+        "frontchannel_logout_supported": true,
+        "end_session_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
+        "claims_supported": [
+          "sub",
+          "iss",
+          "cloud_instance_name",
+          "cloud_instance_host_name",
+          "cloud_graph_host_name",
+          "msgraph_host",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "acr",
+          "nonce",
+          "preferred_username",
+          "name",
+          "tid",
+          "ver",
+          "at_hash",
+          "c_hash",
+          "email"
+        ],
+        "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
+        "tenant_region_scope": "NA",
+        "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net",
+        "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Cookie": "cookie;",
+        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "945",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 04 Aug 2022 08:44:46 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.13418.10 - KRC ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
+        "api-version": "1.1",
+        "metadata": [
+          {
+            "preferred_network": "login.microsoftonline.com",
+            "preferred_cache": "login.windows.net",
+            "aliases": [
+              "login.microsoftonline.com",
+              "login.windows.net",
+              "login.microsoft.com",
+              "sts.windows.net"
+            ]
+          },
+          {
+            "preferred_network": "login.partner.microsoftonline.cn",
+            "preferred_cache": "login.partner.microsoftonline.cn",
+            "aliases": [
+              "login.partner.microsoftonline.cn",
+              "login.chinacloudapi.cn"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.de",
+            "preferred_cache": "login.microsoftonline.de",
+            "aliases": [
+              "login.microsoftonline.de"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.us",
+            "preferred_cache": "login.microsoftonline.us",
+            "aliases": [
+              "login.microsoftonline.us",
+              "login.usgovcloudapi.net"
+            ]
+          },
+          {
+            "preferred_network": "login-us.microsoftonline.com",
+            "preferred_cache": "login-us.microsoftonline.com",
+            "aliases": [
+              "login-us.microsoftonline.com"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "8b8398db-ec21-4979-9d03-e55507bdabb0",
+        "Connection": "keep-alive",
+        "Content-Length": "290",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Cookie": "cookie;",
+        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "x-client-cpu": "x64",
+        "x-client-current-telemetry": "4|730,0|",
+        "x-client-last-telemetry": "4|0|||",
+        "x-client-os": "win32",
+        "x-client-sku": "MSAL.Python",
+        "x-client-ver": "1.16.0",
+        "x-ms-lib-capability": "retry-after, h429"
+      },
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Floadtest.azure-dev.com%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "client-request-id": "8b8398db-ec21-4979-9d03-e55507bdabb0",
+        "Content-Length": "93",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 04 Aug 2022 08:44:46 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-clitelem": "1,0,0,,",
+        "x-ms-ests-server": "2.1.13418.9 - NCUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 3599,
+        "ext_expires_in": 3599,
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://myservice.azure.com/appcomponents/000?api-version=2022-06-01-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "1416",
+        "Content-Type": "application/merge-patch\u002Bjson",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b1 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": {
+        "name": "app_component",
+        "testId": "000",
+        "value": {
+          "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo": {
+            "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo",
+            "resourceName": "App-Service-Sample-Demo",
+            "resourceType": "Microsoft.Web/sites",
+            "subscriptionId": "00000000-0000-0000-0000-000000000000"
+          },
+          "subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Demo-App-Service-Sample-rg/providers/Microsoft.Web/sites/Demo-App-Service-Sample": {
+            "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Demo-App-Service-Sample-rg/providers/Microsoft.Web/sites/Demo-App-Service-Sample",
+            "resourceName": "Demo-App-Service-Sample",
+            "resourceType": "Microsoft.Web/sites",
+            "subscriptionId": "00000000-0000-0000-0000-000000000000"
+          },
+          "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample": {
+            "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample",
+            "resourceName": "App-Service-Sample-Demo",
+            "resourceType": "Microsoft.Web/sites",
+            "subscriptionId": "00000000-0000-0000-0000-000000000000"
+          }
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
+        "Connection": "keep-alive",
+        "Content-Length": "1777",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 04 Aug 2022 08:44:47 GMT",
+        "Location": "https://myservice.azure.com/appcomponents/000?resourceId=%2fsubscriptions%2f00000000-0000-0000-0000-000000000000%2fresourcegroups%2fpython-sdk-test%2fproviders%2fmicrosoft.loadtestservice%2floadtests%2floadtest-jf\u0026api-version=2022-06-01-preview",
+        "mise-correlation-id": "66f7ae1d-be9c-44dd-b13b-2bb6d15225f6",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "8a7c56fa-577c-4ffc-97c7-550e0e531b9e"
+      },
+      "ResponseBody": {
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/python-sdk-test/providers/microsoft.loadtestservice/loadtests/loadtest-jf",
+        "testId": "000",
+        "testRunId": null,
+        "name": "000",
+        "value": {
+          "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo": {
+            "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo",
+            "resourceName": "App-Service-Sample-Demo",
+            "resourceType": "Microsoft.Web/sites",
+            "displayName": null,
+            "resourceGroup": "App-Service-Sample-Demo-rg",
+            "subscriptionId": "00000000-0000-0000-0000-000000000000",
+            "kind": null
+          },
+          "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Demo-App-Service-Sample-rg/providers/Microsoft.Web/sites/Demo-App-Service-Sample": {
+            "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Demo-App-Service-Sample-rg/providers/Microsoft.Web/sites/Demo-App-Service-Sample",
+            "resourceName": "Demo-App-Service-Sample",
+            "resourceType": "Microsoft.Web/sites",
+            "displayName": null,
+            "resourceGroup": "Demo-App-Service-Sample-rg",
+            "subscriptionId": "00000000-0000-0000-0000-000000000000",
+            "kind": null
+          },
+          "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample": {
+            "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample",
+            "resourceName": "App-Service-Sample-Demo",
+            "resourceType": "Microsoft.Web/sites",
+            "displayName": null,
+            "resourceGroup": "App-Service-Sample-Demo-rg",
+            "subscriptionId": "00000000-0000-0000-0000-000000000000",
+            "kind": null
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://myservice.azure.com/appcomponents?api-version=2022-06-01-preview\u0026testId=000",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b1 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
+        "Connection": "keep-alive",
+        "Content-Length": "1777",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 04 Aug 2022 08:44:47 GMT",
+        "mise-correlation-id": "72093d49-1968-45f5-bf65-0cead839a415",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "b177b917-396d-471d-bafe-12c3034130b2"
+      },
+      "ResponseBody": {
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/python-sdk-test/providers/microsoft.loadtestservice/loadtests/loadtest-jf",
+        "testId": "000",
+        "testRunId": null,
+        "name": "000",
+        "value": {
+          "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo": {
+            "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo",
+            "resourceName": "App-Service-Sample-Demo",
+            "resourceType": "Microsoft.Web/sites",
+            "displayName": null,
+            "resourceGroup": "App-Service-Sample-Demo-rg",
+            "subscriptionId": "00000000-0000-0000-0000-000000000000",
+            "kind": null
+          },
+          "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Demo-App-Service-Sample-rg/providers/Microsoft.Web/sites/Demo-App-Service-Sample": {
+            "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Demo-App-Service-Sample-rg/providers/Microsoft.Web/sites/Demo-App-Service-Sample",
+            "resourceName": "Demo-App-Service-Sample",
+            "resourceType": "Microsoft.Web/sites",
+            "displayName": null,
+            "resourceGroup": "Demo-App-Service-Sample-rg",
+            "subscriptionId": "00000000-0000-0000-0000-000000000000",
+            "kind": null
+          },
+          "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample": {
+            "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample",
+            "resourceName": "App-Service-Sample-Demo",
+            "resourceType": "Microsoft.Web/sites",
+            "displayName": null,
+            "resourceGroup": "App-Service-Sample-Demo-rg",
+            "subscriptionId": "00000000-0000-0000-0000-000000000000",
+            "kind": null
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://myservice.azure.com/appcomponents/000?api-version=2022-06-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b1 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
+        "Connection": "keep-alive",
+        "Content-Length": "1777",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 04 Aug 2022 08:44:47 GMT",
+        "mise-correlation-id": "ac973c32-55c1-4974-979e-929b8205d3c3",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "9e9c6884-f3e9-4a69-8e34-5e9d8612ba13"
+      },
+      "ResponseBody": {
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/python-sdk-test/providers/microsoft.loadtestservice/loadtests/loadtest-jf",
+        "testId": "000",
+        "testRunId": null,
+        "name": "000",
+        "value": {
+          "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo": {
+            "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo",
+            "resourceName": "App-Service-Sample-Demo",
+            "resourceType": "Microsoft.Web/sites",
+            "displayName": null,
+            "resourceGroup": "App-Service-Sample-Demo-rg",
+            "subscriptionId": "00000000-0000-0000-0000-000000000000",
+            "kind": null
+          },
+          "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Demo-App-Service-Sample-rg/providers/Microsoft.Web/sites/Demo-App-Service-Sample": {
+            "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Demo-App-Service-Sample-rg/providers/Microsoft.Web/sites/Demo-App-Service-Sample",
+            "resourceName": "Demo-App-Service-Sample",
+            "resourceType": "Microsoft.Web/sites",
+            "displayName": null,
+            "resourceGroup": "Demo-App-Service-Sample-rg",
+            "subscriptionId": "00000000-0000-0000-0000-000000000000",
+            "kind": null
+          },
+          "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample": {
+            "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample",
+            "resourceName": "App-Service-Sample-Demo",
+            "resourceType": "Microsoft.Web/sites",
+            "displayName": null,
+            "resourceGroup": "App-Service-Sample-Demo-rg",
+            "subscriptionId": "00000000-0000-0000-0000-000000000000",
+            "kind": null
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://myservice.azure.com/appcomponents?api-version=2022-06-01-preview\u0026testId=abcdefghijklmnopqrstuvwxyz",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b1 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
+        "Connection": "keep-alive",
+        "Content-Length": "143",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 04 Aug 2022 08:44:48 GMT",
+        "mise-correlation-id": "cecfa90f-4799-44e1-a09e-a9895f1cf04d",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "1d5f1d1a-b54c-46c0-8699-cd6961c75721"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "TestNotFound",
+          "message": "Test not found with given identifier \u0022abcdefghijklmnopqrstuvwxyz\u0022.",
+          "target": null,
+          "details": null
+        }
+      }
+    },
+    {
+      "RequestUri": "https://myservice.azure.com/appcomponents/123?api-version=2022-06-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b1 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json",
+        "Date": "Thu, 04 Aug 2022 08:44:48 GMT",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-error-code": "InternalServerError"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InternalServerError",
+          "message": "Unable to process the request, please retry",
+          "target": null,
+          "details": null
+        }
+      }
+    },
+    {
+      "RequestUri": "https://myservice.azure.com/appcomponents/123?api-version=2022-06-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b1 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json",
+        "Date": "Thu, 04 Aug 2022 08:44:50 GMT",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-error-code": "InternalServerError"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InternalServerError",
+          "message": "Unable to process the request, please retry",
+          "target": null,
+          "details": null
+        }
+      }
+    },
+    {
+      "RequestUri": "https://myservice.azure.com/appcomponents/123?api-version=2022-06-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b1 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json",
+        "Date": "Thu, 04 Aug 2022 08:44:54 GMT",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-error-code": "InternalServerError"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InternalServerError",
+          "message": "Unable to process the request, please retry",
+          "target": null,
+          "details": null
+        }
+      }
+    },
+    {
+      "RequestUri": "https://myservice.azure.com/appcomponents/123?api-version=2022-06-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b1 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json",
+        "Date": "Thu, 04 Aug 2022 08:44:58 GMT",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-error-code": "InternalServerError"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InternalServerError",
+          "message": "Unable to process the request, please retry",
+          "target": null,
+          "details": null
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
