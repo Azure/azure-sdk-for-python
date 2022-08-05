@@ -14,7 +14,6 @@ from azure.core.exceptions import (
     ResourceExistsError,
     AzureError,
     ClientAuthenticationError,
-    ServiceRequestError
 )
 
 from azure.core.pipeline.transport import AsyncHttpResponse, AioHttpTransportResponse, AioHttpTransport
@@ -502,11 +501,11 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
         future = asyncio.Future()
         future.set_exception(ClientPayloadError())
         stream_reader_read_mock.return_value = future
-        with mock.patch.object(StreamReader, "read", stream_reader_read_mock), pytest.raises(ServiceRequestError):
+        with mock.patch.object(StreamReader, "read", stream_reader_read_mock), pytest.raises(HttpResponseError):
             blob = container.get_blob_client(blob=blob_name)
             count = [0]
             blob._pipeline._transport.send = self._count_wrapper(count, blob._pipeline._transport.send)
             await blob.download_blob()
-            assert stream_reader_read_mock.call_count == count[0] == 4
+        assert stream_reader_read_mock.call_count == count[0] == 4
 
 # ------------------------------------------------------------------------------
