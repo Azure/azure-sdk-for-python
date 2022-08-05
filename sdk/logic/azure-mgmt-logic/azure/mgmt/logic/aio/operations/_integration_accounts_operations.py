@@ -15,6 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
@@ -24,33 +25,31 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class IntegrationAccountsOperations:
-    """IntegrationAccountsOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.logic.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.logic.aio.LogicManagementClient`'s
+        :attr:`integration_accounts` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def list_by_subscription(
         self,
         top: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.IntegrationAccountListResult"]:
+    ) -> AsyncIterable[_models.IntegrationAccountListResult]:
         """Gets a list of integration accounts by subscription.
 
         :param top: The number of items to be included in the result. Default value is None.
@@ -62,13 +61,16 @@ class IntegrationAccountsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.logic.models.IntegrationAccountListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2019-05-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccountListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2019-05-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.IntegrationAccountListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -77,9 +79,11 @@ class IntegrationAccountsOperations:
                     api_version=api_version,
                     top=top,
                     template_url=self.list_by_subscription.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -88,9 +92,11 @@ class IntegrationAccountsOperations:
                     api_version=api_version,
                     top=top,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -130,7 +136,7 @@ class IntegrationAccountsOperations:
         resource_group_name: str,
         top: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.IntegrationAccountListResult"]:
+    ) -> AsyncIterable[_models.IntegrationAccountListResult]:
         """Gets a list of integration accounts by resource group.
 
         :param resource_group_name: The resource group name.
@@ -144,13 +150,16 @@ class IntegrationAccountsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.logic.models.IntegrationAccountListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2019-05-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccountListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2019-05-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.IntegrationAccountListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -160,9 +169,11 @@ class IntegrationAccountsOperations:
                     api_version=api_version,
                     top=top,
                     template_url=self.list_by_resource_group.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -172,9 +183,11 @@ class IntegrationAccountsOperations:
                     api_version=api_version,
                     top=top,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -214,7 +227,7 @@ class IntegrationAccountsOperations:
         resource_group_name: str,
         integration_account_name: str,
         **kwargs: Any
-    ) -> "_models.IntegrationAccount":
+    ) -> _models.IntegrationAccount:
         """Gets an integration account.
 
         :param resource_group_name: The resource group name.
@@ -226,13 +239,16 @@ class IntegrationAccountsOperations:
         :rtype: ~azure.mgmt.logic.models.IntegrationAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2019-05-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2019-05-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.IntegrationAccount]
 
         
         request = build_get_request(
@@ -241,11 +257,13 @@ class IntegrationAccountsOperations:
             integration_account_name=integration_account_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -272,9 +290,9 @@ class IntegrationAccountsOperations:
         self,
         resource_group_name: str,
         integration_account_name: str,
-        integration_account: "_models.IntegrationAccount",
+        integration_account: _models.IntegrationAccount,
         **kwargs: Any
-    ) -> "_models.IntegrationAccount":
+    ) -> _models.IntegrationAccount:
         """Creates or updates an integration account.
 
         :param resource_group_name: The resource group name.
@@ -288,14 +306,17 @@ class IntegrationAccountsOperations:
         :rtype: ~azure.mgmt.logic.models.IntegrationAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2019-05-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2019-05-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.IntegrationAccount]
 
         _json = self._serialize.body(integration_account, 'IntegrationAccount')
 
@@ -307,11 +328,13 @@ class IntegrationAccountsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.create_or_update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -342,9 +365,9 @@ class IntegrationAccountsOperations:
         self,
         resource_group_name: str,
         integration_account_name: str,
-        integration_account: "_models.IntegrationAccount",
+        integration_account: _models.IntegrationAccount,
         **kwargs: Any
-    ) -> "_models.IntegrationAccount":
+    ) -> _models.IntegrationAccount:
         """Updates an integration account.
 
         :param resource_group_name: The resource group name.
@@ -358,14 +381,17 @@ class IntegrationAccountsOperations:
         :rtype: ~azure.mgmt.logic.models.IntegrationAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2019-05-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2019-05-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.IntegrationAccount]
 
         _json = self._serialize.body(integration_account, 'IntegrationAccount')
 
@@ -377,11 +403,13 @@ class IntegrationAccountsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -421,13 +449,16 @@ class IntegrationAccountsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2019-05-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2019-05-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_delete_request(
@@ -436,11 +467,13 @@ class IntegrationAccountsOperations:
             integration_account_name=integration_account_name,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -463,9 +496,9 @@ class IntegrationAccountsOperations:
         self,
         resource_group_name: str,
         integration_account_name: str,
-        parameters: "_models.GetCallbackUrlParameters",
+        parameters: _models.GetCallbackUrlParameters,
         **kwargs: Any
-    ) -> "_models.CallbackUrl":
+    ) -> _models.CallbackUrl:
         """Gets the integration account callback URL.
 
         :param resource_group_name: The resource group name.
@@ -479,14 +512,17 @@ class IntegrationAccountsOperations:
         :rtype: ~azure.mgmt.logic.models.CallbackUrl
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CallbackUrl"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2019-05-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2019-05-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CallbackUrl]
 
         _json = self._serialize.body(parameters, 'GetCallbackUrlParameters')
 
@@ -498,11 +534,13 @@ class IntegrationAccountsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.list_callback_url.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -529,9 +567,9 @@ class IntegrationAccountsOperations:
         self,
         resource_group_name: str,
         integration_account_name: str,
-        list_key_vault_keys: "_models.ListKeyVaultKeysDefinition",
+        list_key_vault_keys: _models.ListKeyVaultKeysDefinition,
         **kwargs: Any
-    ) -> AsyncIterable["_models.KeyVaultKeyCollection"]:
+    ) -> AsyncIterable[_models.KeyVaultKeyCollection]:
         """Gets the integration account's Key Vault keys.
 
         :param resource_group_name: The resource group name.
@@ -546,14 +584,17 @@ class IntegrationAccountsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.logic.models.KeyVaultKeyCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2019-05-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyVaultKeyCollection"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2019-05-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.KeyVaultKeyCollection]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 _json = self._serialize.body(list_key_vault_keys, 'ListKeyVaultKeysDefinition')
@@ -566,9 +607,11 @@ class IntegrationAccountsOperations:
                     content_type=content_type,
                     json=_json,
                     template_url=self.list_key_vault_keys.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 _json = self._serialize.body(list_key_vault_keys, 'ListKeyVaultKeysDefinition')
@@ -581,9 +624,11 @@ class IntegrationAccountsOperations:
                     content_type=content_type,
                     json=_json,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -622,7 +667,7 @@ class IntegrationAccountsOperations:
         self,
         resource_group_name: str,
         integration_account_name: str,
-        log_tracking_events: "_models.TrackingEventsDefinition",
+        log_tracking_events: _models.TrackingEventsDefinition,
         **kwargs: Any
     ) -> None:
         """Logs the integration account's tracking events.
@@ -638,14 +683,17 @@ class IntegrationAccountsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2019-05-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2019-05-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _json = self._serialize.body(log_tracking_events, 'TrackingEventsDefinition')
 
@@ -657,11 +705,13 @@ class IntegrationAccountsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.log_tracking_events.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -684,9 +734,9 @@ class IntegrationAccountsOperations:
         self,
         resource_group_name: str,
         integration_account_name: str,
-        regenerate_access_key: "_models.RegenerateActionParameter",
+        regenerate_access_key: _models.RegenerateActionParameter,
         **kwargs: Any
-    ) -> "_models.IntegrationAccount":
+    ) -> _models.IntegrationAccount:
         """Regenerates the integration account access key.
 
         :param resource_group_name: The resource group name.
@@ -700,14 +750,17 @@ class IntegrationAccountsOperations:
         :rtype: ~azure.mgmt.logic.models.IntegrationAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2019-05-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2019-05-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.IntegrationAccount]
 
         _json = self._serialize.body(regenerate_access_key, 'RegenerateActionParameter')
 
@@ -719,11 +772,13 @@ class IntegrationAccountsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.regenerate_access_key.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs

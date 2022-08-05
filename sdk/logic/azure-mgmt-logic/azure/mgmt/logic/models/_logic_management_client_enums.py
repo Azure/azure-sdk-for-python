@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AgreementType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AgreementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The agreement type.
     """
 
@@ -20,7 +19,7 @@ class AgreementType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     X12 = "X12"
     EDIFACT = "Edifact"
 
-class ApiDeploymentParameterVisibility(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ApiDeploymentParameterVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Api deployment parameter visibility.
     """
 
@@ -28,7 +27,7 @@ class ApiDeploymentParameterVisibility(with_metaclass(CaseInsensitiveEnumMeta, s
     DEFAULT = "Default"
     INTERNAL = "Internal"
 
-class ApiTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ApiTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Api tier.
     """
 
@@ -37,13 +36,13 @@ class ApiTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class ApiType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ApiType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NOT_SPECIFIED = "NotSpecified"
     REST = "Rest"
     SOAP = "Soap"
 
-class AzureAsyncOperationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AzureAsyncOperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Azure async operation state.
     """
 
@@ -52,7 +51,7 @@ class AzureAsyncOperationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     PENDING = "Pending"
     CANCELED = "Canceled"
 
-class DayOfWeek(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The day of the week.
     """
 
@@ -64,7 +63,7 @@ class DayOfWeek(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FRIDAY = "Friday"
     SATURDAY = "Saturday"
 
-class DaysOfWeek(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DaysOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SUNDAY = "Sunday"
     MONDAY = "Monday"
@@ -74,7 +73,7 @@ class DaysOfWeek(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FRIDAY = "Friday"
     SATURDAY = "Saturday"
 
-class EdifactCharacterSet(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EdifactCharacterSet(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The edifact character set.
     """
 
@@ -94,7 +93,7 @@ class EdifactCharacterSet(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UNOY = "UNOY"
     KECA = "KECA"
 
-class EdifactDecimalIndicator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EdifactDecimalIndicator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The edifact decimal indicator.
     """
 
@@ -102,7 +101,7 @@ class EdifactDecimalIndicator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     COMMA = "Comma"
     DECIMAL = "Decimal"
 
-class EncryptionAlgorithm(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The encryption algorithm.
     """
 
@@ -114,7 +113,7 @@ class EncryptionAlgorithm(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AES192 = "AES192"
     AES256 = "AES256"
 
-class ErrorResponseCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ErrorResponseCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The error response code.
     """
 
@@ -123,7 +122,7 @@ class ErrorResponseCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     INTERNAL_SERVER_ERROR = "InternalServerError"
     INVALID_OPERATION_ID = "InvalidOperationId"
 
-class EventLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EventLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The event level.
     """
 
@@ -134,7 +133,7 @@ class EventLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     INFORMATIONAL = "Informational"
     VERBOSE = "Verbose"
 
-class HashingAlgorithm(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class HashingAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The signing or hashing algorithm.
     """
 
@@ -146,7 +145,7 @@ class HashingAlgorithm(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SHA2384 = "SHA2384"
     SHA2512 = "SHA2512"
 
-class IntegrationAccountSkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class IntegrationAccountSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The integration account sku name.
     """
 
@@ -155,7 +154,7 @@ class IntegrationAccountSkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     BASIC = "Basic"
     STANDARD = "Standard"
 
-class IntegrationServiceEnvironmentAccessEndpointType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class IntegrationServiceEnvironmentAccessEndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The integration service environment access endpoint type.
     """
 
@@ -163,7 +162,7 @@ class IntegrationServiceEnvironmentAccessEndpointType(with_metaclass(CaseInsensi
     EXTERNAL = "External"
     INTERNAL = "Internal"
 
-class IntegrationServiceEnvironmentNetworkDependencyCategoryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class IntegrationServiceEnvironmentNetworkDependencyCategoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The integration service environment network dependency category type.
     """
 
@@ -180,7 +179,7 @@ class IntegrationServiceEnvironmentNetworkDependencyCategoryType(with_metaclass(
     SQL = "SQL"
     REGIONAL_SERVICE = "RegionalService"
 
-class IntegrationServiceEnvironmentNetworkDependencyHealthState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class IntegrationServiceEnvironmentNetworkDependencyHealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The integration service environment network dependency health state.
     """
 
@@ -189,7 +188,7 @@ class IntegrationServiceEnvironmentNetworkDependencyHealthState(with_metaclass(C
     UNHEALTHY = "Unhealthy"
     UNKNOWN = "Unknown"
 
-class IntegrationServiceEnvironmentNetworkEndPointAccessibilityState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class IntegrationServiceEnvironmentNetworkEndPointAccessibilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The integration service environment network endpoint accessibility state.
     """
 
@@ -198,7 +197,7 @@ class IntegrationServiceEnvironmentNetworkEndPointAccessibilityState(with_metacl
     AVAILABLE = "Available"
     NOT_AVAILABLE = "NotAvailable"
 
-class IntegrationServiceEnvironmentSkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class IntegrationServiceEnvironmentSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The integration service environment sku name.
     """
 
@@ -206,7 +205,7 @@ class IntegrationServiceEnvironmentSkuName(with_metaclass(CaseInsensitiveEnumMet
     PREMIUM = "Premium"
     DEVELOPER = "Developer"
 
-class IntegrationServiceEnvironmentSkuScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class IntegrationServiceEnvironmentSkuScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The integration service environment sku scale type.
     """
 
@@ -214,7 +213,7 @@ class IntegrationServiceEnvironmentSkuScaleType(with_metaclass(CaseInsensitiveEn
     AUTOMATIC = "Automatic"
     NONE = "None"
 
-class KeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The key type.
     """
 
@@ -222,7 +221,7 @@ class KeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PRIMARY = "Primary"
     SECONDARY = "Secondary"
 
-class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of managed service identity. The type 'SystemAssigned' includes an implicitly created
     identity. The type 'None' will remove any identities from the resource.
     """
@@ -231,7 +230,7 @@ class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, En
     USER_ASSIGNED = "UserAssigned"
     NONE = "None"
 
-class MapType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class MapType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The map type.
     """
 
@@ -241,7 +240,7 @@ class MapType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     XSLT30 = "Xslt30"
     LIQUID = "Liquid"
 
-class MessageFilterType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class MessageFilterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The message filter type.
     """
 
@@ -249,13 +248,13 @@ class MessageFilterType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     INCLUDE = "Include"
     EXCLUDE = "Exclude"
 
-class OpenAuthenticationProviderType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OpenAuthenticationProviderType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Open authentication policy provider type.
     """
 
     AAD = "AAD"
 
-class ParameterType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The parameter type.
     """
 
@@ -269,14 +268,14 @@ class ParameterType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     OBJECT = "Object"
     SECURE_OBJECT = "SecureObject"
 
-class PartnerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PartnerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The partner type.
     """
 
     NOT_SPECIFIED = "NotSpecified"
     B2_B = "B2B"
 
-class RecurrenceFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RecurrenceFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The recurrence frequency.
     """
 
@@ -289,14 +288,14 @@ class RecurrenceFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MONTH = "Month"
     YEAR = "Year"
 
-class SchemaType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SchemaType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The schema type.
     """
 
     NOT_SPECIFIED = "NotSpecified"
     XML = "Xml"
 
-class SegmentTerminatorSuffix(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SegmentTerminatorSuffix(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The segment terminator suffix.
     """
 
@@ -306,7 +305,7 @@ class SegmentTerminatorSuffix(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     LF = "LF"
     CRLF = "CRLF"
 
-class SigningAlgorithm(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SigningAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The signing or hashing algorithm.
     """
 
@@ -317,7 +316,7 @@ class SigningAlgorithm(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SHA2384 = "SHA2384"
     SHA2512 = "SHA2512"
 
-class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The sku name.
     """
 
@@ -328,7 +327,7 @@ class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class StatusAnnotation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class StatusAnnotation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status annotation.
     """
 
@@ -336,7 +335,7 @@ class StatusAnnotation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PREVIEW = "Preview"
     PRODUCTION = "Production"
 
-class SwaggerSchemaType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SwaggerSchemaType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The swagger schema type.
     """
 
@@ -349,14 +348,14 @@ class SwaggerSchemaType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     OBJECT = "Object"
     NULL = "Null"
 
-class TrackEventsOperationOptions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TrackEventsOperationOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The track events operation options.
     """
 
     NONE = "None"
     DISABLE_SOURCE_INFO_ENRICH = "DisableSourceInfoEnrich"
 
-class TrackingRecordType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TrackingRecordType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The tracking record type.
     """
 
@@ -377,7 +376,7 @@ class TrackingRecordType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     EDIFACT_FUNCTIONAL_GROUP_ACKNOWLEDGMENT = "EdifactFunctionalGroupAcknowledgment"
     EDIFACT_TRANSACTION_SET_ACKNOWLEDGMENT = "EdifactTransactionSetAcknowledgment"
 
-class TrailingSeparatorPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TrailingSeparatorPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The trailing separator policy.
     """
 
@@ -386,7 +385,7 @@ class TrailingSeparatorPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     OPTIONAL = "Optional"
     MANDATORY = "Mandatory"
 
-class UsageIndicator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class UsageIndicator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The usage indicator.
     """
 
@@ -395,7 +394,7 @@ class UsageIndicator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     INFORMATION = "Information"
     PRODUCTION = "Production"
 
-class WorkflowProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class WorkflowProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The workflow provisioning state.
     """
 
@@ -422,7 +421,7 @@ class WorkflowProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     WAITING = "Waiting"
     IN_PROGRESS = "InProgress"
 
-class WorkflowState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class WorkflowState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The workflow state.
     """
 
@@ -433,7 +432,7 @@ class WorkflowState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DELETED = "Deleted"
     SUSPENDED = "Suspended"
 
-class WorkflowStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class WorkflowStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The workflow status.
     """
 
@@ -451,7 +450,7 @@ class WorkflowStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ABORTED = "Aborted"
     IGNORED = "Ignored"
 
-class WorkflowTriggerProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class WorkflowTriggerProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The workflow trigger provisioning state.
     """
 
@@ -474,7 +473,7 @@ class WorkflowTriggerProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, s
     UNREGISTERED = "Unregistered"
     COMPLETED = "Completed"
 
-class WsdlImportMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class WsdlImportMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The WSDL import method.
     """
 
@@ -482,7 +481,7 @@ class WsdlImportMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SOAP_TO_REST = "SoapToRest"
     SOAP_PASS_THROUGH = "SoapPassThrough"
 
-class X12CharacterSet(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class X12CharacterSet(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The X12 character set.
     """
 
@@ -491,7 +490,7 @@ class X12CharacterSet(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     EXTENDED = "Extended"
     UTF8 = "UTF8"
 
-class X12DateFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class X12DateFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The x12 date format.
     """
 
@@ -499,7 +498,7 @@ class X12DateFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CCYYMMDD = "CCYYMMDD"
     YYMMDD = "YYMMDD"
 
-class X12TimeFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class X12TimeFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The x12 time format.
     """
 

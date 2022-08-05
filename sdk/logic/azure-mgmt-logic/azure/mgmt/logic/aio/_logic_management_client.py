@@ -134,33 +134,87 @@ class LogicManagementClient:    # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.workflows = WorkflowsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_versions = WorkflowVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_triggers = WorkflowTriggersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_version_triggers = WorkflowVersionTriggersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_trigger_histories = WorkflowTriggerHistoriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_runs = WorkflowRunsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_run_actions = WorkflowRunActionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_run_action_repetitions = WorkflowRunActionRepetitionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_run_action_repetitions_request_histories = WorkflowRunActionRepetitionsRequestHistoriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_run_action_request_histories = WorkflowRunActionRequestHistoriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_run_action_scope_repetitions = WorkflowRunActionScopeRepetitionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_run_operations = WorkflowRunOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_accounts = IntegrationAccountsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_account_assemblies = IntegrationAccountAssembliesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_account_batch_configurations = IntegrationAccountBatchConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_account_schemas = IntegrationAccountSchemasOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_account_maps = IntegrationAccountMapsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_account_partners = IntegrationAccountPartnersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_account_agreements = IntegrationAccountAgreementsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_account_certificates = IntegrationAccountCertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_account_sessions = IntegrationAccountSessionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_service_environments = IntegrationServiceEnvironmentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_service_environment_skus = IntegrationServiceEnvironmentSkusOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_service_environment_network_health = IntegrationServiceEnvironmentNetworkHealthOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_service_environment_managed_apis = IntegrationServiceEnvironmentManagedApisOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_service_environment_managed_api_operations = IntegrationServiceEnvironmentManagedApiOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.workflows = WorkflowsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workflow_versions = WorkflowVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workflow_triggers = WorkflowTriggersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workflow_version_triggers = WorkflowVersionTriggersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workflow_trigger_histories = WorkflowTriggerHistoriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workflow_runs = WorkflowRunsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workflow_run_actions = WorkflowRunActionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workflow_run_action_repetitions = WorkflowRunActionRepetitionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workflow_run_action_repetitions_request_histories = WorkflowRunActionRepetitionsRequestHistoriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workflow_run_action_request_histories = WorkflowRunActionRequestHistoriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workflow_run_action_scope_repetitions = WorkflowRunActionScopeRepetitionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workflow_run_operations = WorkflowRunOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_accounts = IntegrationAccountsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_account_assemblies = IntegrationAccountAssembliesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_account_batch_configurations = IntegrationAccountBatchConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_account_schemas = IntegrationAccountSchemasOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_account_maps = IntegrationAccountMapsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_account_partners = IntegrationAccountPartnersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_account_agreements = IntegrationAccountAgreementsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_account_certificates = IntegrationAccountCertificatesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_account_sessions = IntegrationAccountSessionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_service_environments = IntegrationServiceEnvironmentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_service_environment_skus = IntegrationServiceEnvironmentSkusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_service_environment_network_health = IntegrationServiceEnvironmentNetworkHealthOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_service_environment_managed_apis = IntegrationServiceEnvironmentManagedApisOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_service_environment_managed_api_operations = IntegrationServiceEnvironmentManagedApiOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(
