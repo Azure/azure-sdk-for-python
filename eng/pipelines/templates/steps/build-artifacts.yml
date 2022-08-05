@@ -109,14 +109,15 @@ steps:
       CustomCondition: ${{ parameters.BuildDocs }}
       ArtifactName: 'documentation'
 
-  - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-    displayName: 'Generate BOM'
-    condition: succeededOrFailed()
-    inputs:
-      BuildDropPath: $(Build.ArtifactStagingDirectory)
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+      displayName: 'Generate BOM'
+      condition: succeededOrFailed()
+      inputs:
+        BuildDropPath: $(Build.ArtifactStagingDirectory)
 
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-    parameters:
-      ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
-      ArtifactName: 'manifest'
+    - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+      parameters:
+        ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
+        ArtifactName: 'manifest'
 

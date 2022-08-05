@@ -5,13 +5,13 @@
 # license information.
 # -------------------------------------------------------------------------
 from testcase import PurviewScanningTest, PurviewScanningPowerShellPreparer
-from _util import PurviewScanningRecordingProcessor
+from devtools_testutils import recorded_by_proxy
 
-class PurviewScanningSmokeTest(PurviewScanningTest):
+class TestPurviewScanningSmoke(PurviewScanningTest):
 
     @PurviewScanningPowerShellPreparer()
+    @recorded_by_proxy
     def test_basic_smoke_test(self, purviewscanning_endpoint):
-        self.recording_processors.append(PurviewScanningRecordingProcessor())
         client = self.create_client(endpoint=purviewscanning_endpoint)
         response = client.data_sources.list_all()
         result = [item for item in response]
