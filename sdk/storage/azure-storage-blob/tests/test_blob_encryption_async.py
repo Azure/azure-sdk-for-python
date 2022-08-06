@@ -795,5 +795,41 @@ class StorageBlobEncryptionTestAsync(AsyncStorageTestCase):
         # Assert
         assert result == data
 
+    @BlobPreparer()
+    async def test_get_blob_read_with_other_read_operations_ranged(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        self.bsc.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+
+        data = b'12345' * 205 * 10  # 10250 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference(BlobType.BLOCKBLOB))
+        await blob.upload_blob(data, overwrite=True)
+        offset, length = 501, 5000
+
+        # Act / Assert
+        stream = await blob.download_blob(offset=offset, length=length)
+        first = await stream.read(100)  # Read in first chunk
+        second = await stream.readall()
+
+        assert first == data[offset:offset + 100]
+        assert second == data[offset + 100:offset + length]
+
+        stream = await blob.download_blob(offset=offset, length=length)
+        first = await stream.read(3000)  # Read past first chunk
+        second = await stream.readall()
+
+        assert first == data[offset:offset + 3000]
+        assert second == data[offset + 3000:offset + length]
+
+        stream = await blob.download_blob(offset=offset, length=length)
+        first = await stream.read(3000)  # Read past first chunk
+        second_stream = BytesIO()
+        read_size = await stream.readinto(second_stream)
+        second = second_stream.getvalue()
+
+        assert first == data[offset:offset + 3000]
+        assert second == data[offset + 3000:offset + length]
+        assert read_size == len(second)
+
 
 # ------------------------------------------------------------------------------

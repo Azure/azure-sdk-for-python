@@ -1330,4 +1330,151 @@ class StorageGetBlobTestAsync(AsyncStorageTestCase):
         # Assert
         assert result == data
 
+    @BlobPreparer()
+    async def test_get_blob_read_past(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        data = b'Hello World'
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await blob.upload_blob(data, overwrite=True)
+
+        # Act
+        stream = await blob.download_blob()
+        result = await stream.read(25)
+
+        # Assert
+        assert result == data
+        for _ in range(3):
+            result = await stream.read(100)
+            assert result == b''
+
+    @BlobPreparer()
+    async def test_get_blob_read_ranged(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await blob.upload_blob(data, overwrite=True)
+
+        # Act / Assert
+        offset, length = 1024, 2048
+        stream = await blob.download_blob(offset=offset, length=length)
+
+        read_size = 1024
+        data1 = await stream.read(read_size)
+        data2 = await stream.read(read_size)
+
+        assert data1 == data[offset:offset + read_size]
+        assert data2 == data[offset + read_size:offset + length]
+
+        offset, length = 501, 3000
+        stream = await blob.download_blob(offset=offset, length=length)
+
+        read_size = 1536
+        data1 = await stream.read(read_size)
+        data2 = await stream.read(read_size)
+
+        assert data1 == data[offset:offset + read_size]
+        assert data2 == data[offset + read_size:offset + length]
+
+    @BlobPreparer()
+    async def test_get_blob_read_with_other_read_operations_single(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        data = b'Hello World'
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await blob.upload_blob(data, overwrite=True)
+
+        # Act / Assert
+        stream = await blob.download_blob()
+        first = await stream.read(5)
+        second = await stream.readall()
+
+        assert first == data[:5]
+        assert second == data[5:]
+
+        stream = await blob.download_blob()
+        first = await stream.read(5)
+        second_stream = BytesIO()
+        read_size = await stream.readinto(second_stream)
+        second = second_stream.getvalue()
+
+        assert first == data[:5]
+        assert second == data[5:]
+        assert read_size == len(second)
+
+        # Test another read operation after reading all data
+        stream = await blob.download_blob()
+        first = await stream.read(25)
+        second_stream = BytesIO()
+        read_size = await stream.readinto(second_stream)
+        second = second_stream.getvalue()
+
+        assert first == data
+        assert second == b''
+        assert read_size == 0
+
+    @BlobPreparer()
+    async def test_get_blob_read_with_other_read_operations_chunks(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 10  # 10250 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await blob.upload_blob(data, overwrite=True)
+
+        # Act / Assert
+        stream = await blob.download_blob()
+        first = await stream.read(100)  # Read in first chunk
+        second = await stream.readall()
+
+        assert first == data[:100]
+        assert second == data[100:]
+
+        stream = await blob.download_blob()
+        first = await stream.read(3000)  # Read past first chunk
+        second = await stream.readall()
+
+        assert first == data[:3000]
+        assert second == data[3000:]
+
+        stream = await blob.download_blob()
+        first = await stream.read(3000)  # Read past first chunk
+        second_stream = BytesIO()
+        read_size = await stream.readinto(second_stream)
+        second = second_stream.getvalue()
+
+        assert first == data[:3000]
+        assert second == data[3000:]
+        assert read_size == len(second)
+
+    @BlobPreparer()
+    async def test_get_blob_read_with_other_read_operations_ranged(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 10  # 10250 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await blob.upload_blob(data, overwrite=True)
+        offset, length = 1024, 2048
+
+        # Act / Assert
+        stream = await blob.download_blob(offset=offset, length=length)
+        first = await stream.read(100)  # Read in first chunk
+        second = await stream.readall()
+
+        assert first == data[offset:offset + 100]
+        assert second == data[offset + 100:offset + length]
+
+        offset, length = 501, 5000
+        stream = await blob.download_blob(offset=offset, length=length)
+        first = await stream.read(3000)  # Read past first chunk
+        second = await stream.readall()
+
+        assert first == data[offset:offset + 3000]
+        assert second == data[offset + 3000:offset + length]
+
+        stream = await blob.download_blob(offset=offset, length=length)
+        first = await stream.read(3000)  # Read past first chunk
+        second_stream = BytesIO()
+        read_size = await stream.readinto(second_stream)
+        second = second_stream.getvalue()
+
+        assert first == data[offset:offset + 3000]
+        assert second == data[offset + 3000:offset + length]
+        assert read_size == len(second)
+
 # ------------------------------------------------------------------------------

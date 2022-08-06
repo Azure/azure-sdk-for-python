@@ -6,6 +6,7 @@
 
 import base64
 import os
+from io import BytesIO
 from json import dumps, loads
 from math import ceil
 
@@ -815,6 +816,53 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
 
         # Assert
         assert result == data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_get_blob_read_with_other_read_operations_ranged(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_get_size=4 * MiB,
+            max_chunk_get_size=4 * MiB,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        data = b'abcde' * 4 * MiB  # 20 MiB
+        await blob.upload_blob(data, overwrite=True)
+
+        offset, length = 1 * MiB, 5 * MiB
+
+        # Act / Assert
+        read_size = 150000
+        stream = await blob.download_blob(offset=offset, length=length)
+        first = await stream.read(read_size)  # Read in first chunk
+        second = await stream.readall()
+
+        assert first == data[offset:offset + read_size]
+        assert second == data[offset + read_size:offset + length]
+
+        read_size = 4 * MiB + 100000
+        stream = await blob.download_blob(offset=offset, length=length)
+        first = await stream.read(read_size)  # Read past first chunk
+        second = await stream.readall()
+
+        assert first == data[offset:offset + read_size]
+        assert second == data[offset + read_size:offset + length]
+
+        stream = await blob.download_blob(offset=offset, length=length)
+        first = await stream.read(read_size)  # Read past first chunk
+        second_stream = BytesIO()
+        read_length = await stream.readinto(second_stream)
+        second = second_stream.getvalue()
+
+        assert first == data[offset:offset + read_size]
+        assert second == data[offset + read_size:offset + length]
+        assert read_length == len(second)
 
     @pytest.mark.skip(reason="Intended for manual testing due to blob size.")
     @pytest.mark.live_test_only

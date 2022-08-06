@@ -505,6 +505,17 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         return response
 
+    def _get_downloader_start_with_offset(self):
+        # Start where the initial request download ended
+        start = self._initial_range[1] + 1
+        # For encryption V2 only, adjust start to the end of the fetched data rather than download size
+        if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
+            start = (self._start_range or 0) + len(self._current_content)
+
+        # Adjust the start based on any data read past the current content
+        start += (self._offset - len(self._current_content))
+        return start
+
     def chunks(self):
         # type: () -> Iterator[bytes]
         """Iterate over chunks in the download stream.
@@ -562,11 +573,9 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         """
         if size == -1:
             return self.readall()
-        if size == 0 or self.size == 0:
-            data = b''
-            if self._encoding:
-                return data.decode(self._encoding)
-            return data
+        # Empty blob or already read to the end
+        if size == 0 or self._offset >= self.size:
+            return b'' if not self._encoding else ''
 
         stream = BytesIO()
         remaining_size = size
@@ -581,15 +590,21 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             self._offset += read
 
         if remaining_size > 0:
-            end_range = min(self._offset + remaining_size, self.size)
+            start_range = self._get_downloader_start_with_offset()
+
+            # End is the min between the remaining size, the file size, and the end of the specified range
+            end_range = min(start_range + remaining_size, self._file_size)
+            if self._end_range is not None:
+                end_range = min(end_range, self._end_range + 1)
+
             parallel = self._max_concurrency > 1
             downloader = _ChunkDownloader(
                 client=self._clients.blob,
                 non_empty_ranges=self._non_empty_ranges,
-                total_size=remaining_size,
+                total_size=self.size,
                 chunk_size=self._config.max_chunk_get_size,
                 current_progress=self._offset,
-                start_range=self._offset,
+                start_range=start_range,
                 end_range=end_range,
                 stream=stream,
                 parallel=parallel,
@@ -600,7 +615,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 **self._request_options
             )
 
-            if parallel:
+            if parallel and remaining_size > self._config.max_chunk_get_size:
                 import concurrent.futures
                 with concurrent.futures.ThreadPoolExecutor(self._max_concurrency) as executor:
                     list(executor.map(
@@ -689,30 +704,36 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             except (NotImplementedError, AttributeError):
                 raise ValueError(error_message)
 
-        # Write the content to the user stream
-        stream.write(self._current_content)
-        if self._progress_hook:
-            self._progress_hook(len(self._current_content), self.size)
+        # If some data has been streamed using `read`, only stream the remaining data
+        remaining_size = self.size - self._offset
+        # Already read to the end
+        if remaining_size <= 0:
+            return 0
+
+        # Write the content to the user stream if there is data left
+        if self._offset < len(self._current_content):
+            content = self._current_content[self._offset:]
+            stream.write(content)
+            self._offset += len(content)
+            if self._progress_hook:
+                self._progress_hook(len(content), self.size)
 
         if self._download_complete:
-            return self.size
+            return remaining_size
 
         data_end = self._file_size
         if self._end_range is not None:
             # Use the length unless it is over the end of the file
             data_end = min(self._file_size, self._end_range + 1)
 
-        data_start = self._initial_range[1] + 1  # Start where the first download ended
-        # For encryption, adjust start to the end of the fetched data rather than download size
-        if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
-            data_start = (self._start_range or 0) + len(self._current_content)
+        data_start = self._get_downloader_start_with_offset()
 
         downloader = _ChunkDownloader(
             client=self._clients.blob,
             non_empty_ranges=self._non_empty_ranges,
             total_size=self.size,
             chunk_size=self._config.max_chunk_get_size,
-            current_progress=self._first_get_size,
+            current_progress=self._offset,
             start_range=data_start,
             end_range=data_end,
             stream=stream,
@@ -734,7 +755,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         else:
             for chunk in downloader.get_chunk_offsets():
                 downloader.process_chunk(chunk)
-        return self.size
+
+        return remaining_size
 
     def download_to_stream(self, stream, max_concurrency=1):
         """Download the contents of this blob to a stream.
