@@ -13,7 +13,7 @@ of packages that provide APIs for Key Vault operations:
 ## _Disclaimer_
 
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
-
+_Python 3.7 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
 
 ## Install the package
 Install the Azure Key Vault client libraries for Python with [pip][pip]:

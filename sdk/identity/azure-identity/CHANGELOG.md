@@ -1,6 +1,6 @@
 # Release History
 
-## 1.11.0b3 (Unreleased)
+## 1.11.0b3 (2022-08-09)
 
 Azure-identity is supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 
@@ -10,9 +10,7 @@ Azure-identity is supported on Python 3.7 or later. For more details, please rea
 
 ### Breaking Changes
 
-### Bugs Fixed
-
-### Other Changes
+- Removed `VisualStudioCodeCredential` from `DefaultAzureCredential` token chain. ([#23249](https://github.com/Azure/azure-sdk-for-python/issues/23249))
 
 ## 1.11.0b2 (2022-07-05)
 

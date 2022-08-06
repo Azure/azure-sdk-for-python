@@ -6,12 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, Union
+from typing import List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class DataContainer(msrest.serialization.Model):
@@ -34,7 +36,7 @@ class DataContainer(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        workspace: "WorkspaceInfo",
+        workspace: "_models.WorkspaceInfo",
         **kwargs
     ):
         """
@@ -140,7 +142,7 @@ class ResponseWithError(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: "Error",
+        error: "_models.Error",
         **kwargs
     ):
         """
@@ -167,12 +169,12 @@ class VMInsightsOnboardingStatus(ProxyResource):
     :vartype resource_id: str
     :ivar onboarding_status: The onboarding status for the resource. Note that, a higher level
      scope, e.g., resource group or subscription, is considered onboarded if at least one resource
-     under it is onboarded. Possible values include: "onboarded", "notOnboarded", "unknown".
+     under it is onboarded. Known values are: "onboarded", "notOnboarded", "unknown".
     :vartype onboarding_status: str or
      ~$(python-base-namespace).v2018_11_27_preview.models.OnboardingStatus
     :ivar data_status: The status of VM Insights data from the resource. When reported as
      ``present`` the data array will contain information about the data containers to which data for
-     the specified resource is being routed. Possible values include: "present", "notPresent".
+     the specified resource is being routed. Known values are: "present", "notPresent".
     :vartype data_status: str or ~$(python-base-namespace).v2018_11_27_preview.models.DataStatus
     :ivar data: Containers that currently store VM Insights data for the specified resource.
     :vartype data: list[~$(python-base-namespace).v2018_11_27_preview.models.DataContainer]
@@ -198,9 +200,9 @@ class VMInsightsOnboardingStatus(ProxyResource):
         self,
         *,
         resource_id: Optional[str] = None,
-        onboarding_status: Optional[Union[str, "OnboardingStatus"]] = None,
-        data_status: Optional[Union[str, "DataStatus"]] = None,
-        data: Optional[List["DataContainer"]] = None,
+        onboarding_status: Optional[Union[str, "_models.OnboardingStatus"]] = None,
+        data_status: Optional[Union[str, "_models.DataStatus"]] = None,
+        data: Optional[List["_models.DataContainer"]] = None,
         **kwargs
     ):
         """
@@ -209,12 +211,12 @@ class VMInsightsOnboardingStatus(ProxyResource):
         :paramtype resource_id: str
         :keyword onboarding_status: The onboarding status for the resource. Note that, a higher level
          scope, e.g., resource group or subscription, is considered onboarded if at least one resource
-         under it is onboarded. Possible values include: "onboarded", "notOnboarded", "unknown".
+         under it is onboarded. Known values are: "onboarded", "notOnboarded", "unknown".
         :paramtype onboarding_status: str or
          ~$(python-base-namespace).v2018_11_27_preview.models.OnboardingStatus
         :keyword data_status: The status of VM Insights data from the resource. When reported as
          ``present`` the data array will contain information about the data containers to which data for
-         the specified resource is being routed. Possible values include: "present", "notPresent".
+         the specified resource is being routed. Known values are: "present", "notPresent".
         :paramtype data_status: str or ~$(python-base-namespace).v2018_11_27_preview.models.DataStatus
         :keyword data: Containers that currently store VM Insights data for the specified resource.
         :paramtype data: list[~$(python-base-namespace).v2018_11_27_preview.models.DataContainer]

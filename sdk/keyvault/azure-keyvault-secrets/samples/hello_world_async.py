@@ -7,7 +7,6 @@ import os
 import asyncio
 from azure.keyvault.secrets.aio import SecretClient
 from azure.identity.aio import DefaultAzureCredential
-from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:

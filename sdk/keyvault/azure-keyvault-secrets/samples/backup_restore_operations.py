@@ -6,7 +6,6 @@ import os
 import time
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
-from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
