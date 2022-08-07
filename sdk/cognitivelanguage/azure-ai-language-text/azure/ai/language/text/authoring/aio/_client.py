@@ -13,7 +13,7 @@ from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
-from ._configuration import TAAuthoringClientConfiguration
+from ._configuration import TextAuthoringClientConfiguration
 from .operations import TextAnalysisAuthoringOperations
 
 if TYPE_CHECKING:
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class TAAuthoringClient:  # pylint: disable=client-accepts-api-version-keyword
+class TextAuthoringClient:  # pylint: disable=client-accepts-api-version-keyword
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms. The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
@@ -38,8 +38,8 @@ class TAAuthoringClient:  # pylint: disable=client-accepts-api-version-keyword
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. Default value is "2022-05-15-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-05-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -47,7 +47,7 @@ class TAAuthoringClient:  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "{Endpoint}/language"
-        self._config = TAAuthoringClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = TextAuthoringClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -86,7 +86,7 @@ class TAAuthoringClient:  # pylint: disable=client-accepts-api-version-keyword
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "TAAuthoringClient":
+    async def __aenter__(self) -> "TextAuthoringClient":
         await self._client.__aenter__()
         return self
 

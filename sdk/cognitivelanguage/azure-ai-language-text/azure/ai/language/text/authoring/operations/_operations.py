@@ -7,10 +7,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
 from urllib.parse import parse_qs, urljoin, urlparse
 
-from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -18,44 +17,17 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     map_error,
 )
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from azure.core.pipeline.transport import HttpResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.polling.base_polling import LROBasePolling
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ...operations._operations import (
-    build_text_analysis_authoring_cancel_training_job_request,
-    build_text_analysis_authoring_create_project_request,
-    build_text_analysis_authoring_delete_deployment_request,
-    build_text_analysis_authoring_delete_project_request,
-    build_text_analysis_authoring_delete_trained_model_request,
-    build_text_analysis_authoring_deploy_project_request,
-    build_text_analysis_authoring_export_request,
-    build_text_analysis_authoring_get_deployment_request,
-    build_text_analysis_authoring_get_deployment_status_request,
-    build_text_analysis_authoring_get_export_status_request,
-    build_text_analysis_authoring_get_import_status_request,
-    build_text_analysis_authoring_get_model_evaluation_results_request,
-    build_text_analysis_authoring_get_model_evaluation_summary_request,
-    build_text_analysis_authoring_get_project_deletion_status_request,
-    build_text_analysis_authoring_get_project_request,
-    build_text_analysis_authoring_get_supported_languages_request,
-    build_text_analysis_authoring_get_swap_deployments_status_request,
-    build_text_analysis_authoring_get_trained_model_request,
-    build_text_analysis_authoring_get_training_status_request,
-    build_text_analysis_authoring_import_method_request,
-    build_text_analysis_authoring_list_deployments_request,
-    build_text_analysis_authoring_list_projects_request,
-    build_text_analysis_authoring_list_trained_models_request,
-    build_text_analysis_authoring_list_training_config_versions_request,
-    build_text_analysis_authoring_list_training_jobs_request,
-    build_text_analysis_authoring_swap_deployments_request,
-    build_text_analysis_authoring_train_request,
-)
+from .._serialization import Serializer
+from .._vendor import _format_url_section
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -63,7 +35,751 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
+
+
+def build_text_analysis_authoring_list_projects_request(
+    *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects"
+
+    # Construct parameters
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_create_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_get_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_delete_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_export_request(
+    project_name: str, *, string_index_type: str, asset_kind: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/:export"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["stringIndexType"] = _SERIALIZER.query("string_index_type", string_index_type, "str")
+    if asset_kind is not None:
+        _params["assetKind"] = _SERIALIZER.query("asset_kind", asset_kind, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_import_method_request(project_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/:import"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_train_request(project_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/:train"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_list_deployments_request(
+    project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/deployments"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_swap_deployments_request(project_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/deployments/:swap"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_get_deployment_request(
+    project_name: str, deployment_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/deployments/{deploymentName}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_deploy_project_request(
+    project_name: str, deployment_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/deployments/{deploymentName}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_delete_deployment_request(
+    project_name: str, deployment_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/deployments/{deploymentName}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_get_deployment_status_request(
+    project_name: str, deployment_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/deployments/{deploymentName}/jobs/{jobId}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_get_swap_deployments_status_request(
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/deployments/swap/jobs/{jobId}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_get_export_status_request(
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/export/jobs/{jobId}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_get_import_status_request(
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/import/jobs/{jobId}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_list_trained_models_request(
+    project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/models"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_get_trained_model_request(
+    project_name: str, trained_model_label: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/models/{trainedModelLabel}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_delete_trained_model_request(
+    project_name: str, trained_model_label: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/models/{trainedModelLabel}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_get_model_evaluation_results_request(
+    project_name: str,
+    trained_model_label: str,
+    *,
+    string_index_type: str,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/models/{trainedModelLabel}/evaluation/result"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["stringIndexType"] = _SERIALIZER.query("string_index_type", string_index_type, "str")
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_get_model_evaluation_summary_request(
+    project_name: str, trained_model_label: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/models/{trainedModelLabel}/evaluation/summary-result"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_list_training_jobs_request(
+    project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/train/jobs"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_get_training_status_request(
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/train/jobs/{jobId}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_cancel_training_job_request(
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/train/jobs/{jobId}/:cancel"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_get_project_deletion_status_request(job_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/global/deletion-jobs/{jobId}"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_get_supported_languages_request(
+    *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/global/languages"
+
+    # Construct parameters
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_analysis_authoring_list_training_config_versions_request(
+    *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/global/training-config-versions"
+
+    # Construct parameters
+    _params["projectKind"] = _SERIALIZER.query("project_kind", project_kind, "str")
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-methods
@@ -72,11 +788,11 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.language.text.aio.TAAuthoringClient`'s
+        :class:`~azure.ai.language.text.TextAuthoringClient`'s
         :attr:`text_analysis_authoring` attribute.
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs):
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -84,9 +800,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_projects(
-        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    def list_projects(self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any) -> Iterable[JSON]:
         """Lists the existing projects.
 
         :keyword top: The maximum number of resources to return from the collection. Default value is
@@ -96,7 +810,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
          value is None.
         :paramtype skip: int
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -166,17 +880,17 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
+            return deserialized.get("nextLink", None), iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -187,10 +901,10 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
     @overload
-    async def create_project(
+    def create_project(
         self, project_name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Creates a new project or updates an existing one.
@@ -251,7 +965,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         """
 
     @overload
-    async def create_project(
+    def create_project(
         self, project_name: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Creates a new project or updates an existing one.
@@ -295,8 +1009,8 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
                 }
         """
 
-    @distributed_trace_async
-    async def create_project(self, project_name: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    @distributed_trace
+    def create_project(self, project_name: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Creates a new project or updates an existing one.
 
         :param project_name: The name of the project to use. Required.
@@ -368,7 +1082,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -395,8 +1109,8 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def get_project(self, project_name: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def get_project(self, project_name: str, **kwargs: Any) -> JSON:
         """Gets the details of a project.
 
         :param project_name: The name of the project to use. Required.
@@ -451,7 +1165,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -471,7 +1185,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         return cast(JSON, deserialized)
 
-    async def _delete_project_initial(  # pylint: disable=inconsistent-return-statements
+    def _delete_project_initial(  # pylint: disable=inconsistent-return-statements
         self, project_name: str, **kwargs: Any
     ) -> None:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -493,7 +1207,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -509,32 +1223,32 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    @distributed_trace_async
-    async def begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
+    @distributed_trace
+    def begin_delete_project(self, project_name: str, **kwargs: Any) -> LROPoller[None]:
         """Deletes a project.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._delete_project_initial(  # type: ignore
+            raw_result = self._delete_project_initial(  # type: ignore
                 project_name=project_name, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
         kwargs.pop("error_map", None)
@@ -549,23 +1263,22 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         if polling is True:
             polling_method = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )  # type: AsyncPollingMethod
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
         elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+            polling_method = cast(PollingMethod, NoPolling())
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    async def _export_initial(  # pylint: disable=inconsistent-return-statements
+    def _export_initial(  # pylint: disable=inconsistent-return-statements
         self, project_name: str, *, string_index_type: str, asset_kind: Optional[str] = None, **kwargs: Any
     ) -> None:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -589,7 +1302,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -605,10 +1318,10 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    @distributed_trace_async
-    async def begin_export(
+    @distributed_trace
+    def begin_export(
         self, project_name: str, *, string_index_type: str, asset_kind: Optional[str] = None, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> LROPoller[None]:
         """Triggers a job to export a project's data.
 
         :param project_name: The name of the project to use. Required.
@@ -619,25 +1332,25 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         :keyword asset_kind: Kind of asset to export. Default value is None.
         :paramtype asset_kind: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._export_initial(  # type: ignore
+            raw_result = self._export_initial(  # type: ignore
                 project_name=project_name,
                 string_index_type=string_index_type,
                 asset_kind=asset_kind,
@@ -658,23 +1371,22 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         if polling is True:
             polling_method = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )  # type: AsyncPollingMethod
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
         elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+            polling_method = cast(PollingMethod, NoPolling())
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    async def _import_method_initial(  # pylint: disable=inconsistent-return-statements
+    def _import_method_initial(  # pylint: disable=inconsistent-return-statements
         self, project_name: str, body: Union[JSON, IO], **kwargs: Any
     ) -> None:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -708,7 +1420,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -725,9 +1437,9 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
             return cls(pipeline_response, None, response_headers)
 
     @overload
-    async def begin_import_method(
+    def begin_import_method(
         self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> LROPoller[None]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
@@ -739,14 +1451,14 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
          Default value is "application/json".
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -778,9 +1490,9 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         """
 
     @overload
-    async def begin_import_method(
+    def begin_import_method(
         self, project_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> LROPoller[None]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
@@ -792,21 +1504,19 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
          Default value is "application/json".
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def begin_import_method(
-        self, project_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    @distributed_trace
+    def begin_import_method(self, project_name: str, body: Union[JSON, IO], **kwargs: Any) -> LROPoller[None]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
@@ -818,14 +1528,14 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
          Default value is None.
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -833,11 +1543,11 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._import_method_initial(  # type: ignore
+            raw_result = self._import_method_initial(  # type: ignore
                 project_name=project_name,
                 body=body,
                 content_type=content_type,
@@ -858,23 +1568,22 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         if polling is True:
             polling_method = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )  # type: AsyncPollingMethod
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
         elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+            polling_method = cast(PollingMethod, NoPolling())
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    async def _train_initial(  # pylint: disable=inconsistent-return-statements
+    def _train_initial(  # pylint: disable=inconsistent-return-statements
         self, project_name: str, body: Union[JSON, IO], **kwargs: Any
     ) -> None:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -908,7 +1617,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -925,9 +1634,9 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
             return cls(pipeline_response, None, response_headers)
 
     @overload
-    async def begin_train(
+    def begin_train(
         self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> LROPoller[None]:
         """Triggers a training job for a project.
 
         :param project_name: The name of the project to use. Required.
@@ -938,14 +1647,14 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
          Default value is "application/json".
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -971,9 +1680,9 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         """
 
     @overload
-    async def begin_train(
+    def begin_train(
         self, project_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> LROPoller[None]:
         """Triggers a training job for a project.
 
         :param project_name: The name of the project to use. Required.
@@ -984,19 +1693,19 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
          Default value is "application/json".
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def begin_train(self, project_name: str, body: Union[JSON, IO], **kwargs: Any) -> AsyncLROPoller[None]:
+    @distributed_trace
+    def begin_train(self, project_name: str, body: Union[JSON, IO], **kwargs: Any) -> LROPoller[None]:
         """Triggers a training job for a project.
 
         :param project_name: The name of the project to use. Required.
@@ -1007,14 +1716,14 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
          Default value is None.
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1022,11 +1731,11 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._train_initial(  # type: ignore
+            raw_result = self._train_initial(  # type: ignore
                 project_name=project_name,
                 body=body,
                 content_type=content_type,
@@ -1047,26 +1756,25 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         if polling is True:
             polling_method = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )  # type: AsyncPollingMethod
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
         elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+            polling_method = cast(PollingMethod, NoPolling())
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     @distributed_trace
     def list_deployments(
         self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    ) -> Iterable[JSON]:
         """Lists the deployments belonging to a project.
 
         :param project_name: The name of the project to use. Required.
@@ -1078,7 +1786,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
          value is None.
         :paramtype skip: int
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1139,17 +1847,17 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
+            return deserialized.get("nextLink", None), iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -1160,9 +1868,9 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
-    async def _swap_deployments_initial(  # pylint: disable=inconsistent-return-statements
+    def _swap_deployments_initial(  # pylint: disable=inconsistent-return-statements
         self, project_name: str, body: Union[JSON, IO], **kwargs: Any
     ) -> None:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -1196,7 +1904,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1213,9 +1921,9 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
             return cls(pipeline_response, None, response_headers)
 
     @overload
-    async def begin_swap_deployments(
+    def begin_swap_deployments(
         self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> LROPoller[None]:
         """Swaps two existing deployments with each other.
 
         :param project_name: The name of the project to use. Required.
@@ -1226,14 +1934,14 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
          Default value is "application/json".
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1249,9 +1957,9 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         """
 
     @overload
-    async def begin_swap_deployments(
+    def begin_swap_deployments(
         self, project_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> LROPoller[None]:
         """Swaps two existing deployments with each other.
 
         :param project_name: The name of the project to use. Required.
@@ -1262,21 +1970,19 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
          Default value is "application/json".
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def begin_swap_deployments(
-        self, project_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    @distributed_trace
+    def begin_swap_deployments(self, project_name: str, body: Union[JSON, IO], **kwargs: Any) -> LROPoller[None]:
         """Swaps two existing deployments with each other.
 
         :param project_name: The name of the project to use. Required.
@@ -1288,14 +1994,14 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
          Default value is None.
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1303,11 +2009,11 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._swap_deployments_initial(  # type: ignore
+            raw_result = self._swap_deployments_initial(  # type: ignore
                 project_name=project_name,
                 body=body,
                 content_type=content_type,
@@ -1328,24 +2034,23 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         if polling is True:
             polling_method = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )  # type: AsyncPollingMethod
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
         elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+            polling_method = cast(PollingMethod, NoPolling())
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    @distributed_trace_async
-    async def get_deployment(self, project_name: str, deployment_name: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def get_deployment(self, project_name: str, deployment_name: str, **kwargs: Any) -> JSON:
         """Gets the details of a deployment.
 
         :param project_name: The name of the project to use. Required.
@@ -1393,7 +2098,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1413,7 +2118,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         return cast(JSON, deserialized)
 
-    async def _deploy_project_initial(  # pylint: disable=inconsistent-return-statements
+    def _deploy_project_initial(  # pylint: disable=inconsistent-return-statements
         self, project_name: str, deployment_name: str, body: Union[JSON, IO], **kwargs: Any
     ) -> None:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -1448,7 +2153,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1465,7 +2170,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
             return cls(pipeline_response, None, response_headers)
 
     @overload
-    async def begin_deploy_project(
+    def begin_deploy_project(
         self,
         project_name: str,
         deployment_name: str,
@@ -1473,7 +2178,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> LROPoller[None]:
         """Creates a new deployment or replaces an existing one.
 
         :param project_name: The name of the project to use. Required.
@@ -1486,14 +2191,14 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
          Default value is "application/json".
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1506,7 +2211,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         """
 
     @overload
-    async def begin_deploy_project(
+    def begin_deploy_project(
         self,
         project_name: str,
         deployment_name: str,
@@ -1514,7 +2219,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> LROPoller[None]:
         """Creates a new deployment or replaces an existing one.
 
         :param project_name: The name of the project to use. Required.
@@ -1527,21 +2232,21 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
          Default value is "application/json".
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def begin_deploy_project(
+    @distributed_trace
+    def begin_deploy_project(
         self, project_name: str, deployment_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> LROPoller[None]:
         """Creates a new deployment or replaces an existing one.
 
         :param project_name: The name of the project to use. Required.
@@ -1554,14 +2259,14 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
          Default value is None.
         :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1569,11 +2274,11 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._deploy_project_initial(  # type: ignore
+            raw_result = self._deploy_project_initial(  # type: ignore
                 project_name=project_name,
                 deployment_name=deployment_name,
                 body=body,
@@ -1595,23 +2300,22 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         if polling is True:
             polling_method = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )  # type: AsyncPollingMethod
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
         elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+            polling_method = cast(PollingMethod, NoPolling())
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    async def _delete_deployment_initial(  # pylint: disable=inconsistent-return-statements
+    def _delete_deployment_initial(  # pylint: disable=inconsistent-return-statements
         self, project_name: str, deployment_name: str, **kwargs: Any
     ) -> None:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -1634,7 +2338,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1650,10 +2354,8 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    @distributed_trace_async
-    async def begin_delete_deployment(
-        self, project_name: str, deployment_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    @distributed_trace
+    def begin_delete_deployment(self, project_name: str, deployment_name: str, **kwargs: Any) -> LROPoller[None]:
         """Deletes a project deployment.
 
         :param project_name: The name of the project to use. Required.
@@ -1661,25 +2363,25 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         :param deployment_name: The name of the specific deployment of the project to use. Required.
         :type deployment_name: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._delete_deployment_initial(  # type: ignore
+            raw_result = self._delete_deployment_initial(  # type: ignore
                 project_name=project_name,
                 deployment_name=deployment_name,
                 cls=lambda x, y, z: x,
@@ -1699,24 +2401,23 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         if polling is True:
             polling_method = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )  # type: AsyncPollingMethod
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
         elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+            polling_method = cast(PollingMethod, NoPolling())
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    @distributed_trace_async
-    async def get_deployment_status(self, project_name: str, deployment_name: str, job_id: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def get_deployment_status(self, project_name: str, deployment_name: str, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status of an existing deployment job.
 
         :param project_name: The name of the project to use. Required.
@@ -1808,7 +2509,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1828,8 +2529,8 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def get_swap_deployments_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def get_swap_deployments_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status of an existing swap deployment job.
 
         :param project_name: The name of the project to use. Required.
@@ -1918,7 +2619,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1938,8 +2639,8 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def get_export_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def get_export_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
 
         :param project_name: The name of the project to use. Required.
@@ -2030,7 +2731,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2050,8 +2751,8 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def get_import_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def get_import_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status for an import.
 
         :param project_name: The name of the project to use. Required.
@@ -2140,7 +2841,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2163,7 +2864,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
     @distributed_trace
     def list_trained_models(
         self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    ) -> Iterable[JSON]:
         """Lists the trained models belonging to a project.
 
         :param project_name: The name of the project to use. Required.
@@ -2175,7 +2876,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
          value is None.
         :paramtype skip: int
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2235,17 +2936,17 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
+            return deserialized.get("nextLink", None), iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -2256,10 +2957,10 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
-    async def get_trained_model(self, project_name: str, trained_model_label: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def get_trained_model(self, project_name: str, trained_model_label: str, **kwargs: Any) -> JSON:
         """Gets the details of a trained model.
 
         :param project_name: The name of the project to use. Required.
@@ -2306,7 +3007,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2326,8 +3027,8 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def delete_trained_model(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def delete_trained_model(  # pylint: disable=inconsistent-return-statements
         self, project_name: str, trained_model_label: str, **kwargs: Any
     ) -> None:
         """Deletes an existing trained model.
@@ -2360,7 +3061,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2383,7 +3084,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    ) -> Iterable[JSON]:
         """Gets the detailed results of the evaluation for a trained model. This includes the raw
         inference results for the data included in the evaluation process.
 
@@ -2401,7 +3102,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
          value is None.
         :paramtype skip: int
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2453,17 +3154,17 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
+            return deserialized.get("nextLink", None), iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -2474,10 +3175,10 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
-    async def get_model_evaluation_summary(self, project_name: str, trained_model_label: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def get_model_evaluation_summary(self, project_name: str, trained_model_label: str, **kwargs: Any) -> JSON:
         """Gets the evaluation summary of a trained model. The summary includes high level performance
         measurements of the model e.g., F1, Precision, Recall, etc.
 
@@ -2663,7 +3364,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2686,7 +3387,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
     @distributed_trace
     def list_training_jobs(
         self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    ) -> Iterable[JSON]:
         """Lists the non-expired training jobs created for a project.
 
         :param project_name: The name of the project to use. Required.
@@ -2698,7 +3399,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
          value is None.
         :paramtype skip: int
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2831,17 +3532,17 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
+            return deserialized.get("nextLink", None), iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -2852,10 +3553,10 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
-    async def get_training_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def get_training_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status for a training job.
 
         :param project_name: The name of the project to use. Required.
@@ -2975,7 +3676,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2995,7 +3696,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         return cast(JSON, deserialized)
 
-    async def _cancel_training_job_initial(  # pylint: disable=inconsistent-return-statements
+    def _cancel_training_job_initial(  # pylint: disable=inconsistent-return-statements
         self, project_name: str, job_id: str, **kwargs: Any
     ) -> None:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -3018,7 +3719,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3034,8 +3735,8 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    @distributed_trace_async
-    async def begin_cancel_training_job(self, project_name: str, job_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
+    @distributed_trace
+    def begin_cancel_training_job(self, project_name: str, job_id: str, **kwargs: Any) -> LROPoller[None]:
         """Triggers a cancellation for a running training job.
 
         :param project_name: The name of the project to use. Required.
@@ -3043,25 +3744,25 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         :param job_id: The job ID. Required.
         :type job_id: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._cancel_training_job_initial(  # type: ignore
+            raw_result = self._cancel_training_job_initial(  # type: ignore
                 project_name=project_name,
                 job_id=job_id,
                 cls=lambda x, y, z: x,
@@ -3081,24 +3782,23 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         if polling is True:
             polling_method = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )  # type: AsyncPollingMethod
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
         elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+            polling_method = cast(PollingMethod, NoPolling())
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    @distributed_trace_async
-    async def get_project_deletion_status(self, job_id: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def get_project_deletion_status(self, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status for a project deletion job.
 
         :param job_id: The job ID. Required.
@@ -3184,7 +3884,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3207,7 +3907,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
     @distributed_trace
     def get_supported_languages(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    ) -> Iterable[JSON]:
         """Lists the supported languages.
 
         :keyword top: The maximum number of resources to return from the collection. Default value is
@@ -3217,7 +3917,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
          value is None.
         :paramtype skip: int
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3271,17 +3971,17 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
+            return deserialized.get("nextLink", None), iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -3292,12 +3992,12 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def list_training_config_versions(
         self, *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    ) -> Iterable[JSON]:
         """Lists the support training config version for a given project type.
 
         :keyword project_kind: The project kind. Known values are: "CustomSingleLabelClassification",
@@ -3310,7 +4010,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
          value is None.
         :paramtype skip: int
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3365,17 +4065,17 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
+            return deserialized.get("nextLink", None), iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -3386,4 +4086,4 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)

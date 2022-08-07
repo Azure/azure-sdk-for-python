@@ -20,16 +20,13 @@ autorest
 ## Configuration
 
 ```yaml
-title: TAAuthoringClient
 namespace: azure.ai.language.text
 package-name: azure-ai-language-text
 license-header: MICROSOFT_MIT_NO_VERSION
 no-namespace-folders: true
 python: true
-tag: release_2022_05_15_preview
+tag: release_2022_05_01
 openapi-type: data-plane
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/Language/preview/2022-05-15-preview/analyzetext-authoring.json
-output-folder: ../azure/ai/language/text
 clear-output-folder: true
 version-tolerant: true
 package-version: 1.0.0b1
@@ -38,6 +35,23 @@ credential-scopes: https://cognitiveservices.azure.com/.default
 black: true
 modelerfour:
   lenient-model-deduplication: true
+```
+
+## Batch Execution
+
+```yaml
+batch:
+  - tag: release_authoring_1_0
+```
+
+## Authoring
+
+These settings apply only when `--tag=release_authoring_1_0` is specified on the command line.
+
+```yaml $(tag) == 'release_authoring_1_0'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/Language/stable/2022-05-01/analyzetext-authoring.json
+output-folder: ../azure/ai/language/text/authoring
+title: TextAuthoringClient
 ```
 
 ## Customizations

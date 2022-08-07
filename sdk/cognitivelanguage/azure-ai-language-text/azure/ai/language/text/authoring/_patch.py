@@ -31,7 +31,7 @@
 from typing import List, Union, Any
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
-from ._client import TAAuthoringClient as GeneratedTAAuthoringClient
+from ._client import TextAuthoringClient as GeneratedTextAuthoringClient
 
 
 def _authentication_policy(credential):
@@ -50,7 +50,7 @@ def _authentication_policy(credential):
     return authentication_policy
 
 
-class TAAuthoringClient(GeneratedTAAuthoringClient): # pylint: disable=client-accepts-api-version-keyword
+class TextAuthoringClient(GeneratedTextAuthoringClient): # pylint: disable=client-accepts-api-version-keyword
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms. The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
@@ -59,13 +59,13 @@ class TAAuthoringClient(GeneratedTAAuthoringClient): # pylint: disable=client-ac
 
     :ivar text_analysis_authoring: TextAnalysisAuthoringOperations operations
     :vartype text_analysis_authoring:
-     azure.ai.language.text.operations.TextAnalysisAuthoringOperations
+     azure.ai.language.text.authoring.operations.TextAnalysisAuthoringOperations
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2022-05-15-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-05-01". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -81,7 +81,7 @@ class TAAuthoringClient(GeneratedTAAuthoringClient): # pylint: disable=client-ac
         )
 
 
-__all__: List[str] = ["TAAuthoringClient"]
+__all__: List[str] = ["TextAuthoringClient"]
 
 
 def patch_sdk():
