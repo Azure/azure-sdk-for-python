@@ -67,6 +67,7 @@ setup(
         'six>=1.11.0',
     ],
     python_requires=">=3.6",
+    include_package_data=True,
     extras_require={
         ":python_version<'3.8'": ["typing-extensions"]
     }
