@@ -22,9 +22,8 @@ USAGE:
     6) COMMUNICATION_M365_APP_ID - the application id of Microsoft 365
     7) COMMUNICATION_M365_AAD_AUTHORITY - the Azure AD authority of M365 
     8) COMMUNICATION_M365_AAD_TENANT - the tenant ID of Microsoft 365 application
-    9) COMMUNICATION_M365_SCOPE - the scope of Microsoft 365 application
-    10) COMMUNICATION_MSAL_USERNAME - the username for authenticating via the MSAL library
-    11) COMMUNICATION_MSAL_PASSWORD - the password for authenticating via the MSAL library
+    9) COMMUNICATION_MSAL_USERNAME - the username for authenticating via the MSAL library
+    10) COMMUNICATION_MSAL_PASSWORD - the password for authenticating via the MSAL library
 """
 from azure.communication.identity._shared.utils import parse_connection_str
 from msal import PublicClientApplication
@@ -43,7 +42,6 @@ class CommunicationIdentityClientSamples(object):
         self.m365_client_id = os.getenv('COMMUNICATION_M365_APP_ID') 
         self.m365_aad_authority = os.getenv('COMMUNICATION_M365_AAD_AUTHORITY') 
         self.m365_aad_tenant = os.getenv('COMMUNICATION_M365_AAD_TENANT')
-        self.m365_scope = os.getenv('COMMUNICATION_M365_SCOPE') 
         self.msal_username = os.getenv('COMMUNICATION_MSAL_USERNAME') 
         self.msal_password = os.getenv('COMMUNICATION_MSAL_PASSWORD')
 
@@ -139,10 +137,14 @@ class CommunicationIdentityClientSamples(object):
 
         async with identity_client:    
             msal_app = PublicClientApplication(client_id=self.m365_client_id, authority="{}/{}".format(self.m365_aad_authority, self.m365_aad_tenant))
+            scopes = [ 
+                "https://auth.msft.communication.azure.com/Teams.ManageCalls",
+                "https://auth.msft.communication.azure.com/Teams.ManageChats"
+            ]
             result = msal_app.acquire_token_by_username_password(
                 username=self.msal_username,
                 password=self.msal_password,
-                scopes=[self.m365_scope])
+                scopes=scopes)
             aad_token =  result["access_token"]
             teams_user_oid = result["id_token_claims"]["oid"] 
             print("AAD access token of a Teams User: " + aad_token)
