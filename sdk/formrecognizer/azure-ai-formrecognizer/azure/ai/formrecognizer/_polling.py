@@ -50,14 +50,14 @@ class DocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
     """Implements a protocol followed by returned poller objects."""
 
     @property
-    def details(
+    def details(  # pylint: disable=no-self-use, unused-argument
         self,
-    ) -> Mapping[str, Any]:  # pylint: disable=no-self-use, unused-argument
+    ) -> Mapping[str, Any]:
         ...
 
-    def polling_method(
+    def polling_method(  # pylint: disable=no-self-use
         self,
-    ) -> PollingMethod[PollingReturnType]:  # pylint: disable=no-self-use
+    ) -> PollingMethod[PollingReturnType]:
         ...
 
     def continuation_token(self) -> str:  # pylint: disable=no-self-use
@@ -66,27 +66,27 @@ class DocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
     def status(self) -> str:  # pylint: disable=no-self-use
         ...
 
-    def result(
+    def result(  # pylint: disable=no-self-use, unused-argument
         self, timeout: Optional[int] = None
-    ) -> PollingReturnType:  # pylint: disable=no-self-use, unused-argument
+    ) -> PollingReturnType:
         ...
 
-    def wait(
+    def wait(  # pylint: disable=no-self-use, unused-argument
         self, timeout: Optional[float] = None
-    ) -> None:  # pylint: disable=no-self-use, unused-argument
+    ) -> None:
         ...
 
     def done(self) -> bool:  # pylint: disable=no-self-use
         ...
 
-    def add_done_callback(
+    def add_done_callback(  # pylint: disable=no-self-use, unused-argument
         self, func: Callable
-    ) -> None:  # pylint: disable=no-self-use, unused-argument
+    ) -> None:
         ...
 
-    def remove_done_callback(
+    def remove_done_callback(  # pylint: disable=no-self-use, unused-argument
         self, func: Callable
-    ) -> None:  # pylint: disable=no-self-use, unused-argument
+    ) -> None:
         ...
 
 
