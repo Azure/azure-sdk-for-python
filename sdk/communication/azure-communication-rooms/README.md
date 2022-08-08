@@ -106,7 +106,7 @@ client = RoomsClient.from_connection_string(conn_str='<connection_str>' )
 try:
     response = client.add_participants(
         room_id="id of the room to be updated",
-        participants="new participants as a list"
+        participants=["new-participant-one", "new-participant-two"]
     )
 except HttpResponseError as e:
     print('service responds error: {}'.format(e))

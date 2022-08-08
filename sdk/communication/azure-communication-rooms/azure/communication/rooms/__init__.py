@@ -13,6 +13,7 @@ from ._models import (
     RoomParticipant,
     ParticipantsCollection
 )
+from ._version import VERSION
 
 __all__ = [
     'CommunicationRoom',
@@ -22,3 +23,5 @@ __all__ = [
     'RoleType',
     'ParticipantsCollection'
 ]
+
+__VERSION__ = VERSION

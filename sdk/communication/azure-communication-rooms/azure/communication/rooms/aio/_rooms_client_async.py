@@ -32,7 +32,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param AzureKeyCredential credential:
+    :param ~azure.core.credentials.AzureKeyCredential credential:
         The access key we use to authenticate against the service.
     """
     def __init__(
