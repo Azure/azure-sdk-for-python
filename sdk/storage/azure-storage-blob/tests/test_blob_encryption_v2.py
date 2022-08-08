@@ -657,6 +657,31 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
 
     @pytest.mark.live_test_only
     @BlobPreparer()
+    def test_get_blob_range_chunked(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_get_size=4 * MiB,
+            max_chunk_get_size=4 * MiB,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcde' * 3 * MiB  # 15 MiB
+        blob.upload_blob(content, overwrite=True)
+
+        # Act
+        offset, length = 1 * MiB, 5 * MiB
+        data = blob.download_blob(offset=offset, length=length).readall()
+
+        # Assert
+        self.assertEqual(content[offset:offset + length], data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
     def test_get_blob_chunked_size_equal_region_size_concurrent(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
