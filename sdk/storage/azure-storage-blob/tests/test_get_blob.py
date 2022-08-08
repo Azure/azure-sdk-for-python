@@ -1051,6 +1051,31 @@ class StorageGetBlobTest(StorageTestCase):
         assert data == content
 
     @BlobPreparer()
+    def test_get_blob_read_single(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        self.bsc._config.max_single_get_size = 10 * 1024
+        self.bsc._config.max_chunk_get_size = 10 * 1024
+
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        # Act
+        result = bytearray()
+        read_size = 512
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
+
+    @BlobPreparer()
     def test_get_blob_read_small_chunks(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         data = b'12345' * 205 * 5  # 5125 bytes

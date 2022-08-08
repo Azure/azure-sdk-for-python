@@ -583,8 +583,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # Start by reading from current_content if there is data left
         if self._offset < len(self._current_content):
             start = self._offset
-            end = min(remaining_size, len(self._current_content) - self._offset)
-            read = stream.write(self._current_content[start:end])
+            length = min(remaining_size, len(self._current_content) - self._offset)
+            read = stream.write(self._current_content[start:start + length])
 
             remaining_size -= read
             self._offset += read
