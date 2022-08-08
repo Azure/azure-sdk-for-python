@@ -202,7 +202,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-communication-networktraversal azure-core<2.0.0,>=1.23.0
 #override azure-communication-email azure-core<2.0.0,>=1.23.0
 #override azure-communication-email azure-mgmt-core<2.0.0,>=1.3.1
-#override azure-communication-rooms azure-core<2.0.0,>=1.23.0
+#override azure-communication-rooms azure-core<2.0.0,>=1.24.0
 #override azure-mgmt-communication azure-core<2.0.0,>=1.9.0
 #override azure-mgmt-communication azure-mgmt-core<2.0.0,>=1.3.1
 #override azure-ai-metricsadvisor azure-core<2.0.0,>=1.23.0
