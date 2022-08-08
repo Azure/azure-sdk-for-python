@@ -36,7 +36,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param AzureKeyCredential credential:
+    :param ~azure.core.credentials.AzureKeyCredential credential:
         The access key we use to authenticate against the service.
     """
     def __init__(
@@ -56,8 +56,8 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
 
         # TokenCredential not supported at the moment
         if hasattr(credential, "get_token"):
-            raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
-                    "or a token credential from azure.identity".format(type(credential)))
+            raise TypeError("Unsupported credential: {}. Use an AzureKeyCredential to use HMACCredentialsPolicy"
+            " for authentication".format(type(credential)))
 
         self._endpoint = endpoint
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
