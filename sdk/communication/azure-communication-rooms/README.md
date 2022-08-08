@@ -7,6 +7,11 @@ Read more about Azure Communication Services [here](https://docs.microsoft.com/a
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please
 refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
+## Key concepts
+
+The Azure Communication Rooms package is used to do following:
+- Create scheduled meetings
+- Create meetings with managed permissions for its participants
 ## Getting started
 
 ### Installating the package
@@ -109,6 +114,11 @@ except HttpResponseError as e:
 ```
 
 Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-rooms/samples) directory for detailed examples of how to use this library to create and manage rooms.
+
+## Troubleshooting
+
+Rooms operations will throw an exception if the request to the server fails. The Rooms client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md).
+
 
 ## Next steps
 ### More sample code
