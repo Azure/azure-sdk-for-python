@@ -18,7 +18,12 @@ from ._user_agent import USER_AGENT
 
 
 class FormRecognizerClientBase:
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, TokenCredential],
+        **kwargs: Any
+    ) -> None:
         try:
             endpoint = endpoint.rstrip("/")
         except AttributeError:

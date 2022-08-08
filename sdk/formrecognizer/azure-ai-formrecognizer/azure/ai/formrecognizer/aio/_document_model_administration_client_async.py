@@ -98,7 +98,11 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
     @distributed_trace_async
     async def begin_build_model(
-        self, build_mode: Union[str, ModelBuildMode], *, blob_container_url: str, **kwargs: Any
+        self,
+        build_mode: Union[str, ModelBuildMode],
+        *,
+        blob_container_url: str,
+        **kwargs: Any
     ) -> AsyncDocumentModelAdministrationLROPoller[DocumentModelDetails]:
         """Build a custom model.
 
@@ -464,7 +468,9 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         return DocumentModelDetails._from_generated(response)
 
     @distributed_trace
-    def list_operations(self, **kwargs: Any) -> AsyncItemPaged[DocumentModelOperationSummary]:
+    def list_operations(
+        self, **kwargs: Any
+    ) -> AsyncItemPaged[DocumentModelOperationSummary]:
         """List information for each document model operation.
 
         Lists all document model operations associated with the Form Recognizer resource.
@@ -488,13 +494,17 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         return self._client.get_operations(  # type: ignore
             cls=kwargs.pop(
                 "cls",
-                lambda objs: [DocumentModelOperationSummary._from_generated(x) for x in objs],
+                lambda objs: [
+                    DocumentModelOperationSummary._from_generated(x) for x in objs
+                ],
             ),
             **kwargs
         )
 
     @distributed_trace_async
-    async def get_operation(self, operation_id: str, **kwargs: Any) -> DocumentModelOperationDetails:
+    async def get_operation(
+        self, operation_id: str, **kwargs: Any
+    ) -> DocumentModelOperationDetails:
         """Get a document model operation by its ID.
 
         Get a document model operation associated with the Form Recognizer resource.

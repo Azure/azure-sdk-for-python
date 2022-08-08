@@ -20,10 +20,14 @@ class AsyncDocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
     """Implements a protocol followed by returned poller objects."""
 
     @property
-    def details(self) -> Mapping[str, Any]: # pylint: disable=no-self-use, unused-argument
+    def details(
+        self,
+    ) -> Mapping[str, Any]:  # pylint: disable=no-self-use, unused-argument
         ...
 
-    def polling_method(self) -> AsyncPollingMethod[PollingReturnType]:  # pylint: disable=no-self-use
+    def polling_method(
+        self,
+    ) -> AsyncPollingMethod[PollingReturnType]:  # pylint: disable=no-self-use
         ...
 
     def continuation_token(self) -> str:  # pylint: disable=no-self-use
@@ -32,7 +36,9 @@ class AsyncDocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
     def status(self) -> str:  # pylint: disable=no-self-use
         ...
 
-    async def result(self) -> PollingReturnType: # pylint: disable=no-self-use, unused-argument
+    async def result(
+        self,
+    ) -> PollingReturnType:  # pylint: disable=no-self-use, unused-argument
         ...
 
     async def wait(self) -> None:  # pylint: disable=no-self-use, unused-argument
@@ -42,7 +48,9 @@ class AsyncDocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
         ...
 
 
-class AsyncDocumentModelAdministrationClientLROPoller(AsyncLROPoller[PollingReturnType]):
+class AsyncDocumentModelAdministrationClientLROPoller(
+    AsyncLROPoller[PollingReturnType]
+):
     """Custom poller for model build operations. Call `result()` on the poller to return
     a :class:`~azure.ai.formrecognizer.DocumentModelInfo`.
 
@@ -65,11 +73,13 @@ class AsyncDocumentModelAdministrationClientLROPoller(AsyncLROPoller[PollingRetu
             created_on = datetime.datetime.strptime(created_on, "%Y-%m-%dT%H:%M:%SZ")
         last_updated_on = self._current_body.get("lastUpdatedDateTime", None)
         if last_updated_on:
-            last_updated_on = datetime.datetime.strptime(last_updated_on, "%Y-%m-%dT%H:%M:%SZ")
+            last_updated_on = datetime.datetime.strptime(
+                last_updated_on, "%Y-%m-%dT%H:%M:%SZ"
+            )
         return {
             "operation_id": parse_operation_id(
-                    self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore
-                ),
+                self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore
+            ),
             "operation_kind": self._current_body.get("kind", None),
             "percent_completed": self._current_body.get("percentCompleted", 0),
             "resource_location_url": self._current_body.get("resourceLocation", None),

@@ -57,7 +57,12 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
             :caption: Creating the DocumentAnalysisClient with a token credential.
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, TokenCredential],
+        **kwargs: Any
+    ) -> None:
         api_version = kwargs.pop(
             "api_version", DocumentAnalysisApiVersion.V2022_06_30_PREVIEW
         )

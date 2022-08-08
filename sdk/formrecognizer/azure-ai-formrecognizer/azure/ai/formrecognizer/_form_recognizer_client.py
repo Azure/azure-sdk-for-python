@@ -63,7 +63,12 @@ class FormRecognizerClient(FormRecognizerClientBase):
             :caption: Creating the FormRecognizerClient with a token credential.
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, TokenCredential],
+        **kwargs: Any
+    ) -> None:
         api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
         super().__init__(
             endpoint=endpoint,
@@ -84,7 +89,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
     @distributed_trace
     def begin_recognize_receipts(
         self, receipt: Union[bytes, IO[bytes]], **kwargs: Any
-    )  -> LROPoller[List[RecognizedForm]]:
+    ) -> LROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
@@ -164,7 +169,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_recognize_receipts_from_url(self, receipt_url: str, **kwargs: Any) -> LROPoller[List[RecognizedForm]]:
+    def begin_recognize_receipts_from_url(
+        self, receipt_url: str, **kwargs: Any
+    ) -> LROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given sales receipt.
         The input document must be the location (URL) of the receipt to be analyzed.
 
@@ -532,7 +539,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             raise e
 
     @distributed_trace
-    def begin_recognize_invoices_from_url(self, invoice_url: str, **kwargs: Any) -> LROPoller[List[RecognizedForm]]:
+    def begin_recognize_invoices_from_url(
+        self, invoice_url: str, **kwargs: Any
+    ) -> LROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given invoice.
         The input document must be the location (URL) of the invoice to be analyzed.
 
@@ -676,7 +685,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_recognize_content_from_url(self, form_url: str, **kwargs: Any) -> LROPoller[List[FormPage]]:
+    def begin_recognize_content_from_url(
+        self, form_url: str, **kwargs: Any
+    ) -> LROPoller[List[FormPage]]:
         """Extract text and layout information from a given document.
         The input document must be the location (URL) of the document to be analyzed.
 

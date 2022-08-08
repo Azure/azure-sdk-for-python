@@ -50,10 +50,14 @@ class DocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
     """Implements a protocol followed by returned poller objects."""
 
     @property
-    def details(self) -> Mapping[str, Any]: # pylint: disable=no-self-use, unused-argument
+    def details(
+        self,
+    ) -> Mapping[str, Any]:  # pylint: disable=no-self-use, unused-argument
         ...
 
-    def polling_method(self) -> PollingMethod[PollingReturnType]:  # pylint: disable=no-self-use
+    def polling_method(
+        self,
+    ) -> PollingMethod[PollingReturnType]:  # pylint: disable=no-self-use
         ...
 
     def continuation_token(self) -> str:  # pylint: disable=no-self-use
@@ -62,19 +66,27 @@ class DocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
     def status(self) -> str:  # pylint: disable=no-self-use
         ...
 
-    def result(self, timeout: Optional[int] = None) -> PollingReturnType: # pylint: disable=no-self-use, unused-argument
+    def result(
+        self, timeout: Optional[int] = None
+    ) -> PollingReturnType:  # pylint: disable=no-self-use, unused-argument
         ...
 
-    def wait(self, timeout: Optional[float] = None) -> None:  # pylint: disable=no-self-use, unused-argument
+    def wait(
+        self, timeout: Optional[float] = None
+    ) -> None:  # pylint: disable=no-self-use, unused-argument
         ...
 
     def done(self) -> bool:  # pylint: disable=no-self-use
         ...
 
-    def add_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
+    def add_done_callback(
+        self, func: Callable
+    ) -> None:  # pylint: disable=no-self-use, unused-argument
         ...
 
-    def remove_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
+    def remove_done_callback(
+        self, func: Callable
+    ) -> None:  # pylint: disable=no-self-use, unused-argument
         ...
 
 
@@ -101,11 +113,13 @@ class DocumentModelAdministrationClientLROPoller(LROPoller[PollingReturnType]):
             created_on = datetime.datetime.strptime(created_on, "%Y-%m-%dT%H:%M:%SZ")
         last_updated_on = self._current_body.get("lastUpdatedDateTime", None)
         if last_updated_on:
-            last_updated_on = datetime.datetime.strptime(last_updated_on, "%Y-%m-%dT%H:%M:%SZ")
+            last_updated_on = datetime.datetime.strptime(
+                last_updated_on, "%Y-%m-%dT%H:%M:%SZ"
+            )
         return {
             "operation_id": parse_operation_id(
-                    self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore
-                ),
+                self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore
+            ),
             "operation_kind": self._current_body.get("kind", None),
             "percent_completed": self._current_body.get("percentCompleted", 0),
             "resource_location_url": self._current_body.get("resourceLocation", None),
@@ -115,7 +129,10 @@ class DocumentModelAdministrationClientLROPoller(LROPoller[PollingReturnType]):
 
     @classmethod
     def from_continuation_token(
-        cls, polling_method: PollingMethod[PollingReturnType], continuation_token: str, **kwargs: Any
+        cls,
+        polling_method: PollingMethod[PollingReturnType],
+        continuation_token: str,
+        **kwargs: Any
     ) -> "DocumentModelAdministrationClientLROPoller":
         (
             client,
@@ -144,7 +161,9 @@ class FormTrainingPolling(LocationPolling):
         """Return the polling URL."""
         return self._location_url + "?includeKeys=true"
 
-    def get_status(self, pipeline_response: PipelineResponse) -> str:  # pylint: disable=no-self-use
+    def get_status(
+        self, pipeline_response: PipelineResponse
+    ) -> str:  # pylint: disable=no-self-use
         """Process the latest status update retrieved from a 'location' header.
 
         :param azure.core.pipeline.PipelineResponse pipeline_response: latest REST call response.
@@ -177,7 +196,9 @@ class FormTrainingPolling(LocationPolling):
 class AnalyzePolling(OperationResourcePolling):
     """Polling method overrides for custom analyze endpoints."""
 
-    def get_status(self, pipeline_response: PipelineResponse) -> str:  # pylint: disable=no-self-use
+    def get_status(
+        self, pipeline_response: PipelineResponse
+    ) -> str:  # pylint: disable=no-self-use
         """Process the latest status update retrieved from an "Operation-Location" header.
         Raise errors for issues with input document.
 
@@ -207,7 +228,9 @@ class AnalyzePolling(OperationResourcePolling):
 class CopyPolling(OperationResourcePolling):
     """Polling method overrides for copy endpoint."""
 
-    def get_status(self, pipeline_response: PipelineResponse) -> str:  # pylint: disable=no-self-use
+    def get_status(
+        self, pipeline_response: PipelineResponse
+    ) -> str:  # pylint: disable=no-self-use
         """Process the latest status update retrieved from an "Operation-Location" header.
         Raise errors for issues occurring during the copy model operation.
 

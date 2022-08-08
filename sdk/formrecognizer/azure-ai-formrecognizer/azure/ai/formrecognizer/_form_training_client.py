@@ -73,7 +73,12 @@ class FormTrainingClient(FormRecognizerClientBase):
             :caption: Creating the FormTrainingClient with a token credential.
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, TokenCredential],
+        **kwargs: Any
+    ) -> None:
         api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
         super().__init__(
             endpoint=endpoint,
@@ -357,10 +362,7 @@ class FormTrainingClient(FormRecognizerClientBase):
 
     @distributed_trace
     def begin_copy_model(
-        self,
-        model_id: str,
-        target: Dict[str, Union[str, int]],
-        **kwargs: Any
+        self, model_id: str, target: Dict[str, Union[str, int]], **kwargs: Any
     ) -> LROPoller[CustomFormModelInfo]:
         """Copy a custom model stored in this resource (the source) to the user specified
         target Form Recognizer resource. This should be called with the source Form Recognizer resource
@@ -438,7 +440,9 @@ class FormTrainingClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_create_composed_model(self, model_ids: List[str], **kwargs: Any) -> LROPoller[CustomFormModel]:
+    def begin_create_composed_model(
+        self, model_ids: List[str], **kwargs: Any
+    ) -> LROPoller[CustomFormModel]:
         """Creates a composed model from a collection of existing models that were trained with labels.
 
         A composed model allows multiple models to be called with a single model ID. When a document is
