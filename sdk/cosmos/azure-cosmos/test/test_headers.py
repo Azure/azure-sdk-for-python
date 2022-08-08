@@ -83,6 +83,9 @@ class HeadersTest(unittest.TestCase):
             pass
 
     def test_zero_max_integrated_cache_staleness(self):
+        cosmos_client_connection = self.container.client_connection
+        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
+            side_effect=self.side_effect_dedicated_gateway_max_age_zero)
         try:
             self.container.read_item(item="id-1", partition_key="pk-1",
                                      max_integrated_cache_staleness_in_ms=self.dedicated_gateway_max_age_zero)
