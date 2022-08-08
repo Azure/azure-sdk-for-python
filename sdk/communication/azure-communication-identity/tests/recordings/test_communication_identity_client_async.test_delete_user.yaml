@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.1 Python/3.7.12 (Darwin-21.5.0-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 01 Jun 2022 08:16:25 GMT
+      - Wed, 03 Aug 2022 09:15:35 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -24,12 +24,12 @@ interactions:
         2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Wed, 01 Jun 2022 08:16:25 GMT
-      ms-cv: /hVsw9MGv0OUT3fp2w22pQ.2.0
+      date: Wed, 03 Aug 2022 09:15:35 GMT
+      ms-cv: ZkXjZvHBrUqaZwSIrs3eWA.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 90ms
+      x-processing-time: 36ms
     status:
       code: 201
       message: Created
@@ -40,9 +40,9 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.1 Python/3.7.12 (Darwin-21.5.0-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 01 Jun 2022 08:16:26 GMT
+      - Wed, 03 Aug 2022 09:15:36 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -53,12 +53,12 @@ interactions:
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
         2021-10-31-preview, 2021-11-01, 2022-06-01
-      date: Wed, 01 Jun 2022 08:16:26 GMT
-      ms-cv: 3wMzYq3CPEKV65PefsLGoA.2.0
+      date: Wed, 03 Aug 2022 09:15:36 GMT
+      ms-cv: KFh9ctTUpk2L8RP/RBF/7w.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 339ms
+      x-processing-time: 536ms
     status:
       code: 204
       message: No Content
