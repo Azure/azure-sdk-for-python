@@ -311,7 +311,7 @@ class EventHubProducerClient(
     def _get_partitions(self):
         # type: () -> None
         if not self._partition_ids:
-            _LOGGER.info("Populating partition IDs so producers can be started.")
+            _LOGGER.debug("Populating partition IDs so producers can be started.")
             self._partition_ids = self.get_partition_ids()  # type: ignore
             for p_id in cast(List[str], self._partition_ids):
                 self._producers[p_id] = None
