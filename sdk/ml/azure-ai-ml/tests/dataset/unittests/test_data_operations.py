@@ -138,7 +138,7 @@ class TestDataOperations:
             params_override = [{"path": "./pattern-mltable"}]
             data = load_data(path=data_path, params_override=params_override)
             path = Path(data._base_path, data.path).resolve()
-            assert str(data.path).endswith("/pattern-mltable")
+            assert str(data.path).endswith("pattern-mltable")
             mock_data_operations.create_or_update(data)
             mock_thing.assert_called_once_with(
                 mock_workspace_scope,
