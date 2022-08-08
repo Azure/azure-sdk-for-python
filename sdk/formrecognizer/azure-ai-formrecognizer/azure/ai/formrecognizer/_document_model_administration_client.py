@@ -93,11 +93,11 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
     @distributed_trace
     def begin_build_model(
-        self, build_mode: Union[str, ModelBuildMode], blob_container_url: str, **kwargs: Any
+        self, build_mode: Union[str, ModelBuildMode], *, blob_container_url: str, **kwargs: Any
     ) -> DocumentModelAdministrationLROPoller[DocumentModelDetails]:
         """Build a custom model.
 
-        The request must include a `blob_container_url` parameter that is an
+        The request must include a `blob_container_url` keyword parameter that is an
         externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
         a container URI (without SAS) is accepted only when the container is public or has a managed identity
         configured, see more about configuring managed identities to work with Form Recognizer here:
@@ -107,7 +107,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         :param build_mode: The custom model build mode. Possible values include: "template", "neural".
             For more information about build modes, see: https://aka.ms/azsdk/formrecognizer/buildmode.
-        :param str blob_container_url: An Azure Storage blob container's SAS URI. A container URI (without SAS)
+        :keyword str blob_container_url: An Azure Storage blob container's SAS URI. A container URI (without SAS)
             can be used if the container is public or has a managed identity configured. For more information on
             setting up a training data set, see: https://aka.ms/azsdk/formrecognizer/buildtrainingset.
         :type build_mode: str or :class:`~azure.ai.formrecognizer.ModelBuildMode`
