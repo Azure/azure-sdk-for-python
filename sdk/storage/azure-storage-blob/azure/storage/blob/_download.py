@@ -588,6 +588,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
             remaining_size -= read
             self._offset += read
+            if self._progress_hook:
+                self._progress_hook(self._offset, self.size)
 
         if remaining_size > 0:
             start_range = self._get_downloader_start_with_offset()
@@ -612,6 +614,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 encryption_options=self._encryption_options,
                 encryption_data=self._encryption_data,
                 use_location=self._location_mode,
+                progress_hook=self._progress_hook,
                 **self._request_options
             )
 

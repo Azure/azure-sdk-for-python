@@ -1353,4 +1353,31 @@ class StorageGetBlobTest(StorageTestCase):
         assert second == data[offset + 3000:offset + length]
         assert read_size == len(second)
 
+    @BlobPreparer()
+    def test_get_blob_read_progress(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+
+        # Custom progress tracker for 4 read calls then readall
+        class CustomProgressTracker:
+            def __init__(self):
+                self.num_read = 0
+                self.totals = [5125, 5125, 5125, 5125, 5125, 5125, 5125, 5125, 5125]
+                self.currents = [500, 1000, 1024, 1500, 2000, 3024, 4048, 5072, 5125]
+
+            def assert_progress(self, current, total):
+                assert total == self.totals[self.num_read]
+                assert current == self.currents[self.num_read]
+                self.num_read += 1
+
+        progress = CustomProgressTracker()
+        stream = blob.download_blob(progress_hook=progress.assert_progress)
+
+        # Act / Assert
+        for _ in range(4):
+            stream.read(500)
+        stream.readall()
+
     # ------------------------------------------------------------------------------
