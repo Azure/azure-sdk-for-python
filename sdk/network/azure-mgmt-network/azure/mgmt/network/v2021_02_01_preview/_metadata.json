@@ -118,6 +118,8 @@
         "nsp_profiles": "NspProfilesOperations",
         "nsp_access_rules": "NspAccessRulesOperations",
         "nsp_associations": "NspAssociationsOperations",
-        "perimeter_associable_resource_types": "PerimeterAssociableResourceTypesOperations"
+        "nsp_associations_proxy": "NspAssociationsProxyOperations",
+        "perimeter_associable_resource_types": "PerimeterAssociableResourceTypesOperations",
+        "nsp_access_rules_reconcile": "NspAccessRulesReconcileOperations"
     }
 }
