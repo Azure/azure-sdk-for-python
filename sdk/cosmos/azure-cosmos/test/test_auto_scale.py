@@ -62,15 +62,14 @@ class AutoScaleTest(unittest.TestCase):
         self.created_database.delete_container(created_container)
 
         # Testing the incorrect passing of an input value of the max_throughput to verify negative behavior
-        try:
+
+        with pytest.raises(exceptions.CosmosHttpResponseError) as e:
             created_container = self.created_database.create_container(
                 id='container_with_wrong_auto_scale_settings',
                 partition_key=PartitionKey(path="/id"),
-                offer_throughput=ThroughputProperties(auto_scale_max_throughput=-200, auto_scale_increment_percent=0)
-
-            )
-        except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, http_constants.StatusCodes.BAD_REQUEST)
+                offer_throughput=ThroughputProperties(auto_scale_max_throughput=-200, auto_scale_increment_percent=0))
+        assert "Requested throughput -200 is less than required minimum throughput 1000" in str(e.value)
+        self.created_database.delete_container(created_container)
 
     def test_auto_scale_increment_percent(self):
         created_container = self.created_database.create_container(
@@ -87,31 +86,15 @@ class AutoScaleTest(unittest.TestCase):
 
         self.created_database.delete_container(created_container)
 
-        # Testing the incorrect passing of an input value of the max_increment_percentage to verify negative behavior
-        try:
-            created_container = self.created_database.create_container(
-                id='container_with_wrong_auto_scale_settings',
-                partition_key=PartitionKey(path="/id"),
-                offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=-25)
-
-            )
-            self.created_database.delete_container(created_container)
-        except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, http_constants.StatusCodes.BAD_REQUEST)
-
     def test_auto_scale_settings(self):
         # Testing for wrong attributes for the auto_scale_settings in the created container
-        try:
+        with pytest.raises(AssertionError) as e:
             created_container = self.created_database.create_container(
                 id='container_with_wrong_auto_scale_settings',
                 partition_key=PartitionKey(path="/id"),
-                offer_throughput="wrong setting"
-
-            )
-        except exceptions.CosmosHttpResponseError:
-            print("CosmosHttpResponseError")
-        except AttributeError:
-            print("AttributeError")
+                offer_throughput="wrong setting")
+            assert "Wrong attribute" in str(e.value)
+            self.created_database.delete_container(created_container)
 
     def test_create_container_if_not_exist(self):
         # Testing auto_scale_settings for the create_container_if_not_exists method
