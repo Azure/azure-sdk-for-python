@@ -1,4 +1,3 @@
-import tempfile
 from pathlib import Path
 
 import yaml
@@ -10,7 +9,7 @@ from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml.automl import classification
-from azure.ai.ml.constants import AssetTypes, TimeZone
+from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
@@ -366,7 +365,11 @@ class TestPipelineJobEntity:
 
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_automl_node_in_pipeline_image_multiclass_classification(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture, run_type
+        self,
+        mock_machinelearning_client: MLClient,
+        mocker: MockFixture,
+        run_type: str,
+        tmp_path: Path,
     ):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_multiclass_classification.yml"
 
@@ -376,71 +379,75 @@ class TestPipelineJobEntity:
             del test_config["jobs"]["hello_automl_image_multiclass_classification"]["search_space"]
             del test_config["jobs"]["hello_automl_image_multiclass_classification"]["sweep"]
 
-        with tempfile.NamedTemporaryFile() as test_yaml_file:
-            dump_yaml_to_file(test_yaml_file.name, test_config)
-            job = load_job(path=test_yaml_file.name)
-            assert isinstance(job, PipelineJob)
-            node = next(iter(job.jobs.values()))
-            assert isinstance(node, ImageClassificationJob)
-            mocker.patch(
-                "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
-                return_value="xxx",
-            )
-            mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
-            mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+        test_yaml_file = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_file, test_config)
+        job = load_job(path=test_yaml_file)
+        assert isinstance(job, PipelineJob)
+        node = next(iter(job.jobs.values()))
+        assert isinstance(node, ImageClassificationJob)
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
+        )
+        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
-            rest_job_dict = job._to_rest_object().as_dict()
-            omit_fields = ["name", "display_name", "experiment_name", "properties"]
-            actual_dict = pydash.omit(
-                rest_job_dict["properties"]["jobs"]["hello_automl_image_multiclass_classification"], omit_fields
-            )
+        rest_job_dict = job._to_rest_object().as_dict()
+        omit_fields = ["name", "display_name", "experiment_name", "properties"]
+        actual_dict = pydash.omit(
+            rest_job_dict["properties"]["jobs"]["hello_automl_image_multiclass_classification"], omit_fields
+        )
 
-            expected_dict = {
-                "limits": {"timeout_minutes": 60},
-                "log_verbosity": "info",
-                "outputs": {},
-                "primary_metric": "accuracy",
-                "tags": {},
-                "target_column_name": "label",
-                "task": "image_classification",
-                "training_data": "${{parent.inputs.image_multiclass_classification_train_data}}",
-                "type": "automl",
-                "validation_data": "${{parent.inputs.image_multiclass_classification_validate_data}}",
-                "sweep": {
-                    "sampling_algorithm": "random",
-                    "limits": {"max_concurrent_trials": 4, "max_trials": 20},
-                    "early_termination": {
-                        "evaluation_interval": 10,
-                        "delay_evaluation": 0,
-                        "type": "bandit",
-                        "slack_factor": 0.2,
-                        "slack_amount": 0.0,
-                    },
+        expected_dict = {
+            "limits": {"timeout_minutes": 60},
+            "log_verbosity": "info",
+            "outputs": {},
+            "primary_metric": "accuracy",
+            "tags": {},
+            "target_column_name": "label",
+            "task": "image_classification",
+            "training_data": "${{parent.inputs.image_multiclass_classification_train_data}}",
+            "type": "automl",
+            "validation_data": "${{parent.inputs.image_multiclass_classification_validate_data}}",
+            "sweep": {
+                "sampling_algorithm": "random",
+                "limits": {"max_concurrent_trials": 4, "max_trials": 20},
+                "early_termination": {
+                    "evaluation_interval": 10,
+                    "delay_evaluation": 0,
+                    "type": "bandit",
+                    "slack_factor": 0.2,
+                    "slack_amount": 0.0,
                 },
-                "image_model": {
-                    "checkpoint_frequency": 1,
-                    "early_stopping": True,
-                    "early_stopping_delay": 2,
-                    "early_stopping_patience": 2,
-                    "evaluation_frequency": 1,
-                },
-                "search_space": [
-                    {
-                        "learning_rate": "uniform(0.005,0.05)",
-                        "model_name": "choice('vitb16r224')",
-                        "optimizer": "choice('sgd','adam','adamw')",
-                        "warmup_cosine_lr_warmup_epochs": "choice(0,3)",
-                    }
-                ],
-            }
-            if (run_type == "single") or (run_type == "automode"):
-                del expected_dict["search_space"]
-                del expected_dict["sweep"]
-            assert actual_dict == expected_dict
+            },
+            "image_model": {
+                "checkpoint_frequency": 1,
+                "early_stopping": True,
+                "early_stopping_delay": 2,
+                "early_stopping_patience": 2,
+                "evaluation_frequency": 1,
+            },
+            "search_space": [
+                {
+                    "learning_rate": "uniform(0.005,0.05)",
+                    "model_name": "choice('vitb16r224')",
+                    "optimizer": "choice('sgd','adam','adamw')",
+                    "warmup_cosine_lr_warmup_epochs": "choice(0,3)",
+                }
+            ],
+        }
+        if (run_type == "single") or (run_type == "automode"):
+            del expected_dict["search_space"]
+            del expected_dict["sweep"]
+        assert actual_dict == expected_dict
 
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_automl_node_in_pipeline_image_multilabel_classification(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture, run_type
+        self,
+        mock_machinelearning_client: MLClient,
+        mocker: MockFixture,
+        run_type: str,
+        tmp_path: Path,
     ):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_multilabel_classification.yml"
 
@@ -450,71 +457,71 @@ class TestPipelineJobEntity:
             del test_config["jobs"]["hello_automl_image_multilabel_classification"]["search_space"]
             del test_config["jobs"]["hello_automl_image_multilabel_classification"]["sweep"]
 
-        with tempfile.NamedTemporaryFile() as test_yaml_file:
-            dump_yaml_to_file(test_yaml_file.name, test_config)
-            job = load_job(path=test_yaml_file.name)
-            assert isinstance(job, PipelineJob)
-            node = next(iter(job.jobs.values()))
-            assert isinstance(node, ImageClassificationMultilabelJob)
-            mocker.patch(
-                "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
-                return_value="xxx",
-            )
-            mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
-            mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+        test_yaml_file = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_file, test_config)
+        job = load_job(path=test_yaml_file)
+        assert isinstance(job, PipelineJob)
+        node = next(iter(job.jobs.values()))
+        assert isinstance(node, ImageClassificationMultilabelJob)
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
+        )
+        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
-            rest_job_dict = job._to_rest_object().as_dict()
-            omit_fields = ["name", "display_name", "experiment_name", "properties"]
-            actual_dict = pydash.omit(
-                rest_job_dict["properties"]["jobs"]["hello_automl_image_multilabel_classification"], omit_fields
-            )
+        rest_job_dict = job._to_rest_object().as_dict()
+        omit_fields = ["name", "display_name", "experiment_name", "properties"]
+        actual_dict = pydash.omit(
+            rest_job_dict["properties"]["jobs"]["hello_automl_image_multilabel_classification"], omit_fields
+        )
 
-            expected_dict = {
-                "limits": {"timeout_minutes": 60},
-                "log_verbosity": "info",
-                "outputs": {},
-                "primary_metric": "iou",
-                "tags": {},
-                "target_column_name": "label",
-                "task": "image_classification_multilabel",
-                "training_data": "${{parent.inputs.image_multilabel_classification_train_data}}",
-                "type": "automl",
-                "validation_data": "${{parent.inputs.image_multilabel_classification_validate_data}}",
-                "sweep": {
-                    "sampling_algorithm": "random",
-                    "limits": {"max_concurrent_trials": 4, "max_trials": 20},
-                    "early_termination": {
-                        "evaluation_interval": 10,
-                        "delay_evaluation": 0,
-                        "type": "bandit",
-                        "slack_factor": 0.2,
-                        "slack_amount": 0.0,
-                    },
+        expected_dict = {
+            "limits": {"timeout_minutes": 60},
+            "log_verbosity": "info",
+            "outputs": {},
+            "primary_metric": "iou",
+            "tags": {},
+            "target_column_name": "label",
+            "task": "image_classification_multilabel",
+            "training_data": "${{parent.inputs.image_multilabel_classification_train_data}}",
+            "type": "automl",
+            "validation_data": "${{parent.inputs.image_multilabel_classification_validate_data}}",
+            "sweep": {
+                "sampling_algorithm": "random",
+                "limits": {"max_concurrent_trials": 4, "max_trials": 20},
+                "early_termination": {
+                    "evaluation_interval": 10,
+                    "delay_evaluation": 0,
+                    "type": "bandit",
+                    "slack_factor": 0.2,
+                    "slack_amount": 0.0,
                 },
-                "image_model": {
-                    "checkpoint_frequency": 1,
-                    "early_stopping": True,
-                    "early_stopping_delay": 2,
-                    "early_stopping_patience": 2,
-                    "evaluation_frequency": 1,
-                },
-                "search_space": [
-                    {
-                        "learning_rate": "uniform(0.005,0.05)",
-                        "model_name": "choice('vitb16r224')",
-                        "optimizer": "choice('sgd','adam','adamw')",
-                        "warmup_cosine_lr_warmup_epochs": "choice(0,3)",
-                    }
-                ],
-            }
-            if (run_type == "single") or (run_type == "automode"):
-                del expected_dict["search_space"]
-                del expected_dict["sweep"]
-            assert actual_dict == expected_dict
+            },
+            "image_model": {
+                "checkpoint_frequency": 1,
+                "early_stopping": True,
+                "early_stopping_delay": 2,
+                "early_stopping_patience": 2,
+                "evaluation_frequency": 1,
+            },
+            "search_space": [
+                {
+                    "learning_rate": "uniform(0.005,0.05)",
+                    "model_name": "choice('vitb16r224')",
+                    "optimizer": "choice('sgd','adam','adamw')",
+                    "warmup_cosine_lr_warmup_epochs": "choice(0,3)",
+                }
+            ],
+        }
+        if (run_type == "single") or (run_type == "automode"):
+            del expected_dict["search_space"]
+            del expected_dict["sweep"]
+        assert actual_dict == expected_dict
 
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_automl_node_in_pipeline_image_object_detection(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture, run_type
+        self, mock_machinelearning_client: MLClient, mocker: MockFixture, run_type: str, tmp_path: Path
     ):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_object_detection.yml"
 
@@ -524,72 +531,76 @@ class TestPipelineJobEntity:
             del test_config["jobs"]["hello_automl_image_object_detection"]["search_space"]
             del test_config["jobs"]["hello_automl_image_object_detection"]["sweep"]
 
-        with tempfile.NamedTemporaryFile() as test_yaml_file:
-            dump_yaml_to_file(test_yaml_file.name, test_config)
-            job = load_job(path=test_yaml_file.name)
-            assert isinstance(job, PipelineJob)
-            node = next(iter(job.jobs.values()))
-            assert isinstance(node, ImageObjectDetectionJob)
-            mocker.patch(
-                "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
-                return_value="xxx",
-            )
-            mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
-            mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+        test_yaml_file = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_file, test_config)
+        job = load_job(path=test_yaml_file)
+        assert isinstance(job, PipelineJob)
+        node = next(iter(job.jobs.values()))
+        assert isinstance(node, ImageObjectDetectionJob)
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
+        )
+        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
-            rest_job_dict = job._to_rest_object().as_dict()
-            omit_fields = ["name", "display_name", "experiment_name", "properties"]
-            actual_dict = pydash.omit(
-                rest_job_dict["properties"]["jobs"]["hello_automl_image_object_detection"], omit_fields
-            )
+        rest_job_dict = job._to_rest_object().as_dict()
+        omit_fields = ["name", "display_name", "experiment_name", "properties"]
+        actual_dict = pydash.omit(
+            rest_job_dict["properties"]["jobs"]["hello_automl_image_object_detection"], omit_fields
+        )
 
-            expected_dict = {
-                "limits": {"timeout_minutes": 60},
-                "log_verbosity": "info",
-                "outputs": {},
-                "primary_metric": "mean_average_precision",
-                "tags": {},
-                "target_column_name": "label",
-                "task": "image_object_detection",
-                "training_data": "${{parent.inputs.image_object_detection_train_data}}",
-                "type": "automl",
-                "validation_data": "${{parent.inputs.image_object_detection_validate_data}}",
-                "sweep": {
-                    "sampling_algorithm": "random",
-                    "limits": {"max_concurrent_trials": 4, "max_trials": 20},
-                    "early_termination": {
-                        "evaluation_interval": 10,
-                        "delay_evaluation": 0,
-                        "type": "bandit",
-                        "slack_factor": 0.2,
-                        "slack_amount": 0.0,
-                    },
+        expected_dict = {
+            "limits": {"timeout_minutes": 60},
+            "log_verbosity": "info",
+            "outputs": {},
+            "primary_metric": "mean_average_precision",
+            "tags": {},
+            "target_column_name": "label",
+            "task": "image_object_detection",
+            "training_data": "${{parent.inputs.image_object_detection_train_data}}",
+            "type": "automl",
+            "validation_data": "${{parent.inputs.image_object_detection_validate_data}}",
+            "sweep": {
+                "sampling_algorithm": "random",
+                "limits": {"max_concurrent_trials": 4, "max_trials": 20},
+                "early_termination": {
+                    "evaluation_interval": 10,
+                    "delay_evaluation": 0,
+                    "type": "bandit",
+                    "slack_factor": 0.2,
+                    "slack_amount": 0.0,
                 },
-                "image_model": {
-                    "checkpoint_frequency": 1,
-                    "early_stopping": True,
-                    "early_stopping_delay": 2,
-                    "early_stopping_patience": 2,
-                    "evaluation_frequency": 1,
-                },
-                "search_space": [
-                    {
-                        "learning_rate": "uniform(0.005,0.05)",
-                        "model_name": "choice('fasterrcnn_resnet50_fpn')",
-                        "optimizer": "choice('sgd','adam','adamw')",
-                        "warmup_cosine_lr_warmup_epochs": "choice(0,3)",
-                        "min_size": "choice(600,800)",
-                    }
-                ],
-            }
-            if (run_type == "single") or (run_type == "automode"):
-                del expected_dict["search_space"]
-                del expected_dict["sweep"]
-            assert actual_dict == expected_dict
+            },
+            "image_model": {
+                "checkpoint_frequency": 1,
+                "early_stopping": True,
+                "early_stopping_delay": 2,
+                "early_stopping_patience": 2,
+                "evaluation_frequency": 1,
+            },
+            "search_space": [
+                {
+                    "learning_rate": "uniform(0.005,0.05)",
+                    "model_name": "choice('fasterrcnn_resnet50_fpn')",
+                    "optimizer": "choice('sgd','adam','adamw')",
+                    "warmup_cosine_lr_warmup_epochs": "choice(0,3)",
+                    "min_size": "choice(600,800)",
+                }
+            ],
+        }
+        if (run_type == "single") or (run_type == "automode"):
+            del expected_dict["search_space"]
+            del expected_dict["sweep"]
+        assert actual_dict == expected_dict
 
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_automl_node_in_pipeline_image_instance_segmentation(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture, run_type
+        self,
+        mock_machinelearning_client: MLClient,
+        mocker: MockFixture,
+        run_type: str,
+        tmp_path: Path,
     ):
         test_path = (
             "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_instance_segmentation.yml"
@@ -601,68 +612,68 @@ class TestPipelineJobEntity:
             del test_config["jobs"]["hello_automl_image_instance_segmentation"]["search_space"]
             del test_config["jobs"]["hello_automl_image_instance_segmentation"]["sweep"]
 
-        with tempfile.NamedTemporaryFile() as test_yaml_file:
-            dump_yaml_to_file(test_yaml_file.name, test_config)
-            job = load_job(path=test_yaml_file.name)
-            assert isinstance(job, PipelineJob)
-            node = next(iter(job.jobs.values()))
-            assert isinstance(node, ImageInstanceSegmentationJob)
-            mocker.patch(
-                "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
-                return_value="xxx",
-            )
-            mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
-            mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+        test_yaml_file = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_file, test_config)
+        job = load_job(path=test_yaml_file)
+        assert isinstance(job, PipelineJob)
+        node = next(iter(job.jobs.values()))
+        assert isinstance(node, ImageInstanceSegmentationJob)
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
+        )
+        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
-            rest_job_dict = job._to_rest_object().as_dict()
-            omit_fields = ["name", "display_name", "experiment_name", "properties"]
-            actual_dict = pydash.omit(
-                rest_job_dict["properties"]["jobs"]["hello_automl_image_instance_segmentation"], omit_fields
-            )
+        rest_job_dict = job._to_rest_object().as_dict()
+        omit_fields = ["name", "display_name", "experiment_name", "properties"]
+        actual_dict = pydash.omit(
+            rest_job_dict["properties"]["jobs"]["hello_automl_image_instance_segmentation"], omit_fields
+        )
 
-            expected_dict = {
-                "limits": {"timeout_minutes": 60},
-                "log_verbosity": "info",
-                "outputs": {},
-                "primary_metric": "mean_average_precision",
-                "tags": {},
-                "target_column_name": "label",
-                "task": "image_instance_segmentation",
-                "training_data": "${{parent.inputs.image_instance_segmentation_train_data}}",
-                "type": "automl",
-                "validation_data": "${{parent.inputs.image_instance_segmentation_validate_data}}",
-                "sweep": {
-                    "sampling_algorithm": "random",
-                    "limits": {"max_concurrent_trials": 4, "max_trials": 20},
-                    "early_termination": {
-                        "evaluation_interval": 10,
-                        "delay_evaluation": 0,
-                        "type": "bandit",
-                        "slack_factor": 0.2,
-                        "slack_amount": 0.0,
-                    },
+        expected_dict = {
+            "limits": {"timeout_minutes": 60},
+            "log_verbosity": "info",
+            "outputs": {},
+            "primary_metric": "mean_average_precision",
+            "tags": {},
+            "target_column_name": "label",
+            "task": "image_instance_segmentation",
+            "training_data": "${{parent.inputs.image_instance_segmentation_train_data}}",
+            "type": "automl",
+            "validation_data": "${{parent.inputs.image_instance_segmentation_validate_data}}",
+            "sweep": {
+                "sampling_algorithm": "random",
+                "limits": {"max_concurrent_trials": 4, "max_trials": 20},
+                "early_termination": {
+                    "evaluation_interval": 10,
+                    "delay_evaluation": 0,
+                    "type": "bandit",
+                    "slack_factor": 0.2,
+                    "slack_amount": 0.0,
                 },
-                "image_model": {
-                    "checkpoint_frequency": 1,
-                    "early_stopping": True,
-                    "early_stopping_delay": 2,
-                    "early_stopping_patience": 2,
-                    "evaluation_frequency": 1,
-                },
-                "search_space": [
-                    {
-                        "learning_rate": "uniform(0.005,0.05)",
-                        "model_name": "choice('maskrcnn_resnet50_fpn')",
-                        "optimizer": "choice('sgd','adam','adamw')",
-                        "warmup_cosine_lr_warmup_epochs": "choice(0,3)",
-                        "min_size": "choice(600,800)",
-                    }
-                ],
-            }
-            if (run_type == "single") or (run_type == "automode"):
-                del expected_dict["search_space"]
-                del expected_dict["sweep"]
-            assert actual_dict == expected_dict
+            },
+            "image_model": {
+                "checkpoint_frequency": 1,
+                "early_stopping": True,
+                "early_stopping_delay": 2,
+                "early_stopping_patience": 2,
+                "evaluation_frequency": 1,
+            },
+            "search_space": [
+                {
+                    "learning_rate": "uniform(0.005,0.05)",
+                    "model_name": "choice('maskrcnn_resnet50_fpn')",
+                    "optimizer": "choice('sgd','adam','adamw')",
+                    "warmup_cosine_lr_warmup_epochs": "choice(0,3)",
+                    "min_size": "choice(600,800)",
+                }
+            ],
+        }
+        if (run_type == "single") or (run_type == "automode"):
+            del expected_dict["search_space"]
+            del expected_dict["sweep"]
+        assert actual_dict == expected_dict
 
     def test_infer_pipeline_output_type_as_node_type(
         self,
