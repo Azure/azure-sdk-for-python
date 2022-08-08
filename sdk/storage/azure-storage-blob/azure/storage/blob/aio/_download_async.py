@@ -455,8 +455,16 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
     async def read(self, size: Optional[int] = -1) -> T:
         """
-        Read up to size bytes from the object and return them. If size
-        is specified as -1, all bytes will be read.
+        Read up to size bytes from the stream and return them. If size
+        is unspecified or is -1, all bytes will be read.
+
+        :param size:
+            The number of bytes to download from the stream. Leave unsepcified
+            or set to -1 to download all bytes.
+        :returns: 
+            The requsted data as bytes or a string if encoding was speicified. If
+            the return value is empty, there is no more data to read.
+        :rtype: T
         """
         if size == -1:
             return await self.readall()
@@ -544,9 +552,11 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
     async def readall(self):
         # type: () -> T
-        """Download the contents of this blob.
-
+        """
+        Read the entire contents of this blob.
         This operation is blocking until all data is downloaded.
+
+        :returns: The requsted data as bytes or a string if encoding was speicified.
         :rtype: T
         """
         stream = BytesIO()
