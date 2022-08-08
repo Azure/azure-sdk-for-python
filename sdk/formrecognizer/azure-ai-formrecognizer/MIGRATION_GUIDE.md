@@ -637,7 +637,7 @@ Use `begin_build_model()` to build a custom model. Please note that this method 
 ```python
 document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
 poller = document_model_admin_client.begin_build_model(
-    "template", container_sas_url, model_id="my-model-id", description="my model description"
+    "template", blob_container_url=container_sas_url, model_id="my-model-id", description="my model description"
 )
 model = poller.result()
 

@@ -90,7 +90,7 @@ async def main():
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         async with document_model_admin_client:
-            model = await (await document_model_admin_client.begin_build_model(ModelBuildMode.TEMPLATE, os.getenv("CONTAINER_SAS_URL"))).result()
+            model = await (await document_model_admin_client.begin_build_model(ModelBuildMode.TEMPLATE, blob_container_url=os.getenv("CONTAINER_SAS_URL"))).result()
             model_id = model.model_id
 
     await sample_copy_model_to_async(model_id)
