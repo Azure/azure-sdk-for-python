@@ -179,7 +179,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             my_file = fd.read()
 
-        build_poller = client.begin_build_model(blob_container_url=formrecognizer_storage_container_sas_url)
+        build_poller = client.begin_build_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
         model = build_poller.result()
 
         poller = da_client.begin_analyze_document(model.model_id, my_file, pages="1")
