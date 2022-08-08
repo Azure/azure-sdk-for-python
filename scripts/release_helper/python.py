@@ -146,7 +146,7 @@ class IssueProcessPython(IssueProcess):
             self.add_label(AUTO_CLOSE_LABEL)
             self.is_open = False
             self.log(f"{self.issue_package.issue.number} has been closed!")
-            record_release(self.package_name, self.issue_package.issue, _FILE_OUT)
+            record_release(self.package_name, self.issue_package.issue, _FILE_OUT, last_version)
 
     def run(self) -> None:
         self.get_package_and_output()

@@ -1054,7 +1054,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             ),
             parent=SpanContext(
                 trace_id=36873507687745823477771305566750195432,
-                span_id=12030755672171557337,
+                span_id=12030755672171557338,
                 is_remote=False,
             ),
             kind=SpanKind.CLIENT,
@@ -1108,7 +1108,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             ),
             parent=SpanContext(
                 trace_id=36873507687745823477771305566750195432,
-                span_id=12030755672171557337,
+                span_id=12030755672171557338,
                 is_remote=False,
             ),
             kind=SpanKind.CLIENT,

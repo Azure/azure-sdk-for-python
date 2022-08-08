@@ -37,13 +37,11 @@ class DictMixin:
         self.__dict__[key] = None
 
     def __eq__(self, other):
-        """Compare objects by comparing all attributes."""
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
         return False
 
     def __ne__(self, other):
-        """Compare objects by comparing all attributes."""
         return not self.__eq__(other)
 
     def __contains__(self, key):
