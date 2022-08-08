@@ -14,7 +14,7 @@ from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationErr
 from azure.ai.formrecognizer import (
     DocumentModelAdministrationClient,
     DocumentAnalysisApiVersion,
-    ModelOperationDetails
+    DocumentModelOperationDetails
 )
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
 from preparers import FormRecognizerPreparer
@@ -161,7 +161,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                 op = await client.get_operation(successful_op.operation_id)
                 # test to/from dict
                 op_dict = op.to_dict()
-                op = ModelOperationDetails.from_dict(op_dict)
+                op = DocumentModelOperationDetails.from_dict(op_dict)
                 assert op.error is None
                 model = op.result
                 assert model.model_id
@@ -181,7 +181,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                 op = await client.get_operation(failed_op.operation_id)
                 # test to/from dict
                 op_dict = op.to_dict()
-                op = ModelOperationDetails.from_dict(op_dict)
+                op = DocumentModelOperationDetails.from_dict(op_dict)
 
                 error = op.error
                 assert op.result is None
