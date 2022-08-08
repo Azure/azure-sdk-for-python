@@ -27,7 +27,7 @@ def sample_export_project():
     client = TextAuthoringClient(endpoint, AzureKeyCredential(key)).text_analysis_authoring
 
     project_name = "Project_Name"
-    print(client.begin_export(project_name, string_index_type="utf16CodeUnit").result())
+    client.begin_export(project_name, string_index_type="Utf16CodeUnit")
 
     
 
