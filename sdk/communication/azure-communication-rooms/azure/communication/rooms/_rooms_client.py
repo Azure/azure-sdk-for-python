@@ -164,7 +164,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         participants: Optional[List[RoomParticipant]] = None,
         **kwargs
     ) -> CommunicationRoom:
-        """Update a valid room's attributes. For any agruement that is passed
+        """Update a valid room's attributes. For any argument that is passed
         in, the corresponding room property will be replaced with the new value.
 
         :param room_id: Required. Id of room to be updated
