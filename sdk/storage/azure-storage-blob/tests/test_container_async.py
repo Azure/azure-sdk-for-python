@@ -400,20 +400,15 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
     async def test_list_containers_with_public_access(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        variables = kwargs.pop('variables')
-        if self.is_live:
-            expiry_time = datetime.utcnow() + timedelta(hours=1)
-            start_time = datetime.utcnow()
-            variables = {"expiry_time": expiry_time.isoformat(), "start_time": start_time.isoformat()}
+        variables = kwargs.pop('variables', {})
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = await self._create_container(bsc)
-        expires = datetime.strptime(variables["expiry_time"], "%Y-%m-%dT%H:%M:%S.%f")
-        starts = datetime.strptime(variables["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=expires,
-                                     start=starts)
+                                     expiry=expiry_time,
+                                     start=start_time)
         signed_identifier = {'testid': access_policy}
         resp = await container.set_container_access_policy(signed_identifier, public_access=PublicAccess.Blob)
 
@@ -688,22 +683,17 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
     async def test_set_container_acl(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        variables = kwargs.pop('variables')
-        if self.is_live:
-            expiry_time = datetime.utcnow() + timedelta(hours=1)
-            start_time = datetime.utcnow()
-            variables = {"expiry_time": expiry_time.isoformat(), "start_time": start_time.isoformat()}
+        variables = kwargs.pop('variables', {})
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = await self._create_container(bsc)
 
         # Act
-        expires = datetime.strptime(variables["expiry_time"], "%Y-%m-%dT%H:%M:%S.%f")
-        starts = datetime.strptime(variables["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=expires,
-                                     start=starts)
+                                     expiry=expiry_time,
+                                     start=start_time)
         signed_identifier = {'testid': access_policy}
         response = await container.set_container_access_policy(signed_identifier)
 
@@ -723,22 +713,17 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
     async def test_set_container_acl_with_one_signed_identifier(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
         variables = kwargs.pop('variables')
-        if self.is_live:
-            expiry_time = datetime.utcnow() + timedelta(hours=1)
-            start_time = datetime.utcnow()
-            variables = {"expiry_time": expiry_time.isoformat(), "start_time": start_time.isoformat()}
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = await self._create_container(bsc)
 
         # Act
-        expires = datetime.strptime(variables["expiry_time"], "%Y-%m-%dT%H:%M:%S.%f")
-        starts = datetime.strptime(variables["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=expires,
-                                     start=starts)
+                                     expiry=expiry_time,
+                                     start=start_time)
         signed_identifier = {'testid': access_policy}
 
         response = await container.set_container_access_policy(signed_identifier)
@@ -754,23 +739,18 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
     async def test_set_container_acl_with_lease_id(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
         variables = kwargs.pop('variables')
-        if self.is_live:
-            expiry_time = datetime.utcnow() + timedelta(hours=1)
-            start_time = datetime.utcnow()
-            variables = {"expiry_time": expiry_time.isoformat(), "start_time": start_time.isoformat()}
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = await self._create_container(bsc)
         lease_id = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
-        expires = datetime.strptime(variables["expiry_time"], "%Y-%m-%dT%H:%M:%S.%f")
-        starts = datetime.strptime(variables["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=expires,
-                                     start=starts)
+                                     expiry=expiry_time,
+                                     start=start_time)
         signed_identifier = {'testid': access_policy}
         await container.set_container_access_policy(signed_identifier, lease=lease_id)
 
@@ -825,22 +805,17 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
     async def test_set_container_acl_with_signed_identifiers(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
         variables = kwargs.pop('variables')
-        if self.is_live:
-            expiry_time = datetime.utcnow() + timedelta(hours=1)
-            start_time = datetime.utcnow() - timedelta(minutes=1)
-            variables = {"expiry_time": expiry_time.isoformat(), "start_time": start_time.isoformat()}
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = await self._create_container(bsc)
 
         # Act
-        expires = datetime.strptime(variables["expiry_time"], "%Y-%m-%dT%H:%M:%S.%f")
-        starts = datetime.strptime(variables["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow() - timedelta(minutes=1))
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=expires,
-                                     start=starts)
+                                     expiry=expiry_time,
+                                     start=start_time)
         identifiers = {'testid': access_policy}
         await container.set_container_access_policy(identifiers)
 
@@ -878,21 +853,16 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
     async def test_set_container_acl_with_three_identifiers(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
         variables = kwargs.pop('variables')
-        if self.is_live:
-            expiry_time = datetime.utcnow() + timedelta(hours=1)
-            start_time = datetime.utcnow() - timedelta(minutes=1)
-            variables = {"expiry_time": expiry_time.isoformat(), "start_time": start_time.isoformat()}
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = await self._create_container(bsc)
 
-        expires = datetime.strptime(variables["expiry_time"], "%Y-%m-%dT%H:%M:%S.%f")
-        starts = datetime.strptime(variables["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow() - timedelta(minutes=1))
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=expires,
-                                     start=starts)
+                                     expiry=expiry_time,
+                                     start=start_time)
         identifiers = {i: access_policy for i in range(2)}
 
         # Act
@@ -925,10 +895,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Assert
         with pytest.raises(ValueError) as e:
             await container_name.set_container_access_policy(identifiers)
-        self.assertEqual(
-            str(e.exception),
-            'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
-        )
+        assert str(e.value.args[0]) == 'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1224,8 +1191,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         self.assertNamedItemInContainer(blobs, 'blob1')
         self.assertNamedItemInContainer(blobs, 'blob2')
         assert blobs[0].size == 11
-        self.assertEqual(blobs[1].content_settings.content_type,
-                         'application/octet-stream')
+        assert blobs[1].content_settings.content_type == 'application/octet-stream'
         assert blobs[0].creation_time is not None
 
     @pytest.mark.playback_test_only
@@ -1236,26 +1202,24 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
-        container = await self._create_container(bsc)
+        container = bsc.get_container_client('orp-source')
         data = b'hello world'
-        b_c = container.get_blob_client('blob1')
+        b_c = container.get_blob_client('blob3')
         await b_c.upload_blob(data, overwrite=True)
         metadata = {'hello': 'world', 'number': '42'}
         await b_c.set_blob_metadata(metadata)
 
-        prop = await b_c.get_blob_properties()
-
-        await container.get_blob_client('blob2').upload_blob(data, overwrite=True)
+        await container.get_blob_client('blob4').upload_blob(data, overwrite=True)
 
         # Act
         blobs_list = container.list_blobs()
         number_of_blobs_with_policy = 0
         async for blob in blobs_list:
-            if blob.object_replication_source_properties is not None:
+            if blob.object_replication_source_properties:
                 number_of_blobs_with_policy += 1
 
         # Assert
-        self.assertIsNot(number_of_blobs_with_policy, 0)
+        assert number_of_blobs_with_policy != 0
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1424,7 +1388,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blobs = list()
-        
+
         # include deletedwithversions will give you all alive root blobs and the the deleted root blobs when versioning is on.
         async for blob in container.list_blobs(include=["deletedwithversions"]):
             blobs.append(blob)
@@ -1496,8 +1460,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         assert blobs[1].name == 'blob1copy'
         assert blobs[1].blob_type == blobs[0].blob_type
         assert blobs[1].size == 11
-        self.assertEqual(blobs[1].content_settings.content_type,
-                         'application/octet-stream')
+        assert blobs[1].content_settings.content_type == 'application/octet-stream'
         assert blobs[1].content_settings.cache_control == None
         assert blobs[1].content_settings.content_encoding == None
         assert blobs[1].content_settings.content_language == None
@@ -1624,9 +1587,11 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_batch_blobs_with_container_sas(
-            self, storage_account_name, storage_account_key):
+    async def test_batch_blobs_with_container_sas(self, **kwargs):
         # Arrange
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container_name = self._get_container_reference("testcont")
         sas_token = self.generate_sas(

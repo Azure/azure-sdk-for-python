@@ -1,0 +1,124 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/acontainer108f32e8?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 08 Aug 2022 19:40:15 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Mon, 08 Aug 2022 19:40:15 GMT",
+        "ETag": "\u00220x8DA7975D1234451\u0022",
+        "Last-Modified": "Mon, 08 Aug 2022 19:40:15 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/acontainer108f32e8?comp=lease\u0026restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 08 Aug 2022 19:40:15 GMT",
+        "x-ms-lease-action": "acquire",
+        "x-ms-lease-duration": "15",
+        "x-ms-proposed-lease-id": "00000000-1111-2222-3333-444444444444",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Mon, 08 Aug 2022 19:40:15 GMT",
+        "ETag": "\u00220x8DA7975D1234451\u0022",
+        "Last-Modified": "Mon, 08 Aug 2022 19:40:15 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-lease-id": "00000000-1111-2222-3333-444444444444",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/acontainer108f32e8?comp=lease\u0026restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 08 Aug 2022 19:40:15 GMT",
+        "x-ms-lease-action": "acquire",
+        "x-ms-lease-duration": "-1",
+        "x-ms-proposed-lease-id": "e5039776-9040-4e1e-948a-a175069e5dfe",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 409,
+      "ResponseHeaders": {
+        "Content-Length": "221",
+        "Content-Type": "application/xml",
+        "Date": "Mon, 08 Aug 2022 19:40:15 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-error-code": "LeaseAlreadyPresent",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003ELeaseAlreadyPresent\u003C/Code\u003E\u003CMessage\u003EThere is already a lease present.\n",
+        "RequestId:0715701a-f01e-00bb-0e5e-ab4c83000000\n",
+        "Time:2022-08-08T19:40:15.4829902Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/acontainer108f32e8?comp=lease\u0026restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 08 Aug 2022 19:40:32 GMT",
+        "x-ms-lease-action": "acquire",
+        "x-ms-lease-duration": "-1",
+        "x-ms-proposed-lease-id": "1fdcb35c-5ef4-4b0d-a95a-e74a3d511351",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Mon, 08 Aug 2022 19:40:32 GMT",
+        "ETag": "\u00220x8DA7975D1234451\u0022",
+        "Last-Modified": "Mon, 08 Aug 2022 19:40:15 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-lease-id": "1fdcb35c-5ef4-4b0d-a95a-e74a3d511351",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}
