@@ -10,7 +10,7 @@ import pytest
 from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
 from azure.core.exceptions import HttpResponseError
 from azure.core.exceptions import ResourceNotFoundError
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
 test_id = os.environ.get("TEST_ID", "000")
 app_component = os.environ.get("APP_COMPONENT", "000")
@@ -23,7 +23,7 @@ class TestAppComponentTestingSmoke(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_create_or_update_app_components(self, loadtesting_endpoint):
-
+        set_bodiless_matcher()
         # positive testing
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.create_or_update_app_components(
@@ -75,7 +75,7 @@ class TestAppComponentTestingSmoke(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_delete_app_component(self, loadtesting_endpoint):
-
+        set_bodiless_matcher()
         #positive testing
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.delete_app_components(
@@ -95,7 +95,7 @@ class TestAppComponentTestingSmoke(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_get_app_components(self, loadtesting_endpoint):
-
+        set_bodiless_matcher()
         # creating an app component array to help in testing
         client = self.create_client(endpoint=loadtesting_endpoint)
         client.load_test_administration.create_or_update_app_components(

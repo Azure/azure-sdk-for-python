@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 
 from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
 test_id = os.environ.get("TEST_ID", "000")
 file_id = os.environ.get("FILE_ID", "000")
@@ -22,6 +22,7 @@ class TestLoadtestingSmoke(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_smoke_create_or_update_test(self, loadtesting_endpoint):
+        set_bodiless_matcher()
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.create_or_update_test(
             test_id,
@@ -46,6 +47,7 @@ class TestLoadtestingSmoke(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_upload_test_file(self, loadtesting_endpoint):
+        set_bodiless_matcher()
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.upload_test_file(
             test_id, file_id, open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb")
@@ -55,6 +57,7 @@ class TestLoadtestingSmoke(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_create_or_update_app_components(self, loadtesting_endpoint):
+        set_bodiless_matcher()
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.create_or_update_app_components(
             app_component,
@@ -76,6 +79,7 @@ class TestLoadtestingSmoke(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_create_or_update_test_run(self, loadtesting_endpoint):
+        set_bodiless_matcher()
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_runs.create_or_update_test(
             test_run_id,
@@ -93,6 +97,7 @@ class TestLoadtestingSmoke(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_get_app_components(self, loadtesting_endpoint):
+        set_bodiless_matcher()
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.get_app_components(test_id=test_id)
         assert result is not None

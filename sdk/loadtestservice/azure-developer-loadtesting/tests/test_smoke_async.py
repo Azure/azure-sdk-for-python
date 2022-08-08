@@ -7,6 +7,7 @@
 from testcase import LoadtestingPowerShellPreparer
 from testcase_async import LoadtestingAsyncTest
 from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import set_bodiless_matcher
 import os
 
 test_id = os.environ.get("TEST_ID", "000")
@@ -19,6 +20,7 @@ class TestLoadtestingSmokeAsync(LoadtestingAsyncTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_smoke_create_or_update_test(self, loadtesting_endpoint):
+        set_bodiless_matcher()
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = await client.load_test_administration.create_or_update_test(
             test_id,
@@ -43,6 +45,7 @@ class TestLoadtestingSmokeAsync(LoadtestingAsyncTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_create_or_update_app_components(self, loadtesting_endpoint):
+        set_bodiless_matcher()
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = await client.load_test_administration.create_or_update_app_components(
             app_component,
@@ -64,6 +67,7 @@ class TestLoadtestingSmokeAsync(LoadtestingAsyncTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_get_app_components(self, loadtesting_endpoint):
+        set_bodiless_matcher()
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = await client.load_test_administration.get_app_components(test_id=test_id)
         assert result is not None

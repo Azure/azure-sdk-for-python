@@ -14,7 +14,7 @@ import uuid
 from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
 from azure.core.exceptions import HttpResponseError
 from azure.core.exceptions import ResourceNotFoundError
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher, set_custom_default_matcher
 
 test_id = os.environ.get("TEST_ID", "000")
 file_id = os.environ.get("FILE_ID", "000")
@@ -30,6 +30,7 @@ class TestOperationsSmokeTest(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_create_or_update_loadtest(self, loadtesting_endpoint):
+        set_bodiless_matcher()
         # positive testing
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.create_or_update_test(
@@ -76,6 +77,7 @@ class TestOperationsSmokeTest(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_delete_loadtest(self, loadtesting_endpoint):
+        set_bodiless_matcher()
         # creating a mock test to delete
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.create_or_update_test(
@@ -112,6 +114,7 @@ class TestOperationsSmokeTest(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_get_loadtest(self, loadtesting_endpoint):
+        set_bodiless_matcher()
         # positive testing
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.get_load_test(
@@ -128,6 +131,9 @@ class TestOperationsSmokeTest(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_file_upload(self, loadtesting_endpoint):
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
+        )
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.upload_test_file(
             test_id,
@@ -146,6 +152,7 @@ class TestOperationsSmokeTest(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_get_file_by_name(self, loadtesting_endpoint):
+        set_bodiless_matcher()
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.get_test_file(
             test_id,
@@ -163,7 +170,9 @@ class TestOperationsSmokeTest(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_delete_test_file(self, loadtesting_endpoint):
-
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
+        )
         # pushing a sample file to delete
         client = self.create_client(endpoint=loadtesting_endpoint)
         client.load_test_administration.upload_test_file(
@@ -187,7 +196,9 @@ class TestOperationsSmokeTest(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_list_test_files(self, loadtesting_endpoint):
-
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
+        )
         # pushing a sample file to test list
         client = self.create_client(endpoint=loadtesting_endpoint)
         client.load_test_administration.upload_test_file(
