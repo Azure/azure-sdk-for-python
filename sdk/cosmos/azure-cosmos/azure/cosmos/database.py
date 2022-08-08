@@ -232,13 +232,16 @@ class DatabaseProxy(object):
                 UserWarning,
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if offer_throughput is not None:
+
+        try:
+            if offer_throughput.auto_scale_max_throughput or offer_throughput.auto_scale_increment_percent:
+                request_options['autoUpgradePolicy'] = _stringify_auto_scale(offer=offer_throughput)
+            elif offer_throughput.offer_throughput:
+                request_options["offerThroughput"] = offer_throughput.offer_throughput
+
+        except AttributeError:
             if isinstance(offer_throughput, int):
                 request_options["offerThroughput"] = offer_throughput
-
-            if isinstance(offer_throughput, object):
-                offer_throughput = _stringify_auto_scale(offer=offer_throughput)
-                request_options['autoUpgradePolicy'] = offer_throughput
 
         data = self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
