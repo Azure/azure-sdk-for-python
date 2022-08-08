@@ -57,7 +57,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         # TokenCredential not supported at the moment
         if hasattr(credential, "get_token"):
             raise TypeError("Unsupported credential: {}. Use an AzureKeyCredential to use HMACCredentialsPolicy"
-                    "from azure.identity".format(type(credential)))
+            " for authentication".format(type(credential)))
 
         self._endpoint = endpoint
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
