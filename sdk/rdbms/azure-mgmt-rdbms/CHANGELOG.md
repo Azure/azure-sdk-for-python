@@ -1,5 +1,12 @@
 # Release History
 
+## 10.2.0b3 (2022-08-08)
+
+**Features**
+
+  - Added operation group AzureADAdministratorsOperations
+  - Added operation group CheckNameAvailabilityWithoutLocationOperations
+
 ## 10.2.0b2 (2022-08-01)
 
 **Features**
