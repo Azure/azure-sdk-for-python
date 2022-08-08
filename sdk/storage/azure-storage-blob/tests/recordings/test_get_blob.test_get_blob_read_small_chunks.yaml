@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:12 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:12 GMT
       etag:
-      - '"0x8DA69B8B4421649"'
+      - '"0x8DA79970FB06E19"'
       last-modified:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -55,7 +55,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:12 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
@@ -69,11 +69,11 @@ interactions:
       content-md5:
       - uKHXKnfsrxcvqdhaQZ9EcQ==
       date:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       etag:
-      - '"0x8DA69B8B460BCA4"'
+      - '"0x8DA79970FD01459"'
       last-modified:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -103,7 +103,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:12 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
@@ -117,11 +117,11 @@ interactions:
       content-md5:
       - Wdx8FHnen0XNG2jkknKUFA==
       date:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       etag:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       last-modified:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -145,7 +145,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:12 GMT
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
@@ -165,11 +165,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       etag:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       last-modified:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       vary:
@@ -179,7 +179,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -201,71 +201,11 @@ interactions:
       Connection:
       - keep-alive
       If-Match:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Tue, 19 Jul 2022 18:58:45 GMT
-      x-ms-range:
-      - bytes=512-1023
-      x-ms-version:
-      - '2021-08-06'
-    method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainera3271247/bloba3271247
-  response:
-    body:
-      string: '34512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234512345123451234'
-    headers:
-      accept-ranges:
-      - bytes
-      content-length:
-      - '512'
-      content-range:
-      - bytes 512-1023/5125
-      content-type:
-      - application/octet-stream
-      date:
-      - Tue, 19 Jul 2022 18:58:44 GMT
-      etag:
-      - '"0x8DA69B8B46DDA16"'
-      last-modified:
-      - Tue, 19 Jul 2022 18:58:44 GMT
-      server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      vary:
-      - Origin
-      x-ms-blob-content-md5:
-      - Wdx8FHnen0XNG2jkknKUFA==
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-creation-time:
-      - Tue, 19 Jul 2022 18:58:44 GMT
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2021-08-06'
-    status:
-      code: 206
-      message: Partial Content
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      If-Match:
-      - '"0x8DA69B8B46DDA16"'
-      User-Agent:
-      - azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)
-      x-ms-date:
-      - Tue, 19 Jul 2022 18:58:45 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       x-ms-range:
       - bytes=1024-1535
       x-ms-version:
@@ -285,11 +225,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       etag:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       last-modified:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       vary:
@@ -299,7 +239,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -321,11 +261,11 @@ interactions:
       Connection:
       - keep-alive
       If-Match:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Tue, 19 Jul 2022 18:58:45 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       x-ms-range:
       - bytes=1536-2047
       x-ms-version:
@@ -345,11 +285,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       etag:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       last-modified:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       vary:
@@ -359,7 +299,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -381,11 +321,11 @@ interactions:
       Connection:
       - keep-alive
       If-Match:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Tue, 19 Jul 2022 18:58:45 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       x-ms-range:
       - bytes=2048-2559
       x-ms-version:
@@ -405,11 +345,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       etag:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       last-modified:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       vary:
@@ -419,7 +359,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -441,11 +381,11 @@ interactions:
       Connection:
       - keep-alive
       If-Match:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Tue, 19 Jul 2022 18:58:45 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       x-ms-range:
       - bytes=2560-3071
       x-ms-version:
@@ -465,11 +405,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       etag:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       last-modified:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       vary:
@@ -479,7 +419,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -501,11 +441,11 @@ interactions:
       Connection:
       - keep-alive
       If-Match:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Tue, 19 Jul 2022 18:58:45 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       x-ms-range:
       - bytes=3072-3583
       x-ms-version:
@@ -525,11 +465,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 19 Jul 2022 18:58:45 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       etag:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       last-modified:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       vary:
@@ -539,7 +479,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -561,11 +501,11 @@ interactions:
       Connection:
       - keep-alive
       If-Match:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Tue, 19 Jul 2022 18:58:45 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       x-ms-range:
       - bytes=3584-4095
       x-ms-version:
@@ -585,11 +525,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 19 Jul 2022 18:58:45 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       etag:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       last-modified:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       vary:
@@ -599,7 +539,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -621,11 +561,11 @@ interactions:
       Connection:
       - keep-alive
       If-Match:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Tue, 19 Jul 2022 18:58:45 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       x-ms-range:
       - bytes=4096-4607
       x-ms-version:
@@ -645,11 +585,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 19 Jul 2022 18:58:45 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       etag:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       last-modified:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       vary:
@@ -659,7 +599,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -681,11 +621,11 @@ interactions:
       Connection:
       - keep-alive
       If-Match:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Tue, 19 Jul 2022 18:58:45 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       x-ms-range:
       - bytes=4608-5119
       x-ms-version:
@@ -705,11 +645,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 19 Jul 2022 18:58:45 GMT
+      - Mon, 08 Aug 2022 23:38:14 GMT
       etag:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       last-modified:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       vary:
@@ -719,7 +659,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -741,11 +681,11 @@ interactions:
       Connection:
       - keep-alive
       If-Match:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       User-Agent:
       - azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Tue, 19 Jul 2022 18:58:45 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       x-ms-range:
       - bytes=5120-5124
       x-ms-version:
@@ -765,11 +705,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 19 Jul 2022 18:58:45 GMT
+      - Mon, 08 Aug 2022 23:38:14 GMT
       etag:
-      - '"0x8DA69B8B46DDA16"'
+      - '"0x8DA79970FDCBCA5"'
       last-modified:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       vary:
@@ -779,7 +719,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 19 Jul 2022 18:58:44 GMT
+      - Mon, 08 Aug 2022 23:38:13 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
