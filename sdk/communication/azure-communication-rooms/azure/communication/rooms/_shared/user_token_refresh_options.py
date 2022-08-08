@@ -21,7 +21,7 @@ class CommunicationTokenRefreshOptions(object):
         token, # type: str
         token_refresher=None
     ):
-        # type: (str) -> None
+        # type: (...) -> None
         if not isinstance(token, six.string_types):
             raise TypeError("token must be a string.")
         self._token = token
