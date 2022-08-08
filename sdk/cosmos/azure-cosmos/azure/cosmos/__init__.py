@@ -50,7 +50,6 @@ __all__ = (
     "Permission",
     "ScriptsProxy",
     "UserProxy",
-    "Offer",
     "DatabaseAccount",
     "ConsistencyLevel",
     "DataType",
