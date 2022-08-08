@@ -22,6 +22,7 @@ from ._models_py3 import AdminRule
 from ._models_py3 import AdminRuleListResult
 from ._models_py3 import BaseAdminRule
 from ._models_py3 import BaseUserRule
+from ._models_py3 import CheckMembers
 from ._models_py3 import CloudErrorBody
 from ._models_py3 import ConfigurationGroup
 from ._models_py3 import ConnectivityConfiguration
@@ -38,7 +39,7 @@ from ._models_py3 import EffectiveVirtualNetworksListResult
 from ._models_py3 import EffectiveVirtualNetworksParameter
 from ._models_py3 import GroupMembersItem
 from ._models_py3 import Hub
-from ._models_py3 import LoggingCategory
+from ._models_py3 import MemberDestination
 from ._models_py3 import NetworkGroup
 from ._models_py3 import NetworkGroupListResult
 from ._models_py3 import NetworkManager
@@ -63,6 +64,8 @@ from ._models_py3 import PerimeterAssociableResource
 from ._models_py3 import PerimeterAssociableResourcesListResult
 from ._models_py3 import PerimeterBasedAccessRule
 from ._models_py3 import ProxyResource
+from ._models_py3 import QueryNSPObj
+from ._models_py3 import QueryNSPReqRes
 from ._models_py3 import QueryRequestOptions
 from ._models_py3 import Resource
 from ._models_py3 import RuleCollection
@@ -91,6 +94,7 @@ from ._network_management_client_enums import (
     EffectiveUserRuleKind,
     GroupConnectivity,
     IsGlobal,
+    IsMember,
     MembershipType,
     NspProvisioningState,
     ProvisioningState,
@@ -101,7 +105,9 @@ from ._network_management_client_enums import (
     UseHubGateway,
     UserRuleKind,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'ActiveBaseSecurityAdminRule',
     'ActiveBaseSecurityUserRule',
@@ -119,6 +125,7 @@ __all__ = [
     'AdminRuleListResult',
     'BaseAdminRule',
     'BaseUserRule',
+    'CheckMembers',
     'CloudErrorBody',
     'ConfigurationGroup',
     'ConnectivityConfiguration',
@@ -135,7 +142,7 @@ __all__ = [
     'EffectiveVirtualNetworksParameter',
     'GroupMembersItem',
     'Hub',
-    'LoggingCategory',
+    'MemberDestination',
     'NetworkGroup',
     'NetworkGroupListResult',
     'NetworkManager',
@@ -160,6 +167,8 @@ __all__ = [
     'PerimeterAssociableResourcesListResult',
     'PerimeterBasedAccessRule',
     'ProxyResource',
+    'QueryNSPObj',
+    'QueryNSPReqRes',
     'QueryRequestOptions',
     'Resource',
     'RuleCollection',
@@ -185,6 +194,7 @@ __all__ = [
     'EffectiveUserRuleKind',
     'GroupConnectivity',
     'IsGlobal',
+    'IsMember',
     'MembershipType',
     'NspProvisioningState',
     'ProvisioningState',
@@ -195,3 +205,5 @@ __all__ = [
     'UseHubGateway',
     'UserRuleKind',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
