@@ -127,7 +127,7 @@ def test_invalid_proxy_server(connection_str):
     'proxy_port': 3128,  # proxy port.
     }
 
-    client = EventHubProducerClient.from_connection_string(connection_str)
+    client = EventHubProducerClient.from_connection_string(connection_str, http_proxy=HTTP_PROXY)
     with client:
         with pytest.raises(ConnectError):
             batch = client.create_batch()
