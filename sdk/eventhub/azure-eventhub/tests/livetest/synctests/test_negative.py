@@ -132,6 +132,3 @@ def test_invalid_proxy_server(connection_str):
         with pytest.raises(ConnectError):
             batch = client.create_batch()
 
-
-
-
