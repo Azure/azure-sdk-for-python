@@ -31,29 +31,51 @@ from azure.developer.loadtesting import LoadTestingClient
 from azure.identity import DefaultAzureCredential
 import time
 
+# can be installed using pip install azure-mgmt-loadtestservice
+from azure.mgmt.loadtestservice import LoadTestClient
+from azure.mgmt.loadtestservice.models import LoadTestResource
+from azure.core.exceptions import HttpResponseError
+
 # using python dotenv library to load environment variables from a .env file
 from dotenv import load_dotenv
+from uuid import uuid4
 
 # logging.basicConfig(level=logging.DEBUG)
 # LOG = logging.getLogger()
 
 # Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-# AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, LOADTESTSERVICE_ENDPOINT, SUBSCRIPTION_ID
+# AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, SUBSCRIPTION_ID, RESOURCE_GROUP
 
 load_dotenv()
 
-endpoint = os.environ["LOADTESTSERVICE_ENDPOINT"]
-
-# Build a client through AAD
-client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=endpoint)
-
-TEST_ID = "some-test-id"  # ID to be assigned to a test
-FILE_ID = "some-file-id"  # ID to be assigned to file uploaded
-TEST_RUN_ID = "some-testrun-id"  # ID to be assigned to a test run
-APP_COMPONENT = "some-appcomponent-id"  # ID of the APP Component
+TEST_ID = str(uuid4())  # ID to be assigned to a test
+FILE_ID = str(uuid4())  # ID to be assigned to file uploaded
+TEST_RUN_ID = str(uuid4())  # ID to be assigned to a test run
+APP_COMPONENT = str(uuid4())  # ID of the APP Component
 DISPLAY_NAME = "my-loadtest"  # display name
 SUBSCRIPTION_ID = os.environ["SUBSCRIPTION_ID"]
+RESOURCE_GROUP = os.environ["RESOURCE_GROUP"]
 
+# setting up management client
+mgmt_client = LoadTestClient(
+    credential=DefaultAzureCredential(),
+    subscription_id=SUBSCRIPTION_ID,
+)
+
+# creating a new loadtest resource and getting its endpoint
+endpoint = "https://" + mgmt_client.load_tests.create_or_update(
+    resource_group_name=RESOURCE_GROUP,
+    load_test_name="my-loadtesting-service",
+    load_test_resource=LoadTestResource(
+        location="eastus",
+        description="my-loadtest",
+    )
+).data_plane_uri
+
+print(f'Created loadtest resource with endpoint: {endpoint}')
+
+# Build a client through AAD and resource endpoint
+client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=endpoint)
 
 result = client.load_test_administration.create_or_update_test(
     TEST_ID,
@@ -90,6 +112,24 @@ result = client.load_test_administration.create_or_update_app_components(
     },
 )
 print(result)
+
+# waiting for jmx file to validate
+start_time = time.time()
+
+TIMEOUT = 6000
+REFRESH_TIME = 10
+
+while time.time() - start_time < TIMEOUT:
+    result = client.load_test_administration.get_load_test(
+        TEST_ID
+    )
+
+    # checking if the file was validated successfully
+    if result["inputArtifacts"]["testScriptUrl"]["validationStatus"] == "VALIDATION_SUCCESS":
+        break
+
+    time.sleep(REFRESH_TIME)
+print("Validation was successful")
 
 # Creating the test run
 result = client.load_test_runs.create_or_update_test(
