@@ -4,7 +4,6 @@ from typing import List
 import pytest
 from unittest.mock import patch
 
-import tempfile
 
 from azure.ai.ml._utils.utils import to_iso_duration_format_mins, load_yaml, dump_yaml_to_file
 from azure.ai.ml.constants import AZUREML_PRIVATE_FEATURES_ENV_VAR
@@ -280,7 +279,9 @@ def _get_rest_automl_job(automl_task, name, compute_id):
 
 
 @pytest.fixture
-def loaded_image_classification_job(mock_machinelearning_client: OperationScope, run_type: str) -> AutoMLJob:
+def loaded_image_classification_job(
+    mock_machinelearning_client: OperationScope, run_type: str, tmp_path: Path
+) -> AutoMLJob:
     test_schema_path = Path("./tests/test_configs/automl_job/automl_image_classification_job_mock.yaml")
 
     test_config = load_yaml(test_schema_path)
@@ -291,17 +292,19 @@ def loaded_image_classification_job(mock_machinelearning_client: OperationScope,
         del test_config["search_space"]
         del test_config["sweep"]
 
-    with tempfile.NamedTemporaryFile() as test_yaml_path:
-        dump_yaml_to_file(test_yaml_path.name, test_config)
-        job = load_job(test_yaml_path.name)
-        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+    test_yaml_path = tmp_path / "job.yml"
+    dump_yaml_to_file(test_yaml_path, test_config)
+    job = load_job(test_yaml_path)
+    mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
     return job
 
 
 @pytest.fixture
 def loaded_image_classification_multilabel_job(
-    mock_machinelearning_client: OperationScope, run_type: str
+    mock_machinelearning_client: OperationScope,
+    run_type: str,
+    tmp_path: Path,
 ) -> AutoMLJob:
     test_schema_path = Path("./tests/test_configs/automl_job/automl_image_classification_multilabel_job_mock.yaml")
 
@@ -313,16 +316,18 @@ def loaded_image_classification_multilabel_job(
         del test_config["search_space"]
         del test_config["sweep"]
 
-    with tempfile.NamedTemporaryFile() as test_yaml_path:
-        dump_yaml_to_file(test_yaml_path.name, test_config)
-        job = load_job(test_yaml_path.name)
-        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+    test_yaml_path = tmp_path / "job.yml"
+    dump_yaml_to_file(test_yaml_path, test_config)
+    job = load_job(test_yaml_path)
+    mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
     return job
 
 
 @pytest.fixture
-def loaded_image_object_detection_job(mock_machinelearning_client: OperationScope, run_type: str) -> AutoMLJob:
+def loaded_image_object_detection_job(
+    mock_machinelearning_client: OperationScope, run_type: str, tmp_path: Path
+) -> AutoMLJob:
     test_schema_path = Path("./tests/test_configs/automl_job/automl_image_object_detection_job_mock.yaml")
 
     test_config = load_yaml(test_schema_path)
@@ -333,17 +338,17 @@ def loaded_image_object_detection_job(mock_machinelearning_client: OperationScop
         del test_config["search_space"]
         del test_config["sweep"]
 
-    with tempfile.NamedTemporaryFile() as test_yaml_path:
-        dump_yaml_to_file(test_yaml_path.name, test_config)
-        job = load_job(test_yaml_path.name)
-        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+    test_yaml_path = tmp_path / "job.yml"
+    dump_yaml_to_file(test_yaml_path, test_config)
+    job = load_job(test_yaml_path)
+    mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
     return job
 
 
 @pytest.fixture
 def loaded_image_instance_segmentation_job(
-    mock_machinelearning_client: OperationScope, run_type: str
+    mock_machinelearning_client: OperationScope, run_type: str, tmp_path: Path
 ) -> AutoMLJob:
     test_schema_path = Path("./tests/test_configs/automl_job/automl_image_instance_segmentation_job_mock.yaml")
 
@@ -355,10 +360,10 @@ def loaded_image_instance_segmentation_job(
         del test_config["search_space"]
         del test_config["sweep"]
 
-    with tempfile.NamedTemporaryFile() as test_yaml_path:
-        dump_yaml_to_file(test_yaml_path.name, test_config)
-        job = load_job(test_yaml_path.name)
-        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+    test_yaml_path = tmp_path / "job.yml"
+    dump_yaml_to_file(test_yaml_path, test_config)
+    job = load_job(test_yaml_path)
+    mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
     return job
 
