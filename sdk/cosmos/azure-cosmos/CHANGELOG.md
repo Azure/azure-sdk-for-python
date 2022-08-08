@@ -9,6 +9,7 @@
 
 #### Bugs Fixed
 - Fixed parsing of args for overloaded `container.read()` method.
+- Fixed `validate_cache_staleness_value()` method to allow max_integrated_cache_staleness to be an integer greater than or equal to 0
 
 #### Other Changes
 
