@@ -59,6 +59,11 @@ class HeadersTest(unittest.TestCase):
         assert args[2]["x-ms-dedicatedgateway-max-age"] == self.dedicated_gateway_max_age_million
         raise StopIteration
 
+    def side_effect_dedicated_gateway_max_age_zero(self, *args, **kwargs):
+        # Extract request headers from args
+        assert args[2]["x-ms-dedicatedgateway-max-age"] == self.dedicated_gateway_max_age_zero
+        raise StopIteration
+
     def test_max_integrated_cache_staleness(self):
         cosmos_client_connection = self.container.client_connection
         cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
