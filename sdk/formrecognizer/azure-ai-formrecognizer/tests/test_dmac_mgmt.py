@@ -13,7 +13,7 @@ from azure.core.pipeline.transport import RequestsTransport
 from azure.ai.formrecognizer import (
     DocumentModelAdministrationClient,
     DocumentAnalysisApiVersion,
-    ModelOperationDetails
+    DocumentModelOperationDetails
 )
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -100,7 +100,7 @@ class TestManagement(FormRecognizerTest):
     @recorded_by_proxy
     def test_mgmt_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", description="mgmt model")
+        poller = client.begin_build_model("template", formrecognizer_storage_container_sas_url, description="mgmt model")
         model = poller.result()
 
         model_from_get = client.get_model(model.model_id)
@@ -154,7 +154,7 @@ class TestManagement(FormRecognizerTest):
             # assert op.tags is None
             # test to/from dict
             op_dict = op.to_dict()
-            op = ModelOperationDetails.from_dict(op_dict)
+            op = DocumentModelOperationDetails.from_dict(op_dict)
             assert op.error is None
             model = op.result
             assert model.model_id
@@ -174,7 +174,7 @@ class TestManagement(FormRecognizerTest):
             op = client.get_operation(failed_op.operation_id)
             # test to/from dict
             op_dict = op.to_dict()
-            op = ModelOperationDetails.from_dict(op_dict)
+            op = DocumentModelOperationDetails.from_dict(op_dict)
 
             assert op.result is None
             error = op.error

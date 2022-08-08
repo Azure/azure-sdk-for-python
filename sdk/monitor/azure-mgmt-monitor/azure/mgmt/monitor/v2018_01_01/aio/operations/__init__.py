@@ -9,7 +9,12 @@
 from ._metric_definitions_operations import MetricDefinitionsOperations
 from ._metrics_operations import MetricsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'MetricDefinitionsOperations',
     'MetricsOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

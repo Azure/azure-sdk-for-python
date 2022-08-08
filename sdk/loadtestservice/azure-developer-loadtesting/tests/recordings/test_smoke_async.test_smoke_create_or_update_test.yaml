@@ -1,0 +1,35 @@
+interactions:
+- request:
+    body: '{"resourceId": "/subscriptions/SUBSCRIPTION_ID/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
+      "description": "", "displayName": "TestingResource", "loadTestConfig": {"engineSize":
+      "m", "engineInstances": 1, "splitAllCSVs": false}, "secrets": {}, "environmentVariables":
+      {}, "passFailCriteria": {"passFailMetrics": {}}, "keyvaultReferenceIdentityType":
+      "SystemAssigned", "keyvaultReferenceIdentityId": null}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '466'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.8.8 (Windows-10-10.0.19041-SP0)
+    method: PATCH
+    uri: https://myservice.azure.com/loadtests/TEST_ID?api-version=2022-06-01-preview
+  response:
+    body:
+      string: '{}'
+    headers:
+      api-supported-versions: 2021-07-01-preview, 2022-06-01-preview
+      connection: keep-alive
+      content-length: '1135'
+      content-type: application/json; charset=utf-8
+      date: Wed, 27 Jul 2022 08:20:40 GMT
+      mise-correlation-id: c666d266-6acb-4569-b1c5-7685b904d0d8
+      strict-transport-security: max-age=15724800; includeSubDomains
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://946598fc-b4a7-4e07-8fbb-a68ca02a9f10.eus.cnt-prod.loadtesting.azure.com/loadtests/a011890b-0201-004d-010d?api-version=2022-06-01-preview
+version: 1

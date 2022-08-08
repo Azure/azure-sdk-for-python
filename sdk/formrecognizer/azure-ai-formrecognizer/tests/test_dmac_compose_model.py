@@ -27,10 +27,10 @@ class TestTraining(FormRecognizerTest):
         model_id_1 = str(uuid.uuid4())
         model_id_2 = str(uuid.uuid4())
         composed_id = str(uuid.uuid4())
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", model_id=model_id_1, description="model1")
+        poller = client.begin_build_model("template", formrecognizer_storage_container_sas_url, model_id=model_id_1, description="model1")
         model_1 = poller.result()
 
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", model_id=model_id_2, description="model2")
+        poller = client.begin_build_model("template", formrecognizer_storage_container_sas_url, model_id=model_id_2, description="model2")
         model_2 = poller.result()
 
         poller = client.begin_compose_model([model_1.model_id, model_2.model_id], model_id=composed_id, description="my composed model", tags={"testkey": "testvalue"})
@@ -55,10 +55,10 @@ class TestTraining(FormRecognizerTest):
     @recorded_by_proxy
     def test_compose_model_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", description="model1")
+        poller = client.begin_build_model("template", formrecognizer_storage_container_sas_url, description="model1")
         model_1 = poller.result()
 
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", description="model2")
+        poller = client.begin_build_model("template", formrecognizer_storage_container_sas_url, description="model2")
         model_2 = poller.result()
 
         raw_response = []
@@ -87,10 +87,10 @@ class TestTraining(FormRecognizerTest):
     def test_compose_continuation_token(self, **kwargs):
         client = kwargs.pop("client")
         formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+        poller = client.begin_build_model("template", formrecognizer_storage_container_sas_url)
         model_1 = poller.result()
 
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+        poller = client.begin_build_model("template", formrecognizer_storage_container_sas_url)
         model_2 = poller.result()
 
         initial_poller = client.begin_compose_model([model_1.model_id, model_2.model_id])
@@ -107,10 +107,10 @@ class TestTraining(FormRecognizerTest):
     @recorded_by_proxy
     def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+        poller = client.begin_build_model("template", formrecognizer_storage_container_sas_url)
         model_1 = poller.result()
 
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+        poller = client.begin_build_model("template", formrecognizer_storage_container_sas_url)
         model_2 = poller.result()
 
         poller = client.begin_compose_model([model_1.model_id, model_2.model_id])

@@ -1,8 +1,8 @@
 # Guide for migrating azure-ai-formrecognizer to version 3.2.x from versions 3.1.x and below
 
-This guide is intended to assist in the migration to `azure-ai-formrecognizer (3.2.x)` from versions `3.1.x` and below. It will focus on side-by-side comparisons for similar operations between versions. Please note that version `3.2.0b1` will be used for comparison with `3.1.2`. 
+This guide is intended to assist in the migration to `azure-ai-formrecognizer (3.2.x)` from versions `3.1.x` and below. It will focus on side-by-side comparisons for similar operations between versions. Please note that version `3.2.0b6` will be used for comparison with `3.1.2`. 
 
-> NOTE: Please read the [CHANGELOG][changelog] to see important changes that have occurred since version `3.2.0b1` of the SDK.
+> NOTE: Please read the [CHANGELOG][changelog] to see important changes that have occurred since version `3.2.0b6` of the SDK.
 
 Familiarity with `azure-ai-formrecognizer (3.1.x and below)` package is assumed. For those new to the Azure Form Recognizer client library for Python please refer to the [README][readme] rather than this guide.
 
@@ -21,16 +21,17 @@ Familiarity with `azure-ai-formrecognizer (3.1.x and below)` package is assumed.
 
 A natural question to ask when considering whether to adopt a new version of the library is what the benefits of doing so would be. As Azure Form Recognizer has matured and been embraced by a more diverse group of developers, we have been focused on learning the patterns and practices to best support developer productivity and add value to our customers.
 
-There are many benefits to using the new design of the `azure-ai-formrecognizer (3.2.x)` library. This new version of the library introduces two new clients `DocumentAnalysisClient` and the `DocumentModelAdministrationClient` with unified methods for analyzing documents and provides support for the new features added by the service in API version `2021-09-30-preview` and later.
+There are many benefits to using the new design of the `azure-ai-formrecognizer (3.2.x)` library. This new version of the library introduces two new clients `DocumentAnalysisClient` and the `DocumentModelAdministrationClient` with unified methods for analyzing documents and provides support for the new features added by the service in API version `2022-06-30-preview` and later.
 
 New features provided by the `DocumentAnalysisClient` include:
-- One consolidated method for analyzing document layout, a prebuilt general document model type, along with the same prebuilt models that were included previously (receipts, invoices, business cards, ID documents), and custom models. ***As of 3.2.0b3, a prebuilt read model was added to read information about pages and detected languages. A prebuilt model to analyze U.S. W-2 tax documents was also added with the following model ID: `prebuilt-tax.us.w2`.***
+- One consolidated method for analyzing document layout, a prebuilt general document model type, a prebuilt read model to get text detection and detected languages, along with more new prebuilt models that can be seen [here][fr-models].
 - Models introduced in the latest version of the library, such as `AnalyzeResult`, remove hierarchical dependencies between document elements and move them to a more top level and easily accessible position.
 - The Form Recognizer service has further improved how to define where elements are located on documents by moving towards `BoundingRegion` definitions allowing for cross-page elements.
 - Document element fields are returned with more information, such as content and spans. 
 
 New features provided by the `DocumentModelAdministrationClient` include:
 - Users can now assign their own model IDs and specify a description when building, composing, or copying models.
+- Users can specify the algorithm used to build the custom model through the required `build_mode` parameter on `begin_build_model()`. See more about `build_mode` [here][https://aka.ms/azsdk/formrecognizer/buildmode].
 - Listing models now includes both prebuilt and custom models.
 - When using `get_model()`, users can get the field schema (field names and types that the model can extract) for the model they specified, including for prebuilt models. 
 - Ability to get information from model operations that occurred in the last 24 hours.
@@ -39,7 +40,7 @@ The table below describes the relationship of each client and its supported API 
 
 |API version|Supported clients
 |-|-
-|2021-09-30-preview | DocumentAnalysisClient and DocumentModelAdministrationClient
+|2022-06-30-preview | DocumentAnalysisClient and DocumentModelAdministrationClient
 |2.1 | FormRecognizerClient and FormTrainingClient
 |2.0 | FormRecognizerClient and FormTrainingClient
 
@@ -60,7 +61,7 @@ Some terminology has changed to reflect the enhanced capabilities of the newest 
 
 We continue to support API key and AAD authentication methods when creating the clients. Below are the differences between the two versions:
 
-- In `3.2.x`, we have added `DocumentAnalysisClient` and `DocumentModelAdministrationClient` which support API version `2021-09-30-preview` and later.
+- In `3.2.x`, we have added `DocumentAnalysisClient` and `DocumentModelAdministrationClient` which support API version `2022-06-30-preview` and later.
 - `FormRecognizerClient` and `FormTrainingClient` will continue to work targeting API versions `2.1` and `2.0`.
 - In `DocumentAnalysisClient` all prebuilt model methods along with custom model, layout, and a prebuilt general document analysis model are unified into two methods called
 `begin_analyze_document` and `begin_analyze_document_from_url`.
@@ -104,11 +105,11 @@ document_model_admin_client = DocumentModelAdministrationClient(
 
 Differences between the versions:
 - `begin_analyze_document` and `begin_analyze_document_from_url` accept a string with the desired model ID for analysis. The model ID can be any of the prebuilt model IDs or a custom model ID.
-- Along with more consolidated analysis methods in the `DocumentAnalysisClient`, the return types have also been improved and remove the hierarchical dependencies between elements. An instance of the `AnalyzeResult` model is now returned which showcases important document elements, such as key-value pairs, entities, tables, and document fields and values, among others, at the top level of the returned model. This can be contrasted with `RecognizedForm` which included more hierarchical relationships, for instance tables were an element of a `FormPage` and not a top-level element.
-- In the new version of the library, the functionality of `begin_recognize_content` has been added as a prebuilt model and can be called in library version `azure-ai-formrecognizer (3.2.x)` with `begin_analyze_document` by passing in the `prebuilt-layout` model ID. Similarly, to get general document information, such as key-value pairs, entities, and text layout, the `prebuilt-document` model ID can be used with `begin_analyze_document`. ***As of 3.2.0b3, passing in the `prebuilt-read` model was added to read information about pages and detected languages.***
+- Along with more consolidated analysis methods in the `DocumentAnalysisClient`, the return types have also been improved and remove the hierarchical dependencies between elements. An instance of the `AnalyzeResult` model is now returned which showcases important document elements, such as key-value pairs, tables, and document fields and values, among others, at the top level of the returned model. This can be contrasted with `RecognizedForm` which included more hierarchical relationships, for instance tables were an element of a `FormPage` and not a top-level element.
+- In the new version of the library, the functionality of `begin_recognize_content` has been added as a prebuilt model and can be called in library version `azure-ai-formrecognizer (3.2.x)` with `begin_analyze_document` by passing in the `prebuilt-layout` model ID. Similarly, to get general document information, such as key-value pairs and text layout, the `prebuilt-document` model ID can be used with `begin_analyze_document`. Additionally, passing in the `prebuilt-read` model was added to read information about pages and detected languages.
 - When calling `begin_analyze_document` and `begin_analyze_document_from_url` the returned type is an `AnalyzeResult` object, while the various methods used with `FormRecognizerClient` return a list of `RecognizedForm`.
 - The `pages` keyword argument is a string with library version `azure-ai-formrecognizer (3.2.x)`. In `azure-ai-formrecognizer (3.1.x)`, `pages` was a list of strings.
-- The `include_field_elements` keyword argument is not supported with the `DocumentAnalysisClient`, text details are automatically included with API version `2021-09-30-preview` and later.
+- The `include_field_elements` keyword argument is not supported with the `DocumentAnalysisClient`, text details are automatically included with API version `2022-06-30-preview` and later.
 - The `reading_order` keyword argument does not exist on `begin_analyze_document` and `begin_analyze_document_from_url`. The service uses `natural` reading order to return data.
 
 Analyzing prebuilt models like business cards, identity documents, invoices, and receipts with `3.1.x`:
@@ -453,13 +454,6 @@ for table_idx, table in enumerate(result.tables):
                 )
             )
 
-print("----Entities found in document----")
-for entity in result.entities:
-    print("Entity of category '{}' with sub-category '{}'".format(entity.category, entity.sub_category))
-    print("...has content '{}'".format(entity.content))
-    print("...within '{}' bounding regions".format(entity.bounding_regions))
-    print("...with confidence {}\n".format(entity.confidence))
-
 print("----Key-value pairs found in document----")
 for kv_pair in result.key_value_pairs:
     if kv_pair.key:
@@ -486,7 +480,7 @@ print("----------------------------------------")
 Differences between the versions:
 - Analyzing a custom model with `DocumentAnalysisClient` uses the general `begin_analyze_document` and `begin_analyze_document_from_url` methods.
 - In order to analyze a custom model with `FormRecognizerClient` the `begin_recognize_custom_models` and its corresponding URL methods are used.
-- The `include_field_elements` keyword argument is not supported with the `DocumentAnalysisClient`, text details are automatically included with API version `2021-09-30-preview` and later.
+- The `include_field_elements` keyword argument is not supported with the `DocumentAnalysisClient`, text details are automatically included with API version `2022-06-30-preview` and later.
 
 Analyze custom document with `3.1.x`:
 ```python
@@ -599,7 +593,7 @@ print("-----------------------------------")
 Differences between the versions:
 - Files for building a new model for version `3.2.x` can be created using [Form Recognizer Studio][fr_labeling_tool].
 - In version `3.1.x` the `use_training_labels` keyword argument was used to indicate whether to use labeled data when creating the custom model.
-- In version `3.2.x` the `use_training_labels` keyword argument is not supported since training must be carried out with labeled training documents. Additionally train without labels is now replaced with the prebuilt model `prebuilt-document` which extracts entities, key-value pairs, and layout from a document. 
+- In version `3.2.x` the `use_training_labels` keyword argument is not supported since training must be carried out with labeled training documents. Additionally, training without labels is now replaced with the prebuilt model `prebuilt-document` which extracts key-value pairs and layout from a document. 
 
 Train a custom model with `3.1.x`:
 ```python
@@ -638,12 +632,12 @@ for doc in model.training_documents:
 ```
 
 Train a custom model with `3.2.x`:
-***As of 3.2.0b3, `begin_build_model()` has a required `build_mode` parameter. See https://aka.ms/azsdk/formrecognizer/buildmode for more information about build modes.***
+Use `begin_build_model()` to build a custom model. Please note that this method has a required `build_mode` parameter. See https://aka.ms/azsdk/formrecognizer/buildmode for more information about build modes.
 
 ```python
 document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
 poller = document_model_admin_client.begin_build_model(
-    container_sas_url, "template", model_id="my-model-id", description="my model description"
+    "template", container_sas_url, model_id="my-model-id", description="my model description"
 )
 model = poller.result()
 
@@ -660,7 +654,7 @@ for name, doc_type in model.doc_types.items():
 ### Managing models
 
 Differences between the versions:
-- When using API version `2021-09-30-preview` and later models no longer include submodels, instead a model can analyze different document types.
+- When using API version `2022-06-30-preview` and later models no longer include submodels, instead a model can analyze different document types.
 - When building, composing, or copying models users can now assign their own model IDs and specify a description.
 - In version `3.2.x` of the library, only models that build successfully can be retrieved from the get and list model calls. Unsuccessful model operations can be viewed with the get and list operation methods (note that document model operation data persists for only 24 hours). In version `3.1.x` of the library, models that had not succeeded were still created, had to be deleted by the user, and were returned in the list models response.
 
@@ -672,3 +666,4 @@ For additional samples please take a look at the [Form Recognizer Samples][sampl
 [readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md
 [samples_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/README.md
 [fr_labeling_tool]: https://aka.ms/azsdk/formrecognizer/formrecognizerstudio
+[fr-models]: https://aka.ms/azsdk/formrecognizer/models
