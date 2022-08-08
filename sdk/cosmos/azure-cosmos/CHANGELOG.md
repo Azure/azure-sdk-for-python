@@ -3,7 +3,7 @@
 ### 4.3.1 (Unreleased)
 
 #### Features Added
-- Added the ability to create containers and databases with autoscale properties for the sync and async clients. - [See PR #24976](https://github.com/Azure/azure-sdk-for-python/pull/24976)
+- Added the ability to create containers and databases with autoscale properties for the sync and async clients.
 #### Breaking Changes
 
 #### Bugs Fixed
