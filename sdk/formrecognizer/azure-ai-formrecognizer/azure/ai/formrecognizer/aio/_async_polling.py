@@ -48,9 +48,7 @@ class AsyncDocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
         ...
 
 
-class AsyncDocumentModelAdministrationClientLROPoller(
-    AsyncLROPoller[PollingReturnType]
-):
+class AsyncDocumentModelAdministrationClientLROPoller(AsyncLROPoller[PollingReturnType]):
     """Custom poller for model build operations. Call `result()` on the poller to return
     a :class:`~azure.ai.formrecognizer.DocumentModelInfo`.
 
@@ -73,9 +71,7 @@ class AsyncDocumentModelAdministrationClientLROPoller(
             created_on = datetime.datetime.strptime(created_on, "%Y-%m-%dT%H:%M:%SZ")
         last_updated_on = self._current_body.get("lastUpdatedDateTime", None)
         if last_updated_on:
-            last_updated_on = datetime.datetime.strptime(
-                last_updated_on, "%Y-%m-%dT%H:%M:%SZ"
-            )
+            last_updated_on = datetime.datetime.strptime(last_updated_on, "%Y-%m-%dT%H:%M:%SZ")
         return {
             "operation_id": parse_operation_id(
                 self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore
@@ -89,10 +85,7 @@ class AsyncDocumentModelAdministrationClientLROPoller(
 
     @classmethod
     def from_continuation_token(
-        cls,
-        polling_method: AsyncPollingMethod[PollingReturnType],
-        continuation_token: str,
-        **kwargs: Any
+        cls, polling_method: AsyncPollingMethod[PollingReturnType], continuation_token: str, **kwargs: Any
     ) -> "AsyncDocumentModelAdministrationClientLROPoller":
         (
             client,

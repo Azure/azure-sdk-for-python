@@ -80,29 +80,16 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
     """
 
     def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureKeyCredential, AsyncTokenCredential],
-        **kwargs: Any
+        self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
     ) -> None:
-        api_version = kwargs.pop(
-            "api_version", DocumentAnalysisApiVersion.V2022_06_30_PREVIEW
-        )
+        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2022_06_30_PREVIEW)
         super().__init__(
-            endpoint=endpoint,
-            credential=credential,
-            api_version=api_version,
-            client_kind="document",
-            **kwargs
+            endpoint=endpoint, credential=credential, api_version=api_version, client_kind="document", **kwargs
         )
 
     @distributed_trace_async
     async def begin_build_model(
-        self,
-        build_mode: Union[str, ModelBuildMode],
-        *,
-        blob_container_url: str,
-        **kwargs: Any
+        self, build_mode: Union[str, ModelBuildMode], *, blob_container_url: str, **kwargs: Any
     ) -> AsyncDocumentModelAdministrationLROPoller[DocumentModelDetails]:
         """Build a custom model.
 
@@ -146,12 +133,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         """
 
         def callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            op_response = self._deserialize(
-                self._generated_models.GetOperationResponse, raw_response
-            )
-            model_info = self._deserialize(
-                self._generated_models.ModelInfo, op_response.result
-            )
+            op_response = self._deserialize(self._generated_models.GetOperationResponse, raw_response)
+            model_info = self._deserialize(self._generated_models.ModelInfo, op_response.result)
             return DocumentModelDetails._from_generated(model_info)
 
         description = kwargs.pop("description", None)
@@ -159,9 +142,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         tags = kwargs.pop("tags", None)
         cls = kwargs.pop("cls", callback)
         continuation_token = kwargs.pop("continuation_token", None)
-        polling_interval = kwargs.pop(
-            "polling_interval", self._client._config.polling_interval
-        )
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
 
         if model_id is None:
             model_id = str(uuid.uuid4())
@@ -180,9 +161,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
             cls=cls,
             continuation_token=continuation_token,
             polling=AsyncLROBasePolling(
-                timeout=polling_interval,
-                lro_algorithms=[DocumentModelAdministrationPolling()],
-                **kwargs
+                timeout=polling_interval, lro_algorithms=[DocumentModelAdministrationPolling()], **kwargs
             ),
             **kwargs
         )
@@ -221,24 +200,16 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 :caption: Creating a composed model with existing models.
         """
 
-        def _compose_callback(
-            raw_response, _, headers
-        ):  # pylint: disable=unused-argument
-            op_response = self._deserialize(
-                self._generated_models.GetOperationResponse, raw_response
-            )
-            model_info = self._deserialize(
-                self._generated_models.ModelInfo, op_response.result
-            )
+        def _compose_callback(raw_response, _, headers):  # pylint: disable=unused-argument
+            op_response = self._deserialize(self._generated_models.GetOperationResponse, raw_response)
+            model_info = self._deserialize(self._generated_models.ModelInfo, op_response.result)
             return DocumentModelDetails._from_generated(model_info)
 
         model_id = kwargs.pop("model_id", None)
         description = kwargs.pop("description", None)
         tags = kwargs.pop("tags", None)
         continuation_token = kwargs.pop("continuation_token", None)
-        polling_interval = kwargs.pop(
-            "polling_interval", self._client._config.polling_interval
-        )
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
 
         if model_id is None:
             model_id = str(uuid.uuid4())
@@ -249,17 +220,14 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 description=description,
                 tags=tags,
                 component_models=[
-                    self._generated_models.ComponentModelInfo(model_id=model_id)
-                    for model_id in component_model_ids
+                    self._generated_models.ComponentModelInfo(model_id=model_id) for model_id in component_model_ids
                 ]
                 if component_model_ids
                 else [],
             ),
             cls=kwargs.pop("cls", _compose_callback),
             polling=AsyncLROBasePolling(
-                timeout=polling_interval,
-                lro_algorithms=[DocumentModelAdministrationPolling()],
-                **kwargs
+                timeout=polling_interval, lro_algorithms=[DocumentModelAdministrationPolling()], **kwargs
             ),
             continuation_token=continuation_token,
             **kwargs
@@ -332,20 +300,14 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         """
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            op_response = self._deserialize(
-                self._generated_models.GetOperationResponse, raw_response
-            )
-            model_info = self._deserialize(
-                self._generated_models.ModelInfo, op_response.result
-            )
+            op_response = self._deserialize(self._generated_models.GetOperationResponse, raw_response)
+            model_info = self._deserialize(self._generated_models.ModelInfo, op_response.result)
             return DocumentModelDetails._from_generated(model_info)
 
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        polling_interval = kwargs.pop(
-            "polling_interval", self._client._config.polling_interval
-        )
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
         return await self._client.begin_copy_document_model_to(  # type: ignore
@@ -362,9 +324,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
             else None,
             cls=kwargs.pop("cls", _copy_callback),
             polling=AsyncLROBasePolling(
-                timeout=polling_interval,
-                lro_algorithms=[DocumentModelAdministrationPolling()],
-                **kwargs
+                timeout=polling_interval, lro_algorithms=[DocumentModelAdministrationPolling()], **kwargs
             ),
             continuation_token=continuation_token,
             **kwargs
@@ -468,9 +428,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         return DocumentModelDetails._from_generated(response)
 
     @distributed_trace
-    def list_operations(
-        self, **kwargs: Any
-    ) -> AsyncItemPaged[DocumentModelOperationSummary]:
+    def list_operations(self, **kwargs: Any) -> AsyncItemPaged[DocumentModelOperationSummary]:
         """List information for each document model operation.
 
         Lists all document model operations associated with the Form Recognizer resource.
@@ -494,17 +452,13 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         return self._client.get_operations(  # type: ignore
             cls=kwargs.pop(
                 "cls",
-                lambda objs: [
-                    DocumentModelOperationSummary._from_generated(x) for x in objs
-                ],
+                lambda objs: [DocumentModelOperationSummary._from_generated(x) for x in objs],
             ),
             **kwargs
         )
 
     @distributed_trace_async
-    async def get_operation(
-        self, operation_id: str, **kwargs: Any
-    ) -> DocumentModelOperationDetails:
+    async def get_operation(self, operation_id: str, **kwargs: Any) -> DocumentModelOperationDetails:
         """Get a document model operation by its ID.
 
         Get a document model operation associated with the Form Recognizer resource.

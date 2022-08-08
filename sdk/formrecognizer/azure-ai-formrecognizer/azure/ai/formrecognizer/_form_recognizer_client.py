@@ -63,27 +63,14 @@ class FormRecognizerClient(FormRecognizerClientBase):
             :caption: Creating the FormRecognizerClient with a token credential.
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureKeyCredential, TokenCredential],
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
         api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
         super().__init__(
-            endpoint=endpoint,
-            credential=credential,
-            api_version=api_version,
-            client_kind="form",
-            **kwargs
+            endpoint=endpoint, credential=credential, api_version=api_version, client_kind="form", **kwargs
         )
 
-    def _prebuilt_callback(
-        self, raw_response, _, headers
-    ):  # pylint: disable=unused-argument
-        analyze_result = self._deserialize(
-            self._generated_models.AnalyzeOperationResult, raw_response
-        )
+    def _prebuilt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
+        analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
         return prepare_prebuilt_models(analyze_result)
 
     @distributed_trace
@@ -134,9 +121,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         content_type = kwargs.pop("content_type", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
         if content_type == "application/json":
-            raise TypeError(
-                "Call begin_recognize_receipts_from_url() to analyze a receipt from a URL."
-            )
+            raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a URL.")
         cls = kwargs.pop("cls", self._prebuilt_callback)
         if content_type is None and kwargs.get("continuation_token", None) is None:
             content_type = get_content_type(receipt)
@@ -147,18 +132,14 @@ class FormRecognizerClient(FormRecognizerClientBase):
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"locale": locale})
             else:
-                raise ValueError(
-                    "'locale' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'locale' is only available for API version V2_1 and up")
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if pages:
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"pages": pages})
             else:
-                raise ValueError(
-                    "'pages' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'pages' is only available for API version V2_1 and up")
         return self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream=receipt,  # type: ignore
             content_type=content_type,
@@ -169,9 +150,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_recognize_receipts_from_url(
-        self, receipt_url: str, **kwargs: Any
-    ) -> LROPoller[List[RecognizedForm]]:
+    def begin_recognize_receipts_from_url(self, receipt_url: str, **kwargs: Any) -> LROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given sales receipt.
         The input document must be the location (URL) of the receipt to be analyzed.
 
@@ -217,18 +196,14 @@ class FormRecognizerClient(FormRecognizerClientBase):
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"locale": locale})
             else:
-                raise ValueError(
-                    "'locale' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'locale' is only available for API version V2_1 and up")
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if pages:
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"pages": pages})
             else:
-                raise ValueError(
-                    "'pages' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'pages' is only available for API version V2_1 and up")
         return self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream={"source": receipt_url},  # type: ignore
             include_text_details=include_field_elements,
@@ -282,9 +257,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         """
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
-            raise TypeError(
-                "Call begin_recognize_business_cards_from_url() to analyze a business card from a URL."
-            )
+            raise TypeError("Call begin_recognize_business_cards_from_url() to analyze a business card from a URL.")
 
         include_field_elements = kwargs.pop("include_field_elements", False)
 
@@ -351,8 +324,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         except ValueError as e:
             if "begin_analyze_business_card_async" in str(e):
                 raise ValueError(
-                    "Method 'begin_recognize_business_cards_from_url' is "
-                    "only available for API version V2_1 and up"
+                    "Method 'begin_recognize_business_cards_from_url' is " "only available for API version V2_1 and up"
                 )
             raise e
 
@@ -513,9 +485,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         """
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
-            raise TypeError(
-                "Call begin_recognize_invoice_from_url() to analyze an invoice from a URL."
-            )
+            raise TypeError("Call begin_recognize_invoice_from_url() to analyze an invoice from a URL.")
 
         include_field_elements = kwargs.pop("include_field_elements", False)
 
@@ -533,15 +503,11 @@ class FormRecognizerClient(FormRecognizerClientBase):
             )
         except ValueError as e:
             if "begin_analyze_invoice_async" in str(e):
-                raise ValueError(
-                    "Method 'begin_recognize_invoices' is only available for API version V2_1 and up"
-                )
+                raise ValueError("Method 'begin_recognize_invoices' is only available for API version V2_1 and up")
             raise e
 
     @distributed_trace
-    def begin_recognize_invoices_from_url(
-        self, invoice_url: str, **kwargs: Any
-    ) -> LROPoller[List[RecognizedForm]]:
+    def begin_recognize_invoices_from_url(self, invoice_url: str, **kwargs: Any) -> LROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given invoice.
         The input document must be the location (URL) of the invoice to be analyzed.
 
@@ -580,23 +546,16 @@ class FormRecognizerClient(FormRecognizerClientBase):
         except ValueError as e:
             if "begin_analyze_invoice_async" in str(e):
                 raise ValueError(
-                    "Method 'begin_recognize_invoices_from_url' is "
-                    "only available for API version V2_1 and up"
+                    "Method 'begin_recognize_invoices_from_url' is " "only available for API version V2_1 and up"
                 )
             raise e
 
-    def _content_callback(
-        self, raw_response, _, headers
-    ):  # pylint: disable=unused-argument
-        analyze_result = self._deserialize(
-            self._generated_models.AnalyzeOperationResult, raw_response
-        )
+    def _content_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
+        analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
         return prepare_content_result(analyze_result)
 
     @distributed_trace
-    def begin_recognize_content(
-        self, form: Union[bytes, IO[bytes]], **kwargs: Any
-    ) -> LROPoller[List[FormPage]]:
+    def begin_recognize_content(self, form: Union[bytes, IO[bytes]], **kwargs: Any) -> LROPoller[List[FormPage]]:
         """Extract text and content/layout information from a given document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
@@ -643,9 +602,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         content_type = kwargs.pop("content_type", None)
         reading_order = kwargs.pop("reading_order", None)
         if content_type == "application/json":
-            raise TypeError(
-                "Call begin_recognize_content_from_url() to analyze a document from a URL."
-            )
+            raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a URL.")
 
         if content_type is None and kwargs.get("continuation_token", None) is None:
             content_type = get_content_type(form)
@@ -656,25 +613,19 @@ class FormRecognizerClient(FormRecognizerClientBase):
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"pages": pages})
             else:
-                raise ValueError(
-                    "'pages' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'pages' is only available for API version V2_1 and up")
 
         if reading_order:
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"reading_order": reading_order})
             else:
-                raise ValueError(
-                    "'reading_order' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'reading_order' is only available for API version V2_1 and up")
 
         if language:
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"language": language})
             else:
-                raise ValueError(
-                    "'language' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'language' is only available for API version V2_1 and up")
 
         return self._client.begin_analyze_layout_async(  # type: ignore
             file_stream=form,  # type: ignore
@@ -685,9 +636,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_recognize_content_from_url(
-        self, form_url: str, **kwargs: Any
-    ) -> LROPoller[List[FormPage]]:
+    def begin_recognize_content_from_url(self, form_url: str, **kwargs: Any) -> LROPoller[List[FormPage]]:
         """Extract text and layout information from a given document.
         The input document must be the location (URL) of the document to be analyzed.
 
@@ -725,25 +674,19 @@ class FormRecognizerClient(FormRecognizerClientBase):
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"pages": pages})
             else:
-                raise ValueError(
-                    "'pages' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'pages' is only available for API version V2_1 and up")
 
         if reading_order:
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"reading_order": reading_order})
             else:
-                raise ValueError(
-                    "'reading_order' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'reading_order' is only available for API version V2_1 and up")
 
         if language:
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"language": language})
             else:
-                raise ValueError(
-                    "'language' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'language' is only available for API version V2_1 and up")
 
         return self._client.begin_analyze_layout_async(  # type: ignore
             file_stream={"source": form_url},  # type: ignore
@@ -794,32 +737,22 @@ class FormRecognizerClient(FormRecognizerClientBase):
             raise ValueError("model_id cannot be None or empty.")
 
         pages = kwargs.pop("pages", None)
-        polling_interval = kwargs.pop(
-            "polling_interval", self._client._config.polling_interval
-        )
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
-            raise TypeError(
-                "Call begin_recognize_custom_forms_from_url() to analyze a document from a URL."
-            )
+            raise TypeError("Call begin_recognize_custom_forms_from_url() to analyze a document from a URL.")
         if content_type is None and continuation_token is None:
             content_type = get_content_type(form)
 
         include_field_elements = kwargs.pop("include_field_elements", False)
 
-        def analyze_callback(
-            raw_response, _, headers
-        ):  # pylint: disable=unused-argument
-            analyze_result = self._deserialize(
-                self._generated_models.AnalyzeOperationResult, raw_response
-            )
+        def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
+            analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
             return prepare_form_result(analyze_result, model_id)
 
         callback = kwargs.pop("cls", analyze_callback)
-        polling = LROBasePolling(
-            timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
-        )
+        polling = LROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs)
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
@@ -827,9 +760,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"pages": pages})
             else:
-                raise ValueError(
-                    "'pages' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'pages' is only available for API version V2_1 and up")
 
         return self._client.begin_analyze_with_custom_model(  # type: ignore
             file_stream=form,  # type: ignore
@@ -872,22 +803,14 @@ class FormRecognizerClient(FormRecognizerClientBase):
         pages = kwargs.pop("pages", None)
         continuation_token = kwargs.pop("continuation_token", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
-        polling_interval = kwargs.pop(
-            "polling_interval", self._client._config.polling_interval
-        )
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
 
-        def analyze_callback(
-            raw_response, _, headers
-        ):  # pylint: disable=unused-argument
-            analyze_result = self._deserialize(
-                self._generated_models.AnalyzeOperationResult, raw_response
-            )
+        def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
+            analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
             return prepare_form_result(analyze_result, model_id)
 
         callback = kwargs.pop("cls", analyze_callback)
-        polling = LROBasePolling(
-            timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
-        )
+        polling = LROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs)
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
@@ -895,9 +818,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"pages": pages})
             else:
-                raise ValueError(
-                    "'pages' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'pages' is only available for API version V2_1 and up")
 
         return self._client.begin_analyze_with_custom_model(  # type: ignore
             file_stream={"source": form_url},  # type: ignore
