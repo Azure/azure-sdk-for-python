@@ -27,8 +27,7 @@
 import os
 import sys
 
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
+from datetime import datetime, timedelta
 from azure.core.exceptions import HttpResponseError
 from azure.communication.rooms import (
     RoomsClient,
@@ -55,7 +54,7 @@ class RoomsSample(object):
     def create_single_room(self):
 
         valid_from =  datetime.now()
-        valid_until = valid_from + relativedelta(months=+4)
+        valid_until = valid_from + timedelta(weeks=4)
         participants = []
 
         participants.append(RoomParticipant(CommunicationUserIdentifier("<PARTICIPANT_MRI>")))
@@ -85,7 +84,7 @@ class RoomsSample(object):
     def update_single_room(self, room_id):
         # set attributes you want to change
         valid_from =  datetime.now()
-        valid_until = valid_from + relativedelta(months=+1,days=+20)
+        valid_until = valid_from + timedelta(weeks=7)
 
         try:
             update_room_response = self.rooms_client.update_room(room_id=room_id, valid_from=valid_from, valid_until=valid_until)

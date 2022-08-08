@@ -5,10 +5,8 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
+from datetime import datetime, timedelta
 
-from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.rooms import (
@@ -25,13 +23,6 @@ from _shared.testcase import (
     ResponseReplacerProcessor
 )
 from helper import URIIdentityReplacer, RequestBodyIdentityReplacer
-
-class FakeTokenCredential(object):
-    def __init__(self):
-        self.token = AccessToken("Fake Token", 0)
-
-    def get_token(self, *args):
-        return self.token
 
 class RoomsClientTest(CommunicationTestCase):
     def __init__(self, method_name):
@@ -89,19 +80,19 @@ class RoomsClientTest(CommunicationTestCase):
     @pytest.mark.live_test_only
     def test_create_room_only_validFrom(self):
         # room attributes
-        valid_from =  datetime.now() + relativedelta(days=+3)
+        valid_from =  datetime.now() + timedelta(days=3)
         response = self.rooms_client.create_room(valid_from=valid_from)
         # delete created room
         self.rooms_client.delete_room(room_id=response.id)
 
         # verify room is valid for 180 days
-        valid_until = datetime.utcnow() + relativedelta(days=+180)
+        valid_until = datetime.utcnow() + timedelta(days=180)
         self.assertEqual(valid_until.date(), response.valid_until.date())
 
     @pytest.mark.live_test_only
     def test_create_room_only_validUntil(self):
         # room attributes
-        valid_until =  datetime.now() + relativedelta(months=+3)
+        valid_until =  datetime.now() + timedelta(weeks=3)
         response = self.rooms_client.create_room(valid_until=valid_until)
         # delete created room
         self.rooms_client.delete_room(room_id=response.id)
@@ -123,8 +114,8 @@ class RoomsClientTest(CommunicationTestCase):
 
     def test_create_room_validUntil_7Months(self):
         # room attributes
-        valid_from =  datetime.now() + relativedelta(days=+3)
-        valid_until = valid_from + relativedelta(months=+7)
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until = valid_from + timedelta(weeks=29)
 
         with pytest.raises(HttpResponseError) as ex:
             self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until)
@@ -133,7 +124,7 @@ class RoomsClientTest(CommunicationTestCase):
 
     def test_create_room_validFrom_7Months(self):
         # room attributes
-        valid_from = datetime.now() + relativedelta(months=+7)
+        valid_from = datetime.now() + timedelta(weeks=29)
 
         with pytest.raises(HttpResponseError) as ex:
             self.rooms_client.create_room(valid_from=valid_from)
@@ -144,8 +135,8 @@ class RoomsClientTest(CommunicationTestCase):
     @pytest.mark.live_test_only
     def test_create_room_correct_timerange(self):
         # room attributes
-        valid_from =  datetime.now() + relativedelta(days=+3)
-        valid_until = valid_from + relativedelta(months=+4)
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until = valid_from + timedelta(weeks=4)
 
         response = self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until)
         self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until)
@@ -170,8 +161,8 @@ class RoomsClientTest(CommunicationTestCase):
     @pytest.mark.live_test_only
     def test_create_room_open_room(self):
         # room attributes
-        valid_from =  datetime.now() + relativedelta(days=+3)
-        valid_until = valid_from + relativedelta(months=+4)
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until = valid_from + timedelta(weeks=4)
         room_join_policy = RoomJoinPolicy.COMMUNICATION_SERVICE_USERS
 
         response = self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, room_join_policy=room_join_policy)
@@ -182,8 +173,8 @@ class RoomsClientTest(CommunicationTestCase):
     @pytest.mark.live_test_only
     def test_create_room_all_attributes(self):
         # room attributes
-        valid_from =  datetime.now() + relativedelta(days=+3)
-        valid_until = valid_from + relativedelta(months=+4)
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until = valid_from + timedelta(weeks=4)
         participants = [
             self.users["john"]
         ]
@@ -199,8 +190,8 @@ class RoomsClientTest(CommunicationTestCase):
     @pytest.mark.live_test_only
     def test_get_room(self):
         # room attributes
-        valid_from =  datetime.now() + relativedelta(days=+3)
-        valid_until = valid_from + relativedelta(months=+2)
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until = valid_from + timedelta(weeks=2)
         # add john to room
         participants = [
             self.users["john"]
@@ -239,7 +230,7 @@ class RoomsClientTest(CommunicationTestCase):
         create_response = self.rooms_client.create_room()
 
         # update room attributes
-        valid_from =  datetime.now() + relativedelta(months=+2)
+        valid_from =  datetime.now() + timedelta(weeks=2)
 
         with pytest.raises(HttpResponseError) as ex:
             self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from)
@@ -255,7 +246,7 @@ class RoomsClientTest(CommunicationTestCase):
         create_response = self.rooms_client.create_room()
 
         # update room attributes
-        valid_until =  datetime.now() + relativedelta(months=+2)
+        valid_until =  datetime.now() + timedelta(weeks=2)
 
         with pytest.raises(HttpResponseError) as ex:
             self.rooms_client.update_room(room_id=create_response.id, valid_until=valid_until)
@@ -271,7 +262,7 @@ class RoomsClientTest(CommunicationTestCase):
         create_response = self.rooms_client.create_room()
 
         # update room attributes
-        valid_from =  datetime.now() + relativedelta(months=+7)
+        valid_from =  datetime.now() + timedelta(weeks=29)
 
         with pytest.raises(HttpResponseError) as ex:
             self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from)
@@ -287,7 +278,7 @@ class RoomsClientTest(CommunicationTestCase):
         create_response = self.rooms_client.create_room()
 
         # update room attributes
-        valid_until =  datetime.now() + relativedelta(months=+7)
+        valid_until =  datetime.now() + timedelta(weeks=29)
 
         with pytest.raises(HttpResponseError) as ex:
             self.rooms_client.update_room(room_id=create_response.id, valid_until=valid_until)
@@ -303,8 +294,8 @@ class RoomsClientTest(CommunicationTestCase):
         create_response = self.rooms_client.create_room()
 
         # update room attributes
-        valid_from =  datetime.now() + relativedelta(days=+3)
-        valid_until =  datetime.now() + relativedelta(months=+7)
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until =  datetime.now() + timedelta(weeks=29)
 
         with pytest.raises(HttpResponseError) as ex:
             self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
@@ -321,8 +312,8 @@ class RoomsClientTest(CommunicationTestCase):
         create_response = self.rooms_client.create_room()
 
         # update room attributes
-        valid_from =  datetime.now() + relativedelta(days=+3)
-        valid_until =  datetime.now() + relativedelta(months=+4)
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until =  datetime.now() + timedelta(weeks=4)
 
         update_response = self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
 
@@ -337,8 +328,8 @@ class RoomsClientTest(CommunicationTestCase):
         create_response = self.rooms_client.create_room()
 
         # room attributes
-        valid_from =  datetime.now() + relativedelta(days=-1)
-        valid_until = valid_from + relativedelta(months=+4)
+        valid_from =  datetime.now() + timedelta(days=-1)
+        valid_until = valid_from + timedelta(weeks=4)
         room_join_policy = RoomJoinPolicy.COMMUNICATION_SERVICE_USERS
 
         with pytest.raises(HttpResponseError) as ex:
@@ -356,8 +347,8 @@ class RoomsClientTest(CommunicationTestCase):
         create_response = self.rooms_client.create_room()
 
         # room attributes
-        valid_from =  datetime.now() + relativedelta(days=+3)
-        valid_until = valid_from + relativedelta(months=+4)
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until = valid_from + timedelta(weeks=4)
         room_join_policy = RoomJoinPolicy.COMMUNICATION_SERVICE_USERS
 
         response = self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until, room_join_policy=room_join_policy)

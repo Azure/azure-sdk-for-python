@@ -14,7 +14,6 @@ from .._generated.models import (
     RoomJoinPolicy,
     RoleType
 )
-from .._generated import _serialization
 from .._generated.models import RoomModel
 from .._shared.models import (
     CommunicationIdentifier,
@@ -24,33 +23,22 @@ from .._shared.models import (
 )
 
 
-class CommunicationRoom(_serialization.Model):
+class CommunicationRoom():
     """The response object from rooms service.
 
     :ivar id: Unique identifier of a room. This id is server generated.
     :vartype id: str
-    :ivar created_on: The timestamp when the room was created at the server. The timestamp
-     is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-    :vartype created_on: ~datetime
-    :ivar valid_from: The timestamp from when the room is open for joining. The timestamp is in
-     RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-    :vartype valid_from: ~datetime
-    :ivar valid_until: The timestamp from when the room can no longer be joined. The timestamp is
-     in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-    :vartype valid_until: ~datetime
+    :ivar created_on: The timestamp when the room was created at the server.
+    :vartype created_on: ~datetime.datetime
+    :ivar valid_from: The timestamp from when the room is open for joining.
+    :vartype valid_from: ~datetime.datetime
+    :ivar valid_until: The timestamp from when the room can no longer be joined.
+    :vartype valid_until: ~datetime.datetime
     :ivar room_join_policy: The join policy of the room.
     :vartype room_join_policy: ~azure.communication.rooms.RoomJoinPolicy
     :ivar participants: Collection of room participants.
     :vartype participants: Optional[List[~azure.communication.rooms.RoomParticipant]]
     """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
-        'valid_from': {'key': 'validFrom', 'type': 'iso-8601'},
-        'valid_until': {'key': 'validUntil', 'type': 'iso-8601'},
-        'participants': {'key': 'participants', 'type': '[RoomParticipant]'},
-    }
 
     def __init__(
         self,
@@ -66,16 +54,14 @@ class CommunicationRoom(_serialization.Model):
         """
         :param id: Unique identifier of a room. This id is server generated.
         :type id: str
-        :param created_on: The timestamp when the room was created at the server. The
-         timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-        :type created_on: ~datetime
-        :param valid_from: The timestamp from when the room is open for joining. The timestamp is in
-         RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-        :type valid_from: ~datetime
-        :param valid_until: The timestamp from when the room can no longer be joined. The timestamp
-         is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-        :type valid_until: ~datetime
-        :param room_join_policy: The join policy of the room.
+        :param created_on: The timestamp when the room was created at the server.
+        :type created_on: ~datetime.datetime
+        :param valid_from: The timestamp from when the room is open for joining.
+        :type valid_from: ~datetime.datetime
+        :param valid_until: The timestamp from when the room can no longer be joined.
+        :type valid_until: ~datetime.datetime
+        :param room_join_policy: The join policy of the room. Allows only participants or any communication
+        service users to join
         :type room_join_policy: ~azure.communication.rooms.RoomJoinPolicy
         :param participants: Collection of room participants.
         :type participants: Optional[List[~azure.communication.rooms.RoomParticipant]]
@@ -89,7 +75,7 @@ class CommunicationRoom(_serialization.Model):
         self.participants = participants
 
     @classmethod
-    def from_room_response(cls, get_room_response: RoomModel,
+    def _from_room_response(cls, get_room_response: RoomModel,
             **kwargs
     ) -> 'CommunicationRoom':
         """Create CommunicationRoom from the internal RoomModel.
@@ -105,11 +91,17 @@ class CommunicationRoom(_serialization.Model):
             valid_from=get_room_response.valid_from,
             valid_until=get_room_response.valid_until,
             room_join_policy=get_room_response.room_join_policy,
-            participants=[RoomParticipant.from_room_participant_internal(p) for p in get_room_response.participants],
+            # pylint: disable=protected-access
+            participants=[RoomParticipant._from_room_participant_internal(p) for p in get_room_response.participants],
             **kwargs
         )
 
-class RoomParticipant(_serialization.Model):
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+class RoomParticipant():
     """A participant of the room.
 
     All required parameters must be populated in order to send to Azure.
@@ -122,15 +114,6 @@ class RoomParticipant(_serialization.Model):
     :ivar role: Role Name.
     :vartype role: Optional[Union[str, RoleType]
     """
-
-    _validation = {
-        "communication_identifier": {"required": True},
-    }
-
-    _attribute_map = {
-        "communication_identifier": {"key": "communicationIdentifier", "type": "CommunicationIdentifier"},
-        "role": {"key": "role", "type": "Optional[Union[str, RoleType]"},
-    }
 
     def __init__(
         self,
@@ -154,7 +137,7 @@ class RoomParticipant(_serialization.Model):
         self.role = role
 
     @classmethod
-    def from_room_participant_internal(cls, room_participant_internal: RoomParticipantInternal, **kwargs):
+    def _from_room_participant_internal(cls, room_participant_internal: RoomParticipantInternal, **kwargs):
         return cls(
             communication_identifier=_CommunicationIdentifierConverter
                 .to_communication_identifier(room_participant_internal.communication_identifier),
@@ -162,12 +145,17 @@ class RoomParticipant(_serialization.Model):
             **kwargs
         )
 
-    def to_room_participant_internal(self):
+    def _to_room_participant_internal(self):
         return RoomParticipantInternal(
             communication_identifier=_CommunicationIdentifierConverter
                 .to_communication_identifier_model(self.communication_identifier),
             role=self.role
         )
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
 
 class _CommunicationIdentifierConverter():
     @staticmethod
@@ -202,7 +190,7 @@ class _CommunicationIdentifierConverter():
         return UnknownIdentifier(raw_id)
 
 
-class ParticipantsCollection(_serialization.Model):
+class ParticipantsCollection():
     """Collection of participants in a room.
 
     All required parameters must be populated in order to send to Azure.
@@ -211,14 +199,7 @@ class ParticipantsCollection(_serialization.Model):
     :vartype participants: List[~azure.communication.rooms.RoomParticipant]
     """
 
-    _validation = {
-        "participants": {"required": True, "readonly": True},
-    }
-
-    _attribute_map = {
-        "participants": {"key": "participants", "type": "List[RoomParticipant]"},
-    }
-
     def __init__(self, *, participants: List[RoomParticipantInternal], **kwargs):
         super().__init__(**kwargs)
-        self.participants = [RoomParticipant.from_room_participant_internal(p) for p in participants]
+        # pylint: disable=protected-access
+        self.participants = [RoomParticipant._from_room_participant_internal(p) for p in participants]

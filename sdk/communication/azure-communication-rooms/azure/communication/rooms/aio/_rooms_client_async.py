@@ -7,12 +7,14 @@ from datetime import datetime
 from typing import List, Optional
 import uuid
 
+from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.communication.rooms import RoomJoinPolicy
 from azure.communication.rooms._models import CommunicationRoom, RoomParticipant, ParticipantsCollection
 from azure.communication.rooms._shared.models import CommunicationIdentifier
+from azure.communication.rooms._shared.policy import HMACCredentialsPolicy
 from .._generated.aio._client import AzureCommunicationRoomsService
-from .._shared.utils import parse_connection_str, get_authentication_policy
+from .._shared.utils import parse_connection_str
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
 from .._generated.models import (
@@ -30,12 +32,12 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param str credential:
+    :param AzureKeyCredential credential:
         The access key we use to authenticate against the service.
     """
     def __init__(
             self, endpoint: str,
-            credential: str,
+            credential: AzureKeyCredential,
             **kwargs
     ) -> None:
         try:
@@ -50,12 +52,12 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
 
         # TokenCredential not supported at the moment
         if hasattr(credential, "get_token"):
-            raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
-                    "or a token credential from azure.identity".format(type(credential)))
+            raise TypeError("Unsupported credential: {}. Use an AzureKeyCredential to use HMACCredentialsPolicy"
+                    "from azure.identity".format(type(credential)))
 
         self._endpoint = endpoint
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
-        self._authentication_policy = get_authentication_policy(endpoint, credential, decode_url=True, is_async=True)
+        self._authentication_policy = HMACCredentialsPolicy(endpoint, credential.key, decode_url=True)
         self._rooms_service_client = AzureCommunicationRoomsService(
             self._endpoint,
             api_version=self._api_version,
@@ -85,7 +87,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
-        return cls(endpoint, access_key, **kwargs)
+        return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
 
     @distributed_trace_async
     async def create_room(
@@ -99,16 +101,14 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
     ) -> CommunicationRoom:
         """Create a new room.
 
-        :param valid_from: The timestamp from when the room is open for joining. The timestamp is in
-         RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-        :type valid_from: (Optional)datetime
-        :param valid_until: The timestamp from when the room can no longer be joined. The timestamp
-         is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-        :type valid_until: (Optional)datetime
-        :param room_join_policy: (Optional)The join policy of the room.
-        :type room_join_policy: (Optional)RoomJoinPolicy
-        :param participants: (Optional) Collection of identities invited to the room.
-        :type participants: (Optional)List[RoomParticipant]
+        :param valid_from: The timestamp from when the room is open for joining. Optional.
+        :type valid_from: ~datetime.datetime
+        :param valid_until: The timestamp from when the room can no longer be joined. Optional.
+        :type valid_until: ~datetime.datetime
+        :param room_join_policy: The join policy of the room. Optional.
+        :type room_join_policy: ~azure.communication.rooms.models.RoomJoinPolicy
+        :param participants: Collection of identities invited to the room. Optional.
+        :type participants: List[~azure.communication.rooms.RoomParticipant]
         :returns: Created room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -117,7 +117,8 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
             valid_from=valid_from,
             valid_until=valid_until,
             room_join_policy=room_join_policy,
-            participants=[p.to_room_participant_internal() for p in participants] if participants else None
+            # pylint: disable=protected-access
+            participants=[p._to_room_participant_internal() for p in participants] if participants else None
         )
 
         repeatability_request_id = uuid.uuid1()
@@ -128,7 +129,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
             repeatability_request_id=repeatability_request_id,
             repeatability_first_sent=repeatability_first_sent,
             **kwargs)
-        return CommunicationRoom.from_room_response(create_room_response)
+        return CommunicationRoom._from_room_response(create_room_response) # pylint: disable=protected-access
 
     @distributed_trace_async
     async def delete_room(
@@ -158,20 +159,19 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         participants: Optional[List[RoomParticipant]] = None,
         **kwargs
     ) -> CommunicationRoom:
-        """Update a valid room's attributes
+        """Update a valid room's attributes. For any agruement that is passed
+        in, the corresponding room property will be replaced with the new value.
 
         :param room_id: Required. Id of room to be updated
         :type room_id: str
-        :param valid_from: The timestamp from when the room is open for joining. The timestamp is in
-         RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-        :type valid_from: (Optional)datetime
-        :param valid_until: The timestamp from when the room can no longer be joined. The timestamp
-         is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-        :type valid_until: (Optional)datetime
-        :param room_join_policy: (Optional)The join policy of the room.
-        :type room_join_policy: (Optional)RoomJoinPolicy
-        :param participants: (Optional) Collection of identities invited to the room.
-        :type participants: (Optional)List[RoomParticipant]
+        :param valid_from: The timestamp from when the room is open for joining. Optional.
+        :type valid_from: ~datetime.datetime
+        :param valid_until: The timestamp from when the room can no longer be joined. Optional.
+        :type valid_until: ~datetime.datetime
+        :param room_join_policy: The join policy of the room. Optional.
+        :type room_join_policy: ~azure.communication.rooms.models.RoomJoinPolicy
+        :param participants: Collection of identities invited to the room. Optional.
+        :type participants: List[~azure.communication.rooms.RoomParticipant]
         :returns: Updated room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -182,11 +182,12 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
             valid_from=valid_from,
             valid_until=valid_until,
             room_join_policy=room_join_policy,
-            participants=[p.to_room_participant_internal() for p in participants] if participants else None
+            # pylint: disable=protected-access
+            participants=[p._to_room_participant_internal() for p in participants] if participants else None
         )
         update_room_response = await self._rooms_service_client.rooms.update_room(
             room_id=room_id, patch_room_request=update_room_request, **kwargs)
-        return CommunicationRoom.from_room_response(update_room_response)
+        return CommunicationRoom._from_room_response(update_room_response) # pylint: disable=protected-access
 
     @distributed_trace_async
     async def get_room(
@@ -204,7 +205,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
 
         """
         get_room_response = await self._rooms_service_client.rooms.get_room(room_id=room_id, **kwargs)
-        return CommunicationRoom.from_room_response(get_room_response)
+        return CommunicationRoom._from_room_response(get_room_response) # pylint: disable=protected-access
 
     @distributed_trace_async
     async def add_participants(
@@ -214,16 +215,19 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         participants: List[RoomParticipant],
         **kwargs
     ) -> None:
-        """Add participants to a room
+        """Add participants to a roomMaximum room size is 350 participants. Adding more participants
+        will result in exceptions. Existing participants cannot be added again.
+
         :param room_id: Required. Id of room to be updated
         :type room_id: str
         :param participants: Required. Collection of identities invited to the room.
-        :type participants: List[RoomParticipant]
+        :type participants: List[~azure.communication.rooms.RoomParticipant]
         :return: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         add_participants_request = AddParticipantsRequest(
-            participants=[p.to_room_participant_internal() for p in participants]
+            # pylint: disable=protected-access
+            participants=[p._to_room_participant_internal() for p in participants]
         )
         await self._rooms_service_client.rooms.add_participants(
             room_id=room_id, add_participants_request=add_participants_request, **kwargs)
@@ -236,16 +240,19 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         participants: List[RoomParticipant],
         **kwargs
     ) -> None:
-        """Update participants to a room
+        """Update participants to a room. It looks for the room participants based on their
+        communication identifier and replace those participants with the value passed in
+        this API.
         :param room_id: Required. Id of room to be updated
         :type room_id: str
-        :param participants: Required. Collection of identities invited to the room.
-        :type participants: List[RoomParticipant]
+        :param participants: Required. Collection of identities to be updated
+        :type participants: List[~azure.communication.rooms.RoomParticipant]
         :return: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         update_participants_request = UpdateParticipantsRequest(
-            participants=[p.to_room_participant_internal() for p in participants]
+            # pylint: disable=protected-access
+            participants=[p._to_room_participant_internal() for p in participants]
         )
         await self._rooms_service_client.rooms.update_participants(
             room_id=room_id, update_participants_request=update_participants_request, **kwargs)
@@ -261,13 +268,14 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         """Remove participants from a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
-        :param participants: Required. Collection of identities invited to the room.
-        :type participants: List[RoomParticipant]
+        :param participants: Required. Collection of identities to be removed from the room.
+        :type participants: List[~azure.communication.rooms._shared.models.CommunicationIdentifier]
         :return: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         participants = [
-            RoomParticipant(communication_identifier=id).to_room_participant_internal()
+            # pylint: disable=protected-access
+            RoomParticipant(communication_identifier=id)._to_room_participant_internal()
             for id in communication_identifiers
         ]
         remove_participants_request = RemoveParticipantsRequest(
@@ -283,7 +291,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         **kwargs
     ) -> ParticipantsCollection:
         """Get participants of a room
-        :param room_id: Required. Id of room to be updated
+        :param room_id: Required. Id of room whose participants to be fetched.
         :type room_id: str
         :returns: ParticipantsCollection containing all participants in the room.
         :rtype: ~azure.communication.rooms.ParticipantsCollection

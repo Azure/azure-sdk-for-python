@@ -4,12 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from turtle import update
 import pytest
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
+from datetime import datetime, timedelta
 
-from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier
@@ -26,10 +23,6 @@ from _shared.testcase import (
 
 from _shared.utils import get_http_logging_policy
 from helper import URIIdentityReplacer, RequestBodyIdentityReplacer
-
-class FakeTokenCredential(object):
-    def __init__(self):
-        self.token = AccessToken("Fake Token", 0)
 
 class RoomsClientTestAsync(AsyncCommunicationTestCase):
     def __init__(self, method_name):
@@ -90,21 +83,21 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_room_only_validFrom_async(self):
         # room attributes
-        valid_from =  datetime.now() + relativedelta(days=+3)
+        valid_from =  datetime.now() + timedelta(days=3)
         async with self.rooms_client:
             response = await self.rooms_client.create_room(valid_from=valid_from)
             # delete created room
             await self.rooms_client.delete_room(room_id=response.id)
 
             # verify room is valid for 180 days
-            valid_until = datetime.now() + relativedelta(days=+180)
+            valid_until = datetime.now() + timedelta(days=180)
             self.assertEqual(valid_until.date(), response.valid_until.date())
 
     @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_room_only_validUntil_async(self):
         # room attributes
-        valid_until =  datetime.now() + relativedelta(months=+3)
+        valid_until =  datetime.now() + timedelta(weeks=3)
         async with self.rooms_client:
             response = await self.rooms_client.create_room(valid_until=valid_until)
             # delete created room
@@ -130,8 +123,8 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_room_validUntil_7Months_async(self):
         # room attributes
-        valid_from =  datetime.now() + relativedelta(days=+3)
-        valid_until = valid_from + relativedelta(months=+7)
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until = valid_from + timedelta(weeks=29)
 
         with pytest.raises(HttpResponseError) as ex:
             async with self.rooms_client:
@@ -142,7 +135,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_room_validFrom_7Months_async(self):
         # room attributes
-        valid_from = datetime.now() + relativedelta(months=+7)
+        valid_from = datetime.now() + timedelta(weeks=29)
 
         with pytest.raises(HttpResponseError) as ex:
             async with self.rooms_client:
@@ -154,8 +147,8 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_room_correct_timerange_async(self):
         # room attributes
-        valid_from =  datetime.now() + relativedelta(days=+3)
-        valid_until = valid_from + relativedelta(months=+4)
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until = valid_from + timedelta(weeks=4)
 
         async with self.rooms_client:
             response = await self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until)
@@ -186,8 +179,8 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_room_open_room(self):
         # room attributes
-        valid_from =  datetime.now() + relativedelta(days=+3)
-        valid_until = valid_from + relativedelta(months=+4)
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until = valid_from + timedelta(weeks=4)
         room_join_policy = RoomJoinPolicy.COMMUNICATION_SERVICE_USERS
 
         response = await self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, room_join_policy=room_join_policy)
@@ -199,8 +192,8 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_room_all_attributes_async(self):
         # room attributes
-        valid_from =  datetime.now() + relativedelta(days=+3)
-        valid_until = valid_from + relativedelta(months=+4)
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until = valid_from + timedelta(weeks=4)
         # add john to room
         participants = [
             self.users["john"]
@@ -218,8 +211,8 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_get_room_async(self):
         # room attributes
-        valid_from =  datetime.now() + relativedelta(days=+3)
-        valid_until = valid_from + relativedelta(months=+2)
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until = valid_from + timedelta(weeks=2)
 
         # add john to room
         participants = [
@@ -262,12 +255,9 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
     async def test_update_room_only_ValidFrom_async(self):
         # room with no attributes
         async with self.rooms_client:
-            #create_response = await self.rooms_client.create_room()
-            # update room attributes
-            valid_from =  datetime.now() + relativedelta(months=+2)
-            valid_until =  datetime.now() + relativedelta(months=+3)
+            create_response = await self.rooms_client.create_room()
 
-            create_response = await self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=[])
+            valid_from =  datetime.now() + timedelta(weeks=2)
 
             with pytest.raises(HttpResponseError) as ex:
                 await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from)
@@ -285,7 +275,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             create_response = await self.rooms_client.create_room()
 
             # update room attributes
-            valid_until =  datetime.now() + relativedelta(months=+2)
+            valid_until =  datetime.now() + timedelta(weeks=2)
 
             with pytest.raises(HttpResponseError) as ex:
                 await self.rooms_client.update_room(room_id=create_response.id, valid_until=valid_until)
@@ -303,7 +293,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             create_response = await self.rooms_client.create_room()
 
             # update room attributes
-            valid_from =  datetime.now() + relativedelta(months=+7)
+            valid_from =  datetime.now() + timedelta(weeks=29)
 
             with pytest.raises(HttpResponseError) as ex:
                 await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from)
@@ -321,7 +311,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             create_response = await self.rooms_client.create_room()
 
             # update room attributes
-            valid_until =  datetime.now() + relativedelta(months=+7)
+            valid_until =  datetime.now() + timedelta(weeks=29)
 
             with pytest.raises(HttpResponseError) as ex:
                 await self.rooms_client.update_room(room_id=create_response.id, valid_until=valid_until)
@@ -339,8 +329,8 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             create_response = await self.rooms_client.create_room()
 
             # update room attributes
-            valid_from =  datetime.now() + relativedelta(days=+3)
-            valid_until =  datetime.now() + relativedelta(months=+7)
+            valid_from =  datetime.now() + timedelta(days=3)
+            valid_until =  datetime.now() + timedelta(weeks=29)
 
             with pytest.raises(HttpResponseError) as ex:
                 await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
@@ -359,8 +349,8 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             create_response = await self.rooms_client.create_room()
 
             # update room attributes
-            valid_from =  datetime.now() + relativedelta(days=+3)
-            valid_until =  datetime.now() + relativedelta(months=+4)
+            valid_from =  datetime.now() + timedelta(days=3)
+            valid_until =  datetime.now() + timedelta(weeks=4)
 
             update_response = await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
 
@@ -376,8 +366,8 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
         create_response = await self.rooms_client.create_room()
 
         # room attributes
-        valid_from =  datetime.now() + relativedelta(days=-1)
-        valid_until = valid_from + relativedelta(months=+4)
+        valid_from =  datetime.now() - timedelta(days=1)
+        valid_until = valid_from + timedelta(weeks=4)
         room_join_policy = RoomJoinPolicy.COMMUNICATION_SERVICE_USERS
 
         with pytest.raises(HttpResponseError) as ex:
@@ -396,8 +386,8 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
         create_response = await self.rooms_client.create_room()
 
         # room attributes
-        valid_from =  datetime.now() + relativedelta(days=+3)
-        valid_until = valid_from + relativedelta(months=+4)
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until = valid_from + timedelta(weeks=4)
         room_join_policy = RoomJoinPolicy.COMMUNICATION_SERVICE_USERS
 
         response = await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until, room_join_policy=room_join_policy)

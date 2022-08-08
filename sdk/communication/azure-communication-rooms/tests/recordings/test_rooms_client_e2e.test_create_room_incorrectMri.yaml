@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-communication-identity/1.1.1 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 28 Jul 2022 15:15:54 GMT
+      - Mon, 08 Aug 2022 19:46:24 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -32,9 +32,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jul 2022 15:15:52 GMT
+      - Mon, 08 Aug 2022 19:46:24 GMT
       ms-cv:
-      - 67IeoIMjvky8CWHh4DKlaA.0
+      - aWJrrGEeVEybNgoivJcICQ.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 29ms
+      - 36ms
     status:
       code: 201
       message: Created
@@ -60,9 +60,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-communication-identity/1.1.1 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 28 Jul 2022 15:15:54 GMT
+      - Mon, 08 Aug 2022 19:46:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -79,9 +79,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jul 2022 15:15:53 GMT
+      - Mon, 08 Aug 2022 19:46:24 GMT
       ms-cv:
-      - Jnquxf++HkSKGyiHpx5l0Q.0
+      - hr1/tfmvvkasg3hkdgJNtg.0
       request-context:
       - appId=
       strict-transport-security:
@@ -89,7 +89,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 29ms
+      - 28ms
     status:
       code: 201
       message: Created
@@ -107,9 +107,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-communication-identity/1.1.1 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 28 Jul 2022 15:15:54 GMT
+      - Mon, 08 Aug 2022 19:46:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -126,9 +126,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jul 2022 15:15:53 GMT
+      - Mon, 08 Aug 2022 19:46:24 GMT
       ms-cv:
-      - oo+06zagD06MgyriHMmbtw.0
+      - wcjNGXy1+026WEl2v1AVog.0
       request-context:
       - appId=
       strict-transport-security:
@@ -136,7 +136,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 29ms
+      - 31ms
     status:
       code: 201
       message: Created
@@ -156,13 +156,13 @@ interactions:
       Content-Type:
       - application/json
       Repeatability-First-Sent:
-      - '2022-07-28T15:15:54.967164Z'
+      - '2022-08-08T19:46:25.40464Z'
       Repeatability-Request-ID:
-      - 2ce184db-0e88-11ed-9c4e-a864f132484d
+      - c984fcc9-1752-11ed-8cca-a864f132484d
       User-Agent:
-      - azsdk-python-communication-rooms/1.1.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-communication-rooms/1.0.0b1 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 28 Jul 2022 15:15:54 GMT
+      - Mon, 08 Aug 2022 19:46:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -176,9 +176,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jul 2022 15:15:53 GMT
+      - Mon, 08 Aug 2022 19:46:25 GMT
       ms-cv:
-      - czDUtNvXbUWay+LyAIqcvQ.0
+      - nvJUmBSybEW54XmKFfcCOQ.0
       transfer-encoding:
       - chunked
       x-cache:
@@ -198,9 +198,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-communication-identity/1.1.1 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 28 Jul 2022 15:15:55 GMT
+      - Mon, 08 Aug 2022 19:46:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -213,9 +213,9 @@ interactions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
         2021-11-01, 2022-06-01
       date:
-      - Thu, 28 Jul 2022 15:15:53 GMT
+      - Mon, 08 Aug 2022 19:46:25 GMT
       ms-cv:
-      - 81M2ogp2BUCNCCNBcYMizQ.0
+      - aQp/WrZyq0CaXM+JZtG4vg.0
       request-context:
       - appId=
       strict-transport-security:
@@ -223,7 +223,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 174ms
+      - 124ms
     status:
       code: 204
       message: No Content
@@ -239,9 +239,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-communication-identity/1.1.1 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 28 Jul 2022 15:15:55 GMT
+      - Mon, 08 Aug 2022 19:46:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -254,9 +254,9 @@ interactions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
         2021-11-01, 2022-06-01
       date:
-      - Thu, 28 Jul 2022 15:15:54 GMT
+      - Mon, 08 Aug 2022 19:46:25 GMT
       ms-cv:
-      - gKq/ToK3UEOP3XzGe8acRw.0
+      - BiTmx1Oi4U6R55E0Rao4Tw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -264,7 +264,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 202ms
+      - 135ms
     status:
       code: 204
       message: No Content
@@ -280,9 +280,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0 Python/3.10.5 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-communication-identity/1.1.1 Python/3.10.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 28 Jul 2022 15:15:55 GMT
+      - Mon, 08 Aug 2022 19:46:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -295,9 +295,9 @@ interactions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
         2021-11-01, 2022-06-01
       date:
-      - Thu, 28 Jul 2022 15:15:54 GMT
+      - Mon, 08 Aug 2022 19:46:25 GMT
       ms-cv:
-      - x69NOvdafkW6IO6/Y3pAUQ.0
+      - 0GUgIho8vUiALuLiRXHdkQ.0
       request-context:
       - appId=
       strict-transport-security:
@@ -305,7 +305,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 184ms
+      - 166ms
     status:
       code: 204
       message: No Content

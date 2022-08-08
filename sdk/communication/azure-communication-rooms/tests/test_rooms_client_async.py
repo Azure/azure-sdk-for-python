@@ -7,6 +7,7 @@
 import aiounittest
 import datetime
 
+from azure.core.credentials import AzureKeyCredential
 from azure.communication.rooms.aio import RoomsClient
 from azure.communication.rooms import (
     RoomParticipant,
@@ -51,7 +52,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                 "participants": [self.json_participant]
             })
 
-        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
 
         response = None
         try:
@@ -80,7 +81,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                 "participants": []
             })
 
-        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
 
         response = None
         try:
@@ -104,7 +105,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
         raised = False
         async def mock_send(*_, **__):
             return mock_response(status_code=404, json_payload={"msg": "some error"})
-        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
         try:
             await rooms_client.delete_room(room_id=self.room_id)
         except:
@@ -124,7 +125,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                 "participants": []
             })
 
-        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
 
         response = None
         try:
@@ -144,7 +145,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
         raised = False
         async def mock_send(*_, **__):
             return mock_response(status_code=404, json_payload={"msg": "some error"})
-        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
         try:
             await rooms_client.get_room(room_id=self.room_id)
         except:
@@ -171,7 +172,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
             })
 
         response = None
-        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
         try:
             response = await rooms_client.add_participants(room_id=self.room_id, participants=[additional_participant])
         except:
@@ -195,7 +196,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                 "participants": [self.json_participant]
             })
 
-        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
 
         response = None
         try:
@@ -216,7 +217,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                 "participants": []
             })
 
-        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
 
         response = None
         try:
@@ -236,7 +237,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                 "participants": [self.json_participant]
             })
 
-        rooms_client = RoomsClient("https://endpoint", "fakeCredential==", transport=Mock(send=mock_send))
+        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
 
         response = None
         try:
