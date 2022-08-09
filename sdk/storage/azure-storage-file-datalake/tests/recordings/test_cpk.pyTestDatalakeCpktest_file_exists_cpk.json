@@ -9,16 +9,16 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Tue, 09 Aug 2022 20:02:53 GMT",
+        "x-ms-date": "Tue, 09 Aug 2022 22:25:36 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Tue, 09 Aug 2022 20:02:52 GMT",
-        "ETag": "\u00220x8DA7A4224FBF228\u0022",
-        "Last-Modified": "Tue, 09 Aug 2022 20:02:53 GMT",
+        "Date": "Tue, 09 Aug 2022 22:25:35 GMT",
+        "ETag": "\u00220x8DA7A56152EA124\u0022",
+        "Last-Modified": "Tue, 09 Aug 2022 22:25:36 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -36,9 +36,9 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Tue, 09 Aug 2022 20:02:53 GMT",
+        "x-ms-date": "Tue, 09 Aug 2022 22:25:36 GMT",
         "x-ms-encryption-algorithm": "AES256",
-        "x-ms-encryption-key": "MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",
+        "x-ms-encryption-key": "Sanitized",
         "x-ms-encryption-key-sha256": "3QFFFpRA5\u002BXANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=",
         "x-ms-version": "2021-08-06"
       },
@@ -46,9 +46,9 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Tue, 09 Aug 2022 20:02:53 GMT",
-        "ETag": "\u00220x8DA7A42250EFD0B\u0022",
-        "Last-Modified": "Tue, 09 Aug 2022 20:02:53 GMT",
+        "Date": "Tue, 09 Aug 2022 22:25:36 GMT",
+        "ETag": "\u00220x8DA7A56153A79D6\u0022",
+        "Last-Modified": "Tue, 09 Aug 2022 22:25:36 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -68,9 +68,9 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Tue, 09 Aug 2022 20:02:53 GMT",
+        "x-ms-date": "Tue, 09 Aug 2022 22:25:36 GMT",
         "x-ms-encryption-algorithm": "AES256",
-        "x-ms-encryption-key": "MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",
+        "x-ms-encryption-key": "Sanitized",
         "x-ms-encryption-key-sha256": "3QFFFpRA5\u002BXANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=",
         "x-ms-version": "2021-08-06"
       },
@@ -78,9 +78,9 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Tue, 09 Aug 2022 20:02:53 GMT",
-        "ETag": "\u00220x8DA7A4225235C6A\u0022",
-        "Last-Modified": "Tue, 09 Aug 2022 20:02:53 GMT",
+        "Date": "Tue, 09 Aug 2022 22:25:36 GMT",
+        "ETag": "\u00220x8DA7A5615466DA3\u0022",
+        "Last-Modified": "Tue, 09 Aug 2022 22:25:36 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -99,13 +99,13 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Tue, 09 Aug 2022 20:02:53 GMT",
+        "x-ms-date": "Tue, 09 Aug 2022 22:25:37 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 409,
       "ResponseHeaders": {
-        "Date": "Tue, 09 Aug 2022 20:02:53 GMT",
+        "Date": "Tue, 09 Aug 2022 22:25:36 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"

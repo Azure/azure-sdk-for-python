@@ -26,4 +26,6 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_oauth_response_sanitizer()
 
+    add_header_regex_sanitizer(key="x-ms-encryption-key", value="Sanitized")
+
     add_uri_string_sanitizer(target=".preprod.", value=".")
