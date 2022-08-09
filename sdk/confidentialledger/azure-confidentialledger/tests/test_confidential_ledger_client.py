@@ -32,10 +32,11 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             os.remove(self.network_certificate_path)
 
         # The Confidential Ledger always presents a self-signed certificate, so add that certificate
-        # to the recording options.
+        # to the recording options for the Confidential Ledger endpoint.
         function_recording_options: Dict[str, Union[str, List[PemCertificate]]] = {
             "tls_certificate": network_cert,
         }
+        set_function_recording_options(**function_recording_options)
 
         # The ACL instance should already have the potential AAD user added as an Administrator.
         credential = self.get_credential(ConfidentialLedgerClient)
@@ -50,6 +51,10 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         if not is_aad and not fetch_tls_cert:
             # Delete the network certificate again since we want to make sure a cert-based client
             # fetches it too.
+            #
+            # Since we create the cert-based client immediately, the certificate will still be
+            # available for the above aad_based_client when we use it to add the cert-based user
+            # to the ledger.
             os.remove(self.network_certificate_path)
 
         certificate_credential = ConfidentialLedgerCertificateCredential(
@@ -64,11 +69,6 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
         if not is_aad:
             # We need to add the certificate-based user as an Administrator.
-
-            # Set the recording options to accept the self-signed TLS certificate first since we
-            # need to make a connection to the Confidential Ledger.
-            set_function_recording_options(**function_recording_options)
-
             aad_based_client.create_or_update_user(
                 USER_CERTIFICATE_THUMBPRINT, {"assignedRole": "Administrator"}
             )
@@ -80,16 +80,12 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             function_recording_options["certificates"] = [
                 PemCertificate(data=USER_CERTIFICATE_PRIVATE_KEY, key=USER_CERTIFICATE_PUBLIC_KEY)
             ]
+            set_function_recording_options(**function_recording_options)
 
             client = certificate_based_client
         else:
             client = aad_based_client
 
-        # Set recording options after the clients have been created, otherwise the TLS/user cert
-        # options might screw up the ConfidentialLedgerClient creation for tests expecting
-        # auto-magic TLS cert retrieval (the auto-magic hits the Identity Service which is endorsed
-        # by a well-known CA, not by the self-signed Confidential Ledger TLS certificate).
-        set_function_recording_options(**function_recording_options)
         return client
 
     @ConfidentialLedgerPreparer()
