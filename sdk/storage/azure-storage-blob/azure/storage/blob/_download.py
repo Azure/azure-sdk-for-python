@@ -574,7 +574,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         :param size:
             The number of bytes to download from the stream. Leave unsepcified
             or set to -1 to download all bytes.
-        :returns: 
+        :returns:
             The requsted data as bytes or a string if encoding was speicified. If
             the return value is empty, there is no more data to read.
         :rtype: T
