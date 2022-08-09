@@ -70,7 +70,7 @@ from azure.storage.blob import BlobServiceClient
 
 with tracer.start_as_current_span(name="MyApplication"):
     client = BlobServiceClient.from_connection_string('connectionstring')
-    client.create_container('mycontainer')  # Call will be traced
+    client.create_container('my_container')  # Call will be traced
 ```
 
 Azure Exporter can be found in the [package](https://pypi.org/project/opentelemetry-azure-monitor-exporter/) `opentelemetry-azure-monitor-exporter`

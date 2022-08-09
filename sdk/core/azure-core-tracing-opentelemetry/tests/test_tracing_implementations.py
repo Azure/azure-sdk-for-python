@@ -188,4 +188,4 @@ class TestOpentelemetryWrapper:
             assert wrapped_class.kind == SpanKind.INTERNAL
 
             with pytest.raises(ValueError):
-                wrapped_class.kind = "somethingstuid"
+                wrapped_class.kind = "somethingstuid" # what should be done here?

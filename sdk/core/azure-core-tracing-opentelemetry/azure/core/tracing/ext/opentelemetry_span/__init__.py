@@ -83,6 +83,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
                 # assuming user knows what they are doing.
                 kwargs.setdefault('links', links)
         self._span_instance = span or current_tracer.start_span(name=name, kind=kind, **kwargs)
+        # spell-checker:ignore ctxt
         self._current_ctxt_manager = None
 
     @property
@@ -140,7 +141,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             self._span_instance._kind = kind # pylint: disable=protected-access
         except AttributeError:
             warnings.warn(
-                """Kind must be set while creating the span for Opentelemetry. It might be possible
+                """Kind must be set while creating the span for OpenTelemetry. It might be possible
                 that one of the packages you are using doesn't follow the latest Opentelemtry Spec.
                 Try updating the azure packages to the latest versions."""
             )
@@ -233,7 +234,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             current_span._links.append(OpenTelemetryLink(span_ctx, attributes)) # pylint: disable=protected-access
         except AttributeError:
             warnings.warn(
-                """Link must be added while creating the span for Opentelemetry. It might be possible
+                """Link must be added while creating the span for OpenTelemetry. It might be possible
                 that one of the packages you are using doesn't follow the latest Opentelemtry Spec.
                 Try updating the azure packages to the latest versions."""
             )
