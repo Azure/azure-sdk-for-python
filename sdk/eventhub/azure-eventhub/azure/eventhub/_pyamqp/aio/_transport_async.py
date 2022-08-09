@@ -98,7 +98,7 @@ class AsyncTransportMixin():
         except (TimeoutError, socket.timeout, asyncio.IncompleteReadError, asyncio.TimeoutError):
             return None, None
 
-    async def read(self, verify_frame_type=0, **kwargs):  # TODO: verify frame type?
+    async def read(self, verify_frame_type=0, **kwargs):
         async with self.socket_lock:
             read_frame_buffer = BytesIO()
             try:

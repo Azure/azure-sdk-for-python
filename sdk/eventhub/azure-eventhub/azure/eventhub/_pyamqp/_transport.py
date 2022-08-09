@@ -389,7 +389,7 @@ class _AbstractTransport(object):
             self.sock = None
         self.connected = False
 
-    def read(self, verify_frame_type=0, **kwargs):  # TODO: verify frame type?
+    def read(self, verify_frame_type=0, **kwargs):
         read = self._read
         read_frame_buffer = BytesIO()
         try:
