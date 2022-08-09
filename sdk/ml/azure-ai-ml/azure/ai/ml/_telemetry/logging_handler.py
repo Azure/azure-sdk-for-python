@@ -1,29 +1,31 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 """Contains functionality for sending telemetry to Application Insights."""
 
 import datetime
 import json
 import logging
 import platform
+import urllib.request as http_client_t
 from os import getenv
+from urllib.error import HTTPError
 
 from applicationinsights import TelemetryClient
 from applicationinsights.channel import (
     AsynchronousQueue,
     AsynchronousSender,
-    SynchronousSender,
     SynchronousQueue,
+    SynchronousSender,
     TelemetryChannel,
     TelemetryContext,
 )
 
-from ._customtraceback import format_exc
-
-import urllib.request as http_client_t
-from urllib.error import HTTPError
 from .._user_agent import USER_AGENT
+from ._customtraceback import format_exc
 
 AML_INTERNAL_LOGGER_NAMESPACE = "azure.ai.ml._telemetry"
 
@@ -59,7 +61,8 @@ def is_telemetry_collection_disabled():
 
 
 def get_appinsights_log_handler(user_agent, instrumentation_key=None, component_name=None, *args, **kwargs):
-    """Enable the Application Insights logging handler for specified logger and instrumentation key.
+    """Enable the Application Insights logging handler for specified logger and
+    instrumentation key.
 
     Enable diagnostics collection with the :func:`azureml.telemetry.set_diagnostics_collection` function.
 
@@ -108,7 +111,8 @@ def get_appinsights_log_handler(user_agent, instrumentation_key=None, component_
 
 
 class AppInsightsLoggingHandler(logging.Handler):
-    """Integration point between Python's logging framework and the Application Insights service.
+    """Integration point between Python's logging framework and the Application
+    Insights service.
 
     :param instrumentation_key: The instrumentation key to use while sending telemetry to the Application
         Insights service.
@@ -124,8 +128,7 @@ class AppInsightsLoggingHandler(logging.Handler):
     """
 
     def __init__(self, instrumentation_key, logger, sender=None, *args, **kwargs):
-        """
-        Initialize a new instance of the class.
+        """Initialize a new instance of the class.
 
         :param instrumentation_key: The instrumentation key to use while sending telemetry to the Application
             Insights service.
@@ -241,7 +244,10 @@ class AppInsightsLoggingHandler(logging.Handler):
 
 
 class _RetrySynchronousSender(SynchronousSender):
-    """Synchronous sender with limited retry. SenderBase does infinite retry; this class avoids that."""
+    """Synchronous sender with limited retry.
+
+    SenderBase does infinite retry; this class avoids that.
+    """
 
     def __init__(self, logger, timeout=10, retry=1):
         super(_RetrySynchronousSender, self).__init__()
@@ -251,7 +257,10 @@ class _RetrySynchronousSender(SynchronousSender):
         self.consecutive_failures = 0
 
     def send(self, data_to_send):
-        """Override the default resend mechanism in SenderBase. Stop resend based on retry during failure."""
+        """Override the default resend mechanism in SenderBase.
+
+        Stop resend based on retry during failure.
+        """
         status = _http_send(self._logger, data_to_send, self.service_endpoint_uri, self.send_timeout)
         if status is SUCCESS:
             self.consecutive_failures = 0
@@ -265,7 +274,10 @@ class _RetrySynchronousSender(SynchronousSender):
 
 
 class _RetryAsynchronousSender(AsynchronousSender):
-    """Asynchronous sender with limited retry. SenderBase does infinite retry; this class avoids that."""
+    """Asynchronous sender with limited retry.
+
+    SenderBase does infinite retry; this class avoids that.
+    """
 
     def __init__(self, logger, timeout=10, retry=3):
         super(_RetryAsynchronousSender, self).__init__()
@@ -275,7 +287,10 @@ class _RetryAsynchronousSender(AsynchronousSender):
         self.consecutive_failures = 0
 
     def send(self, data_to_send):
-        """Override the default resend mechanism in SenderBase. Stop resend based on retry during failure."""
+        """Override the default resend mechanism in SenderBase.
+
+        Stop resend based on retry during failure.
+        """
         status = _http_send(self._logger, data_to_send, self.service_endpoint_uri, self.send_timeout)
         if status is SUCCESS:
             self.consecutive_failures = 0
@@ -289,8 +304,7 @@ class _RetryAsynchronousSender(AsynchronousSender):
 
 
 def _json_serialize_unknown(obj):
-    """
-    JSON serializer for objects not serializable by default json code.
+    """JSON serializer for objects not serializable by default json code.
 
     :param obj: the object to be serialized
     """
@@ -313,7 +327,12 @@ def _http_send(logger, data_to_send, service_endpoint_uri, send_timeout=10):
     content = bytearray(request_payload, "utf-8")
     begin = datetime.datetime.now()
     request = http_client_t.Request(
-        service_endpoint_uri, content, {"Accept": "application/json", "Content-Type": "application/json; charset=utf-8"}
+        service_endpoint_uri,
+        content,
+        {
+            "Accept": "application/json",
+            "Content-Type": "application/json; charset=utf-8",
+        },
     )
     try:
         response = http_client_t.urlopen(request, timeout=send_timeout)
@@ -331,6 +350,9 @@ def _http_send(logger, data_to_send, service_endpoint_uri, send_timeout=10):
     except Exception as e:  # pylint: disable=broad-except
         logger.error("Unexpected exception: %s", e)
     finally:
-        logger.info("Finish uploading in %f seconds.", (datetime.datetime.now() - begin).total_seconds())
+        logger.info(
+            "Finish uploading in %f seconds.",
+            (datetime.datetime.now() - begin).total_seconds(),
+        )
 
     return FAILURE

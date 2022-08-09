@@ -2,11 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from .credentials import DatastoreCredentials
-from azure.ai.ml._restclient.v2022_02_01_preview import models as model_preview
-
-from azure.ai.ml._utils._experimental import experimental
 from base64 import b64encode
+
+from azure.ai.ml._restclient.v2022_02_01_preview import models as model_preview
+from azure.ai.ml._utils._experimental import experimental
+
+from .credentials import DatastoreCredentials
 
 
 @experimental

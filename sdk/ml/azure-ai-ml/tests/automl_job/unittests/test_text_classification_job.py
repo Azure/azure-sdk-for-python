@@ -172,7 +172,7 @@ class TestAutoMLTextClassificationJob:
             name="text_classification_job",
             experiment_name="experiment",
             tags={"foo_tag": "bar"},
-            identity = identity,
+            identity=identity,
         )
         expected_job.set_limits(max_concurrent_trials=max_concurrent_trials, timeout_minutes=timeout)
         expected_job.set_featurization(dataset_language=dataset_language)
@@ -190,7 +190,7 @@ class TestAutoMLTextClassificationJob:
             ),
             featurization_settings=NlpVerticalFeaturizationSettings(dataset_language=dataset_language),
         )
-        job_data = JobBaseData(properties=RestAutoMLJob(task_details=task_details, identity = identity))
+        job_data = JobBaseData(properties=RestAutoMLJob(task_details=task_details, identity=identity))
         # Test converting REST object to Job
         converted_to_job = TextClassificationJob._from_rest_object(job_data)
         assert converted_to_job.identity == identity

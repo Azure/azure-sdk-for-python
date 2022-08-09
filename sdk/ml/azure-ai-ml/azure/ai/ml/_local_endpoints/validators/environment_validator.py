@@ -2,22 +2,19 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
 
 from pathlib import Path
 from typing import Iterable, Tuple
 
+from azure.ai.ml._artifacts._artifact_utilities import download_artifact_from_storage_url
+from azure.ai.ml._local_endpoints.errors import RequiredLocalArtifactsNotFoundError
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._utils._arm_id_utils import parse_name_version
+from azure.ai.ml._utils.utils import dump_yaml, is_url
 from azure.ai.ml.entities import OnlineDeployment
 from azure.ai.ml.entities._assets.environment import BuildContext, Environment
-
-from azure.ai.ml._local_endpoints.errors import RequiredLocalArtifactsNotFoundError
-from azure.core.exceptions import AzureError
-
 from azure.ai.ml.operations._environment_operations import EnvironmentOperations
-from azure.ai.ml._artifacts._artifact_utilities import download_artifact_from_storage_url
-
-from azure.ai.ml._utils._arm_id_utils import parse_name_version
-from azure.ai.ml._utils.utils import convert_ordered_dict_to_yaml_str, is_url
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 
 
 class EnvironmentValidator:
@@ -93,9 +90,7 @@ class EnvironmentValidator:
                 dockerfile_contents,
                 environment_asset.inference_config,
             )
-        conda_file_contents = (
-            convert_ordered_dict_to_yaml_str(environment_asset.conda_file) if environment_asset.conda_file else None
-        )
+        conda_file_contents = dump_yaml(environment_asset.conda_file) if environment_asset.conda_file else None
         return (
             environment_asset.image,
             environment_asset.id,
@@ -111,7 +106,7 @@ class EnvironmentValidator:
         :type return: Iterable[str]
         """
         if environment.image:
-            conda_file_contents = convert_ordered_dict_to_yaml_str(environment.conda_file)
+            conda_file_contents = dump_yaml(environment.conda_file)
             return (
                 environment.image,
                 environment._conda_file_path,
@@ -126,7 +121,14 @@ class EnvironmentValidator:
             absolute_build_directory = Path(base_path, environment.build.path).resolve()
             absolute_dockerfile_path = Path(absolute_build_directory, environment.build.dockerfile_path).resolve()
             dockerfile_contents = absolute_dockerfile_path.read_text()
-            return (None, None, None, absolute_dockerfile_path, dockerfile_contents, environment.inference_config)
+            return (
+                None,
+                None,
+                None,
+                absolute_dockerfile_path,
+                dockerfile_contents,
+                environment.inference_config,
+            )
 
     def _local_environment_is_valid(self, deployment: OnlineDeployment):
         return isinstance(deployment.environment, Environment) and (

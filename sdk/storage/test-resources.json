@@ -380,6 +380,16 @@
             ]
         },
         {
+          "type": "Microsoft.Storage/storageAccounts/encryptionScopes",
+          "apiVersion": "[variables('storageApiVersion')]",
+          "name": "[concat(variables('dataLakeAccountName'), '/hnstestscope1')]",
+          "properties": {
+          },
+          "dependsOn": [
+            "[variables('dataLakeAccountName')]"
+          ]
+        },
+        {
           "type": "Microsoft.Storage/storageAccounts",
           "apiVersion": "[variables('storageApiVersion')]",
           "name": "[variables('dataLakeSoftDeleteAccountName')]",

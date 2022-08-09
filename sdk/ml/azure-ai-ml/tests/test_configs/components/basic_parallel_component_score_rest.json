@@ -10,6 +10,7 @@
         "componentSpec": {
             "$schema": "http://azureml/sdk-2-0/ParallelComponent.json",
             "name": "batch_score",
+            "_source": "CLASS",
             "version": "1.0.0",
             "type": "parallel",
             "display_name": "BatchScore",
@@ -54,10 +55,10 @@
             "mini_batch_size": "10kb",
             "input_data": "${{inputs.score_input}}",
             "task": {
-                "type": "function",
+                "type": "run_function",
                 "code": "../python",
                 "entry_script": "pass_through.py",
-                "args": "--label ${{inputs.label}} --model ${{inputs.score_model}} --output_scored_result ${{outputs.scored_result}}",
+                "program_arguments": "--label ${{inputs.label}} --model ${{inputs.score_model}} --output_scored_result ${{outputs.scored_result}}",
                 "append_row_to": "${{outputs.scoring_summary}}",
                 "environment": "azureml:AzureML-Minimal:2"
             }

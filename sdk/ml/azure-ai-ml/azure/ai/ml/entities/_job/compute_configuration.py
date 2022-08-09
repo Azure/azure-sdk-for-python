@@ -2,15 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import logging
 import json
-from typing import Dict, Any
-from azure.ai.ml.constants import JobComputePropertyFields, LOCAL_COMPUTE_TARGET
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import (
-    ComputeConfiguration as RestComputeConfiguration,
-)
-from azure.ai.ml.entities._mixins import RestTranslatableMixin, DictMixin
+import logging
+from typing import Any, Dict
 
+from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import ComputeConfiguration as RestComputeConfiguration
+from azure.ai.ml.constants import LOCAL_COMPUTE_TARGET, JobComputePropertyFields
+from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 
 module_logger = logging.getLogger(__name__)
 

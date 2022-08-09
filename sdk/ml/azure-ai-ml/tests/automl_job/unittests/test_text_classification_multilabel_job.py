@@ -112,7 +112,7 @@ class TestAutoMLTextClassificationMultilabelJob:
             primary_metric=primary_metric,
             log_verbosity=log_verbosity,
             target_column_name=label_column,
-            identity = identity,
+            identity=identity,
             training_data=Input(type=AssetTypes.MLTABLE, path=training_data_uri),
             validation_data=Input(type=AssetTypes.MLTABLE, path=validation_data_uri),
         )
@@ -169,7 +169,7 @@ class TestAutoMLTextClassificationMultilabelJob:
             name="text_classification_multilabel_job",
             experiment_name="experiment",
             tags={"foo_tag": "bar"},
-            identity = identity,
+            identity=identity,
         )
         expected_job.set_limits(max_concurrent_trials=max_concurrent_trials, timeout_minutes=timeout)
         expected_job.set_featurization(dataset_language=dataset_language)
@@ -186,7 +186,7 @@ class TestAutoMLTextClassificationMultilabelJob:
             ),
             featurization_settings=NlpVerticalFeaturizationSettings(dataset_language=dataset_language),
         )
-        job_data = JobBaseData(properties=RestAutoMLJob(task_details=task_details, identity = identity))
+        job_data = JobBaseData(properties=RestAutoMLJob(task_details=task_details, identity=identity))
         # Test converting REST object to Job
         converted_to_job = TextClassificationMultilabelJob._from_rest_object(job_data)
         assert converted_to_job.identity == identity

@@ -2,8 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use,protected-access
+
 from marshmallow import fields, post_load, pre_dump
-from azure.ai.ml._schema import PatchedSchemaMeta
+
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 
 class ImageModelDistributionSettingsSchema(metaclass=PatchedSchemaMeta):

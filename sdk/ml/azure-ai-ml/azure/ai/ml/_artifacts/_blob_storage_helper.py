@@ -2,36 +2,37 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import uuid
 import logging
-import time
 import os
-from typing import Dict, List, TYPE_CHECKING
-from pathlib import PurePosixPath, Path
-from colorama import Fore
 import sys
+import time
+import uuid
+from pathlib import Path, PurePosixPath
+from typing import TYPE_CHECKING, Dict, List
 
-from azure.storage.blob import BlobServiceClient, ContainerClient
-from azure.core.exceptions import ResourceNotFoundError
-from azure.ai.ml._utils._asset_utils import (
-    generate_asset_id,
-    upload_directory,
-    upload_file,
-    AssetNotChangedError,
-    _build_metadata_dict,
-    IgnoreFile,
-    get_directory_size,
-)
+from colorama import Fore
+
 from azure.ai.ml._artifacts._constants import (
-    UPLOAD_CONFIRMATION,
     ARTIFACT_ORIGIN,
+    BLOB_DATASTORE_IS_HDI_FOLDER_KEY,
+    FILE_SIZE_WARNING,
     LEGACY_ARTIFACT_DIRECTORY,
     MAX_CONCURRENCY,
-    FILE_SIZE_WARNING,
-    BLOB_DATASTORE_IS_HDI_FOLDER_KEY,
+    UPLOAD_CONFIRMATION,
+)
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
+from azure.ai.ml._utils._asset_utils import (
+    AssetNotChangedError,
+    IgnoreFile,
+    _build_metadata_dict,
+    generate_asset_id,
+    get_directory_size,
+    upload_directory,
+    upload_file,
 )
 from azure.ai.ml.constants import STORAGE_AUTH_MISMATCH_ERROR
-from azure.ai.ml._ml_exceptions import ErrorTarget, ErrorCategory, ValidationException, MlException
+from azure.core.exceptions import ResourceNotFoundError
+from azure.storage.blob import BlobServiceClient, ContainerClient
 
 if TYPE_CHECKING:
     from azure.storage.blob import BlobProperties
@@ -66,9 +67,7 @@ class BlobStorageClient:
         asset_hash: str = None,
         show_progress: bool = True,
     ) -> Dict[str, str]:
-        """
-        Upload a file or directory to a path inside the container
-        """
+        """Upload a file or directory to a path inside the container."""
         if name and version is None:
             version = str(uuid.uuid4())  # placeholder for auto-increment artifacts
 
@@ -105,7 +104,13 @@ class BlobStorageClient:
             else:
                 self.indicator_file = dest
                 self.check_blob_exists()
-                upload_file(storage_client=self, source=source, dest=dest, msg=msg, show_progress=show_progress)
+                upload_file(
+                    storage_client=self,
+                    source=source,
+                    dest=dest,
+                    msg=msg,
+                    show_progress=show_progress,
+                )
             print(Fore.RESET + "\n", file=sys.stderr)
 
             # upload must be completed before we try to generate confirmation file
@@ -118,18 +123,23 @@ class BlobStorageClient:
             if self.legacy:
                 dest = dest.replace(ARTIFACT_ORIGIN, LEGACY_ARTIFACT_DIRECTORY)
 
-        artifact_info = {"remote path": dest, "name": name, "version": version, "indicator file": self.indicator_file}
+        artifact_info = {
+            "remote path": dest,
+            "name": name,
+            "version": version,
+            "indicator file": self.indicator_file,
+        }
 
         return artifact_info
 
     def check_blob_exists(self) -> None:
-        """
-        Throw error if blob already exists.
+        """Throw error if blob already exists.
 
-        Check if blob already exists in container by checking the metadata for
-        existence and confirmation data. If confirmation data is missing, blob does not exist
-        or was only partially uploaded and the partial upload will be overwritten with a complete
-        upload.
+        Check if blob already exists in container by checking the
+        metadata for existence and confirmation data. If confirmation
+        data is missing, blob does not exist or was only partially
+        uploaded and the partial upload will be overwritten with a
+        complete upload.
         """
 
         try:
@@ -183,7 +193,7 @@ class BlobStorageClient:
         blob_client.set_blob_metadata(metadata_dict)
 
     def _blob_is_hdi_folder(self, blob: "BlobProperties") -> bool:
-        """Checks if a given blob actually represents a folder
+        """Checks if a given blob actually represents a folder.
 
         Blob datastores do not natively have any conception of a folder. Instead,
         empty blobs with the same name as a "folder" can have additional metadata
@@ -200,10 +210,14 @@ class BlobStorageClient:
         return bool(blob.metadata and blob.metadata.get(BLOB_DATASTORE_IS_HDI_FOLDER_KEY, None))
 
     def download(
-        self, starts_with: str, destination: str = Path.home(), max_concurrency: int = MAX_CONCURRENCY
+        self,
+        starts_with: str,
+        destination: str = Path.home(),
+        max_concurrency: int = MAX_CONCURRENCY,
     ) -> None:
-        """
-        Downloads all blobs inside a specified container to the destination folder
+        """Downloads all blobs inside a specified container to the destination
+        folder.
+
         :param starts_with: Indicates the blob name starts with to search.
         :param destination: Indicates path to download in local
         :param max_concurrency: Indicates concurrent connections to download a blob.
@@ -236,8 +250,8 @@ class BlobStorageClient:
             )
 
     def list(self, starts_with: str) -> List[str]:
-        """
-        Lists all blob names in the specified container
+        """Lists all blob names in the specified container.
+
         :param starts_with: Indicates the blob name starts with to search.
         :return: the list of blob paths in container
         """
@@ -246,7 +260,7 @@ class BlobStorageClient:
 
     def exists(self, blobpath: str, delimeter: str = "/") -> bool:
         """Returns whether there exists a blob named `blobpath`, or if there
-           exists a virtual directory given path delimeter `delimeter`
+        exists a virtual directory given path delimeter `delimeter`
 
            e.g:
                 Given blob store with blobs
@@ -270,6 +284,7 @@ class BlobStorageClient:
 
         # Virtual directory only exists if there is atleast one blob with it
         result = next(
-            self.container_client.walk_blobs(name_starts_with=blobpath + ensure_delimeter, delimiter=delimeter), None
+            self.container_client.walk_blobs(name_starts_with=blobpath + ensure_delimeter, delimiter=delimeter),
+            None,
         )
         return result is not None

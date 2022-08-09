@@ -2,43 +2,34 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 import json
 import logging
 import time
-from typing import Dict, Iterable, Union, Any
+from typing import Any, Dict, Iterable, Union
 
-from azure.core.polling import LROPoller
-from azure.identity import ChainedTokenCredential
-
-from azure.ai.ml._restclient.v2022_02_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient022022Preview,
-)
-
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     EndpointAuthKeys,
     EndpointAuthToken,
+    KeyType,
     OnlineEndpointTrackedResourceArmPaginatedResult,
     RegenerateEndpointKeysRequest,
-    KeyType,
 )
-from ._operation_orchestrator import OperationOrchestrator
-
-from azure.ai.ml.entities._assets import Data
-from azure.ai.ml._utils._endpoint_utils import polling_wait, post_and_validate_response
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
-from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
-from azure.ai.ml.constants import (
-    KEY,
-    AzureMLResourceType,
-    EndpointInvokeFields,
-    LROConfigurations,
-    EndpointKeyType,
-)
-from azure.ai.ml.entities import OnlineEndpoint, OnlineDeployment
-from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from azure.ai.ml._utils._azureml_polling import AzureMLPolling
+from azure.ai.ml._utils._endpoint_utils import polling_wait, post_and_validate_response
+from azure.ai.ml.constants import KEY, AzureMLResourceType, EndpointInvokeFields, EndpointKeyType, LROConfigurations
+from azure.ai.ml.entities import OnlineDeployment, OnlineEndpoint
+from azure.ai.ml.entities._assets import Data
+from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
+from azure.core.polling import LROPoller
+from azure.identity import ChainedTokenCredential
+
+from ._operation_orchestrator import OperationOrchestrator
 
 logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
 logger.propagate = False
@@ -50,10 +41,11 @@ def _strip_zeroes_from_traffic(traffic: Dict[str, str]) -> Dict[str, str]:
 
 
 class OnlineEndpointOperations(_ScopeDependentOperations):
-    """
-    OnlineEndpointOperations
+    """OnlineEndpointOperations.
 
-    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should
+    create an MLClient instance that instantiates it for you and
+    attaches it as an attribute.
     """
 
     def __init__(
@@ -93,7 +85,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "OnlineEndpoint.ListKeys", ActivityType.PUBLICAPI)
     def list_keys(self, name: str) -> Union[EndpointAuthKeys, EndpointAuthToken]:
-        """List the keys
+        """List the keys.
 
         :param name str: the endpoint name
         :raise: Exception if cannot get online credentials
@@ -181,20 +173,19 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
             **self._init_kwargs,
         )
         if no_wait:
-            module_logger.info(
-                f"Delete request initiated. Status can be checked using `az ml online-endpoint show -n {name}`\n"
-            )
             return delete_poller
         else:
             message = f"Deleting endpoint {name} \n"
-            module_logger.warning(
-                f" Delete request initiated. If you interrupt this command or it times out while waiting for deletion to complete, status can be checked using `az ml online-endpoint show -n {name}`\n"
+            polling_wait(
+                poller=delete_poller,
+                start_time=start_time,
+                message=message,
+                timeout=None,
             )
-            polling_wait(poller=delete_poller, start_time=start_time, message=message, timeout=None)
 
     @monitor_with_activity(logger, "OnlineEndpoint.BeginDeleteOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, endpoint: OnlineEndpoint, local: bool = False, **kwargs: Any) -> LROPoller:
-        """Create or update an endpoint
+        """Create or update an endpoint.
 
         :param endpoint: The endpoint entity.
         :type endpoint: Endpoint
@@ -218,11 +209,13 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
             endpoint_resource = endpoint._to_rest_online_endpoint(location=location)
             orchestrators = OperationOrchestrator(
-                operation_container=self._all_operations, operation_scope=self._operation_scope
+                operation_container=self._all_operations,
+                operation_scope=self._operation_scope,
             )
             if hasattr(endpoint_resource.properties, "compute"):
                 endpoint_resource.properties.compute = orchestrators.get_asset_arm_id(
-                    endpoint_resource.properties.compute, azureml_type=AzureMLResourceType.COMPUTE
+                    endpoint_resource.properties.compute,
+                    azureml_type=AzureMLResourceType.COMPUTE,
                 )
             poller = self._online_operation.begin_create_or_update(
                 resource_group_name=self._resource_group_name,
@@ -247,7 +240,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
     def begin_regenerate_keys(
         self, name: str, key_type: str = EndpointKeyType.PRIMARY_KEY_TYPE, **kwargs: Any
     ) -> LROPoller:
-        """Regenerate keys for endpoint
+        """Regenerate keys for endpoint.
 
         :param name: The endpoint name.
         :type name: The endpoint type. Defaults to ONLINE_ENDPOINT_TYPE.
@@ -285,8 +278,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         local: bool = False,
         **kwargs,
     ) -> str:
-        """Invokes the endpoint with the provided payload
-
+        """Invokes the endpoint with the provided payload.
 
         :param str endpoint_name: the endpoint name
         :param (str, optional) request_file: File containing the request payload. This is only valid for online endpoint.
@@ -356,7 +348,10 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
             )
 
     def _regenerate_online_keys(
-        self, name: str, key_type: str = EndpointKeyType.PRIMARY_KEY_TYPE, no_wait: bool = False
+        self,
+        name: str,
+        key_type: str = EndpointKeyType.PRIMARY_KEY_TYPE,
+        no_wait: bool = False,
     ) -> Union[LROPoller[None], None]:
         keys = self._online_operation.list_keys(
             resource_group_name=self._resource_group_name,

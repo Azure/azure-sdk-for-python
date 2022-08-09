@@ -2,15 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import UserAssignedIdentity as RestUserAssignedIdentity
 from typing import Optional
+
+from azure.ai.ml._restclient.v2022_01_01_preview.models import UserAssignedIdentity as RestUserAssignedIdentity
 
 
 class UserAssignedIdentity(RestUserAssignedIdentity):
-    """User Assigned identity specification"""
+    """User Assigned identity specification."""
 
     def __init__(self, resource_id: Optional[str] = None, **kwargs):
-        """User Assigned identity specification
+        """User Assigned identity specification.
 
         :param resource_id: The resource ID of the user assigned identity.
         :type resource_id: str

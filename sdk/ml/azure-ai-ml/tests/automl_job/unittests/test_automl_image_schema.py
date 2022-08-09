@@ -3,7 +3,9 @@ from pathlib import Path
 from typing import List
 import pytest
 from unittest.mock import patch
-from azure.ai.ml._utils.utils import to_iso_duration_format_mins
+
+
+from azure.ai.ml._utils.utils import to_iso_duration_format_mins, load_yaml, dump_yaml_to_file
 from azure.ai.ml.constants import AZUREML_PRIVATE_FEATURES_ENV_VAR
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._restclient.v2022_02_01_preview.models._models_py3 import (
@@ -20,8 +22,8 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models._models_py3 import (
     ImageSweepLimitSettings as RestImageSweepLimitSettings,
     ImageModelDistributionSettingsClassification as RestImageClassificationSearchSpace,
     ImageModelDistributionSettingsObjectDetection as RestImageObjectDetectionSearchSpace,
-    ImageModelSettings,
     ImageModelSettingsClassification,
+    ImageModelSettingsObjectDetection,
     ImageVerticalDataSettings as RestImageVerticalDataSettings,
     InstanceSegmentationPrimaryMetrics,
     JobBaseData,
@@ -44,7 +46,6 @@ from azure.ai.ml.automl import (
 from azure.ai.ml import load_job
 
 
-
 @pytest.fixture(autouse=True)
 def set_env_var() -> None:
     with patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}):
@@ -57,11 +58,11 @@ def compute_binding_expected(mock_workspace_scope: OperationScope) -> str:
 
 
 @pytest.fixture
-def expected_image_limits() -> RestImageLimitSettings:
+def expected_image_limits(run_type: str) -> RestImageLimitSettings:
     return RestImageLimitSettings(
         timeout=to_iso_duration_format_mins(60),
         max_concurrent_trials=1,
-        max_trials=1,
+        max_trials=2 if run_type == "automode" else 1,
     )
 
 
@@ -106,8 +107,19 @@ def expected_image_sweep_settings() -> RestImageSweepSettings:
 
 
 @pytest.fixture
-def expected_image_model_settings_classification() -> ImageModelSettings:
+def expected_image_model_settings_classification() -> ImageModelSettingsClassification:
     return ImageModelSettingsClassification(
+        checkpoint_frequency=1,
+        early_stopping=True,
+        early_stopping_delay=2,
+        early_stopping_patience=2,
+        evaluation_frequency=1,
+    )
+
+
+@pytest.fixture
+def expected_image_model_settings_object_detection() -> ImageModelSettingsObjectDetection:
+    return ImageModelSettingsObjectDetection(
         checkpoint_frequency=1,
         early_stopping=True,
         early_stopping_delay=2,
@@ -151,10 +163,11 @@ def expected_image_object_detection_search_space_settings() -> List[RestImageObj
 @pytest.fixture
 def expected_image_classification_job(
     mock_workspace_scope: OperationScope,
+    run_type: str,
     expected_image_data_settings: RestImageVerticalDataSettings,
     expected_image_limits: RestImageLimitSettings,
     expected_image_sweep_settings: RestImageSweepSettings,
-    expected_image_model_settings_classification: ImageModelSettings,
+    expected_image_model_settings_classification: ImageModelSettingsClassification,
     expected_image_search_space_settings: List[RestImageClassificationSearchSpace],
     compute_binding_expected: str,
 ) -> JobBaseData:
@@ -162,9 +175,9 @@ def expected_image_classification_job(
         RestImageClassification(
             data_settings=expected_image_data_settings,
             limit_settings=expected_image_limits,
-            sweep_settings=expected_image_sweep_settings,
+            sweep_settings=expected_image_sweep_settings if run_type == "sweep" else None,
             model_settings=expected_image_model_settings_classification,
-            search_space=expected_image_search_space_settings,
+            search_space=expected_image_search_space_settings if run_type == "sweep" else None,
             primary_metric=ClassificationPrimaryMetrics.ACCURACY,
             log_verbosity=LogVerbosity.DEBUG,
         ),
@@ -176,10 +189,11 @@ def expected_image_classification_job(
 @pytest.fixture
 def expected_image_classification_multilabel_job(
     mock_workspace_scope: OperationScope,
+    run_type: str,
     expected_image_data_settings: RestImageVerticalDataSettings,
     expected_image_limits: RestImageLimitSettings,
     expected_image_sweep_settings: RestImageSweepSettings,
-    expected_image_model_settings_classification: ImageModelSettings,
+    expected_image_model_settings_classification: ImageModelSettingsClassification,
     expected_image_search_space_settings: List[RestImageClassificationSearchSpace],
     compute_binding_expected: str,
 ) -> JobBaseData:
@@ -187,9 +201,9 @@ def expected_image_classification_multilabel_job(
         RestImageClassificationMultilabel(
             data_settings=expected_image_data_settings,
             limit_settings=expected_image_limits,
-            sweep_settings=expected_image_sweep_settings,
+            sweep_settings=expected_image_sweep_settings if run_type == "sweep" else None,
             model_settings=expected_image_model_settings_classification,
-            search_space=expected_image_search_space_settings,
+            search_space=expected_image_search_space_settings if run_type == "sweep" else None,
             primary_metric=ClassificationMultilabelPrimaryMetrics.IOU,
             log_verbosity=LogVerbosity.DEBUG,
         ),
@@ -201,10 +215,11 @@ def expected_image_classification_multilabel_job(
 @pytest.fixture
 def expected_image_object_detection_job(
     mock_workspace_scope: OperationScope,
+    run_type: str,
     expected_image_data_settings: RestImageVerticalDataSettings,
     expected_image_limits: RestImageLimitSettings,
     expected_image_sweep_settings: RestImageSweepSettings,
-    expected_image_model_settings_classification: ImageModelSettings,
+    expected_image_model_settings_object_detection: ImageModelSettingsObjectDetection,
     expected_image_object_detection_search_space_settings: List[RestImageObjectDetectionSearchSpace],
     compute_binding_expected: str,
 ) -> JobBaseData:
@@ -212,9 +227,9 @@ def expected_image_object_detection_job(
         RestImageObjectDetection(
             data_settings=expected_image_data_settings,
             limit_settings=expected_image_limits,
-            sweep_settings=expected_image_sweep_settings,
-            model_settings=expected_image_model_settings_classification,
-            search_space=expected_image_object_detection_search_space_settings,
+            sweep_settings=expected_image_sweep_settings if run_type == "sweep" else None,
+            model_settings=expected_image_model_settings_object_detection,
+            search_space=expected_image_object_detection_search_space_settings if run_type == "sweep" else None,
             primary_metric=ObjectDetectionPrimaryMetrics.MEAN_AVERAGE_PRECISION,
             log_verbosity=LogVerbosity.DEBUG,
         ),
@@ -226,10 +241,11 @@ def expected_image_object_detection_job(
 @pytest.fixture
 def expected_image_instance_segmentation_job(
     mock_workspace_scope: OperationScope,
+    run_type: str,
     expected_image_data_settings: RestImageVerticalDataSettings,
     expected_image_limits: RestImageLimitSettings,
     expected_image_sweep_settings: RestImageSweepSettings,
-    expected_image_model_settings_classification: ImageModelSettings,
+    expected_image_model_settings_object_detection: ImageModelSettingsObjectDetection,
     expected_image_object_detection_search_space_settings: List[RestImageObjectDetectionSearchSpace],
     compute_binding_expected: str,
 ) -> JobBaseData:
@@ -237,9 +253,9 @@ def expected_image_instance_segmentation_job(
         RestImageInstanceSegmentation(
             data_settings=expected_image_data_settings,
             limit_settings=expected_image_limits,
-            sweep_settings=expected_image_sweep_settings,
-            model_settings=expected_image_model_settings_classification,
-            search_space=expected_image_object_detection_search_space_settings,
+            sweep_settings=expected_image_sweep_settings if run_type == "sweep" else None,
+            model_settings=expected_image_model_settings_object_detection,
+            search_space=expected_image_object_detection_search_space_settings if run_type == "sweep" else None,
             primary_metric=InstanceSegmentationPrimaryMetrics.MEAN_AVERAGE_PRECISION,
             log_verbosity=LogVerbosity.DEBUG,
         ),
@@ -263,111 +279,187 @@ def _get_rest_automl_job(automl_task, name, compute_id):
 
 
 @pytest.fixture
-def loaded_image_classification_job(mock_machinelearning_client: OperationScope) -> AutoMLJob:
+def loaded_image_classification_job(
+    mock_machinelearning_client: OperationScope, run_type: str, tmp_path: Path
+) -> AutoMLJob:
     test_schema_path = Path("./tests/test_configs/automl_job/automl_image_classification_job_mock.yaml")
-    job = load_job(test_schema_path)
+
+    test_config = load_yaml(test_schema_path)
+    if run_type == "automode":
+        test_config["limits"]["max_trials"] = 2
+    if run_type != "sweep":
+        # Remove search_space and sweep sections from the yaml
+        del test_config["search_space"]
+        del test_config["sweep"]
+
+    test_yaml_path = tmp_path / "job.yml"
+    dump_yaml_to_file(test_yaml_path, test_config)
+    job = load_job(test_yaml_path)
     mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+
     return job
 
 
 @pytest.fixture
-def loaded_image_classification_multilabel_job(mock_machinelearning_client: OperationScope) -> AutoMLJob:
+def loaded_image_classification_multilabel_job(
+    mock_machinelearning_client: OperationScope,
+    run_type: str,
+    tmp_path: Path,
+) -> AutoMLJob:
     test_schema_path = Path("./tests/test_configs/automl_job/automl_image_classification_multilabel_job_mock.yaml")
-    job = load_job(test_schema_path)
+
+    test_config = load_yaml(test_schema_path)
+    if run_type == "automode":
+        test_config["limits"]["max_trials"] = 2
+    if run_type != "sweep":
+        # Remove search_space and sweep sections from the yaml
+        del test_config["search_space"]
+        del test_config["sweep"]
+
+    test_yaml_path = tmp_path / "job.yml"
+    dump_yaml_to_file(test_yaml_path, test_config)
+    job = load_job(test_yaml_path)
     mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+
     return job
 
 
 @pytest.fixture
-def loaded_image_object_detection_job(mock_machinelearning_client: OperationScope) -> AutoMLJob:
+def loaded_image_object_detection_job(
+    mock_machinelearning_client: OperationScope, run_type: str, tmp_path: Path
+) -> AutoMLJob:
     test_schema_path = Path("./tests/test_configs/automl_job/automl_image_object_detection_job_mock.yaml")
-    job = load_job(test_schema_path)
+
+    test_config = load_yaml(test_schema_path)
+    if run_type == "automode":
+        test_config["limits"]["max_trials"] = 2
+    if run_type != "sweep":
+        # Remove search_space and sweep sections from the yaml
+        del test_config["search_space"]
+        del test_config["sweep"]
+
+    test_yaml_path = tmp_path / "job.yml"
+    dump_yaml_to_file(test_yaml_path, test_config)
+    job = load_job(test_yaml_path)
     mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+
     return job
 
 
 @pytest.fixture
-def loaded_image_instance_segmentation_job(mock_machinelearning_client: OperationScope) -> AutoMLJob:
+def loaded_image_instance_segmentation_job(
+    mock_machinelearning_client: OperationScope, run_type: str, tmp_path: Path
+) -> AutoMLJob:
     test_schema_path = Path("./tests/test_configs/automl_job/automl_image_instance_segmentation_job_mock.yaml")
-    job = load_job(test_schema_path)
+
+    test_config = load_yaml(test_schema_path)
+    if run_type == "automode":
+        test_config["limits"]["max_trials"] = 2
+    if run_type != "sweep":
+        # Remove search_space and sweep sections from the yaml
+        del test_config["search_space"]
+        del test_config["sweep"]
+
+    test_yaml_path = tmp_path / "job.yml"
+    dump_yaml_to_file(test_yaml_path, test_config)
+    job = load_job(test_yaml_path)
     mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+
     return job
 
 
 @pytest.mark.unittest
 class TestAutoMLImageSchema:
+    @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_deserialized_image_classification_job(
         self,
         mock_workspace_scope: OperationScope,
+        run_type: str,
         expected_image_classification_job: JobBaseData,
         loaded_image_classification_job: AutoMLJob,
     ):
-        self._validate_automl_image_classification_jobs(loaded_image_classification_job)
+        self._validate_automl_image_classification_jobs(loaded_image_classification_job, run_type)
         assert (
             loaded_image_classification_job._to_rest_object().as_dict() == expected_image_classification_job.as_dict()
         )
 
+    @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_deserialized_image_classification_multilabel_job(
         self,
         mock_workspace_scope: OperationScope,
+        run_type: str,
         expected_image_classification_multilabel_job: JobBaseData,
         loaded_image_classification_multilabel_job: AutoMLJob,
     ):
-        self._validate_automl_image_classification_jobs(loaded_image_classification_multilabel_job)
+        self._validate_automl_image_classification_jobs(loaded_image_classification_multilabel_job, run_type)
         assert (
             loaded_image_classification_multilabel_job._to_rest_object().as_dict()
             == expected_image_classification_multilabel_job.as_dict()
         )
 
+    @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_deserialized_image_object_detection_job(
         self,
         mock_workspace_scope: OperationScope,
+        run_type: str,
         expected_image_object_detection_job: JobBaseData,
         loaded_image_object_detection_job: AutoMLJob,
     ):
-        self._validate_automl_image_object_detection_jobs(loaded_image_object_detection_job)
+        self._validate_automl_image_object_detection_jobs(loaded_image_object_detection_job, run_type)
         assert (
             loaded_image_object_detection_job._to_rest_object().as_dict()
             == expected_image_object_detection_job.as_dict()
         )
 
+    @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_deserialized_image_instance_segmentation_job(
         self,
         mock_workspace_scope: OperationScope,
+        run_type: str,
         expected_image_instance_segmentation_job: JobBaseData,
         loaded_image_instance_segmentation_job: AutoMLJob,
     ):
-        self._validate_automl_image_object_detection_jobs(loaded_image_instance_segmentation_job)
+        self._validate_automl_image_object_detection_jobs(loaded_image_instance_segmentation_job, run_type)
         assert (
             loaded_image_instance_segmentation_job._to_rest_object().as_dict()
             == expected_image_instance_segmentation_job.as_dict()
         )
 
-    def _validate_automl_image_classification_jobs(self, automl_job):
+    def _validate_automl_image_classification_jobs(self, automl_job, run_type):
         assert isinstance(automl_job, AutoMLJob)
         assert automl_job._data and isinstance(automl_job._data, RestImageVerticalDataSettings)
         assert automl_job.limits and isinstance(automl_job.limits, ImageLimitSettings)
         assert automl_job.compute and isinstance(automl_job.compute, str)
-        assert automl_job.image_model and isinstance(automl_job.image_model, ImageModelSettings)
-        assert automl_job.sweep and isinstance(automl_job.sweep, ImageSweepSettings)
-        assert automl_job.search_space and isinstance(automl_job.search_space, List)
-        for item in automl_job.search_space:
-            assert isinstance(item, ImageClassificationSearchSpace)
+        assert automl_job.image_model and isinstance(automl_job.image_model, ImageModelSettingsClassification)
+        if run_type == "sweep":
+            assert automl_job.sweep and isinstance(automl_job.sweep, ImageSweepSettings)
+            assert automl_job.search_space and isinstance(automl_job.search_space, List)
+            for item in automl_job.search_space:
+                assert isinstance(item, ImageClassificationSearchSpace)
+        else:
+            assert automl_job.sweep is None
+            assert automl_job.search_space is None
 
-    def _validate_automl_image_object_detection_jobs(self, automl_job):
+    def _validate_automl_image_object_detection_jobs(self, automl_job, run_type):
         assert isinstance(automl_job, AutoMLJob)
         assert automl_job._data and isinstance(automl_job._data, RestImageVerticalDataSettings)
         assert automl_job.limits and isinstance(automl_job.limits, ImageLimitSettings)
         assert automl_job.compute and isinstance(automl_job.compute, str)
-        assert automl_job.image_model and isinstance(automl_job.image_model, ImageModelSettings)
-        assert automl_job.sweep and isinstance(automl_job.sweep, ImageSweepSettings)
-        assert automl_job.search_space and isinstance(automl_job.search_space, List)
-        for item in automl_job.search_space:
-            assert isinstance(item, ImageObjectDetectionSearchSpace)
+        assert automl_job.image_model and isinstance(automl_job.image_model, ImageModelSettingsObjectDetection)
+        if run_type == "sweep":
+            assert automl_job.sweep and isinstance(automl_job.sweep, ImageSweepSettings)
+            assert automl_job.search_space and isinstance(automl_job.search_space, List)
+            for item in automl_job.search_space:
+                assert isinstance(item, ImageObjectDetectionSearchSpace)
+        else:
+            assert automl_job.sweep is None
+            assert automl_job.search_space is None
 
+    @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_deserialize_image_classification_job(
         self,
         mock_workspace_scope,
+        run_type,
         expected_image_classification_job: JobBaseData,
         loaded_image_classification_job: AutoMLJob,
     ):
