@@ -142,7 +142,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         except AttributeError:
             warnings.warn(
                 """Kind must be set while creating the span for OpenTelemetry. It might be possible
-                that one of the packages you are using doesn't follow the latest Opentelemtry Spec.
+                that one of the packages you are using doesn't follow the latest Opentelemetry Spec.
                 Try updating the azure packages to the latest versions."""
             )
 
@@ -235,7 +235,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         except AttributeError:
             warnings.warn(
                 """Link must be added while creating the span for OpenTelemetry. It might be possible
-                that one of the packages you are using doesn't follow the latest Opentelemtry Spec.
+                that one of the packages you are using doesn't follow the latest Opentelemetry Spec.
                 Try updating the azure packages to the latest versions."""
             )
 
