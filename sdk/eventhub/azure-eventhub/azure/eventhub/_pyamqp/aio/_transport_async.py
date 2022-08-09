@@ -92,7 +92,6 @@ class AsyncTransportMixin():
                 decoded = decode_empty_frame(header)
             else:
                 decoded = decode_frame(payload)
-            # TODO: Catch decode error and return amqp:decode-error
             #_LOGGER.info("ICH%d <- %r", channel, decoded)
             return channel, decoded
         except (TimeoutError, socket.timeout, asyncio.IncompleteReadError, asyncio.TimeoutError):
