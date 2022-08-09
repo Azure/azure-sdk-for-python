@@ -58,7 +58,6 @@
     "sdk/confidentialledger/azure-confidentialledger/**",
     "sdk/core/azure/**",
     "sdk/core/azure-common/**",
-    "sdk/core/azure-core-tracing-opencensus/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
     "sdk/core/azure-core/**",
     "sdk/cosmos/azure-cosmos/**",
