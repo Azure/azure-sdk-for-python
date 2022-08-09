@@ -31,7 +31,7 @@ class SecretClient(KeyVaultClientBase):
         :mod:`azure.identity`
     :keyword api_version: version of the Key Vault API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.secrets.ApiVersion
-    :keyword transport: transport to use. 
+    :keyword transport: transport to use.
     :paramtype transport: ~azure.core.pipeline.transport.HttpTransport
 
     Example:
