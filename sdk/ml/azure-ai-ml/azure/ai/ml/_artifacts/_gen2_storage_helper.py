@@ -2,30 +2,29 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import uuid
 import logging
-import time
 import os
-from typing import Dict, List
-from pathlib import PurePosixPath, Path
-from colorama import Fore
 import sys
+import time
+import uuid
+from pathlib import Path, PurePosixPath
+from typing import Dict, List
 
-from azure.storage.filedatalake import DataLakeServiceClient
-from azure.core.exceptions import ResourceExistsError
+from colorama import Fore
+
+from azure.ai.ml._artifacts._constants import UPLOAD_CONFIRMATION
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
 from azure.ai.ml._utils._asset_utils import (
+    AssetNotChangedError,
+    IgnoreFile,
+    _build_metadata_dict,
     generate_asset_id,
     upload_directory,
     upload_file,
-    AssetNotChangedError,
-    _build_metadata_dict,
-    IgnoreFile,
-)
-from azure.ai.ml._artifacts._constants import (
-    UPLOAD_CONFIRMATION,
 )
 from azure.ai.ml.constants import STORAGE_AUTH_MISMATCH_ERROR
-from azure.ai.ml._ml_exceptions import ErrorTarget, ErrorCategory, ValidationException, MlException
+from azure.core.exceptions import ResourceExistsError
+from azure.storage.filedatalake import DataLakeServiceClient
 
 module_logger = logging.getLogger(__name__)
 
@@ -57,9 +56,7 @@ class Gen2StorageClient:
         asset_hash: str = None,
         show_progress: bool = True,
     ) -> Dict[str, str]:
-        """
-        Upload a file or directory to a path inside the filesystem.
-        """
+        """Upload a file or directory to a path inside the filesystem."""
         if name and version is None:
             version = str(uuid.uuid4())  # placeholder for auto-increment artifacts
 
@@ -91,7 +88,12 @@ class Gen2StorageClient:
                     ignore_file=ignore_file,
                 )
             else:
-                upload_file(storage_client=self, source=source, msg=msg, show_progress=show_progress)
+                upload_file(
+                    storage_client=self,
+                    source=source,
+                    msg=msg,
+                    show_progress=show_progress,
+                )
             print(Fore.RESET + "\n", file=sys.stderr)
 
             # upload must be completed before we try to generate confirmation file
@@ -112,13 +114,13 @@ class Gen2StorageClient:
         return artifact_info
 
     def check_blob_exists(self) -> None:
-        """
-        Throw error if file or directory already exists.
+        """Throw error if file or directory already exists.
 
-        Check if file or directory already exists in filesystem by checking the metadata for
-        existence and confirmation data. If confirmation data is missing, file or directory does not exist
-        or was only partially uploaded and the partial upload will be overwritten with a complete
-        upload.
+        Check if file or directory already exists in filesystem by
+        checking the metadata for existence and confirmation data. If
+        confirmation data is missing, file or directory does not exist
+        or was only partially uploaded and the partial upload will be
+        overwritten with a complete upload.
         """
         try:
             if self.directory_client.exists():
@@ -146,9 +148,8 @@ class Gen2StorageClient:
         self.directory_client.set_metadata(_build_metadata_dict(name, version))
 
     def download(self, starts_with: str, destination: str = Path.home()) -> None:
-        """
-        Downloads all items inside a specified filesystem directory with the prefix `starts_with` to the destination folder.
-        """
+        """Downloads all items inside a specified filesystem directory with the
+        prefix `starts_with` to the destination folder."""
         try:
             mylist = self.file_system_client.get_paths(path=starts_with)
             for item in mylist:
@@ -180,14 +181,11 @@ class Gen2StorageClient:
             )
 
     def list(self, starts_with: str) -> List[str]:
-        """
-        Lists all file names in the specified filesystem with the prefix `starts_with`
-        """
+        """Lists all file names in the specified filesystem with the prefix
+        `starts_with`"""
         return [f.get("name") for f in self.file_system_client.get_paths(path=starts_with)]
 
     def exists(self, path: str) -> bool:
-        """
-        Returns whether there exists a file named `path`
-        """
+        """Returns whether there exists a file named `path`"""
         file_client = self.file_system_client.get_file_client(path)
         return file_client.exists()

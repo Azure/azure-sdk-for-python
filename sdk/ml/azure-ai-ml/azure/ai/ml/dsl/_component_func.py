@@ -1,11 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 from typing import Callable, Mapping
 
+from azure.ai.ml.dsl._dynamic import KwParameter, create_kw_function_from_parameters
 from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities._builders import Command
-from azure.ai.ml.dsl._dynamic import KwParameter, create_kw_function_from_parameters
 
 
 def get_dynamic_input_parameter(inputs: Mapping):

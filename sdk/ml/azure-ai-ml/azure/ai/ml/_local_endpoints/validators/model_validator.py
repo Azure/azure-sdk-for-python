@@ -2,22 +2,26 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 from pathlib import Path
 
+from azure.ai.ml._artifacts._artifact_utilities import download_artifact
+from azure.ai.ml._local_endpoints.errors import RequiredLocalArtifactsNotFoundError
+from azure.ai.ml._utils._arm_id_utils import parse_prefixed_name_version
+from azure.ai.ml._utils._storage_utils import AzureMLDatastorePathUri
 from azure.ai.ml.entities import OnlineDeployment
 from azure.ai.ml.entities._assets import Model
-
 from azure.ai.ml.operations._model_operations import ModelOperations
-
-from azure.ai.ml._local_endpoints.errors import RequiredLocalArtifactsNotFoundError
-from azure.ai.ml._artifacts._artifact_utilities import download_artifact
-from azure.ai.ml._utils._arm_id_utils import parse_prefixed_name_version, is_ARM_id_for_resource
-from azure.ai.ml._utils._storage_utils import AzureMLDatastorePathUri
 
 
 class ModelValidator:
     def get_model_artifacts(
-        self, endpoint_name: str, deployment: OnlineDeployment, model_operations: ModelOperations, download_path: str
+        self,
+        endpoint_name: str,
+        deployment: OnlineDeployment,
+        model_operations: ModelOperations,
+        download_path: str,
     ) -> str:
         """Validates and returns model artifacts from deployment specification.
 

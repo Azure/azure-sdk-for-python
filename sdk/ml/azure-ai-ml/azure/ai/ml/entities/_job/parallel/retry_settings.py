@@ -6,13 +6,10 @@ from pathlib import Path
 from typing import Dict, Union
 
 from azure.ai.ml._schema.component.retry_settings import RetrySettingsSchema
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-)
 from azure.ai.ml._utils.utils import load_yaml
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._mixins import RestTranslatableMixin, DictMixin
 
 
 class RetrySettings(RestTranslatableMixin, DictMixin):

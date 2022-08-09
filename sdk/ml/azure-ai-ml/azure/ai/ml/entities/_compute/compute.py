@@ -1,28 +1,26 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 from abc import abstractclassmethod
 from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Union
 
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeResource
-from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
 from azure.ai.ml._schema.compute.compute import ComputeSchema
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    ComputeType,
-    CommonYamlFields,
-)
-from azure.ai.ml.entities import Resource
+from azure.ai.ml._utils.utils import dump_yaml_to_file
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields, ComputeType
+from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._util import find_type_in_override
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 
 
 class Compute(Resource, RestTranslatableMixin):
-    """Compute resource
+    """Compute resource.
 
     :param type: The type of the compute, possible values are ["amlcompute", "computeinstance", "virtualmachine", "kubernetes"]
     :type type: str
@@ -58,7 +56,8 @@ class Compute(Resource, RestTranslatableMixin):
 
     @property
     def type(self) -> Optional[str]:
-        """The type of the compute, possible values are ["amlcompute", "computeinstance", "virtualmachine", "kubernetes"]
+        """The type of the compute, possible values are ["amlcompute",
+        "computeinstance", "virtualmachine", "kubernetes"]
 
         :return: The type of the compute
         :rtype: Optional[str]
@@ -67,7 +66,7 @@ class Compute(Resource, RestTranslatableMixin):
 
     @property
     def created_on(self) -> Optional[str]:
-        """Creation timestamp
+        """Creation timestamp.
 
         :return: [description]
         :rtype: Optional[str]
@@ -76,7 +75,7 @@ class Compute(Resource, RestTranslatableMixin):
 
     @property
     def provisioning_state(self) -> Optional[str]:
-        """Provisioning state
+        """Provisioning state.
 
         :return: [description]
         :rtype: Optional[str]
@@ -85,7 +84,7 @@ class Compute(Resource, RestTranslatableMixin):
 
     @property
     def provisioning_errors(self) -> Optional[str]:
-        """Provisioning errors
+        """Provisioning errors.
 
         :return: [description]
         :rtype: Optional[str]
@@ -98,11 +97,11 @@ class Compute(Resource, RestTranslatableMixin):
     @classmethod
     def _from_rest_object(cls, rest_obj: ComputeResource) -> "Compute":
         from azure.ai.ml.entities import (
-            VirtualMachineCompute,
             AmlCompute,
             ComputeInstance,
-            UnsupportedCompute,
             KubernetesCompute,
+            UnsupportedCompute,
+            VirtualMachineCompute,
         )
 
         mapping = {
@@ -153,7 +152,7 @@ class Compute(Resource, RestTranslatableMixin):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        from azure.ai.ml.entities import VirtualMachineCompute, AmlCompute, ComputeInstance, KubernetesCompute
+        from azure.ai.ml.entities import AmlCompute, ComputeInstance, KubernetesCompute, VirtualMachineCompute
 
         type_in_override = find_type_in_override(params_override) if params_override else None
         type = type_in_override or data.get(CommonYamlFields.TYPE, None)  # override takes the priority
@@ -187,7 +186,7 @@ class NetworkSettings:
         subnet: str = None,
         **kwargs,
     ):
-        """Network settings for a compute
+        """Network settings for a compute.
 
         :param vnet_name: The virtual network name, defaults to None
         :type vnet_name: str, optional
