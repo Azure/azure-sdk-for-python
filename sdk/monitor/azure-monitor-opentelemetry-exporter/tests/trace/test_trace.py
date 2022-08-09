@@ -307,6 +307,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.target, "www.wikipedia.org")
 
         # url
+        # spell-checker:ignore ddds
         span._attributes = {
             "http.method": "GET",
             "http.scheme": "https",

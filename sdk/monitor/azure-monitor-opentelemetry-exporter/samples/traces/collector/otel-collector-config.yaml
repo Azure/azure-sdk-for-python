@@ -1,6 +1,7 @@
 receivers:
     otlp:
         protocols:
+            # spell-checker:ignore grpc
             grpc:
             http:
 exporters:

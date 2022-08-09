@@ -1,4 +1,4 @@
-# Microsoft Opentelemetry exporter for Azure Monitor
+# Microsoft OpenTelemetry exporter for Azure Monitor
 
 [![Gitter chat](https://img.shields.io/gitter/room/Microsoft/azure-monitor-python)](https://gitter.im/Azure/azure-sdk-for-python)
 
@@ -10,7 +10,7 @@ The exporter for Azure Monitor allows you to export data utilizing the OpenTelem
 
 ### Install the package
 
-Install the Microsoft Opentelemetry exporter for Azure Monitor with [pip][pip]:
+Install the Microsoft OpenTelemetry exporter for Azure Monitor with [pip][pip]:
 
 ```Bash
 pip install azure-monitor-opentelemetry-exporter --pre
@@ -22,7 +22,7 @@ To use this package, you must have:
 
 * Azure subscription - [Create a free account][azure_sub]
 * Azure Monitor - [How to use application insights][application_insights_namespace]
-* Opentelemetry SDK - [Opentelemtry SDK for Python][ot_sdk_python]
+* OpenTelemetry SDK - [OpenTelemtry SDK for Python][ot_sdk_python]
 * Python 3.6 or later - [Install Python][python]
 
 ### Instantiate the client
@@ -81,9 +81,9 @@ exporter = AzureMonitorTraceExporter()
 
 Some of the key concepts for the Azure monitor exporter include:
 
-* [Opentelemetry][opentelemtry_spec]: Opentelemetry is a set of libraries used to collect and export telemetry data (metrics, logs, and traces) for analysis in order to understand your software's performance and behavior.
+* [OpenTelemetry][opentelemtry_spec]: OpenTelemetry is a set of libraries used to collect and export telemetry data (metrics, logs, and traces) for analysis in order to understand your software's performance and behavior.
 
-* [Instrumentation][instrumentation_library]: The ability to call the opentelemetry API directly by any application is facilitated by instrumentation. A library that enables OpenTelemetry observability for another library is called an instrumentation Library.
+* [Instrumentation][instrumentation_library]: The ability to call the OpenTelemetry API directly by any application is facilitated by instrumentation. A library that enables OpenTelemetry observability for another library is called an instrumentation Library.
 
 * [Log][log_concept]: Log refers to capturing of logging, exception and events.
 
@@ -454,7 +454,7 @@ Please find further examples in the [samples](https://github.com/Azure/azure-sdk
 
 For more extensive documentation on the Azure Monitor service, see the [Azure Monitor documentation][product_docs] on docs.microsoft.com.
 
-For detailed overview of Opentelemetry, visit their [overview](https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/overview.md) page.
+For detailed overview of OpenTelemetry, visit their [overview](https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/overview.md) page.
 
 ## Contributing
 
