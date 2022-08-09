@@ -142,6 +142,7 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
 
+    # spell-checker:ignore Fhir
     HealthcareFhirResourceCreatedEventName = 'Microsoft.HealthcareApis.FhirResourceCreated'
 
     HealthcareFhirResourceDeletedEventName = 'Microsoft.HealthcareApis.FhirResourceDeleted'
