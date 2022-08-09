@@ -101,8 +101,9 @@ directive:
 
 ### Authoring API Directives
 
+## Give LROs return types
+
 ```yaml $(tag) == 'release_authoring_1_0'
-# Give LROs return types
 directive:
   - where-operation: TextAnalysisAuthoring_DeleteProject
     transform: >
@@ -170,8 +171,21 @@ directive:
       };
 ```
 
+## Remove status operations
+
 ```yaml $(tag) == 'release_authoring_1_0'
-# Rename Authoring client operations
+directive:
+  - remove-operation: TextAnalysisAuthoring_GetDeploymentStatus
+  - remove-operation: TextAnalysisAuthoring_GetSwapDeploymentsStatus
+  - remove-operation: TextAnalysisAuthoring_GetExportStatus
+  - remove-operation: TextAnalysisAuthoring_GetImportStatus
+  - remove-operation: TextAnalysisAuthoring_GetTrainingStatus
+  - remove-operation: TextAnalysisAuthoring_GetProjectDeletionStatus
+```
+
+## Rename Authoring client operations
+
+```yaml $(tag) == 'release_authoring_1_0'
 directive:
   - rename-operation:
       from: TextAnalysisAuthoring_ListProjects
@@ -210,18 +224,6 @@ directive:
       from: TextAnalysisAuthoring_DeleteDeployment
       to: DeleteDeployment
   - rename-operation:
-      from: TextAnalysisAuthoring_GetDeploymentStatus
-      to: GetDeploymentStatus
-  - rename-operation:
-      from: TextAnalysisAuthoring_GetSwapDeploymentsStatus
-      to: GetSwapDeploymentsStatus
-  - rename-operation:
-      from: TextAnalysisAuthoring_GetExportStatus
-      to: GetExportStatus
-  - rename-operation:
-      from: TextAnalysisAuthoring_GetImportStatus
-      to: GetImportStatus
-  - rename-operation:
       from: TextAnalysisAuthoring_ListTrainedModels
       to: ListTrainedModels
   - rename-operation:
@@ -240,14 +242,8 @@ directive:
       from: TextAnalysisAuthoring_ListTrainingJobs
       to: ListTrainingJobs
   - rename-operation:
-      from: TextAnalysisAuthoring_GetTrainingStatus
-      to: GetTrainingStatus
-  - rename-operation:
       from: TextAnalysisAuthoring_CancelTrainingJob
       to: CancelTrainingJob
-  - rename-operation:
-      from: TextAnalysisAuthoring_GetProjectDeletionStatus
-      to: GetProjectDeletionStatus
   - rename-operation:
       from: TextAnalysisAuthoring_GetSupportedLanguages
       to: ListSupportedLanguages
