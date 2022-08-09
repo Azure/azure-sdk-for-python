@@ -2,27 +2,24 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 from pathlib import Path
 from typing import Dict, Union
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    AzureDataLakeGen1Datastore as RestAzureDatalakeGen1Datastore,
-    DatastoreData,
-    DatastoreType,
-)
-from azure.ai.ml.entities._datastore.credentials import (
-    ServicePrincipalCredentials,
-    CertificateCredentials,
-)
-from azure.ai.ml.entities._datastore.utils import from_rest_datastore_credentials
+from azure.ai.ml._restclient.v2022_05_01.models import AzureDataLakeGen1Datastore as RestAzureDatalakeGen1Datastore
+from azure.ai.ml._restclient.v2022_05_01.models import DatastoreData, DatastoreType
 from azure.ai.ml._schema._datastore.adls_gen1 import AzureDataLakeGen1Schema
 from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, TYPE
+from azure.ai.ml.entities._datastore.credentials import CertificateCredentials, ServicePrincipalCredentials
 from azure.ai.ml.entities._datastore.datastore import Datastore
+from azure.ai.ml.entities._datastore.utils import from_rest_datastore_credentials
 from azure.ai.ml.entities._util import load_from_dict
 
 
 class AzureDataLakeGen1Datastore(Datastore):
-    """Azure Data Lake aka Gen 1 datastore that is linked to an Azure ML workspace
+    """Azure Data Lake aka Gen 1 datastore that is linked to an Azure ML
+    workspace.
 
     :param name: Name of the datastore.
     :type name: str

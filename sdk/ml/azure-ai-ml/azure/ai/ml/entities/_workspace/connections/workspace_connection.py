@@ -1,41 +1,45 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
+import json
 from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Union
-import json
 
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
-from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
-from azure.ai.ml._utils.utils import load_yaml, dump_yaml_to_file, camel_to_snake, _snake_to_camel
-from azure.ai.ml.entities import Resource
-from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._workspace.connections.credentials import (
-    PatTokenCredentials,
-    UsernamePasswordCredentials,
-    ManagedIdentityCredentials,
-    WorkspaceConnectionCredentials,
-    SasTokenCredentials,
-    ServicePrincipalCredentials,
+from azure.ai.ml._restclient.v2022_01_01_preview.models import (
+    ConnectionAuthType,
+    ManagedIdentityAuthTypeWorkspaceConnectionProperties,
+    NoneAuthTypeWorkspaceConnectionProperties,
+    PATAuthTypeWorkspaceConnectionProperties,
+    SASAuthTypeWorkspaceConnectionProperties,
+    ServicePrincipalAuthTypeWorkspaceConnectionProperties,
+    UsernamePasswordAuthTypeWorkspaceConnectionProperties,
 )
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
-    ConnectionAuthType,
-    PATAuthTypeWorkspaceConnectionProperties,
-    ManagedIdentityAuthTypeWorkspaceConnectionProperties,
-    UsernamePasswordAuthTypeWorkspaceConnectionProperties,
-    SASAuthTypeWorkspaceConnectionProperties,
-    NoneAuthTypeWorkspaceConnectionProperties,
-    ServicePrincipalAuthTypeWorkspaceConnectionProperties,
-    ConnectionCategory,
+)
+from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
+from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._workspace.connections.credentials import (
+    ManagedIdentityCredentials,
+    PatTokenCredentials,
+    SasTokenCredentials,
+    ServicePrincipalCredentials,
+    UsernamePasswordCredentials,
+    WorkspaceConnectionCredentials,
 )
 
 
 class WorkspaceConnection(Resource):
-    """
-    Azure ML workspace connection provides a secure way to store authentication and configuration information needed to
-    connect and interact with the external resources.
+    """Azure ML workspace connection provides a secure way to store
+    authentication and configuration information needed to connect and interact
+    with the external resources.
 
     :param name: Name of the workspace connection.
     :type name: str
@@ -72,7 +76,8 @@ class WorkspaceConnection(Resource):
 
     @property
     def type(self) -> str:
-        """Type of the workspace connection, supported are 'Git', 'PythonFeed' and 'ContainerRegistry'.
+        """Type of the workspace connection, supported are 'Git', 'PythonFeed'
+        and 'ContainerRegistry'.
 
         :return: Type of the job.
         :rtype: str

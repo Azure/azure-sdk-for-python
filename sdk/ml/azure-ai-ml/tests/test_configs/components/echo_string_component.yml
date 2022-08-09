@@ -1,0 +1,22 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+name: microsoft_samples_echo_string
+display_name: EchoString
+description: This is the basic command component that echo input string
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 1
+
+inputs:
+  component_in_string:
+    description: A string
+    type: string
+
+command: >-
+  echo Hello World &
+  echo ${{inputs.component_in_string}} &
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

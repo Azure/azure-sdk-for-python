@@ -8,9 +8,7 @@ from .automl_job import AutoMLJob
 
 
 class AutoMLVertical(AutoMLJob):
-    """
-    Abstract class for AutoML verticals.
-    """
+    """Abstract class for AutoML verticals."""
 
     @abstractmethod
     def __init__(self, task_type: str, **kwargs) -> None:

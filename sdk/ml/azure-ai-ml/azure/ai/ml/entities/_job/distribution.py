@@ -3,17 +3,18 @@
 # ---------------------------------------------------------
 
 
-from typing import Optional, Union, Dict
+from typing import Dict, Optional, Union
+
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    Mpi as RestMpi,
-    PyTorch as RestPyTorch,
-    TensorFlow as RestTensorFlow,
     DistributionConfiguration as RestDistributionConfiguration,
-    DistributionType as RestDistributionType,
 )
-from azure.ai.ml.entities._util import SnakeToPascalDescriptor
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._restclient.v2022_02_01_preview.models import DistributionType as RestDistributionType
+from azure.ai.ml._restclient.v2022_02_01_preview.models import Mpi as RestMpi
+from azure.ai.ml._restclient.v2022_02_01_preview.models import PyTorch as RestPyTorch
+from azure.ai.ml._restclient.v2022_02_01_preview.models import TensorFlow as RestTensorFlow
 from azure.ai.ml.constants import DistributionType
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.entities._util import SnakeToPascalDescriptor
 
 SDK_TO_REST = {
     DistributionType.MPI: RestDistributionType.MPI,
@@ -25,7 +26,9 @@ SDK_TO_REST = {
 class DistributionConfiguration(RestTranslatableMixin):
 
     type = SnakeToPascalDescriptor(
-        "distribution_type", transformer=lambda x: SDK_TO_REST.get(x, None), reverse_transformer=lambda x: x.lower()
+        "distribution_type",
+        transformer=lambda x: SDK_TO_REST.get(x, None),
+        reverse_transformer=lambda x: x.lower(),
     )
 
     def __init__(self) -> None:
@@ -35,8 +38,8 @@ class DistributionConfiguration(RestTranslatableMixin):
     def _from_rest_object(
         cls, obj: Optional[Union[RestDistributionConfiguration, Dict]]
     ) -> "DistributionConfiguration":
-        """
-        This function works for distribution property of a Job object and of a Component object()
+        """This function works for distribution property of a Job object and of
+        a Component object()
 
         Distribution of Job when returned by MFE, is a RestDistributionConfiguration
 
@@ -45,7 +48,6 @@ class DistributionConfiguration(RestTranslatableMixin):
 
         So in the job distribution case, we need to call as_dist() first and get type from "distribution_type" property.
         In the componenet case, we need to extract type from key "type"
-
         """
         if obj is None:
             return None

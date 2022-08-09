@@ -3,16 +3,19 @@
 # ---------------------------------------------------------
 
 
+import tarfile
+from pathlib import Path
+
 from docker.errors import NotFound
 from docker.models.containers import Container
-from pathlib import Path
-import tarfile
+
 from azure.ai.ml._local_endpoints.errors import InvalidVSCodeRequestError
 
 
 class EntryScriptUtility:
     def export_container_startup_files(self, container: Container, build_directory: str):
-        """Exports the /var/azureml-server/entry.py from the provided Docker container to a local folder.
+        """Exports the /var/azureml-server/entry.py from the provided Docker
+        container to a local folder.
 
         :param container: Container which contains the azureml-server.
         :type container: Container
@@ -37,7 +40,8 @@ class EntryScriptUtility:
         return entry_script_py
 
     def update_entry_script(self, entry_script_local_path: str):
-        """Edits the /var/azureml-server/entry.py at the local path so it has the proper debugger statements.
+        """Edits the /var/azureml-server/entry.py at the local path so it has
+        the proper debugger statements.
 
         :param entry_script_local_path: Path where the entry.py is on local machine.
         :type entry_script_local_path: str
