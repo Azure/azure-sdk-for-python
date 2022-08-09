@@ -766,14 +766,17 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
     async def test_set_container_acl_with_public_access(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop('variables', {})
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = await self._create_container(bsc)
 
         # Act
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=datetime.utcnow() + timedelta(hours=1),
-                                     start=datetime.utcnow())
+                                     expiry=expiry_time,
+                                     start=start_time)
         signed_identifier = {'testid': access_policy}
         await container.set_container_access_policy(signed_identifier, public_access='container')
 
@@ -781,6 +784,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         acl = await container.get_container_access_policy()
         assert acl is not None
         assert 'container' == acl.get('public_access')
+
+        return variables
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -986,7 +991,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         with pytest.raises(HttpResponseError):
             await container.acquire_lease()
         self.sleep(17)
-        await container.acquire_lease()
+        await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1232,7 +1237,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
         await blob1.upload_blob(data)
-        lease = await blob1.acquire_lease()
+        lease = await blob1.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         resp = []
@@ -1630,8 +1635,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
     @recorded_by_proxy_async
     async def test_delete_blobs_with_if_tags(self, **kwargs):
         set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
-        blob_storage_account_name = kwargs.pop("blob_storage_account_name")
-        blob_storage_account_key = kwargs.pop("blob_storage_account_key")
+        blob_storage_account_name = kwargs.pop("storage_account_name")
+        blob_storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
         bsc = BlobServiceClient(self.account_url(blob_storage_account_name, "blob"), blob_storage_account_key)
@@ -1898,8 +1903,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
     @recorded_by_proxy_async
     async def test_standard_blob_tier_with_if_tags(self, **kwargs):
         set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
-        blob_storage_account_name = kwargs.pop("blob_storage_account_name")
-        blob_storage_account_key = kwargs.pop("blob_storage_account_key")
+        blob_storage_account_name = kwargs.pop("storage_account_name")
+        blob_storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(blob_storage_account_name, "blob"), blob_storage_account_key)
         container = await self._create_container(bsc)
