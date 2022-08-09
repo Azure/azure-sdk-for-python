@@ -17,11 +17,11 @@ from azure.eventgrid._policies import CloudEventDistributedTracingPolicy
 from _mocks import (
     cloud_storage_dict
 )
-
+# spell-checker:disable
 _content_type = "application/cloudevents-batch+json; charset=utf-8"
 _traceparent_value = "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
 _tracestate_value = "rojo=00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01,congo=lZWRzIHRoNhcm5hbCBwbGVhc3VyZS4"
-
+# spell-chcker:enable
 
 class EventGridSerializationTests(object):
 

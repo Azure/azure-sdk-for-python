@@ -198,6 +198,7 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MediaJobCancelingEventName = 'Microsoft.Media.JobCanceling'
 
+    # spell-checker:ignore Errored
     MediaJobErroredEventName = 'Microsoft.Media.JobErrored'
 
     MediaJobFinishedEventName = 'Microsoft.Media.JobFinished'
