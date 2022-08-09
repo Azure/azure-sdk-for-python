@@ -45,7 +45,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     async def test_copy_model_successful(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
         async with client:
-            training_poller = await client.begin_build_model("template", formrecognizer_storage_container_sas_url)
+            training_poller = await client.begin_build_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await training_poller.result()
 
             target = await client.get_copy_authorization(tags={"testkey": "testvalue"})
@@ -71,7 +71,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     async def test_copy_model_with_model_id_and_desc(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
         async with client:
-            poller = await client.begin_build_model("template", formrecognizer_storage_container_sas_url)
+            poller = await client.begin_build_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await poller.result()
 
             model_id = str(uuid.uuid4())
@@ -100,7 +100,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     async def test_copy_model_fail_bad_model_id(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
         async with client:
-            poller = await client.begin_build_model("template", formrecognizer_storage_container_sas_url)
+            poller = await client.begin_build_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await poller.result()
 
             target = await client.get_copy_authorization()
@@ -125,7 +125,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             raw_response.append(document_model)
 
         async with client:
-            training_poller = await client.begin_build_model("template", formrecognizer_storage_container_sas_url)
+            training_poller = await client.begin_build_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await training_poller.result()
 
             target = await client.get_copy_authorization()
@@ -157,10 +157,10 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     async def test_copy_model_with_composed_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
         async with client:
-            poller_1 = await client.begin_build_model("template", formrecognizer_storage_container_sas_url)
+            poller_1 = await client.begin_build_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model_1 = await poller_1.result()
 
-            poller_2 = await client.begin_build_model("template", formrecognizer_storage_container_sas_url)
+            poller_2 = await client.begin_build_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model_2 = await poller_2.result()
 
             composed_poller = await client.begin_compose_model([model_1.model_id, model_2.model_id])
@@ -190,7 +190,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         client = kwargs.pop("client")
         formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         async with client:
-            poller = await client.begin_build_model("template", formrecognizer_storage_container_sas_url)
+            poller = await client.begin_build_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await poller.result()
 
             target = await client.get_copy_authorization()
@@ -209,7 +209,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     async def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
         async with client:
-            poller = await client.begin_build_model("template", formrecognizer_storage_container_sas_url)
+            poller = await client.begin_build_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await poller.result()
 
             target = await client.get_copy_authorization()

@@ -6,6 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import AdministratorListResult
+from ._models_py3 import AzureADAdministrator
 from ._models_py3 import Backup
 from ._models_py3 import CapabilitiesListResult
 from ._models_py3 import CapabilityProperties
@@ -55,6 +57,8 @@ from ._models_py3 import VirtualNetworkSubnetUsageResult
 
 
 from ._my_sql_management_client_enums import (
+    AdministratorName,
+    AdministratorType,
     ConfigurationSource,
     CreateMode,
     CreatedByType,
@@ -75,6 +79,8 @@ from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 __all__ = [
+    'AdministratorListResult',
+    'AzureADAdministrator',
     'Backup',
     'CapabilitiesListResult',
     'CapabilityProperties',
@@ -121,6 +127,8 @@ __all__ = [
     'UserAssignedIdentity',
     'VirtualNetworkSubnetUsageParameter',
     'VirtualNetworkSubnetUsageResult',
+    'AdministratorName',
+    'AdministratorType',
     'ConfigurationSource',
     'CreateMode',
     'CreatedByType',

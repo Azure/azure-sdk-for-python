@@ -36,9 +36,7 @@ def validate_api_version(api_version: str, client_kind: str) -> None:
                 api_version = DocumentAnalysisApiVersion(api_version)
                 err_message += (
                     "\nAPI version '{}' is only available for "
-                    "DocumentAnalysisClient and DocumentModelAdministrationClient.".format(
-                        api_version
-                    )
+                    "DocumentAnalysisClient and DocumentModelAdministrationClient.".format(api_version)
                 )
             except ValueError:
                 pass

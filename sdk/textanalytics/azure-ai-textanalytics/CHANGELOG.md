@@ -1,6 +1,6 @@
 # Release History
 
-## 5.2.0b5 (Unreleased)
+## 5.2.0b5 (2022-08-09)
 
 The version of this client library defaults to the API version `2022-05-01`.
 
