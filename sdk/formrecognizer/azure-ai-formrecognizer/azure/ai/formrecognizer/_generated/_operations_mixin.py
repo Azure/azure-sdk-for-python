@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from typing import Any, IO, Iterable, List, Optional, Union
 
     # FIXME: have to manually reconfigure import path for multiapi operation mixin
-    from .._polling import DocumentModelAdministrationLROPoller
+    from .._polling import DocumentModelAdministrationClientLROPoller
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
 
@@ -500,7 +500,7 @@ class FormRecognizerClientOperationsMixin(object):
         build_request,  # type: _models.BuildDocumentModelRequest
         **kwargs  # type: Any
     ):
-        # type: (...) -> DocumentModelAdministrationLROPoller[None]
+        # type: (...) -> DocumentModelAdministrationClientLROPoller[None]
         """Build model.
 
         Builds a custom document analysis model.
@@ -516,9 +516,9 @@ class FormRecognizerClientOperationsMixin(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of DocumentModelAdministrationLROPoller that returns either None or the
-         result of cls(response)
-        :rtype: ~...._polling.DocumentModelAdministrationLROPoller[None]
+        :return: An instance of DocumentModelAdministrationClientLROPoller that returns either None or
+         the result of cls(response)
+        :rtype: ~...._polling.DocumentModelAdministrationClientLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_build_document_model')
@@ -578,7 +578,7 @@ class FormRecognizerClientOperationsMixin(object):
         compose_request,  # type: _models.ComposeDocumentModelRequest
         **kwargs  # type: Any
     ):
-        # type: (...) -> DocumentModelAdministrationLROPoller[None]
+        # type: (...) -> DocumentModelAdministrationClientLROPoller[None]
         """Compose model.
 
         Creates a new model from document types of existing models.
@@ -594,9 +594,9 @@ class FormRecognizerClientOperationsMixin(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of DocumentModelAdministrationLROPoller that returns either None or the
-         result of cls(response)
-        :rtype: ~...._polling.DocumentModelAdministrationLROPoller[None]
+        :return: An instance of DocumentModelAdministrationClientLROPoller that returns either None or
+         the result of cls(response)
+        :rtype: ~...._polling.DocumentModelAdministrationClientLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_compose_document_model')
@@ -661,7 +661,7 @@ class FormRecognizerClientOperationsMixin(object):
         copy_to_request,  # type: _models.CopyAuthorization
         **kwargs  # type: Any
     ):
-        # type: (...) -> DocumentModelAdministrationLROPoller[None]
+        # type: (...) -> DocumentModelAdministrationClientLROPoller[None]
         """Copy model.
 
         Copies model to the target resource, region, and modelId.
@@ -678,9 +678,9 @@ class FormRecognizerClientOperationsMixin(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of DocumentModelAdministrationLROPoller that returns either None or the
-         result of cls(response)
-        :rtype: ~...._polling.DocumentModelAdministrationLROPoller[None]
+        :return: An instance of DocumentModelAdministrationClientLROPoller that returns either None or
+         the result of cls(response)
+        :rtype: ~...._polling.DocumentModelAdministrationClientLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_copy_document_model_to')

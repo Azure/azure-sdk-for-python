@@ -63,11 +63,9 @@ class RestorableSqlContainersOperations:
         :type instance_id: str
         :param restorable_sql_database_rid: The resource ID of the SQL database. Default value is None.
         :type restorable_sql_database_rid: str
-        :param start_time: The snapshot create timestamp after which snapshots need to be listed.
-         Default value is None.
+        :param start_time: Restorable Sql containers event feed start time. Default value is None.
         :type start_time: str
-        :param end_time: The snapshot create timestamp before which snapshots need to be listed.
-         Default value is None.
+        :param end_time: Restorable Sql containers event feed end time. Default value is None.
         :type end_time: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RestorableSqlContainersListResult or the result of
@@ -79,7 +77,7 @@ class RestorableSqlContainersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.RestorableSqlContainersListResult]
 
         error_map = {

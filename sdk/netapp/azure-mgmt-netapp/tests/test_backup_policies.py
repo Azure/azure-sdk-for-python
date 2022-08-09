@@ -68,51 +68,55 @@ class TestNetAppBackupPolicies(AzureMgmtRecordedTestCase):
     # Note that when tests are run in live mode it is best to run one test at a time.
     @recorded_by_proxy
     def test_create_delete_backup_policy(self):
-        create_backup_policy(self.client, TEST_BACKUP_POLICY_1)
+        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
+        create_backup_policy(self.client, TEST_BACKUP_POLICY_1, account_name=ACCOUNT1)
 
-        backup_policies_list = self.client.backup_policies.list(TEST_RG, TEST_ACC_1)
+        backup_policies_list = self.client.backup_policies.list(TEST_RG, ACCOUNT1)
         assert len(list(backup_policies_list)) == 1
 
-        delete_backup_policy(self.client, TEST_BACKUP_POLICY_1, live=self.is_live)
+        delete_backup_policy(self.client, TEST_BACKUP_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
 
-        backup_policies_list = self.client.backup_policies.list(TEST_RG, TEST_ACC_1)
+        backup_policies_list = self.client.backup_policies.list(TEST_RG, ACCOUNT1)
         assert len(list(backup_policies_list)) == 0
 
-        delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
+        delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)
 
     @recorded_by_proxy
     def test_list_backup_policies(self):
-        create_backup_policy(self.client, TEST_BACKUP_POLICY_1)
-        create_backup_policy(self.client, TEST_BACKUP_POLICY_2, backup_policy_only=True)
+        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")        
+        create_backup_policy(self.client, TEST_BACKUP_POLICY_1, account_name=ACCOUNT1)
+        create_backup_policy(self.client, TEST_BACKUP_POLICY_2,  account_name=ACCOUNT1, backup_policy_only=True)
 
-        backup_policies_list = self.client.backup_policies.list(TEST_RG, TEST_ACC_1)
+        backup_policies_list = self.client.backup_policies.list(TEST_RG, ACCOUNT1)
         assert len(list(backup_policies_list)) == 2
         idx = 0
         for backup_policy in backup_policies_list:
             assert backup_policy.name == BACKUP_POLICIES[idx]
             idx += 1
 
-        delete_backup_policy(self.client, TEST_BACKUP_POLICY_1, live=self.is_live)
-        delete_backup_policy(self.client, TEST_BACKUP_POLICY_2, live=self.is_live)
+        delete_backup_policy(self.client, TEST_BACKUP_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
+        delete_backup_policy(self.client, TEST_BACKUP_POLICY_2, account_name=ACCOUNT1, live=self.is_live)
 
-        backup_policies_list = self.client.backup_policies.list(TEST_RG, TEST_ACC_1)
+        backup_policies_list = self.client.backup_policies.list(TEST_RG, ACCOUNT1)
         assert len(list(backup_policies_list)) == 0
 
-        delete_account(self.client, TEST_RG, TEST_ACC_1)
+        delete_account(self.client, TEST_RG, ACCOUNT1)
 
     @recorded_by_proxy
     def test_get_backup_policy_by_name(self):
-        create_backup_policy(self.client, TEST_BACKUP_POLICY_1)
+        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-") 
+        create_backup_policy(self.client, TEST_BACKUP_POLICY_1, account_name=ACCOUNT1)
 
-        backup_policy = self.client.backup_policies.get(TEST_RG, TEST_ACC_1, TEST_BACKUP_POLICY_1)
-        assert backup_policy.name == TEST_ACC_1 + "/" + TEST_BACKUP_POLICY_1
+        backup_policy = self.client.backup_policies.get(TEST_RG, ACCOUNT1, TEST_BACKUP_POLICY_1)
+        assert backup_policy.name == ACCOUNT1 + "/" + TEST_BACKUP_POLICY_1
 
-        delete_backup_policy(self.client, TEST_BACKUP_POLICY_1, live=self.is_live)
-        delete_account(self.client, TEST_RG, TEST_ACC_1)
+        delete_backup_policy(self.client, TEST_BACKUP_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
+        delete_account(self.client, TEST_RG, ACCOUNT1)
 
     @recorded_by_proxy
     def test_update_backup_policies(self):
-        create_backup_policy(self.client, TEST_BACKUP_POLICY_1)
+        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-") 
+        create_backup_policy(self.client, TEST_BACKUP_POLICY_1, account_name=ACCOUNT1)
         backup_policy_body = BackupPolicyPatch(
             location=LOCATION,
             daily_backups_to_keep=0,
@@ -120,9 +124,9 @@ class TestNetAppBackupPolicies(AzureMgmtRecordedTestCase):
             monthly_backups_to_keep=0,
             enabled=True
         )
-        backup_policy = self.client.backup_policies.begin_update(TEST_RG, TEST_ACC_1, TEST_BACKUP_POLICY_1, backup_policy_body).result()
+        backup_policy = self.client.backup_policies.begin_update(TEST_RG, ACCOUNT1, TEST_BACKUP_POLICY_1, backup_policy_body).result()
         assert backup_policy.daily_backups_to_keep == 0
         assert backup_policy.weekly_backups_to_keep == 1
 
-        delete_backup_policy(self.client, TEST_BACKUP_POLICY_1, live=self.is_live)
-        delete_account(self.client, TEST_RG, TEST_ACC_1)
+        delete_backup_policy(self.client, TEST_BACKUP_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
+        delete_account(self.client, TEST_RG, ACCOUNT1)

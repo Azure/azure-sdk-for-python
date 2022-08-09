@@ -39,11 +39,14 @@ from .sanitizers import (
     add_uri_regex_sanitizer,
     add_uri_string_sanitizer,
     add_uri_subscription_id_sanitizer,
+    PemCertificate,
     set_bodiless_matcher,
     set_custom_default_matcher,
     set_default_function_settings,
     set_default_session_settings,
+    set_function_recording_options,
     set_headerless_matcher,
+    set_session_recording_options,
 )
 from .helpers import ResponseCallback, RetryCounter
 from .fake_credentials import FakeTokenCredential
@@ -82,6 +85,7 @@ __all__ = [
     "KeyVaultPreparer",
     "RandomNameResourceGroupPreparer",
     "CachedResourceGroupPreparer",
+    "PemCertificate",
     "PowerShellPreparer",
     "EnvironmentVariableLoader",
     "recorded_by_proxy",
@@ -91,7 +95,9 @@ __all__ = [
     "set_custom_default_matcher",
     "set_default_function_settings",
     "set_default_session_settings",
+    "set_function_recording_options",
     "set_headerless_matcher",
+    "set_session_recording_options",
     "start_test_proxy",
     "stop_test_proxy",
     "variable_recorder",

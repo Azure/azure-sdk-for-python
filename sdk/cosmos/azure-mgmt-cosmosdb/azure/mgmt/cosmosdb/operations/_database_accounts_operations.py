@@ -38,7 +38,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -78,7 +78,7 @@ def build_update_request_initial(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
     content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
     accept = _headers.pop('Accept', "application/json")
 
@@ -123,7 +123,7 @@ def build_create_or_update_request_initial(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
     content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
     accept = _headers.pop('Accept', "application/json")
 
@@ -164,7 +164,7 @@ def build_delete_request_initial(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}")  # pylint: disable=line-too-long
     path_format_arguments = {
@@ -198,7 +198,7 @@ def build_failover_priority_change_request_initial(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
     content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/failoverPriorityChange")  # pylint: disable=line-too-long
@@ -235,7 +235,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -269,7 +269,7 @@ def build_list_by_resource_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -305,7 +305,7 @@ def build_list_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -342,7 +342,7 @@ def build_list_connection_strings_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -382,7 +382,7 @@ def build_offline_region_request_initial(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
     content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
     accept = _headers.pop('Accept', "application/json")
 
@@ -427,7 +427,7 @@ def build_online_region_request_initial(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
     content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
     accept = _headers.pop('Accept', "application/json")
 
@@ -469,7 +469,7 @@ def build_get_read_only_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -506,7 +506,7 @@ def build_list_read_only_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -546,7 +546,7 @@ def build_regenerate_key_request_initial(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
     content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/regenerateKey")  # pylint: disable=line-too-long
@@ -582,7 +582,7 @@ def build_check_name_exists_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
     # Construct URL
     _url = kwargs.pop("template_url", "/providers/Microsoft.DocumentDB/databaseAccountNames/{accountName}")
     path_format_arguments = {
@@ -613,7 +613,7 @@ def build_list_metrics_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -653,7 +653,7 @@ def build_list_usages_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -692,7 +692,7 @@ def build_list_metric_definitions_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -765,7 +765,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DatabaseAccountGetResults]
 
         
@@ -817,7 +817,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DatabaseAccountGetResults]
 
@@ -890,7 +890,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DatabaseAccountGetResults]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -955,7 +955,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DatabaseAccountGetResults]
 
@@ -1030,7 +1030,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DatabaseAccountGetResults]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -1094,7 +1094,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
@@ -1155,7 +1155,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop(
@@ -1215,7 +1215,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
@@ -1286,7 +1286,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -1350,7 +1350,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DatabaseAccountsListResult]
 
         error_map = {
@@ -1432,7 +1432,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DatabaseAccountsListResult]
 
         error_map = {
@@ -1523,7 +1523,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DatabaseAccountListKeysResult]
 
         
@@ -1586,7 +1586,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DatabaseAccountListConnectionStringsResult]
 
         
@@ -1638,7 +1638,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
@@ -1706,7 +1706,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -1769,7 +1769,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
@@ -1837,7 +1837,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -1911,7 +1911,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DatabaseAccountListReadOnlyKeysResult]
 
         
@@ -1974,7 +1974,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DatabaseAccountListReadOnlyKeysResult]
 
         
@@ -2026,7 +2026,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
@@ -2094,7 +2094,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -2167,7 +2167,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
@@ -2225,7 +2225,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.MetricListResult]
 
         error_map = {
@@ -2320,7 +2320,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.UsagesResult]
 
         error_map = {
@@ -2411,7 +2411,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.MetricDefinitionsListResult]
 
         error_map = {

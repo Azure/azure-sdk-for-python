@@ -105,6 +105,7 @@
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
     "sdk/ml/azure-ai-ml/tests/**",
+    "sdk/loadtestservice/azure-developer-loadtesting/**",
     "sdk/monitor/azure-monitor-ingestion/**",
     "eng/**/*.json",
     "eng/*.txt",
@@ -162,6 +163,8 @@
     "docfx",
     "dotenv",
     "dpkg",
+    "dtlk",
+    "dtlksd",
     "DWORD",
     "eastus",
     "eckey",
@@ -184,6 +187,7 @@
     "hexlify",
     "himds",
     "hmac",
+    "hnstestscope",
     "howto",
     "illumos",
     "imds",
@@ -193,6 +197,7 @@
     "ipconfiguration",
     "ipconfigurations",
     "iqmp",
+    "isclass",
     "iscoroutine",
     "iscoroutinefunction",
     "iscsi",
@@ -204,6 +209,7 @@
     "kubeconfigs",
     "Kubernetes",
     "Kusto",
+    "kvlt",
     "livekvtest",
     "livekvtestcertprg",
     "livekvtestcertrec",
@@ -231,6 +237,7 @@
     "myacr",
     "nazsdk",
     "noarch",
+    "NOPERM",
     "northcentralus",
     "nspkg",
     "OAEP",
@@ -252,6 +259,7 @@
     "pluggy",
     "popen",
     "prebuilts",
+    "premf",
     "pschema",
     "PSECRET",
     "pyfuncitem",
@@ -279,6 +287,7 @@
     "SECG",
     "SECP",
     "setfacl",
+    "sftdl",
     "signalr",
     "signup",
     "simplifiable",
@@ -463,6 +472,12 @@
       ]
     },
     {
+      "filename": "sdk/loadtestservice/azure-developer-loadtesting/azure/developer/loadtesting/**",
+      "words":[
+        "vusers"
+      ]
+    },
+    {
       "filename": "sdk/ml/azure-ai-ml/**",
       "words": [
         "azureml",
@@ -530,7 +545,18 @@
         "kwonlyargcount",
         "dcid",
         "startf",
-        "dpkg"
+        "dpkg",
+        "isreused",
+        "reusedrunid",
+        "strictyaml",
+        "funcs",
+        "Fsubscriptions",
+        "Fresource",
+        "Fproviders",
+        "Fdeployments",
+        "isfolder",
+        "mylist",
+        "unioned"
       ]
     },
     {

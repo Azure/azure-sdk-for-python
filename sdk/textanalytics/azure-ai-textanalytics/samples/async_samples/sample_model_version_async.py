@@ -28,7 +28,7 @@ import os
 import asyncio
 
 
-async def sample_model_version_async():
+async def sample_model_version_async() -> None:
     print("--------------Choosing model_version sample--------------")
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
@@ -64,14 +64,14 @@ async def sample_model_version_async():
         print("...Results of Recognize Entities Action:")
         document_results = await poller.result()
         async for action_results in document_results:
-            recognize_entities_result = action_results[0]
-            if recognize_entities_result.is_error:
-                print("......Is an error with code '{}' and message '{}'".format(
-                    recognize_entities_result.code, recognize_entities_result.message
-                ))
-            else:
-                for entity in recognize_entities_result.entities:
+            action_result = action_results[0]
+            if action_result.kind == "EntityRecognition":
+                for entity in action_result.entities:
                     print(f"......Entity '{entity.text}' has category '{entity.category}'")
+            elif action_result.is_error is True:
+                print("......Is an error with code '{}' and message '{}'".format(
+                    action_result.code, action_result.message
+                ))
 
 
 async def main():
