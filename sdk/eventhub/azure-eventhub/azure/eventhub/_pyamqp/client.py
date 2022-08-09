@@ -457,8 +457,6 @@ class SendClient(AMQPClient):
         message_delivery.error = error
 
     def _on_send_complete(self, message_delivery, reason, state):
-        # TODO: check whether the callback would be called in case of message expiry or link going down
-        #  and if so handle the state in the callback
         message_delivery.reason = reason
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
             if state and SEND_DISPOSITION_ACCEPT in state:

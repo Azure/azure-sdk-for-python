@@ -383,8 +383,6 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
             raise RuntimeError("Message is not sent.")
 
     async def _on_send_complete_async(self, message_delivery, reason, state):
-        # TODO: check whether the callback would be called in case of message expiry or link going down
-        #  and if so handle the state in the callback
         message_delivery.reason = reason
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
             if state and SEND_DISPOSITION_ACCEPT in state:

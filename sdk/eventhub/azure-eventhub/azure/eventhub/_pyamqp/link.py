@@ -149,7 +149,7 @@ class Link(object):
         except Exception as e:  # pylint: disable=broad-except
             _LOGGER.error("Link state change callback failed: '%r'", e, extra=self.network_trace_params)
 
-    def _remove_pending_deliveries(self):  # TODO: move to sender
+    def _remove_pending_deliveries(self):
         for delivery in self._pending_deliveries.values():
             delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None)
         self._pending_deliveries = {}
@@ -190,10 +190,10 @@ class Link(object):
             _LOGGER.info("<- %r", AttachFrame(*frame), extra=self.network_trace_params)
         if self._is_closed:
             raise ValueError("Invalid link")
-        elif not frame[5] or not frame[6]:  # TODO: not sure if we should source + target check here
+        elif not frame[5] or not frame[6]:
             _LOGGER.info("Cannot get source or target. Detaching link")
             self._remove_pending_deliveries()
-            self._set_state(LinkState.DETACHED)  # TODO: Send detach now?
+            self._set_state(LinkState.DETACHED)
             raise ValueError("Invalid link")
         self.remote_handle = frame[1]  # handle
         self.remote_max_message_size = frame[10]  # max_message_size
@@ -265,7 +265,7 @@ class Link(object):
             return
         try:
             self._check_if_closed()
-            self._remove_pending_deliveries()  # TODO: Keep?
+            self._remove_pending_deliveries()
             if self.state in [LinkState.ATTACH_SENT, LinkState.ATTACH_RCVD]:
                 self._outgoing_detach(close=close, error=error)
                 self._set_state(LinkState.DETACHED)

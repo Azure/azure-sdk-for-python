@@ -131,7 +131,7 @@ class SenderLink(Link):
             if delivery:
                 delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, frame[4])  # state
 
-    def _update_pending_delivery_status(self):  # TODO
+    def _update_pending_delivery_status(self):
         now = time.time()
         expired = []
         for delivery in self._pending_deliveries.values():
