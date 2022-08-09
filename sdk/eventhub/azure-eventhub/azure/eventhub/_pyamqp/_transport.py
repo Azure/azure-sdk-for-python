@@ -384,7 +384,7 @@ class _AbstractTransport(object):
             except Exception as exc:
                 # TODO: shutdown could raise OSError, Transport endpoint is not connected if the endpoint is already
                 #  disconnected. can we safely ignore the errors since the close operation is initiated by us.
-                _LOGGER.info("An error occurred when shutting down the socket: %r", exc)
+                _LOGGER.info("Transport endpoint is already disconnected: %r", exc)
             self.sock.close()
             self.sock = None
         self.connected = False
