@@ -56,12 +56,6 @@ def sample_export_import_project():
         export_result = export_poller.result()
         export_url = export_result["resultUrl"]
 
-        # delete old project
-        delete_poller = client.begin_delete_project(
-            project_name=project_name
-        )
-        delete_poller.result()
-
         # import project
         project = {
             "Metadata": {

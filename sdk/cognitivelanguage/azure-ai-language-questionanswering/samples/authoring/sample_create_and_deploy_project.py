@@ -81,9 +81,9 @@ def sample_create_and_deploy_project():
             project_name=project_name
         )
         for source in sources:
-            print("project: {}".format(source["displayName"]))
+            print("source name: {}".format(source.get("displayName", "N/A")))
             print("\tsource: {}".format(source["source"]))
-            print("\tsource Uri: {}".format(source["sourceUri"]))
+            print("\tsource Uri: {}".format(source.get("sourceUri", "N/A")))
             print("\tsource kind: {}".format(source["sourceKind"]))
 
         # deploy project
