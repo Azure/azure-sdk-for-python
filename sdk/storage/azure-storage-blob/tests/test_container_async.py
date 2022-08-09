@@ -389,7 +389,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
     async def test_list_containers_with_public_access(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        variables = kwargs.pop('variables', {})
+        variables = kwargs.pop("variables", {})
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = await self._create_container(bsc)
@@ -702,7 +702,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
     async def test_set_container_acl_with_one_signed_identifier(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        variables = kwargs.pop('variables')
+        variables = kwargs.pop("variables", {})
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = await self._create_container(bsc)
@@ -728,7 +728,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
     async def test_set_container_acl_with_lease_id(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        variables = kwargs.pop('variables')
+        variables = kwargs.pop("variables", {})
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = await self._create_container(bsc)
@@ -755,7 +755,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
     async def test_set_container_acl_with_public_access(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        variables = kwargs.pop('variables', {})
+        variables = kwargs.pop("variables", {})
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = await self._create_container(bsc)
@@ -799,7 +799,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
     async def test_set_container_acl_with_signed_identifiers(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        variables = kwargs.pop('variables')
+        variables = kwargs.pop("variables", {})
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = await self._create_container(bsc)
@@ -847,7 +847,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
     async def test_set_container_acl_with_three_identifiers(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        variables = kwargs.pop('variables')
+        variables = kwargs.pop("variables", {})
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = await self._create_container(bsc)
