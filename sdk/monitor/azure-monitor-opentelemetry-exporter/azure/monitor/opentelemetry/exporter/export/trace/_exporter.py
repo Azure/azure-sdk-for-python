@@ -5,7 +5,6 @@ import logging
 from typing import Optional, Sequence, Any
 from urllib.parse import urlparse
 
-# spell-checker:ignore semconv
 from opentelemetry.util.types import Attributes
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
 from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult

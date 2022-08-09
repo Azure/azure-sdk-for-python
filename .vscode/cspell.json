@@ -453,7 +453,8 @@
     {
       "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*.py",
       "words": [
-        "ikey"
+        "ikey",
+        "semconv"
       ]
     },
     {
@@ -461,7 +462,8 @@
       "words": [
         "otel",
         "OTLP",
-        "otlp"
+        "otlp",
+        "grpc"
       ]
     },
     {

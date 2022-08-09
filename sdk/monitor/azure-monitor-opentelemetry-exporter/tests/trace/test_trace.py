@@ -645,6 +645,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.target, "messaging")
 
         # azure specific
+        # spell-checker:ignore myeventhub
         span._attributes = {
             "az.namespace": "Microsoft.EventHub",
             "peer.address": "Test_peer",
