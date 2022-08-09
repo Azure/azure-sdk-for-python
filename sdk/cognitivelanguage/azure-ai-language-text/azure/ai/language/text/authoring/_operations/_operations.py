@@ -139,7 +139,7 @@ def build_delete_project_request(project_name: str, **kwargs: Any) -> HttpReques
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_export_request(
+def build_export_project_request(
     project_name: str, *, string_index_type: str, asset_kind: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -168,7 +168,7 @@ def build_export_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_import_method_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_import_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -715,14 +715,19 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
     @overload
     def create_project(
-        self, project_name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        project_name: str,
+        project_parameters: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> JSON:
         """Creates a new project or updates an existing one.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param body: The project parameters. Required.
-        :type body: JSON
+        :param project_parameters: The project parameters. Required.
+        :type project_parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -734,7 +739,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                body = {
+                project_parameters = {
                     "language": "str",  # The project language. This is BCP-47 representation of
                       a language. For example, use "en" for English, "en-gb" for English (UK), "es" for
                       Spanish etc. Required.
@@ -776,14 +781,19 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
     @overload
     def create_project(
-        self, project_name: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        project_name: str,
+        project_parameters: IO,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> JSON:
         """Creates a new project or updates an existing one.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param body: The project parameters. Required.
-        :type body: IO
+        :param project_parameters: The project parameters. Required.
+        :type project_parameters: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -820,13 +830,14 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         """
 
     @distributed_trace
-    def create_project(self, project_name: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    def create_project(self, project_name: str, project_parameters: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Creates a new project or updates an existing one.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param body: The project parameters. Is either a model type or a IO type. Required.
-        :type body: JSON or IO
+        :param project_parameters: The project parameters. Is either a model type or a IO type.
+         Required.
+        :type project_parameters: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
         :paramtype content_type: str
@@ -873,10 +884,10 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         content_type = content_type or "application/merge-patch+json"
         _json = None
         _content = None
-        if isinstance(body, (IO, bytes)):
-            _content = body
+        if isinstance(project_parameters, (IO, bytes)):
+            _content = project_parameters
         else:
-            _json = body
+            _json = project_parameters
 
         request = build_create_project_request(
             project_name=project_name,
@@ -1162,7 +1173,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    def _export_initial(
+    def _export_project_initial(
         self, project_name: str, *, string_index_type: str, asset_kind: Optional[str] = None, **kwargs: Any
     ) -> Optional[JSON]:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -1173,7 +1184,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
         cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
-        request = build_export_request(
+        request = build_export_project_request(
             project_name=project_name,
             string_index_type=string_index_type,
             asset_kind=asset_kind,
@@ -1215,7 +1226,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         return deserialized
 
     @distributed_trace
-    def begin_export(
+    def begin_export_project(
         self, project_name: str, *, string_index_type: str, asset_kind: Optional[str] = None, **kwargs: Any
     ) -> LROPoller[JSON]:
         """Triggers a job to export a project's data.
@@ -1306,7 +1317,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._export_initial(  # type: ignore
+            raw_result = self._export_project_initial(  # type: ignore
                 project_name=project_name,
                 string_index_type=string_index_type,
                 asset_kind=asset_kind,
@@ -1348,7 +1359,9 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    def _import_method_initial(self, project_name: str, body: Union[JSON, IO], **kwargs: Any) -> Optional[JSON]:
+    def _import_project_initial(
+        self, project_name: str, project_data: Union[JSON, IO], **kwargs: Any
+    ) -> Optional[JSON]:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -1361,12 +1374,12 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(body, (IO, bytes)):
-            _content = body
+        if isinstance(project_data, (IO, bytes)):
+            _content = project_data
         else:
-            _json = body
+            _json = project_data
 
-        request = build_import_method_request(
+        request = build_import_project_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1409,16 +1422,16 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         return deserialized
 
     @overload
-    def begin_import_method(
-        self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    def begin_import_project(
+        self, project_name: str, project_data: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[JSON]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param body: The project data to import. Required.
-        :type body: JSON
+        :param project_data: The project data to import. Required.
+        :type project_data: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1437,7 +1450,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                body = {
+                project_data = {
                     "metadata": {
                         "language": "str",  # The project language. This is BCP-47
                           representation of a language. For example, use "en" for English, "en-gb" for
@@ -1517,16 +1530,16 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         """
 
     @overload
-    def begin_import_method(
-        self, project_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
+    def begin_import_project(
+        self, project_name: str, project_data: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[JSON]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param body: The project data to import. Required.
-        :type body: IO
+        :param project_data: The project data to import. Required.
+        :type project_data: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1601,14 +1614,14 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         """
 
     @distributed_trace
-    def begin_import_method(self, project_name: str, body: Union[JSON, IO], **kwargs: Any) -> LROPoller[JSON]:
+    def begin_import_project(self, project_name: str, project_data: Union[JSON, IO], **kwargs: Any) -> LROPoller[JSON]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param body: The project data to import. Is either a model type or a IO type. Required.
-        :type body: JSON or IO
+        :param project_data: The project data to import. Is either a model type or a IO type. Required.
+        :type project_data: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -1690,9 +1703,9 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._import_method_initial(  # type: ignore
+            raw_result = self._import_project_initial(  # type: ignore
                 project_name=project_name,
-                body=body,
+                project_data=project_data,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -1732,7 +1745,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    def _train_initial(self, project_name: str, body: Union[JSON, IO], **kwargs: Any) -> Optional[JSON]:
+    def _train_initial(self, project_name: str, training_parameters: Union[JSON, IO], **kwargs: Any) -> Optional[JSON]:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -1745,10 +1758,10 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(body, (IO, bytes)):
-            _content = body
+        if isinstance(training_parameters, (IO, bytes)):
+            _content = training_parameters
         else:
-            _json = body
+            _json = training_parameters
 
         request = build_train_request(
             project_name=project_name,
@@ -1794,14 +1807,14 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
     @overload
     def begin_train(
-        self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, project_name: str, training_parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[JSON]:
         """Triggers a training job for a project.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param body: The training input parameters. Required.
-        :type body: JSON
+        :param training_parameters: The training input parameters. Required.
+        :type training_parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1820,7 +1833,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                body = {
+                training_parameters = {
                     "modelLabel": "str",  # Represents the output model label. Required.
                     "trainingConfigVersion": "str",  # Represents training config version.
                       Required.
@@ -1926,14 +1939,14 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
     @overload
     def begin_train(
-        self, project_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, project_name: str, training_parameters: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[JSON]:
         """Triggers a training job for a project.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param body: The training input parameters. Required.
-        :type body: IO
+        :param training_parameters: The training input parameters. Required.
+        :type training_parameters: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2039,13 +2052,14 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         """
 
     @distributed_trace
-    def begin_train(self, project_name: str, body: Union[JSON, IO], **kwargs: Any) -> LROPoller[JSON]:
+    def begin_train(self, project_name: str, training_parameters: Union[JSON, IO], **kwargs: Any) -> LROPoller[JSON]:
         """Triggers a training job for a project.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param body: The training input parameters. Is either a model type or a IO type. Required.
-        :type body: JSON or IO
+        :param training_parameters: The training input parameters. Is either a model type or a IO type.
+         Required.
+        :type training_parameters: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -2160,7 +2174,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         if cont_token is None:
             raw_result = self._train_initial(  # type: ignore
                 project_name=project_name,
-                body=body,
+                training_parameters=training_parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -2299,7 +2313,9 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
         return ItemPaged(get_next, extract_data)
 
-    def _swap_deployments_initial(self, project_name: str, body: Union[JSON, IO], **kwargs: Any) -> Optional[JSON]:
+    def _swap_deployments_initial(
+        self, project_name: str, deployment_names: Union[JSON, IO], **kwargs: Any
+    ) -> Optional[JSON]:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -2312,10 +2328,10 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(body, (IO, bytes)):
-            _content = body
+        if isinstance(deployment_names, (IO, bytes)):
+            _content = deployment_names
         else:
-            _json = body
+            _json = deployment_names
 
         request = build_swap_deployments_request(
             project_name=project_name,
@@ -2361,14 +2377,14 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
     @overload
     def begin_swap_deployments(
-        self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, project_name: str, deployment_names: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[JSON]:
         """Swaps two existing deployments with each other.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param body: The job object to swap two deployments. Required.
-        :type body: JSON
+        :param deployment_names: The job object to swap two deployments. Required.
+        :type deployment_names: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2387,7 +2403,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                body = {
+                deployment_names = {
                     "firstDeploymentName": "str",  # Represents the first deployment name.
                       Required.
                     "secondDeploymentName": "str"  # Represents the second deployment name.
@@ -2452,14 +2468,14 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
     @overload
     def begin_swap_deployments(
-        self, project_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, project_name: str, deployment_names: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[JSON]:
         """Swaps two existing deployments with each other.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param body: The job object to swap two deployments. Required.
-        :type body: IO
+        :param deployment_names: The job object to swap two deployments. Required.
+        :type deployment_names: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2534,14 +2550,16 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         """
 
     @distributed_trace
-    def begin_swap_deployments(self, project_name: str, body: Union[JSON, IO], **kwargs: Any) -> LROPoller[JSON]:
+    def begin_swap_deployments(
+        self, project_name: str, deployment_names: Union[JSON, IO], **kwargs: Any
+    ) -> LROPoller[JSON]:
         """Swaps two existing deployments with each other.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param body: The job object to swap two deployments. Is either a model type or a IO type.
-         Required.
-        :type body: JSON or IO
+        :param deployment_names: The job object to swap two deployments. Is either a model type or a IO
+         type. Required.
+        :type deployment_names: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -2625,7 +2643,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         if cont_token is None:
             raw_result = self._swap_deployments_initial(  # type: ignore
                 project_name=project_name,
-                body=body,
+                deployment_names=deployment_names,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -2735,7 +2753,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         return cast(JSON, deserialized)
 
     def _deploy_project_initial(
-        self, project_name: str, deployment_name: str, body: Union[JSON, IO], **kwargs: Any
+        self, project_name: str, deployment_name: str, deployment_label: Union[JSON, IO], **kwargs: Any
     ) -> Optional[JSON]:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -2749,10 +2767,10 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(body, (IO, bytes)):
-            _content = body
+        if isinstance(deployment_label, (IO, bytes)):
+            _content = deployment_label
         else:
-            _json = body
+            _json = deployment_label
 
         request = build_deploy_project_request(
             project_name=project_name,
@@ -2802,7 +2820,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         self,
         project_name: str,
         deployment_name: str,
-        body: JSON,
+        deployment_label: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2813,8 +2831,8 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         :type project_name: str
         :param deployment_name: The name of the specific deployment of the project to use. Required.
         :type deployment_name: str
-        :param body: The new deployment info. Required.
-        :type body: JSON
+        :param deployment_label: The new deployment info. Required.
+        :type deployment_label: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2833,7 +2851,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                body = {
+                deployment_label = {
                     "trainedModelLabel": "str"  # Represents the trained model label. Required.
                 }
 
@@ -2898,7 +2916,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         self,
         project_name: str,
         deployment_name: str,
-        body: IO,
+        deployment_label: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2909,8 +2927,8 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         :type project_name: str
         :param deployment_name: The name of the specific deployment of the project to use. Required.
         :type deployment_name: str
-        :param body: The new deployment info. Required.
-        :type body: IO
+        :param deployment_label: The new deployment info. Required.
+        :type deployment_label: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2986,7 +3004,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
     @distributed_trace
     def begin_deploy_project(
-        self, project_name: str, deployment_name: str, body: Union[JSON, IO], **kwargs: Any
+        self, project_name: str, deployment_name: str, deployment_label: Union[JSON, IO], **kwargs: Any
     ) -> LROPoller[JSON]:
         """Creates a new deployment or replaces an existing one.
 
@@ -2994,8 +3012,9 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         :type project_name: str
         :param deployment_name: The name of the specific deployment of the project to use. Required.
         :type deployment_name: str
-        :param body: The new deployment info. Is either a model type or a IO type. Required.
-        :type body: JSON or IO
+        :param deployment_label: The new deployment info. Is either a model type or a IO type.
+         Required.
+        :type deployment_label: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -3080,7 +3099,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             raw_result = self._deploy_project_initial(  # type: ignore
                 project_name=project_name,
                 deployment_name=deployment_name,
-                body=body,
+                deployment_label=deployment_label,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,

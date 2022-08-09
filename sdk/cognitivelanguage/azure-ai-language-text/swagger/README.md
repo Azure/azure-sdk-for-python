@@ -171,6 +171,27 @@ directive:
       };
 ```
 
+## Rename `body` param for operations
+
+```yaml $(tag) == 'release_authoring_1_0'
+directive:
+  - where-operation: TextAnalysisAuthoring_CreateProject
+    transform: >
+        $.parameters[1]["x-ms-client-name"] = "project_parameters";
+  - where-operation: TextAnalysisAuthoring_Import
+    transform: >
+        $.parameters[1]["x-ms-client-name"] = "project_data";
+  - where-operation: TextAnalysisAuthoring_Train
+    transform: >
+        $.parameters[1]["x-ms-client-name"] = "training_parameters";
+  - where-operation: TextAnalysisAuthoring_SwapDeployments
+    transform: >
+        $.parameters[1]["x-ms-client-name"] = "deployment_names";
+  - where-operation: TextAnalysisAuthoring_DeployProject
+    transform: >
+        $.parameters[2]["x-ms-client-name"] = "deployment_label";
+```
+
 ## Remove status operations
 
 ```yaml $(tag) == 'release_authoring_1_0'
@@ -201,10 +222,10 @@ directive:
       to: DeleteProject
   - rename-operation:
       from: TextAnalysisAuthoring_Export
-      to: Export
+      to: ExportProject
   - rename-operation:
       from: TextAnalysisAuthoring_Import
-      to: Import
+      to: ImportProject
   - rename-operation:
       from: TextAnalysisAuthoring_Train
       to: Train
