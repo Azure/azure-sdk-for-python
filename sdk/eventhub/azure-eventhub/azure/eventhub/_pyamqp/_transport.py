@@ -446,7 +446,6 @@ class _AbstractTransport(object):
                 decoded = decode_empty_frame(header)
             else:
                 decoded = decode_frame(payload)
-            # TODO: Catch decode error and return amqp:decode-error
             return channel, decoded
         except (socket.timeout, TimeoutError):
             return None, None
