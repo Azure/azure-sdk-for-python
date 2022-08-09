@@ -482,11 +482,8 @@ class WebSocketTransportAsync(AsyncTransportMixin):
 
     def close(self):
         """Do any preliminary work in shutting down the connection."""
-        # TODO: async close doesn't:
-        # 1) shutdown socket and close. --> self.sock.shutdown(socket.SHUT_RDWR) and self.sock.close()
-        # 2) set self.connected = False
-        # I think we need to do this, like in sync
         self.ws.close()
+        self.connected = False
 
     async def write(self, s):
         """Completely write a string to the peer.
