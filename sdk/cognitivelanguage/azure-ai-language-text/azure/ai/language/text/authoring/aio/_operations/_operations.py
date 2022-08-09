@@ -42,7 +42,6 @@ from ..._operations._operations import (
     build_get_model_evaluation_summary_request,
     build_get_project_deletion_status_request,
     build_get_project_request,
-    build_get_supported_languages_request,
     build_get_swap_deployments_status_request,
     build_get_trained_model_request,
     build_get_training_status_request,
@@ -50,6 +49,7 @@ from ..._operations._operations import (
     build_list_deployments_request,
     build_list_model_evaluation_results_request,
     build_list_projects_request,
+    build_list_supported_languages_request,
     build_list_trained_models_request,
     build_list_training_config_versions_request,
     build_list_training_jobs_request,
@@ -456,16 +456,14 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
         return cast(JSON, deserialized)
 
-    async def _delete_project_initial(  # pylint: disable=inconsistent-return-statements
-        self, project_name: str, **kwargs: Any
-    ) -> None:
+    async def _delete_project_initial(self, project_name: str, **kwargs: Any) -> Optional[JSON]:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
         request = build_delete_project_request(
             project_name=project_name,
@@ -484,18 +482,30 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 202:
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     @distributed_trace_async
-    async def begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
+    async def begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[JSON]:
         """Deletes a project.
 
         :param project_name: The name of the project to use. Required.
@@ -507,14 +517,72 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
@@ -524,9 +592,15 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -550,16 +624,16 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    async def _export_initial(  # pylint: disable=inconsistent-return-statements
+    async def _export_initial(
         self, project_name: str, *, string_index_type: str, asset_kind: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    ) -> Optional[JSON]:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
         request = build_export_request(
             project_name=project_name,
@@ -580,20 +654,32 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 202:
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     @distributed_trace_async
     async def begin_export(
         self, project_name: str, *, string_index_type: str, asset_kind: Optional[str] = None, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Triggers a job to export a project's data.
 
         :param project_name: The name of the project to use. Required.
@@ -610,14 +696,74 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "resultUrl": "str",  # Optional. The URL to use in order to download the
+                      exported project.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
@@ -633,9 +779,15 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -659,9 +811,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    async def _import_method_initial(  # pylint: disable=inconsistent-return-statements
-        self, project_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> None:
+    async def _import_method_initial(self, project_name: str, body: Union[JSON, IO], **kwargs: Any) -> Optional[JSON]:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -669,7 +819,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
         content_type = content_type or "application/json"
         _json = None
@@ -699,20 +849,32 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 202:
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     @overload
     async def begin_import_method(
         self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
@@ -730,8 +892,8 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -760,12 +922,67 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
                       Required. "Utf16CodeUnit"
                     "assets": exported_project_assets
                 }
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
     @overload
     async def begin_import_method(
         self, project_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
@@ -783,15 +1000,73 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
     @distributed_trace_async
     async def begin_import_method(
         self, project_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
@@ -809,15 +1084,73 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
@@ -833,9 +1166,15 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -859,9 +1198,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    async def _train_initial(  # pylint: disable=inconsistent-return-statements
-        self, project_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> None:
+    async def _train_initial(self, project_name: str, body: Union[JSON, IO], **kwargs: Any) -> Optional[JSON]:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -869,7 +1206,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
         content_type = content_type or "application/json"
         _json = None
@@ -899,20 +1236,32 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 202:
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     @overload
     async def begin_train(
         self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Triggers a training job for a project.
 
         :param project_name: The name of the project to use. Required.
@@ -929,8 +1278,8 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -953,12 +1302,98 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
                           percentage.
                     }
                 }
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimate end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        }
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
     @overload
     async def begin_train(
         self, project_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Triggers a training job for a project.
 
         :param project_name: The name of the project to use. Required.
@@ -975,13 +1410,102 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimate end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        }
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
     @distributed_trace_async
-    async def begin_train(self, project_name: str, body: Union[JSON, IO], **kwargs: Any) -> AsyncLROPoller[None]:
+    async def begin_train(self, project_name: str, body: Union[JSON, IO], **kwargs: Any) -> AsyncLROPoller[JSON]:
         """Triggers a training job for a project.
 
         :param project_name: The name of the project to use. Required.
@@ -998,15 +1522,104 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimate end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        }
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
@@ -1022,9 +1635,15 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -1147,9 +1766,9 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
         return AsyncItemPaged(get_next, extract_data)
 
-    async def _swap_deployments_initial(  # pylint: disable=inconsistent-return-statements
+    async def _swap_deployments_initial(
         self, project_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> None:
+    ) -> Optional[JSON]:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -1157,7 +1776,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
         content_type = content_type or "application/json"
         _json = None
@@ -1187,20 +1806,32 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 202:
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     @overload
     async def begin_swap_deployments(
         self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Swaps two existing deployments with each other.
 
         :param project_name: The name of the project to use. Required.
@@ -1217,8 +1848,8 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1231,12 +1862,67 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
                     "secondDeploymentName": "str"  # Represents the second deployment name.
                       Required.
                 }
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
     @overload
     async def begin_swap_deployments(
         self, project_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Swaps two existing deployments with each other.
 
         :param project_name: The name of the project to use. Required.
@@ -1253,15 +1939,73 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
     @distributed_trace_async
     async def begin_swap_deployments(
         self, project_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Swaps two existing deployments with each other.
 
         :param project_name: The name of the project to use. Required.
@@ -1279,15 +2023,73 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
@@ -1303,9 +2105,15 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -1398,9 +2206,9 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
         return cast(JSON, deserialized)
 
-    async def _deploy_project_initial(  # pylint: disable=inconsistent-return-statements
+    async def _deploy_project_initial(
         self, project_name: str, deployment_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> None:
+    ) -> Optional[JSON]:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -1408,7 +2216,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
         content_type = content_type or "application/json"
         _json = None
@@ -1439,15 +2247,27 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 202:
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     @overload
     async def begin_deploy_project(
@@ -1458,7 +2278,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Creates a new deployment or replaces an existing one.
 
         :param project_name: The name of the project to use. Required.
@@ -1477,8 +2297,8 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1487,6 +2307,61 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
                 # JSON input template you can fill out and use as your body input.
                 body = {
                     "trainedModelLabel": "str"  # Represents the trained model label. Required.
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
                 }
         """
 
@@ -1499,7 +2374,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Creates a new deployment or replaces an existing one.
 
         :param project_name: The name of the project to use. Required.
@@ -1518,15 +2393,73 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
     @distributed_trace_async
     async def begin_deploy_project(
         self, project_name: str, deployment_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Creates a new deployment or replaces an existing one.
 
         :param project_name: The name of the project to use. Required.
@@ -1545,15 +2478,73 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
@@ -1570,9 +2561,15 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -1596,16 +2593,16 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    async def _delete_deployment_initial(  # pylint: disable=inconsistent-return-statements
+    async def _delete_deployment_initial(
         self, project_name: str, deployment_name: str, **kwargs: Any
-    ) -> None:
+    ) -> Optional[JSON]:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
         request = build_delete_deployment_request(
             project_name=project_name,
@@ -1625,20 +2622,32 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 202:
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     @distributed_trace_async
     async def begin_delete_deployment(
         self, project_name: str, deployment_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Deletes a project deployment.
 
         :param project_name: The name of the project to use. Required.
@@ -1652,14 +2661,72 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
@@ -1674,9 +2741,15 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -2980,16 +4053,14 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
         return cast(JSON, deserialized)
 
-    async def _cancel_training_job_initial(  # pylint: disable=inconsistent-return-statements
-        self, project_name: str, job_id: str, **kwargs: Any
-    ) -> None:
+    async def _cancel_training_job_initial(self, project_name: str, job_id: str, **kwargs: Any) -> Optional[JSON]:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
         request = build_cancel_training_job_request(
             project_name=project_name,
@@ -3009,18 +4080,30 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 202:
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     @distributed_trace_async
-    async def begin_cancel_training_job(self, project_name: str, job_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
+    async def begin_cancel_training_job(self, project_name: str, job_id: str, **kwargs: Any) -> AsyncLROPoller[JSON]:
         """Triggers a cancellation for a running training job.
 
         :param project_name: The name of the project to use. Required.
@@ -3034,14 +4117,103 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimate end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        }
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
@@ -3056,9 +4228,15 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -3190,7 +4368,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def get_supported_languages(
+    def list_supported_languages(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Lists the supported languages.
@@ -3227,7 +4405,7 @@ class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_supported_languages_request(
+                request = build_list_supported_languages_request(
                     top=top,
                     skip=skip,
                     api_version=self._config.api_version,

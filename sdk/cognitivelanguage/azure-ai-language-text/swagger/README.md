@@ -99,6 +99,77 @@ directive:
     $["x-ms-client-default"] = "UnicodeCodePoint";
 ```
 
+### Authoring API Directives
+
+```yaml $(tag) == 'release_authoring_1_0'
+# Give LROs return types
+directive:
+  - where-operation: TextAnalysisAuthoring_DeleteProject
+    transform: >
+      $["responses"]["200"] = {
+        "description": "dummy schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/TextAnalysisAuthoringProjectDeletionJobState"
+        }
+      };
+  - where-operation: TextAnalysisAuthoring_Export
+    transform: >
+      $["responses"]["200"] = {
+        "description": "dummy schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/TextAnalysisAuthoringExportProjectJobState"
+        }
+      };
+  - where-operation: TextAnalysisAuthoring_Import
+    transform: >
+      $["responses"]["200"] = {
+        "description": "dummy schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/TextAnalysisAuthoringImportProjectJobState"
+        }
+      };
+  - where-operation: TextAnalysisAuthoring_Train
+    transform: >
+      $["responses"]["200"] = {
+        "description": "dummy schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/TextAnalysisAuthoringTrainingJobState"
+        }
+      };
+  - where-operation: TextAnalysisAuthoring_DeployProject
+    transform: >
+      $["responses"]["200"] = {
+        "description": "dummy schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/TextAnalysisAuthoringDeploymentJobState"
+        }
+      };
+  - where-operation: TextAnalysisAuthoring_SwapDeployments
+    transform: >
+      $["responses"]["200"] = {
+        "description": "dummy schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/TextAnalysisAuthoringDeploymentJobState"
+        }
+      };
+  - where-operation: TextAnalysisAuthoring_DeleteDeployment
+    transform: >
+      $["responses"]["200"] = {
+        "description": "dummy schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/TextAnalysisAuthoringDeploymentJobState"
+        }
+      };
+  - where-operation: TextAnalysisAuthoring_CancelTrainingJob
+    transform: >
+      $["responses"]["200"] = {
+        "description": "dummy schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/TextAnalysisAuthoringTrainingJobState"
+        }
+      };
+```
+
 ```yaml $(tag) == 'release_authoring_1_0'
 # Rename Authoring client operations
 directive:
