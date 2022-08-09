@@ -55,7 +55,7 @@ def _validate_key_encryption_key_wrap(kek):
 
 
 class StorageEncryptionMixin(object):
-    def configure_encryption(self, kwargs):
+    def _configure_encryption(self, kwargs):
         self.require_encryption = kwargs.get("require_encryption", False)
         self.encryption_version = kwargs.get("encryption_version", "1.0")
         self.key_encryption_key = kwargs.get("key_encryption_key")

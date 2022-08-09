@@ -4,7 +4,8 @@
 Conversational Language Understanding - aka **CLU** for short - is a cloud-based conversational AI service which provides many language understanding capabilities like:
 - Conversation App: It's used in extracting intents and entities in conversations
 - Workflow app: Acts like an orchestrator to select the best candidate to analyze conversations to get best response from apps like Qna, Luis, and Conversation App
-
+- Conversational Summarization: Used to summarize conversations in the form of issues, and final resolutions
+- Conversational PII: Used to extract and redact personally-identifiable info (PII)
 
 [Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][api_reference_documentation] | [Samples][conversationallanguage_samples] | [Product documentation][conversationallanguage_docs] | [Analysis REST API][conversationallanguage_restdocs] | [Authoring REST API][conversationallanguage_restdocs_authoring]
 
@@ -27,8 +28,10 @@ _Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For mor
 Install the Azure Conversations client library for Python with [pip][pip_link]:
 
 ```bash
-pip install azure-ai-language-conversations
+pip install azure-ai-language-conversations --pre
 ```
+
+> Note: This version of the client library defaults to the 2022-05-15-preview version of the service
 
 ### Authenticate the client
 In order to interact with the CLU service, you'll need to create an instance of the [ConversationAnalysisClient][conversationanalysisclient_class] class, or [ConversationAuthoringClient][conversationauthoringclient_class] class. You will need an **endpoint**, and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
@@ -79,7 +82,7 @@ Authentication with AAD requires some initial setup:
 
 - [Install azure-identity][install_azure_identity]
 - [Register a new AAD application][register_aad_app]
-- [Grant access][grant_role_access] to the Language service by assigning the "Cognitive Services User" role to your service principal.
+- [Grant access][grant_role_access] to the Language service by assigning the "Cognitive Services Language Reader" role to your service principal.
 
 After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
 As an example, [DefaultAzureCredential][default_azure_credential]
@@ -103,8 +106,8 @@ client = ConversationAnalysisClient(endpoint="https://<my-custom-subdomain>.cogn
 ### ConversationAnalysisClient
 The [ConversationAnalysisClient][conversationanalysisclient_class] is the primary interface for making predictions using your deployed Conversations models. For asynchronous operations, an async `ConversationAnalysisClient` is in the `azure.ai.language.conversation.aio` namespace.
 
-### ConversationAnalysisClient
-You can use the [ConversationAuthoringClient][conversationauthoringclient_class] to interface with the [Azure Language Portal][azure_language_portal] to carry out authoring operations on your language resource/project. For example, you can use it to create a project, populate with training data, train, test, and deploy. For asynchronous operations, an async `ConversationAnalysisClient` is in the `azure.ai.language.conversation.authoring.aio` namespace.
+### ConversationAuthoringClient
+You can use the [ConversationAuthoringClient][conversationauthoringclient_class] to interface with the [Azure Language Portal][azure_language_portal] to carry out authoring operations on your language resource/project. For example, you can use it to create a project, populate with training data, train, test, and deploy. For asynchronous operations, an async `ConversationAuthoringClient` is in the `azure.ai.language.conversation.authoring.aio` namespace.
 
 ## Examples
 The `azure-ai-language-conversation` client library provides both synchronous and asynchronous APIs.
@@ -240,6 +243,186 @@ if top_intent_object["targetProjectKind"] == "Luis":
     print("\nentities:")
     for entity in luis_response["entities"]:
         print("\n{}".format(entity))
+```
+
+### Conversational Summarization
+
+You can use this sample if you need to summarize a conversation in the form of an issue, and final resolution. For example, a dialog from tech support:
+
+```python
+# import libraries
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.conversations import ConversationAnalysisClient
+# get secrets
+endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+key = os.environ["AZURE_CONVERSATIONS_KEY"]
+# analyze query
+client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
+with client:
+    poller = client.begin_conversation_analysis(
+        task={
+            "displayName": "Analyze conversations from xxx",
+            "analysisInput": {
+                "conversations": [
+                    {
+                        "conversationItems": [
+                            {
+                                "text": "Hello, how can I help you?",
+                                "modality": "text",
+                                "id": "1",
+                                "participantId": "Agent"
+                            },
+                            {
+                                "text": "How to upgrade Office? I am getting error messages the whole day.",
+                                "modality": "text",
+                                "id": "2",
+                                "participantId": "Customer"
+                            },
+                            {
+                                "text": "Press the upgrade button please. Then sign in and follow the instructions.",
+                                "modality": "text",
+                                "id": "3",
+                                "participantId": "Agent"
+                            }
+                        ],
+                        "modality": "text",
+                        "id": "conversation1",
+                        "language": "en"
+                    },
+                ]
+            },
+            "tasks": [
+                {
+                    "taskName": "analyze 1",
+                    "kind": "ConversationalSummarizationTask",
+                    "parameters": {
+                        "summaryAspects": ["Issue, Resolution"]
+                    }
+                }
+            ]
+        }
+    )
+
+    # view result
+    result = poller.result()
+    task_result = result["tasks"]["items"][0]
+    print("... view task status ...")
+    print("status: {}".format(task_result["status"]))
+    resolution_result = task_result["results"]
+    if resolution_result["errors"]:
+        print("... errors occured ...")
+        for error in resolution_result["errors"]:
+            print(error)
+    else:
+        conversation_result = resolution_result["conversations"][0]
+        if conversation_result["warnings"]:
+            print("... view warnings ...")
+            for warning in conversation_result["warnings"]:
+                print(warning)
+        else:
+            summaries = conversation_result["summaries"]
+            print("... view task result ...")
+            print("issue: {}".format(summaries[0]["text"]))
+            print("resolution: {}".format(summaries[1]["text"]))
+```
+
+### Conversational PII
+
+You can use this sample if you need to extract and redact pii info from/in conversations
+
+```python
+# import libraries
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.conversations import ConversationAnalysisClient
+# get secrets
+endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+key = os.environ["AZURE_CONVERSATIONS_KEY"]
+# analyze query
+client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
+with client:
+    poller = client.begin_conversation_analysis(
+        task={
+            "displayName": "Analyze PII in conversation",
+            "analysisInput": {
+                "conversations": [
+                    {
+                        "conversationItems": [
+                            {
+                                "id": "1",
+                                "participantId": "0",
+                                "modality": "transcript",
+                                "text": "It is john doe.",
+                                "lexical": "It is john doe",
+                                "itn": "It is john doe",
+                                "maskedItn": "It is john doe"
+                            },
+                            {
+                                "id": "2",
+                                "participantId": "1",
+                                "modality": "transcript",
+                                "text": "Yes, 633-27-8199 is my phone",
+                                "lexical": "yes six three three two seven eight one nine nine is my phone",
+                                "itn": "yes 633278199 is my phone",
+                                "maskedItn": "yes 633278199 is my phone",
+                            },
+                            {
+                                "id": "3",
+                                "participantId": "1",
+                                "modality": "transcript",
+                                "text": "j.doe@yahoo.com is my email",
+                                "lexical": "j dot doe at yahoo dot com is my email",
+                                "maskedItn": "j.doe@yahoo.com is my email",
+                                "itn": "j.doe@yahoo.com is my email",
+                            }
+                        ],
+                        "modality": "transcript",
+                        "id": "1",
+                        "language": "en"
+                    }
+                ]
+            },
+            "tasks": [
+                {
+                    "kind": "ConversationalPIITask",
+                    "parameters": {
+                        "redactionSource": "lexical",
+                        "piiCategories": [
+                            "all"
+                        ]
+                    }
+                }
+            ]
+        }
+    )
+    # view result
+    result = poller.result()
+    task_result = result["tasks"]["items"][0]
+    print("... view task status ...")
+    print("status: {}".format(task_result["status"]))
+    conv_pii_result = task_result["results"]
+    if conv_pii_result["errors"]:
+        print("... errors occured ...")
+        for error in conv_pii_result["errors"]:
+            print(error)
+    else:
+        conversation_result = conv_pii_result["conversations"][0]
+        if conversation_result["warnings"]:
+            print("... view warnings ...")
+            for warning in conversation_result["warnings"]:
+                print(warning)
+        else:
+            print("... view task result ...")
+            for conversation in conversation_result["conversationItems"]:
+                print("conversation id: {}".format(conversation["id"]))
+                print("... entities ...")
+                for entity in conversation["entities"]:
+                    print("text: {}".format(entity["text"]))
+                    print("category: {}".format(entity["category"]))
+                    print("confidence: {}".format(entity["confidenceScore"]))
+                    print("offset: {}".format(entity["offset"]))
+                    print("length: {}".format(entity["length"]))
 ```
 
 ### Import a Conversation Project

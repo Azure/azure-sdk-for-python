@@ -7,7 +7,6 @@ import os
 import asyncio
 from azure.keyvault.secrets.aio import SecretClient
 from azure.identity.aio import DefaultAzureCredential
-from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
@@ -43,7 +42,7 @@ async def run_sample():
     # if the secret already exists in the key vault, then a new version of the secret is created.
     print("\n.. Create Secret")
     expires_on = datetime.datetime.utcnow() + datetime.timedelta(days=365)
-    secret = await client.set_secret("helloWorldSecretName", "helloWorldSecretValue", expires_on=expires_on)
+    secret = await client.set_secret("helloWorldSecretNameAsync", "helloWorldSecretValue", expires_on=expires_on)
     print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
     print("Secret with name '{0}' expires on '{1}'".format(secret.name, secret.properties.expires_on))
 
@@ -72,7 +71,7 @@ async def run_sample():
     # Bank forced a password update for security purposes. Let's change the value of the secret in the key vault.
     # To achieve this, we need to create a new version of the secret in the key vault. The update operation cannot
     # change the value of the secret.
-    new_secret = await client.set_secret(secret.name, "newSecretValue")
+    new_secret = await client.set_secret(secret.name, "newSecretValueAsync")
     print("Secret with name '{0}' created with value '{1}'".format(new_secret.name, new_secret.value))
 
     # The bank account was closed, need to delete its credentials from the Key Vault.

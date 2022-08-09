@@ -8,46 +8,46 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "36",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
         "urlSource": "https://blob_sas_url"
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "96da60ff-b40b-4aed-9520-8aadc97f7985",
+        "apim-request-id": "e8e6e0fe-2a6c-4cef-b55b-42f011430518",
         "Content-Length": "0",
-        "Date": "Wed, 25 May 2022 21:42:09 GMT",
-        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-idDocument/analyzeResults/96da60ff-b40b-4aed-9520-8aadc97f7985?api-version=2022-06-30-preview",
+        "Date": "Thu, 23 Jun 2022 23:52:17 GMT",
+        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-idDocument/analyzeResults/e8e6e0fe-2a6c-4cef-b55b-42f011430518?api-version=2022-06-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1303"
+        "x-envoy-upstream-service-time": "318"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-idDocument/analyzeResults/96da60ff-b40b-4aed-9520-8aadc97f7985?api-version=2022-06-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-idDocument/analyzeResults/e8e6e0fe-2a6c-4cef-b55b-42f011430518?api-version=2022-06-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "1ecdcbf5-ebdd-4702-82b4-461686e1acd2",
+        "apim-request-id": "f11a5006-f5c2-4fa3-93aa-c97a3f647015",
+        "Content-Length": "44093",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 25 May 2022 21:42:15 GMT",
+        "Date": "Thu, 23 Jun 2022 23:52:22 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "55"
+        "x-envoy-upstream-service-time": "35"
       },
       "ResponseBody": {
         "status": "succeeded",
-        "createdDateTime": "2022-05-25T21:42:10Z",
-        "lastUpdatedDateTime": "2022-05-25T21:42:12Z",
+        "createdDateTime": "2022-06-23T23:52:18Z",
+        "lastUpdatedDateTime": "2022-06-23T23:52:20Z",
         "analyzeResult": {
           "apiVersion": "2022-06-30-preview",
           "modelId": "prebuilt-idDocument",
@@ -73,7 +73,7 @@
                     17,
                     36
                   ],
-                  "confidence": 0.9976318,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 0,
                     "length": 2
@@ -91,7 +91,7 @@
                     42,
                     50
                   ],
-                  "confidence": 0.992763,
+                  "confidence": 0.992,
                   "span": {
                     "offset": 3,
                     "length": 10
@@ -109,7 +109,7 @@
                     20,
                     172
                   ],
-                  "confidence": 0.997703,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 14,
                     "length": 2
@@ -127,7 +127,7 @@
                     20,
                     153
                   ],
-                  "confidence": 0.9577712,
+                  "confidence": 0.957,
                   "span": {
                     "offset": 17,
                     "length": 13
@@ -145,7 +145,7 @@
                     275,
                     43
                   ],
-                  "confidence": 0.9941295,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 31,
                     "length": 6
@@ -163,7 +163,7 @@
                     333,
                     42
                   ],
-                  "confidence": 0.9947432,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 38,
                     "length": 7
@@ -181,7 +181,7 @@
                     258,
                     64
                   ],
-                  "confidence": 0.9934329,
+                  "confidence": 0.993,
                   "span": {
                     "offset": 46,
                     "length": 7
@@ -199,7 +199,7 @@
                     322,
                     63
                   ],
-                  "confidence": 0.9943904,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 54,
                     "length": 6
@@ -217,7 +217,7 @@
                     368,
                     63
                   ],
-                  "confidence": 0.9975672,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 61,
                     "length": 5
@@ -235,7 +235,7 @@
                     151,
                     85
                   ],
-                  "confidence": 0.9560438,
+                  "confidence": 0.956,
                   "span": {
                     "offset": 67,
                     "length": 2
@@ -253,7 +253,7 @@
                     159,
                     84
                   ],
-                  "confidence": 0.7869303,
+                  "confidence": 0.786,
                   "span": {
                     "offset": 70,
                     "length": 16
@@ -271,7 +271,7 @@
                     317,
                     84
                   ],
-                  "confidence": 0.6426674,
+                  "confidence": 0.642,
                   "span": {
                     "offset": 87,
                     "length": 6
@@ -289,7 +289,7 @@
                     381,
                     83
                   ],
-                  "confidence": 0.9958695,
+                  "confidence": 0.995,
                   "span": {
                     "offset": 94,
                     "length": 5
@@ -307,7 +307,7 @@
                     151,
                     100
                   ],
-                  "confidence": 0.9953537,
+                  "confidence": 0.995,
                   "span": {
                     "offset": 100,
                     "length": 1
@@ -325,7 +325,7 @@
                     160,
                     99
                   ],
-                  "confidence": 0.9935876,
+                  "confidence": 0.993,
                   "span": {
                     "offset": 102,
                     "length": 6
@@ -343,7 +343,7 @@
                     150,
                     116
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 109,
                     "length": 1
@@ -361,7 +361,7 @@
                     158,
                     116
                   ],
-                  "confidence": 0.9885511,
+                  "confidence": 0.988,
                   "span": {
                     "offset": 111,
                     "length": 4
@@ -379,7 +379,7 @@
                     198,
                     115
                   ],
-                  "confidence": 0.9978394,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 116,
                     "length": 2
@@ -397,7 +397,7 @@
                     150,
                     149
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 119,
                     "length": 1
@@ -415,7 +415,7 @@
                     159,
                     149
                   ],
-                  "confidence": 0.9979991,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 121,
                     "length": 3
@@ -433,7 +433,7 @@
                     188,
                     148
                   ],
-                  "confidence": 0.9919581,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 125,
                     "length": 10
@@ -451,7 +451,7 @@
                     151,
                     164
                   ],
-                  "confidence": 0.9332533,
+                  "confidence": 0.933,
                   "span": {
                     "offset": 136,
                     "length": 1
@@ -469,7 +469,7 @@
                     158,
                     164
                   ],
-                  "confidence": 0.9979987,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 138,
                     "length": 3
@@ -487,7 +487,7 @@
                     183,
                     164
                   ],
-                  "confidence": 0.9924441,
+                  "confidence": 0.992,
                   "span": {
                     "offset": 142,
                     "length": 6
@@ -505,7 +505,7 @@
                     237,
                     164
                   ],
-                  "confidence": 0.9960691,
+                  "confidence": 0.996,
                   "span": {
                     "offset": 149,
                     "length": 7
@@ -523,7 +523,7 @@
                     159,
                     177
                   ],
-                  "confidence": 0.9796277,
+                  "confidence": 0.979,
                   "span": {
                     "offset": 157,
                     "length": 4
@@ -541,7 +541,7 @@
                     199,
                     176
                   ],
-                  "confidence": 0.9880856,
+                  "confidence": 0.988,
                   "span": {
                     "offset": 162,
                     "length": 4
@@ -559,7 +559,7 @@
                     232,
                     176
                   ],
-                  "confidence": 0.9976466,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 167,
                     "length": 2
@@ -577,7 +577,7 @@
                     256,
                     176
                   ],
-                  "confidence": 0.9945571,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 170,
                     "length": 10
@@ -595,7 +595,7 @@
                     317,
                     149
                   ],
-                  "confidence": 0.2159953,
+                  "confidence": 0.215,
                   "span": {
                     "offset": 181,
                     "length": 2
@@ -613,7 +613,7 @@
                     326,
                     149
                   ],
-                  "confidence": 0.6425506,
+                  "confidence": 0.642,
                   "span": {
                     "offset": 184,
                     "length": 3
@@ -631,7 +631,7 @@
                     348,
                     148
                   ],
-                  "confidence": 0.9947469,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 188,
                     "length": 10
@@ -649,7 +649,7 @@
                     186,
                     202
                   ],
-                  "confidence": 0.9979693,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 199,
                     "length": 2
@@ -667,7 +667,7 @@
                     199,
                     202
                   ],
-                  "confidence": 0.9938478,
+                  "confidence": 0.993,
                   "span": {
                     "offset": 202,
                     "length": 3
@@ -685,7 +685,7 @@
                     227,
                     201
                   ],
-                  "confidence": 0.9967224,
+                  "confidence": 0.996,
                   "span": {
                     "offset": 206,
                     "length": 1
@@ -703,7 +703,7 @@
                     295,
                     202
                   ],
-                  "confidence": 0.9947891,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 208,
                     "length": 2
@@ -721,7 +721,7 @@
                     307,
                     201
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 211,
                     "length": 4
@@ -739,7 +739,7 @@
                     339,
                     201
                   ],
-                  "confidence": 0.9980029,
+                  "confidence": 0.998,
                   "span": {
                     "offset": 216,
                     "length": 3
@@ -757,7 +757,7 @@
                     186,
                     214
                   ],
-                  "confidence": 0.9974854,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 220,
                     "length": 2
@@ -775,7 +775,7 @@
                     198,
                     214
                   ],
-                  "confidence": 0.997716,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 223,
                     "length": 3
@@ -793,7 +793,7 @@
                     226,
                     213
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 227,
                     "length": 6
@@ -811,7 +811,7 @@
                     295,
                     215
                   ],
-                  "confidence": 0.997967,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 234,
                     "length": 2
@@ -829,7 +829,7 @@
                     307,
                     214
                   ],
-                  "confidence": 0.9979497,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 237,
                     "length": 3
@@ -847,7 +847,7 @@
                     337,
                     214
                   ],
-                  "confidence": 0.9980585,
+                  "confidence": 0.998,
                   "span": {
                     "offset": 241,
                     "length": 3
@@ -865,7 +865,7 @@
                     360,
                     213
                   ],
-                  "confidence": 0.633177,
+                  "confidence": 0.633,
                   "span": {
                     "offset": 245,
                     "length": 2
@@ -883,7 +883,7 @@
                     185,
                     229
                   ],
-                  "confidence": 0.9980585,
+                  "confidence": 0.998,
                   "span": {
                     "offset": 248,
                     "length": 2
@@ -901,7 +901,7 @@
                     198,
                     228
                   ],
-                  "confidence": 0.9913172,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 251,
                     "length": 12
@@ -919,7 +919,7 @@
                     231,
                     241
                   ],
-                  "confidence": 0.6753584,
+                  "confidence": 0.675,
                   "span": {
                     "offset": 264,
                     "length": 1
@@ -937,7 +937,7 @@
                     293,
                     228
                   ],
-                  "confidence": 0.9705787,
+                  "confidence": 0.97,
                   "span": {
                     "offset": 266,
                     "length": 2
@@ -955,7 +955,7 @@
                     307,
                     228
                   ],
-                  "confidence": 0.9979826,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 269,
                     "length": 3
@@ -973,7 +973,7 @@
                     336,
                     227
                   ],
-                  "confidence": 0.9978796,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 273,
                     "length": 1
@@ -991,7 +991,7 @@
                     293,
                     245
                   ],
-                  "confidence": 0.9407834,
+                  "confidence": 0.94,
                   "span": {
                     "offset": 275,
                     "length": 2
@@ -1009,7 +1009,7 @@
                     307,
                     245
                   ],
-                  "confidence": 0.9980585,
+                  "confidence": 0.998,
                   "span": {
                     "offset": 278,
                     "length": 3
@@ -1027,7 +1027,7 @@
                     331,
                     245
                   ],
-                  "confidence": 0.9930879,
+                  "confidence": 0.993,
                   "span": {
                     "offset": 282,
                     "length": 10
@@ -1045,7 +1045,7 @@
                     155,
                     274
                   ],
-                  "confidence": 0.9935351,
+                  "confidence": 0.993,
                   "span": {
                     "offset": 293,
                     "length": 1
@@ -1063,7 +1063,7 @@
                     161,
                     274
                   ],
-                  "confidence": 0.9089368,
+                  "confidence": 0.908,
                   "span": {
                     "offset": 295,
                     "length": 27
@@ -1081,7 +1081,7 @@
                     389,
                     270
                   ],
-                  "confidence": 0.9968246,
+                  "confidence": 0.996,
                   "span": {
                     "offset": 323,
                     "length": 7
@@ -1099,7 +1099,7 @@
                     366,
                     285
                   ],
-                  "confidence": 0.9937675,
+                  "confidence": 0.993,
                   "span": {
                     "offset": 331,
                     "length": 3
@@ -1117,7 +1117,7 @@
                     386,
                     285
                   ],
-                  "confidence": 0.9940514,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 335,
                     "length": 10

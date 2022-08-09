@@ -43,11 +43,9 @@ class ChaosManagementClient:
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2021-09-15-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-07-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-     Retry-After header is present.
     """
 
     def __init__(
@@ -64,12 +62,24 @@ class ChaosManagementClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.capabilities = CapabilitiesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.experiments = ExperimentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.targets = TargetsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.target_types = TargetTypesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.capability_types = CapabilityTypesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.capabilities = CapabilitiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.experiments = ExperimentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.targets = TargetsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.target_types = TargetTypesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.capability_types = CapabilityTypesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

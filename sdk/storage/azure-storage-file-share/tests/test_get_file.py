@@ -7,25 +7,25 @@
 # --------------------------------------------------------------------------
 import base64
 import os
-import unittest
 import uuid
+from io import BytesIO
 
 import pytest
 from azure.core.exceptions import HttpResponseError, ResourceModifiedError
-
 from azure.storage.fileshare import (
     ShareFileClient,
-    ShareServiceClient,
-    FileProperties
+    ShareServiceClient
 )
+
 from devtools_testutils.storage import StorageTestCase
 from settings.testcase import FileSharePreparer
+from test_helpers import ProgressTracker
 
 # ------------------------------------------------------------------------------
 TEST_FILE_PREFIX = 'file'
 FILE_PATH = 'file_output.temp.{}.dat'.format(str(uuid.uuid4()))
-
 # ------------------------------------------------------------------------------
+
 
 class StorageGetFileTest(StorageTestCase):
     def _setup(self, storage_account_name, storage_account_key):
@@ -1314,5 +1314,111 @@ class StorageGetFileTest(StorageTestCase):
         # Assert
         self.assertTrue(props.server_encrypted)
 
+    @FileSharePreparer()
+    def test_get_file_progress_single_get(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+
+        file_name = self._get_file_reference()
+        file = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=self.directory_name + '/' + file_name,
+            credential=storage_account_key)
+
+        data = b'a' * 512
+        file.upload_file(data)
+
+        progress = ProgressTracker(len(data), len(data))
+
+        # Act
+        file.download_file(progress_hook=progress.assert_progress).readall()
+
+        # Assert
+        progress.assert_complete()
+
+    @FileSharePreparer()
+    def test_get_file_progress_chunked(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+
+        file_name = self._get_file_reference()
+        file = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=self.directory_name + '/' + file_name,
+            credential=storage_account_key,
+            max_single_get_size=1024,
+            max_chunk_get_size=1024)
+
+        data = b'a' * 5120
+        file.upload_file(data)
+
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        file.download_file(progress_hook=progress.assert_progress).readall()
+
+        # Assert
+        progress.assert_complete()
+
+    @pytest.mark.live_test_only
+    @FileSharePreparer()
+    def test_get_file_progress_chunked_parallel(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        self._setup(storage_account_name, storage_account_key)
+
+        file_name = self._get_file_reference()
+        file = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=self.directory_name + '/' + file_name,
+            credential=storage_account_key,
+            max_single_get_size=1024,
+            max_chunk_get_size=1024)
+
+        data = b'a' * 5120
+        file.upload_file(data)
+
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        file.download_file(max_concurrency=3, progress_hook=progress.assert_progress).readall()
+
+        # Assert
+        progress.assert_complete()
+
+    @pytest.mark.live_test_only
+    @FileSharePreparer()
+    def test_get_file_progress_range_readinto(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        self._setup(storage_account_name, storage_account_key)
+
+        file_name = self._get_file_reference()
+        file = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=self.directory_name + '/' + file_name,
+            credential=storage_account_key,
+            max_single_get_size=1024,
+            max_chunk_get_size=1024)
+
+        data = b'a' * 5120
+        file.upload_file(data)
+
+        length = 4096
+        progress = ProgressTracker(length, 1024)
+        result = BytesIO()
+
+        # Act
+        stream = file.download_file(
+            offset=512,
+            length=length,
+            max_concurrency=3,
+            progress_hook=progress.assert_progress
+        )
+        read = stream.readinto(result)
+
+        # Assert
+        progress.assert_complete()
+        self.assertEqual(length, read)
 
 # ------------------------------------------------------------------------------

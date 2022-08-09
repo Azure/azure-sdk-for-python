@@ -59,6 +59,7 @@ async def _upload_file_helper(
     file_last_write_time="now",
     file_permission=None,
     file_permission_key=None,
+    progress_hook=None,
     **kwargs
 ):
     try:
@@ -85,6 +86,7 @@ async def _upload_file_helper(
             stream=stream,
             max_concurrency=max_concurrency,
             validate_content=validate_content,
+            progress_hook=progress_hook,
             timeout=timeout,
             **kwargs
         )
@@ -109,10 +111,14 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         An optional file snapshot on which to operate. This can be the snapshot ID string
         or the response returned from :func:`ShareClient.create_snapshot`.
     :param credential:
-        The credential with which to authenticate. This is optional if the
+        The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials or an account
-        shared access key.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -132,7 +138,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         share_name,  # type: str
         file_path,  # type: str
         snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-        credential=None,  # type: Optional[Any]
+        credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -360,6 +366,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             .. versionadded:: 12.1.0
 
         :paramtype lease: ~azure.storage.fileshare.aio.ShareLeaseClient or str
+        :keyword progress_hook:
+            An async callback to track the progress of a long running upload. The signature is
+            function(current: int, total: Optional[int]) where current is the number of bytes transferred
+            so far, and total is the size of the blob or None if the size is unknown.
+        :paramtype progress_hook: Callable[[int, Optional[int]], Awaitable[None]]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
@@ -378,6 +389,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         content_settings = kwargs.pop('content_settings', None)
         max_concurrency = kwargs.pop('max_concurrency', 1)
         validate_content = kwargs.pop('validate_content', False)
+        progress_hook = kwargs.pop('progress_hook', None)
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
 
@@ -411,6 +423,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             file_last_write_time=file_last_write_time,
             file_permission=file_permission,
             file_permission_key=permission_key,
+            progress_hook=progress_hook,
             **kwargs
         )
 
@@ -613,6 +626,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             .. versionadded:: 12.1.0
 
         :paramtype lease: ~azure.storage.fileshare.aio.ShareLeaseClient or str
+        :keyword progress_hook:
+            An async callback to track the progress of a long running download. The signature is
+            function(current: int, total: int) where current is the number of bytes transferred
+            so far, and total is the size of the blob or None if the size is unknown.
+        :paramtype progress_hook: Callable[[int, int], Awaitable[None]]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A streaming object (StorageStreamDownloader)

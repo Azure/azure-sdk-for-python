@@ -10,8 +10,8 @@
         "azure_arm": true,
         "has_lro_operations": true,
         "client_side_validation": false,
-        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"WebSiteManagementClientConfiguration\"], \"._operations_mixin\": [\"WebSiteManagementClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
-        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"WebSiteManagementClientConfiguration\"], \"._operations_mixin\": [\"WebSiteManagementClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"WebSiteManagementClientConfiguration\"], \"._operations_mixin\": [\"WebSiteManagementClientOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"WebSiteManagementClientConfiguration\"], \"._operations_mixin\": [\"WebSiteManagementClientOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -117,200 +117,216 @@
         "web_apps": "WebAppsOperations"
     },
     "operation_mixins": {
-        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Iterable\", \"Optional\", \"Union\"]}, \"azurecore\": {\"azure.core.paging\": [\"ItemPaged\"]}}}",
-        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\", \"Optional\", \"Union\"]}, \"azurecore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}}}",
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Iterable\", \"Optional\", \"Union\"]}, \"azurecore\": {\"azure.core.paging\": [\"ItemPaged\"]}}, \"regular\": {\"local\": {\".\": [[\"models\", \"_models\"]]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\", \"Optional\", \"Union\"]}, \"azurecore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}}, \"regular\": {\"local\": {\"..\": [[\"models\", \"_models\"]]}}}",
         "operations": {
             "get_publishing_user" : {
                 "sync": {
-                    "signature": "def get_publishing_user(\n    self,\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.User\"\n",
-                    "doc": "\"\"\"Gets publishing user.\n\nDescription for Gets publishing user.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: User, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.User\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def get_publishing_user(\n    self,\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e _models.User\n",
+                    "doc": "\"\"\"Gets publishing user.\n\nGets publishing user.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: User, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.User\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "**kwargs"
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def get_publishing_user(\n    self,\n    **kwargs: Any\n) -\u003e \"_models.User\":\n",
-                    "doc": "\"\"\"Gets publishing user.\n\nDescription for Gets publishing user.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: User, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.User\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": ""
+                    "signature": "async def get_publishing_user(\n    self,\n    **kwargs: Any\n) -\u003e _models.User:\n",
+                    "doc": "\"\"\"Gets publishing user.\n\nGets publishing user.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: User, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.User\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "**kwargs"
+                }
             },
             "update_publishing_user" : {
                 "sync": {
-                    "signature": "def update_publishing_user(\n    self,\n    user_details,  # type: \"_models.User\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.User\"\n",
-                    "doc": "\"\"\"Updates publishing user.\n\nDescription for Updates publishing user.\n\n:param user_details: Details of publishing user.\n:type user_details: ~azure.mgmt.web.v2021_01_15.models.User\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: User, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.User\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def update_publishing_user(\n    self,\n    user_details,  # type: _models.User\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e _models.User\n",
+                    "doc": "\"\"\"Updates publishing user.\n\nUpdates publishing user.\n\n:param user_details: Details of publishing user.\n:type user_details: ~azure.mgmt.web.v2021_01_15.models.User\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: User, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.User\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "user_details, **kwargs"
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def update_publishing_user(\n    self,\n    user_details: \"_models.User\",\n    **kwargs: Any\n) -\u003e \"_models.User\":\n",
-                    "doc": "\"\"\"Updates publishing user.\n\nDescription for Updates publishing user.\n\n:param user_details: Details of publishing user.\n:type user_details: ~azure.mgmt.web.v2021_01_15.models.User\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: User, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.User\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": "user_details"
+                    "signature": "async def update_publishing_user(\n    self,\n    user_details: _models.User,\n    **kwargs: Any\n) -\u003e _models.User:\n",
+                    "doc": "\"\"\"Updates publishing user.\n\nUpdates publishing user.\n\n:param user_details: Details of publishing user.\n:type user_details: ~azure.mgmt.web.v2021_01_15.models.User\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: User, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.User\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "user_details, **kwargs"
+                }
             },
             "list_source_controls" : {
                 "sync": {
-                    "signature": "def list_source_controls(\n    self,\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e Iterable[\"_models.SourceControlCollection\"]\n",
-                    "doc": "\"\"\"Gets the source controls available for Azure websites.\n\nDescription for Gets the source controls available for Azure websites.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either SourceControlCollection or the result of\n cls(response)\n:rtype:\n ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2021_01_15.models.SourceControlCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def list_source_controls(\n    self,\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e Iterable[_models.SourceControlCollection]\n",
+                    "doc": "\"\"\"Gets the source controls available for Azure websites.\n\nGets the source controls available for Azure websites.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either SourceControlCollection or the result of\n cls(response)\n:rtype:\n ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2021_01_15.models.SourceControlCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "**kwargs"
                 },
                 "async": {
                     "coroutine": false,
-                    "signature": "def list_source_controls(\n    self,\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.SourceControlCollection\"]:\n",
-                    "doc": "\"\"\"Gets the source controls available for Azure websites.\n\nDescription for Gets the source controls available for Azure websites.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either SourceControlCollection or the result of\n cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.SourceControlCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": ""
+                    "signature": "def list_source_controls(\n    self,\n    **kwargs: Any\n) -\u003e AsyncIterable[_models.SourceControlCollection]:\n",
+                    "doc": "\"\"\"Gets the source controls available for Azure websites.\n\nGets the source controls available for Azure websites.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either SourceControlCollection or the result of\n cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.SourceControlCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "**kwargs"
+                }
             },
             "get_source_control" : {
                 "sync": {
-                    "signature": "def get_source_control(\n    self,\n    source_control_type,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.SourceControl\"\n",
-                    "doc": "\"\"\"Gets source control token.\n\nDescription for Gets source control token.\n\n:param source_control_type: Type of source control.\n:type source_control_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: SourceControl, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.SourceControl\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def get_source_control(\n    self,\n    source_control_type,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e _models.SourceControl\n",
+                    "doc": "\"\"\"Gets source control token.\n\nGets source control token.\n\n:param source_control_type: Type of source control.\n:type source_control_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: SourceControl, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.SourceControl\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "source_control_type, **kwargs"
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def get_source_control(\n    self,\n    source_control_type: str,\n    **kwargs: Any\n) -\u003e \"_models.SourceControl\":\n",
-                    "doc": "\"\"\"Gets source control token.\n\nDescription for Gets source control token.\n\n:param source_control_type: Type of source control.\n:type source_control_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: SourceControl, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.SourceControl\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": "source_control_type"
+                    "signature": "async def get_source_control(\n    self,\n    source_control_type: str,\n    **kwargs: Any\n) -\u003e _models.SourceControl:\n",
+                    "doc": "\"\"\"Gets source control token.\n\nGets source control token.\n\n:param source_control_type: Type of source control.\n:type source_control_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: SourceControl, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.SourceControl\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "source_control_type, **kwargs"
+                }
             },
             "update_source_control" : {
                 "sync": {
-                    "signature": "def update_source_control(\n    self,\n    source_control_type,  # type: str\n    request_message,  # type: \"_models.SourceControl\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.SourceControl\"\n",
-                    "doc": "\"\"\"Updates source control token.\n\nDescription for Updates source control token.\n\n:param source_control_type: Type of source control.\n:type source_control_type: str\n:param request_message: Source control token information.\n:type request_message: ~azure.mgmt.web.v2021_01_15.models.SourceControl\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: SourceControl, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.SourceControl\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def update_source_control(\n    self,\n    source_control_type,  # type: str\n    request_message,  # type: _models.SourceControl\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e _models.SourceControl\n",
+                    "doc": "\"\"\"Updates source control token.\n\nUpdates source control token.\n\n:param source_control_type: Type of source control.\n:type source_control_type: str\n:param request_message: Source control token information.\n:type request_message: ~azure.mgmt.web.v2021_01_15.models.SourceControl\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: SourceControl, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.SourceControl\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "source_control_type, request_message, **kwargs"
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def update_source_control(\n    self,\n    source_control_type: str,\n    request_message: \"_models.SourceControl\",\n    **kwargs: Any\n) -\u003e \"_models.SourceControl\":\n",
-                    "doc": "\"\"\"Updates source control token.\n\nDescription for Updates source control token.\n\n:param source_control_type: Type of source control.\n:type source_control_type: str\n:param request_message: Source control token information.\n:type request_message: ~azure.mgmt.web.v2021_01_15.models.SourceControl\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: SourceControl, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.SourceControl\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": "source_control_type, request_message"
+                    "signature": "async def update_source_control(\n    self,\n    source_control_type: str,\n    request_message: _models.SourceControl,\n    **kwargs: Any\n) -\u003e _models.SourceControl:\n",
+                    "doc": "\"\"\"Updates source control token.\n\nUpdates source control token.\n\n:param source_control_type: Type of source control.\n:type source_control_type: str\n:param request_message: Source control token information.\n:type request_message: ~azure.mgmt.web.v2021_01_15.models.SourceControl\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: SourceControl, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.SourceControl\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "source_control_type, request_message, **kwargs"
+                }
             },
             "list_billing_meters" : {
                 "sync": {
-                    "signature": "def list_billing_meters(\n    self,\n    billing_location=None,  # type: Optional[str]\n    os_type=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e Iterable[\"_models.BillingMeterCollection\"]\n",
-                    "doc": "\"\"\"Gets a list of meters for a given location.\n\nDescription for Gets a list of meters for a given location.\n\n:param billing_location: Azure Location of billable resource.\n:type billing_location: str\n:param os_type: App Service OS type meters used for.\n:type os_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either BillingMeterCollection or the result of\n cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2021_01_15.models.BillingMeterCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def list_billing_meters(\n    self,\n    billing_location=None,  # type: Optional[str]\n    os_type=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e Iterable[_models.BillingMeterCollection]\n",
+                    "doc": "\"\"\"Gets a list of meters for a given location.\n\nGets a list of meters for a given location.\n\n:param billing_location: Azure Location of billable resource. Default value is None.\n:type billing_location: str\n:param os_type: App Service OS type meters used for. Default value is None.\n:type os_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either BillingMeterCollection or the result of\n cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2021_01_15.models.BillingMeterCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "billing_location, os_type, **kwargs"
                 },
                 "async": {
                     "coroutine": false,
-                    "signature": "def list_billing_meters(\n    self,\n    billing_location: Optional[str] = None,\n    os_type: Optional[str] = None,\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.BillingMeterCollection\"]:\n",
-                    "doc": "\"\"\"Gets a list of meters for a given location.\n\nDescription for Gets a list of meters for a given location.\n\n:param billing_location: Azure Location of billable resource.\n:type billing_location: str\n:param os_type: App Service OS type meters used for.\n:type os_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either BillingMeterCollection or the result of\n cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.BillingMeterCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": "billing_location, os_type"
+                    "signature": "def list_billing_meters(\n    self,\n    billing_location: Optional[str] = None,\n    os_type: Optional[str] = None,\n    **kwargs: Any\n) -\u003e AsyncIterable[_models.BillingMeterCollection]:\n",
+                    "doc": "\"\"\"Gets a list of meters for a given location.\n\nGets a list of meters for a given location.\n\n:param billing_location: Azure Location of billable resource. Default value is None.\n:type billing_location: str\n:param os_type: App Service OS type meters used for. Default value is None.\n:type os_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either BillingMeterCollection or the result of\n cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.BillingMeterCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "billing_location, os_type, **kwargs"
+                }
             },
             "check_name_availability" : {
                 "sync": {
-                    "signature": "def check_name_availability(\n    self,\n    name,  # type: str\n    type,  # type: Union[str, \"_models.CheckNameResourceTypes\"]\n    is_fqdn=None,  # type: Optional[bool]\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.ResourceNameAvailability\"\n",
-                    "doc": "\"\"\"Check if a resource name is available.\n\nDescription for Check if a resource name is available.\n\n:param name: Resource name to verify.\n:type name: str\n:param type: Resource type used for verification.\n:type type: str or ~azure.mgmt.web.v2021_01_15.models.CheckNameResourceTypes\n:param is_fqdn: Is fully qualified domain name.\n:type is_fqdn: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ResourceNameAvailability, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.ResourceNameAvailability\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def check_name_availability(\n    self,\n    name,  # type: str\n    type,  # type: Union[str, \"_models.CheckNameResourceTypes\"]\n    is_fqdn=None,  # type: Optional[bool]\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e _models.ResourceNameAvailability\n",
+                    "doc": "\"\"\"Check if a resource name is available.\n\nCheck if a resource name is available.\n\n:param name: Resource name to verify.\n:type name: str\n:param type: Resource type used for verification.\n:type type: str or ~azure.mgmt.web.v2021_01_15.models.CheckNameResourceTypes\n:param is_fqdn: Is fully qualified domain name. Default value is None.\n:type is_fqdn: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ResourceNameAvailability, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.ResourceNameAvailability\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "name, type, is_fqdn, **kwargs"
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def check_name_availability(\n    self,\n    name: str,\n    type: Union[str, \"_models.CheckNameResourceTypes\"],\n    is_fqdn: Optional[bool] = None,\n    **kwargs: Any\n) -\u003e \"_models.ResourceNameAvailability\":\n",
-                    "doc": "\"\"\"Check if a resource name is available.\n\nDescription for Check if a resource name is available.\n\n:param name: Resource name to verify.\n:type name: str\n:param type: Resource type used for verification.\n:type type: str or ~azure.mgmt.web.v2021_01_15.models.CheckNameResourceTypes\n:param is_fqdn: Is fully qualified domain name.\n:type is_fqdn: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ResourceNameAvailability, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.ResourceNameAvailability\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": "name, type, is_fqdn"
+                    "signature": "async def check_name_availability(\n    self,\n    name: str,\n    type: Union[str, \"_models.CheckNameResourceTypes\"],\n    is_fqdn: Optional[bool] = None,\n    **kwargs: Any\n) -\u003e _models.ResourceNameAvailability:\n",
+                    "doc": "\"\"\"Check if a resource name is available.\n\nCheck if a resource name is available.\n\n:param name: Resource name to verify.\n:type name: str\n:param type: Resource type used for verification.\n:type type: str or ~azure.mgmt.web.v2021_01_15.models.CheckNameResourceTypes\n:param is_fqdn: Is fully qualified domain name. Default value is None.\n:type is_fqdn: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ResourceNameAvailability, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.ResourceNameAvailability\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "name, type, is_fqdn, **kwargs"
+                }
             },
             "get_subscription_deployment_locations" : {
                 "sync": {
-                    "signature": "def get_subscription_deployment_locations(\n    self,\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.DeploymentLocations\"\n",
-                    "doc": "\"\"\"Gets list of available geo regions plus ministamps.\n\nDescription for Gets list of available geo regions plus ministamps.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DeploymentLocations, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.DeploymentLocations\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def get_subscription_deployment_locations(\n    self,\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e _models.DeploymentLocations\n",
+                    "doc": "\"\"\"Gets list of available geo regions plus ministamps.\n\nGets list of available geo regions plus ministamps.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DeploymentLocations, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.DeploymentLocations\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "**kwargs"
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def get_subscription_deployment_locations(\n    self,\n    **kwargs: Any\n) -\u003e \"_models.DeploymentLocations\":\n",
-                    "doc": "\"\"\"Gets list of available geo regions plus ministamps.\n\nDescription for Gets list of available geo regions plus ministamps.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DeploymentLocations, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.DeploymentLocations\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": ""
+                    "signature": "async def get_subscription_deployment_locations(\n    self,\n    **kwargs: Any\n) -\u003e _models.DeploymentLocations:\n",
+                    "doc": "\"\"\"Gets list of available geo regions plus ministamps.\n\nGets list of available geo regions plus ministamps.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DeploymentLocations, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.DeploymentLocations\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "**kwargs"
+                }
             },
             "list_geo_regions" : {
                 "sync": {
-                    "signature": "def list_geo_regions(\n    self,\n    sku=None,  # type: Optional[Union[str, \"_models.SkuName\"]]\n    linux_workers_enabled=None,  # type: Optional[bool]\n    xenon_workers_enabled=None,  # type: Optional[bool]\n    linux_dynamic_workers_enabled=None,  # type: Optional[bool]\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e Iterable[\"_models.GeoRegionCollection\"]\n",
-                    "doc": "\"\"\"Get a list of available geographical regions.\n\nDescription for Get a list of available geographical regions.\n\n:param sku: Name of SKU used to filter the regions.\n:type sku: str or ~azure.mgmt.web.v2021_01_15.models.SkuName\n:param linux_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter to only\n regions that support Linux workers.\n:type linux_workers_enabled: bool\n:param xenon_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter to only\n regions that support Xenon workers.\n:type xenon_workers_enabled: bool\n:param linux_dynamic_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter\n to only regions that support Linux Consumption Workers.\n:type linux_dynamic_workers_enabled: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either GeoRegionCollection or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2021_01_15.models.GeoRegionCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def list_geo_regions(\n    self,\n    sku=None,  # type: Optional[Union[str, \"_models.SkuName\"]]\n    linux_workers_enabled=None,  # type: Optional[bool]\n    xenon_workers_enabled=None,  # type: Optional[bool]\n    linux_dynamic_workers_enabled=None,  # type: Optional[bool]\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e Iterable[_models.GeoRegionCollection]\n",
+                    "doc": "\"\"\"Get a list of available geographical regions.\n\nGet a list of available geographical regions.\n\n:param sku: Name of SKU used to filter the regions. Default value is None.\n:type sku: str or ~azure.mgmt.web.v2021_01_15.models.SkuName\n:param linux_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter to only\n regions that support Linux workers. Default value is None.\n:type linux_workers_enabled: bool\n:param xenon_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter to only\n regions that support Xenon workers. Default value is None.\n:type xenon_workers_enabled: bool\n:param linux_dynamic_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter\n to only regions that support Linux Consumption Workers. Default value is None.\n:type linux_dynamic_workers_enabled: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either GeoRegionCollection or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2021_01_15.models.GeoRegionCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "sku, linux_workers_enabled, xenon_workers_enabled, linux_dynamic_workers_enabled, **kwargs"
                 },
                 "async": {
                     "coroutine": false,
-                    "signature": "def list_geo_regions(\n    self,\n    sku: Optional[Union[str, \"_models.SkuName\"]] = None,\n    linux_workers_enabled: Optional[bool] = None,\n    xenon_workers_enabled: Optional[bool] = None,\n    linux_dynamic_workers_enabled: Optional[bool] = None,\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.GeoRegionCollection\"]:\n",
-                    "doc": "\"\"\"Get a list of available geographical regions.\n\nDescription for Get a list of available geographical regions.\n\n:param sku: Name of SKU used to filter the regions.\n:type sku: str or ~azure.mgmt.web.v2021_01_15.models.SkuName\n:param linux_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter to only\n regions that support Linux workers.\n:type linux_workers_enabled: bool\n:param xenon_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter to only\n regions that support Xenon workers.\n:type xenon_workers_enabled: bool\n:param linux_dynamic_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter\n to only regions that support Linux Consumption Workers.\n:type linux_dynamic_workers_enabled: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either GeoRegionCollection or the result of cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.GeoRegionCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": "sku, linux_workers_enabled, xenon_workers_enabled, linux_dynamic_workers_enabled"
+                    "signature": "def list_geo_regions(\n    self,\n    sku: Optional[Union[str, \"_models.SkuName\"]] = None,\n    linux_workers_enabled: Optional[bool] = None,\n    xenon_workers_enabled: Optional[bool] = None,\n    linux_dynamic_workers_enabled: Optional[bool] = None,\n    **kwargs: Any\n) -\u003e AsyncIterable[_models.GeoRegionCollection]:\n",
+                    "doc": "\"\"\"Get a list of available geographical regions.\n\nGet a list of available geographical regions.\n\n:param sku: Name of SKU used to filter the regions. Default value is None.\n:type sku: str or ~azure.mgmt.web.v2021_01_15.models.SkuName\n:param linux_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter to only\n regions that support Linux workers. Default value is None.\n:type linux_workers_enabled: bool\n:param xenon_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter to only\n regions that support Xenon workers. Default value is None.\n:type xenon_workers_enabled: bool\n:param linux_dynamic_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter\n to only regions that support Linux Consumption Workers. Default value is None.\n:type linux_dynamic_workers_enabled: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either GeoRegionCollection or the result of cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.GeoRegionCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "sku, linux_workers_enabled, xenon_workers_enabled, linux_dynamic_workers_enabled, **kwargs"
+                }
             },
             "list_site_identifiers_assigned_to_host_name" : {
                 "sync": {
-                    "signature": "def list_site_identifiers_assigned_to_host_name(\n    self,\n    name_identifier,  # type: \"_models.NameIdentifier\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e Iterable[\"_models.IdentifierCollection\"]\n",
-                    "doc": "\"\"\"List all apps that are assigned to a hostname.\n\nDescription for List all apps that are assigned to a hostname.\n\n:param name_identifier: Hostname information.\n:type name_identifier: ~azure.mgmt.web.v2021_01_15.models.NameIdentifier\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either IdentifierCollection or the result of\n cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2021_01_15.models.IdentifierCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def list_site_identifiers_assigned_to_host_name(\n    self,\n    name_identifier,  # type: _models.NameIdentifier\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e Iterable[_models.IdentifierCollection]\n",
+                    "doc": "\"\"\"List all apps that are assigned to a hostname.\n\nList all apps that are assigned to a hostname.\n\n:param name_identifier: Hostname information.\n:type name_identifier: ~azure.mgmt.web.v2021_01_15.models.NameIdentifier\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either IdentifierCollection or the result of\n cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2021_01_15.models.IdentifierCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "name_identifier, **kwargs"
                 },
                 "async": {
                     "coroutine": false,
-                    "signature": "def list_site_identifiers_assigned_to_host_name(\n    self,\n    name_identifier: \"_models.NameIdentifier\",\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.IdentifierCollection\"]:\n",
-                    "doc": "\"\"\"List all apps that are assigned to a hostname.\n\nDescription for List all apps that are assigned to a hostname.\n\n:param name_identifier: Hostname information.\n:type name_identifier: ~azure.mgmt.web.v2021_01_15.models.NameIdentifier\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either IdentifierCollection or the result of\n cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.IdentifierCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": "name_identifier"
+                    "signature": "def list_site_identifiers_assigned_to_host_name(\n    self,\n    name_identifier: _models.NameIdentifier,\n    **kwargs: Any\n) -\u003e AsyncIterable[_models.IdentifierCollection]:\n",
+                    "doc": "\"\"\"List all apps that are assigned to a hostname.\n\nList all apps that are assigned to a hostname.\n\n:param name_identifier: Hostname information.\n:type name_identifier: ~azure.mgmt.web.v2021_01_15.models.NameIdentifier\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either IdentifierCollection or the result of\n cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.IdentifierCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "name_identifier, **kwargs"
+                }
             },
             "list_premier_add_on_offers" : {
                 "sync": {
-                    "signature": "def list_premier_add_on_offers(\n    self,\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e Iterable[\"_models.PremierAddOnOfferCollection\"]\n",
-                    "doc": "\"\"\"List all premier add-on offers.\n\nDescription for List all premier add-on offers.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either PremierAddOnOfferCollection or the result of\n cls(response)\n:rtype:\n ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2021_01_15.models.PremierAddOnOfferCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def list_premier_add_on_offers(\n    self,\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e Iterable[_models.PremierAddOnOfferCollection]\n",
+                    "doc": "\"\"\"List all premier add-on offers.\n\nList all premier add-on offers.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either PremierAddOnOfferCollection or the result of\n cls(response)\n:rtype:\n ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2021_01_15.models.PremierAddOnOfferCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "**kwargs"
                 },
                 "async": {
                     "coroutine": false,
-                    "signature": "def list_premier_add_on_offers(\n    self,\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.PremierAddOnOfferCollection\"]:\n",
-                    "doc": "\"\"\"List all premier add-on offers.\n\nDescription for List all premier add-on offers.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either PremierAddOnOfferCollection or the result of\n cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.PremierAddOnOfferCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": ""
+                    "signature": "def list_premier_add_on_offers(\n    self,\n    **kwargs: Any\n) -\u003e AsyncIterable[_models.PremierAddOnOfferCollection]:\n",
+                    "doc": "\"\"\"List all premier add-on offers.\n\nList all premier add-on offers.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either PremierAddOnOfferCollection or the result of\n cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.PremierAddOnOfferCollection]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "**kwargs"
+                }
             },
             "list_skus" : {
                 "sync": {
-                    "signature": "def list_skus(\n    self,\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.SkuInfos\"\n",
-                    "doc": "\"\"\"List all SKUs.\n\nDescription for List all SKUs.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: SkuInfos, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.SkuInfos\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def list_skus(\n    self,\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e _models.SkuInfos\n",
+                    "doc": "\"\"\"List all SKUs.\n\nList all SKUs.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: SkuInfos, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.SkuInfos\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "**kwargs"
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def list_skus(\n    self,\n    **kwargs: Any\n) -\u003e \"_models.SkuInfos\":\n",
-                    "doc": "\"\"\"List all SKUs.\n\nDescription for List all SKUs.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: SkuInfos, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.SkuInfos\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": ""
+                    "signature": "async def list_skus(\n    self,\n    **kwargs: Any\n) -\u003e _models.SkuInfos:\n",
+                    "doc": "\"\"\"List all SKUs.\n\nList all SKUs.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: SkuInfos, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.SkuInfos\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "**kwargs"
+                }
             },
             "verify_hosting_environment_vnet" : {
                 "sync": {
-                    "signature": "def verify_hosting_environment_vnet(\n    self,\n    parameters,  # type: \"_models.VnetParameters\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.VnetValidationFailureDetails\"\n",
-                    "doc": "\"\"\"Verifies if this VNET is compatible with an App Service Environment by analyzing the Network\nSecurity Group rules.\n\nDescription for Verifies if this VNET is compatible with an App Service Environment by\nanalyzing the Network Security Group rules.\n\n:param parameters: VNET information.\n:type parameters: ~azure.mgmt.web.v2021_01_15.models.VnetParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: VnetValidationFailureDetails, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.VnetValidationFailureDetails\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def verify_hosting_environment_vnet(\n    self,\n    parameters,  # type: _models.VnetParameters\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e _models.VnetValidationFailureDetails\n",
+                    "doc": "\"\"\"Verifies if this VNET is compatible with an App Service Environment by analyzing the Network\nSecurity Group rules.\n\nVerifies if this VNET is compatible with an App Service Environment by analyzing the Network\nSecurity Group rules.\n\n:param parameters: VNET information.\n:type parameters: ~azure.mgmt.web.v2021_01_15.models.VnetParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: VnetValidationFailureDetails, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.VnetValidationFailureDetails\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "parameters, **kwargs"
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def verify_hosting_environment_vnet(\n    self,\n    parameters: \"_models.VnetParameters\",\n    **kwargs: Any\n) -\u003e \"_models.VnetValidationFailureDetails\":\n",
-                    "doc": "\"\"\"Verifies if this VNET is compatible with an App Service Environment by analyzing the Network\nSecurity Group rules.\n\nDescription for Verifies if this VNET is compatible with an App Service Environment by\nanalyzing the Network Security Group rules.\n\n:param parameters: VNET information.\n:type parameters: ~azure.mgmt.web.v2021_01_15.models.VnetParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: VnetValidationFailureDetails, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.VnetValidationFailureDetails\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": "parameters"
+                    "signature": "async def verify_hosting_environment_vnet(\n    self,\n    parameters: _models.VnetParameters,\n    **kwargs: Any\n) -\u003e _models.VnetValidationFailureDetails:\n",
+                    "doc": "\"\"\"Verifies if this VNET is compatible with an App Service Environment by analyzing the Network\nSecurity Group rules.\n\nVerifies if this VNET is compatible with an App Service Environment by analyzing the Network\nSecurity Group rules.\n\n:param parameters: VNET information.\n:type parameters: ~azure.mgmt.web.v2021_01_15.models.VnetParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: VnetValidationFailureDetails, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.VnetValidationFailureDetails\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "parameters, **kwargs"
+                }
             },
             "move" : {
                 "sync": {
-                    "signature": "def move(\n    self,\n    resource_group_name,  # type: str\n    move_resource_envelope,  # type: \"_models.CsmMoveResourceEnvelope\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e None\n",
-                    "doc": "\"\"\"Move resources between resource groups.\n\nDescription for Move resources between resource groups.\n\n:param resource_group_name: Name of the resource group to which the resource belongs.\n:type resource_group_name: str\n:param move_resource_envelope: Object that represents the resource to move.\n:type move_resource_envelope: ~azure.mgmt.web.v2021_01_15.models.CsmMoveResourceEnvelope\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def move(  # pylint: disable=inconsistent-return-statements\n    self,\n    resource_group_name,  # type: str\n    move_resource_envelope,  # type: _models.CsmMoveResourceEnvelope\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e None\n",
+                    "doc": "\"\"\"Move resources between resource groups.\n\nMove resources between resource groups.\n\n:param resource_group_name: Name of the resource group to which the resource belongs.\n:type resource_group_name: str\n:param move_resource_envelope: Object that represents the resource to move.\n:type move_resource_envelope: ~azure.mgmt.web.v2021_01_15.models.CsmMoveResourceEnvelope\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "resource_group_name, move_resource_envelope, **kwargs"
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def move(\n    self,\n    resource_group_name: str,\n    move_resource_envelope: \"_models.CsmMoveResourceEnvelope\",\n    **kwargs: Any\n) -\u003e None:\n",
-                    "doc": "\"\"\"Move resources between resource groups.\n\nDescription for Move resources between resource groups.\n\n:param resource_group_name: Name of the resource group to which the resource belongs.\n:type resource_group_name: str\n:param move_resource_envelope: Object that represents the resource to move.\n:type move_resource_envelope: ~azure.mgmt.web.v2021_01_15.models.CsmMoveResourceEnvelope\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": "resource_group_name, move_resource_envelope"
+                    "signature": "async def move(  # pylint: disable=inconsistent-return-statements\n    self,\n    resource_group_name: str,\n    move_resource_envelope: _models.CsmMoveResourceEnvelope,\n    **kwargs: Any\n) -\u003e None:\n",
+                    "doc": "\"\"\"Move resources between resource groups.\n\nMove resources between resource groups.\n\n:param resource_group_name: Name of the resource group to which the resource belongs.\n:type resource_group_name: str\n:param move_resource_envelope: Object that represents the resource to move.\n:type move_resource_envelope: ~azure.mgmt.web.v2021_01_15.models.CsmMoveResourceEnvelope\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "resource_group_name, move_resource_envelope, **kwargs"
+                }
             },
             "validate" : {
                 "sync": {
-                    "signature": "def validate(\n    self,\n    resource_group_name,  # type: str\n    validate_request,  # type: \"_models.ValidateRequest\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.ValidateResponse\"\n",
-                    "doc": "\"\"\"Validate if a resource can be created.\n\nDescription for Validate if a resource can be created.\n\n:param resource_group_name: Name of the resource group to which the resource belongs.\n:type resource_group_name: str\n:param validate_request: Request with the resources to validate.\n:type validate_request: ~azure.mgmt.web.v2021_01_15.models.ValidateRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ValidateResponse, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.ValidateResponse\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def validate(\n    self,\n    resource_group_name,  # type: str\n    validate_request,  # type: _models.ValidateRequest\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e _models.ValidateResponse\n",
+                    "doc": "\"\"\"Validate if a resource can be created.\n\nValidate if a resource can be created.\n\n:param resource_group_name: Name of the resource group to which the resource belongs.\n:type resource_group_name: str\n:param validate_request: Request with the resources to validate.\n:type validate_request: ~azure.mgmt.web.v2021_01_15.models.ValidateRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ValidateResponse, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.ValidateResponse\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "resource_group_name, validate_request, **kwargs"
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def validate(\n    self,\n    resource_group_name: str,\n    validate_request: \"_models.ValidateRequest\",\n    **kwargs: Any\n) -\u003e \"_models.ValidateResponse\":\n",
-                    "doc": "\"\"\"Validate if a resource can be created.\n\nDescription for Validate if a resource can be created.\n\n:param resource_group_name: Name of the resource group to which the resource belongs.\n:type resource_group_name: str\n:param validate_request: Request with the resources to validate.\n:type validate_request: ~azure.mgmt.web.v2021_01_15.models.ValidateRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ValidateResponse, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.ValidateResponse\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": "resource_group_name, validate_request"
+                    "signature": "async def validate(\n    self,\n    resource_group_name: str,\n    validate_request: _models.ValidateRequest,\n    **kwargs: Any\n) -\u003e _models.ValidateResponse:\n",
+                    "doc": "\"\"\"Validate if a resource can be created.\n\nValidate if a resource can be created.\n\n:param resource_group_name: Name of the resource group to which the resource belongs.\n:type resource_group_name: str\n:param validate_request: Request with the resources to validate.\n:type validate_request: ~azure.mgmt.web.v2021_01_15.models.ValidateRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ValidateResponse, or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2021_01_15.models.ValidateResponse\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "resource_group_name, validate_request, **kwargs"
+                }
             },
             "validate_move" : {
                 "sync": {
-                    "signature": "def validate_move(\n    self,\n    resource_group_name,  # type: str\n    move_resource_envelope,  # type: \"_models.CsmMoveResourceEnvelope\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e None\n",
-                    "doc": "\"\"\"Validate whether a resource can be moved.\n\nDescription for Validate whether a resource can be moved.\n\n:param resource_group_name: Name of the resource group to which the resource belongs.\n:type resource_group_name: str\n:param move_resource_envelope: Object that represents the resource to move.\n:type move_resource_envelope: ~azure.mgmt.web.v2021_01_15.models.CsmMoveResourceEnvelope\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def validate_move(  # pylint: disable=inconsistent-return-statements\n    self,\n    resource_group_name,  # type: str\n    move_resource_envelope,  # type: _models.CsmMoveResourceEnvelope\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e None\n",
+                    "doc": "\"\"\"Validate whether a resource can be moved.\n\nValidate whether a resource can be moved.\n\n:param resource_group_name: Name of the resource group to which the resource belongs.\n:type resource_group_name: str\n:param move_resource_envelope: Object that represents the resource to move.\n:type move_resource_envelope: ~azure.mgmt.web.v2021_01_15.models.CsmMoveResourceEnvelope\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "resource_group_name, move_resource_envelope, **kwargs"
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def validate_move(\n    self,\n    resource_group_name: str,\n    move_resource_envelope: \"_models.CsmMoveResourceEnvelope\",\n    **kwargs: Any\n) -\u003e None:\n",
-                    "doc": "\"\"\"Validate whether a resource can be moved.\n\nDescription for Validate whether a resource can be moved.\n\n:param resource_group_name: Name of the resource group to which the resource belongs.\n:type resource_group_name: str\n:param move_resource_envelope: Object that represents the resource to move.\n:type move_resource_envelope: ~azure.mgmt.web.v2021_01_15.models.CsmMoveResourceEnvelope\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": "resource_group_name, move_resource_envelope"
+                    "signature": "async def validate_move(  # pylint: disable=inconsistent-return-statements\n    self,\n    resource_group_name: str,\n    move_resource_envelope: _models.CsmMoveResourceEnvelope,\n    **kwargs: Any\n) -\u003e None:\n",
+                    "doc": "\"\"\"Validate whether a resource can be moved.\n\nValidate whether a resource can be moved.\n\n:param resource_group_name: Name of the resource group to which the resource belongs.\n:type resource_group_name: str\n:param move_resource_envelope: Object that represents the resource to move.\n:type move_resource_envelope: ~azure.mgmt.web.v2021_01_15.models.CsmMoveResourceEnvelope\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "resource_group_name, move_resource_envelope, **kwargs"
+                }
             }
         }
     }

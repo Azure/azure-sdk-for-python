@@ -1,25 +1,32 @@
 # Release History
 
-## 1.1.0 (Unreleased)
+## 1.1.1 (Unreleased)
 
 ### Features Added
-- Added support to build a custom Teams endpoint using Microsoft 365 Teams identities:
-    - Added `get_token_for_teams_user(aad_token, client_id, user_object_id)` method that provides the ability to exchange an Azure AD access token of a Teams user for a Communication Identity access token to `CommunicationIdentityClient`.
-- Removed `ApiVersion.V2021_10_31_preview` from API versions.
-- Added a new API version `ApiVersion.V2022_06_01` that is now the deafult API version
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
-- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+
+## 1.1.0 (2022-08-01)
+
+### Features Added
+
+- Added support to integrate communication as Teams user with Azure Communication Services:
+    - Added `get_token_for_teams_user(aad_token, client_id, user_object_id)` method that provides the ability to exchange an Azure AD access token of a Teams user for a Communication Identity access token to `CommunicationIdentityClient`.
+- Removed `ApiVersion.V2021_10_31_preview` from API versions.
+- Added a new API version `ApiVersion.V2022_06_01` that is now the default API version
+
+### Other Changes
+- Python 2.7 is no longer supported. Please use Python version 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 
 ## 1.1.0b1 (2021-11-09)
 
 ### Features Added
 
-- Added support for Microsoft 365 Teams identities
+- Added support to integrate communication as Teams user with Azure Communication Services:
   - `CommunicationIdentityClient` added a new method `get_token_for_teams_user` that provides the ability to exchange an Azure AD access token of a Teams user for a Communication Identity access token
 
 ## 1.0.1 (2021-06-08)
