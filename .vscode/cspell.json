@@ -80,7 +80,6 @@
     "sdk/keyvault/azure-keyvault-keys/tests/keys.py",
     "sdk/mixedreality/azure-mixedreality-authentication/**",
     "sdk/modelsrepository/azure-iot-modelsrepository/**",
-    "sdk/monitor/azure-monitor-opentelemetry-exporter/**",
     "sdk/monitor/azure-monitor-query/**",
     "sdk/metricsadvisor/azure-ai-metricsadvisor/**",
     "sdk/purview/azure-purview-catalog/**",
@@ -448,6 +447,22 @@
         "authr",
         "dcrrole",
         "pergb"
+      ]
+    },
+    {
+      "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*.py",
+      "words": [
+        "ikey",
+        "semconv"
+      ]
+    },
+    {
+      "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*",
+      "words": [
+        "otel",
+        "OTLP",
+        "otlp",
+        "grpc"
       ]
     },
     {
