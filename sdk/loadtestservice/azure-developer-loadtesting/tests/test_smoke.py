@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 
 from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher, set_custom_default_matcher
 
 test_id = os.environ.get("TEST_ID", "000")
 file_id = os.environ.get("FILE_ID", "000")
@@ -47,7 +47,9 @@ class TestLoadtestingSmoke(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_upload_test_file(self, loadtesting_endpoint):
-        set_bodiless_matcher()
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
+        )
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.upload_test_file(
             test_id, file_id, open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb")
