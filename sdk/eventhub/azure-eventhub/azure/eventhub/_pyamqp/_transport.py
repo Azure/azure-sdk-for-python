@@ -508,14 +508,7 @@ class SSLTransport(_AbstractTransport):
         # Setup the right SSL version; default to optimal versions across
         # ssl implementations
         if ssl_version is None:
-            # older versions of python 2.7 and python 2.6 do not have the
-            # ssl.PROTOCOL_TLS defined the equivalent is ssl.PROTOCOL_SSLv23
-            # we default to PROTOCOL_TLS and fallback to PROTOCOL_SSLv23
-            # TODO: Drop this once we drop Python 2.7 support
-            if hasattr(ssl, 'PROTOCOL_TLS'):
-                ssl_version = ssl.PROTOCOL_TLS
-            else:
-                ssl_version = ssl.PROTOCOL_SSLv23
+            ssl_version = ssl.PROTOCOL_TLS
 
         opts = {
             'sock': sock,
