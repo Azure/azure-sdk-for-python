@@ -6,10 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -149,7 +153,7 @@ class ManagementGroupDiagnosticSettingsResource(ManagementGroupProxyOnlyResource
         service_bus_rule_id: Optional[str] = None,
         event_hub_authorization_rule_id: Optional[str] = None,
         event_hub_name: Optional[str] = None,
-        logs: Optional[List["ManagementGroupLogSettings"]] = None,
+        logs: Optional[List["_models.ManagementGroupLogSettings"]] = None,
         workspace_id: Optional[str] = None,
         **kwargs
     ):
@@ -199,7 +203,7 @@ class ManagementGroupDiagnosticSettingsResourceCollection(msrest.serialization.M
     def __init__(
         self,
         *,
-        value: Optional[List["ManagementGroupDiagnosticSettingsResource"]] = None,
+        value: Optional[List["_models.ManagementGroupDiagnosticSettingsResource"]] = None,
         **kwargs
     ):
         """

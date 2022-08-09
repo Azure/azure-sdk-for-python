@@ -56,7 +56,7 @@ async def sample_manage_models_async():
         # [END list_models_async]
 
         # let's build a model to use for this sample
-        poller = await document_model_admin_client.begin_build_model(container_sas_url, DocumentBuildMode.TEMPLATE, description="model for sample")
+        poller = await document_model_admin_client.begin_build_model(DocumentBuildMode.TEMPLATE, container_sas_url, description="model for sample")
         model = await poller.result()
 
         # [START get_model_async]

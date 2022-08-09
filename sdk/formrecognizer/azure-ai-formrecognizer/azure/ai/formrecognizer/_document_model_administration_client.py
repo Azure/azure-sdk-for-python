@@ -93,11 +93,11 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
     @distributed_trace
     def begin_build_model(
-        self, source: str, build_mode: Union[str, DocumentBuildMode], **kwargs: Any
+        self, build_mode: Union[str, DocumentBuildMode], blob_container_url: str, **kwargs: Any
     ) -> DocumentModelAdministrationLROPoller[DocumentModelDetails]:
         """Build a custom model.
 
-        The request must include a `source` parameter that is an
+        The request must include a `blob_container_url` parameter that is an
         externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
         a container URI (without SAS) is accepted only when the container is public or has a managed identity
         configured, see more about configuring managed identities to work with Form Recognizer here:
@@ -105,15 +105,15 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         Models are built using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff', or 'image/bmp'. Other types of content in the container is ignored.
 
-        :param str source: An Azure Storage blob container's SAS URI. A container URI (without SAS)
-            can be used if the container is public or has a managed identity configured. For more information on
-            setting up a training data set, see: https://aka.ms/azsdk/formrecognizer/buildtrainingset.
         :param build_mode: The custom model build mode. Possible values include: "template", "neural".
             For more information about build modes, see: https://aka.ms/azsdk/formrecognizer/buildmode.
+        :param str blob_container_url: An Azure Storage blob container's SAS URI. A container URI (without SAS)
+            can be used if the container is public or has a managed identity configured. For more information on
+            setting up a training data set, see: https://aka.ms/azsdk/formrecognizer/buildtrainingset.
         :type build_mode: str or :class:`~azure.ai.formrecognizer.DocumentBuildMode`
         :keyword str model_id: A unique ID for your model. If not specified, a model ID will be created for you.
         :keyword str description: An optional description to add to the model.
-        :keyword str prefix: A case-sensitive prefix string to filter documents in the source path.
+        :keyword str prefix: A case-sensitive prefix string to filter documents in the blob container url path.
             For example, when using an Azure storage blob URI, use the prefix to restrict sub folders.
             `prefix` should end in '/' to avoid cases where filenames share the same prefix.
         :keyword tags: List of user defined key-value tag attributes associated with the model.
@@ -164,7 +164,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
                 description=description,
                 tags=tags,
                 azure_blob_source=self._generated_models.AzureBlobContentSource(
-                    container_url=source,
+                    container_url=blob_container_url,
                     prefix=kwargs.pop("prefix", None),
                 ),
             ),
