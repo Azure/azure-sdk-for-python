@@ -8,17 +8,17 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Tue, 09 Aug 2022 21:56:50 GMT",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Wed, 13 Jul 2022 23:44:59 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Tue, 09 Aug 2022 21:56:50 GMT",
-        "ETag": "\u00220x8DA7A52104CE393\u0022",
-        "Last-Modified": "Tue, 09 Aug 2022 21:56:50 GMT",
+        "Date": "Wed, 13 Jul 2022 23:44:59 GMT",
+        "ETag": "\u00220x8DA6529B2CA5FC0\u0022",
+        "Last-Modified": "Wed, 13 Jul 2022 23:44:59 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -35,16 +35,16 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "If-Modified-Since": "Tue, 09 Aug 2022 21:41:51 GMT",
-        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Tue, 09 Aug 2022 21:56:51 GMT",
+        "If-Modified-Since": "Wed, 13 Jul 2022 23:29:59 GMT",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Wed, 13 Jul 2022 23:44:59 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Tue, 09 Aug 2022 21:56:50 GMT",
+        "Date": "Wed, 13 Jul 2022 23:44:59 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -60,8 +60,8 @@
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Tue, 09 Aug 2022 21:56:51 GMT",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Wed, 13 Jul 2022 23:44:59 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
@@ -69,7 +69,7 @@
       "ResponseHeaders": {
         "Content-Length": "225",
         "Content-Type": "application/xml",
-        "Date": "Tue, 09 Aug 2022 21:56:50 GMT",
+        "Date": "Wed, 13 Jul 2022 23:44:59 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -80,12 +80,12 @@
       },
       "ResponseBody": [
         "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EContainerNotFound\u003C/Code\u003E\u003CMessage\u003EThe specified container does not exist.\n",
-        "RequestId:5bd375f0-e01e-00a7-633a-ac1ee3000000\n",
-        "Time:2022-08-09T21:56:50.7967157Z\u003C/Message\u003E\u003C/Error\u003E"
+        "RequestId:aac9e9b4-a01e-0084-2912-97a8c3000000\n",
+        "Time:2022-07-13T23:44:59.5647293Z\u003C/Message\u003E\u003C/Error\u003E"
       ]
     }
   ],
   "Variables": {
-    "if_modified": "2022-08-09T21:41:51.312650"
+    "if_modified": "2022-07-13T23:29:59.878768"
   }
 }
