@@ -39,10 +39,20 @@ class BaseExporter:
         """
         parsed_connection_string = ConnectionStringParser(kwargs.get('connection_string'))
 
-        self._instrumentation_key = parsed_connection_string.instrumentation_key
-        self._timeout = 10.0  # networking timeout in seconds
         self._api_version = kwargs.get('api_version') or _SERVICE_API_LATEST
         self._consecutive_redirects = 0  # To prevent circular redirects
+        self._enable_local_storage = kwargs.get('enable_local_storage', True)
+        self._instrumentation_key = parsed_connection_string.instrumentation_key
+        self._storage_maintenance_period = kwargs.get('storage_maintenance_period', 60)  # Maintenance interval in seconds.
+        self._storage_max_size = kwargs.get('storage_max_size', 50 * 1024 * 1024)  # Maximum size in bytes (default 50MiB)
+        self._storage_min_retry_interval = kwargs.get('storage_min_retry_interval', 60)  # minimum retry interval in seconds
+        temp_suffix = self._instrumentation_key or ""
+        default_storage_path = os.path.join(
+            tempfile.gettempdir(), _TEMPDIR_PREFIX + temp_suffix
+        )
+        self._storage_path = kwargs.get('storage_path', default_storage_path)  # Maintenance interval in seconds.
+        self._storage_retention_period = kwargs.get('storage_retention_period', 7 * 24 * 60 * 60)  # Retention period in seconds
+        self._timeout = kwargs.get('timeout', 10.0)  # networking timeout in seconds
 
         config = AzureMonitorClientConfiguration(
             parsed_connection_string.endpoint, **kwargs)
@@ -64,17 +74,16 @@ class BaseExporter:
         ]
         self.client = AzureMonitorClient(
             host=parsed_connection_string.endpoint, connection_timeout=self._timeout, policies=policies, **kwargs)
-        temp_suffix = self._instrumentation_key or ""
-        default_storage_path = os.path.join(
-            tempfile.gettempdir(), _TEMPDIR_PREFIX + temp_suffix
-        )
-        self.storage = LocalFileStorage(
-            path=default_storage_path,
-            max_size=50 * 1024 * 1024,  # Maximum size in bytes.
-            maintenance_period=60,  # Maintenance interval in seconds.
-            retention_period=7 * 24 * 60 * 60,  # Retention period in seconds
-            name="{} Storage".format(self.__class__.__name__),
-        )
+        self.storage = None
+        if self._enable_local_storage:
+            self.storage = LocalFileStorage(
+                path=self._storage_path,
+                max_size=self._storage_max_size,
+                maintenance_period=self._storage_maintenance_period,
+                retention_period=self._storage_retention_period,
+                name="{} Storage".format(self.__class__.__name__),
+                lease_period=self._storage_min_retry_interval,
+            )
 
     def _transmit_from_storage(self) -> None:
         for blob in self.storage.gets():
@@ -87,6 +96,15 @@ class BaseExporter:
                     blob.lease(1)
                 else:
                     blob.delete()
+
+    def _handle_transmit_from_storage(self, envelopes: List[TelemetryItem], result: ExportResult) -> None:
+        if self.storage:
+            if result == ExportResult.FAILED_RETRYABLE:
+                envelopes_to_store = [x.as_dict() for x in envelopes]
+                self.storage.put(envelopes_to_store)
+            elif result == ExportResult.SUCCESS:
+                # Try to send any cached events
+                self._transmit_from_storage()
 
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
@@ -119,10 +137,10 @@ class BaseExporter:
                             error.message,
                             envelopes[error.index] if error.index is not None else "",
                         )
-                if resend_envelopes:
+                if self.storage and resend_envelopes:
                     envelopes_to_store = [x.as_dict()
                                           for x in resend_envelopes]
-                    self.storage.put(envelopes_to_store)
+                    self.storage.put(envelopes_to_store, 0)
                     self._consecutive_redirects = 0
                     return ExportResult.FAILED_RETRYABLE
 
