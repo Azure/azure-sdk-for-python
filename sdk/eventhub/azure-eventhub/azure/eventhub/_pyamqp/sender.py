@@ -104,7 +104,6 @@ class SenderLink(Link):
             'payload': output
         }
         if self.network_trace:
-            # TODO: whether we should move frame tracing into centralized place e.g. connection.py
             _LOGGER.info("-> %r", TransferFrame(delivery_id='<pending>', **delivery.frame), extra=self.network_trace_params)
         self._session._outgoing_transfer(delivery)
         if delivery.transfer_state == SessionTransferState.OKAY:
