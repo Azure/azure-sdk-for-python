@@ -12,20 +12,37 @@ import pytest
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
-    ClientAuthenticationError, ResourceModifiedError
-from azure.storage.filedatalake import ContentSettings, generate_account_sas, generate_file_sas, \
-    ResourceTypes, AccountSasPermissions, \
-    DataLakeFileClient, FileSystemClient, DataLakeDirectoryClient, FileSasPermissions, generate_file_system_sas, \
-    FileSystemSasPermissions
-from azure.storage.filedatalake import DataLakeServiceClient
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceModifiedError,
+    ResourceNotFoundError
+)
+from azure.storage.filedatalake import (
+    AccountSasPermissions,
+    ContentSettings,
+    DataLakeDirectoryClient,
+    DataLakeFileClient,
+    DataLakeServiceClient,
+    EncryptionScopeOptions,
+    FileSasPermissions,
+    FileSystemClient,
+    FileSystemSasPermissions,
+    generate_account_sas,
+    generate_file_sas,
+    generate_file_system_sas,
+    ResourceTypes,
+)
 from settings.testcase import DataLakePreparer
 from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
+
 TEST_DIRECTORY_PREFIX = 'directory'
 TEST_FILE_PREFIX = 'file'
 FILE_PATH = 'file_output.temp.dat'
+
 # ------------------------------------------------------------------------------
 
 
@@ -318,6 +335,26 @@ class FileTest(StorageTestCase):
         # Act
         file_client.append_data(b'abc', 0, 3)
         response = file_client.flush_data(3)
+
+        # Assert
+        prop = file_client.get_file_properties()
+        self.assertIsNotNone(response)
+        self.assertEqual(prop['size'], 3)
+
+    @DataLakePreparer()
+    def test_flush_data_with_bool(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        file_client.create_file()
+
+        # Act
+        response = file_client.append_data(b'abc', 0, 3, flush=True)
 
         # Assert
         prop = file_client.get_file_properties()
@@ -886,6 +923,26 @@ class FileTest(StorageTestCase):
         data = new_client.download_file().readall()
         self.assertEqual(data, data_bytes)
         self.assertEqual(new_client.path_name, "newname")
+
+    @DataLakePreparer()
+    def test_file_encryption_scope_from_file_system(self, datalake_storage_account_name, datalake_storage_account_key):
+        # Arrange
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key, logging_enable=True)
+        self.file_system_name = self.get_resource_name('filesystem')
+        file_name = 'testfile'
+        encryption_scope = EncryptionScopeOptions(default_encryption_scope="hnstestscope1")
+
+        file_system = self.dsc.get_file_system_client(self.file_system_name)
+        file_system.create_file_system(encryption_scope_options=encryption_scope)
+
+        file_client = file_system.create_file(file_name)
+        props = file_client.get_file_properties()
+
+        # Assert
+        self.assertTrue(props)
+        self.assertIsNotNone(props['encryption_scope'])
+        self.assertEqual(props['encryption_scope'], encryption_scope.default_encryption_scope)
 
     @pytest.mark.live_test_only
     @DataLakePreparer()

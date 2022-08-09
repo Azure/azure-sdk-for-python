@@ -22,10 +22,7 @@ from .._user_agent import USER_AGENT
 
 class FormRecognizerClientBaseAsync:
     def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureKeyCredential, AsyncTokenCredential],
-        **kwargs: Any
+        self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
     ) -> None:
 
         try:
@@ -79,9 +76,7 @@ class FormRecognizerClientBaseAsync:
             credential=credential,  # type: ignore
             api_version=self._api_version,
             sdk_moniker=USER_AGENT,
-            authentication_policy=kwargs.get(
-                "authentication_policy", authentication_policy
-            ),
+            authentication_policy=kwargs.get("authentication_policy", authentication_policy),
             http_logging_policy=kwargs.get("http_logging_policy", http_logging_policy),
             per_retry_policies=kwargs.get("per_retry_policies", QuotaExceededPolicy()),
             polling_interval=polling_interval,
