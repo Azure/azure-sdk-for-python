@@ -212,11 +212,9 @@ class AMQPClient(object):
                     time.sleep(self._retry_policy.get_backoff_time(retry_settings, exc))
                     if exc.condition == ErrorCondition.LinkDetachForced:
                         self._close_link()  # if link level error, close and open a new link
-                        # TODO: check if there's any other code that we want to close link?
                     if exc.condition in (ErrorCondition.ConnectionCloseForced, ErrorCondition.SocketError):
                         # if connection detach or socket error, close and open a new connection
                         self.close()
-                        # TODO: check if there's any other code we want to close connection
             except Exception:
                 raise
             finally:

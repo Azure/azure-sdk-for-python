@@ -162,11 +162,9 @@ class AMQPClientAsync(AMQPClientSync):
                     await asyncio.sleep(self._retry_policy.get_backoff_time(retry_settings, exc))
                     if exc.condition == ErrorCondition.LinkDetachForced:
                         await self._close_link_async()  # if link level error, close and open a new link
-                        # TODO: check if there's any other code that we want to close link?
                     if exc.condition in (ErrorCondition.ConnectionCloseForced, ErrorCondition.SocketError):
                         # if connection detach or socket error, close and open a new connection
                         await self.close_async()
-                        # TODO: check if there's any other code we want to close connection
             except Exception:
                 raise
             finally:
