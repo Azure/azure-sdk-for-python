@@ -6,90 +6,78 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import BgpSession
-    from ._models_py3 import CheckServiceProviderAvailabilityInput
-    from ._models_py3 import ContactInfo
-    from ._models_py3 import DirectConnection
-    from ._models_py3 import DirectPeeringFacility
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import ExchangeConnection
-    from ._models_py3 import ExchangePeeringFacility
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplayInfo
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import PeerAsn
-    from ._models_py3 import PeerAsnListResult
-    from ._models_py3 import Peering
-    from ._models_py3 import PeeringBandwidthOffer
-    from ._models_py3 import PeeringListResult
-    from ._models_py3 import PeeringLocation
-    from ._models_py3 import PeeringLocationListResult
-    from ._models_py3 import PeeringLocationPropertiesDirect
-    from ._models_py3 import PeeringLocationPropertiesExchange
-    from ._models_py3 import PeeringPropertiesDirect
-    from ._models_py3 import PeeringPropertiesExchange
-    from ._models_py3 import PeeringService
-    from ._models_py3 import PeeringServiceListResult
-    from ._models_py3 import PeeringServiceLocation
-    from ._models_py3 import PeeringServiceLocationListResult
-    from ._models_py3 import PeeringServicePrefix
-    from ._models_py3 import PeeringServicePrefixListResult
-    from ._models_py3 import PeeringServiceProvider
-    from ._models_py3 import PeeringServiceProviderListResult
-    from ._models_py3 import PeeringSku
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceTags
-    from ._models_py3 import SubResource
-except (SyntaxError, ImportError):
-    from ._models import BgpSession  # type: ignore
-    from ._models import CheckServiceProviderAvailabilityInput  # type: ignore
-    from ._models import ContactInfo  # type: ignore
-    from ._models import DirectConnection  # type: ignore
-    from ._models import DirectPeeringFacility  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import ExchangeConnection  # type: ignore
-    from ._models import ExchangePeeringFacility  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplayInfo  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import PeerAsn  # type: ignore
-    from ._models import PeerAsnListResult  # type: ignore
-    from ._models import Peering  # type: ignore
-    from ._models import PeeringBandwidthOffer  # type: ignore
-    from ._models import PeeringListResult  # type: ignore
-    from ._models import PeeringLocation  # type: ignore
-    from ._models import PeeringLocationListResult  # type: ignore
-    from ._models import PeeringLocationPropertiesDirect  # type: ignore
-    from ._models import PeeringLocationPropertiesExchange  # type: ignore
-    from ._models import PeeringPropertiesDirect  # type: ignore
-    from ._models import PeeringPropertiesExchange  # type: ignore
-    from ._models import PeeringService  # type: ignore
-    from ._models import PeeringServiceListResult  # type: ignore
-    from ._models import PeeringServiceLocation  # type: ignore
-    from ._models import PeeringServiceLocationListResult  # type: ignore
-    from ._models import PeeringServicePrefix  # type: ignore
-    from ._models import PeeringServicePrefixListResult  # type: ignore
-    from ._models import PeeringServiceProvider  # type: ignore
-    from ._models import PeeringServiceProviderListResult  # type: ignore
-    from ._models import PeeringSku  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceTags  # type: ignore
-    from ._models import SubResource  # type: ignore
+from ._models_py3 import BgpSession
+from ._models_py3 import CdnPeeringPrefix
+from ._models_py3 import CdnPeeringPrefixListResult
+from ._models_py3 import CheckServiceProviderAvailabilityInput
+from ._models_py3 import ConnectionMonitorTest
+from ._models_py3 import ConnectionMonitorTestListResult
+from ._models_py3 import ContactDetail
+from ._models_py3 import DirectConnection
+from ._models_py3 import DirectPeeringFacility
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import ExchangeConnection
+from ._models_py3 import ExchangePeeringFacility
+from ._models_py3 import LogAnalyticsWorkspaceProperties
+from ._models_py3 import LookingGlassOutput
+from ._models_py3 import MetricDimension
+from ._models_py3 import MetricSpecification
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplayInfo
+from ._models_py3 import OperationListResult
+from ._models_py3 import PeerAsn
+from ._models_py3 import PeerAsnListResult
+from ._models_py3 import Peering
+from ._models_py3 import PeeringBandwidthOffer
+from ._models_py3 import PeeringListResult
+from ._models_py3 import PeeringLocation
+from ._models_py3 import PeeringLocationListResult
+from ._models_py3 import PeeringLocationPropertiesDirect
+from ._models_py3 import PeeringLocationPropertiesExchange
+from ._models_py3 import PeeringPropertiesDirect
+from ._models_py3 import PeeringPropertiesExchange
+from ._models_py3 import PeeringReceivedRoute
+from ._models_py3 import PeeringReceivedRouteListResult
+from ._models_py3 import PeeringRegisteredAsn
+from ._models_py3 import PeeringRegisteredAsnListResult
+from ._models_py3 import PeeringRegisteredPrefix
+from ._models_py3 import PeeringRegisteredPrefixListResult
+from ._models_py3 import PeeringService
+from ._models_py3 import PeeringServiceCountry
+from ._models_py3 import PeeringServiceCountryListResult
+from ._models_py3 import PeeringServiceListResult
+from ._models_py3 import PeeringServiceLocation
+from ._models_py3 import PeeringServiceLocationListResult
+from ._models_py3 import PeeringServicePrefix
+from ._models_py3 import PeeringServicePrefixEvent
+from ._models_py3 import PeeringServicePrefixListResult
+from ._models_py3 import PeeringServiceProvider
+from ._models_py3 import PeeringServiceProviderListResult
+from ._models_py3 import PeeringServiceSku
+from ._models_py3 import PeeringSku
+from ._models_py3 import Resource
+from ._models_py3 import ResourceTags
+from ._models_py3 import ServiceSpecification
+from ._models_py3 import SubResource
+
 
 from ._peering_management_client_enums import (
+    Command,
     ConnectionState,
     DirectPeeringType,
     Enum0,
-    Enum1,
-    Enum14,
-    Enum15,
     Family,
     Kind,
     LearnedType,
-    Name,
+    LegacyPeeringsKind,
+    LookingGlassCommand,
+    LookingGlassSourceType,
+    PeeringLocationsDirectPeeringType,
+    PeeringLocationsKind,
     PrefixValidationState,
     ProvisioningState,
+    Role,
     SessionAddressProvider,
     SessionStateV4,
     SessionStateV6,
@@ -97,16 +85,27 @@ from ._peering_management_client_enums import (
     Tier,
     ValidationState,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'BgpSession',
+    'CdnPeeringPrefix',
+    'CdnPeeringPrefixListResult',
     'CheckServiceProviderAvailabilityInput',
-    'ContactInfo',
+    'ConnectionMonitorTest',
+    'ConnectionMonitorTestListResult',
+    'ContactDetail',
     'DirectConnection',
     'DirectPeeringFacility',
+    'ErrorDetail',
     'ErrorResponse',
     'ExchangeConnection',
     'ExchangePeeringFacility',
+    'LogAnalyticsWorkspaceProperties',
+    'LookingGlassOutput',
+    'MetricDimension',
+    'MetricSpecification',
     'Operation',
     'OperationDisplayInfo',
     'OperationListResult',
@@ -121,30 +120,44 @@ __all__ = [
     'PeeringLocationPropertiesExchange',
     'PeeringPropertiesDirect',
     'PeeringPropertiesExchange',
+    'PeeringReceivedRoute',
+    'PeeringReceivedRouteListResult',
+    'PeeringRegisteredAsn',
+    'PeeringRegisteredAsnListResult',
+    'PeeringRegisteredPrefix',
+    'PeeringRegisteredPrefixListResult',
     'PeeringService',
+    'PeeringServiceCountry',
+    'PeeringServiceCountryListResult',
     'PeeringServiceListResult',
     'PeeringServiceLocation',
     'PeeringServiceLocationListResult',
     'PeeringServicePrefix',
+    'PeeringServicePrefixEvent',
     'PeeringServicePrefixListResult',
     'PeeringServiceProvider',
     'PeeringServiceProviderListResult',
+    'PeeringServiceSku',
     'PeeringSku',
     'Resource',
     'ResourceTags',
+    'ServiceSpecification',
     'SubResource',
+    'Command',
     'ConnectionState',
     'DirectPeeringType',
     'Enum0',
-    'Enum1',
-    'Enum14',
-    'Enum15',
     'Family',
     'Kind',
     'LearnedType',
-    'Name',
+    'LegacyPeeringsKind',
+    'LookingGlassCommand',
+    'LookingGlassSourceType',
+    'PeeringLocationsDirectPeeringType',
+    'PeeringLocationsKind',
     'PrefixValidationState',
     'ProvisioningState',
+    'Role',
     'SessionAddressProvider',
     'SessionStateV4',
     'SessionStateV6',
@@ -152,3 +165,5 @@ __all__ = [
     'Tier',
     'ValidationState',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

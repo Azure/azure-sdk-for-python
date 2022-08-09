@@ -6,12 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._peering_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class BgpSession(msrest.serialization.Model):
@@ -19,39 +21,37 @@ class BgpSession(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param session_prefix_v4: The IPv4 prefix that contains both ends' IPv4 addresses.
-    :type session_prefix_v4: str
-    :param session_prefix_v6: The IPv6 prefix that contains both ends' IPv6 addresses.
-    :type session_prefix_v6: str
+    :ivar session_prefix_v4: The IPv4 prefix that contains both ends' IPv4 addresses.
+    :vartype session_prefix_v4: str
+    :ivar session_prefix_v6: The IPv6 prefix that contains both ends' IPv6 addresses.
+    :vartype session_prefix_v6: str
     :ivar microsoft_session_i_pv4_address: The IPv4 session address on Microsoft's end.
     :vartype microsoft_session_i_pv4_address: str
     :ivar microsoft_session_i_pv6_address: The IPv6 session address on Microsoft's end.
     :vartype microsoft_session_i_pv6_address: str
-    :param peer_session_i_pv4_address: The IPv4 session address on peer's end.
-    :type peer_session_i_pv4_address: str
-    :param peer_session_i_pv6_address: The IPv6 session address on peer's end.
-    :type peer_session_i_pv6_address: str
-    :ivar session_state_v4: The state of the IPv4 session. Possible values include: "None", "Idle",
+    :ivar peer_session_i_pv4_address: The IPv4 session address on peer's end.
+    :vartype peer_session_i_pv4_address: str
+    :ivar peer_session_i_pv6_address: The IPv6 session address on peer's end.
+    :vartype peer_session_i_pv6_address: str
+    :ivar session_state_v4: The state of the IPv4 session. Known values are: "None", "Idle",
      "Connect", "Active", "OpenSent", "OpenConfirm", "OpenReceived", "Established", "PendingAdd",
      "PendingUpdate", "PendingRemove".
     :vartype session_state_v4: str or ~azure.mgmt.peering.models.SessionStateV4
-    :ivar session_state_v6: The state of the IPv6 session. Possible values include: "None", "Idle",
+    :ivar session_state_v6: The state of the IPv6 session. Known values are: "None", "Idle",
      "Connect", "Active", "OpenSent", "OpenConfirm", "OpenReceived", "Established", "PendingAdd",
      "PendingUpdate", "PendingRemove".
     :vartype session_state_v6: str or ~azure.mgmt.peering.models.SessionStateV6
-    :param max_prefixes_advertised_v4: The maximum number of prefixes advertised over the IPv4
+    :ivar max_prefixes_advertised_v4: The maximum number of prefixes advertised over the IPv4
      session.
-    :type max_prefixes_advertised_v4: int
-    :param max_prefixes_advertised_v6: The maximum number of prefixes advertised over the IPv6
+    :vartype max_prefixes_advertised_v4: int
+    :ivar max_prefixes_advertised_v6: The maximum number of prefixes advertised over the IPv6
      session.
-    :type max_prefixes_advertised_v6: int
-    :param md5_authentication_key: The MD5 authentication key of the session.
-    :type md5_authentication_key: str
+    :vartype max_prefixes_advertised_v6: int
+    :ivar md5_authentication_key: The MD5 authentication key of the session.
+    :vartype md5_authentication_key: str
     """
 
     _validation = {
-        'microsoft_session_i_pv4_address': {'readonly': True},
-        'microsoft_session_i_pv6_address': {'readonly': True},
         'session_state_v4': {'readonly': True},
         'session_state_v6': {'readonly': True},
     }
@@ -75,6 +75,8 @@ class BgpSession(msrest.serialization.Model):
         *,
         session_prefix_v4: Optional[str] = None,
         session_prefix_v6: Optional[str] = None,
+        microsoft_session_i_pv4_address: Optional[str] = None,
+        microsoft_session_i_pv6_address: Optional[str] = None,
         peer_session_i_pv4_address: Optional[str] = None,
         peer_session_i_pv6_address: Optional[str] = None,
         max_prefixes_advertised_v4: Optional[int] = None,
@@ -82,11 +84,33 @@ class BgpSession(msrest.serialization.Model):
         md5_authentication_key: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword session_prefix_v4: The IPv4 prefix that contains both ends' IPv4 addresses.
+        :paramtype session_prefix_v4: str
+        :keyword session_prefix_v6: The IPv6 prefix that contains both ends' IPv6 addresses.
+        :paramtype session_prefix_v6: str
+        :keyword microsoft_session_i_pv4_address: The IPv4 session address on Microsoft's end.
+        :paramtype microsoft_session_i_pv4_address: str
+        :keyword microsoft_session_i_pv6_address: The IPv6 session address on Microsoft's end.
+        :paramtype microsoft_session_i_pv6_address: str
+        :keyword peer_session_i_pv4_address: The IPv4 session address on peer's end.
+        :paramtype peer_session_i_pv4_address: str
+        :keyword peer_session_i_pv6_address: The IPv6 session address on peer's end.
+        :paramtype peer_session_i_pv6_address: str
+        :keyword max_prefixes_advertised_v4: The maximum number of prefixes advertised over the IPv4
+         session.
+        :paramtype max_prefixes_advertised_v4: int
+        :keyword max_prefixes_advertised_v6: The maximum number of prefixes advertised over the IPv6
+         session.
+        :paramtype max_prefixes_advertised_v6: int
+        :keyword md5_authentication_key: The MD5 authentication key of the session.
+        :paramtype md5_authentication_key: str
+        """
         super(BgpSession, self).__init__(**kwargs)
         self.session_prefix_v4 = session_prefix_v4
         self.session_prefix_v6 = session_prefix_v6
-        self.microsoft_session_i_pv4_address = None
-        self.microsoft_session_i_pv6_address = None
+        self.microsoft_session_i_pv4_address = microsoft_session_i_pv4_address
+        self.microsoft_session_i_pv6_address = microsoft_session_i_pv6_address
         self.peer_session_i_pv4_address = peer_session_i_pv4_address
         self.peer_session_i_pv6_address = peer_session_i_pv6_address
         self.session_state_v4 = None
@@ -96,13 +120,141 @@ class BgpSession(msrest.serialization.Model):
         self.md5_authentication_key = md5_authentication_key
 
 
+class Resource(msrest.serialization.Model):
+    """The ARM resource class.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(Resource, self).__init__(**kwargs)
+        self.name = None
+        self.id = None
+        self.type = None
+
+
+class CdnPeeringPrefix(Resource):
+    """The CDN peering prefix.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar prefix: The prefix.
+    :vartype prefix: str
+    :ivar azure_region: The Azure region.
+    :vartype azure_region: str
+    :ivar azure_service: The Azure service.
+    :vartype azure_service: str
+    :ivar is_primary_region: The flag that indicates whether or not this is the primary region.
+    :vartype is_primary_region: bool
+    :ivar bgp_community: The BGP Community.
+    :vartype bgp_community: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'prefix': {'readonly': True},
+        'azure_region': {'readonly': True},
+        'azure_service': {'readonly': True},
+        'is_primary_region': {'readonly': True},
+        'bgp_community': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'prefix': {'key': 'properties.prefix', 'type': 'str'},
+        'azure_region': {'key': 'properties.azureRegion', 'type': 'str'},
+        'azure_service': {'key': 'properties.azureService', 'type': 'str'},
+        'is_primary_region': {'key': 'properties.isPrimaryRegion', 'type': 'bool'},
+        'bgp_community': {'key': 'properties.bgpCommunity', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(CdnPeeringPrefix, self).__init__(**kwargs)
+        self.prefix = None
+        self.azure_region = None
+        self.azure_service = None
+        self.is_primary_region = None
+        self.bgp_community = None
+
+
+class CdnPeeringPrefixListResult(msrest.serialization.Model):
+    """The paginated list of CDN peering prefixes.
+
+    :ivar value: The list of CDN peering prefixes.
+    :vartype value: list[~azure.mgmt.peering.models.CdnPeeringPrefix]
+    :ivar next_link: The link to fetch the next page of CDN peering prefixes.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[CdnPeeringPrefix]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.CdnPeeringPrefix"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: The list of CDN peering prefixes.
+        :paramtype value: list[~azure.mgmt.peering.models.CdnPeeringPrefix]
+        :keyword next_link: The link to fetch the next page of CDN peering prefixes.
+        :paramtype next_link: str
+        """
+        super(CdnPeeringPrefixListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
 class CheckServiceProviderAvailabilityInput(msrest.serialization.Model):
     """Class for CheckServiceProviderAvailabilityInput.
 
-    :param peering_service_location: Gets or sets the PeeringServiceLocation.
-    :type peering_service_location: str
-    :param peering_service_provider: Gets or sets the PeeringServiceProvider.
-    :type peering_service_provider: str
+    :ivar peering_service_location: Gets or sets the peering service location.
+    :vartype peering_service_location: str
+    :ivar peering_service_provider: Gets or sets the peering service provider.
+    :vartype peering_service_provider: str
     """
 
     _attribute_map = {
@@ -117,34 +269,167 @@ class CheckServiceProviderAvailabilityInput(msrest.serialization.Model):
         peering_service_provider: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword peering_service_location: Gets or sets the peering service location.
+        :paramtype peering_service_location: str
+        :keyword peering_service_provider: Gets or sets the peering service provider.
+        :paramtype peering_service_provider: str
+        """
         super(CheckServiceProviderAvailabilityInput, self).__init__(**kwargs)
         self.peering_service_location = peering_service_location
         self.peering_service_provider = peering_service_provider
 
 
-class ContactInfo(msrest.serialization.Model):
-    """The contact information of the peer.
+class ConnectionMonitorTest(Resource):
+    """The Connection Monitor Test class.
 
-    :param emails: The list of email addresses.
-    :type emails: list[str]
-    :param phone: The list of contact numbers.
-    :type phone: list[str]
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar source_agent: The Connection Monitor test source agent.
+    :vartype source_agent: str
+    :ivar destination: The Connection Monitor test destination.
+    :vartype destination: str
+    :ivar destination_port: The Connection Monitor test destination port.
+    :vartype destination_port: int
+    :ivar test_frequency_in_sec: The Connection Monitor test frequency in seconds.
+    :vartype test_frequency_in_sec: int
+    :ivar is_test_successful: The flag that indicates if the Connection Monitor test is successful
+     or not.
+    :vartype is_test_successful: bool
+    :ivar path: The path representing the Connection Monitor test.
+    :vartype path: list[str]
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", "Failed".
+    :vartype provisioning_state: str or ~azure.mgmt.peering.models.ProvisioningState
     """
 
+    _validation = {
+        'name': {'readonly': True},
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'is_test_successful': {'readonly': True},
+        'path': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
     _attribute_map = {
-        'emails': {'key': 'emails', 'type': '[str]'},
-        'phone': {'key': 'phone', 'type': '[str]'},
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_agent': {'key': 'properties.sourceAgent', 'type': 'str'},
+        'destination': {'key': 'properties.destination', 'type': 'str'},
+        'destination_port': {'key': 'properties.destinationPort', 'type': 'int'},
+        'test_frequency_in_sec': {'key': 'properties.testFrequencyInSec', 'type': 'int'},
+        'is_test_successful': {'key': 'properties.isTestSuccessful', 'type': 'bool'},
+        'path': {'key': 'properties.path', 'type': '[str]'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        emails: Optional[List[str]] = None,
-        phone: Optional[List[str]] = None,
+        source_agent: Optional[str] = None,
+        destination: Optional[str] = None,
+        destination_port: Optional[int] = None,
+        test_frequency_in_sec: Optional[int] = None,
         **kwargs
     ):
-        super(ContactInfo, self).__init__(**kwargs)
-        self.emails = emails
+        """
+        :keyword source_agent: The Connection Monitor test source agent.
+        :paramtype source_agent: str
+        :keyword destination: The Connection Monitor test destination.
+        :paramtype destination: str
+        :keyword destination_port: The Connection Monitor test destination port.
+        :paramtype destination_port: int
+        :keyword test_frequency_in_sec: The Connection Monitor test frequency in seconds.
+        :paramtype test_frequency_in_sec: int
+        """
+        super(ConnectionMonitorTest, self).__init__(**kwargs)
+        self.source_agent = source_agent
+        self.destination = destination
+        self.destination_port = destination_port
+        self.test_frequency_in_sec = test_frequency_in_sec
+        self.is_test_successful = None
+        self.path = None
+        self.provisioning_state = None
+
+
+class ConnectionMonitorTestListResult(msrest.serialization.Model):
+    """The paginated list of [T].
+
+    :ivar value: The list of [T].
+    :vartype value: list[~azure.mgmt.peering.models.ConnectionMonitorTest]
+    :ivar next_link: The link to fetch the next page of [T].
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ConnectionMonitorTest]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.ConnectionMonitorTest"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: The list of [T].
+        :paramtype value: list[~azure.mgmt.peering.models.ConnectionMonitorTest]
+        :keyword next_link: The link to fetch the next page of [T].
+        :paramtype next_link: str
+        """
+        super(ConnectionMonitorTestListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class ContactDetail(msrest.serialization.Model):
+    """The contact detail class.
+
+    :ivar role: The role of the contact. Known values are: "Noc", "Policy", "Technical", "Service",
+     "Escalation", "Other".
+    :vartype role: str or ~azure.mgmt.peering.models.Role
+    :ivar email: The e-mail address of the contact.
+    :vartype email: str
+    :ivar phone: The phone number of the contact.
+    :vartype phone: str
+    """
+
+    _attribute_map = {
+        'role': {'key': 'role', 'type': 'str'},
+        'email': {'key': 'email', 'type': 'str'},
+        'phone': {'key': 'phone', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        role: Optional[Union[str, "_models.Role"]] = None,
+        email: Optional[str] = None,
+        phone: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword role: The role of the contact. Known values are: "Noc", "Policy", "Technical",
+         "Service", "Escalation", "Other".
+        :paramtype role: str or ~azure.mgmt.peering.models.Role
+        :keyword email: The e-mail address of the contact.
+        :paramtype email: str
+        :keyword phone: The phone number of the contact.
+        :paramtype phone: str
+        """
+        super(ContactDetail, self).__init__(**kwargs)
+        self.role = role
+        self.email = email
         self.phone = phone
 
 
@@ -153,31 +438,39 @@ class DirectConnection(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param bandwidth_in_mbps: The bandwidth of the connection.
-    :type bandwidth_in_mbps: int
-    :param provisioned_bandwidth_in_mbps: The bandwidth that is actually provisioned.
-    :type provisioned_bandwidth_in_mbps: int
-    :param session_address_provider: The field indicating if Microsoft provides session ip
-     addresses. Possible values include: "Microsoft", "Peer".
-    :type session_address_provider: str or ~azure.mgmt.peering.models.SessionAddressProvider
-    :param use_for_peering_service: The flag that indicates whether or not the connection is used
+    :ivar bandwidth_in_mbps: The bandwidth of the connection.
+    :vartype bandwidth_in_mbps: int
+    :ivar provisioned_bandwidth_in_mbps: The bandwidth that is actually provisioned.
+    :vartype provisioned_bandwidth_in_mbps: int
+    :ivar session_address_provider: The field indicating if Microsoft provides session ip
+     addresses. Known values are: "Microsoft", "Peer".
+    :vartype session_address_provider: str or ~azure.mgmt.peering.models.SessionAddressProvider
+    :ivar use_for_peering_service: The flag that indicates whether or not the connection is used
      for peering service.
-    :type use_for_peering_service: bool
-    :param peering_db_facility_id: The PeeringDB.com ID of the facility at which the connection has
+    :vartype use_for_peering_service: bool
+    :ivar microsoft_tracking_id: The ID used within Microsoft's peering provisioning system to
+     track the connection.
+    :vartype microsoft_tracking_id: str
+    :ivar peering_db_facility_id: The PeeringDB.com ID of the facility at which the connection has
      to be set up.
-    :type peering_db_facility_id: int
-    :ivar connection_state: The state of the connection. Possible values include: "None",
+    :vartype peering_db_facility_id: int
+    :ivar connection_state: The state of the connection. Known values are: "None",
      "PendingApproval", "Approved", "ProvisioningStarted", "ProvisioningFailed",
-     "ProvisioningCompleted", "Validating", "Active".
+     "ProvisioningCompleted", "Validating", "Active", "TypeChangeRequested", "TypeChangeInProgress".
     :vartype connection_state: str or ~azure.mgmt.peering.models.ConnectionState
-    :param bgp_session: The BGP session associated with the connection.
-    :type bgp_session: ~azure.mgmt.peering.models.BgpSession
-    :param connection_identifier: The unique identifier (GUID) for the connection.
-    :type connection_identifier: str
+    :ivar bgp_session: The BGP session associated with the connection.
+    :vartype bgp_session: ~azure.mgmt.peering.models.BgpSession
+    :ivar connection_identifier: The unique identifier (GUID) for the connection.
+    :vartype connection_identifier: str
+    :ivar error_message: The error message related to the connection state, if any.
+    :vartype error_message: str
     """
 
     _validation = {
+        'provisioned_bandwidth_in_mbps': {'readonly': True},
+        'microsoft_tracking_id': {'readonly': True},
         'connection_state': {'readonly': True},
+        'error_message': {'readonly': True},
     }
 
     _attribute_map = {
@@ -185,47 +478,67 @@ class DirectConnection(msrest.serialization.Model):
         'provisioned_bandwidth_in_mbps': {'key': 'provisionedBandwidthInMbps', 'type': 'int'},
         'session_address_provider': {'key': 'sessionAddressProvider', 'type': 'str'},
         'use_for_peering_service': {'key': 'useForPeeringService', 'type': 'bool'},
+        'microsoft_tracking_id': {'key': 'microsoftTrackingId', 'type': 'str'},
         'peering_db_facility_id': {'key': 'peeringDBFacilityId', 'type': 'int'},
         'connection_state': {'key': 'connectionState', 'type': 'str'},
         'bgp_session': {'key': 'bgpSession', 'type': 'BgpSession'},
         'connection_identifier': {'key': 'connectionIdentifier', 'type': 'str'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
         bandwidth_in_mbps: Optional[int] = None,
-        provisioned_bandwidth_in_mbps: Optional[int] = None,
-        session_address_provider: Optional[Union[str, "SessionAddressProvider"]] = None,
+        session_address_provider: Optional[Union[str, "_models.SessionAddressProvider"]] = None,
         use_for_peering_service: Optional[bool] = None,
         peering_db_facility_id: Optional[int] = None,
-        bgp_session: Optional["BgpSession"] = None,
+        bgp_session: Optional["_models.BgpSession"] = None,
         connection_identifier: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword bandwidth_in_mbps: The bandwidth of the connection.
+        :paramtype bandwidth_in_mbps: int
+        :keyword session_address_provider: The field indicating if Microsoft provides session ip
+         addresses. Known values are: "Microsoft", "Peer".
+        :paramtype session_address_provider: str or ~azure.mgmt.peering.models.SessionAddressProvider
+        :keyword use_for_peering_service: The flag that indicates whether or not the connection is used
+         for peering service.
+        :paramtype use_for_peering_service: bool
+        :keyword peering_db_facility_id: The PeeringDB.com ID of the facility at which the connection
+         has to be set up.
+        :paramtype peering_db_facility_id: int
+        :keyword bgp_session: The BGP session associated with the connection.
+        :paramtype bgp_session: ~azure.mgmt.peering.models.BgpSession
+        :keyword connection_identifier: The unique identifier (GUID) for the connection.
+        :paramtype connection_identifier: str
+        """
         super(DirectConnection, self).__init__(**kwargs)
         self.bandwidth_in_mbps = bandwidth_in_mbps
-        self.provisioned_bandwidth_in_mbps = provisioned_bandwidth_in_mbps
+        self.provisioned_bandwidth_in_mbps = None
         self.session_address_provider = session_address_provider
         self.use_for_peering_service = use_for_peering_service
+        self.microsoft_tracking_id = None
         self.peering_db_facility_id = peering_db_facility_id
         self.connection_state = None
         self.bgp_session = bgp_session
         self.connection_identifier = connection_identifier
+        self.error_message = None
 
 
 class DirectPeeringFacility(msrest.serialization.Model):
     """The properties that define a direct peering facility.
 
-    :param address: The address of the direct peering facility.
-    :type address: str
-    :param direct_peering_type: The type of the direct peering. Possible values include: "Edge",
-     "Transit", "Cdn", "Internal".
-    :type direct_peering_type: str or ~azure.mgmt.peering.models.DirectPeeringType
-    :param peering_db_facility_id: The PeeringDB.com ID of the facility.
-    :type peering_db_facility_id: int
-    :param peering_db_facility_link: The PeeringDB.com URL of the facility.
-    :type peering_db_facility_link: str
+    :ivar address: The address of the direct peering facility.
+    :vartype address: str
+    :ivar direct_peering_type: The type of the direct peering. Known values are: "Edge", "Transit",
+     "Cdn", "Internal", "Ix", "IxRs", "Voice", "EdgeZoneForOperators".
+    :vartype direct_peering_type: str or ~azure.mgmt.peering.models.DirectPeeringType
+    :ivar peering_db_facility_id: The PeeringDB.com ID of the facility.
+    :vartype peering_db_facility_id: int
+    :ivar peering_db_facility_link: The PeeringDB.com URL of the facility.
+    :vartype peering_db_facility_link: str
     """
 
     _attribute_map = {
@@ -239,11 +552,22 @@ class DirectPeeringFacility(msrest.serialization.Model):
         self,
         *,
         address: Optional[str] = None,
-        direct_peering_type: Optional[Union[str, "DirectPeeringType"]] = None,
+        direct_peering_type: Optional[Union[str, "_models.DirectPeeringType"]] = None,
         peering_db_facility_id: Optional[int] = None,
         peering_db_facility_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword address: The address of the direct peering facility.
+        :paramtype address: str
+        :keyword direct_peering_type: The type of the direct peering. Known values are: "Edge",
+         "Transit", "Cdn", "Internal", "Ix", "IxRs", "Voice", "EdgeZoneForOperators".
+        :paramtype direct_peering_type: str or ~azure.mgmt.peering.models.DirectPeeringType
+        :keyword peering_db_facility_id: The PeeringDB.com ID of the facility.
+        :paramtype peering_db_facility_id: int
+        :keyword peering_db_facility_link: The PeeringDB.com URL of the facility.
+        :paramtype peering_db_facility_link: str
+        """
         super(DirectPeeringFacility, self).__init__(**kwargs)
         self.address = address
         self.direct_peering_type = direct_peering_type
@@ -251,8 +575,8 @@ class DirectPeeringFacility(msrest.serialization.Model):
         self.peering_db_facility_link = peering_db_facility_link
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """The error response that indicates why an operation has failed.
+class ErrorDetail(msrest.serialization.Model):
+    """The error detail that describes why an operation has failed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -276,9 +600,36 @@ class ErrorResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(ErrorResponse, self).__init__(**kwargs)
+        """
+        """
+        super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """The error response that indicates why an operation has failed.
+
+    :ivar error: The error detail that describes why an operation has failed.
+    :vartype error: ~azure.mgmt.peering.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
+    }
+
+    def __init__(
+        self,
+        *,
+        error: Optional["_models.ErrorDetail"] = None,
+        **kwargs
+    ):
+        """
+        :keyword error: The error detail that describes why an operation has failed.
+        :paramtype error: ~azure.mgmt.peering.models.ErrorDetail
+        """
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = error
 
 
 class ExchangeConnection(msrest.serialization.Model):
@@ -286,21 +637,24 @@ class ExchangeConnection(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param peering_db_facility_id: The PeeringDB.com ID of the facility at which the connection has
+    :ivar peering_db_facility_id: The PeeringDB.com ID of the facility at which the connection has
      to be set up.
-    :type peering_db_facility_id: int
-    :ivar connection_state: The state of the connection. Possible values include: "None",
+    :vartype peering_db_facility_id: int
+    :ivar connection_state: The state of the connection. Known values are: "None",
      "PendingApproval", "Approved", "ProvisioningStarted", "ProvisioningFailed",
-     "ProvisioningCompleted", "Validating", "Active".
+     "ProvisioningCompleted", "Validating", "Active", "TypeChangeRequested", "TypeChangeInProgress".
     :vartype connection_state: str or ~azure.mgmt.peering.models.ConnectionState
-    :param bgp_session: The BGP session associated with the connection.
-    :type bgp_session: ~azure.mgmt.peering.models.BgpSession
-    :param connection_identifier: The unique identifier (GUID) for the connection.
-    :type connection_identifier: str
+    :ivar bgp_session: The BGP session associated with the connection.
+    :vartype bgp_session: ~azure.mgmt.peering.models.BgpSession
+    :ivar connection_identifier: The unique identifier (GUID) for the connection.
+    :vartype connection_identifier: str
+    :ivar error_message: The error message related to the connection state, if any.
+    :vartype error_message: str
     """
 
     _validation = {
         'connection_state': {'readonly': True},
+        'error_message': {'readonly': True},
     }
 
     _attribute_map = {
@@ -308,43 +662,54 @@ class ExchangeConnection(msrest.serialization.Model):
         'connection_state': {'key': 'connectionState', 'type': 'str'},
         'bgp_session': {'key': 'bgpSession', 'type': 'BgpSession'},
         'connection_identifier': {'key': 'connectionIdentifier', 'type': 'str'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
         peering_db_facility_id: Optional[int] = None,
-        bgp_session: Optional["BgpSession"] = None,
+        bgp_session: Optional["_models.BgpSession"] = None,
         connection_identifier: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword peering_db_facility_id: The PeeringDB.com ID of the facility at which the connection
+         has to be set up.
+        :paramtype peering_db_facility_id: int
+        :keyword bgp_session: The BGP session associated with the connection.
+        :paramtype bgp_session: ~azure.mgmt.peering.models.BgpSession
+        :keyword connection_identifier: The unique identifier (GUID) for the connection.
+        :paramtype connection_identifier: str
+        """
         super(ExchangeConnection, self).__init__(**kwargs)
         self.peering_db_facility_id = peering_db_facility_id
         self.connection_state = None
         self.bgp_session = bgp_session
         self.connection_identifier = connection_identifier
+        self.error_message = None
 
 
 class ExchangePeeringFacility(msrest.serialization.Model):
     """The properties that define an exchange peering facility.
 
-    :param exchange_name: The name of the exchange peering facility.
-    :type exchange_name: str
-    :param bandwidth_in_mbps: The bandwidth of the connection between Microsoft and the exchange
+    :ivar exchange_name: The name of the exchange peering facility.
+    :vartype exchange_name: str
+    :ivar bandwidth_in_mbps: The bandwidth of the connection between Microsoft and the exchange
      peering facility.
-    :type bandwidth_in_mbps: int
-    :param microsoft_i_pv4_address: The IPv4 address of Microsoft at the exchange peering facility.
-    :type microsoft_i_pv4_address: str
-    :param microsoft_i_pv6_address: The IPv6 address of Microsoft at the exchange peering facility.
-    :type microsoft_i_pv6_address: str
-    :param facility_i_pv4_prefix: The IPv4 prefixes associated with the exchange peering facility.
-    :type facility_i_pv4_prefix: str
-    :param facility_i_pv6_prefix: The IPv6 prefixes associated with the exchange peering facility.
-    :type facility_i_pv6_prefix: str
-    :param peering_db_facility_id: The PeeringDB.com ID of the facility.
-    :type peering_db_facility_id: int
-    :param peering_db_facility_link: The PeeringDB.com URL of the facility.
-    :type peering_db_facility_link: str
+    :vartype bandwidth_in_mbps: int
+    :ivar microsoft_i_pv4_address: The IPv4 address of Microsoft at the exchange peering facility.
+    :vartype microsoft_i_pv4_address: str
+    :ivar microsoft_i_pv6_address: The IPv6 address of Microsoft at the exchange peering facility.
+    :vartype microsoft_i_pv6_address: str
+    :ivar facility_i_pv4_prefix: The IPv4 prefixes associated with the exchange peering facility.
+    :vartype facility_i_pv4_prefix: str
+    :ivar facility_i_pv6_prefix: The IPv6 prefixes associated with the exchange peering facility.
+    :vartype facility_i_pv6_prefix: str
+    :ivar peering_db_facility_id: The PeeringDB.com ID of the facility.
+    :vartype peering_db_facility_id: int
+    :ivar peering_db_facility_link: The PeeringDB.com URL of the facility.
+    :vartype peering_db_facility_link: str
     """
 
     _attribute_map = {
@@ -371,6 +736,29 @@ class ExchangePeeringFacility(msrest.serialization.Model):
         peering_db_facility_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword exchange_name: The name of the exchange peering facility.
+        :paramtype exchange_name: str
+        :keyword bandwidth_in_mbps: The bandwidth of the connection between Microsoft and the exchange
+         peering facility.
+        :paramtype bandwidth_in_mbps: int
+        :keyword microsoft_i_pv4_address: The IPv4 address of Microsoft at the exchange peering
+         facility.
+        :paramtype microsoft_i_pv4_address: str
+        :keyword microsoft_i_pv6_address: The IPv6 address of Microsoft at the exchange peering
+         facility.
+        :paramtype microsoft_i_pv6_address: str
+        :keyword facility_i_pv4_prefix: The IPv4 prefixes associated with the exchange peering
+         facility.
+        :paramtype facility_i_pv4_prefix: str
+        :keyword facility_i_pv6_prefix: The IPv6 prefixes associated with the exchange peering
+         facility.
+        :paramtype facility_i_pv6_prefix: str
+        :keyword peering_db_facility_id: The PeeringDB.com ID of the facility.
+        :paramtype peering_db_facility_id: int
+        :keyword peering_db_facility_link: The PeeringDB.com URL of the facility.
+        :paramtype peering_db_facility_link: str
+        """
         super(ExchangePeeringFacility, self).__init__(**kwargs)
         self.exchange_name = exchange_name
         self.bandwidth_in_mbps = bandwidth_in_mbps
@@ -380,6 +768,165 @@ class ExchangePeeringFacility(msrest.serialization.Model):
         self.facility_i_pv6_prefix = facility_i_pv6_prefix
         self.peering_db_facility_id = peering_db_facility_id
         self.peering_db_facility_link = peering_db_facility_link
+
+
+class LogAnalyticsWorkspaceProperties(msrest.serialization.Model):
+    """The properties that define a Log Analytics Workspace.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar workspace_id: The Workspace ID.
+    :vartype workspace_id: str
+    :ivar key: The Workspace Key.
+    :vartype key: str
+    :ivar connected_agents: The list of connected agents.
+    :vartype connected_agents: list[str]
+    """
+
+    _validation = {
+        'workspace_id': {'readonly': True},
+        'key': {'readonly': True},
+        'connected_agents': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'workspace_id': {'key': 'workspaceID', 'type': 'str'},
+        'key': {'key': 'key', 'type': 'str'},
+        'connected_agents': {'key': 'connectedAgents', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(LogAnalyticsWorkspaceProperties, self).__init__(**kwargs)
+        self.workspace_id = None
+        self.key = None
+        self.connected_agents = None
+
+
+class LookingGlassOutput(msrest.serialization.Model):
+    """Looking glass output model.
+
+    :ivar command: Invoked command. Known values are: "Traceroute", "Ping", "BgpRoute".
+    :vartype command: str or ~azure.mgmt.peering.models.Command
+    :ivar output: Output of the command.
+    :vartype output: str
+    """
+
+    _attribute_map = {
+        'command': {'key': 'command', 'type': 'str'},
+        'output': {'key': 'output', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        command: Optional[Union[str, "_models.Command"]] = None,
+        output: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword command: Invoked command. Known values are: "Traceroute", "Ping", "BgpRoute".
+        :paramtype command: str or ~azure.mgmt.peering.models.Command
+        :keyword output: Output of the command.
+        :paramtype output: str
+        """
+        super(LookingGlassOutput, self).__init__(**kwargs)
+        self.command = command
+        self.output = output
+
+
+class MetricDimension(msrest.serialization.Model):
+    """Dimensions of the metric.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Name of the dimension.
+    :vartype name: str
+    :ivar display_name: Localized friendly display name of the dimension.
+    :vartype display_name: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'display_name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(MetricDimension, self).__init__(**kwargs)
+        self.name = None
+        self.display_name = None
+
+
+class MetricSpecification(msrest.serialization.Model):
+    """Specifications of the Metrics for Azure Monitoring.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Name of the metric.
+    :vartype name: str
+    :ivar display_name: Localized friendly display name of the metric.
+    :vartype display_name: str
+    :ivar display_description: Localized friendly description of the metric.
+    :vartype display_description: str
+    :ivar unit: Unit that makes sense for the metric.
+    :vartype unit: str
+    :ivar aggregation_type: Aggregation type will be set to one of the values: Average, Minimum,
+     Maximum, Total, Count.
+    :vartype aggregation_type: str
+    :ivar supported_time_grain_types: Supported time grain types for the metric.
+    :vartype supported_time_grain_types: list[str]
+    :ivar dimensions: Dimensions of the metric.
+    :vartype dimensions: list[~azure.mgmt.peering.models.MetricDimension]
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'display_name': {'readonly': True},
+        'display_description': {'readonly': True},
+        'unit': {'readonly': True},
+        'aggregation_type': {'readonly': True},
+        'supported_time_grain_types': {'readonly': True},
+        'dimensions': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'display_description': {'key': 'displayDescription', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
+        'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
+        'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(MetricSpecification, self).__init__(**kwargs)
+        self.name = None
+        self.display_name = None
+        self.display_description = None
+        self.unit = None
+        self.aggregation_type = None
+        self.supported_time_grain_types = None
+        self.dimensions = None
 
 
 class Operation(msrest.serialization.Model):
@@ -393,28 +940,35 @@ class Operation(msrest.serialization.Model):
     :vartype display: ~azure.mgmt.peering.models.OperationDisplayInfo
     :ivar is_data_action: The flag that indicates whether the operation applies to data plane.
     :vartype is_data_action: bool
+    :ivar service_specification: Service specification payload.
+    :vartype service_specification: ~azure.mgmt.peering.models.ServiceSpecification
     """
 
     _validation = {
         'name': {'readonly': True},
         'display': {'readonly': True},
         'is_data_action': {'readonly': True},
+        'service_specification': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplayInfo'},
         'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
+        'service_specification': {'key': 'properties.serviceSpecification', 'type': 'ServiceSpecification'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
+        """
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = None
         self.is_data_action = None
+        self.service_specification = None
 
 
 class OperationDisplayInfo(msrest.serialization.Model):
@@ -450,6 +1004,8 @@ class OperationDisplayInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplayInfo, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -460,10 +1016,10 @@ class OperationDisplayInfo(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """The paginated list of peering API operations.
 
-    :param value: The list of peering API operations.
-    :type value: list[~azure.mgmt.peering.models.Operation]
-    :param next_link: The link to fetch the next page of peering API operations.
-    :type next_link: str
+    :ivar value: The list of peering API operations.
+    :vartype value: list[~azure.mgmt.peering.models.Operation]
+    :ivar next_link: The link to fetch the next page of peering API operations.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -474,48 +1030,19 @@ class OperationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Operation"]] = None,
+        value: Optional[List["_models.Operation"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of peering API operations.
+        :paramtype value: list[~azure.mgmt.peering.models.Operation]
+        :keyword next_link: The link to fetch the next page of peering API operations.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
-
-
-class Resource(msrest.serialization.Model):
-    """The ARM resource class.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar id: The ID of the resource.
-    :vartype id: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    """
-
-    _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
-        self.name = None
-        self.id = None
-        self.type = None
 
 
 class PeerAsn(Resource):
@@ -529,21 +1056,25 @@ class PeerAsn(Resource):
     :vartype id: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param peer_asn: The Autonomous System Number (ASN) of the peer.
-    :type peer_asn: int
-    :param peer_contact_info: The contact information of the peer.
-    :type peer_contact_info: ~azure.mgmt.peering.models.ContactInfo
-    :param peer_name: The name of the peer.
-    :type peer_name: str
-    :param validation_state: The validation state of the ASN associated with the peer. Possible
-     values include: "None", "Pending", "Approved", "Failed".
-    :type validation_state: str or ~azure.mgmt.peering.models.ValidationState
+    :ivar peer_asn: The Autonomous System Number (ASN) of the peer.
+    :vartype peer_asn: int
+    :ivar peer_contact_detail: The contact details of the peer.
+    :vartype peer_contact_detail: list[~azure.mgmt.peering.models.ContactDetail]
+    :ivar peer_name: The name of the peer.
+    :vartype peer_name: str
+    :ivar validation_state: The validation state of the ASN associated with the peer. Known values
+     are: "None", "Pending", "Approved", "Failed".
+    :vartype validation_state: str or ~azure.mgmt.peering.models.ValidationState
+    :ivar error_message: The error message for the validation state.
+    :vartype error_message: str
     """
 
     _validation = {
         'name': {'readonly': True},
         'id': {'readonly': True},
         'type': {'readonly': True},
+        'validation_state': {'readonly': True},
+        'error_message': {'readonly': True},
     }
 
     _attribute_map = {
@@ -551,34 +1082,43 @@ class PeerAsn(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'peer_asn': {'key': 'properties.peerAsn', 'type': 'int'},
-        'peer_contact_info': {'key': 'properties.peerContactInfo', 'type': 'ContactInfo'},
+        'peer_contact_detail': {'key': 'properties.peerContactDetail', 'type': '[ContactDetail]'},
         'peer_name': {'key': 'properties.peerName', 'type': 'str'},
         'validation_state': {'key': 'properties.validationState', 'type': 'str'},
+        'error_message': {'key': 'properties.errorMessage', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
         peer_asn: Optional[int] = None,
-        peer_contact_info: Optional["ContactInfo"] = None,
+        peer_contact_detail: Optional[List["_models.ContactDetail"]] = None,
         peer_name: Optional[str] = None,
-        validation_state: Optional[Union[str, "ValidationState"]] = None,
         **kwargs
     ):
+        """
+        :keyword peer_asn: The Autonomous System Number (ASN) of the peer.
+        :paramtype peer_asn: int
+        :keyword peer_contact_detail: The contact details of the peer.
+        :paramtype peer_contact_detail: list[~azure.mgmt.peering.models.ContactDetail]
+        :keyword peer_name: The name of the peer.
+        :paramtype peer_name: str
+        """
         super(PeerAsn, self).__init__(**kwargs)
         self.peer_asn = peer_asn
-        self.peer_contact_info = peer_contact_info
+        self.peer_contact_detail = peer_contact_detail
         self.peer_name = peer_name
-        self.validation_state = validation_state
+        self.validation_state = None
+        self.error_message = None
 
 
 class PeerAsnListResult(msrest.serialization.Model):
     """The paginated list of peer ASNs.
 
-    :param value: The list of peer ASNs.
-    :type value: list[~azure.mgmt.peering.models.PeerAsn]
-    :param next_link: The link to fetch the next page of peer ASNs.
-    :type next_link: str
+    :ivar value: The list of peer ASNs.
+    :vartype value: list[~azure.mgmt.peering.models.PeerAsn]
+    :ivar next_link: The link to fetch the next page of peer ASNs.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -589,10 +1129,16 @@ class PeerAsnListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PeerAsn"]] = None,
+        value: Optional[List["_models.PeerAsn"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of peer ASNs.
+        :paramtype value: list[~azure.mgmt.peering.models.PeerAsn]
+        :keyword next_link: The link to fetch the next page of peer ASNs.
+        :paramtype next_link: str
+        """
         super(PeerAsnListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -611,21 +1157,21 @@ class Peering(Resource):
     :vartype id: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param sku: Required. The SKU that defines the tier and kind of the peering.
-    :type sku: ~azure.mgmt.peering.models.PeeringSku
-    :param kind: Required. The kind of the peering. Possible values include: "Direct", "Exchange".
-    :type kind: str or ~azure.mgmt.peering.models.Kind
-    :param location: Required. The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param direct: The properties that define a direct peering.
-    :type direct: ~azure.mgmt.peering.models.PeeringPropertiesDirect
-    :param exchange: The properties that define an exchange peering.
-    :type exchange: ~azure.mgmt.peering.models.PeeringPropertiesExchange
-    :param peering_location: The location of the peering.
-    :type peering_location: str
-    :ivar provisioning_state: The provisioning state of the resource. Possible values include:
+    :ivar sku: Required. The SKU that defines the tier and kind of the peering.
+    :vartype sku: ~azure.mgmt.peering.models.PeeringSku
+    :ivar kind: Required. The kind of the peering. Known values are: "Direct", "Exchange".
+    :vartype kind: str or ~azure.mgmt.peering.models.Kind
+    :ivar location: Required. The location of the resource.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar direct: The properties that define a direct peering.
+    :vartype direct: ~azure.mgmt.peering.models.PeeringPropertiesDirect
+    :ivar exchange: The properties that define an exchange peering.
+    :vartype exchange: ~azure.mgmt.peering.models.PeeringPropertiesExchange
+    :ivar peering_location: The location of the peering.
+    :vartype peering_location: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.peering.models.ProvisioningState
     """
@@ -657,15 +1203,31 @@ class Peering(Resource):
     def __init__(
         self,
         *,
-        sku: "PeeringSku",
-        kind: Union[str, "Kind"],
+        sku: "_models.PeeringSku",
+        kind: Union[str, "_models.Kind"],
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        direct: Optional["PeeringPropertiesDirect"] = None,
-        exchange: Optional["PeeringPropertiesExchange"] = None,
+        direct: Optional["_models.PeeringPropertiesDirect"] = None,
+        exchange: Optional["_models.PeeringPropertiesExchange"] = None,
         peering_location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword sku: Required. The SKU that defines the tier and kind of the peering.
+        :paramtype sku: ~azure.mgmt.peering.models.PeeringSku
+        :keyword kind: Required. The kind of the peering. Known values are: "Direct", "Exchange".
+        :paramtype kind: str or ~azure.mgmt.peering.models.Kind
+        :keyword location: Required. The location of the resource.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword direct: The properties that define a direct peering.
+        :paramtype direct: ~azure.mgmt.peering.models.PeeringPropertiesDirect
+        :keyword exchange: The properties that define an exchange peering.
+        :paramtype exchange: ~azure.mgmt.peering.models.PeeringPropertiesExchange
+        :keyword peering_location: The location of the peering.
+        :paramtype peering_location: str
+        """
         super(Peering, self).__init__(**kwargs)
         self.sku = sku
         self.kind = kind
@@ -680,10 +1242,10 @@ class Peering(Resource):
 class PeeringBandwidthOffer(msrest.serialization.Model):
     """The properties that define a peering bandwidth offer.
 
-    :param offer_name: The name of the bandwidth offer.
-    :type offer_name: str
-    :param value_in_mbps: The value of the bandwidth offer in Mbps.
-    :type value_in_mbps: int
+    :ivar offer_name: The name of the bandwidth offer.
+    :vartype offer_name: str
+    :ivar value_in_mbps: The value of the bandwidth offer in Mbps.
+    :vartype value_in_mbps: int
     """
 
     _attribute_map = {
@@ -698,6 +1260,12 @@ class PeeringBandwidthOffer(msrest.serialization.Model):
         value_in_mbps: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword offer_name: The name of the bandwidth offer.
+        :paramtype offer_name: str
+        :keyword value_in_mbps: The value of the bandwidth offer in Mbps.
+        :paramtype value_in_mbps: int
+        """
         super(PeeringBandwidthOffer, self).__init__(**kwargs)
         self.offer_name = offer_name
         self.value_in_mbps = value_in_mbps
@@ -706,10 +1274,10 @@ class PeeringBandwidthOffer(msrest.serialization.Model):
 class PeeringListResult(msrest.serialization.Model):
     """The paginated list of peerings.
 
-    :param value: The list of peerings.
-    :type value: list[~azure.mgmt.peering.models.Peering]
-    :param next_link: The link to fetch the next page of peerings.
-    :type next_link: str
+    :ivar value: The list of peerings.
+    :vartype value: list[~azure.mgmt.peering.models.Peering]
+    :ivar next_link: The link to fetch the next page of peerings.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -720,10 +1288,16 @@ class PeeringListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Peering"]] = None,
+        value: Optional[List["_models.Peering"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of peerings.
+        :paramtype value: list[~azure.mgmt.peering.models.Peering]
+        :keyword next_link: The link to fetch the next page of peerings.
+        :paramtype next_link: str
+        """
         super(PeeringListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -740,19 +1314,19 @@ class PeeringLocation(Resource):
     :vartype id: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param kind: The kind of peering that the peering location supports. Possible values include:
-     "Direct", "Exchange".
-    :type kind: str or ~azure.mgmt.peering.models.Kind
-    :param direct: The properties that define a direct peering location.
-    :type direct: ~azure.mgmt.peering.models.PeeringLocationPropertiesDirect
-    :param exchange: The properties that define an exchange peering location.
-    :type exchange: ~azure.mgmt.peering.models.PeeringLocationPropertiesExchange
-    :param peering_location: The name of the peering location.
-    :type peering_location: str
-    :param country: The country in which the peering location exists.
-    :type country: str
-    :param azure_region: The Azure region associated with the peering location.
-    :type azure_region: str
+    :ivar kind: The kind of peering that the peering location supports. Known values are: "Direct",
+     "Exchange".
+    :vartype kind: str or ~azure.mgmt.peering.models.Kind
+    :ivar direct: The properties that define a direct peering location.
+    :vartype direct: ~azure.mgmt.peering.models.PeeringLocationPropertiesDirect
+    :ivar exchange: The properties that define an exchange peering location.
+    :vartype exchange: ~azure.mgmt.peering.models.PeeringLocationPropertiesExchange
+    :ivar peering_location: The name of the peering location.
+    :vartype peering_location: str
+    :ivar country: The country in which the peering location exists.
+    :vartype country: str
+    :ivar azure_region: The Azure region associated with the peering location.
+    :vartype azure_region: str
     """
 
     _validation = {
@@ -776,14 +1350,29 @@ class PeeringLocation(Resource):
     def __init__(
         self,
         *,
-        kind: Optional[Union[str, "Kind"]] = None,
-        direct: Optional["PeeringLocationPropertiesDirect"] = None,
-        exchange: Optional["PeeringLocationPropertiesExchange"] = None,
+        kind: Optional[Union[str, "_models.Kind"]] = None,
+        direct: Optional["_models.PeeringLocationPropertiesDirect"] = None,
+        exchange: Optional["_models.PeeringLocationPropertiesExchange"] = None,
         peering_location: Optional[str] = None,
         country: Optional[str] = None,
         azure_region: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword kind: The kind of peering that the peering location supports. Known values are:
+         "Direct", "Exchange".
+        :paramtype kind: str or ~azure.mgmt.peering.models.Kind
+        :keyword direct: The properties that define a direct peering location.
+        :paramtype direct: ~azure.mgmt.peering.models.PeeringLocationPropertiesDirect
+        :keyword exchange: The properties that define an exchange peering location.
+        :paramtype exchange: ~azure.mgmt.peering.models.PeeringLocationPropertiesExchange
+        :keyword peering_location: The name of the peering location.
+        :paramtype peering_location: str
+        :keyword country: The country in which the peering location exists.
+        :paramtype country: str
+        :keyword azure_region: The Azure region associated with the peering location.
+        :paramtype azure_region: str
+        """
         super(PeeringLocation, self).__init__(**kwargs)
         self.kind = kind
         self.direct = direct
@@ -796,10 +1385,10 @@ class PeeringLocation(Resource):
 class PeeringLocationListResult(msrest.serialization.Model):
     """The paginated list of peering locations.
 
-    :param value: The list of peering locations.
-    :type value: list[~azure.mgmt.peering.models.PeeringLocation]
-    :param next_link: The link to fetch the next page of peering locations.
-    :type next_link: str
+    :ivar value: The list of peering locations.
+    :vartype value: list[~azure.mgmt.peering.models.PeeringLocation]
+    :ivar next_link: The link to fetch the next page of peering locations.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -810,10 +1399,16 @@ class PeeringLocationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PeeringLocation"]] = None,
+        value: Optional[List["_models.PeeringLocation"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of peering locations.
+        :paramtype value: list[~azure.mgmt.peering.models.PeeringLocation]
+        :keyword next_link: The link to fetch the next page of peering locations.
+        :paramtype next_link: str
+        """
         super(PeeringLocationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -822,10 +1417,10 @@ class PeeringLocationListResult(msrest.serialization.Model):
 class PeeringLocationPropertiesDirect(msrest.serialization.Model):
     """The properties that define a direct peering location.
 
-    :param peering_facilities: The list of direct peering facilities at the peering location.
-    :type peering_facilities: list[~azure.mgmt.peering.models.DirectPeeringFacility]
-    :param bandwidth_offers: The list of bandwidth offers available at the peering location.
-    :type bandwidth_offers: list[~azure.mgmt.peering.models.PeeringBandwidthOffer]
+    :ivar peering_facilities: The list of direct peering facilities at the peering location.
+    :vartype peering_facilities: list[~azure.mgmt.peering.models.DirectPeeringFacility]
+    :ivar bandwidth_offers: The list of bandwidth offers available at the peering location.
+    :vartype bandwidth_offers: list[~azure.mgmt.peering.models.PeeringBandwidthOffer]
     """
 
     _attribute_map = {
@@ -836,10 +1431,16 @@ class PeeringLocationPropertiesDirect(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        peering_facilities: Optional[List["DirectPeeringFacility"]] = None,
-        bandwidth_offers: Optional[List["PeeringBandwidthOffer"]] = None,
+        peering_facilities: Optional[List["_models.DirectPeeringFacility"]] = None,
+        bandwidth_offers: Optional[List["_models.PeeringBandwidthOffer"]] = None,
         **kwargs
     ):
+        """
+        :keyword peering_facilities: The list of direct peering facilities at the peering location.
+        :paramtype peering_facilities: list[~azure.mgmt.peering.models.DirectPeeringFacility]
+        :keyword bandwidth_offers: The list of bandwidth offers available at the peering location.
+        :paramtype bandwidth_offers: list[~azure.mgmt.peering.models.PeeringBandwidthOffer]
+        """
         super(PeeringLocationPropertiesDirect, self).__init__(**kwargs)
         self.peering_facilities = peering_facilities
         self.bandwidth_offers = bandwidth_offers
@@ -848,8 +1449,8 @@ class PeeringLocationPropertiesDirect(msrest.serialization.Model):
 class PeeringLocationPropertiesExchange(msrest.serialization.Model):
     """The properties that define an exchange peering location.
 
-    :param peering_facilities: The list of exchange peering facilities at the peering location.
-    :type peering_facilities: list[~azure.mgmt.peering.models.ExchangePeeringFacility]
+    :ivar peering_facilities: The list of exchange peering facilities at the peering location.
+    :vartype peering_facilities: list[~azure.mgmt.peering.models.ExchangePeeringFacility]
     """
 
     _attribute_map = {
@@ -859,9 +1460,13 @@ class PeeringLocationPropertiesExchange(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        peering_facilities: Optional[List["ExchangePeeringFacility"]] = None,
+        peering_facilities: Optional[List["_models.ExchangePeeringFacility"]] = None,
         **kwargs
     ):
+        """
+        :keyword peering_facilities: The list of exchange peering facilities at the peering location.
+        :paramtype peering_facilities: list[~azure.mgmt.peering.models.ExchangePeeringFacility]
+        """
         super(PeeringLocationPropertiesExchange, self).__init__(**kwargs)
         self.peering_facilities = peering_facilities
 
@@ -869,17 +1474,23 @@ class PeeringLocationPropertiesExchange(msrest.serialization.Model):
 class PeeringPropertiesDirect(msrest.serialization.Model):
     """The properties that define a direct peering.
 
-    :param connections: The set of connections that constitute a direct peering.
-    :type connections: list[~azure.mgmt.peering.models.DirectConnection]
-    :param use_for_peering_service: The flag that indicates whether or not the peering is used for
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar connections: The set of connections that constitute a direct peering.
+    :vartype connections: list[~azure.mgmt.peering.models.DirectConnection]
+    :ivar use_for_peering_service: The flag that indicates whether or not the peering is used for
      peering service.
-    :type use_for_peering_service: bool
-    :param peer_asn: The reference of the peer ASN.
-    :type peer_asn: ~azure.mgmt.peering.models.SubResource
-    :param direct_peering_type: The type of direct peering. Possible values include: "Edge",
-     "Transit", "Cdn", "Internal".
-    :type direct_peering_type: str or ~azure.mgmt.peering.models.DirectPeeringType
+    :vartype use_for_peering_service: bool
+    :ivar peer_asn: The reference of the peer ASN.
+    :vartype peer_asn: ~azure.mgmt.peering.models.SubResource
+    :ivar direct_peering_type: The type of direct peering. Known values are: "Edge", "Transit",
+     "Cdn", "Internal", "Ix", "IxRs", "Voice", "EdgeZoneForOperators".
+    :vartype direct_peering_type: str or ~azure.mgmt.peering.models.DirectPeeringType
     """
+
+    _validation = {
+        'use_for_peering_service': {'readonly': True},
+    }
 
     _attribute_map = {
         'connections': {'key': 'connections', 'type': '[DirectConnection]'},
@@ -891,15 +1502,23 @@ class PeeringPropertiesDirect(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        connections: Optional[List["DirectConnection"]] = None,
-        use_for_peering_service: Optional[bool] = None,
-        peer_asn: Optional["SubResource"] = None,
-        direct_peering_type: Optional[Union[str, "DirectPeeringType"]] = None,
+        connections: Optional[List["_models.DirectConnection"]] = None,
+        peer_asn: Optional["_models.SubResource"] = None,
+        direct_peering_type: Optional[Union[str, "_models.DirectPeeringType"]] = None,
         **kwargs
     ):
+        """
+        :keyword connections: The set of connections that constitute a direct peering.
+        :paramtype connections: list[~azure.mgmt.peering.models.DirectConnection]
+        :keyword peer_asn: The reference of the peer ASN.
+        :paramtype peer_asn: ~azure.mgmt.peering.models.SubResource
+        :keyword direct_peering_type: The type of direct peering. Known values are: "Edge", "Transit",
+         "Cdn", "Internal", "Ix", "IxRs", "Voice", "EdgeZoneForOperators".
+        :paramtype direct_peering_type: str or ~azure.mgmt.peering.models.DirectPeeringType
+        """
         super(PeeringPropertiesDirect, self).__init__(**kwargs)
         self.connections = connections
-        self.use_for_peering_service = use_for_peering_service
+        self.use_for_peering_service = None
         self.peer_asn = peer_asn
         self.direct_peering_type = direct_peering_type
 
@@ -907,10 +1526,10 @@ class PeeringPropertiesDirect(msrest.serialization.Model):
 class PeeringPropertiesExchange(msrest.serialization.Model):
     """The properties that define an exchange peering.
 
-    :param connections: The set of connections that constitute an exchange peering.
-    :type connections: list[~azure.mgmt.peering.models.ExchangeConnection]
-    :param peer_asn: The reference of the peer ASN.
-    :type peer_asn: ~azure.mgmt.peering.models.SubResource
+    :ivar connections: The set of connections that constitute an exchange peering.
+    :vartype connections: list[~azure.mgmt.peering.models.ExchangeConnection]
+    :ivar peer_asn: The reference of the peer ASN.
+    :vartype peer_asn: ~azure.mgmt.peering.models.SubResource
     """
 
     _attribute_map = {
@@ -921,13 +1540,293 @@ class PeeringPropertiesExchange(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        connections: Optional[List["ExchangeConnection"]] = None,
-        peer_asn: Optional["SubResource"] = None,
+        connections: Optional[List["_models.ExchangeConnection"]] = None,
+        peer_asn: Optional["_models.SubResource"] = None,
         **kwargs
     ):
+        """
+        :keyword connections: The set of connections that constitute an exchange peering.
+        :paramtype connections: list[~azure.mgmt.peering.models.ExchangeConnection]
+        :keyword peer_asn: The reference of the peer ASN.
+        :paramtype peer_asn: ~azure.mgmt.peering.models.SubResource
+        """
         super(PeeringPropertiesExchange, self).__init__(**kwargs)
         self.connections = connections
         self.peer_asn = peer_asn
+
+
+class PeeringReceivedRoute(msrest.serialization.Model):
+    """The properties that define a received route.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar prefix: The prefix.
+    :vartype prefix: str
+    :ivar next_hop: The next hop for the prefix.
+    :vartype next_hop: str
+    :ivar as_path: The AS path for the prefix.
+    :vartype as_path: str
+    :ivar origin_as_validation_state: The origin AS change information for the prefix.
+    :vartype origin_as_validation_state: str
+    :ivar rpki_validation_state: The RPKI validation state for the prefix and origin AS that's
+     listed in the AS path.
+    :vartype rpki_validation_state: str
+    :ivar trust_anchor: The authority which holds the Route Origin Authorization record for the
+     prefix, if any.
+    :vartype trust_anchor: str
+    :ivar received_timestamp: The received timestamp associated with the prefix.
+    :vartype received_timestamp: str
+    """
+
+    _validation = {
+        'prefix': {'readonly': True},
+        'next_hop': {'readonly': True},
+        'as_path': {'readonly': True},
+        'origin_as_validation_state': {'readonly': True},
+        'rpki_validation_state': {'readonly': True},
+        'trust_anchor': {'readonly': True},
+        'received_timestamp': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'prefix': {'key': 'prefix', 'type': 'str'},
+        'next_hop': {'key': 'nextHop', 'type': 'str'},
+        'as_path': {'key': 'asPath', 'type': 'str'},
+        'origin_as_validation_state': {'key': 'originAsValidationState', 'type': 'str'},
+        'rpki_validation_state': {'key': 'rpkiValidationState', 'type': 'str'},
+        'trust_anchor': {'key': 'trustAnchor', 'type': 'str'},
+        'received_timestamp': {'key': 'receivedTimestamp', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(PeeringReceivedRoute, self).__init__(**kwargs)
+        self.prefix = None
+        self.next_hop = None
+        self.as_path = None
+        self.origin_as_validation_state = None
+        self.rpki_validation_state = None
+        self.trust_anchor = None
+        self.received_timestamp = None
+
+
+class PeeringReceivedRouteListResult(msrest.serialization.Model):
+    """The paginated list of received routes for the peering.
+
+    :ivar value: The list of received routes for the peering.
+    :vartype value: list[~azure.mgmt.peering.models.PeeringReceivedRoute]
+    :ivar next_link: The link to fetch the next page of received routes for the peering.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PeeringReceivedRoute]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.PeeringReceivedRoute"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: The list of received routes for the peering.
+        :paramtype value: list[~azure.mgmt.peering.models.PeeringReceivedRoute]
+        :keyword next_link: The link to fetch the next page of received routes for the peering.
+        :paramtype next_link: str
+        """
+        super(PeeringReceivedRouteListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class PeeringRegisteredAsn(Resource):
+    """The customer's ASN that is registered by the peering service provider.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar asn: The customer's ASN from which traffic originates.
+    :vartype asn: int
+    :ivar peering_service_prefix_key: The peering service prefix key that is to be shared with the
+     customer.
+    :vartype peering_service_prefix_key: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", "Failed".
+    :vartype provisioning_state: str or ~azure.mgmt.peering.models.ProvisioningState
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'peering_service_prefix_key': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'asn': {'key': 'properties.asn', 'type': 'int'},
+        'peering_service_prefix_key': {'key': 'properties.peeringServicePrefixKey', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        asn: Optional[int] = None,
+        **kwargs
+    ):
+        """
+        :keyword asn: The customer's ASN from which traffic originates.
+        :paramtype asn: int
+        """
+        super(PeeringRegisteredAsn, self).__init__(**kwargs)
+        self.asn = asn
+        self.peering_service_prefix_key = None
+        self.provisioning_state = None
+
+
+class PeeringRegisteredAsnListResult(msrest.serialization.Model):
+    """The paginated list of peering registered ASNs.
+
+    :ivar value: The list of peering registered ASNs.
+    :vartype value: list[~azure.mgmt.peering.models.PeeringRegisteredAsn]
+    :ivar next_link: The link to fetch the next page of peering registered ASNs.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PeeringRegisteredAsn]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.PeeringRegisteredAsn"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: The list of peering registered ASNs.
+        :paramtype value: list[~azure.mgmt.peering.models.PeeringRegisteredAsn]
+        :keyword next_link: The link to fetch the next page of peering registered ASNs.
+        :paramtype next_link: str
+        """
+        super(PeeringRegisteredAsnListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class PeeringRegisteredPrefix(Resource):
+    """The customer's prefix that is registered by the peering service provider.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar prefix: The customer's prefix from which traffic originates.
+    :vartype prefix: str
+    :ivar prefix_validation_state: The prefix validation state. Known values are: "None",
+     "Invalid", "Verified", "Failed", "Pending", "Warning", "Unknown".
+    :vartype prefix_validation_state: str or ~azure.mgmt.peering.models.PrefixValidationState
+    :ivar peering_service_prefix_key: The peering service prefix key that is to be shared with the
+     customer.
+    :vartype peering_service_prefix_key: str
+    :ivar error_message: The error message associated with the validation state, if any.
+    :vartype error_message: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", "Failed".
+    :vartype provisioning_state: str or ~azure.mgmt.peering.models.ProvisioningState
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'prefix_validation_state': {'readonly': True},
+        'peering_service_prefix_key': {'readonly': True},
+        'error_message': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'prefix': {'key': 'properties.prefix', 'type': 'str'},
+        'prefix_validation_state': {'key': 'properties.prefixValidationState', 'type': 'str'},
+        'peering_service_prefix_key': {'key': 'properties.peeringServicePrefixKey', 'type': 'str'},
+        'error_message': {'key': 'properties.errorMessage', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        prefix: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword prefix: The customer's prefix from which traffic originates.
+        :paramtype prefix: str
+        """
+        super(PeeringRegisteredPrefix, self).__init__(**kwargs)
+        self.prefix = prefix
+        self.prefix_validation_state = None
+        self.peering_service_prefix_key = None
+        self.error_message = None
+        self.provisioning_state = None
+
+
+class PeeringRegisteredPrefixListResult(msrest.serialization.Model):
+    """The paginated list of peering registered prefixes.
+
+    :ivar value: The list of peering registered prefixes.
+    :vartype value: list[~azure.mgmt.peering.models.PeeringRegisteredPrefix]
+    :ivar next_link: The link to fetch the next page of peering registered prefixes.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PeeringRegisteredPrefix]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.PeeringRegisteredPrefix"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: The list of peering registered prefixes.
+        :paramtype value: list[~azure.mgmt.peering.models.PeeringRegisteredPrefix]
+        :keyword next_link: The link to fetch the next page of peering registered prefixes.
+        :paramtype next_link: str
+        """
+        super(PeeringRegisteredPrefixListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class PeeringService(Resource):
@@ -943,17 +1842,28 @@ class PeeringService(Resource):
     :vartype id: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: Required. The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param peering_service_location: The PeeringServiceLocation of the Customer.
-    :type peering_service_location: str
-    :param peering_service_provider: The MAPS Provider Name.
-    :type peering_service_provider: str
-    :ivar provisioning_state: The provisioning state of the resource. Possible values include:
+    :ivar sku: The SKU that defines the type of the peering service.
+    :vartype sku: ~azure.mgmt.peering.models.PeeringServiceSku
+    :ivar location: Required. The location of the resource.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar peering_service_location: The location (state/province) of the customer.
+    :vartype peering_service_location: str
+    :ivar peering_service_provider: The name of the service provider.
+    :vartype peering_service_provider: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.peering.models.ProvisioningState
+    :ivar provider_primary_peering_location: The primary peering (Microsoft/service provider)
+     location to be used for customer traffic.
+    :vartype provider_primary_peering_location: str
+    :ivar provider_backup_peering_location: The backup peering (Microsoft/service provider)
+     location to be used for customer traffic.
+    :vartype provider_backup_peering_location: str
+    :ivar log_analytics_workspace_properties: The Log Analytics Workspace Properties.
+    :vartype log_analytics_workspace_properties:
+     ~azure.mgmt.peering.models.LogAnalyticsWorkspaceProperties
     """
 
     _validation = {
@@ -968,37 +1878,136 @@ class PeeringService(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'PeeringServiceSku'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'peering_service_location': {'key': 'properties.peeringServiceLocation', 'type': 'str'},
         'peering_service_provider': {'key': 'properties.peeringServiceProvider', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'provider_primary_peering_location': {'key': 'properties.providerPrimaryPeeringLocation', 'type': 'str'},
+        'provider_backup_peering_location': {'key': 'properties.providerBackupPeeringLocation', 'type': 'str'},
+        'log_analytics_workspace_properties': {'key': 'properties.logAnalyticsWorkspaceProperties', 'type': 'LogAnalyticsWorkspaceProperties'},
     }
 
     def __init__(
         self,
         *,
         location: str,
+        sku: Optional["_models.PeeringServiceSku"] = None,
         tags: Optional[Dict[str, str]] = None,
         peering_service_location: Optional[str] = None,
         peering_service_provider: Optional[str] = None,
+        provider_primary_peering_location: Optional[str] = None,
+        provider_backup_peering_location: Optional[str] = None,
+        log_analytics_workspace_properties: Optional["_models.LogAnalyticsWorkspaceProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword sku: The SKU that defines the type of the peering service.
+        :paramtype sku: ~azure.mgmt.peering.models.PeeringServiceSku
+        :keyword location: Required. The location of the resource.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword peering_service_location: The location (state/province) of the customer.
+        :paramtype peering_service_location: str
+        :keyword peering_service_provider: The name of the service provider.
+        :paramtype peering_service_provider: str
+        :keyword provider_primary_peering_location: The primary peering (Microsoft/service provider)
+         location to be used for customer traffic.
+        :paramtype provider_primary_peering_location: str
+        :keyword provider_backup_peering_location: The backup peering (Microsoft/service provider)
+         location to be used for customer traffic.
+        :paramtype provider_backup_peering_location: str
+        :keyword log_analytics_workspace_properties: The Log Analytics Workspace Properties.
+        :paramtype log_analytics_workspace_properties:
+         ~azure.mgmt.peering.models.LogAnalyticsWorkspaceProperties
+        """
         super(PeeringService, self).__init__(**kwargs)
+        self.sku = sku
         self.location = location
         self.tags = tags
         self.peering_service_location = peering_service_location
         self.peering_service_provider = peering_service_provider
         self.provisioning_state = None
+        self.provider_primary_peering_location = provider_primary_peering_location
+        self.provider_backup_peering_location = provider_backup_peering_location
+        self.log_analytics_workspace_properties = log_analytics_workspace_properties
+
+
+class PeeringServiceCountry(Resource):
+    """The peering service country.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(PeeringServiceCountry, self).__init__(**kwargs)
+
+
+class PeeringServiceCountryListResult(msrest.serialization.Model):
+    """The paginated list of peering service countries.
+
+    :ivar value: The list of peering service countries.
+    :vartype value: list[~azure.mgmt.peering.models.PeeringServiceCountry]
+    :ivar next_link: The link to fetch the next page of peering service countries.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PeeringServiceCountry]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.PeeringServiceCountry"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: The list of peering service countries.
+        :paramtype value: list[~azure.mgmt.peering.models.PeeringServiceCountry]
+        :keyword next_link: The link to fetch the next page of peering service countries.
+        :paramtype next_link: str
+        """
+        super(PeeringServiceCountryListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class PeeringServiceListResult(msrest.serialization.Model):
     """The paginated list of peering services.
 
-    :param value: The list of peering services.
-    :type value: list[~azure.mgmt.peering.models.PeeringService]
-    :param next_link: The link to fetch the next page of peering services.
-    :type next_link: str
+    :ivar value: The list of peering services.
+    :vartype value: list[~azure.mgmt.peering.models.PeeringService]
+    :ivar next_link: The link to fetch the next page of peering services.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1009,17 +2018,23 @@ class PeeringServiceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PeeringService"]] = None,
+        value: Optional[List["_models.PeeringService"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of peering services.
+        :paramtype value: list[~azure.mgmt.peering.models.PeeringService]
+        :keyword next_link: The link to fetch the next page of peering services.
+        :paramtype next_link: str
+        """
         super(PeeringServiceListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
 class PeeringServiceLocation(Resource):
-    """PeeringService location.
+    """The peering service location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1029,12 +2044,12 @@ class PeeringServiceLocation(Resource):
     :vartype id: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param country: Country of the customer.
-    :type country: str
-    :param state: State of the customer.
-    :type state: str
-    :param azure_region: Azure region for the location.
-    :type azure_region: str
+    :ivar country: Country of the customer.
+    :vartype country: str
+    :ivar state: State of the customer.
+    :vartype state: str
+    :ivar azure_region: Azure region for the location.
+    :vartype azure_region: str
     """
 
     _validation = {
@@ -1060,6 +2075,14 @@ class PeeringServiceLocation(Resource):
         azure_region: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword country: Country of the customer.
+        :paramtype country: str
+        :keyword state: State of the customer.
+        :paramtype state: str
+        :keyword azure_region: Azure region for the location.
+        :paramtype azure_region: str
+        """
         super(PeeringServiceLocation, self).__init__(**kwargs)
         self.country = country
         self.state = state
@@ -1069,10 +2092,10 @@ class PeeringServiceLocation(Resource):
 class PeeringServiceLocationListResult(msrest.serialization.Model):
     """The paginated list of peering service locations.
 
-    :param value: The list of peering service locations.
-    :type value: list[~azure.mgmt.peering.models.PeeringServiceLocation]
-    :param next_link: The link to fetch the next page of peering service locations.
-    :type next_link: str
+    :ivar value: The list of peering service locations.
+    :vartype value: list[~azure.mgmt.peering.models.PeeringServiceLocation]
+    :ivar next_link: The link to fetch the next page of peering service locations.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1083,10 +2106,16 @@ class PeeringServiceLocationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PeeringServiceLocation"]] = None,
+        value: Optional[List["_models.PeeringServiceLocation"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of peering service locations.
+        :paramtype value: list[~azure.mgmt.peering.models.PeeringServiceLocation]
+        :keyword next_link: The link to fetch the next page of peering service locations.
+        :paramtype next_link: str
+        """
         super(PeeringServiceLocationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1103,15 +2132,21 @@ class PeeringServicePrefix(Resource):
     :vartype id: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param prefix: Valid route prefix.
-    :type prefix: str
-    :param prefix_validation_state: The prefix validation state. Possible values include: "None",
-     "Invalid", "Verified", "Failed", "Pending", "Unknown".
-    :type prefix_validation_state: str or ~azure.mgmt.peering.models.PrefixValidationState
-    :param learned_type: The prefix learned type. Possible values include: "None", "ViaPartner",
+    :ivar prefix: The prefix from which your traffic originates.
+    :vartype prefix: str
+    :ivar prefix_validation_state: The prefix validation state. Known values are: "None",
+     "Invalid", "Verified", "Failed", "Pending", "Warning", "Unknown".
+    :vartype prefix_validation_state: str or ~azure.mgmt.peering.models.PrefixValidationState
+    :ivar learned_type: The prefix learned type. Known values are: "None", "ViaServiceProvider",
      "ViaSession".
-    :type learned_type: str or ~azure.mgmt.peering.models.LearnedType
-    :ivar provisioning_state: The provisioning state of the resource. Possible values include:
+    :vartype learned_type: str or ~azure.mgmt.peering.models.LearnedType
+    :ivar error_message: The error message for validation state.
+    :vartype error_message: str
+    :ivar events: The list of events for peering service prefix.
+    :vartype events: list[~azure.mgmt.peering.models.PeeringServicePrefixEvent]
+    :ivar peering_service_prefix_key: The peering service prefix key.
+    :vartype peering_service_prefix_key: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.peering.models.ProvisioningState
     """
@@ -1120,6 +2155,10 @@ class PeeringServicePrefix(Resource):
         'name': {'readonly': True},
         'id': {'readonly': True},
         'type': {'readonly': True},
+        'prefix_validation_state': {'readonly': True},
+        'learned_type': {'readonly': True},
+        'error_message': {'readonly': True},
+        'events': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -1130,6 +2169,9 @@ class PeeringServicePrefix(Resource):
         'prefix': {'key': 'properties.prefix', 'type': 'str'},
         'prefix_validation_state': {'key': 'properties.prefixValidationState', 'type': 'str'},
         'learned_type': {'key': 'properties.learnedType', 'type': 'str'},
+        'error_message': {'key': 'properties.errorMessage', 'type': 'str'},
+        'events': {'key': 'properties.events', 'type': '[PeeringServicePrefixEvent]'},
+        'peering_service_prefix_key': {'key': 'properties.peeringServicePrefixKey', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
@@ -1137,24 +2179,79 @@ class PeeringServicePrefix(Resource):
         self,
         *,
         prefix: Optional[str] = None,
-        prefix_validation_state: Optional[Union[str, "PrefixValidationState"]] = None,
-        learned_type: Optional[Union[str, "LearnedType"]] = None,
+        peering_service_prefix_key: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword prefix: The prefix from which your traffic originates.
+        :paramtype prefix: str
+        :keyword peering_service_prefix_key: The peering service prefix key.
+        :paramtype peering_service_prefix_key: str
+        """
         super(PeeringServicePrefix, self).__init__(**kwargs)
         self.prefix = prefix
-        self.prefix_validation_state = prefix_validation_state
-        self.learned_type = learned_type
+        self.prefix_validation_state = None
+        self.learned_type = None
+        self.error_message = None
+        self.events = None
+        self.peering_service_prefix_key = peering_service_prefix_key
         self.provisioning_state = None
 
 
-class PeeringServicePrefixListResult(msrest.serialization.Model):
-    """The paginated list of [T].
+class PeeringServicePrefixEvent(msrest.serialization.Model):
+    """The details of the event associated with a prefix.
 
-    :param value: The list of [T].
-    :type value: list[~azure.mgmt.peering.models.PeeringServicePrefix]
-    :param next_link: The link to fetch the next page of [T].
-    :type next_link: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar event_timestamp: The timestamp of the event associated with a prefix.
+    :vartype event_timestamp: ~datetime.datetime
+    :ivar event_type: The type of the event associated with a prefix.
+    :vartype event_type: str
+    :ivar event_summary: The summary of the event associated with a prefix.
+    :vartype event_summary: str
+    :ivar event_level: The level of the event associated with a prefix.
+    :vartype event_level: str
+    :ivar event_description: The description of the event associated with a prefix.
+    :vartype event_description: str
+    """
+
+    _validation = {
+        'event_timestamp': {'readonly': True},
+        'event_type': {'readonly': True},
+        'event_summary': {'readonly': True},
+        'event_level': {'readonly': True},
+        'event_description': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'event_timestamp': {'key': 'eventTimestamp', 'type': 'iso-8601'},
+        'event_type': {'key': 'eventType', 'type': 'str'},
+        'event_summary': {'key': 'eventSummary', 'type': 'str'},
+        'event_level': {'key': 'eventLevel', 'type': 'str'},
+        'event_description': {'key': 'eventDescription', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(PeeringServicePrefixEvent, self).__init__(**kwargs)
+        self.event_timestamp = None
+        self.event_type = None
+        self.event_summary = None
+        self.event_level = None
+        self.event_description = None
+
+
+class PeeringServicePrefixListResult(msrest.serialization.Model):
+    """The paginated list of peering service prefixes.
+
+    :ivar value: The list of peering service prefixes.
+    :vartype value: list[~azure.mgmt.peering.models.PeeringServicePrefix]
+    :ivar next_link: The link to fetch the next page of peering service prefixes.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1165,10 +2262,16 @@ class PeeringServicePrefixListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PeeringServicePrefix"]] = None,
+        value: Optional[List["_models.PeeringServicePrefix"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of peering service prefixes.
+        :paramtype value: list[~azure.mgmt.peering.models.PeeringServicePrefix]
+        :keyword next_link: The link to fetch the next page of peering service prefixes.
+        :paramtype next_link: str
+        """
         super(PeeringServicePrefixListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1185,8 +2288,11 @@ class PeeringServiceProvider(Resource):
     :vartype id: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param service_provider_name: The name of the service provider.
-    :type service_provider_name: str
+    :ivar service_provider_name: The name of the service provider.
+    :vartype service_provider_name: str
+    :ivar peering_locations: The list of locations at which the service provider peers with
+     Microsoft.
+    :vartype peering_locations: list[str]
     """
 
     _validation = {
@@ -1200,25 +2306,35 @@ class PeeringServiceProvider(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'service_provider_name': {'key': 'properties.serviceProviderName', 'type': 'str'},
+        'peering_locations': {'key': 'properties.peeringLocations', 'type': '[str]'},
     }
 
     def __init__(
         self,
         *,
         service_provider_name: Optional[str] = None,
+        peering_locations: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword service_provider_name: The name of the service provider.
+        :paramtype service_provider_name: str
+        :keyword peering_locations: The list of locations at which the service provider peers with
+         Microsoft.
+        :paramtype peering_locations: list[str]
+        """
         super(PeeringServiceProvider, self).__init__(**kwargs)
         self.service_provider_name = service_provider_name
+        self.peering_locations = peering_locations
 
 
 class PeeringServiceProviderListResult(msrest.serialization.Model):
     """The paginated list of peering service providers.
 
-    :param value: The list of peering service providers.
-    :type value: list[~azure.mgmt.peering.models.PeeringServiceProvider]
-    :param next_link: The link to fetch the next page of peering service providers.
-    :type next_link: str
+    :ivar value: The list of peering service providers.
+    :vartype value: list[~azure.mgmt.peering.models.PeeringServiceProvider]
+    :ivar next_link: The link to fetch the next page of peering service providers.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1229,30 +2345,66 @@ class PeeringServiceProviderListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PeeringServiceProvider"]] = None,
+        value: Optional[List["_models.PeeringServiceProvider"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of peering service providers.
+        :paramtype value: list[~azure.mgmt.peering.models.PeeringServiceProvider]
+        :keyword next_link: The link to fetch the next page of peering service providers.
+        :paramtype next_link: str
+        """
         super(PeeringServiceProviderListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
+class PeeringServiceSku(msrest.serialization.Model):
+    """The SKU that defines the type of the peering service.
+
+    :ivar name: The name of the peering service SKU.
+    :vartype name: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword name: The name of the peering service SKU.
+        :paramtype name: str
+        """
+        super(PeeringServiceSku, self).__init__(**kwargs)
+        self.name = name
+
+
 class PeeringSku(msrest.serialization.Model):
     """The SKU that defines the tier and kind of the peering.
 
-    :param name: The name of the peering SKU. Possible values include: "Basic_Exchange_Free",
-     "Basic_Direct_Free", "Premium_Direct_Free", "Premium_Exchange_Metered",
-     "Premium_Direct_Metered", "Premium_Direct_Unlimited".
-    :type name: str or ~azure.mgmt.peering.models.Name
-    :param tier: The tier of the peering SKU. Possible values include: "Basic", "Premium".
-    :type tier: str or ~azure.mgmt.peering.models.Tier
-    :param family: The family of the peering SKU. Possible values include: "Direct", "Exchange".
-    :type family: str or ~azure.mgmt.peering.models.Family
-    :param size: The size of the peering SKU. Possible values include: "Free", "Metered",
-     "Unlimited".
-    :type size: str or ~azure.mgmt.peering.models.Size
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the peering SKU.
+    :vartype name: str
+    :ivar tier: The tier of the peering SKU. Known values are: "Basic", "Premium".
+    :vartype tier: str or ~azure.mgmt.peering.models.Tier
+    :ivar family: The family of the peering SKU. Known values are: "Direct", "Exchange".
+    :vartype family: str or ~azure.mgmt.peering.models.Family
+    :ivar size: The size of the peering SKU. Known values are: "Free", "Metered", "Unlimited".
+    :vartype size: str or ~azure.mgmt.peering.models.Size
     """
+
+    _validation = {
+        'tier': {'readonly': True},
+        'family': {'readonly': True},
+        'size': {'readonly': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -1264,24 +2416,25 @@ class PeeringSku(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: Optional[Union[str, "Name"]] = None,
-        tier: Optional[Union[str, "Tier"]] = None,
-        family: Optional[Union[str, "Family"]] = None,
-        size: Optional[Union[str, "Size"]] = None,
+        name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: The name of the peering SKU.
+        :paramtype name: str
+        """
         super(PeeringSku, self).__init__(**kwargs)
         self.name = name
-        self.tier = tier
-        self.family = family
-        self.size = size
+        self.tier = None
+        self.family = None
+        self.size = None
 
 
 class ResourceTags(msrest.serialization.Model):
     """The resource tags.
 
-    :param tags: A set of tags. Gets or sets the tags, a dictionary of descriptors arm object.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Gets or sets the tags, a dictionary of descriptors arm object.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -1294,15 +2447,46 @@ class ResourceTags(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Gets or sets the tags, a dictionary of descriptors arm object.
+        :paramtype tags: dict[str, str]
+        """
         super(ResourceTags, self).__init__(**kwargs)
         self.tags = tags
+
+
+class ServiceSpecification(msrest.serialization.Model):
+    """Service specification payload.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar metric_specifications: Specifications of the Metrics for Azure Monitoring.
+    :vartype metric_specifications: list[~azure.mgmt.peering.models.MetricSpecification]
+    """
+
+    _validation = {
+        'metric_specifications': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ServiceSpecification, self).__init__(**kwargs)
+        self.metric_specifications = None
 
 
 class SubResource(msrest.serialization.Model):
     """The sub resource.
 
-    :param id: The identifier of the referenced resource.
-    :type id: str
+    :ivar id: The identifier of the referenced resource.
+    :vartype id: str
     """
 
     _attribute_map = {
@@ -1315,5 +2499,9 @@ class SubResource(msrest.serialization.Model):
         id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The identifier of the referenced resource.
+        :paramtype id: str
+        """
         super(SubResource, self).__init__(**kwargs)
         self.id = id

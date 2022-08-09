@@ -18,28 +18,53 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._peering_management_client_operations import build_check_service_provider_availability_request
+from ...operations._looking_glass_operations import build_invoke_request
 from .._vendor import MixinABC
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class PeeringManagementClientOperationsMixin(MixinABC):
+class LookingGlassOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.peering.aio.PeeringManagementClient`'s
+        :attr:`looking_glass` attribute.
+    """
+
+    models = _models
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
-    async def check_service_provider_availability(
+    async def invoke(
         self,
-        check_service_provider_availability_input: _models.CheckServiceProviderAvailabilityInput,
+        command: Union[str, "_models.LookingGlassCommand"],
+        source_type: Union[str, "_models.LookingGlassSourceType"],
+        source_location: str,
+        destination_ip: str,
         **kwargs: Any
-    ) -> Union[str, "_models.Enum0"]:
-        """Checks if the peering service provider is present within 1000 miles of customer's location.
+    ) -> _models.LookingGlassOutput:
+        """Run looking glass functionality.
 
-        :param check_service_provider_availability_input: The CheckServiceProviderAvailabilityInput
-         indicating customer location and service provider.
-        :type check_service_provider_availability_input:
-         ~azure.mgmt.peering.models.CheckServiceProviderAvailabilityInput
+        :param command: The command to be executed: ping, traceroute, bgpRoute.
+        :type command: str or ~azure.mgmt.peering.models.LookingGlassCommand
+        :param source_type: The type of the source: Edge site or Azure Region.
+        :type source_type: str or ~azure.mgmt.peering.models.LookingGlassSourceType
+        :param source_location: The location of the source.
+        :type source_location: str
+        :param destination_ip: The IP address of the destination.
+        :type destination_ip: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Enum0, or the result of cls(response)
-        :rtype: str or ~azure.mgmt.peering.models.Enum0
+        :return: LookingGlassOutput, or the result of cls(response)
+        :rtype: ~azure.mgmt.peering.models.LookingGlassOutput
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -47,21 +72,21 @@ class PeeringManagementClientOperationsMixin(MixinABC):
         }
         error_map.update(kwargs.pop('error_map', {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union[str, "_models.Enum0"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.LookingGlassOutput]
 
-        _json = self._serialize.body(check_service_provider_availability_input, 'CheckServiceProviderAvailabilityInput')
-
-        request = build_check_service_provider_availability_request(
+        
+        request = build_invoke_request(
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self.check_service_provider_availability.metadata['url'],
+            command=command,
+            source_type=source_type,
+            source_location=source_location,
+            destination_ip=destination_ip,
+            template_url=self.invoke.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -80,12 +105,12 @@ class PeeringManagementClientOperationsMixin(MixinABC):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('str', pipeline_response)
+        deserialized = self._deserialize('LookingGlassOutput', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    check_service_provider_availability.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.Peering/checkServiceProviderAvailability"}  # type: ignore
+    invoke.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.Peering/lookingGlass"}  # type: ignore
 

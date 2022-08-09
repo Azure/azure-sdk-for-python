@@ -6,119 +6,161 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from copy import deepcopy
+from typing import Any, TYPE_CHECKING
 
-from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
+
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.mgmt.core import ARMPipelineClient
+
+from . import models
+from ._configuration import PeeringManagementClientConfiguration
+from .operations import CdnPeeringPrefixesOperations, ConnectionMonitorTestsOperations, LegacyPeeringsOperations, LookingGlassOperations, Operations, PeerAsnsOperations, PeeringLocationsOperations, PeeringManagementClientOperationsMixin, PeeringServiceCountriesOperations, PeeringServiceLocationsOperations, PeeringServiceProvidersOperations, PeeringServicesOperations, PeeringsOperations, PrefixesOperations, ReceivedRoutesOperations, RegisteredAsnsOperations, RegisteredPrefixesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._configuration import PeeringManagementClientConfiguration
-from .operations import PeeringManagementClientOperationsMixin
-from .operations import LegacyPeeringsOperations
-from .operations import Operations
-from .operations import PeerAsnsOperations
-from .operations import PeeringLocationsOperations
-from .operations import PeeringsOperations
-from .operations import PeeringServiceLocationsOperations
-from .operations import PeeringServicePrefixesOperations
-from .operations import PrefixesOperations
-from .operations import PeeringServiceProvidersOperations
-from .operations import PeeringServicesOperations
-from . import models
-
-
-class PeeringManagementClient(PeeringManagementClientOperationsMixin):
+class PeeringManagementClient(PeeringManagementClientOperationsMixin):    # pylint: disable=too-many-instance-attributes
     """Peering Client.
 
+    :ivar cdn_peering_prefixes: CdnPeeringPrefixesOperations operations
+    :vartype cdn_peering_prefixes: azure.mgmt.peering.operations.CdnPeeringPrefixesOperations
     :ivar legacy_peerings: LegacyPeeringsOperations operations
     :vartype legacy_peerings: azure.mgmt.peering.operations.LegacyPeeringsOperations
+    :ivar looking_glass: LookingGlassOperations operations
+    :vartype looking_glass: azure.mgmt.peering.operations.LookingGlassOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.peering.operations.Operations
     :ivar peer_asns: PeerAsnsOperations operations
     :vartype peer_asns: azure.mgmt.peering.operations.PeerAsnsOperations
     :ivar peering_locations: PeeringLocationsOperations operations
     :vartype peering_locations: azure.mgmt.peering.operations.PeeringLocationsOperations
+    :ivar registered_asns: RegisteredAsnsOperations operations
+    :vartype registered_asns: azure.mgmt.peering.operations.RegisteredAsnsOperations
+    :ivar registered_prefixes: RegisteredPrefixesOperations operations
+    :vartype registered_prefixes: azure.mgmt.peering.operations.RegisteredPrefixesOperations
     :ivar peerings: PeeringsOperations operations
     :vartype peerings: azure.mgmt.peering.operations.PeeringsOperations
+    :ivar received_routes: ReceivedRoutesOperations operations
+    :vartype received_routes: azure.mgmt.peering.operations.ReceivedRoutesOperations
+    :ivar connection_monitor_tests: ConnectionMonitorTestsOperations operations
+    :vartype connection_monitor_tests:
+     azure.mgmt.peering.operations.ConnectionMonitorTestsOperations
+    :ivar peering_service_countries: PeeringServiceCountriesOperations operations
+    :vartype peering_service_countries:
+     azure.mgmt.peering.operations.PeeringServiceCountriesOperations
     :ivar peering_service_locations: PeeringServiceLocationsOperations operations
-    :vartype peering_service_locations: azure.mgmt.peering.operations.PeeringServiceLocationsOperations
-    :ivar peering_service_prefixes: PeeringServicePrefixesOperations operations
-    :vartype peering_service_prefixes: azure.mgmt.peering.operations.PeeringServicePrefixesOperations
+    :vartype peering_service_locations:
+     azure.mgmt.peering.operations.PeeringServiceLocationsOperations
     :ivar prefixes: PrefixesOperations operations
     :vartype prefixes: azure.mgmt.peering.operations.PrefixesOperations
     :ivar peering_service_providers: PeeringServiceProvidersOperations operations
-    :vartype peering_service_providers: azure.mgmt.peering.operations.PeeringServiceProvidersOperations
+    :vartype peering_service_providers:
+     azure.mgmt.peering.operations.PeeringServiceProvidersOperations
     :ivar peering_services: PeeringServicesOperations operations
     :vartype peering_services: azure.mgmt.peering.operations.PeeringServicesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The Azure subscription ID.
     :type subscription_id: str
-    :param str base_url: Service URL
+    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-06-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = PeeringManagementClientConfiguration(credential, subscription_id, **kwargs)
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: str = "https://management.azure.com",
+        **kwargs: Any
+    ) -> None:
+        self._config = PeeringManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
-
+        self._serialize.client_side_validation = False
+        self.cdn_peering_prefixes = CdnPeeringPrefixesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.legacy_peerings = LegacyPeeringsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.looking_glass = LookingGlassOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.peer_asns = PeerAsnsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.peering_locations = PeeringLocationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.registered_asns = RegisteredAsnsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.registered_prefixes = RegisteredPrefixesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.peerings = PeeringsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.received_routes = ReceivedRoutesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.connection_monitor_tests = ConnectionMonitorTestsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.peering_service_countries = PeeringServiceCountriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.peering_service_locations = PeeringServiceLocationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.peering_service_prefixes = PeeringServicePrefixesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.prefixes = PrefixesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.peering_service_providers = PeeringServiceProvidersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.peering_services = PeeringServicesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-    def _send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+
+    def _send_request(
+        self,
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None

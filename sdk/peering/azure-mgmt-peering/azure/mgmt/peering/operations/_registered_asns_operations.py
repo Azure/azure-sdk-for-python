@@ -30,6 +30,7 @@ _SERIALIZER.client_side_validation = False
 def build_get_request(
     resource_group_name: str,
     peering_name: str,
+    registered_asn_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -40,10 +41,11 @@ def build_get_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}/registeredAsns/{registeredAsnName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
         "peeringName": _SERIALIZER.url("peering_name", peering_name, 'str'),
+        "registeredAsnName": _SERIALIZER.url("registered_asn_name", registered_asn_name, 'str'),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
     }
 
@@ -67,9 +69,10 @@ def build_get_request(
 def build_create_or_update_request(
     resource_group_name: str,
     peering_name: str,
+    registered_asn_name: str,
     subscription_id: str,
     *,
-    json: Optional[_models.Peering] = None,
+    json: Optional[_models.PeeringRegisteredAsn] = None,
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -81,10 +84,11 @@ def build_create_or_update_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}/registeredAsns/{registeredAsnName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
         "peeringName": _SERIALIZER.url("peering_name", peering_name, 'str'),
+        "registeredAsnName": _SERIALIZER.url("registered_asn_name", registered_asn_name, 'str'),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
     }
 
@@ -112,6 +116,7 @@ def build_create_or_update_request(
 def build_delete_request(
     resource_group_name: str,
     peering_name: str,
+    registered_asn_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -122,10 +127,11 @@ def build_delete_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}/registeredAsns/{registeredAsnName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
         "peeringName": _SERIALIZER.url("peering_name", peering_name, 'str'),
+        "registeredAsnName": _SERIALIZER.url("registered_asn_name", registered_asn_name, 'str'),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
     }
 
@@ -146,24 +152,20 @@ def build_delete_request(
     )
 
 
-def build_update_request(
+def build_list_by_peering_request(
     resource_group_name: str,
     peering_name: str,
     subscription_id: str,
-    *,
-    json: Optional[_models.ResourceTags] = None,
-    content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}/registeredAsns")  # pylint: disable=line-too-long
     path_format_arguments = {
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
         "peeringName": _SERIALIZER.url("peering_name", peering_name, 'str'),
@@ -176,45 +178,6 @@ def build_update_request(
     _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="PATCH",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
-
-
-def build_list_by_resource_group_request(
-    resource_group_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings")  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
     _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
@@ -225,47 +188,14 @@ def build_list_by_resource_group_request(
         **kwargs
     )
 
-
-def build_list_by_subscription_request(
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Peering/peerings")
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
-
-class PeeringsOperations:
+class RegisteredAsnsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.peering.PeeringManagementClient`'s
-        :attr:`peerings` attribute.
+        :attr:`registered_asns` attribute.
     """
 
     models = _models
@@ -283,18 +213,21 @@ class PeeringsOperations:
         self,
         resource_group_name: str,
         peering_name: str,
+        registered_asn_name: str,
         **kwargs: Any
-    ) -> _models.Peering:
-        """Gets an existing peering with the specified name under the given subscription and resource
-        group.
+    ) -> _models.PeeringRegisteredAsn:
+        """Gets an existing registered ASN with the specified name under the given subscription, resource
+        group and peering.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param peering_name: The name of the peering.
         :type peering_name: str
+        :param registered_asn_name: The name of the registered ASN.
+        :type registered_asn_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Peering, or the result of cls(response)
-        :rtype: ~azure.mgmt.peering.models.Peering
+        :return: PeeringRegisteredAsn, or the result of cls(response)
+        :rtype: ~azure.mgmt.peering.models.PeeringRegisteredAsn
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -306,12 +239,13 @@ class PeeringsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Peering]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PeeringRegisteredAsn]
 
         
         request = build_get_request(
             resource_group_name=resource_group_name,
             peering_name=peering_name,
+            registered_asn_name=registered_asn_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.get.metadata['url'],
@@ -333,14 +267,14 @@ class PeeringsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Peering', pipeline_response)
+        deserialized = self._deserialize('PeeringRegisteredAsn', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}/registeredAsns/{registeredAsnName}"}  # type: ignore
 
 
     @distributed_trace
@@ -348,21 +282,24 @@ class PeeringsOperations:
         self,
         resource_group_name: str,
         peering_name: str,
-        peering: _models.Peering,
+        registered_asn_name: str,
+        registered_asn: _models.PeeringRegisteredAsn,
         **kwargs: Any
-    ) -> _models.Peering:
-        """Creates a new peering or updates an existing peering with the specified name under the given
-        subscription and resource group.
+    ) -> _models.PeeringRegisteredAsn:
+        """Creates a new registered ASN with the specified name under the given subscription, resource
+        group and peering.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param peering_name: The name of the peering.
         :type peering_name: str
-        :param peering: The properties needed to create or update a peering.
-        :type peering: ~azure.mgmt.peering.models.Peering
+        :param registered_asn_name: The name of the ASN.
+        :type registered_asn_name: str
+        :param registered_asn: The properties needed to create a registered ASN.
+        :type registered_asn: ~azure.mgmt.peering.models.PeeringRegisteredAsn
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Peering, or the result of cls(response)
-        :rtype: ~azure.mgmt.peering.models.Peering
+        :return: PeeringRegisteredAsn, or the result of cls(response)
+        :rtype: ~azure.mgmt.peering.models.PeeringRegisteredAsn
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -375,13 +312,14 @@ class PeeringsOperations:
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Peering]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PeeringRegisteredAsn]
 
-        _json = self._serialize.body(peering, 'Peering')
+        _json = self._serialize.body(registered_asn, 'PeeringRegisteredAsn')
 
         request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             peering_name=peering_name,
+            registered_asn_name=registered_asn_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -406,17 +344,17 @@ class PeeringsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Peering', pipeline_response)
+            deserialized = self._deserialize('PeeringRegisteredAsn', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('Peering', pipeline_response)
+            deserialized = self._deserialize('PeeringRegisteredAsn', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}"}  # type: ignore
+    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}/registeredAsns/{registeredAsnName}"}  # type: ignore
 
 
     @distributed_trace
@@ -424,15 +362,18 @@ class PeeringsOperations:
         self,
         resource_group_name: str,
         peering_name: str,
+        registered_asn_name: str,
         **kwargs: Any
     ) -> None:
-        """Deletes an existing peering with the specified name under the given subscription and resource
-        group.
+        """Deletes an existing registered ASN with the specified name under the given subscription,
+        resource group and peering.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param peering_name: The name of the peering.
         :type peering_name: str
+        :param registered_asn_name: The name of the registered ASN.
+        :type registered_asn_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -453,6 +394,7 @@ class PeeringsOperations:
         request = build_delete_request(
             resource_group_name=resource_group_name,
             peering_name=peering_name,
+            registered_asn_name=registered_asn_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
@@ -477,101 +419,33 @@ class PeeringsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}"}  # type: ignore
+    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}/registeredAsns/{registeredAsnName}"}  # type: ignore
 
 
     @distributed_trace
-    def update(
+    def list_by_peering(
         self,
         resource_group_name: str,
         peering_name: str,
-        tags: _models.ResourceTags,
         **kwargs: Any
-    ) -> _models.Peering:
-        """Updates tags for a peering with the specified name under the given subscription and resource
-        group.
+    ) -> Iterable[_models.PeeringRegisteredAsnListResult]:
+        """Lists all registered ASNs under the given subscription, resource group and peering.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param peering_name: The name of the peering.
         :type peering_name: str
-        :param tags: The resource tags.
-        :type tags: ~azure.mgmt.peering.models.ResourceTags
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Peering, or the result of cls(response)
-        :rtype: ~azure.mgmt.peering.models.Peering
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Peering]
-
-        _json = self._serialize.body(tags, 'ResourceTags')
-
-        request = build_update_request(
-            resource_group_name=resource_group_name,
-            peering_name=peering_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self.update.metadata['url'],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('Peering', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}"}  # type: ignore
-
-
-    @distributed_trace
-    def list_by_resource_group(
-        self,
-        resource_group_name: str,
-        **kwargs: Any
-    ) -> Iterable[_models.PeeringListResult]:
-        """Lists all of the peerings under the given subscription and resource group.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PeeringListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.peering.models.PeeringListResult]
+        :return: An iterator like instance of either PeeringRegisteredAsnListResult or the result of
+         cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.peering.models.PeeringRegisteredAsnListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PeeringListResult]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PeeringRegisteredAsnListResult]
 
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -580,11 +454,12 @@ class PeeringsOperations:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_by_resource_group_request(
+                request = build_list_by_peering_request(
                     resource_group_name=resource_group_name,
+                    peering_name=peering_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata['url'],
+                    template_url=self.list_by_peering.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
@@ -593,8 +468,9 @@ class PeeringsOperations:
 
             else:
                 
-                request = build_list_by_resource_group_request(
+                request = build_list_by_peering_request(
                     resource_group_name=resource_group_name,
+                    peering_name=peering_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=next_link,
@@ -607,7 +483,7 @@ class PeeringsOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("PeeringListResult", pipeline_response)
+            deserialized = self._deserialize("PeeringRegisteredAsnListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -634,83 +510,4 @@ class PeeringsOperations:
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_resource_group.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings"}  # type: ignore
-
-    @distributed_trace
-    def list_by_subscription(
-        self,
-        **kwargs: Any
-    ) -> Iterable[_models.PeeringListResult]:
-        """Lists all of the peerings under the given subscription.
-
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PeeringListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.peering.models.PeeringListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PeeringListResult]
-
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_list_by_subscription_request(
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    template_url=self.list_by_subscription.metadata['url'],
-                    headers=_headers,
-                    params=_params,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
-
-            else:
-                
-                request = build_list_by_subscription_request(
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
-                request.method = "GET"
-            return request
-
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize("PeeringListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_by_subscription.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.Peering/peerings"}  # type: ignore
+    list_by_peering.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}/registeredAsns"}  # type: ignore
