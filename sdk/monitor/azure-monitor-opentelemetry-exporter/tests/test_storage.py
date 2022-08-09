@@ -161,7 +161,7 @@ class TestLocalFileStorage(unittest.TestCase):
                     os_mock.return_value = True
                 self.assertTrue(stor._check_storage_size())
 
-    def test_maintanence_routine(self):
+    def test_maintenance_routine(self):
         with mock.patch("os.makedirs") as m:
             with LocalFileStorage(os.path.join(TEST_FOLDER, "baz")) as stor:
                 m.return_value = None
