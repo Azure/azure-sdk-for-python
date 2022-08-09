@@ -57,7 +57,7 @@ _logger = get_logger(logging.DEBUG)
 
 
 class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
-
+    @pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -331,6 +331,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             with pytest.raises(ValueError):
                 await receiver.peek_messages()
 
+    @pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer()
