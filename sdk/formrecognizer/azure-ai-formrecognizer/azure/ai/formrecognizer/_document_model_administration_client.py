@@ -80,24 +80,18 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
-        api_version = kwargs.pop(
-            "api_version", DocumentAnalysisApiVersion.V2022_06_30_PREVIEW
-        )
+        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2022_06_30_PREVIEW)
         super().__init__(
-            endpoint=endpoint,
-            credential=credential,
-            api_version=api_version,
-            client_kind="document",
-            **kwargs
+            endpoint=endpoint, credential=credential, api_version=api_version, client_kind="document", **kwargs
         )
 
     @distributed_trace
     def begin_build_model(
-        self, build_mode: Union[str, ModelBuildMode], blob_container_url: str, **kwargs: Any
+        self, build_mode: Union[str, ModelBuildMode], *, blob_container_url: str, **kwargs: Any
     ) -> DocumentModelAdministrationLROPoller[DocumentModelDetails]:
         """Build a custom model.
 
-        The request must include a `blob_container_url` parameter that is an
+        The request must include a `blob_container_url` keyword parameter that is an
         externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
         a container URI (without SAS) is accepted only when the container is public or has a managed identity
         configured, see more about configuring managed identities to work with Form Recognizer here:
@@ -107,10 +101,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         :param build_mode: The custom model build mode. Possible values include: "template", "neural".
             For more information about build modes, see: https://aka.ms/azsdk/formrecognizer/buildmode.
-        :param str blob_container_url: An Azure Storage blob container's SAS URI. A container URI (without SAS)
+        :type build_mode: str or :class:`~azure.ai.formrecognizer.ModelBuildMode`
+        :keyword str blob_container_url: An Azure Storage blob container's SAS URI. A container URI (without SAS)
             can be used if the container is public or has a managed identity configured. For more information on
             setting up a training data set, see: https://aka.ms/azsdk/formrecognizer/buildtrainingset.
-        :type build_mode: str or :class:`~azure.ai.formrecognizer.ModelBuildMode`
         :keyword str model_id: A unique ID for your model. If not specified, a model ID will be created for you.
         :keyword str description: An optional description to add to the model.
         :keyword str prefix: A case-sensitive prefix string to filter documents in the blob container url path.
@@ -137,12 +131,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         """
 
         def callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            op_response = self._deserialize(
-                self._generated_models.GetOperationResponse, raw_response
-            )
-            model_info = self._deserialize(
-                self._generated_models.ModelInfo, op_response.result
-            )
+            op_response = self._deserialize(self._generated_models.GetOperationResponse, raw_response)
+            model_info = self._deserialize(self._generated_models.ModelInfo, op_response.result)
             return DocumentModelDetails._from_generated(model_info)
 
         description = kwargs.pop("description", None)
@@ -150,9 +140,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         tags = kwargs.pop("tags", None)
         cls = kwargs.pop("cls", callback)
         continuation_token = kwargs.pop("continuation_token", None)
-        polling_interval = kwargs.pop(
-            "polling_interval", self._client._config.polling_interval
-        )
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
 
         if model_id is None:
             model_id = str(uuid.uuid4())
@@ -171,9 +159,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
             cls=cls,
             continuation_token=continuation_token,
             polling=LROBasePolling(
-                timeout=polling_interval,
-                lro_algorithms=[DocumentModelAdministrationPolling()],
-                **kwargs
+                timeout=polling_interval, lro_algorithms=[DocumentModelAdministrationPolling()], **kwargs
             ),
             **kwargs
         )
@@ -212,24 +198,16 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
                 :caption: Creating a composed model with existing models.
         """
 
-        def _compose_callback(
-            raw_response, _, headers
-        ):  # pylint: disable=unused-argument
-            op_response = self._deserialize(
-                self._generated_models.GetOperationResponse, raw_response
-            )
-            model_info = self._deserialize(
-                self._generated_models.ModelInfo, op_response.result
-            )
+        def _compose_callback(raw_response, _, headers):  # pylint: disable=unused-argument
+            op_response = self._deserialize(self._generated_models.GetOperationResponse, raw_response)
+            model_info = self._deserialize(self._generated_models.ModelInfo, op_response.result)
             return DocumentModelDetails._from_generated(model_info)
 
         model_id = kwargs.pop("model_id", None)
         description = kwargs.pop("description", None)
         tags = kwargs.pop("tags", None)
         continuation_token = kwargs.pop("continuation_token", None)
-        polling_interval = kwargs.pop(
-            "polling_interval", self._client._config.polling_interval
-        )
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
 
         if model_id is None:
             model_id = str(uuid.uuid4())
@@ -240,17 +218,14 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
                 description=description,
                 tags=tags,
                 component_models=[
-                    self._generated_models.ComponentModelInfo(model_id=model_id)
-                    for model_id in component_model_ids
+                    self._generated_models.ComponentModelInfo(model_id=model_id) for model_id in component_model_ids
                 ]
                 if component_model_ids
                 else [],
             ),
             cls=kwargs.pop("cls", _compose_callback),
             polling=LROBasePolling(
-                timeout=polling_interval,
-                lro_algorithms=[DocumentModelAdministrationPolling()],
-                **kwargs
+                timeout=polling_interval, lro_algorithms=[DocumentModelAdministrationPolling()], **kwargs
             ),
             continuation_token=continuation_token,
             **kwargs
@@ -294,10 +269,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
     @distributed_trace
     def begin_copy_model_to(
-        self,
-        model_id: str,
-        target: TargetAuthorization,
-        **kwargs: Any
+        self, model_id: str, target: TargetAuthorization, **kwargs: Any
     ) -> DocumentModelAdministrationLROPoller[DocumentModelDetails]:
         """Copy a model stored in this resource (the source) to the user specified
         target Form Recognizer resource.
@@ -326,20 +298,14 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         """
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            op_response = self._deserialize(
-                self._generated_models.GetOperationResponse, raw_response
-            )
-            model_info = self._deserialize(
-                self._generated_models.ModelInfo, op_response.result
-            )
+            op_response = self._deserialize(self._generated_models.GetOperationResponse, raw_response)
+            model_info = self._deserialize(self._generated_models.ModelInfo, op_response.result)
             return DocumentModelDetails._from_generated(model_info)
 
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        polling_interval = kwargs.pop(
-            "polling_interval", self._client._config.polling_interval
-        )
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
         return self._client.begin_copy_document_model_to(  # type: ignore
@@ -356,9 +322,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
             else None,
             cls=kwargs.pop("cls", _copy_callback),
             polling=LROBasePolling(
-                timeout=polling_interval,
-                lro_algorithms=[DocumentModelAdministrationPolling()],
-                **kwargs
+                timeout=polling_interval, lro_algorithms=[DocumentModelAdministrationPolling()], **kwargs
             ),
             continuation_token=continuation_token,
             **kwargs

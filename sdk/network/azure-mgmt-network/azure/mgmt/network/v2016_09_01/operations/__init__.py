@@ -29,6 +29,9 @@ from ._operations import VirtualNetworkGatewaysOperations
 from ._operations import VirtualNetworkGatewayConnectionsOperations
 from ._operations import LocalNetworkGatewaysOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'NetworkInterfacesOperations',
     'ApplicationGatewaysOperations',
@@ -53,3 +56,5 @@ __all__ = [
     'VirtualNetworkGatewayConnectionsOperations',
     'LocalNetworkGatewaysOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

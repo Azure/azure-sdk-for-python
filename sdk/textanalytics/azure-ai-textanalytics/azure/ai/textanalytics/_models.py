@@ -74,6 +74,9 @@ class DictMixin:
 
 class TextAnalysisKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumeration of supported Text Analysis kinds.
+
+    .. versionadded:: 2022-05-01
+        The *TextAnalysisKind* enum.
     """
 
     SENTIMENT_ANALYSIS = "SentimentAnalysis"
@@ -414,6 +417,7 @@ class RecognizeEntitiesResult(DictMixin):
         Optional[~azure.ai.textanalytics.TextDocumentStatistics]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizeEntitiesResult.
+    :ivar str kind: The text analysis kind - "EntityRecognition".
     """
 
     def __init__(self, **kwargs):
@@ -458,6 +462,7 @@ class RecognizePiiEntitiesResult(DictMixin):
         Optional[~azure.ai.textanalytics.TextDocumentStatistics]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizePiiEntitiesResult.
+    :ivar str kind: The text analysis kind - "PiiEntityRecognition".
     """
 
     def __init__(self, **kwargs):
@@ -509,6 +514,7 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
         Optional[~azure.ai.textanalytics.TextDocumentStatistics]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a AnalyzeHealthcareEntitiesResult.
+    :ivar str kind: The text analysis kind - "Healthcare".
     """
 
     def __init__(self, **kwargs):
@@ -662,6 +668,7 @@ class DetectLanguageResult(DictMixin):
         Optional[~azure.ai.textanalytics.TextDocumentStatistics]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a DetectLanguageResult.
+    :ivar str kind: The text analysis kind - "LanguageDetection".
     """
 
     def __init__(self, **kwargs):
@@ -1031,6 +1038,7 @@ class ExtractKeyPhrasesResult(DictMixin):
         Optional[~azure.ai.textanalytics.TextDocumentStatistics]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a ExtractKeyPhrasesResult.
+    :ivar str kind: The text analysis kind - "KeyPhraseExtraction".
     """
 
     def __init__(self, **kwargs):
@@ -1073,6 +1081,7 @@ class RecognizeLinkedEntitiesResult(DictMixin):
         Optional[~azure.ai.textanalytics.TextDocumentStatistics]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizeLinkedEntitiesResult.
+    :ivar str kind: The text analysis kind - "EntityLinking".
     """
 
     def __init__(self, **kwargs):
@@ -1124,6 +1133,7 @@ class AnalyzeSentimentResult(DictMixin):
         list[~azure.ai.textanalytics.SentenceSentiment]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a AnalyzeSentimentResult.
+    :ivar str kind: The text analysis kind - "SentimentAnalysis".
     """
 
     def __init__(self, **kwargs):
@@ -1195,6 +1205,7 @@ class DocumentError(DictMixin):
     :vartype error: ~azure.ai.textanalytics.TextAnalyticsError
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always True for an instance of a DocumentError.
+    :ivar str kind: Error kind - "DocumentError".
     """
 
     def __init__(self, **kwargs):
@@ -2192,6 +2203,9 @@ class RecognizeCustomEntitiesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
+
+    .. versionadded:: 2022-05-01
+        The *RecognizeCustomEntitiesAction* model.
     """
 
     def __init__(
@@ -2243,6 +2257,7 @@ class RecognizeCustomEntitiesResult(DictMixin):
     :vartype statistics: Optional[~azure.ai.textanalytics.TextDocumentStatistics]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizeCustomEntitiesResult.
+    :ivar str kind: The text analysis kind - "CustomEntityRecognition".
     """
 
     def __init__(self, **kwargs):
@@ -2309,6 +2324,9 @@ class MultiLabelClassifyAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
+
+    .. versionadded:: 2022-05-01
+        The *MultiLabelClassifyAction* model.
     """
 
     def __init__(
@@ -2354,6 +2372,7 @@ class ClassifyDocumentResult(DictMixin):
     :vartype statistics: Optional[~azure.ai.textanalytics.TextDocumentStatistics]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a ClassifyDocumentResult.
+    :ivar str kind: The text analysis kind - "CustomDocumentClassification".
     """
 
     def __init__(
@@ -2424,6 +2443,9 @@ class SingleLabelClassifyAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
+
+    .. versionadded:: 2022-05-01
+        The *SingleLabelClassifyAction* model.
     """
 
     def __init__(
@@ -2517,6 +2539,9 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
+
+    .. versionadded:: 2022-05-01
+        The *AnalyzeHealthcareEntitiesAction* model.
     """
 
     def __init__(self, **kwargs):

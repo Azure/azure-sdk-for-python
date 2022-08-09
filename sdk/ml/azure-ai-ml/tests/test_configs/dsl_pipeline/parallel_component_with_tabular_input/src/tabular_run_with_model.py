@@ -5,12 +5,11 @@
 
 import argparse
 import os
-import pickle
-from pathlib import Path
 
 from mlflow.sklearn import load_model
 
 MODEL_NAME = "iris_model"
+
 
 def init():
     print("Environment variables start ****")
@@ -34,6 +33,6 @@ def run(input_data):
 
     # cleanup output
     result = input_data.drop(input_data.columns[4:], axis=1)
-    result['variety'] = pred
+    result["variety"] = pred
 
     return result

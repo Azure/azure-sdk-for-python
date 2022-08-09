@@ -11,5 +11,3 @@ jobs:
     distribution:
       type: mpi
       process_count_per_instance: 1
-
-        

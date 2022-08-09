@@ -22,7 +22,7 @@ inputs:
 
 outputs:
   best_model:
-    type: uri_folder
+    type: mlflow_model
 
 jobs:
   hello_automl_regression:

@@ -1,18 +1,19 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 from typing import Callable
 
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._builders import Command
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-)
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 
 
 def to_component(*, job: ComponentTranslatableMixin, **kwargs) -> Callable[..., Command]:
-    """
-    Translate a job object to a component function, provided job should be able to translate to a component.
+    """Translate a job object to a component function, provided job should be
+    able to translate to a component.
 
     For example:
 

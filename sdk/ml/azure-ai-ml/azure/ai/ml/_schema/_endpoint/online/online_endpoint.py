@@ -2,19 +2,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use
+
 import logging
 from typing import Any
-from azure.ai.ml._schema.core.fields import ArmStr, StringTransformedEnum
-from marshmallow import fields, post_load, validates_schema, ValidationError, pre_load, validates
-from azure.ai.ml._schema import NestedField, ExperimentalField
-from azure.ai.ml._schema._endpoint.endpoint import EndpointSchema
-from azure.ai.ml.constants import PublicNetworkAccess
 
-from azure.ai.ml.constants import (
-    AzureMLResourceType,
-    BASE_PATH_CONTEXT_KEY,
-    EndpointYamlFields,
-)
+from marshmallow import ValidationError, fields, post_load, validates
+
+from azure.ai.ml._schema.core.fields import ExperimentalField
+from azure.ai.ml._schema._endpoint.endpoint import EndpointSchema
+from azure.ai.ml._schema.core.fields import ArmStr, StringTransformedEnum
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, AzureMLResourceType, PublicNetworkAccess
 
 module_logger = logging.getLogger(__name__)
 

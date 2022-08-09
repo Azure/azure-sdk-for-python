@@ -2,12 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import logging
 import collections.abc
+import logging
 from typing import Optional, Union
+
+from azure.ai.ml.constants import InputOutputModes
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._mixins import DictMixin
-from azure.ai.ml.constants import InputOutputModes, AssetTypes
 
 module_logger = logging.getLogger(__name__)
 

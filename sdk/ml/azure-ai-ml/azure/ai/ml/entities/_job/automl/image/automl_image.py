@@ -5,21 +5,20 @@
 from abc import ABC
 from typing import Dict, Union
 
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     ImageVerticalDataSettings,
-    LogVerbosity,
-    TrainingDataSettings,
     ImageVerticalValidationDataSettings,
-    TestDataSettings,
+    LogVerbosity,
     SamplingAlgorithmType,
+    TrainingDataSettings,
 )
+from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
-from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
 from azure.ai.ml.entities._job.automl.image.image_limit_settings import ImageLimitSettings
 from azure.ai.ml.entities._job.automl.image.image_sweep_settings import ImageSweepSettings
-from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
 
 
 class AutoMLImage(AutoMLVertical, ABC):
@@ -95,7 +94,8 @@ class AutoMLImage(AutoMLVertical, ABC):
         validation_data_size: float = None,
     ) -> None:
         self._data = ImageVerticalDataSettings(
-            target_column_name=target_column_name, training_data=TrainingDataSettings(data=training_data)
+            target_column_name=target_column_name,
+            training_data=TrainingDataSettings(data=training_data),
         )
 
         self._data.validation_data = self._data.validation_data or ImageVerticalValidationDataSettings()
@@ -109,9 +109,20 @@ class AutoMLImage(AutoMLVertical, ABC):
     def set_limits(
         self,
         *,
+        max_concurrent_trials: int = None,
+        max_trials: int = None,
         timeout_minutes: int = None,
     ) -> None:
+        """Limit settings for all AutoML Image Verticals.
+
+        :param timeout_minutes: AutoML job timeout.
+        :type timeout_minutes: ~datetime.timedelta
+        """
         self._limits = self._limits or ImageLimitSettings()
+        self._limits.max_concurrent_trials = (
+            max_concurrent_trials if max_concurrent_trials is not None else self._limits.max_concurrent_trials
+        )
+        self._limits.max_trials = max_trials if max_trials is not None else self._limits.max_trials
         self._limits.timeout_minutes = timeout_minutes if timeout_minutes is not None else self._limits.timeout_minutes
 
     def set_sweep(
@@ -122,6 +133,18 @@ class AutoMLImage(AutoMLVertical, ABC):
         max_trials: int = None,
         early_termination: EarlyTerminationPolicy = None,
     ) -> None:
+        """Sweep settings for all AutoML Image Verticals.
+
+        :param sampling_algorithm: Required. [Required] Type of the hyperparameter sampling
+         algorithms. Possible values include: "Grid", "Random", "Bayesian".
+        :type sampling_algorithm: str or ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType
+        :param max_concurrent_trials: Maximum Concurrent iterations.
+        :type max_concurrent_trials: int
+        :param max_trials: Number of iterations.
+        :type max_trials: int
+        :param early_termination: Type of early termination policy.
+        :type early_termination: ~azure.mgmt.machinelearningservices.models.EarlyTerminationPolicy
+        """
         if self._sweep:
             self._sweep.sampling_algorithm = sampling_algorithm
         else:

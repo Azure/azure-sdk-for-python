@@ -25,4 +25,3 @@ jobs:
       sample_input_string: ${{parent.inputs.pipeline_sample_input_string}}
     outputs:
       sample_output_data: ${{parent.outputs.pipeline_sample_output_data}}
-

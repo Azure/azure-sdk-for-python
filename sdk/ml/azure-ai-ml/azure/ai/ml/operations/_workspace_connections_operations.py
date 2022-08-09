@@ -2,30 +2,32 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Iterable, Dict
+# pylint: disable=protected-access
+
 import logging
+from typing import Dict, Iterable
 
-from azure.ai.ml._utils.utils import _snake_to_camel
+from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
-from azure.ai.ml._restclient.v2022_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012022
-
-from azure.identity import ChainedTokenCredential
+from azure.ai.ml._utils.utils import _snake_to_camel
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
+from azure.identity import ChainedTokenCredential
 
 module_logger = logging.getLogger(__name__)
 
 
 class WorkspaceConnectionsOperations(_ScopeDependentOperations):
-    """
-    WorkspaceConnectionsOperations
+    """WorkspaceConnectionsOperations.
 
-    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should
+    create an MLClient instance that instantiates it for you and
+    attaches it as an attribute.
     """
 
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient012022,
+        service_client: ServiceClient052022,
         all_operations: OperationsContainer,
         credentials: ChainedTokenCredential = None,
         **kwargs: Dict,
@@ -46,7 +48,10 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         """
 
         obj = self._operation.get(
-            workspace_name=self._workspace_name, connection_name=name, **self._scope_kwargs, **kwargs
+            workspace_name=self._workspace_name,
+            connection_name=name,
+            **self._scope_kwargs,
+            **kwargs,
         )
 
         return WorkspaceConnection._from_rest_object(rest_obj=obj)
@@ -72,8 +77,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         return WorkspaceConnection._from_rest_object(rest_obj=response)
 
     def delete(self, name) -> None:
-        """
-        Delete the workspace connection
+        """Delete the workspace connection.
 
         :param name: Name of the workspace connection.
         :type name: str

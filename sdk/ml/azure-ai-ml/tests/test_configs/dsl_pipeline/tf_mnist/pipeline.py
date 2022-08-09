@@ -1,5 +1,4 @@
-from azure.ai.ml import dsl, TensorFlowDistribution
-from azure.ai.ml.entities import load_component
+from azure.ai.ml import dsl, TensorFlowDistribution, load_component
 from azure.ai.ml.entities import PipelineJob
 from pathlib import Path
 
@@ -10,7 +9,7 @@ parent_dir = str(Path(__file__).parent)
 
 def generate_dsl_pipeline() -> PipelineJob:
     # 1. Load component funcs
-    tf_func = load_component(yaml_file=parent_dir + "/component.yml")
+    tf_func = load_component(path=parent_dir + "/component.yml")
 
     # 2. Construct pipeline
     @dsl.pipeline(
