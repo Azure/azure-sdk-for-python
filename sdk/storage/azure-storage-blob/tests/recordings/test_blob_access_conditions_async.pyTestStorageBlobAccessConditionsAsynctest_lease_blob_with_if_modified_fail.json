@@ -7,17 +7,17 @@
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Thu, 14 Jul 2022 21:31:33 GMT",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Tue, 09 Aug 2022 21:44:11 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 14 Jul 2022 21:31:32 GMT",
-        "ETag": "\u00220x8DA65E039210125\u0022",
-        "Last-Modified": "Thu, 14 Jul 2022 21:31:33 GMT",
+        "Date": "Tue, 09 Aug 2022 21:44:10 GMT",
+        "ETag": "\u00220x8DA7A504BBFA30F\u0022",
+        "Last-Modified": "Tue, 09 Aug 2022 21:44:11 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -35,9 +35,9 @@
         "Content-Length": "11",
         "Content-Type": "application/octet-stream",
         "If-None-Match": "*",
-        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-date": "Thu, 14 Jul 2022 21:31:33 GMT",
+        "x-ms-date": "Tue, 09 Aug 2022 21:44:12 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": "aGVsbG8gd29ybGQ=",
@@ -45,9 +45,9 @@
       "ResponseHeaders": {
         "Content-Length": "0",
         "Content-MD5": "XrY7u\u002BAe7tCTyyK7j1rNww==",
-        "Date": "Thu, 14 Jul 2022 21:31:32 GMT",
-        "ETag": "\u00220x8DA65E0392DFEE0\u0022",
-        "Last-Modified": "Thu, 14 Jul 2022 21:31:33 GMT",
+        "Date": "Tue, 09 Aug 2022 21:44:10 GMT",
+        "ETag": "\u00220x8DA7A504BD57100\u0022",
+        "Last-Modified": "Tue, 09 Aug 2022 21:44:11 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -65,9 +65,9 @@
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "If-Modified-Since": "Thu, 14 Jul 2022 21:46:33 GMT",
-        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Thu, 14 Jul 2022 21:31:33 GMT",
+        "If-Modified-Since": "Tue, 09 Aug 2022 21:59:12 GMT",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Tue, 09 Aug 2022 21:44:12 GMT",
         "x-ms-lease-action": "acquire",
         "x-ms-lease-duration": "-1",
         "x-ms-proposed-lease-id": "00000000-1111-2222-3333-444444444444",
@@ -78,7 +78,7 @@
       "ResponseHeaders": {
         "Content-Length": "252",
         "Content-Type": "application/xml",
-        "Date": "Thu, 14 Jul 2022 21:31:32 GMT",
+        "Date": "Tue, 09 Aug 2022 21:44:10 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -88,12 +88,12 @@
       },
       "ResponseBody": [
         "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EConditionNotMet\u003C/Code\u003E\u003CMessage\u003EThe condition specified using HTTP conditional header(s) is not met.\n",
-        "RequestId:97f15b67-201e-000c-24c9-974dca000000\n",
-        "Time:2022-07-14T21:31:33.3399632Z\u003C/Message\u003E\u003C/Error\u003E"
+        "RequestId:3819d818-d01e-002a-3139-ac2931000000\n",
+        "Time:2022-08-09T21:44:11.5738326Z\u003C/Message\u003E\u003C/Error\u003E"
       ]
     }
   ],
   "Variables": {
-    "if_modified": "2022-07-14T21:46:33.532365"
+    "if_modified": "2022-08-09T21:59:12.204649"
   }
 }
