@@ -7,6 +7,7 @@ import pytest
 import platform
 import functools
 import json
+from unittest import mock
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer
@@ -854,3 +855,25 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         with pytest.raises(ValueError) as e:
             res = client.analyze_sentiment(["I'm tired"], show_opinion_mining=True, disable_service_logs=True, string_index_type="UnicodeCodePoint")
         assert str(e.value) == "'show_opinion_mining' is only available for API version v3.1 and up.\n'disable_service_logs' is only available for API version v3.1 and up.\n'string_index_type' is only available for API version v3.1 and up.\n"
+
+    @TextAnalyticsPreparer()
+    def test_mock_quota_exceeded(self, **kwargs):
+        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
+        response = mock.Mock(
+            status_code=403,
+            headers={"Retry-After": 186688, "Content-Type": "application/json"},
+            reason="Bad Request"
+        )
+        response.text = lambda encoding=None: json.dumps(
+            {"error": {"code": "403", "message": "Out of call volume quota for TextAnalytics F0 pricing tier. Please retry after 15 days. To increase your call volume switch to a paid tier."}}
+        )
+        response.content_type = "application/json"
+        transport = mock.Mock(send=lambda request, **kwargs: response)
+
+        client = TextAnalyticsClient(textanalytics_test_endpoint, AzureKeyCredential(textanalytics_test_api_key), transport=transport)
+
+        with pytest.raises(HttpResponseError) as e:
+            result = client.analyze_sentiment(["I'm tired"])
+        assert e.value.status_code == 403
+        assert e.value.error.message == 'Out of call volume quota for TextAnalytics F0 pricing tier. Please retry after 15 days. To increase your call volume switch to a paid tier.'
