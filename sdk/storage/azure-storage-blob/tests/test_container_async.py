@@ -5,24 +5,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import time
+import requests
+from datetime import datetime, timedelta
 from time import sleep
 
 import pytest
-import unittest
-import asyncio
-from dateutil.tz import tzutc
-
-import requests
-from datetime import datetime, timedelta
-
 from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError, ResourceModifiedError
-from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, BlobAccountPreparer, \
-    CachedResourceGroupPreparer
-
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
 from azure.storage.blob import (
     AccessPolicy,
     AccountSasPermissions,
@@ -40,12 +29,12 @@ from azure.storage.blob import (
     StandardBlobTier,
     StorageErrorCode
     )
-
 from azure.storage.blob.aio import (
     BlobClient,
     BlobServiceClient,
     ContainerClient
 )
+
 from devtools_testutils import set_custom_default_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage import LogCaptured
@@ -1559,8 +1548,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         blob_list = list()
         container_client.delete_blobs(*blob_list)
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
-    @recorded_by_proxy_async
     async def test_delete_blobs_simple(self, **kwargs):
         set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
         storage_account_name = kwargs.pop("storage_account_name")
@@ -1736,8 +1725,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         assert response[2].status_code == 202
         assert response[3].status_code == 202
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
-    @recorded_by_proxy_async
     async def test_delete_blobs_simple_no_raise(self, **kwargs):
         set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
         storage_account_name = kwargs.pop("storage_account_name")
@@ -1767,8 +1756,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         assert response[1].status_code == 202
         assert response[2].status_code == 202
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
-    @recorded_by_proxy_async
     async def test_delete_blobs_with_version_id(self, **kwargs):
         set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
@@ -1809,8 +1798,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         assert response[1].status_code == 202
         assert (await blob.get_blob_properties()).get("version_id") == new_blob_version_id
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
-    @recorded_by_proxy_async
     async def test_delete_blobs_snapshot(self, **kwargs):
         set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
         storage_account_name = kwargs.pop("storage_account_name")
@@ -1850,8 +1839,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             blobs = await self._to_list(container.list_blobs(include='snapshots'))
             assert len(blobs) == 3  # 3 blobs
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
-    @recorded_by_proxy_async
     async def test_standard_blob_tier_set_tier_api_batch(self, **kwargs):
         set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
         storage_account_name = kwargs.pop("storage_account_name")
@@ -1899,8 +1888,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
                     'blob3',
                 )
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
-    @recorded_by_proxy_async
     async def test_standard_blob_tier_with_if_tags(self, **kwargs):
         set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
         blob_storage_account_name = kwargs.pop("storage_account_name")
