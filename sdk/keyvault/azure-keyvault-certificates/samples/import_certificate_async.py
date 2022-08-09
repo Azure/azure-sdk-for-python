@@ -16,7 +16,7 @@ from azure.keyvault.certificates.aio import CertificateClient
 #
 # 3. Set up your environment to use azure-identity's DefaultAzureCredential. To authenticate a service principal with
 #    environment variables, set AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration#authenticate-the-client)
+#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates#authenticate-the-client)
 #
 # 4. A PFX certificate on your machine. Set an environment variable, PFX_CERT_PATH, with the path to this certificate.
 #
@@ -33,7 +33,7 @@ from azure.keyvault.certificates.aio import CertificateClient
 # ----------------------------------------------------------------------------------------------------------
 
 async def run_sample():
-    # Instantiate a certificate client that will be used to call the service.
+    # Instantiate a backup client that will be used to call the service.
     # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
     VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()

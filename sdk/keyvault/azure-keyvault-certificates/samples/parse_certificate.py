@@ -7,7 +7,6 @@ import os
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.certificates import CertificateClient, CertificatePolicy
 from azure.keyvault.secrets import SecretClient
-from azure.core.exceptions import HttpResponseError
 from cryptography.hazmat.primitives.serialization import pkcs12
 
 # ----------------------------------------------------------------------------------------------------------
@@ -20,8 +19,9 @@ from cryptography.hazmat.primitives.serialization import pkcs12
 # 3. azure-keyvault-certificates, azure-keyvault-secrets, azure-identity, and cryptography (v3.3+) packages
 #    (pip install these).
 #
-# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL. (See
-#    https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates#authenticate-the-client)
+# 4. Set up your environment to use azure-identity's DefaultAzureCredential. To authenticate a service principal with
+#    environment variables, set AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID
+#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates how to get the private key of an existing Key Vault certificate
@@ -36,10 +36,8 @@ from cryptography.hazmat.primitives.serialization import pkcs12
 #
 # ----------------------------------------------------------------------------------------------------------
 
-# Instantiate a certificate client that will be used to call the service.
-# Notice that the client is using default Azure credentials.
-# To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
-# 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
+# Instantiate a backup client that will be used to call the service.
+# Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
 VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 certificate_client = CertificateClient(vault_url=VAULT_URL, credential=credential)
