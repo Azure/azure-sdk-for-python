@@ -2,15 +2,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Union, TYPE_CHECKING
+from typing import Any, Union
 from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, HttpLoggingPolicy
 from .._generated.aio import TextAnalyticsClient as _TextAnalyticsClient
 from .._policies import TextAnalyticsResponseHookPolicy
 from .._user_agent import USER_AGENT
 from .._version import DEFAULT_API_VERSION
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 def _authentication_policy(credential):
@@ -33,7 +32,7 @@ class AsyncTextAnalyticsClientBase:
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any
     ) -> None:
         http_logging_policy = HttpLoggingPolicy(**kwargs)
