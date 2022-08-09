@@ -535,7 +535,7 @@ class Connection(object): # pylint:disable=too-many-instance-attributes
         if self.state not in [ConnectionState.OPEN_PIPE, ConnectionState.OPEN_SENT, ConnectionState.OPENED]:
             raise ValueError("Connection not open.")
         now = time.time()
-        if get_local_timeout(now, self.idle_timeout, self.last_frame_received_time) or (
+        if get_local_timeout(now, self._idle_timeout, self._last_frame_received_time) or (
         await self._get_remote_timeout(now)):
             await self.close(
                 # TODO: check error condition
@@ -615,7 +615,7 @@ class Connection(object): # pylint:disable=too-many-instance-attributes
         try:
             if self.state not in _CLOSING_STATES:
                 now = time.time()
-                if get_local_timeout(now, self.idle_timeout, self.last_frame_received_time) or (
+                if get_local_timeout(now, self._idle_timeout, self._last_frame_received_time) or (
                 await self._get_remote_timeout(now)):
                     # TODO: check error condition
                     await self.close(

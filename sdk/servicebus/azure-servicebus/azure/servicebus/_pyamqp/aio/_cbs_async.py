@@ -54,8 +54,8 @@ class CBSAuthenticator(object): # pylint:disable=too-many-instance-attributes
             status_description_field=b'status-description'
         )  # type: ManagementLink
 
-        if not auth.get_token or not asyncio.iscoroutine(auth.get_token):
-            raise ValueError("get_token must be a coroutine object.")
+        #if not auth.get_token or not asyncio.iscoroutinefunction(auth.get_token):
+        #    raise ValueError("get_token must be a coroutine object.")
 
         self._auth = auth
         self._encoding = 'UTF-8'

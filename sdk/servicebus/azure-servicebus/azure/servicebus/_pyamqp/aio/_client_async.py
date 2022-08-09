@@ -356,7 +356,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
                 properties=self._link_properties)
             await self._link.attach()
             return False
-        if (await self._link.get_state()) != LinkState.ATTACHED:  # ATTACHED
+        if self._link.get_state() != LinkState.ATTACHED:  # ATTACHED
             return False
         return True
 
@@ -567,14 +567,14 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                 send_settle_mode=self._send_settle_mode,
                 rcv_settle_mode=self._receive_settle_mode,
                 max_message_size=self._max_message_size,
-                on_message_received=self._message_received,
+                on_transfer=self._message_received_async,
                 properties=self._link_properties,
                 desired_capabilities=self._desired_capabilities,
                 on_attach=self._on_attach
             )
             await self._link.attach()
             return False
-        if (await self._link.get_state()) != LinkState.ATTACHED:  # ATTACHED
+        if self._link.get_state() != LinkState.ATTACHED:  # ATTACHED
             return False
         return True
 
@@ -594,7 +594,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             return False
         return True
 
-    async def _message_received(self, frame, message):
+    async def _message_received_async(self, frame, message):
         """Callback run on receipt of every message. If there is
         a user-defined callback, this will be called.
         Additionally if the client is retrieving messages for a batch
@@ -604,6 +604,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :type message: ~uamqp.message.Message
         """
         if self._message_received_callback:
+            print("CALLING MESSAGE RECEIVED")
             await self._message_received_callback(message)
         if not self._streaming_receive:
             self._received_messages.put((frame, message))
@@ -701,7 +702,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         )
 
     @overload
-    async def settle_messages(
+    async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
         outcome: Literal["accepted"],
@@ -711,7 +712,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         ...
 
     @overload
-    async def settle_messages(
+    async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
         outcome: Literal["released"],
@@ -721,7 +722,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         ...
 
     @overload
-    async def settle_messages(
+    async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
         outcome: Literal["rejected"],
@@ -732,7 +733,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         ...
 
     @overload
-    async def settle_messages(
+    async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
         outcome: Literal["modified"],
@@ -745,7 +746,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         ...
 
     @overload
-    async def settle_messages(
+    async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
         outcome: Literal["received"],
@@ -756,7 +757,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     ):
         ...
 
-    async def settle_messages(self, delivery_id: Union[int, Tuple[int, int]], outcome: str, **kwargs):
+    async def settle_messages_async(self, delivery_id: Union[int, Tuple[int, int]], outcome: str, **kwargs):
         batchable = kwargs.pop('batchable', None)
         if outcome.lower() == 'accepted':
             state = Accepted()

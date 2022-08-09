@@ -10,8 +10,7 @@ import asyncio
 import logging
 import functools
 
-from uamqp import authentication
-
+from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
 from .._common.constants import JWT_TOKEN_SCOPE, TOKEN_TYPE_JWT, TOKEN_TYPE_SASTOKEN
 
 
@@ -47,26 +46,23 @@ async def create_authentication(client):
     except AttributeError:
         token_type = TOKEN_TYPE_JWT
     if token_type == TOKEN_TYPE_SASTOKEN:
-        auth = authentication.JWTTokenAsync(
+        return JWTTokenAuthAsync(
             client._auth_uri,
             client._auth_uri,
             functools.partial(client._credential.get_token, client._auth_uri),
-            token_type=token_type,
-            timeout=client._config.auth_timeout,
-            http_proxy=client._config.http_proxy,
-            transport_type=client._config.transport_type,
+            custom_endpoint_hostname=client._config.custom_endpoint_hostname,
+            port=client._config.connection_port,
+            verify=client._config.connection_verify,
         )
-        await auth.update_token()
-        return auth
-    return authentication.JWTTokenAsync(
+    return JWTTokenAuthAsync(
         client._auth_uri,
         client._auth_uri,
         functools.partial(client._credential.get_token, JWT_TOKEN_SCOPE),
         token_type=token_type,
         timeout=client._config.auth_timeout,
-        http_proxy=client._config.http_proxy,
-        transport_type=client._config.transport_type,
-        refresh_window=300,
+        custom_endpoint_hostname=client._config.custom_endpoint_hostname,
+        port=client._config.connection_port,
+        verify=client._config.connection_verify,
     )
 
 

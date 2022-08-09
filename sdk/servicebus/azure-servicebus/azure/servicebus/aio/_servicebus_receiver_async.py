@@ -399,7 +399,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 if (timeout or self._max_wait_time)
                 else 0
             )
-            abs_timeout_ms = (
+            abs_timeout = (
                 time.time() + timeout_seconds
                 if timeout_seconds
                 else 0
@@ -421,10 +421,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             receiving = True
             while receiving and not expired and len(batch) < max_message_count:
                 while receiving and received_messages_queue.qsize() < max_message_count:
-                    if (
-                        abs_timeout_ms
-                        and amqp_receive_client._counter.get_current_ms() > abs_timeout_ms
-                    ):
+                    if abs_timeout and time.time() > abs_timeout:
                         expired = True
                         break
                     before = received_messages_queue.qsize()
@@ -437,7 +434,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                     ):
                         # first message(s) received, continue receiving for some time
                         first_message_received = True
-                        abs_timeout_ms = time.time() + self._further_pull_receive_timeout_ms
+                        abs_timeout = time.time() + self._further_pull_receive_timeout
                 while (
                     not received_messages_queue.empty() and len(batch) < max_message_count
                 ):
@@ -494,16 +491,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     ):
         # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> None
         if settle_operation == MESSAGE_COMPLETE:
-            return await self._handler.settle_messages(message.delivery_id, 'accepted')
+            return await self._handler.settle_messages_async(message.delivery_id, 'accepted')
         if settle_operation == MESSAGE_ABANDON:
-            return await self._handler.settle_messages(
+            return await self._handler.settle_messages_async(
                 message.delivery_id,
                 'modified',
                 delivery_failed=True,
                 undeliverable_here=False
             )
         if settle_operation == MESSAGE_DEAD_LETTER:
-            return await self._handler.settle_messages(
+            return await self._handler.settle_messages_async(
                 message.delivery_id,
                 'rejected',
                 error=AMQPError(
@@ -516,7 +513,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 )
             )
         if settle_operation == MESSAGE_DEFER:
-            return await self._handler.settle_messages(
+            return await self._handler.settle_messages_async(
                 message.delivery_id,
                 'modified',
                 delivery_failed=True,

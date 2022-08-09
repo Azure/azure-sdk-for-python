@@ -217,9 +217,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             # TODO This is not batch message sending?
             if isinstance(message, ServiceBusMessageBatch):
                 for batch_message in message._messages: # pylint:disable=protected-access
-                    self._handler.send_message(batch_message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout) # pylint:disable=line-too-long, protected-access
+                    await self._handler.send_message_async(batch_message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout) # pylint:disable=line-too-long, protected-access
             else:
-                self._handler.send_message(message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout) # pylint:disable=protected-access
+                await self._handler.send_message_async(message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout) # pylint:disable=protected-access
         except TimeoutError:
             raise OperationTimeoutError(message="Send operation timed out")
         except MessageException as e:

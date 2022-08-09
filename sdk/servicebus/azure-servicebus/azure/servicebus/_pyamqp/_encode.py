@@ -717,6 +717,10 @@ def encode_payload(output, payload):
         #  Possible fix 2:
         #  itertools.dropwhile(lambda x: x is None, header[::-1]))[::-1]
         #  2. encoding bool without constructor
+        #  Possible fix 3:
+        #  header = list(payload[0])
+        #  while header[-1] is None:
+        #      del header[-1]
         encode_value(output, describe_performative(payload[0]))
 
     if payload[2]:  # message annotations
