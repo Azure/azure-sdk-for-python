@@ -25,21 +25,17 @@ def sample_delete_project():
     client = TextAuthoringClient(endpoint, AzureKeyCredential(key))
 
     project_name = "Project_Name"
-    created_projects = client.list_projects()
-    created_projects_names = map(lambda project: project["projectName"], created_projects)
-    if project_name not in created_projects_names:
-        print("The project cannot be deleted because no such project exists")
-        return
     
-    poller = client.begin_delete_project(project_name)
-    poller.result()     #Waits for the project to get deleted
+    try:
+        poller = client.begin_delete_project(project_name)
+        result = poller.result()     # Waits for the project to get deleted
 
-    created_projects = client.list_projects()
-    created_projects_names = map(lambda project: project["projectName"], created_projects)
-    if project_name not in created_projects_names:
-        print("The project is deleted successfully")
-    else:
-        print("An error has occured")
+        if result["status"] == "succeeded":
+            print("The project is deleted successfully")
+        else:
+            print("An error has occured")
+    except Exception as ex:
+        print(ex)
 
 if __name__ == "__main__":
     sample_delete_project()

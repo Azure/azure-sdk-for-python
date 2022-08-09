@@ -5,18 +5,19 @@
 # ------------------------------------
 
 """
-FILE: sample_export_project.py
+FILE: sample_deploy_project.py
 DESCRIPTION:
-    This sample demonstrates how to export a project.
+    This sample demonstrates how to deploy a project.
 USAGE:
-    python sample_export_project.py
+    python sample_deploy_project.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_AUTHORING_ENDPOINT             - endpoint for your Text Analysis resource.
     2) AZURE_TEXT_AUTHORING_KEY                  - API key for your Text Analysis resource.
 """
-def sample_export_project():
+def sample_deploy_project():
     from azure.ai.language.text.authoring import TextAuthoringClient
     from azure.core.credentials import AzureKeyCredential
+    from samples.authoring.dummy_project import dummy_project
     import os
 
     endpoint = os.environ["AZURE_TEXT_AUTHORING_ENDPOINT"]
@@ -25,14 +26,14 @@ def sample_export_project():
     client = TextAuthoringClient(endpoint, AzureKeyCredential(key))
 
     project_name = "Project_Name"
-    poller = client.begin_export_project(project_name, string_index_type="Utf16CodeUnit")
-    result = poller.result()
+    deployment_name = "Deployment_Name"
+    deployment_label = {
+        "trainedModelLabel": "model1"
+    }
 
-    if result["status"] == "succeeded":
-        export_url = result["resultUrl"]
-        print("The project is exported at: " + export_url)
-    else:
-        print("An error has occured")
+    poller = client.begin_deploy_project(project_name, deployment_name, deployment_label)
+    result = poller.result()
+    print(result)
 
 if __name__ == "__main__":
-    sample_export_project()
+    sample_deploy_project()
