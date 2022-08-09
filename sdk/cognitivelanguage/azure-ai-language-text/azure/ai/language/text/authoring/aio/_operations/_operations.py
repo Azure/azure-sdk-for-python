@@ -27,33 +27,33 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ...operations._operations import (
+from ..._operations._operations import (
+    build_cancel_training_job_request,
     build_create_project_request,
+    build_delete_deployment_request,
     build_delete_project_request,
+    build_delete_trained_model_request,
+    build_deploy_project_request,
     build_export_request,
+    build_get_deployment_request,
+    build_get_deployment_status_request,
+    build_get_export_status_request,
+    build_get_import_status_request,
+    build_get_model_evaluation_summary_request,
+    build_get_project_deletion_status_request,
     build_get_project_request,
+    build_get_supported_languages_request,
+    build_get_swap_deployments_status_request,
+    build_get_trained_model_request,
+    build_get_training_status_request,
     build_import_method_request,
+    build_list_deployments_request,
+    build_list_model_evaluation_results_request,
     build_list_projects_request,
-    build_text_analysis_authoring_cancel_training_job_request,
-    build_text_analysis_authoring_delete_deployment_request,
-    build_text_analysis_authoring_delete_trained_model_request,
-    build_text_analysis_authoring_deploy_project_request,
-    build_text_analysis_authoring_get_deployment_request,
-    build_text_analysis_authoring_get_deployment_status_request,
-    build_text_analysis_authoring_get_export_status_request,
-    build_text_analysis_authoring_get_import_status_request,
-    build_text_analysis_authoring_get_model_evaluation_results_request,
-    build_text_analysis_authoring_get_model_evaluation_summary_request,
-    build_text_analysis_authoring_get_project_deletion_status_request,
-    build_text_analysis_authoring_get_supported_languages_request,
-    build_text_analysis_authoring_get_swap_deployments_status_request,
-    build_text_analysis_authoring_get_trained_model_request,
-    build_text_analysis_authoring_get_training_status_request,
-    build_text_analysis_authoring_list_deployments_request,
-    build_text_analysis_authoring_list_trained_models_request,
-    build_text_analysis_authoring_list_training_config_versions_request,
-    build_text_analysis_authoring_list_training_jobs_request,
-    build_text_analysis_authoring_swap_deployments_request,
+    build_list_trained_models_request,
+    build_list_training_config_versions_request,
+    build_list_training_jobs_request,
+    build_swap_deployments_request,
     build_train_request,
 )
 from .._vendor import MixinABC
@@ -67,7 +67,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class TextAuthoringClientOperationsMixin(MixinABC):
+class TextAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_projects(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
@@ -1048,24 +1048,6 @@ class TextAuthoringClientOperationsMixin(MixinABC):
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-
-class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-methods
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.language.text.aio.TextAuthoringClient`'s
-        :attr:`text_analysis_authoring` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace
     def list_deployments(
         self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
@@ -1112,7 +1094,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_text_analysis_authoring_list_deployments_request(
+                request = build_list_deployments_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -1185,7 +1167,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         else:
             _json = body
 
-        request = build_text_analysis_authoring_swap_deployments_request(
+        request = build_swap_deployments_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1384,7 +1366,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_text_analysis_authoring_get_deployment_request(
+        request = build_get_deployment_request(
             project_name=project_name,
             deployment_name=deployment_name,
             api_version=self._config.api_version,
@@ -1436,7 +1418,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         else:
             _json = body
 
-        request = build_text_analysis_authoring_deploy_project_request(
+        request = build_deploy_project_request(
             project_name=project_name,
             deployment_name=deployment_name,
             content_type=content_type,
@@ -1625,7 +1607,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_text_analysis_authoring_delete_deployment_request(
+        request = build_delete_deployment_request(
             project_name=project_name,
             deployment_name=deployment_name,
             api_version=self._config.api_version,
@@ -1798,7 +1780,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_text_analysis_authoring_get_deployment_status_request(
+        request = build_get_deployment_status_request(
             project_name=project_name,
             deployment_name=deployment_name,
             job_id=job_id,
@@ -1909,7 +1891,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_text_analysis_authoring_get_swap_deployments_status_request(
+        request = build_get_swap_deployments_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -2021,7 +2003,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_text_analysis_authoring_get_export_status_request(
+        request = build_get_export_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -2131,7 +2113,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_text_analysis_authoring_get_import_status_request(
+        request = build_get_import_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -2208,7 +2190,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_text_analysis_authoring_list_trained_models_request(
+                request = build_list_trained_models_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -2297,7 +2279,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_text_analysis_authoring_get_trained_model_request(
+        request = build_get_trained_model_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             api_version=self._config.api_version,
@@ -2351,7 +2333,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_text_analysis_authoring_delete_trained_model_request(
+        request = build_delete_trained_model_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             api_version=self._config.api_version,
@@ -2377,7 +2359,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def get_model_evaluation_results(
+    def list_model_evaluation_results(
         self,
         project_name: str,
         trained_model_label: str,
@@ -2424,7 +2406,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_text_analysis_authoring_get_model_evaluation_results_request(
+                request = build_list_model_evaluation_results_request(
                     project_name=project_name,
                     trained_model_label=trained_model_label,
                     string_index_type=string_index_type,
@@ -2654,7 +2636,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_text_analysis_authoring_get_model_evaluation_summary_request(
+        request = build_get_model_evaluation_summary_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             api_version=self._config.api_version,
@@ -2804,7 +2786,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_text_analysis_authoring_list_training_jobs_request(
+                request = build_list_training_jobs_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -2966,7 +2948,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_text_analysis_authoring_get_training_status_request(
+        request = build_get_training_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -3009,7 +2991,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_text_analysis_authoring_cancel_training_job_request(
+        request = build_cancel_training_job_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -3176,7 +3158,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_text_analysis_authoring_get_project_deletion_status_request(
+        request = build_get_project_deletion_status_request(
             job_id=job_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3245,7 +3227,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_text_analysis_authoring_get_supported_languages_request(
+                request = build_get_supported_languages_request(
                     top=top,
                     skip=skip,
                     api_version=self._config.api_version,
@@ -3338,7 +3320,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_text_analysis_authoring_list_training_config_versions_request(
+                request = build_list_training_config_versions_request(
                     project_kind=project_kind,
                     top=top,
                     skip=skip,

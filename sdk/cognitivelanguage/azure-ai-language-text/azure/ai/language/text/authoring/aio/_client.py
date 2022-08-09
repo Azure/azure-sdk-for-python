@@ -14,7 +14,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
 from ._configuration import TextAuthoringClientConfiguration
-from .operations import TextAnalysisAuthoringOperations
+from ._operations import TextAuthoringClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -23,16 +23,13 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class TextAuthoringClient:  # pylint: disable=client-accepts-api-version-keyword
+class TextAuthoringClient(TextAuthoringClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms. The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
     detection and question answering. Further documentation can be found in :code:`<a
     href="https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview</a>`.
 
-    :ivar text_analysis_authoring: TextAnalysisAuthoringOperations operations
-    :vartype text_analysis_authoring:
-     azure.ai.language.text.aio.operations.TextAnalysisAuthoringOperations
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
@@ -53,9 +50,6 @@ class TextAuthoringClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.text_analysis_authoring = TextAnalysisAuthoringOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
     def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

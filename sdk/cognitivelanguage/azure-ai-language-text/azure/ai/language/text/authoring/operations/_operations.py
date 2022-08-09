@@ -27,7 +27,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .._serialization import Serializer
-from .._vendor import _format_url_section
+from .._vendor import MixinABC, _format_url_section
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -41,9 +41,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_text_analysis_authoring_list_projects_request(
-    *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
+def build_list_projects_request(*, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -66,7 +64,7 @@ def build_text_analysis_authoring_list_projects_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_analysis_authoring_create_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_create_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -93,7 +91,7 @@ def build_text_analysis_authoring_create_project_request(project_name: str, **kw
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_analysis_authoring_get_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_get_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -117,7 +115,7 @@ def build_text_analysis_authoring_get_project_request(project_name: str, **kwarg
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_analysis_authoring_delete_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_delete_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -141,7 +139,7 @@ def build_text_analysis_authoring_delete_project_request(project_name: str, **kw
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_analysis_authoring_export_request(
+def build_export_request(
     project_name: str, *, string_index_type: str, asset_kind: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -170,7 +168,7 @@ def build_text_analysis_authoring_export_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_analysis_authoring_import_method_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_import_method_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -197,7 +195,7 @@ def build_text_analysis_authoring_import_method_request(project_name: str, **kwa
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_analysis_authoring_train_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_train_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -782,23 +780,7 @@ def build_text_analysis_authoring_list_training_config_versions_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-methods
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.language.text.TextAuthoringClient`'s
-        :attr:`text_analysis_authoring` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
+class TextAuthoringClientOperationsMixin(MixinABC):
     @distributed_trace
     def list_projects(self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any) -> Iterable[JSON]:
         """Lists the existing projects.
@@ -851,7 +833,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_text_analysis_authoring_list_projects_request(
+                request = build_list_projects_request(
                     top=top,
                     skip=skip,
                     api_version=self._config.api_version,
@@ -1068,7 +1050,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         else:
             _json = body
 
-        request = build_text_analysis_authoring_create_project_request(
+        request = build_create_project_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1154,7 +1136,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_text_analysis_authoring_get_project_request(
+        request = build_get_project_request(
             project_name=project_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1196,7 +1178,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_text_analysis_authoring_delete_project_request(
+        request = build_delete_project_request(
             project_name=project_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1289,7 +1271,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_text_analysis_authoring_export_request(
+        request = build_export_request(
             project_name=project_name,
             string_index_type=string_index_type,
             asset_kind=asset_kind,
@@ -1406,7 +1388,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         else:
             _json = body
 
-        request = build_text_analysis_authoring_import_method_request(
+        request = build_import_method_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1603,7 +1585,7 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
         else:
             _json = body
 
-        request = build_text_analysis_authoring_train_request(
+        request = build_train_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1770,6 +1752,24 @@ class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-method
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+
+class TextAnalysisAuthoringOperations:  # pylint: disable=too-many-public-methods
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.language.text.TextAuthoringClient`'s
+        :attr:`text_analysis_authoring` attribute.
+    """
+
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def list_deployments(

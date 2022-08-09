@@ -39,9 +39,7 @@ def _authentication_policy(credential):
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     if isinstance(credential, AzureKeyCredential):
-        authentication_policy = AzureKeyCredentialPolicy(
-            name="Ocp-Apim-Subscription-Key", credential=credential
-        )
+        authentication_policy = AzureKeyCredentialPolicy(name="Ocp-Apim-Subscription-Key", credential=credential)
     elif credential is not None and not hasattr(credential, "get_token"):
         raise TypeError(
             "Unsupported credential: {}. Use an instance of AzureKeyCredential "
@@ -50,7 +48,7 @@ def _authentication_policy(credential):
     return authentication_policy
 
 
-class TextAuthoringClient(GeneratedTextAuthoringClient): # pylint: disable=client-accepts-api-version-keyword
+class TextAuthoringClient(GeneratedTextAuthoringClient):  # pylint: disable=client-accepts-api-version-keyword
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms. The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language

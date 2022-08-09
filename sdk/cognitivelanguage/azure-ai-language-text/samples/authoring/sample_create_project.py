@@ -22,9 +22,9 @@ def sample_create_project():
 
     endpoint = os.environ["AZURE_TEXT_AUTHORING_ENDPOINT"]
     key = os.environ["AZURE_TEXT_AUTHORING_KEY"]
-    storageContainer = os.environ["AZURE_TEXT_AUTHORING_STORAGE"]
+    storage_container = os.environ["AZURE_TEXT_AUTHORING_STORAGE"]
 
-    client = TextAuthoringClient(endpoint, AzureKeyCredential(key)).text_analysis_authoring
+    client = TextAuthoringClient(endpoint, AzureKeyCredential(key))
 
     project_name = "Project_Name"
     project_body = {
@@ -32,17 +32,16 @@ def sample_create_project():
         "language": "en",
         "projectKind": "customSingleLabelClassification",
         "description": "Test Project",
-        "multilingual": "True",
-        "storageInputContainerName": storageContainer
+        "multilingual": True,
+        "storageInputContainerName": storage_container
     }
-    client.create_project(project_name, project_body)
 
-    created_projects = client.list_projects()
-    created_projects_names = map(lambda project: project["projectName"], created_projects)
-    if(project_name in created_projects_names):
+    try:
+        client.create_project(project_name, project_body)
         print("The project is created successfully")
-    else:
-        print("An error has occured")
+    except Exception as ex:
+        print(ex)
 
-if(__name__ == "__main__"):
+
+if __name__ == "__main__":
     sample_create_project()

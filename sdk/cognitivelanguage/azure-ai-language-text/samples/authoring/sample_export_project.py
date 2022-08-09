@@ -22,14 +22,14 @@ def sample_export_project():
 
     endpoint = os.environ["AZURE_TEXT_AUTHORING_ENDPOINT"]
     key = os.environ["AZURE_TEXT_AUTHORING_KEY"]
-    storageContainer = os.environ["AZURE_TEXT_AUTHORING_STORAGE"]
+    storage_container = os.environ["AZURE_TEXT_AUTHORING_STORAGE"]
 
-    client = TextAuthoringClient(endpoint, AzureKeyCredential(key)).text_analysis_authoring
+    client = TextAuthoringClient(endpoint, AzureKeyCredential(key))
 
     project_name = "Project_Name"
     client.begin_export(project_name, string_index_type="Utf16CodeUnit")
 
     
 
-if(__name__ == "__main__"):
+if __name__ == "__main__":
     sample_export_project()

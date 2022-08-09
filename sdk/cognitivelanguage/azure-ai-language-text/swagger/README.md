@@ -97,3 +97,91 @@ directive:
   transform: |
     $["description"] = "Specifies the method used to interpret string offsets. Set to \"UnicodeCodePoint\" for Python strings.";
     $["x-ms-client-default"] = "UnicodeCodePoint";
+```
+
+```yaml $(tag) == 'release_authoring_1_0'
+# Rename Authoring client operations
+directive:
+  - rename-operation:
+      from: TextAnalysisAuthoring_ListProjects
+      to: ListProjects
+  - rename-operation:
+      from: TextAnalysisAuthoring_CreateProject
+      to: CreateProject
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetProject
+      to: GetProject
+  - rename-operation:
+      from: TextAnalysisAuthoring_DeleteProject
+      to: DeleteProject
+  - rename-operation:
+      from: TextAnalysisAuthoring_Export
+      to: Export
+  - rename-operation:
+      from: TextAnalysisAuthoring_Import
+      to: Import
+  - rename-operation:
+      from: TextAnalysisAuthoring_Train
+      to: Train
+  - rename-operation:
+      from: TextAnalysisAuthoring_ListDeployments
+      to: ListDeployments
+  - rename-operation:
+      from: TextAnalysisAuthoring_SwapDeployments
+      to: SwapDeployments
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetDeployment
+      to: GetDeployment
+  - rename-operation:
+      from: TextAnalysisAuthoring_DeployProject
+      to: DeployProject
+  - rename-operation:
+      from: TextAnalysisAuthoring_DeleteDeployment
+      to: DeleteDeployment
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetDeploymentStatus
+      to: GetDeploymentStatus
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetSwapDeploymentsStatus
+      to: GetSwapDeploymentsStatus
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetExportStatus
+      to: GetExportStatus
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetImportStatus
+      to: GetImportStatus
+  - rename-operation:
+      from: TextAnalysisAuthoring_ListTrainedModels
+      to: ListTrainedModels
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetTrainedModel
+      to: GetTrainedModel
+  - rename-operation:
+      from: TextAnalysisAuthoring_DeleteTrainedModel
+      to: DeleteTrainedModel
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetModelEvaluationResults
+      to: ListModelEvaluationResults
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetModelEvaluationSummary
+      to: GetModelEvaluationSummary
+  - rename-operation:
+      from: TextAnalysisAuthoring_ListTrainingJobs
+      to: ListTrainingJobs
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetTrainingStatus
+      to: GetTrainingStatus
+  - rename-operation:
+      from: TextAnalysisAuthoring_CancelTrainingJob
+      to: CancelTrainingJob
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetProjectDeletionStatus
+      to: GetProjectDeletionStatus
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetSupportedLanguages
+      to: ListSupportedLanguages
+  - rename-operation:
+      from: TextAnalysisAuthoring_ListTrainingConfigVersions
+      to: ListTrainingConfigVersions
+  
+```
