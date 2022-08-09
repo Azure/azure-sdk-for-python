@@ -1,11 +1,11 @@
 # Release History
 
-## 1.0.0b2 (2022-08-04)
+## 1.0.0b2 (2022-08-09)
 
-### Bug Fixed 
-- fixed `delete_app_components` method from `azure.developer.loadtesting.LoadTestingClient.load_test_administration.delete_app_components`
+### Bugs Fixed 
+- Fixed `delete_app_components` method from `azure.developer.loadtesting.LoadTestingClient.load_test_administration.delete_app_components`
 
-### Other Chnages
+### Other Changes
 - Updated README
 - Added more Unit Tests
 - Added and refined Samples
