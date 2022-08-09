@@ -30,7 +30,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection
-from .._base import build_options as _build_options, stringify_auto_scale
+from .._base import build_options as _build_options, _stringify_auto_scale
 from ._container import ContainerProxy
 from ..offer import ThroughputProperties
 from ..http_constants import StatusCodes
@@ -228,12 +228,18 @@ class DatabaseProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         offer_throughput = kwargs.pop('offer_throughput', None)
         if offer_throughput is not None:
-            if isinstance(offer_throughput, int):
-                request_options["offerThroughput"] = offer_throughput
+            try:
+                if offer_throughput.auto_scale_max_throughput:
+                    request_options['autoUpgradePolicy'] = _stringify_auto_scale(offer=offer_throughput)
+                elif offer_throughput.auto_scale_increment_percent:
+                    raise ValueError("auto_scale_max_throughput must be supplied in "
+                                     "conjunction with auto_scale_increment_percent")
+                elif offer_throughput.offer_throughput:
+                    request_options["offerThroughput"] = offer_throughput.offer_throughput
 
-            if isinstance(offer_throughput, object):
-                offer_throughput = stringify_auto_scale(offer=offer_throughput)
-                request_options['autoUpgradePolicy'] = offer_throughput
+            except AttributeError:
+                if isinstance(offer_throughput, int):
+                    request_options["offerThroughput"] = offer_throughput
 
         data = await self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
