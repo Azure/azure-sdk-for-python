@@ -13,7 +13,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_AUTHORING_ENDPOINT             - endpoint for your Text Analysis resource.
     2) AZURE_TEXT_AUTHORING_KEY                  - API key for your Text Analysis resource.
-    3) AZURE_TEXT_AUTHORING_STORAGE              - storage container for the project to be created in
+    3) AZURE_TEXT_AUTHORING_STORAGE              - name of the storage container for the project to be created in
 """
 def sample_create_project():
     from azure.ai.language.text.authoring import TextAuthoringClient
