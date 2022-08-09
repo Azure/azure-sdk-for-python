@@ -99,9 +99,8 @@ class EventHubConsumer(
         self._error = None
         self._timeout = 0
         self._idle_timeout = (idle_timeout * self._amqp_transport.IDLE_TIMEOUT_FACTOR) if idle_timeout else None
-        partition = self._source.split("/")[-1]
-        self._partition = partition
-        self._name = f"EHConsumer-{uuid.uuid4()}-partition{partition}"
+        self._partition = self._source.split("/")[-1]
+        self._name = f"EHConsumer-{uuid.uuid4()}-partition{self._partition}"
         if owner_level is not None:
             link_properties[EPOCH_SYMBOL] = int(owner_level)
         link_property_timeout_ms = (

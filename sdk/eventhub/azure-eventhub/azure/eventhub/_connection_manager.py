@@ -3,25 +3,26 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from __future__ import annotations
 from typing import TYPE_CHECKING
 from threading import Lock
 from enum import Enum
 
-from uamqp import c_uamqp, Connection as uamqp_Connection
+from ._transport._uamqp_transport import UamqpTransport
 from ._constants import TransportType
 
 if TYPE_CHECKING:
+    from uamqp.authentication import JWTTokenAuth
+    from uamqp import Connection
+
     try:
         from typing_extensions import Protocol
     except ImportError:
         Protocol = object  # type: ignore
 
-    from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
-
     class ConnectionManager(Protocol):
-        def get_connection(
-            self, host: str, auth: uamqp_JWTTokenAuth
-        ) -> uamqp_Connection:
+        def get_connection(self, host, auth):
+            # type: (str, 'JWTTokenAuth') -> Connection
             pass
 
         def close_connection(self):
@@ -39,10 +40,7 @@ class _ConnectionMode(Enum):
 class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self._lock = Lock()
-        self._conn: uamqp_Connection = None
-
-        self._lock = Lock()
-        self._conn = None  # type: uamqp_Connection
+        self._conn: Connection = None
 
         self._container_id = kwargs.get("container_id")
         self._debug = kwargs.get("debug")
@@ -57,14 +55,15 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
         self._remote_idle_timeout_empty_frame_send_ratio = kwargs.get(
             "remote_idle_timeout_empty_frame_send_ratio"
         )
+        self._amqp_transport = kwargs.get("amqp_transport", UamqpTransport)
 
-    def get_connection(self, host, auth):
-        # type: (str, uamqp_JWTTokenAuth) -> uamqp_Connection
+    def get_connection(self, *, host: str, auth: JWTTokenAuth, endpoint: str) -> Connection:
         with self._lock:
             if self._conn is None:
-                self._conn = uamqp_Connection(
-                    host,
-                    auth,
+                self._conn = self._amqp_transport.create_connection(
+                    host=host,
+                    auth=auth,
+                    endpoint=endpoint,
                     container_id=self._container_id,
                     max_frame_size=self._max_frame_size,
                     channel_max=self._channel_max,
@@ -81,18 +80,14 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
         # type: () -> None
         with self._lock:
             if self._conn:
-                self._conn.destroy()
+                self._amqp_transport.close_connection(self._conn)
             self._conn = None
 
     def reset_connection_if_broken(self):
         # type: () -> None
         with self._lock:
-            if self._conn and self._conn._state in (  # pylint:disable=protected-access
-                c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
-            ):
+            conn_state = self._amqp_transport.get_connection_state(self._conn)
+            if self._conn and conn_state in self._amqp_transport.CONNECTION_CLOSING_STATES:
                 self._conn = None
 
 
@@ -100,8 +95,8 @@ class _SeparateConnectionManager(object):
     def __init__(self, **kwargs):
         pass
 
-    def get_connection(self, endpoint):  # pylint:disable=unused-argument, no-self-use
-        # type: (str) -> None
+    def get_connection(self, host, auth):  # pylint:disable=unused-argument, no-self-use
+        # type: (str, JWTTokenAuth) -> None
         return None
 
     def close_connection(self):

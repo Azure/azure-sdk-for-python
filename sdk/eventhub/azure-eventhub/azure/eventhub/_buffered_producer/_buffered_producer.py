@@ -32,9 +32,9 @@ class BufferedProducer:
         max_message_size_on_link: int,
         executor: ThreadPoolExecutor,
         *,
-        max_wait_time: float = 1,
+        amqp_transport: AmqpTransport,
         max_buffer_length: int,
-        amqp_transport: AmqpTransport
+        max_wait_time: float = 1
     ):
         self._buffered_queue: queue.Queue = queue.Queue()
         self._max_buffer_len = max_buffer_length

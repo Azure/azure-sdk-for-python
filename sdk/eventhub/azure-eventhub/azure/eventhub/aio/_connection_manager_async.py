@@ -3,17 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from __future__ import annotations
 from typing import TYPE_CHECKING
 from asyncio import Lock
 
-from uamqp import c_uamqp
-from uamqp.async_ops import ConnectionAsync
-
+from ._transport._uamqp_transport_async import UamqpTransportAsync
 from .._connection_manager import _ConnectionMode
 from .._constants import TransportType
 
 if TYPE_CHECKING:
     from uamqp.authentication import JWTTokenAsync
+    from uamqp.async_ops import ConnectionAsync
 
     try:
         from typing_extensions import Protocol
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
     class ConnectionManager(Protocol):
         async def get_connection(
-            self, host: str, auth: "JWTTokenAsync"
+            self, host: str, auth: JWTTokenAsync
         ) -> ConnectionAsync:
             pass
 
@@ -52,11 +52,12 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
         self._remote_idle_timeout_empty_frame_send_ratio = kwargs.get(
             "remote_idle_timeout_empty_frame_send_ratio"
         )
+        self._amqp_transport = kwargs.get("amqp_transport", UamqpTransportAsync)
 
-    async def get_connection(self, host: str, auth: "JWTTokenAsync") -> ConnectionAsync:
+    async def get_connection(self, host: str, auth: JWTTokenAsync) -> ConnectionAsync:
         async with self._lock:
             if self._conn is None:
-                self._conn = ConnectionAsync(
+                self._conn = self._amqp_transport.create_connection_async(
                     host,
                     auth,
                     container_id=self._container_id,
@@ -75,17 +76,13 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
     async def close_connection(self) -> None:
         async with self._lock:
             if self._conn:
-                await self._conn.destroy_async()
+                await self._amqp_transport.close_connection_async(self._conn)
             self._conn = None
 
     async def reset_connection_if_broken(self) -> None:
         async with self._lock:
-            if self._conn and self._conn._state in (  # pylint:disable=protected-access
-                c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
-            ):
+            conn_state = self._amqp_transport.get_connection_state(self._conn)
+            if self._conn and conn_state in self._amqp_transport.CONNECTION_CLOSING_STATES:
                 self._conn = None
 
 
@@ -93,7 +90,7 @@ class _SeparateConnectionManager(object):
     def __init__(self, **kwargs) -> None:
         pass
 
-    async def get_connection(self, host: str, auth: "JWTTokenAsync") -> None:
+    async def get_connection(self, host: str, auth: JWTTokenAsync) -> None:
         pass  # return None
 
     async def close_connection(self) -> None:

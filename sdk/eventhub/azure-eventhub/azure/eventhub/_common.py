@@ -55,6 +55,7 @@ from .amqp import (
     AmqpMessageProperties,
 )
 from ._transport._uamqp_transport import UamqpTransport
+from uamqp import types
 
 if TYPE_CHECKING:
     from uamqp import Message as uamqp_Message, BatchMessage as uamqp_BatchMessage
@@ -224,8 +225,8 @@ class EventData(object):
         :rtype: ~azure.eventhub.EventData
         """
         event_data = cls(body="")
-        event_data._message = message
         # pylint: disable=protected-access
+        event_data._message = message
         event_data._raw_amqp_message = (
             raw_amqp_message
             if raw_amqp_message
@@ -293,11 +294,6 @@ class EventData(object):
 
         :rtype: bytes
         """
-        # TODO: Ask Anna. can we remove the try and just do except? Haven't seen a case where symbol is used to get.
-        # try:
-        #    return self._raw_amqp_message.annotations[types.AMQPSymbol(PROP_PARTITION_KEY)]
-        # except KeyError:
-        #    return self._raw_amqp_message.annotations.get(PROP_PARTITION_KEY, None)
         return self._raw_amqp_message.annotations.get(PROP_PARTITION_KEY, None)
 
     @property
@@ -310,7 +306,6 @@ class EventData(object):
 
     @properties.setter
     def properties(self, value: Dict[Union[str, bytes], Any]):
-        # type: (Dict[Union[str, bytes], Any]) -> None
         """Application-defined properties on the event.
 
         :param dict value: The application properties for the EventData.

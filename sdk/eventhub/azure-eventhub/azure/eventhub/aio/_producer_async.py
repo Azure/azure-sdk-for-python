@@ -99,7 +99,7 @@ class EventHubProducer(
         self._condition: Optional[Exception] = None
         self._lock = asyncio.Lock(**self._internal_kwargs)
         self._link_properties = self._amqp_transport.create_link_properties(
-            {TIMEOUT_SYMBOL: int(self._timeout * 1000)}
+            {TIMEOUT_SYMBOL: int(self._timeout * self._amqp_transport.TIMEOUT_FACTOR)}
         )
 
 

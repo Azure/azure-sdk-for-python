@@ -12,8 +12,6 @@ import collections
 from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
 from datetime import timedelta
 from urllib.parse import urlparse, quote_plus
-import six
-from uamqp import utils
 
 from azure.core.credentials import (
     AccessToken,
@@ -27,7 +25,7 @@ from azure.core.pipeline.policies import RetryMode
 from ._transport._uamqp_transport import UamqpTransport
 from .exceptions import ClientClosedError
 from ._configuration import Configuration
-from ._utils import utc_from_timestamp, parse_sas_credential
+from ._utils import utc_from_timestamp, parse_sas_credential, generate_sas_token
 from ._connection_manager import get_connection_manager
 from ._constants import (
     CONTAINER_PREFIX,
@@ -150,11 +148,8 @@ def _generate_sas_token(uri, policy, key, expiry=None):
         expiry = timedelta(hours=1)  # Default to 1 hour.
 
     abs_expiry = int(time.time()) + expiry.seconds
-    encoded_uri = quote_plus(uri).encode("utf-8")  # pylint: disable=no-member
-    encoded_policy = quote_plus(policy).encode("utf-8")  # pylint: disable=no-member
-    encoded_key = key.encode("utf-8")
 
-    token = utils.create_sas_token(encoded_policy, encoded_key, encoded_uri, expiry)
+    token = generate_sas_token(uri, policy, key, abs_expiry).encode()
     return AccessToken(token=token, expires_on=abs_expiry)
 
 
@@ -289,7 +284,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         credential: CredentialTypes,
         **kwargs: Any,
     ) -> None:
-        self._uamqp_transport = kwargs.pop("uamqp_transport", True)
+        uamqp_transport = kwargs.pop("uamqp_transport", True)
         self._amqp_transport = kwargs.pop("amqp_transport", UamqpTransport)
 
         self.eventhub_name = eventhub_name
@@ -308,7 +303,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
         self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"
         self._config = Configuration(
-            uamqp_transport=self._uamqp_transport,
+            uamqp_transport=uamqp_transport,
             hostname=self._address.hostname,
             **kwargs,
         )
@@ -418,7 +413,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 description = response.application_properties.get(
                     MGMT_STATUS_DESC
                 )  # type: Optional[Union[str, bytes]]
-                if description and isinstance(description, six.binary_type):
+                if description and isinstance(description, bytes):
                     description = description.decode("utf-8")
                 if status_code < 400:
                     return response

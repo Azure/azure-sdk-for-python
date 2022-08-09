@@ -210,7 +210,7 @@ class ClientBaseAsync(ClientBase):
         **kwargs: Any
     ) -> None:
         self._internal_kwargs = get_dict_with_loop_if_needed(kwargs.get("loop", None))
-        self._uamqp_transport = kwargs.pop("uamqp_transport", True)
+        uamqp_transport = kwargs.pop("uamqp_transport", True)
         self._amqp_transport = UamqpTransportAsync
         if isinstance(credential, AzureSasCredential):
             self._credential = EventhubAzureSasTokenCredentialAsync(credential)  # type: ignore
@@ -222,7 +222,7 @@ class ClientBaseAsync(ClientBase):
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
             credential=self._credential,
-            uamqp_transport=self._uamqp_transport,
+            uamqp_transport=uamqp_transport,
             amqp_transport=self._amqp_transport,
             **kwargs
         )

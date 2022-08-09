@@ -277,7 +277,7 @@ class EventHubProducerClient(
 
     async def _buffered_send_event(self, event, **kwargs):
         partition_key = kwargs.get("partition_key")
-        set_event_partition_key(event, partition_key)
+        set_event_partition_key(event, partition_key, self._amqp_transport)
         timeout = kwargs.get("timeout")
         timeout_time = time.time() + timeout if timeout else None
         await self._buffered_send(

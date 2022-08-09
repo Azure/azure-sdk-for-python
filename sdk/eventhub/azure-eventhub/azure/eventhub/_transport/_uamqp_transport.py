@@ -9,6 +9,7 @@ from typing import Optional, Union, Any
 
 try:
     from uamqp import (
+        c_uamqp,
         BatchMessage,
         constants,
         MessageBodyType,
@@ -22,6 +23,7 @@ try:
         AMQPClient,
         compat,
         errors,
+        Connection,
     )
     from uamqp.message import (
         MessageHeader,
@@ -84,6 +86,12 @@ if uamqp_installed:
         MAX_FRAME_SIZE_BYTES = constants.MAX_MESSAGE_LENGTH_BYTES
         IDLE_TIMEOUT_FACTOR = 1000
         MESSAGE = Message
+        CONNECTION_CLOSING_STATES = (  # pylint:disable=protected-access
+                c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
+            )
 
         # define symbols
         PRODUCT_SYMBOL = types.AMQPSymbol("product")
@@ -204,6 +212,48 @@ if uamqp_installed:
             :rtype: dict
             """
             return {types.AMQPSymbol(symbol): types.AMQPLong(value) for (symbol, value) in link_properties.items()}
+
+        @staticmethod
+        def create_connection(**kwargs):
+            """
+            Creates and returns the uamqp Connection object.
+            :keyword str host: The hostname, used by uamqp.
+            :keyword JWTTokenAuth auth: The auth, used by uamqp.
+            :keyword str endpoint: The endpoint, used by pyamqp.
+            :keyword str container_id: Required.
+            :keyword int max_frame_size: Required.
+            :keyword int channel_max: Required.
+            :keyword int idle_timeout: Required.
+            :keyword Dict properties: Required.
+            :keyword int remote_idle_timeout_empty_frame_send_ratio: Required.
+            :keyword error_policy: Required.
+            :keyword bool debug: Required.
+            :keyword str encoding: Required.
+            """
+            endpoint = kwargs.pop("endpoint") # pylint:disable=unused-variable
+            host = kwargs.pop("host")
+            auth = kwargs.pop("auth")
+            return Connection(
+                host,
+                auth,
+                **kwargs
+            )
+
+        @staticmethod
+        def close_connection(connection):
+            """
+            Closes existing connection.
+            :param connection: uamqp or pyamqp Connection.
+            """
+            connection.destroy()
+
+        @staticmethod
+        def get_connection_state(connection):
+            """
+            Gets connection state.
+            :param connection: uamqp or pyamqp Connection.
+            """
+            return connection._state
 
         @staticmethod
         def create_send_client(*, config, **kwargs): # pylint:disable=unused-argument

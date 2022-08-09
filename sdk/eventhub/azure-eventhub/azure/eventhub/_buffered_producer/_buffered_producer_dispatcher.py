@@ -31,10 +31,10 @@ class BufferedProducerDispatcher:
         eventhub_name: str,
         max_message_size_on_link: int,
         *,
+        amqp_transport: AmqpTransport,
         max_buffer_length: int = 1500,
         max_wait_time: float = 1,
-        executor: Optional[Union[ThreadPoolExecutor, int]] = None,
-        amqp_transport: AmqpTransport
+        executor: Optional[Union[ThreadPoolExecutor, int]] = None
     ):
         self._buffered_producers: Dict[str, BufferedProducer] = {}
         self._partition_ids: List[str] = partitions

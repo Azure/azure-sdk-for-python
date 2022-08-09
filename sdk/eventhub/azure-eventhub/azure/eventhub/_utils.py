@@ -10,6 +10,11 @@ import platform
 import datetime
 import calendar
 import logging
+from base64 import b64encode
+from hashlib import sha256
+from hmac import HMAC
+from urllib.parse import urlencode, quote_plus
+import time
 from typing import (
     TYPE_CHECKING,
     Type,
@@ -39,10 +44,7 @@ from ._constants import (
     PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC,
     PROP_LAST_ENQUEUED_OFFSET,
     PROP_TIMESTAMP,
-    PROP_PARTITION_KEY
 )
-
-PROP_PARTITION_KEY_AMQP_SYMBOL = uamqp_types.AMQPSymbol(PROP_PARTITION_KEY)
 
 
 if TYPE_CHECKING:
@@ -130,8 +132,11 @@ def send_context_manager():
         yield None
 
 
-def set_event_partition_key(event, partition_key):
-    # type: (Union[AmqpAnnotatedMessage, EventData], Optional[Union[bytes, str]]) -> None
+def set_event_partition_key(
+    event: Union[AmqpAnnotatedMessage, EventData],
+    partition_key: Optional[Union[bytes, str]],
+    amqp_transport: AmqpTransport
+) -> None:
     if not partition_key:
         return
 
@@ -144,7 +149,7 @@ def set_event_partition_key(event, partition_key):
     if annotations is None:
         annotations = {}
     annotations[
-        PROP_PARTITION_KEY_AMQP_SYMBOL
+        amqp_transport.PROP_PARTITION_KEY_AMQP_SYMBOL
     ] = partition_key  # pylint:disable=protected-access
     if not raw_message.header:
         raw_message.header = AmqpMessageHeader(header=True)
@@ -289,12 +294,14 @@ def transform_outbound_single_message(message, message_type, to_outgoing_amqp_me
     """
     try:
         # pylint: disable=protected-access
-        # EventData
+        # If EventData, set EventData._message to uamqp/pyamqp.Message right before sending.
         message._message = to_outgoing_amqp_message(message.raw_amqp_message)
         return message  # type: ignore
     except AttributeError:
         # pylint: disable=protected-access
-        # AmqpAnnotatedMessage
+        # If AmqpAnnotatedMessage, create EventData object with _from_message.
+        # event_data._message will be set to outgoing uamqp/pyamqp.Message.
+        # event_data.raw_amqp_message will be set to AmqpAnnotatedMessage.
         amqp_message = to_outgoing_amqp_message(message)
         return message_type._from_message(
             message=amqp_message, raw_amqp_message=message  # type: ignore
@@ -335,3 +342,32 @@ def decode_with_recurse(data, encoding="UTF-8"):
         return decoded_list
 
     return data
+
+
+def generate_sas_token(audience, policy, key, expiry=None):
+    """
+    Generate a sas token according to the given audience, policy, key and expiry
+    :param str audience:
+    :param str policy:
+    :param str key:
+    :param int expiry: abs expiry time
+    :rtype: str
+    """
+    if not expiry:
+        expiry = int(time.time()) + 3600  # Default to 1 hour.
+
+    encoded_uri = quote_plus(audience)
+    encoded_policy = quote_plus(policy).encode("utf-8")
+    encoded_key = key.encode("utf-8")
+
+    ttl = int(expiry)
+    sign_key = '%s\n%d' % (encoded_uri, ttl)
+    signature = b64encode(HMAC(encoded_key, sign_key.encode('utf-8'), sha256).digest())
+    result = {
+        'sr': audience,
+        'sig': signature,
+        'se': str(ttl)
+    }
+    if policy:
+        result['skn'] = encoded_policy
+    return 'SharedAccessSignature ' + urlencode(result)

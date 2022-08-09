@@ -13,6 +13,7 @@ class AmqpTransport(ABC):
     MAX_FRAME_SIZE_BYTES = None
     IDLE_TIMEOUT_FACTOR = None
     MESSAGE = None
+    CONNECTION_CLOSING_STATES = None
 
     # define symbols
     PRODUCT_SYMBOL = None
@@ -71,6 +72,41 @@ class AmqpTransport(ABC):
         Creates and returns the link properties.
         :param dict[bytes, int] link_properties: The dict of symbols and corresponding values.
         :rtype: dict
+        """
+
+    @staticmethod
+    @abstractmethod
+    def create_connection(**kwargs):
+        """
+        Creates and returns the uamqp Connection object.
+        :keyword str host: The hostname, used by uamqp.
+        :keyword JWTTokenAuth auth: The auth, used by uamqp.
+        :keyword str endpoint: The endpoint, used by pyamqp.
+        :keyword str container_id: Required.
+        :keyword int max_frame_size: Required.
+        :keyword int channel_max: Required.
+        :keyword int idle_timeout: Required.
+        :keyword Dict properties: Required.
+        :keyword int remote_idle_timeout_empty_frame_send_ratio: Required.
+        :keyword error_policy: Required.
+        :keyword bool debug: Required.
+        :keyword str encoding: Required.
+        """
+
+    @staticmethod
+    @abstractmethod
+    def close_connection(connection):
+        """
+        Closes existing connection.
+        :param connection: uamqp or pyamqp Connection.
+        """
+
+    @staticmethod
+    @abstractmethod
+    def get_connection_state(connection):
+        """
+        Gets connection state.
+        :param connection: uamqp or pyamqp Connection.
         """
 
     @staticmethod

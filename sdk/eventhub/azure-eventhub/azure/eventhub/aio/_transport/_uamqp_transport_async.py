@@ -19,6 +19,7 @@ from uamqp import (
     AMQPClientAsync,
     errors,
 )
+from uamqp.async_ops import ConnectionAsync
 
 from ._base_async import AmqpTransportAsync
 from ..._transport._uamqp_transport import UamqpTransport
@@ -39,6 +40,39 @@ class UamqpTransportAsync(UamqpTransport, AmqpTransportAsync):
     """
     Class which defines uamqp-based methods used by the producer and consumer.
     """
+
+    @staticmethod
+    async def create_connection_async(**kwargs):
+        """
+        Creates and returns the uamqp async Connection object.
+        :keyword str host: The hostname, used by uamqp.
+        :keyword JWTTokenAuth auth: The auth, used by uamqp.
+        :keyword str endpoint: The endpoint, used by pyamqp.
+        :keyword str container_id: Required.
+        :keyword int max_frame_size: Required.
+        :keyword int channel_max: Required.
+        :keyword int idle_timeout: Required.
+        :keyword Dict properties: Required.
+        :keyword int remote_idle_timeout_empty_frame_send_ratio: Required.
+        :keyword error_policy: Required.
+        :keyword bool debug: Required.
+        :keyword str encoding: Required.
+        """
+        endpoint = kwargs.pop("endpoint") # pylint:disable=unused-variable
+        host = kwargs.pop("host")
+        auth = kwargs.pop("auth")
+        return ConnectionAsync(
+            host,
+            auth,
+            **kwargs
+        )
+
+    @staticmethod
+    async def close_connection_async(connection):
+        """
+        Closes existing connection.
+        :param connection: uamqp or pyamqp Connection.
+        """
 
     @staticmethod
     def create_send_client(*, config, **kwargs): # pylint:disable=unused-argument
