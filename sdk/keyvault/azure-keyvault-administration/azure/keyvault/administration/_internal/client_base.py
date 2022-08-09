@@ -8,7 +8,6 @@ from enum import Enum
 from six import with_metaclass
 
 from azure.core import CaseInsensitiveEnumMeta
-from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies import HttpLoggingPolicy
 
 from . import ChallengeAuthPolicy
@@ -55,7 +54,7 @@ class KeyVaultClientBase(object):
                 return
 
             pipeline = kwargs.pop("pipeline", None)
-            transport = kwargs.pop("transport", RequestsTransport(**kwargs))
+            transport = kwargs.pop("transport", None)
             http_logging_policy = HttpLoggingPolicy(**kwargs)
             http_logging_policy.allowed_header_names.update(
                 {"x-ms-keyvault-network-info", "x-ms-keyvault-region", "x-ms-keyvault-service-version"}
