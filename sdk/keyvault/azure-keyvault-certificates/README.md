@@ -33,7 +33,7 @@ authentication as demonstrated below.
 * An existing [Azure Key Vault][azure_keyvault]. If you need to create one, you can do so using the Azure CLI by following the steps in [this document][azure_keyvault_cli].
 
 ### Authenticate the client
-In order to interact with the Azure Key Vault service, you will need an instance of a [CertificateClient][certificate_client_docs], as well as a **vault url** (which you may see as "DNS Name" in the Azure Portal) and a credential object. This document demonstrates using a [DefaultAzureCredential][default_cred_ref], which is appropriate for most scenarios, including local development and production environments. We recommend using a [managed identity][managed_identity] for authentication in production environments.
+In order to interact with the Azure Key Vault service, you will need an instance of a [CertificateClient][certificate_client_docs], as well as a **vault url** and a credential object. This document demonstrates using a [DefaultAzureCredential][default_cred_ref], which is appropriate for most scenarios, including local development and production environments. We recommend using a [managed identity][managed_identity] for authentication in production environments.
 
 See [azure-identity][azure_identity] documentation for more information about other methods of authentication and their corresponding credential types.
 

@@ -33,9 +33,10 @@ authentication as demonstrated below.
 * An [Azure subscription][azure_sub]
 * Python 3.7 or later
 * An existing [Azure Key Vault][azure_keyvault]. If you need to create one, you can do so using the Azure CLI by following the steps in [this document][azure_keyvault_cli].
+* If using Managed HSM, an existing [Key Vault Managed HSM][managed_hsm]. If you need to create a Managed HSM, you can do so using the Azure CLI by following the steps in [this document][managed_hsm_cli].
 
 ### Authenticate the client
-In order to interact with the Azure Key Vault service, you will need an instance of a [KeyClient][key_client_docs], as well as a **vault url** (which you may see as "DNS Name" in the Azure Portal) and a credential object. This document demonstrates using a [DefaultAzureCredential][default_cred_ref], which is appropriate for most scenarios, including local development and production environments. We recommend using a [managed identity][managed_identity] for authentication in production environments.
+In order to interact with the Azure Key Vault service, you will need an instance of a [KeyClient][key_client_docs], as well as a **vault url** and a credential object. This document demonstrates using a [DefaultAzureCredential][default_cred_ref], which is appropriate for most scenarios, including local development and production environments. We recommend using a [managed identity][managed_identity] for authentication in production environments.
 
 See [azure-identity][azure_identity] documentation for more information about other methods of authentication and their corresponding credential types.
 
@@ -409,6 +410,8 @@ contact opencode@microsoft.com with any additional questions or comments.
 [list_operations_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-keys/samples/list_operations.py
 [list_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-keys/samples/list_operations_async.py
 
+[managed_hsm]: https://docs.microsoft.com/azure/key-vault/managed-hsm/overview
+[managed_hsm_cli]: https://docs.microsoft.com/azure/key-vault/managed-hsm/quick-create-cli
 [managed_identity]: https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview
 
 [pip]: https://pypi.org/project/pip/
