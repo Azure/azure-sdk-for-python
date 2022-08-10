@@ -1,5 +1,15 @@
 # Release History
 
+## 3.0.0 (2022-08-10)
+
+**Features**
+
+  - Added operation group ReplicasOperations
+
+**Breaking changes**
+
+  - Client name is changed
+
 ## 2.1.0 (2022-06-08)
 
 **Features**
