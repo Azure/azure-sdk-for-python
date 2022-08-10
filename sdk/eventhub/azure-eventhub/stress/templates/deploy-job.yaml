@@ -1,0 +1,17 @@
+{{- include "stress-test-addons.deploy-job-template.from-pod" (list . "stress.python-eh-stress") -}}
+{{- define "stress.python-eh-stress" -}}
+metadata:
+  labels:
+    testName: "deploy-python-eh-stress"
+    testInstance: "eventhub-{{ .Release.Name }}-{{ .Release.Revision }}"
+    chaos: "true"
+spec:
+  containers:
+    - name: python-eh-stress-parallel
+      image: {{ .Values.image }}
+      command: ['bash', 'bash_file.sh']
+      # command: ['bash', '-c', 'python3 azure_eventhub_producer_stress.py']
+      {{- include "stress-test-addons.container-env" . | nindent 6 }}
+      # async test command
+      # command: ['bash', '-c', 'python3 azure_eventhub_producer_stress.py -m stress_send_list_async & python3 azure_eventhub_consumer_stress_async.py']
+{{- end -}}

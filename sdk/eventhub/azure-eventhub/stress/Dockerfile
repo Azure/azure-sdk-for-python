@@ -8,3 +8,4 @@ COPY ./scripts /app/stress/scripts
 
 WORKDIR /app/stress/scripts
 RUN pip3 install -r dev_requirement.txt
+# ENTRYPOINT [ "bash", "bash_file.sh" ]

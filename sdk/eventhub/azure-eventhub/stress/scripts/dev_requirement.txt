@@ -1,5 +1,5 @@
 psutil
-azure-eventhub
+azure-eventhub==5.8.0a5
 azure-eventhub-checkpointstoreblob
 azure-eventhub-checkpointstoreblob-aio
 azure-servicebus==0.50.3
