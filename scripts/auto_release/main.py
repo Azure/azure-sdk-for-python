@@ -54,7 +54,7 @@ def preview_version_plus(preview_label: str, last_version: str) -> str:
 
 def stable_version_plus(changelog: str, last_version: str):
     flag = [False, False, False]  # breaking, feature, bugfix
-    flag[0] = '### Breaking changes' in changelog
+    flag[0] = '### Breaking Changes' in changelog
     flag[1] = '### Features Added' in changelog
     flag[2] = '### Bugs Fixed' in changelog
 

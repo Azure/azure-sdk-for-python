@@ -33,7 +33,7 @@ class ChangeLog:
         if self.features:
             _build_md(sorted(set(self.features), key=self.features.index), "### Features Added", buffer)
         if self.breaking_changes:
-            _build_md(sorted(set(self.breaking_changes), key=self.breaking_changes.index), "### Breaking changes", buffer)
+            _build_md(sorted(set(self.breaking_changes), key=self.breaking_changes.index), "### Breaking Changes", buffer)
         if not (self.features or self.breaking_changes) and self.optional_features:
             _build_md(sorted(set(self.optional_features), key=self.optional_features.index), "### Features Added", buffer)
 
