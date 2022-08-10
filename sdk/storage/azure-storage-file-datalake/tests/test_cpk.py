@@ -10,7 +10,7 @@ from azure.storage.filedatalake import CustomerProvidedEncryptionKey, DataLakeSe
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import DataLakePreparer
-from tests.test_quick_query import DATALAKE_CSV_DATA
+from test_quick_query import DATALAKE_CSV_DATA
 
 # ------------------------------------------------------------------------------
 TEST_DIRECTORY_PREFIX = 'directory'
