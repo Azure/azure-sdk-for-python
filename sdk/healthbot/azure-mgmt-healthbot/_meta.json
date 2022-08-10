@@ -1,0 +1,11 @@
+{
+  "autorest": "3.7.2",
+  "use": [
+    "@autorest/python@5.16.0",
+    "@autorest/modelerfour@4.19.3"
+  ],
+  "commit": "f964ff84b1f38801363af1eb69cf90e068a916ba",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "autorest_command": "autorest specification/healthbot/resource-manager/readme.md --python --python-sdks-folder=/mnt/vss/_work/1/s/azure-sdk-for-python/sdk --python3-only --use=@autorest/python@5.16.0 --use=@autorest/modelerfour@4.19.3 --version=3.7.2",
+  "readme": "specification/healthbot/resource-manager/readme.md"
+}
