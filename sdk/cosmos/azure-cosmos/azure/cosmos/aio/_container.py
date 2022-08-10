@@ -598,7 +598,12 @@ class ContainerProxy(object):
             response_hook(self.client_connection.last_response_headers, throughput_properties)
 
         return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
-                                    properties=throughput_properties[0])
+                                    properties=throughput_properties[0],
+                                    auto_scale_max_throughput=throughput_properties[0]['content']
+                                    ['offerAutopilotSettings']['maxThroughput'],
+                                    auto_scale_increment_percent=throughput_properties[0]['content']
+                                    ['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
+                                        'incrementPercent'])
 
     @distributed_trace_async
     async def replace_throughput(self, throughput: int, **kwargs: Any) -> ThroughputProperties:
@@ -635,7 +640,11 @@ class ContainerProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
 
-        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
+        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data,
+                                    auto_scale_max_throughput=data['content']['offerAutopilotSettings'][
+                                        'maxThroughput'],
+                                    auto_scale_increment_percent=data['content']['offerAutopilotSettings']
+                                    ['autoUpgradePolicy']['throughputPolicy']['incrementPercent'])
 
     @distributed_trace
     def list_conflicts(self, **kwargs: Any) -> AsyncItemPaged[Dict[str, Any]]:
