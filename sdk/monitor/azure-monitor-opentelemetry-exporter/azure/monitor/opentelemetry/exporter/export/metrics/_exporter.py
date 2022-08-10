@@ -70,6 +70,17 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             _logger.exception("Exception occurred while exporting the data.")
             return _get_metric_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
+    def force_flush(
+        self,
+        timeout_millis: float = 10_000,
+    ) -> None:
+        """
+        Ensure that export of any metrics currently received by the exporter
+        are completed as soon as possible.
+        """
+        # TODO
+        pass
+
     def shutdown(
         self,
         timeout_millis: float = 30_000,  # pylint: disable=unused-argument

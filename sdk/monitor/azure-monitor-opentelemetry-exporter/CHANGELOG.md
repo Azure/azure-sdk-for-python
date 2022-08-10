@@ -5,7 +5,7 @@
 ### Features Added
 
 - Added storage configuration options
-    ([#25369](https://github.com/Azure/azure-sdk-for-python/pull/25369))
+    ([#25633](https://github.com/Azure/azure-sdk-for-python/pull/25633))
 
 ### Breaking Changes
 
@@ -15,6 +15,9 @@
     ([#25369](https://github.com/Azure/azure-sdk-for-python/pull/25369))
 
 ### Other Changes
+
+- Update to OpenTelemetry api/sdk v1.12.0
+    ([#25633](https://github.com/Azure/azure-sdk-for-python/pull/25633))
 
 ## 1.0.0b6 (2022-06-10)
 
