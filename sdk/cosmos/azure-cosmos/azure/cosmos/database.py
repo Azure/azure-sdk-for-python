@@ -830,4 +830,3 @@ class DatabaseProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
-
