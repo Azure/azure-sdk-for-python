@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines, invalid-overridden-method, too-many-public-methods
 import functools
+import sys
 import time
 import warnings
 from io import BytesIO
@@ -143,8 +144,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         # type: (...) -> None
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
-        if loop:
-            warnings.warn("``loop`` is no longer supported.", DeprecationWarning)
+        if loop and sys.version_info >= (3, 8):
+            warnings.warn("The 'loop' parameter was deprecated from asyncio's high-level APIs in Python 3.8 and is no longer supported.", DeprecationWarning)
         super(ShareFileClient, self).__init__(
             account_url, share_name=share_name, file_path=file_path, snapshot=snapshot,
             credential=credential, **kwargs

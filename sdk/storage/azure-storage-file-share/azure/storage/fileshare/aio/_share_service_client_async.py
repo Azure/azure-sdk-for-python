@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
 import functools
+import sys
 import warnings
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List,
@@ -87,8 +88,8 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
         # type: (...) -> None
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
-        if loop:
-            warnings.warn("``loop`` is no longer supported.", DeprecationWarning)
+        if loop and sys.version_info >= (3, 8):
+            warnings.warn("The 'loop' parameter was deprecated from asyncio's high-level APIs in Python 3.8 and is no longer supported.", DeprecationWarning)
         super(ShareServiceClient, self).__init__(
             account_url,
             credential=credential,
