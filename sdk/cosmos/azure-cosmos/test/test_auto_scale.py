@@ -51,25 +51,23 @@ class AutoScaleTest(unittest.TestCase):
         created_container = self.created_database.create_container(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
+            offer_throughput=ThroughputProperties(auto_scale_max_throughput=7000, auto_scale_increment_percent=0)
 
         )
         created_container_properties = created_container.get_throughput()
         # Testing the input value of the max_throughput
         self.assertEqual(
-            created_container_properties.properties['content']['offerAutopilotSettings']['maxThroughput'], 5000)
+            created_container_properties.auto_scale_max_throughput, 7000)
 
         self.created_database.delete_container(created_container)
 
         # Testing the incorrect passing of an input value of the max_throughput to verify negative behavior
-
         with pytest.raises(exceptions.CosmosHttpResponseError) as e:
             created_container = self.created_database.create_container(
                 id='container_with_wrong_auto_scale_settings',
                 partition_key=PartitionKey(path="/id"),
                 offer_throughput=ThroughputProperties(auto_scale_max_throughput=-200, auto_scale_increment_percent=0))
         assert "Requested throughput -200 is less than required minimum throughput 1000" in str(e.value)
-        self.created_database.delete_container(created_container)
 
     def test_auto_scale_increment_percent(self):
         created_container = self.created_database.create_container(
@@ -81,8 +79,7 @@ class AutoScaleTest(unittest.TestCase):
         created_container_properties = created_container.get_throughput()
         # Testing the input value of the max_increment_percentage
         self.assertEqual(
-            created_container_properties.properties['content']['offerAutopilotSettings']['autoUpgradePolicy']
-            ['throughputPolicy']['incrementPercent'], 1)
+            created_container_properties.auto_scale_increment_percent, 1)
 
         self.created_database.delete_container(created_container)
 
@@ -106,7 +103,7 @@ class AutoScaleTest(unittest.TestCase):
         created_container_properties = created_container.get_throughput()
         # Testing the incorrect input value of the max_throughput
         self.assertNotEqual(
-            created_container_properties.properties['content']['offerAutopilotSettings']['maxThroughput'], 2000)
+            created_container_properties.auto_scale_max_throughput, 2000)
 
         self.created_database.delete_container(created_container)
 
@@ -119,8 +116,7 @@ class AutoScaleTest(unittest.TestCase):
         created_container_properties = created_container.get_throughput()
         # Testing the incorrect input value of the max_increment_percentage
         self.assertNotEqual(
-            created_container_properties.properties['content']['offerAutopilotSettings']['autoUpgradePolicy']
-            ['throughputPolicy']['incrementPercent'], 3)
+            created_container_properties.auto_scale_increment_percent, 3)
 
         self.client.delete_database(test_config._test_config.TEST_DATABASE_ID)
 
@@ -139,7 +135,7 @@ class AutoScaleTest(unittest.TestCase):
         created_container_properties = created_container.get_throughput()
         # Testing the correct input value of the max_throughput
         self.assertEqual(
-            created_container_properties.properties['content']['offerAutopilotSettings']['maxThroughput'], 8000)
+            created_container_properties.auto_scale_max_throughput, 8000)
 
         self.created_database.delete_container(created_container)
 
@@ -152,7 +148,6 @@ class AutoScaleTest(unittest.TestCase):
         created_container_properties = created_container.get_throughput()
         # Testing the correct input value of the max_increment_percentage
         self.assertEqual(
-            created_container_properties.properties['content']['offerAutopilotSettings']['autoUpgradePolicy']
-            ['throughputPolicy']['incrementPercent'], 7)
+            created_container_properties.auto_scale_increment_percent, 7)
 
-        created_database.delete_container(created_container)
+        self.created_database.delete_container(created_container)
