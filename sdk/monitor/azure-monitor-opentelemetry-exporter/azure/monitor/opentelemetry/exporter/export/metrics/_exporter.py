@@ -64,12 +64,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
                             )
         try:
             result = self._transmit(envelopes)
-            if result == ExportResult.FAILED_RETRYABLE:
-                envelopes_to_store = [x.as_dict() for x in envelopes]
-                self.storage.put(envelopes_to_store, 1)
-            if result == ExportResult.SUCCESS:
-                # Try to send any cached events
-                self._transmit_from_storage()
+            self._handle_transmit_from_storage(envelopes, result)
             return _get_metric_export_result(result)
         except Exception:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while exporting the data.")
