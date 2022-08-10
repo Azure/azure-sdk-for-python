@@ -28,14 +28,14 @@ Install the Azure Form Recognizer client library for Python with [pip][pip]:
 pip install azure-ai-formrecognizer --pre
 ```
 
-> Note: This version of the client library defaults to the `2022-06-30-preview` version of the service.
+> Note: This version of the client library defaults to the `2022-08-31` version of the service.
 
 This table shows the relationship between SDK versions and supported API versions of the service:
 
 |SDK version|Supported API version of service
 |-|-
-|3.2.0b6 - Latest beta release | 2.0, 2.1, 2022-06-30-preview
-|3.1.X - Latest GA release| 2.0, 2.1 (default)
+|3.2.0 - Latest GA release | 2.0, 2.1, 2022-08-31
+|3.1.X| 2.0, 2.1 (default)
 |3.0.0| 2.0
 
 > Note: Starting with version `3.2.X`, a new set of clients were introduced to leverage the newest features
@@ -45,7 +45,7 @@ This table shows the relationship between SDK versions and supported API version
 
 |API version|Supported clients
 |-|-
-|2022-06-30-preview | DocumentAnalysisClient and DocumentModelAdministrationClient
+|2022-08-31 | DocumentAnalysisClient and DocumentModelAdministrationClient
 |2.1 | FormRecognizerClient and FormTrainingClient
 |2.0 | FormRecognizerClient and FormTrainingClient
 
