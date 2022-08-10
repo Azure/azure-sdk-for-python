@@ -395,7 +395,15 @@ class Connection(object):
             self._remote_idle_timeout_send_frame = self._idle_timeout_empty_frame_send_ratio * self._remote_idle_timeout
 
         if frame[2] < 512:  # Ensure minimum max frame size.
-            pass  # TODO: error
+            #Close with error
+            #Codes_S_R_S_CONNECTION_01_143: [If any of the values in the received open frame are invalid then the connection shall be closed.]
+            #Codes_S_R_S_CONNECTION_01_220: [The error amqp:invalid-field shall be set in the error.condition field of the CLOSE frame.] 
+            self.close(error=AMQPConnectionError(
+                condition=ErrorCondition.InvalidField, 
+                description="connection_endpoint_frame_received::failed parsing OPEN frame"))
+            _LOGGER.error("connection_endpoint_frame_received::failed parsing OPEN frame")
+        else:
+            self._remote_max_frame_size = frame[2]
         self._remote_max_frame_size = frame[2]
         if self.state == ConnectionState.OPEN_SENT:
             self._set_state(ConnectionState.OPENED)
