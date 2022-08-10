@@ -8,6 +8,7 @@
 
 from ._models_py3 import ARMProxyResource
 from ._models_py3 import ARMResourceProperties
+from ._models_py3 import AccountKeyMetadata
 from ._models_py3 import AnalyticalStorageConfiguration
 from ._models_py3 import ApiProperties
 from ._models_py3 import AuthenticationMethodLdapProperties
@@ -86,6 +87,7 @@ from ._models_py3 import DataTransferServiceResourceProperties
 from ._models_py3 import DatabaseAccountConnectionString
 from ._models_py3 import DatabaseAccountCreateUpdateParameters
 from ._models_py3 import DatabaseAccountGetResults
+from ._models_py3 import DatabaseAccountKeysMetadata
 from ._models_py3 import DatabaseAccountListConnectionStringsResult
 from ._models_py3 import DatabaseAccountListKeysResult
 from ._models_py3 import DatabaseAccountListReadOnlyKeysResult
@@ -216,6 +218,7 @@ from ._models_py3 import RestorableGremlinDatabasesListResult
 from ._models_py3 import RestorableGremlinGraphGetResult
 from ._models_py3 import RestorableGremlinGraphPropertiesResource
 from ._models_py3 import RestorableGremlinGraphsListResult
+from ._models_py3 import RestorableGremlinResourcesGetResult
 from ._models_py3 import RestorableGremlinResourcesListResult
 from ._models_py3 import RestorableLocationResource
 from ._models_py3 import RestorableMongodbCollectionGetResult
@@ -224,6 +227,7 @@ from ._models_py3 import RestorableMongodbCollectionsListResult
 from ._models_py3 import RestorableMongodbDatabaseGetResult
 from ._models_py3 import RestorableMongodbDatabasePropertiesResource
 from ._models_py3 import RestorableMongodbDatabasesListResult
+from ._models_py3 import RestorableMongodbResourcesGetResult
 from ._models_py3 import RestorableMongodbResourcesListResult
 from ._models_py3 import RestorableSqlContainerGetResult
 from ._models_py3 import RestorableSqlContainerPropertiesResource
@@ -233,9 +237,11 @@ from ._models_py3 import RestorableSqlDatabaseGetResult
 from ._models_py3 import RestorableSqlDatabasePropertiesResource
 from ._models_py3 import RestorableSqlDatabasePropertiesResourceDatabase
 from ._models_py3 import RestorableSqlDatabasesListResult
+from ._models_py3 import RestorableSqlResourcesGetResult
 from ._models_py3 import RestorableSqlResourcesListResult
 from ._models_py3 import RestorableTableGetResult
 from ._models_py3 import RestorableTablePropertiesResource
+from ._models_py3 import RestorableTableResourcesGetResult
 from ._models_py3 import RestorableTableResourcesListResult
 from ._models_py3 import RestorableTablesListResult
 from ._models_py3 import RestoreParameters
@@ -349,10 +355,13 @@ from ._cosmos_db_management_client_enums import (
     TriggerType,
     UnitType,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'ARMProxyResource',
     'ARMResourceProperties',
+    'AccountKeyMetadata',
     'AnalyticalStorageConfiguration',
     'ApiProperties',
     'AuthenticationMethodLdapProperties',
@@ -431,6 +440,7 @@ __all__ = [
     'DatabaseAccountConnectionString',
     'DatabaseAccountCreateUpdateParameters',
     'DatabaseAccountGetResults',
+    'DatabaseAccountKeysMetadata',
     'DatabaseAccountListConnectionStringsResult',
     'DatabaseAccountListKeysResult',
     'DatabaseAccountListReadOnlyKeysResult',
@@ -561,6 +571,7 @@ __all__ = [
     'RestorableGremlinGraphGetResult',
     'RestorableGremlinGraphPropertiesResource',
     'RestorableGremlinGraphsListResult',
+    'RestorableGremlinResourcesGetResult',
     'RestorableGremlinResourcesListResult',
     'RestorableLocationResource',
     'RestorableMongodbCollectionGetResult',
@@ -569,6 +580,7 @@ __all__ = [
     'RestorableMongodbDatabaseGetResult',
     'RestorableMongodbDatabasePropertiesResource',
     'RestorableMongodbDatabasesListResult',
+    'RestorableMongodbResourcesGetResult',
     'RestorableMongodbResourcesListResult',
     'RestorableSqlContainerGetResult',
     'RestorableSqlContainerPropertiesResource',
@@ -578,9 +590,11 @@ __all__ = [
     'RestorableSqlDatabasePropertiesResource',
     'RestorableSqlDatabasePropertiesResourceDatabase',
     'RestorableSqlDatabasesListResult',
+    'RestorableSqlResourcesGetResult',
     'RestorableSqlResourcesListResult',
     'RestorableTableGetResult',
     'RestorableTablePropertiesResource',
+    'RestorableTableResourcesGetResult',
     'RestorableTableResourcesListResult',
     'RestorableTablesListResult',
     'RestoreParameters',
@@ -691,3 +705,5 @@ __all__ = [
     'TriggerType',
     'UnitType',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

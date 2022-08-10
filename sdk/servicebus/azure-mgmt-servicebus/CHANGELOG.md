@@ -1,5 +1,29 @@
 # Release History
 
+## 8.0.0 (2022-08-08)
+
+**Features**
+
+  - Model ArmDisasterRecovery has a new parameter location
+  - Model MigrationConfigProperties has a new parameter location
+  - Model NetworkRuleSet has a new parameter location
+  - Model Operation has a new parameter is_data_action
+  - Model Operation has a new parameter origin
+  - Model Operation has a new parameter properties
+  - Model OperationDisplay has a new parameter description
+  - Model PrivateEndpointConnection has a new parameter location
+  - Model Rule has a new parameter location
+  - Model SBAuthorizationRule has a new parameter location
+  - Model SBNamespace has a new parameter alternate_name
+  - Model SBNamespaceUpdateParameters has a new parameter alternate_name
+  - Model SBQueue has a new parameter location
+  - Model SBSubscription has a new parameter location
+  - Model SBTopic has a new parameter location
+
+**Breaking changes**
+
+  - Model SBNamespaceUpdateParameters no longer has parameter zone_redundant
+
 ## 7.1.0 (2021-09-23)
 
 **Features**

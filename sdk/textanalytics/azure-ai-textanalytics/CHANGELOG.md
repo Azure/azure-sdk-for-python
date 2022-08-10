@@ -1,6 +1,8 @@
 # Release History
 
-## 5.2.0b5 (Unreleased)
+## 5.2.0b5 (2022-08-11)
+
+The version of this client library defaults to the API version `2022-05-01`.
 
 ### Features Added
 
@@ -10,18 +12,27 @@
 - Added property `details` on returned poller objects which contain long-running operation metadata.
 - Added `TextAnalysisLROPoller` and `AsyncTextAnalysisLROPoller` protocols to describe the return types from long-running operations.
 - Added `cancel` method on the poller objects. Call it to cancel a long-running operation that's in progress.
+- Added property `kind` to `RecognizeEntitiesResult`, `RecognizePiiEntitiesResult`, `AnalyzeHealthcareEntitiesResult`,
+  `DetectLanguageResult`, `ExtractKeyPhrasesResult`, `RecognizeLinkedEntitiesResult`, `AnalyzeSentimentResult`,
+  `RecognizeCustomEntitiesResult`, `ClassifyDocumentResult`, and `DocumentError`.
+- Added enum `TextAnalysisKind`.
 
 ### Breaking Changes
 
 - Removed the Extractive Text Summarization feature and related models: `ExtractSummaryAction`, `ExtractSummaryResult`, and `SummarySentence`. To access this beta feature, install the `5.2.0b4` version of the client library.
-- `SingleCategoryClassifyResult` and `MultiCategoryClassifyResult` models have been merged into one model: `ClassifyDocumentResult`.
 - Removed the `FHIR` feature and related keyword argument and property: `fhir_version` and `fhir_bundle`. To access this beta feature, install the `5.2.0b4` version of the client library.
+- `SingleCategoryClassifyResult` and `MultiCategoryClassifyResult` models have been merged into one model: `ClassifyDocumentResult`.
 - Renamed `SingleCategoryClassifyAction` to `SingleLabelClassifyAction`
 - Renamed `MultiCategoryClassifyAction` to `MultiLabelClassifyAction`.
 
 ### Bugs Fixed
 
+- A `HttpResponseError` will be immediately raised when the call quota volume is exceeded in a `F0` tier Language resource.
+
 ### Other Changes
+
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, see [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+
 
 ## 5.2.0b4 (2022-05-18)
 

@@ -1,10 +1,14 @@
 # Release History
 
-## 12.9.0b1 (Unreleased)
+## 12.9.0b1 (2022-08-09)
+
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
 
 ### Features Added
-
-### Bugs Fixed
+- Added support for `AzureNamedKeyCredential` as a valid `credential` type.
+- Added support for `flush` to `append_data` API, allowing for append and flush in one operation.
+- Encryption Scope is now supported for both `create_file_system` APIs (`FileSystemClient`, `DataLakeServiceClient`).
+- Encryption Scope is now supported as a SAS permission.
 
 ## 12.8.0 (2022-07-07)
 

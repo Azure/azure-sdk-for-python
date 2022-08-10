@@ -29,7 +29,7 @@ class CosmosDBManagementClientConfiguration(Configuration):  # pylint: disable=t
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2022-02-15-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-05-15-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -41,7 +41,7 @@ class CosmosDBManagementClientConfiguration(Configuration):  # pylint: disable=t
         **kwargs: Any
     ) -> None:
         super(CosmosDBManagementClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-15-preview")  # type: str
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

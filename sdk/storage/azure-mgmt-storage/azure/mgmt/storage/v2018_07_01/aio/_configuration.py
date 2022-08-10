@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class StorageManagementClientConfiguration(Configuration):
+class StorageManagementClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for StorageManagementClient.
 
     Note that all parameters used to create this instance are saved as instance

@@ -4,24 +4,22 @@
 
 import logging
 
-from azure.ai.ml._restclient.v2021_10_01.models import (
-    OnlineRequestSettings as RestOnlineRequestSettings,
-    ProbeSettings as RestProbeSettings,
-    BatchRetrySettings as RestBatchRetrySettings,
+from azure.ai.ml._restclient.v2021_10_01.models import BatchRetrySettings as RestBatchRetrySettings
+from azure.ai.ml._restclient.v2021_10_01.models import OnlineRequestSettings as RestOnlineRequestSettings
+from azure.ai.ml._restclient.v2021_10_01.models import ProbeSettings as RestProbeSettings
+from azure.ai.ml._utils.utils import (
+    from_iso_duration_format,
+    from_iso_duration_format_ms,
+    to_iso_duration_format,
+    to_iso_duration_format_ms,
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml._utils.utils import (
-    to_iso_duration_format,
-    from_iso_duration_format,
-    to_iso_duration_format_ms,
-    from_iso_duration_format_ms,
-)
 
 module_logger = logging.getLogger(__name__)
 
 
 class BatchRetrySettings(RestTranslatableMixin):
-    """Retry settings for batch deployment
+    """Retry settings for batch deployment.
 
     :param max_retries: Number of retries in failure, defaults to 3
     :type max_retries: int, optional
@@ -58,7 +56,7 @@ class BatchRetrySettings(RestTranslatableMixin):
 
 
 class OnlineRequestSettings(RestTranslatableMixin):
-    """Request Settings entity
+    """Request Settings entity.
 
     :param request_timeout_ms: defaults to 5000
     :type request_timeout_ms: int, optional
@@ -132,7 +130,7 @@ class ProbeSettings(RestTranslatableMixin):
         period: int = None,
         initial_delay: int = None,
     ):
-        """Settings on how to probe an endpoint
+        """Settings on how to probe an endpoint.
 
         :param failure_threshold: Threshold for probe failures, defaults to 30
         :type failure_threshold: int, optional

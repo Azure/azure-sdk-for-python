@@ -6,24 +6,19 @@
 # license information.
 # --------------------------------------------------------------------------
 import asyncio
-import unittest
 
 from azure.core.exceptions import HttpResponseError
 
-
-from azure.storage.filedatalake.aio import (
-    DataLakeServiceClient,
-    FileSystemClient,
-    DataLakeFileClient,
-    DataLakeDirectoryClient
-)
+from azure.storage.filedatalake.aio import DataLakeDirectoryClient, DataLakeFileClient, DataLakeServiceClient, FileSystemClient
 from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
 from settings.testcase import DataLakePreparer
+from azure.core.credentials import AzureNamedKeyCredential
 
 # ------------------------------------------------------------------------------
-from azure.storage.filedatalake._models import AnalyticsLogging, Metrics, RetentionPolicy, \
-    StaticWebsite, CorsRule
+from azure.storage.filedatalake._models import AnalyticsLogging, CorsRule, Metrics, RetentionPolicy, StaticWebsite
 
+# ------------------------------------------------------------------------------
+TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 # ------------------------------------------------------------------------------
 
 
@@ -343,3 +338,14 @@ class DatalakeServiceTest(StorageTestCase):
         assert client.url == 'https://foo.dfs.core.windows.net/fsname/dname'
         assert client.primary_hostname == 'foo.dfs.core.windows.net'
         assert not client.secondary_hostname
+
+    @DataLakePreparer()
+    async def test_azure_named_key_credential_access(self, datalake_storage_account_name, datalake_storage_account_key):
+        named_key = AzureNamedKeyCredential(datalake_storage_account_name, datalake_storage_account_key)
+        dsc = DataLakeServiceClient(self.account_url(datalake_storage_account_name, "blob"), named_key)
+
+        # Act
+        props = await dsc.get_service_properties()
+
+        # Assert
+        self.assertIsNotNone(props)

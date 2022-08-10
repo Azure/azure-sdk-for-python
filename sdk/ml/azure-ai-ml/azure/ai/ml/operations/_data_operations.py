@@ -2,33 +2,35 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import os
+# pylint: disable=protected-access
+
 import logging
-import requests
+import os
 from pathlib import Path
 from typing import Dict, List, Optional, Union
-from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
-from azure.core.paging import ItemPaged
 
-from azure.ai.ml.constants import AssetTypes, MLTABLE_METADATA_SCHEMA_URL_FALLBACK
-from azure.ai.ml.operations import DatastoreOperations
-from azure.ai.ml._restclient.v2022_05_01 import (
-    AzureMachineLearningWorkspaces as ServiceClient052022,
-)
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
-from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDependentOperations
-from azure.ai.ml.entities._assets import Data
 from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
+from azure.ai.ml._ml_exceptions import (
+    AssetPathException,
+    DataException,
+    ErrorCategory,
+    ErrorTarget,
+    ValidationException,
+)
+from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType
+from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDependentOperations
+from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
+    _archive_or_restore,
     _create_or_update_autoincrement,
     _get_latest,
     _resolve_label_to_asset,
-    _archive_or_restore,
 )
 from azure.ai.ml._utils._data_utils import (
     download_mltable_metadata_schema,
@@ -37,14 +39,12 @@ from azure.ai.ml._utils._data_utils import (
     validate_mltable_metadata,
 )
 from azure.ai.ml._utils.utils import is_url
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
-from azure.ai.ml._ml_exceptions import (
-    DataException,
-    ErrorCategory,
-    ErrorTarget,
-    ValidationException,
-    AssetPathException,
-)
+from azure.ai.ml.constants import MLTABLE_METADATA_SCHEMA_URL_FALLBACK, AssetTypes
+from azure.ai.ml.entities._assets import Data
+from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
+from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+from azure.core.exceptions import HttpResponseError
+from azure.core.paging import ItemPaged
 
 logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
 logger.propagate = False
@@ -74,13 +74,17 @@ class DataOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "Data.List", ActivityType.PUBLICAPI)
     def list(
-        self, name: Optional[str] = None, *, list_view_type: ListViewType = ListViewType.ACTIVE_ONLY
+        self,
+        name: Optional[str] = None,
+        *,
+        list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
     ) -> ItemPaged[Data]:
         """List the data assets of the workspace.
 
         :param name: Name of a specific data asset, optional.
         :type name: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived data assets. Default: ACTIVE_ONLY.
+        :param list_view_type: View type for including/excluding (for example) archived data assets.
+            Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of Data objects
         :rtype: ~azure.core.paging.ItemPaged[Data]
@@ -93,13 +97,12 @@ class DataOperations(_ScopeDependentOperations):
                 list_view_type=list_view_type,
                 **self._scope_kwargs,
             )
-        else:
-            return self._container_operation.list(
-                workspace_name=self._workspace_name,
-                cls=lambda objs: [Data._from_container_rest_object(obj) for obj in objs],
-                list_view_type=list_view_type,
-                **self._scope_kwargs,
-            )
+        return self._container_operation.list(
+            workspace_name=self._workspace_name,
+            cls=lambda objs: [Data._from_container_rest_object(obj) for obj in objs],
+            list_view_type=list_view_type,
+            **self._scope_kwargs,
+        )
 
     @monitor_with_activity(logger, "Data.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Data:
@@ -181,7 +184,7 @@ class DataOperations(_ScopeDependentOperations):
                     body=data_version_resource,
                     **self._scope_kwargs,
                 )
-        except Exception as e:
+        except HttpResponseError as e:
             # service side raises an exception if we attempt to update an existing asset's asset path
             if str(e) == ASSET_PATH_ERROR:
                 raise AssetPathException(
@@ -190,8 +193,7 @@ class DataOperations(_ScopeDependentOperations):
                     no_personal_data_message=CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
                     error_category=ErrorCategory.USER_ERROR,
                 )
-            else:
-                raise e
+            raise e
 
         return Data._from_rest_object(result)
 
@@ -217,9 +219,13 @@ class DataOperations(_ScopeDependentOperations):
                         path=asset_path, datastore_operations=self._datastore_operation
                     )
                     metadata_yaml_path = None
-                except Exception:
+                except Exception:  # pylint: disable=broad-except
                     # skip validation for remote MLTable when the contents cannot be read
-                    logger.info("Unable to access MLTable metadata at path %s", asset_path, exc_info=1)
+                    logger.info(
+                        "Unable to access MLTable metadata at path %s",
+                        asset_path,
+                        exc_info=1,
+                    )
                     return
             else:
                 metadata_contents = read_local_mltable_metadata_contents(path=asset_path)
@@ -228,7 +234,8 @@ class DataOperations(_ScopeDependentOperations):
             mltable_metadata_schema = self._try_get_mltable_metadata_jsonschema(data._mltable_schema_url)
             if mltable_metadata_schema and not data._skip_validation:
                 validate_mltable_metadata(
-                    mltable_metadata_dict=metadata_contents, mltable_schema=mltable_metadata_schema
+                    mltable_metadata_dict=metadata_contents,
+                    mltable_schema=mltable_metadata_schema,
                 )
             return metadata.referenced_uris()
         else:
@@ -237,42 +244,23 @@ class DataOperations(_ScopeDependentOperations):
                 return
 
             if os.path.isabs(asset_path):
-                self._assert_local_path_matches_asset_type(asset_path, asset_type)
+                _assert_local_path_matches_asset_type(asset_path, asset_type)
             else:
                 abs_path = Path(base_path, asset_path).resolve()
-                self._assert_local_path_matches_asset_type(abs_path, asset_type)
+                _assert_local_path_matches_asset_type(abs_path, asset_type)
 
     def _try_get_mltable_metadata_jsonschema(
         self, mltable_schema_url: str = MLTABLE_METADATA_SCHEMA_URL_FALLBACK
     ) -> Union[Dict, None]:
         try:
             return download_mltable_metadata_schema(mltable_schema_url)
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             logger.info(
                 'Failed to download MLTable metadata jsonschema from "%s", skipping validation',
                 mltable_schema_url,
                 exc_info=1,
             )
             return None
-
-    def _assert_local_path_matches_asset_type(
-        self, local_path: str, asset_type: Union[AssetTypes.URI_FILE, AssetTypes.URI_FOLDER]
-    ) -> None:
-        # assert file system type matches asset type
-        if asset_type == AssetTypes.URI_FOLDER and not os.path.isdir(local_path):
-            raise DataException(
-                message="There is no dir on target path: {}".format(local_path),
-                no_personal_data_message="There is no dir on target path",
-                target=ErrorTarget.DATA,
-                error_category=ErrorCategory.USER_ERROR,
-            )
-        elif asset_type == AssetTypes.URI_FILE and not os.path.isfile(local_path):
-            raise DataException(
-                message="There is no file on target path: {}".format(local_path),
-                no_personal_data_message="There is no file on target path",
-                target=ErrorTarget.DATA,
-                error_category=ErrorCategory.USER_ERROR,
-            )
 
     @monitor_with_activity(logger, "Data.Archive", ActivityType.PUBLICAPI)
     def archive(self, name: str, version: str = None, label: str = None) -> None:
@@ -323,7 +311,29 @@ class DataOperations(_ScopeDependentOperations):
     def _get_latest_version(self, name: str) -> Data:
         """Returns the latest version of the asset with the given name.
 
-        Latest is defined as the most recently created, not the most recently updated.
+        Latest is defined as the most recently created, not the most
+        recently updated.
         """
         result = _get_latest(name, self._operation, self._resource_group_name, self._workspace_name)
         return Data._from_rest_object(result)
+
+
+def _assert_local_path_matches_asset_type(
+    local_path: str,
+    asset_type: Union[AssetTypes.URI_FILE, AssetTypes.URI_FOLDER],
+) -> None:
+    # assert file system type matches asset type
+    if asset_type == AssetTypes.URI_FOLDER and not os.path.isdir(local_path):
+        raise DataException(
+            message="There is no dir on target path: {}".format(local_path),
+            no_personal_data_message="There is no dir on target path",
+            target=ErrorTarget.DATA,
+            error_category=ErrorCategory.USER_ERROR,
+        )
+    elif asset_type == AssetTypes.URI_FILE and not os.path.isfile(local_path):
+        raise DataException(
+            message="There is no file on target path: {}".format(local_path),
+            no_personal_data_message="There is no file on target path",
+            target=ErrorTarget.DATA,
+            error_category=ErrorCategory.USER_ERROR,
+        )

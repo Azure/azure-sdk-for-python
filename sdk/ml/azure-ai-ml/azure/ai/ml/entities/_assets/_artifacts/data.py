@@ -1,30 +1,34 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 import os
 import re
-from typing import Dict, Optional, Type, Union
-from pathlib import Path
 from os import PathLike
+from pathlib import Path
+from typing import Dict, Optional, Type, Union
 
-from azure.ai.ml.entities._assets import Artifact
-from .artifact import ArtifactStorageInfo
-from azure.ai.ml._utils.utils import is_url, load_yaml
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, SHORT_URI_FORMAT, AssetTypes
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_05_01.models import (
     DataContainerData,
     DataContainerDetails,
     DataType,
     DataVersionBaseData,
     DataVersionBaseDetails,
+    MLTableData,
     UriFileDataVersion,
     UriFolderDataVersion,
-    MLTableData,
 )
-from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
 from azure.ai.ml._schema import DataSchema
+from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
+from azure.ai.ml._utils.utils import is_url
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, SHORT_URI_FORMAT, AssetTypes
+from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+
+from .artifact import ArtifactStorageInfo
 
 DataAssetTypeModelMap: Dict[str, Type[DataVersionBaseDetails]] = {
     AssetTypes.URI_FILE: UriFileDataVersion,
@@ -145,7 +149,10 @@ class Data(Artifact):
         VersionDetailsClass = getModelForDataAssetType(self.type)
         return DataContainerData(
             properties=DataContainerDetails(
-                properties=self.properties, tags=self.tags, is_archived=False, data_type=VersionDetailsClass.data_type
+                properties=self.properties,
+                tags=self.tags,
+                is_archived=False,
+                data_type=VersionDetailsClass.data_type,
             )
         )
 

@@ -2,8 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from typing import Union
-from marshmallow import fields, Schema
-from azure.ai.ml._schema import NestedField, PathAwareSchema
+
+from marshmallow import Schema, fields
+
+from azure.ai.ml._schema.core.fields import NestedField
+from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.core.fields import DataBindingStr, UnionField
 
 DATA_BINDING_SUPPORTED_KEY = "_data_binding_supported"
@@ -40,6 +43,7 @@ def _add_data_binding_to_field(field, attrs_to_skip, schema_stack):
             attribute=field.attribute,
             dump_only=field.dump_only,
             required=field.required,
+            allow_none=field.allow_none,
         )
 
     setattr(field, DATA_BINDING_SUPPORTED_KEY, True)
@@ -50,6 +54,7 @@ def support_data_binding_expression_for_fields(
     schema: Union[PathAwareSchema, Schema], attrs_to_skip=None, schema_stack=None
 ):
     """Update fields inside schema to support data binding string.
+
     Only first layer of recursive schema is supported now.
     """
     if hasattr(schema, DATA_BINDING_SUPPORTED_KEY) and getattr(schema, DATA_BINDING_SUPPORTED_KEY):

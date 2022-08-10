@@ -11,7 +11,9 @@ class OverrideDefinition(dict):
         super(OverrideDefinition, self).__init__(schema_dict)
 
 
-def get_override_definition_from_schema(schema: str) -> Mapping[str, OverrideDefinition]:
+def get_override_definition_from_schema(
+    schema: str,
+) -> Mapping[str, OverrideDefinition]:
     """Ger override definition from a json schema.
 
     :param schema: Json schema of component job.

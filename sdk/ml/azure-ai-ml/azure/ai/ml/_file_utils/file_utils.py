@@ -1,13 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from pathlib import Path
 import os
+from pathlib import Path
 
 
 def get_root_path() -> str:
-    """
-    Gets the root directory for the drive.
+    """Gets the root directory for the drive.
+
     NOTE: On Windows, it returns 'C:\' or the path to the root dir for the drive.
           On Linux, it returns '/'.
     :return: Path to the root directory for the drive.

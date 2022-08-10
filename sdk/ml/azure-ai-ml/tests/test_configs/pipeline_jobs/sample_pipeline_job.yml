@@ -58,4 +58,3 @@ jobs:
       component_out_path_1: ${{parent.outputs.job_out_data_1}}
       component_out_path_2: ${{parent.outputs.job_out_data_2}}
     component: file:../components/merge_outputs_component.yml
-
