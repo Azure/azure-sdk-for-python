@@ -113,8 +113,8 @@ class AioHttpTransport(AsyncHttpTransport):
         """
         if self._session_owner and self.session:
             await self.session.close()
-            self._session_owner = False
             self.session = None
+        self._session_owner = False
 
     def _build_ssl_config(self, cert, verify):  # pylint: disable=no-self-use
         ssl_ctx = None

@@ -264,8 +264,8 @@ class RequestsTransport(HttpTransport):
     def close(self):
         if self._session_owner and self.session:
             self.session.close()
-            self._session_owner = False
             self.session = None
+        self._session_owner = False
 
     @overload
     def send(self, request, **kwargs):

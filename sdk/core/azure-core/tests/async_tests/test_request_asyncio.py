@@ -43,3 +43,9 @@ async def test_send_data(port, http_request):
         if is_rest(http_request):
             assert is_rest(response)
         assert json.loads(response.text())['data'] == "azerty"
+
+def test_open_closed_asyncio_transport():
+    transport = AsyncioRequestsTransport()
+    transport.close()
+    transport.open()
+    assert not transport.session

@@ -1159,6 +1159,13 @@ def test_close_unopened_transport():
     transport.close()
 
 
+def test_open_closed_transport():
+    transport = RequestsTransport()
+    transport.close()
+    transport.open()
+    assert not transport.session
+
+
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_timeout(caplog, port, http_request):
     transport = RequestsTransport()
@@ -1194,3 +1201,15 @@ def test_conflict_timeout(caplog, port, http_request):
     with pytest.raises(ValueError):
         with Pipeline(transport) as pipeline:
             pipeline.run(request, connection_timeout=(100, 100), read_timeout = 100)
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_open_after_close(caplog, port, http_request):
+    transport = RequestsTransport()
+
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
+
+    with caplog.at_level(logging.WARNING, logger="azure.core.pipeline.transport"):
+        with Pipeline(transport) as pipeline:
+            pipeline.run(request, connection_timeout=(100, 100))
+
+    assert "Tuple timeout setting is deprecated" in caplog.text

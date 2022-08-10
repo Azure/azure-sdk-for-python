@@ -989,3 +989,9 @@ def test_aiohttp_loop():
     loop = asyncio.get_event_loop()
     with pytest.raises(ValueError):
         transport = AioHttpTransport(loop=loop)
+
+def test_open_closed_aiohttp_transport():
+    transport = AioHttpTransport()
+    transport.close()
+    transport.open()
+    assert not transport.session
