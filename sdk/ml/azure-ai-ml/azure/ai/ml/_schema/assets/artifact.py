@@ -2,12 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use
+
 import logging
 
-
 from marshmallow import post_load
-from .asset import AssetSchema
+
 from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY
+
+from .asset import AssetSchema
 
 module_logger = logging.getLogger(__name__)
 

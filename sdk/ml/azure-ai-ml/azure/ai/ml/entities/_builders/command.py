@@ -1,70 +1,66 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 import copy
 import logging
 import os
 from enum import Enum
-from typing import Dict, List, Optional, Union
-
 from os import PathLike
+from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken
+from azure.ai.ml._restclient.v2022_02_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2022_02_01_preview.models import CommandJobLimits as RestCommandJobLimits
+from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData, ManagedIdentity
+from azure.ai.ml._restclient.v2022_02_01_preview.models import ResourceConfiguration as RestResourceConfiguration
+from azure.ai.ml._restclient.v2022_02_01_preview.models import UserIdentity
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
-from .base_node import BaseNode
-from .sweep import Sweep
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    ManagedIdentity,
-    AmlToken,
-    UserIdentity,
-    CommandJobLimits as RestCommandJobLimits,
-    JobBaseData,
-    CommandJob as RestCommandJob,
-    ResourceConfiguration as RestResourceConfiguration,
-)
-
+from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml.constants import (
-    LOCAL_COMPUTE_TARGET,
+    BASE_PATH_CONTEXT_KEY,
     LOCAL_COMPUTE_PROPERTY,
+    LOCAL_COMPUTE_TARGET,
     ComponentSource,
     NodeType,
-    BASE_PATH_CONTEXT_KEY,
 )
-from azure.ai.ml.entities._job.sweep.objective import Objective
-from azure.ai.ml.entities import (
-    Component,
-    CommandComponent,
-    ResourceConfiguration,
-    CommandJobLimits,
-    Environment,
-    CommandJob,
-)
+from azure.ai.ml.entities._assets import Environment
+from azure.ai.ml.entities._component.component import Component
+from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
-from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
-from .._job.pipeline._io import PipelineInput, PipelineOutputBase
-from .._util import validate_attribute_type, get_rest_dict, load_from_dict, convert_ordered_dict_to_dict
+from azure.ai.ml.entities._job.command_job import CommandJob
+from azure.ai.ml.entities._job.job_limits import CommandJobLimits
+from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, from_rest_inputs_to_dataset_literal
 from azure.ai.ml.entities._job.distribution import (
-    MpiDistribution,
-    TensorFlowDistribution,
-    PyTorchDistribution,
     DistributionConfiguration,
+    MpiDistribution,
+    PyTorchDistribution,
+    TensorFlowDistribution,
 )
+from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
+from azure.ai.ml.entities._job.sweep.objective import Objective
+from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
+
 from ..._schema import PathAwareSchema
-from azure.ai.ml._schema.job.command_job import CommandJobSchema
-from ..._schema.job.distribution import PyTorchDistributionSchema, TensorFlowDistributionSchema, MPIDistributionSchema
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorTarget, ErrorCategory
-from azure.ai.ml.entities._job._input_output_helpers import (
-    from_rest_inputs_to_dataset_literal,
-    from_rest_data_outputs,
-)
+from ..._schema.job.distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
+from .._job.pipeline._io import PipelineInput, PipelineOutputBase
+from .._job.pipeline._pipeline_expression import PipelineExpression
+from .._util import convert_ordered_dict_to_dict, get_rest_dict, load_from_dict, validate_attribute_type
+from .base_node import BaseNode
+from .sweep import Sweep
 
 module_logger = logging.getLogger(__name__)
 
 
 class Command(BaseNode):
-    """Base class for command node, used for command component version consumption.
+    """Base class for command node, used for command component version
+    consumption.
 
     :param component: Id or instance of the command component/job to be run for the step
     :type component: CommandComponent
@@ -107,7 +103,20 @@ class Command(BaseNode):
         *,
         component: Union[str, CommandComponent],
         compute: str = None,
-        inputs: Dict[str, Union[PipelineInput, PipelineOutputBase, Input, str, bool, int, float, Enum, "Input"]] = None,
+        inputs: Dict[
+            str,
+            Union[
+                PipelineInput,
+                PipelineOutputBase,
+                Input,
+                str,
+                bool,
+                int,
+                float,
+                Enum,
+                "Input",
+            ],
+        ] = None,
         outputs: Dict[str, Union[str, Output, "Output"]] = None,
         limits: CommandJobLimits = None,
         identity: Union[ManagedIdentity, AmlToken, UserIdentity] = None,
@@ -123,7 +132,13 @@ class Command(BaseNode):
         kwargs.pop("type", None)
         self._parameters = kwargs.pop("parameters", {})
         BaseNode.__init__(
-            self, type=NodeType.COMMAND, inputs=inputs, outputs=outputs, component=component, compute=compute, **kwargs
+            self,
+            type=NodeType.COMMAND,
+            inputs=inputs,
+            outputs=outputs,
+            component=component,
+            compute=compute,
+            **kwargs,
         )
 
         # init mark for _AttrDict
@@ -156,6 +171,7 @@ class Command(BaseNode):
             int,
             float,
             Enum,
+            PipelineExpression,
         )
 
     @classmethod
@@ -164,7 +180,7 @@ class Command(BaseNode):
 
     @property
     def parameters(self) -> Dict[str, str]:
-        """MLFlow parameters
+        """MLFlow parameters.
 
         :return: MLFlow parameters logged in job.
         :rtype: Dict[str, str]
@@ -172,11 +188,16 @@ class Command(BaseNode):
         return self._parameters
 
     @property
-    def distribution(self) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]:
+    def distribution(
+        self,
+    ) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]:
         return self._distribution
 
     @distribution.setter
-    def distribution(self, value: Union[Dict, PyTorchDistribution, TensorFlowDistribution, MpiDistribution]):
+    def distribution(
+        self,
+        value: Union[Dict, PyTorchDistribution, TensorFlowDistribution, MpiDistribution],
+    ):
         if isinstance(value, dict):
             dist_schema = UnionField(
                 [
@@ -289,9 +310,10 @@ class Command(BaseNode):
         search_space: Dict[str, SweepDistribution] = None,
         identity: Union[ManagedIdentity, AmlToken, UserIdentity] = None,
     ) -> Sweep:
-        """Turn the command into a sweep node with extra sweep run setting. The command component in current Command
-        node will be used as its trial component.
-        A command node can sweep for multiple times, and the generated sweep node will share the same trial component.
+        """Turn the command into a sweep node with extra sweep run setting. The
+        command component in current Command node will be used as its trial
+        component. A command node can sweep for multiple times, and the
+        generated sweep node will share the same trial component.
 
         :param primary_metric: primary metric of the sweep objective, AUC e.g. The metric must be logged in
         running the trial component.
@@ -327,7 +349,9 @@ class Command(BaseNode):
             inputs_search_space.update(search_space)
 
         sweep_node = Sweep(
-            trial=self.component,
+            trial=copy.deepcopy(
+                self.component
+            ),  # Make a copy of the underneath Component so that the original node can still be used.
             compute=self.compute if compute is None else compute,
             objective=Objective(goal=goal, primary_metric=primary_metric),
             sampling_algorithm=sampling_algorithm,
@@ -478,7 +502,9 @@ class Command(BaseNode):
         command_job._id = obj.id
         command_job.resources = ResourceConfiguration._from_rest_object(rest_command_job.resources)
         command_job.limits = CommandJobLimits._from_rest_object(rest_command_job.limits)
-        command_job.component._source = ComponentSource.REST  # This is used by pipeline job telemetries.
+        command_job.component._source = (
+            ComponentSource.REMOTE_WORKSPACE_JOB
+        )  # This is used by pipeline job telemetries.
 
         # Handle special case of local job
         if (
@@ -525,7 +551,8 @@ class Command(BaseNode):
             node._name = self.name
             node.compute = self.compute
             node.tags = self.tags
-            node.display_name = self.display_name
+            # Pass through the display name only if the display name is not system generated.
+            node.display_name = self.display_name if self.display_name != self.name else None
             node.environment = copy.deepcopy(self.environment)
             # deep copy for complex object
             node.environment_variables = copy.deepcopy(self.environment_variables)
@@ -540,10 +567,3 @@ class Command(BaseNode):
                 no_personal_data_message=msg.format(type(Component), self._component),
                 target=ErrorTarget.COMMAND_JOB,
             )
-
-    @property
-    def _extra_skip_fields_in_validation(self) -> List[str]:
-        """
-        Extra fields that should be skipped in validation.
-        """
-        return ["component"]

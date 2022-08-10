@@ -38,7 +38,7 @@ jobs:
     max_concurrency_per_instance: 2
 
     task:
-      type: function
+      type: run_function
       code: "../python"
       entry_script: pass_through.py
       append_row_to: ${{outputs.scored_result}} # optional, If Null, equals to summary_only mode in v1.

@@ -1,25 +1,18 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Union
-from pathlib import Path
 from os import PathLike
+from pathlib import Path
+from typing import Dict, Union
 
-from azure.ai.ml.entities._assets import Artifact
-from .artifact import ArtifactStorageInfo
-from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    ArmConstants,
-)
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    CodeVersionData,
-    CodeVersionDetails,
-)
+from azure.ai.ml._restclient.v2022_05_01.models import CodeVersionData, CodeVersionDetails
 from azure.ai.ml._schema import CodeAssetSchema
-from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ArmConstants
+from azure.ai.ml.entities._assets import Artifact
+from azure.ai.ml.entities._util import load_from_dict
+
+from .artifact import ArtifactStorageInfo
 
 
 class Code(Artifact):
@@ -107,7 +100,7 @@ class Code(Artifact):
         return code_version_resource
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
-        """Updates an an artifact with the remote path of a local upload"""
+        """Updates an an artifact with the remote path of a local upload."""
         if asset_artifact.is_file:
             # Code paths cannot be pointers to single files. It must be a pointer to a container
             # Skipping the setter to avoid being resolved as a local path

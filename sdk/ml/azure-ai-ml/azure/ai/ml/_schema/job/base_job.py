@@ -3,16 +3,15 @@
 # ---------------------------------------------------------
 import logging
 
-from azure.ai.ml.constants import AzureMLResourceType
-from azure.ai.ml._schema import NestedField
-from azure.ai.ml._schema.job.identity import ManagedIdentitySchema, AMLTokenIdentitySchema, UserIdentitySchema
 from marshmallow import fields
 
-from ..core.fields import ArmStr, ComputeField, UnionField
+from azure.ai.ml._schema.core.fields import NestedField, ArmStr, ComputeField, UnionField
+from azure.ai.ml._schema.core.resource import ResourceSchema
+from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
+from azure.ai.ml.constants import AzureMLResourceType
+
 from .creation_context import CreationContextSchema
-from .job_output import JobOutputSchema
 from .services import JobServiceSchema
-from ..core.resource import ResourceSchema
 
 module_logger = logging.getLogger(__name__)
 

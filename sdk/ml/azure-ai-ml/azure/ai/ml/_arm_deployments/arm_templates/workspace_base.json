@@ -546,7 +546,7 @@
             "tags": "[parameters('tagValues')]",
             "apiVersion": "2018-05-01-preview",
             "name": "[parameters('applicationInsightsName')]",
-            "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'centralus'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap')),'southcentralus',parameters('applicationInsightsLocation'))]",
+            "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'centralus'), equals(toLower(parameters('applicationInsightsLocation')),'westus3'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap')),'southcentralus',parameters('applicationInsightsLocation'))]",
             "kind": "web",
             "properties": {
                 "Application_Type": "web"

@@ -7,11 +7,6 @@ log_verbosity: debug
 task: forecasting
 primary_metric: normalized_root_mean_squared_error
 
-properties:
-  _automl_internal_enable_mltable_quick_profile: "true"
-  _automl_internal_label: "latest"
-  _automl_internal_save_mlflow: "true"
-
 limits:
   timeout_minutes: 180
   trial_timeout_minutes: 20
@@ -22,7 +17,7 @@ limits:
 
 target_column_name: BeerProduction
 training_data:
-  path: tests/test_configs/automl_job/test_datasets/beer_forecasting/train
+  path: src/azure-ai-ml/tests/test_configs/automl_job/test_datasets/beer_forecasting/train
   type: mltable
 n_cross_validations: 2
 

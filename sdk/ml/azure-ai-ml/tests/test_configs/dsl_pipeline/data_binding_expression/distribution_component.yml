@@ -1,0 +1,58 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+name: microsoftsamples_command_component_basic
+display_name: CommandComponentBasic
+description: This is the basic command component
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 0.0.1
+
+inputs:
+  component_in_number:
+    description: A number
+    type: number
+    default: 10.99
+  component_in_integer:
+    description: A number
+    type: integer
+    default: 3
+  component_in_string:
+    description: A string
+    type: string
+    default: "Hello World"
+  component_in_other_string:
+    description: A string
+    type: string
+    default: "Hello World"
+  component_in_folder:
+    description: A folder
+    type: uri_folder
+    optional: True
+  component_in_file:
+    description: A file
+    type: uri_file
+    optional: True
+
+outputs:
+  component_out_folder:
+    type: uri_folder
+
+# Write some output to work around a bug when pipeline node failed to run with empty dataset as input
+command: >-
+  echo Hello World &
+  echo ${{inputs.component_in_integer}} &
+  echo ${{inputs.component_in_number}} &
+  echo ${{inputs.component_in_string}} &
+  echo ${{inputs.component_in_other_string}} &
+  [echo ${{inputs.component_in_file}} &]
+  [echo ${{inputs.component_in_folder}} &]
+  echo ${{outputs.component_out_folder}} > ${{outputs.component_out_folder}}/sample1.csv
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+
+distribution:
+  type: "mpi"
+  process_count_per_instance: 1

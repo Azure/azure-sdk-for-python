@@ -1,15 +1,18 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=unused-argument,no-self-use
+
 from marshmallow import fields, post_load, pre_load
 
-from azure.ai.ml._schema.core.fields import VersionField, PythonFuncNameStr
-from azure.ai.ml.constants import AzureMLResourceType, BASE_PATH_CONTEXT_KEY
-from azure.ai.ml._schema import UnionField, NestedField, ArmVersionedStr
-from azure.ai.ml._schema.component.input_output import InputPortSchema, ParameterSchema, OutputPortSchema
-from azure.ai.ml._schema.job.creation_context import CreationContextSchema
+from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, UnionField
+from azure.ai.ml._schema.component.input_output import InputPortSchema, OutputPortSchema, ParameterSchema
+from azure.ai.ml._schema.core.fields import PythonFuncNameStr
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, AzureMLResourceType
+
+from ..assets.asset import AssetSchema
 from ..core.fields import RegistryStr
-from ..core.resource import ResourceSchema
 
 
 class ComponentNameStr(PythonFuncNameStr):
@@ -17,7 +20,7 @@ class ComponentNameStr(PythonFuncNameStr):
         return "Component"
 
 
-class BaseComponentSchema(ResourceSchema):
+class ComponentSchema(AssetSchema):
     schema = fields.Str(data_key="$schema", attribute="_schema")
     name = ComponentNameStr(required=True)
     id = UnionField(
@@ -26,7 +29,6 @@ class BaseComponentSchema(ResourceSchema):
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, dump_only=True),
         ]
     )
-    version = VersionField()
     display_name = fields.Str()
     description = fields.Str()
     tags = fields.Dict(keys=fields.Str(), values=fields.Str())
@@ -41,7 +43,6 @@ class BaseComponentSchema(ResourceSchema):
         ),
     )
     outputs = fields.Dict(keys=fields.Str(), values=NestedField(OutputPortSchema))
-    creation_context = NestedField(CreationContextSchema, dump_only=True)
 
     def __init__(self, *args, **kwargs):
         # Remove schema_ignored to enable serialize and deserialize schema.

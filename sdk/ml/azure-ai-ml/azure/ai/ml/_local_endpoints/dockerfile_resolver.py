@@ -6,15 +6,17 @@
 import logging
 from pathlib import Path
 from typing import List, Optional
-from .dockerfile_instructions import From, Run, Workdir, Copy, Cmd
+
 from azure.ai.ml.constants import LocalEndpointConstants
 
+from .dockerfile_instructions import Cmd, Copy, From, Run, Workdir
 
 module_logger = logging.getLogger(__name__)
 
 
 class DockerfileResolver(object):
-    """Represents the contents of a Dockerfile and handles writing the Dockerfile to User's system.
+    """Represents the contents of a Dockerfile and handles writing the
+    Dockerfile to User's system.
 
     :param docker_base_image: name of local endpoint
     :type docker_base_image: str
@@ -67,14 +69,18 @@ class DockerfileResolver(object):
         return self._local_dockerfile_path
 
     def __str__(self) -> str:
-        """Override DockerfileResolver str() built-in func to return the Dockerfile contents as a string.
+        """Override DockerfileResolver str() built-in func to return the
+        Dockerfile contents as a string.
 
         :return: str
         """
         return "" if len(self._instructions) == 0 else "\n".join([str(instr) for instr in self._instructions])
 
     def _construct(self, install_debugpy: bool = False) -> None:
-        """Internal use only. Constructs the Dockerfile instructions based on properties."""
+        """Internal use only.
+
+        Constructs the Dockerfile instructions based on properties.
+        """
         self._instructions = []
         if self._docker_base_image:
             self._instructions = [From(self._docker_base_image)]
@@ -131,7 +137,8 @@ class DockerfileResolver(object):
             )
 
     def write_file(self, directory_path: str, file_prefix: str = None) -> None:
-        """Writes this Dockerfile to a file in provided directory and file name prefix.
+        """Writes this Dockerfile to a file in provided directory and file name
+        prefix.
 
         :param directory_path: absolute path of local directory to write Dockerfile.
         :type directory_path: str

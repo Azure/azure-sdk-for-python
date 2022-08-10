@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from azure.ai.ml._user_agent import USER_AGENT
 from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
@@ -9,19 +10,17 @@ from azure.core.pipeline.policies import (
     CustomHookPolicy,
     DistributedTracingPolicy,
     HeadersPolicy,
+    HttpLoggingPolicy,
     NetworkTraceLoggingPolicy,
     ProxyPolicy,
     RetryPolicy,
     UserAgentPolicy,
-    HttpLoggingPolicy,
 )
 from azure.core.pipeline.transport import RequestsTransport
 
-from azure.ai.ml._user_agent import USER_AGENT
-
 
 def _get_config(**kwargs):
-    """Configuration common to a/sync pipelines"""
+    """Configuration common to a/sync pipelines."""
     config = Configuration(**kwargs)
     config.custom_hook_policy = CustomHookPolicy(**kwargs)
     config.headers_policy = HeadersPolicy(**kwargs)
