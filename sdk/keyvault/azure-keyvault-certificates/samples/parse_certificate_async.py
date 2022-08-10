@@ -13,7 +13,7 @@ from cryptography.hazmat.primitives.serialization import pkcs12
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. An Azure Key Vault. (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
+# 1. An Azure Key Vault. (https://docs.microsoft.com/azure/key-vault/quick-create-cli)
 #
 # 2. A service principal with certificate get, delete, and purge permissions, as well as secret get
 #    permissions.

@@ -9,7 +9,7 @@ from azure.identity.aio import DefaultAzureCredential
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
+# 1. An Azure Key Vault (https://docs.microsoft.com/azure/key-vault/quick-create-cli)
 #
 # 2. azure-keyvault-secrets and azure-identity libraries (pip install these)
 #
@@ -19,7 +19,7 @@ from azure.identity.aio import DefaultAzureCredential
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates deleting and purging a vault(secret) resource for Azure Key Vault.
 # The vault has to be soft-delete enabled to perform one of the following operations. See
-# https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
+# https://docs.microsoft.com/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
 #
 # 1. Create a secret (set_secret)
 #

@@ -9,7 +9,7 @@ from azure.identity import DefaultAzureCredential
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
+# 1. An Azure Key Vault (https://docs.microsoft.com/azure/key-vault/quick-create-cli)
 #
 #  2. Microsoft Azure Key Vault PyPI package -
 #    https://pypi.python.org/pypi/azure-keyvault-secrets/
