@@ -1,4 +1,3 @@
-# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -10,19 +9,20 @@ from datetime import datetime, timedelta
 from enum import Enum
 from time import sleep
 
-from azure.core.exceptions import (ResourceExistsError, ResourceModifiedError, HttpResponseError)
+from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
 from azure.storage.blob import (
     AccountSasPermissions,
     BlobBlock,
     BlobClient,
     BlobSasPermissions,
     BlobServiceClient,
-    ResourceTypes,
     generate_account_sas,
-    generate_blob_sas)
-from devtools_testutils import recorded_by_proxy
+    generate_blob_sas,
+    ResourceTypes
+)
 
-from devtools_testutils.storage import StorageTestCase, is_version_before, ServiceVersion, StorageRecordedTestCase
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
 #------------------------------------------------------------------------------
