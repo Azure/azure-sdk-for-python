@@ -106,13 +106,14 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         assert resp is not None
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_set_blob_tags_with_lease(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
         blob_client, _ = self._create_block_blob()
-        lease = blob_client.acquire_lease()
+        lease = blob_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         blob_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -150,6 +151,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         assert resp is not None
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_get_blob_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -170,6 +172,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
             assert tags[key] == value
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_get_blob_tags_for_a_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -190,6 +193,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
             assert tags[key] == value
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_upload_block_blob_with_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -205,6 +209,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         assert len(resp) == 3
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_get_blob_properties_returns_tags_num(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -222,6 +227,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         assert downloaded.properties.tag_count == len(tags)
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_create_append_blob_with_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -237,6 +243,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         assert len(resp) == 3
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_create_page_blob_with_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -252,6 +259,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         assert len(resp) == 3
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_commit_block_list_with_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -277,6 +285,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         assert len(resp) == len(tags)
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_start_copy_from_url_with_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -308,6 +317,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         assert len(resp) == len(tags)
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_start_copy_from_url_with_tags_copy_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -347,6 +357,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         assert tags == copy_tags
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_start_copy_from_url_with_tags_replace_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -384,6 +395,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         assert tags2 == copy_tags
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_list_blobs_returns_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -401,6 +413,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
                 assert tags[key] == value
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_filter_blobs(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -431,7 +444,6 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         assert items_on_page2[0]['tags']['tag1'] == 'firsttag'
         assert items_on_page2[0]['tags']['tag2'] == 'secondtag'
 
-    @pytest.mark.skip(reason="https://github.com/Azure/azure-sdk-for-python/issues/23693 ; Test failing after resolving odd service versioning skip behavior.")
     @pytest.mark.live_test_only
     @BlobPreparer()
     def test_filter_blobs_using_account_sas(self, **kwargs):
@@ -461,7 +473,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         # where = "@container='{}' and tag1='1000' and tag2 = 'secondtag'".format(container_name1)
         where = "\"year\"='1000' and tag2 = 'secondtag' and tag3='thirdtag'"
 
-        blob_list = self.bsc.find_blobs_by_tags(filter_expression=where, results_per_page=2).by_page()
+        blob_list = self.bsc.find_blobs_by_tags(filter_expression=where, results_per_page=3).by_page()
         first_page = next(blob_list)
         items_on_page1 = list(first_page)
         assert 1 == len(items_on_page1)
