@@ -28,6 +28,8 @@ class ExportResult(Enum):
 
 
 # pylint: disable=broad-except
+# pylint: disable=too-many-instance-attributes
+# pylint: disable=C0301
 class BaseExporter:
     """Azure Monitor base exporter for OpenTelemetry."""
 
