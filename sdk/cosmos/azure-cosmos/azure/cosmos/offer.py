@@ -27,7 +27,7 @@ class ThroughputProperties(object):
 
     To read and update throughput properties, use the associated methods on the :class:`Container`.
     If configuring auto-scale, both `auto_scale_max_throughput` and `auto_scale_increment_percent` must be set and
-    the value of `offer_throughput` will be ignored.
+    the value of `offer_throughput` will not be allowed to be set in conjunction with auto-scale.
 
     :keyword int offer_throughput: The provisioned throughput in request units per second as a number.
     :keyword int auto_scale_max_throughput: The max auto-scale throughput. It should have a valid throughput
