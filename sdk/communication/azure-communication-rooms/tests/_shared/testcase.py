@@ -85,7 +85,7 @@ class CommunicationTestCase(AzureTestCase):
         if self.is_playback():
             self.connection_str = "endpoint=https://sanitized.ppe.communication.azure.net/;accesskey=fake=="
         else:
-            self.connection_str = os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING')
+            self.connection_str = os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
             endpoint, _ = parse_connection_str(self.connection_str)
             self._resource_name = endpoint.split(".")[0]
             self.scrubber.register_name_pair(self._resource_name, "sanitized")
