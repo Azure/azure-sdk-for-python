@@ -185,7 +185,8 @@ class Session(object):
             self._output_handles[outgoing_handle] = new_link
             self._input_handles[frame[1]] = new_link
         except ValueError:
-            pass  # TODO: Reject link
+            # Reject Link
+            await new_link.detach()
     
     async def _outgoing_flow(self, frame=None):
         link_flow = frame or {}
