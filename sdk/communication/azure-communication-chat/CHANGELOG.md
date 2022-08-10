@@ -2,18 +2,16 @@
 
 ## 1.2.0 (Unreleased)
 
+### Features Added
 - Added support for proactive refreshing of tokens
   - `CommunicationTokenCredential` exposes a new boolean keyword argument `proactive_refresh` that defaults to `False`. If set to `True`, the refreshing of the token will be scheduled in the background ensuring continuous authentication state.
   - Added disposal function `close` for `CommunicationTokenCredential`.
-
-### Features Added
-
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
-Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+Python 2.7 is no longer supported. Please use Python version 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 
 ## 1.1.0 (2021-09-15)
 

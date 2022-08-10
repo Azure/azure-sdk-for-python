@@ -8,10 +8,7 @@ import base64
 from azure_devtools.scenario_tests import RecordingProcessor
 from datetime import datetime, timedelta
 from functools import wraps
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
+from urllib.parse import urlparse
 import sys
 
 def generate_token_with_custom_expiry(valid_for_seconds):
