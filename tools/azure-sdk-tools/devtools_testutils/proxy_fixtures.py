@@ -96,8 +96,11 @@ class VariableRecorder:
 
 
 @pytest.fixture
-def environment_variables() -> EnvironmentVariableSanitizer:
+def environment_variables(test_proxy: None) -> EnvironmentVariableSanitizer:
     """Fixture that returns an EnvironmentVariableSanitizer for convenient environment variable fetching and sanitizing.
+
+    :param test_proxy: The fixture responsible for starting up the test proxy server.
+    :type test_proxy: None
 
     :returns: An EnvironmentVariableSanitizer object. Calling:
         - `sanitize(a, b)` will sanitize the value of environnment variable `a` with value `b`
