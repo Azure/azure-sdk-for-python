@@ -87,10 +87,6 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         actual_data = blob.download_blob()
         assert actual_data.readall() == expected_data
 
-    def _get_datetime_variable(self, variables, name, dt):
-        dt_string = variables.setdefault(name, dt.isoformat())
-        return datetime.strptime(dt_string, "%Y-%m-%dT%H:%M:%S.%f")
-
     #--Test cases for block blobs --------------------------------------------
     @BlobPreparer()
     @recorded_by_proxy
