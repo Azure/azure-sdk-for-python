@@ -162,7 +162,8 @@ class Session(object):
             _LOGGER.info("<- %r", EndFrame(*frame), extra=self.network_trace_params)
         if self.state not in [SessionState.END_RCVD, SessionState.END_SENT, SessionState.DISCARDING]:
             await self._set_state(SessionState.END_RCVD)
-            # TODO: Clean up all links
+            for _, link in self.links.items():
+                await link.detach()
             await self._outgoing_end()
         await self._set_state(SessionState.UNMAPPED)
 
