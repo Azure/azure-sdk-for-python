@@ -66,7 +66,10 @@ from azure.keyvault.administration import KeyVaultBackupClient
 
 credential = DefaultAzureCredential()
 
-client = KeyVaultBackupClient(vault_url="https://my-managed-hsm-name.managedhsm.azure.net/", credential=credential)
+client = KeyVaultBackupClient(
+    vault_url="https://my-managed-hsm-name.managedhsm.azure.net/",
+    credential=credential
+)
 ```
 
 > **NOTE:** For an asynchronous client, import `azure.keyvault.administration.aio`'s `KeyVaultBackupClient` instead.
