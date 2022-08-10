@@ -1,5 +1,11 @@
 # Release History
 
+## 2.2.0 (2022-08-10)
+
+### Features Added
+
+  - Added operation group ReplicasOperations
+
 ## 2.1.0 (2022-06-08)
 
 **Features**
