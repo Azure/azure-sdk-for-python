@@ -52,7 +52,7 @@ class EnvironmentVariableSanitizer:
         return real_value if is_live() else value
 
     def sanitize_batch(self, variables: "Dict[str, str]") -> "Dict[str, str]":
-        """Registers sanitizers that replace the values of multiple envrionment variables with the provided values.
+        """Registers sanitizers that replace the values of multiple environment variables with the provided values.
 
         :param variables: A dictionary mapping environment variable names to values they should be sanitized with.
             For example: {"SERICE_CLIENT_ID": "fake_client_id", "SERVICE_ENDPOINT": "https://fake-endpoint.azure.net"}
@@ -103,7 +103,7 @@ def environment_variables(test_proxy: None) -> EnvironmentVariableSanitizer:
     :type test_proxy: None
 
     :returns: An EnvironmentVariableSanitizer object. Calling:
-        - `sanitize(a, b)` will sanitize the value of environnment variable `a` with value `b`
+        - `sanitize(a, b)` will sanitize the value of environment variable `a` with value `b`
         - `sanitize_batch(dict)` will sanitize the values of all variables in dictionary `dict`
         - `get(a)` will return the value of environment variable `a` in the current context (live or playback mode)
         See the definition of EnvironmentVariableSanitizer in
