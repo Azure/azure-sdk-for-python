@@ -29,8 +29,8 @@ class DeviceUpdateConfiguration(Configuration):  # pylint: disable=too-many-inst
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The Azure subscription ID.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2022-04-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-10-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -41,7 +41,7 @@ class DeviceUpdateConfiguration(Configuration):  # pylint: disable=too-many-inst
         **kwargs: Any
     ) -> None:
         super(DeviceUpdateConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-10-01")  # type: str
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
