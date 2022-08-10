@@ -117,13 +117,11 @@ class SASLWithWebSocket(WebSocketTransportAsync, SASLTransportMixinAsync):
     ):
         self.credential = credential
         ssl = ssl or True
-        http_proxy = kwargs.pop('http_proxy', None)
         self._transport = WebSocketTransportAsync(
             host,
             port=port,
             connect_timeout=connect_timeout,
             ssl=ssl,
-            http_proxy=http_proxy,
             **kwargs
         )
         super().__init__(host, port, connect_timeout, ssl, **kwargs)

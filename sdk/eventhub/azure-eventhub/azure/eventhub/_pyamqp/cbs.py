@@ -190,13 +190,10 @@ class CBSAuthenticator(object):
         self.auth_state = CbsAuthState.IN_PROGRESS
         access_token = self._auth.get_token()
         if not access_token:
-            _LOGGER.info("Update_token received an empty token object")
+            _LOGGER.debug("Update_token received an empty token object")
         elif not access_token.token:
-            _LOGGER.info("Update_token received an empty token")
+            _LOGGER.debug("Update_token received an empty token")
         self._expires_on = access_token.expires_on
-        _LOGGER.info('Update_token after token has been updated')
-        _LOGGER.info('Current time: %r', datetime.now())
-        _LOGGER.info('Token expiry: %r', datetime.fromtimestamp(self._expires_on))
         expires_in = self._expires_on - int(utc_now().timestamp())
         self._refresh_window = int(float(expires_in) * 0.1)
         try:
