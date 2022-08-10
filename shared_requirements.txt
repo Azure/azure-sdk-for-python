@@ -140,6 +140,7 @@ chardet<5,>=3.0.2
 #override azure-data-tables azure-core<2.0.0,>=1.23.0
 #override azure-data-tables msrest>=0.6.10
 #override azure-digitaltwins-core azure-core<2.0.0,>=1.20.0
+#override azure-mgmt-devcenter msrest>=0.6.21
 #override azure-eventhub azure-core<2.0.0,>=1.14.0
 #override azure-eventhub typing-extensions>=4.0.1
 #override azure-identity azure-core<2.0.0,>=1.11.0
@@ -377,6 +378,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-imagebuilder msrest>=0.6.21
 #override azure-mgmt-imagebuilder azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-sqlvirtualmachine azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-devcenter azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-batch azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-workloads msrest>=0.6.21
 #override azure-mgmt-workloads azure-mgmt-core>=1.3.0,<2.0.0
