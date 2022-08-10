@@ -2,7 +2,7 @@
 
 ## 10.1.0 (2022-08-10)
 
-**Features Added**
+### Features Added
 
   - Added operation ManagedHsmsOperations.check_mhsm_name_availability
   - Model Key has a new parameter release_policy
@@ -12,7 +12,7 @@
   - Model MHSMPrivateEndpointConnectionItem has a new parameter etag
   - Model MHSMPrivateEndpointConnectionItem has a new parameter id
 
-## 10.0.1b1 (Unreleased)
+### Other Changes
 
   - Python 3.6 is no longer supported. Please use Python version 3.7 or later.
 
