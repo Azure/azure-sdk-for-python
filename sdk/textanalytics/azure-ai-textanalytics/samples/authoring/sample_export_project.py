@@ -5,17 +5,17 @@
 # ------------------------------------
 
 """
-FILE: sample_delete_project.py
+FILE: sample_export_project.py
 DESCRIPTION:
-    This sample demonstrates how to delete a project.
+    This sample demonstrates how to export a project.
 USAGE:
-    python sample_delete_project.py
+    python sample_export_project.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_AUTHORING_ENDPOINT             - endpoint for your Text Analysis resource.
     2) AZURE_TEXT_AUTHORING_KEY                  - API key for your Text Analysis resource.
 """
-def sample_delete_project():
-    from azure.ai.language.text.authoring import TextAuthoringClient
+def sample_export_project():
+    from azure.ai.textanalytics.authoring import TextAuthoringClient
     from azure.core.credentials import AzureKeyCredential
     import os
 
@@ -25,17 +25,14 @@ def sample_delete_project():
     client = TextAuthoringClient(endpoint, AzureKeyCredential(key))
 
     project_name = "Project_Name"
-    
-    try:
-        poller = client.begin_delete_project(project_name)
-        result = poller.result()     # Waits for the project to get deleted
+    poller = client.begin_export_project(project_name, string_index_type="Utf16CodeUnit")
+    result = poller.result()
 
-        if result["status"] == "succeeded":
-            print("The project is deleted successfully")
-        else:
-            print("An error has occured")
-    except Exception as ex:
-        print(ex)
+    if result["status"] == "succeeded":
+        export_url = result["resultUrl"]
+        print("The project is exported at: " + export_url)
+    else:
+        print("An error has occured")
 
 if __name__ == "__main__":
-    sample_delete_project()
+    sample_export_project()

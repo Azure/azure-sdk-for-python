@@ -20,16 +20,15 @@ autorest
 ## Configuration
 
 ```yaml
-namespace: azure.ai.language.text
-package-name: azure-ai-language-text
+namespace: azure.ai.textanalytics.authoring
+package-name: azure-ai-textanalytics
 license-header: MICROSOFT_MIT_NO_VERSION
 no-namespace-folders: true
 python: true
-tag: release_2022_05_01
+tag: release_authoring_2022_05_01
 openapi-type: data-plane
 clear-output-folder: true
 version-tolerant: true
-package-version: 1.0.0b1
 add-credential: true
 credential-scopes: https://cognitiveservices.azure.com/.default
 black: true
@@ -41,16 +40,16 @@ modelerfour:
 
 ```yaml
 batch:
-  - tag: release_authoring_1_0
+  - tag: release_authoring_2022_05_01
 ```
 
 ## Authoring
 
-These settings apply only when `--tag=release_authoring_1_0` is specified on the command line.
+These settings apply only when `--tag=release_authoring_2022_05_01` is specified on the command line.
 
-```yaml $(tag) == 'release_authoring_1_0'
+```yaml $(tag) == 'release_authoring_2022_05_01'
 input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/Language/stable/2022-05-01/analyzetext-authoring.json
-output-folder: ../azure/ai/language/text/authoring
+output-folder: ../../azure/ai/textanalytics/authoring
 title: TextAuthoringClient
 ```
 
@@ -103,7 +102,7 @@ directive:
 
 ## Give LROs return types
 
-```yaml $(tag) == 'release_authoring_1_0'
+```yaml $(tag) == 'release_authoring_2022_05_01'
 directive:
   - where-operation: TextAnalysisAuthoring_DeleteProject
     transform: >
@@ -173,7 +172,7 @@ directive:
 
 ## Rename `body` param for operations
 
-```yaml $(tag) == 'release_authoring_1_0'
+```yaml $(tag) == 'release_authoring_2022_05_01'
 directive:
   - where-operation: TextAnalysisAuthoring_CreateProject
     transform: >
@@ -194,7 +193,7 @@ directive:
 
 ## Remove status operations
 
-```yaml $(tag) == 'release_authoring_1_0'
+```yaml $(tag) == 'release_authoring_2022_05_01'
 directive:
   - remove-operation: TextAnalysisAuthoring_GetDeploymentStatus
   - remove-operation: TextAnalysisAuthoring_GetSwapDeploymentsStatus
@@ -206,7 +205,7 @@ directive:
 
 ## Rename Authoring client operations
 
-```yaml $(tag) == 'release_authoring_1_0'
+```yaml $(tag) == 'release_authoring_2022_05_01'
 directive:
   - rename-operation:
       from: TextAnalysisAuthoring_ListProjects

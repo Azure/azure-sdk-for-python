@@ -16,7 +16,7 @@ USAGE:
     3) AZURE_TEXT_AUTHORING_STORAGE              - name of the storage container for the project to be created in
 """
 def sample_create_project():
-    from azure.ai.language.text.authoring import TextAuthoringClient
+    from azure.ai.textanalytics.authoring import TextAuthoringClient
     from azure.core.credentials import AzureKeyCredential
     import os
 

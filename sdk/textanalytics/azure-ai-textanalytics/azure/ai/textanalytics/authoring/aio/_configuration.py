@@ -11,11 +11,11 @@ from typing import Any, TYPE_CHECKING
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
-from ._version import VERSION
-
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
+
+VERSION = "unknown"
 
 
 class TextAuthoringClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
@@ -28,13 +28,13 @@ class TextAuthoringClientConfiguration(Configuration):  # pylint: disable=too-ma
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: Api Version. Default value is "2022-05-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(TextAuthoringClientConfiguration, self).__init__(**kwargs)
         api_version = kwargs.pop("api_version", "2022-05-01")  # type: str
 
@@ -47,23 +47,20 @@ class TextAuthoringClientConfiguration(Configuration):  # pylint: disable=too-ma
         self.credential = credential
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://cognitiveservices.azure.com/.default"])
-        kwargs.setdefault("sdk_moniker", "ai-language-text/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "ai-textanalytics/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
         self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.BearerTokenCredentialPolicy(
+            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(
                 self.credential, *self.credential_scopes, **kwargs
             )

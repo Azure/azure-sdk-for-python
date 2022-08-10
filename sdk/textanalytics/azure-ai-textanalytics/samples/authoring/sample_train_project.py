@@ -16,7 +16,7 @@ USAGE:
     2) AZURE_TEXT_AUTHORING_KEY                  - API key for your Text Analysis resource.
 """
 def sample_train_project():
-    from azure.ai.language.text.authoring import TextAuthoringClient
+    from azure.ai.textanalytics.authoring import TextAuthoringClient
     from azure.core.credentials import AzureKeyCredential
     from samples.authoring.dummy_project import dummy_project
     import os

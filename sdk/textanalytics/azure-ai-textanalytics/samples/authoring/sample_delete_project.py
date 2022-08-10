@@ -5,19 +5,18 @@
 # ------------------------------------
 
 """
-FILE: sample_deploy_project.py
+FILE: sample_delete_project.py
 DESCRIPTION:
-    This sample demonstrates how to deploy a project.
+    This sample demonstrates how to delete a project.
 USAGE:
-    python sample_deploy_project.py
+    python sample_delete_project.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_AUTHORING_ENDPOINT             - endpoint for your Text Analysis resource.
     2) AZURE_TEXT_AUTHORING_KEY                  - API key for your Text Analysis resource.
 """
-def sample_deploy_project():
-    from azure.ai.language.text.authoring import TextAuthoringClient
+def sample_delete_project():
+    from azure.ai.textanalytics.authoring import TextAuthoringClient
     from azure.core.credentials import AzureKeyCredential
-    from samples.authoring.dummy_project import dummy_project
     import os
 
     endpoint = os.environ["AZURE_TEXT_AUTHORING_ENDPOINT"]
@@ -26,14 +25,17 @@ def sample_deploy_project():
     client = TextAuthoringClient(endpoint, AzureKeyCredential(key))
 
     project_name = "Project_Name"
-    deployment_name = "Deployment_Name"
-    deployment_label = {
-        "trainedModelLabel": "model1"
-    }
+    
+    try:
+        poller = client.begin_delete_project(project_name)
+        result = poller.result()     # Waits for the project to get deleted
 
-    poller = client.begin_deploy_project(project_name, deployment_name, deployment_label)
-    result = poller.result()
-    print(result)
+        if result["status"] == "succeeded":
+            print("The project is deleted successfully")
+        else:
+            print("An error has occured")
+    except Exception as ex:
+        print(ex)
 
 if __name__ == "__main__":
-    sample_deploy_project()
+    sample_delete_project()

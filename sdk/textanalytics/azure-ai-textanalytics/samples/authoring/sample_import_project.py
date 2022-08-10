@@ -19,7 +19,7 @@ from multiprocessing import dummy
 
 
 def sample_import_project():
-    from azure.ai.language.text.authoring import TextAuthoringClient
+    from azure.ai.textanalytics.authoring import TextAuthoringClient
     from azure.core.credentials import AzureKeyCredential
     from samples.authoring.dummy_project import dummy_project
     import os
