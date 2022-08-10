@@ -20,8 +20,9 @@ from azure.storage.blob import (
     ResourceTypes,
     generate_account_sas,
     generate_blob_sas)
+from devtools_testutils import recorded_by_proxy
 
-from devtools_testutils.storage import StorageTestCase, is_version_before, ServiceVersion
+from devtools_testutils.storage import StorageTestCase, is_version_before, ServiceVersion, StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
 #------------------------------------------------------------------------------
@@ -29,7 +30,7 @@ TEST_CONTAINER_PREFIX = 'container'
 TEST_BLOB_PREFIX = 'blob'
 #------------------------------------------------------------------------------
 
-class StorageBlobTagsTest(StorageTestCase):
+class TestStorageBlobTags(StorageRecordedTestCase):
 
     def _setup(self, storage_account_name, key):
         self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key)
@@ -89,6 +90,7 @@ class StorageBlobTagsTest(StorageTestCase):
     #-- test cases for blob tags ----------------------------------------------
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_set_blob_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
