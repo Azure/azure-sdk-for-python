@@ -1,0 +1,172 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/containerf95629d9?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Fri, 05 Aug 2022 00:27:54 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 05 Aug 2022 00:27:54 GMT",
+        "ETag": "\u00220x8DA767957150D94\u0022",
+        "Last-Modified": "Fri, 05 Aug 2022 00:27:55 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/containerf95629d9?restype=container",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Fri, 05 Aug 2022 00:27:54 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 05 Aug 2022 00:27:55 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/containerf95629d9?restype=container",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Fri, 05 Aug 2022 00:28:25 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Content-Length": "225",
+        "Content-Type": "application/xml",
+        "Date": "Fri, 05 Aug 2022 00:28:25 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-error-code": "ContainerNotFound",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EContainerNotFound\u003C/Code\u003E\u003CMessage\u003EThe specified container does not exist.\n",
+        "RequestId:3c6c17fa-601e-007a-1d62-a85fe4000000\n",
+        "Time:2022-08-05T00:28:25.2649752Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/?comp=list\u0026include=deleted",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Fri, 05 Aug 2022 00:28:25 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Fri, 05 Aug 2022 00:28:25 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagename.blob.core.windows.net/\u0022\u003E\u003CContainers\u003E\u003CContainer\u003E\u003CName\u003Econtainerf95629d9\u003C/Name\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CVersion\u003E01D8A862349E0130\u003C/Version\u003E\u003CProperties\u003E\u003CLast-Modified\u003EFri, 05 Aug 2022 00:27:55 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DA767957150D94\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eexpired\u003C/LeaseState\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003CHasImmutabilityPolicy\u003Efalse\u003C/HasImmutabilityPolicy\u003E\u003CHasLegalHold\u003Efalse\u003C/HasLegalHold\u003E\u003CImmutableStorageWithVersioningEnabled\u003Efalse\u003C/ImmutableStorageWithVersioningEnabled\u003E\u003CDeletedTime\u003EFri, 05 Aug 2022 00:27:55 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E1\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003C/Container\u003E\u003C/Containers\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/containerf95629d9?restype=container\u0026comp=undelete",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Fri, 05 Aug 2022 00:28:25 GMT",
+        "x-ms-deleted-container-name": "containerf95629d9",
+        "x-ms-deleted-container-version": "01D8A862349E0130",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 05 Aug 2022 00:28:25 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/containerf95629d9?restype=container",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Fri, 05 Aug 2022 00:28:25 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 05 Aug 2022 00:28:25 GMT",
+        "ETag": "\u00220x8DA76796948357F\u0022",
+        "Last-Modified": "Fri, 05 Aug 2022 00:28:25 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-default-encryption-scope": "$account-encryption-key",
+        "x-ms-deny-encryption-scope-override": "false",
+        "x-ms-has-immutability-policy": "false",
+        "x-ms-has-legal-hold": "false",
+        "x-ms-immutable-storage-with-versioning-enabled": "false",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}
