@@ -2,7 +2,7 @@
 
 ## 10.1.0 (2022-08-09)
 
-**Features**
+**Features Added**
 
   - Added operation ManagedHsmsOperations.check_mhsm_name_availability
   - Model Key has a new parameter release_policy
