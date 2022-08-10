@@ -1,7 +1,11 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""This file includes the type classes which could be used in dsl.pipeline, command function, or any other place that requires job inputs/outputs
+
+# pylint: disable=protected-access
+
+"""This file includes the type classes which could be used in dsl.pipeline,
+command function, or any other place that requires job inputs/outputs.
 
 .. remarks::
 
@@ -51,24 +55,43 @@
             outputs={"my_model": Output(type="mlflow_model")},
         )
         node = my_command()
-
 """
 import math
-from typing import overload
 from collections import OrderedDict
-
-from typing import Union, Sequence, Iterable
-from enum import EnumMeta, Enum as PyEnum
+from enum import Enum as PyEnum
+from enum import EnumMeta
 from inspect import Parameter, signature
+from typing import Dict, Iterable, Sequence, Union, overload
 
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException, MldesignerComponentDefiningError
-from azure.ai.ml.entities._component.input_output import ComponentInput, ComponentOutput
-from azure.ai.ml.constants import InputOutputModes, AssetTypes
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorTarget, ErrorCategory, ComponentException
-from azure.ai.ml.entities._mixins import DictMixin
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._schema.component.input_output import SUPPORTED_PARAM_TYPES
+from azure.ai.ml.constants import AssetTypes, ComponentParameterTypes, InputOutputModes, IOConstants
+from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
+from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 
 
-class Input(DictMixin):
+class _InputOutputBase(DictMixin, RestTranslatableMixin):
+    def __init__(
+        self,
+        *,
+        type,
+        **kwargs,
+    ):
+        """Base class for Input & Output class.
+
+        This class is introduced to support literal output in the future.
+
+        :param type: The type of the Input/Output.
+        :type type: str
+        """
+        self.type = type
+
+    def _is_literal(self) -> bool:
+        """Returns True if this input is literal input."""
+        return self.type in SUPPORTED_PARAM_TYPES
+
+
+class Input(_InputOutputBase):
     """Define an input of a Component or Job.
 
     Default to be a uri_folder Input.
@@ -95,25 +118,6 @@ class Input(DictMixin):
     :type description: str
     """
 
-    # For validation, indicates specific parameters combination for each type
-    _TYPE_COMBINATION_MAPPING = {
-        "uri_folder": ["path", "mode"],
-        "uri_file": ["path", "mode"],
-        "mltable": ["path", "mode"],
-        "mlflow_model": ["path", "mode"],
-        "custom_model": ["path", "mode"],
-        "integer": ["default", "min", "max"],
-        "number": ["default", "min", "max"],
-        "string": ["default"],
-        "boolean": ["default"],
-    }
-    _ALLOWED_TYPES = {
-        "integer": (int),
-        "string": (str),
-        "number": (float),
-        "boolean": (bool),
-    }
-    _DATA_TYPE_MAPPING = {int: "integer", str: "string", float: "number", bool: "boolean"}
     _EMPTY = Parameter.empty
 
     @overload
@@ -122,7 +126,7 @@ class Input(DictMixin):
         *,
         type: str = "uri_folder",
         path: str = None,
-        mode: str = "ro_mount",
+        mode: str = None,
         optional: bool = None,
         description: str = None,
         **kwargs,
@@ -144,7 +148,6 @@ class Input(DictMixin):
         :param description: Description of the input
         :type description: str
         """
-        pass
 
     @overload
     def __init__(
@@ -173,7 +176,6 @@ class Input(DictMixin):
         :param description: Description of the input
         :type description: str
         """
-        pass
 
     @overload
     def __init__(
@@ -202,7 +204,6 @@ class Input(DictMixin):
         :param description: Description of the input
         :type description: str
         """
-        pass
 
     @overload
     def __init__(
@@ -225,7 +226,6 @@ class Input(DictMixin):
         :param description: Description of the input
         :type description: str
         """
-        pass
 
     @overload
     def __init__(
@@ -248,14 +248,13 @@ class Input(DictMixin):
         :param description: Description of the input
         :type description: str
         """
-        pass
 
     def __init__(
         self,
         *,
         type: str = "uri_folder",
         path: str = None,
-        mode: str = "ro_mount",
+        mode: str = None,
         default: Union[str, int, float, bool] = None,
         optional: bool = None,
         min: Union[int, float] = None,
@@ -264,39 +263,55 @@ class Input(DictMixin):
         description: str = None,
         **kwargs,
     ):
+        super(Input, self).__init__(type=type)
         # As an annotation, it is not allowed to initialize the name.
         # The name will be updated by the annotated variable name.
         self.name = None
-        self.type = type
         self.description = description
 
-        self._is_parameter_type = self.type in self._ALLOWED_TYPES
+        self._allowed_types = IOConstants.PRIMITIVE_STR_2_TYPE.get(self.type)
+        self._is_primitive_type = self.type in IOConstants.PRIMITIVE_STR_2_TYPE
         if path and not isinstance(path, str):
             # this logic will make dsl data binding expression working in the same way as yaml
             # it's written to handle InputOutputBase, but there will be loop import if we import InputOutputBase here
             self.path = str(path)
         else:
             self.path = path
-        self.mode = None if self._is_parameter_type else mode
-        self.default = default
-        self.optional = True if optional is True else None
+        self.mode = None if self._is_primitive_type else mode
+        self._update_default(default)
+        self.optional = optional
+        # set the flag to mark if the optional=True is inferred by us.
+        self._is_inferred_optional = False
         self.min = min
         self.max = max
         self.enum = enum
-        self._allowed_types = self._ALLOWED_TYPES.get(self.type)
+        # normalize properties like ["default", "min", "max", "optional"]
+        self._normalize_self_properties()
+
         self._validate_parameter_combinations()
+
+    def _is_enum(self):
+        """returns true if the input is enum."""
+        return self.type == ComponentParameterTypes.STRING and self.enum
 
     def _to_dict(self, remove_name=True):
         """Convert the Input object to a dict."""
-        keys = ["name", "path", "type", "mode", "description", "default", "min", "max", "enum", "optional"]
+        keys = [
+            "name",
+            "path",
+            "type",
+            "mode",
+            "description",
+            "default",
+            "min",
+            "max",
+            "enum",
+            "optional",
+        ]
         if remove_name:
             keys.remove("name")
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
-
-    def _to_component_input(self):
-        data = self._to_dict()
-        return ComponentInput(data)
 
     def _parse(self, val):
         """Parse value passed from command line.
@@ -319,6 +334,8 @@ class Input(DictMixin):
                     target=ErrorTarget.PIPELINE,
                 )
             return True if lower_val == "true" else False
+        elif self.type == "string":
+            return val if isinstance(val, str) else str(val)
         return val
 
     def _parse_and_validate(self, val):
@@ -327,7 +344,7 @@ class Input(DictMixin):
         :param str_val: The input string value from the command line.
         :return: The parsed value, an exception will be raised if the value is invalid.
         """
-        if self._is_parameter_type:
+        if self._is_primitive_type:
             val = self._parse(val) if isinstance(val, str) else val
             self._validate_or_throw(val)
         return val
@@ -337,9 +354,11 @@ class Input(DictMixin):
 
     def _update_default(self, default_value):
         """Update provided default values."""
-        if self.type == "uri_folder" or self.type == "uri_file":
-            self.default = default_value
-            return
+        name = "" if not self.name else f"{self.name!r} "
+        msg_prefix = f"Default value of {self.type} Input {name}"
+        if not self._is_primitive_type and default_value is not None:
+            msg = f"{msg_prefix}cannot be set: Non-primitive type Input has no default value."
+            raise UserErrorException(msg)
         else:
             if isinstance(default_value, float) and not math.isfinite(default_value):
                 # Since nan/inf cannot be stored in the backend, just ignore them.
@@ -348,30 +367,24 @@ class Input(DictMixin):
             """Update provided default values.
             Here we need to make sure the type of default value is allowed or it could be parsed..
             """
-            if default_value is not None and not isinstance(default_value, self._allowed_types):
-                try:
-                    default_value = self._parse(default_value)
-                except Exception as e:
-                    if self.name is None:
-                        msg = "Default value of %s Input cannot be parsed, got '%s', type = %s." % (
-                            self.type,
-                            default_value,
-                            type(default_value),
-                        )
-                    else:
-                        msg = "Default value of %s Input '%s' cannot be parsed, got '%s', type = %s." % (
-                            self.type,
-                            self.name,
-                            default_value,
-                            type(default_value),
-                        )
-                    raise MldesignerComponentDefiningError(cause=msg) from e
+            if default_value is not None:
+                if type(default_value) not in IOConstants.PRIMITIVE_TYPE_2_STR:
+                    msg = f"{msg_prefix}cannot be set: type must be one of {list(IOConstants.PRIMITIVE_TYPE_2_STR.values())}, got '{type(default_value)}'."
+                    raise UserErrorException(msg)
+
+                if not isinstance(default_value, self._allowed_types):
+                    try:
+                        default_value = self._parse(default_value)
+                    except Exception as e:
+                        msg = f"{msg_prefix}cannot be parsed, got '{default_value}', type = {type(default_value)!r}."
+                        raise UserErrorException(msg) from e
             self.default = default_value
 
     def _validate_or_throw(self, value):
         """Validate input parameter value, throw exception if not as expected.
 
-        It will throw exception if validate failed, otherwise do nothing.
+        It will throw exception if validate failed, otherwise do
+        nothing.
         """
         if not self.optional and value is None:
             msg = "Parameter {} cannot be None since it is not optional."
@@ -409,15 +422,22 @@ class Input(DictMixin):
                     target=ErrorTarget.PIPELINE,
                 )
 
+    def _get_python_builtin_type_str(self) -> str:
+        """Get python builtin type for current input in string, eg: str.
+
+        Return yaml type if not available.
+        """
+        return IOConstants.PRIMITIVE_STR_2_TYPE[self.type].__name__ if self._is_primitive_type else self.type
+
     def _validate_parameter_combinations(self):
-        """Validate different parameter combinations according to type"""
+        """Validate different parameter combinations according to type."""
         parameters = ["type", "path", "mode", "default", "min", "max"]
         parameters = {key: getattr(self, key, None) for key in parameters}
         type = parameters.pop("type")
 
         # validate parameter combination
-        if type in self._TYPE_COMBINATION_MAPPING:
-            valid_parameters = self._TYPE_COMBINATION_MAPPING[type]
+        if type in IOConstants.INPUT_TYPE_COMBINATION:
+            valid_parameters = IOConstants.INPUT_TYPE_COMBINATION[type]
             for key, value in parameters.items():
                 if key not in valid_parameters and value is not None:
                     msg = "Invalid parameter for '{}' Input, parameter '{}' should be None but got '{}'"
@@ -428,22 +448,52 @@ class Input(DictMixin):
                         target=ErrorTarget.PIPELINE,
                     )
 
+    def _normalize_self_properties(self):
+        # parse value from string to it's original type. eg: "false" -> False
+        if self.type in IOConstants.PARAM_PARSERS:
+            for key in ["min", "max"]:
+                if getattr(self, key) is not None:
+                    origin_value = getattr(self, key)
+                    new_value = IOConstants.PARAM_PARSERS[self.type](origin_value)
+                    setattr(self, key, new_value)
+        self.optional = IOConstants.PARAM_PARSERS["boolean"](getattr(self, "optional", "false"))
+        self.optional = True if self.optional is True else None
+
     @classmethod
-    def _get_input_by_type(cls, t: type):
-        if t in cls._DATA_TYPE_MAPPING:
-            return cls(type=cls._DATA_TYPE_MAPPING[t])
+    def _get_input_by_type(cls, t: type, optional=None):
+        if t in IOConstants.PRIMITIVE_TYPE_2_STR:
+            return cls(type=IOConstants.PRIMITIVE_TYPE_2_STR[t], optional=optional)
         return None
 
     @classmethod
-    def _get_default_string_input(cls):
-        return cls(type="string")
+    def _get_default_string_input(cls, optional=None):
+        return cls(type="string", optional=optional)
 
     @classmethod
     def _get_param_with_standard_annotation(cls, func):
         return _get_param_with_standard_annotation(func, is_func=True)
 
+    def _to_rest_object(self) -> Dict:
+        # this is for component rest object when using Input as component inputs, as for job input usage,
+        # rest object is generated by extracting Input's properties, see details in to_rest_dataset_literal_inputs()
+        result = self._to_dict()
+        # parse string -> String, integer -> Integer, etc.
+        if result["type"] in IOConstants.TYPE_MAPPING_YAML_2_REST:
+            result["type"] = IOConstants.TYPE_MAPPING_YAML_2_REST[result["type"]]
+        return result
 
-class Output(DictMixin):
+    @classmethod
+    def _from_rest_object(cls, rest_dict: Dict) -> "Input":
+        # this is for component rest object when using Input as component inputs
+        reversed_data_type_mapping = {v: k for k, v in IOConstants.TYPE_MAPPING_YAML_2_REST.items()}
+        # parse String -> string, Integer -> integer, etc
+        if rest_dict["type"] in reversed_data_type_mapping:
+            rest_dict["type"] = reversed_data_type_mapping[rest_dict["type"]]
+
+        return Input(**rest_dict)
+
+
+class Output(_InputOutputBase):
     """Define an output of a Component or Job.
 
     :param type: The type of the data output. Possible values include:
@@ -461,7 +511,7 @@ class Output(DictMixin):
     """
 
     @overload
-    def __init__(self, type="uri_folder", path=None, mode="rw_mount", description=None):
+    def __init__(self, type="uri_folder", path=None, mode=None, description=None):
         """Define a uri_folder output.
 
         :param type: The type of the data output. Possible values include:
@@ -477,10 +527,9 @@ class Output(DictMixin):
         :param description: Description of the output
         :type description: str
         """
-        pass
 
     @overload
-    def __init__(self, type="uri_file", path=None, mode="rw_mount", description=None):
+    def __init__(self, type="uri_file", path=None, mode=None, description=None):
         """Define a uri_file output.
 
         :param type: The type of the data output. Possible values include:
@@ -496,15 +545,13 @@ class Output(DictMixin):
         :param description: Description of the output
         :type description: str
         """
-        pass
 
-    def __init__(
-        self, *, type=AssetTypes.URI_FOLDER, path=None, mode=InputOutputModes.RW_MOUNT, description=None, **kwargs
-    ):
+    def __init__(self, *, type=AssetTypes.URI_FOLDER, path=None, mode=None, description=None, **kwargs):
+        super(Output, self).__init__(type=type)
         # As an annotation, it is not allowed to initialize the name.
         # The name will be updated by the annotated variable name.
         self.name = None
-        self.type = type
+        self._is_primitive_type = self.type in IOConstants.PRIMITIVE_STR_2_TYPE
         self.description = description
 
         self.path = path
@@ -522,15 +569,30 @@ class Output(DictMixin):
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
 
-    def _to_component_output(self):
-        return ComponentOutput(self._to_dict())
+    def _to_rest_object(self) -> Dict:
+        # this is for component rest object when using Output as component outputs, as for job output usage,
+        # rest object is generated by extracting Output's properties, see details in to_rest_data_outputs()
+        return self._to_dict()
+
+    @classmethod
+    def _from_rest_object(cls, rest_dict: Dict) -> "Output":
+        # this is for component rest object when using Output as component outputs
+        return Output(**rest_dict)
 
 
 class EnumInput(Input):
     """Enum parameter parse the value according to its enum values."""
 
-    def __init__(self, *, enum: Union[EnumMeta, Sequence[str]] = None, default=None, description=None, **kwargs):
-        """Initialize an enum parameter, the options of an enum parameter are the enum values.
+    def __init__(
+        self,
+        *,
+        enum: Union[EnumMeta, Sequence[str]] = None,
+        default=None,
+        description=None,
+        **kwargs,
+    ):
+        """Initialize an enum parameter, the options of an enum parameter are
+        the enum values.
 
         :param enum: Enum values.
         :type Union[EnumMeta, Sequence[str]]
@@ -559,7 +621,8 @@ class EnumInput(Input):
 
     @classmethod
     def _assert_enum_valid(cls, enum):
-        """Check whether the enum is valid and return the values of the enum."""
+        """Check whether the enum is valid and return the values of the
+        enum."""
         if isinstance(enum, EnumMeta):
             enum_values = [str(option.value) for option in enum]
         elif isinstance(enum, Iterable):
@@ -643,18 +706,16 @@ def _get_annotation_by_value(val):
     return annotation
 
 
-def _get_annotation_cls_by_type(t: type, raise_error=False):
-    cls = Input._get_input_by_type(t)
+def _get_annotation_cls_by_type(t: type, raise_error=False, optional=None):
+    cls = Input._get_input_by_type(t, optional=optional)
     if cls is None and raise_error:
         raise UserErrorException(f"Can't convert type {t} to azure.ai.ml.Input")
     return cls
 
 
-def _get_param_with_standard_annotation(
-    cls_or_func, is_func=False, non_pipeline_parameter_names=None, dynamic_param_name=None, dynamic_param_value=None
-):
-    """Standardize function parameters or class fields with dsl.types annotation."""
-    non_pipeline_parameter_names = non_pipeline_parameter_names or []
+def _get_param_with_standard_annotation(cls_or_func, is_func=False):
+    """Standardize function parameters or class fields with dsl.types
+    annotation."""
 
     def _get_fields(annotations):
         """Return field names to annotations mapping in class."""
@@ -668,15 +729,17 @@ def _get_param_with_standard_annotation(
                 annotation = EnumInput(type="string", enum=annotation)
             # Try create annotation by type when got like 'param: int'
             if not _is_dsl_type_cls(annotation) and not _is_dsl_types(annotation):
+                origin_annotation = annotation
                 annotation = _get_annotation_cls_by_type(annotation, raise_error=False)
                 if not annotation:
-                    # Fall back to string parameter
-                    annotation = Input._get_default_string_input()
+                    msg = f"Unsupported annotation type '{origin_annotation}' for parameter '{name}'."
+                    raise UserErrorException(msg)
             annotation_fields[name] = annotation
         return annotation_fields
 
     def _merge_field_keys(annotation_fields, defaults_dict):
-        """Merge field keys from annotations and cls dict to get all fields in class."""
+        """Merge field keys from annotations and cls dict to get all fields in
+        class."""
         anno_keys = list(annotation_fields.keys())
         dict_keys = defaults_dict.keys()
         if not dict_keys:
@@ -708,7 +771,7 @@ def _get_param_with_standard_annotation(
             return complete_annotation
         if isinstance(complete_annotation, Input):
             # Non-parameter Input has no default attribute
-            if complete_annotation._is_parameter_type and complete_annotation.default is not None:
+            if complete_annotation._is_primitive_type and complete_annotation.default is not None:
                 # logger.warning(
                 #     f"Warning: Default value of f{complete_annotation.name!r} is set twice: "
                 #     f"{complete_annotation.default!r} and {default!r}, will use {default!r}"
@@ -733,27 +796,83 @@ def _get_param_with_standard_annotation(
             all_fields[name] = annotation
         return all_fields
 
-    def _filter_pipeline_parameters(dct):
-        """Filter out non pipeline parameters and dynamic parameter key."""
-        return {k: v for k, v in dct.items() if k not in non_pipeline_parameter_names and k != dynamic_param_name}
+    def _get_inherited_fields():
+        """Get all fields inherit from bases parameter group class."""
+        _fields = OrderedDict({})
+        if is_func:
+            return _fields
+        # In reversed order so that more derived classes
+        # override earlier field definitions in base classes.
+        for base in cls_or_func.__mro__[-1:0:-1]:
+            # TODO: handle parameter group inherited fields
+            pass
+        return _fields
 
+    def _merge_and_reorder(inherited_fields, cls_fields):
+        """Merge inherited fields with cls fields. The order inside each part
+        will not be changed. Order will be.
+
+        {inherited_no_default_fields} + {cls_no_default_fields} + {inherited_default_fields} + {cls_default_fields}.
+        Note: If cls overwrite an inherited no default field with default, it will be put in the
+        cls_default_fields part and deleted from inherited_no_default_fields:
+        e.g.
+        @dsl.parameter_group
+        class SubGroup:
+            int_param0: Integer
+            int_param1: int
+        @dsl.parameter_group
+        class Group(SubGroup):
+            int_param3: Integer
+            int_param1: int = 1
+        The init function of Group will be 'def __init__(self, *, int_param0, int_param3, int_param1=1)'.
+        """
+
+        def _split(_fields):
+            """Split fields to two parts from the first default field."""
+            _no_defaults_fields, _defaults_fields = {}, {}
+            seen_default = False
+            for key, val in _fields.items():
+                if val.get("default", None) or seen_default:
+                    seen_default = True
+                    _defaults_fields[key] = val
+                else:
+                    _no_defaults_fields[key] = val
+            return _no_defaults_fields, _defaults_fields
+
+        inherited_no_default, inherited_default = _split(inherited_fields)
+        cls_no_default, cls_default = _split(cls_fields)
+        # Cross comparison and delete from inherited_fields if same key appeared in cls_fields
+        for key in cls_default.keys():
+            if key in inherited_no_default.keys():
+                del inherited_no_default[key]
+        for key in cls_no_default.keys():
+            if key in inherited_default.keys():
+                del inherited_default[key]
+        return OrderedDict(
+            {
+                **inherited_no_default,
+                **cls_no_default,
+                **inherited_default,
+                **cls_default,
+            }
+        )
+
+    inherited_fields = _get_inherited_fields()
     # From annotations get field with type
-    annotations = _filter_pipeline_parameters(getattr(cls_or_func, "__annotations__", {}))
-    annotations = _update_io_from_mldesigner(annotations)
+    annotations = getattr(cls_or_func, "__annotations__", {})
     annotation_fields = _get_fields(annotations)
     # Update fields use class field with defaults from class dict or signature(func).paramters
     if not is_func:
         # Only consider public fields in class dict
         defaults_dict = {key: val for key, val in cls_or_func.__dict__.items() if not key.startswith("_")}
-        defaults_dict = _filter_pipeline_parameters(defaults_dict)
         # Restrict each field must have annotation(in annotation dict)
         if any(key not in annotation_fields for key in defaults_dict):
             raise UserErrorException(f"Each field in parameter group {cls_or_func!r} must have an annotation.")
     else:
         # Infer parameter type from value if is function
         defaults_dict = {key: val.default for key, val in signature(cls_or_func).parameters.items()}
-        defaults_dict = _filter_pipeline_parameters(defaults_dict)
-    all_fields = _update_fields_with_default(annotation_fields, defaults_dict)
+    fields = _update_fields_with_default(annotation_fields, defaults_dict)
+    all_fields = _merge_and_reorder(inherited_fields, fields)
     return all_fields
 
 
@@ -776,49 +895,3 @@ def _remove_empty_values(data, ignore_keys=None):
         for k, v in data.items()
         if v is not None or k in ignore_keys
     }
-
-
-def _update_io_from_mldesigner(annotations: dict) -> dict:
-    """This function will translate IOBase from mldesigner package to azure.ml.entities.Input/Output.
-
-    This function depend on `mldesigner._input_output._IOBase._to_io_entity_args_dict` to translate Input/Output
-    instance annotations to IO entities.
-    This function depend on class names of `mldesigner._input_output` to translate Input/Output class annotations
-    to IO entities.
-    """
-    mldesigner_pkg = "mldesigner"
-
-    def _is_input_or_output_type(io: type, type_str: str):
-        """Return true if type name contains type_str"""
-        if isinstance(io, type) and io.__module__.startswith(mldesigner_pkg):
-            if type_str in io.__name__:
-                return True
-        return False
-
-    result = {}
-    for key, io in annotations.items():
-        if isinstance(io, type):
-            if _is_input_or_output_type(io, "Input"):
-                # mldesigner.Input -> entities.Input
-                io = Input
-            elif _is_input_or_output_type(io, "Output"):
-                # mldesigner.Output -> entities.Output
-                io = Output
-        elif hasattr(io, "_to_io_entity_args_dict"):
-            try:
-                if _is_input_or_output_type(type(io), "Input"):
-                    # mldesigner.Input() -> entities.Input()
-                    io = Input(**io._to_io_entity_args_dict())
-                elif _is_input_or_output_type(type(io), "Output"):
-                    # mldesigner.Output() -> entities.Output()
-                    io = Output(**io._to_io_entity_args_dict())
-            except BaseException as e:
-                msg = f"Failed to parse {io} to azure-ai-ml Input/Output."
-                raise ComponentException(
-                    message=msg,
-                    target=ErrorTarget.COMPONENT,
-                    no_personal_data_message=msg,
-                    error_category=ErrorCategory.SYSTEM_ERROR,
-                ) from e
-        result[key] = io
-    return result

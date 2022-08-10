@@ -4,10 +4,9 @@
 
 
 from typing import Dict, Union
+
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job._input_output_helpers import (
-    build_input_output,
-)
+from azure.ai.ml.entities._job._input_output_helpers import build_input_output
 
 
 class JobIOMixin:

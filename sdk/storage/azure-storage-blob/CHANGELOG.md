@@ -1,10 +1,29 @@
 # Release History
 
-## 12.13.0 (Unreleased)
+## 12.14.0b1 (2022-08-09)
+
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
 
 ### Features Added
+- Added support for `AzureNamedKeyCredential` as a valid `credential` type.
+- Added standard `read` method to `StorageStreamDownloader`.
+- Added support for async streams (classes with an async `read` method) to async `upload_blob`.
 
 ### Bugs Fixed
+- Removed dead retry meachism from async `azure.storage.blob.aio.StorageStreamDownloader`.
+- Updated exception catching of `azure.storage.blob.StorageStreamDownloader`'s retry mechanism.
+- Adjusted type hints for `upload_blob` and `StorageStreamDownloader.readall`.
+
+## 12.13.1 (2022-08-04)
+
+### Bugs Fixed
+- Fixed two rare issues with ranged blob download when using client-side encryption V1 or V2.
+
+## 12.13.0 (2022-07-07)
+
+### Bugs Fixed
+- Stable release of features from 12.13.0b1.
+- Added support for deleting versions in `delete_blobs` by supplying `version_id`.
 
 ## 12.13.0b1 (2022-06-15)
 

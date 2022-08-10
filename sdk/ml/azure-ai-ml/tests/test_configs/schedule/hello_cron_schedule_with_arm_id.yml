@@ -1,0 +1,10 @@
+$schema:  http://azureml/sdk-2-0/Schedule.json
+name: weekly_retrain_2022_cron_arm
+display_name: weekly retrain schedule
+description: a weekly retrain schedule
+
+trigger:
+  type: cron
+  expression: "15 10 * * 1"
+
+create_job: azureml:/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/jobs/test_617704734544

@@ -49,7 +49,7 @@ setup(
     classifiers=[
         'Development Status :: 4 - Beta',
         'Programming Language :: Python',
-        "Programming Language :: Python :: 3 :: Only",
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
@@ -65,10 +65,14 @@ setup(
         'azure',
         'azure.mgmt',
     ]),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     install_requires=[
         'msrest>=0.6.21',
         'azure-common~=1.1',
-        'azure-mgmt-core>=1.3.0,<2.0.0',
+        'azure-mgmt-core>=1.3.1,<2.0.0',
     ],
     python_requires=">=3.6"
 )

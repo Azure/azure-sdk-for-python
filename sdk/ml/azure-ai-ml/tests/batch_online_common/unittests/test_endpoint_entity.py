@@ -7,7 +7,7 @@ from azure.ai.ml.entities import (
 )
 import yaml
 import pytest
-from azure.ai.ml import load_online_endpoint, load_batch_endpoint, load_online_deployment
+from azure.ai.ml import load_online_endpoint, load_batch_endpoint
 
 
 @pytest.mark.unittest
@@ -31,8 +31,8 @@ class TestOnlineEndpointYAML:
         assert endpoint.name == target["name"]
 
     def test_online_endpoint_to_rest_object_with_no_issue(self) -> None:
-        deployment = load_online_deployment(TestOnlineEndpointYAML.MINIMAL_DEPLOYMENT)
-        deployment._to_rest_object("westus2")
+        endpoint = load_online_endpoint(TestOnlineEndpointYAML.MINIMAL_ENDPOINT)
+        endpoint._to_rest_online_endpoint("westus2")
 
 
 @pytest.mark.unittest

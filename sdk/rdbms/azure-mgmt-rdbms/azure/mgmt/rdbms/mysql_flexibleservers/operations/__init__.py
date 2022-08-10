@@ -6,28 +6,39 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._backups_operations import BackupsOperations
+from ._configurations_operations import ConfigurationsOperations
+from ._databases_operations import DatabasesOperations
+from ._firewall_rules_operations import FirewallRulesOperations
 from ._servers_operations import ServersOperations
 from ._replicas_operations import ReplicasOperations
-from ._backups_operations import BackupsOperations
-from ._firewall_rules_operations import FirewallRulesOperations
-from ._databases_operations import DatabasesOperations
-from ._configurations_operations import ConfigurationsOperations
+from ._log_files_operations import LogFilesOperations
 from ._location_based_capabilities_operations import LocationBasedCapabilitiesOperations
 from ._check_virtual_network_subnet_usage_operations import CheckVirtualNetworkSubnetUsageOperations
 from ._check_name_availability_operations import CheckNameAvailabilityOperations
+from ._check_name_availability_without_location_operations import CheckNameAvailabilityWithoutLocationOperations
 from ._get_private_dns_zone_suffix_operations import GetPrivateDnsZoneSuffixOperations
 from ._operations import Operations
+from ._azure_ad_administrators_operations import AzureADAdministratorsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
+    'BackupsOperations',
+    'ConfigurationsOperations',
+    'DatabasesOperations',
+    'FirewallRulesOperations',
     'ServersOperations',
     'ReplicasOperations',
-    'BackupsOperations',
-    'FirewallRulesOperations',
-    'DatabasesOperations',
-    'ConfigurationsOperations',
+    'LogFilesOperations',
     'LocationBasedCapabilitiesOperations',
     'CheckVirtualNetworkSubnetUsageOperations',
     'CheckNameAvailabilityOperations',
+    'CheckNameAvailabilityWithoutLocationOperations',
     'GetPrivateDnsZoneSuffixOperations',
     'Operations',
+    'AzureADAdministratorsOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

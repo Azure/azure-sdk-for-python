@@ -6,7 +6,6 @@ import asyncio
 import os
 from azure.keyvault.secrets.aio import SecretClient
 from azure.identity.aio import DefaultAzureCredential
-from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
@@ -44,8 +43,8 @@ async def run_sample():
     # Let's create secrets holding storage and bank accounts credentials. If the secret
     # already exists in the Key Vault, then a new version of the secret is created.
     print("\n.. Create Secret")
-    bank_secret = await client.set_secret("listOpsBankSecretName", "listOpsSecretValue1")
-    storage_secret = await client.set_secret("listOpsStorageSecretName", "listOpsSecretValue2")
+    bank_secret = await client.set_secret("listOpsBankSecretNameAsync", "listOpsSecretValue1")
+    storage_secret = await client.set_secret("listOpsStorageSecretNameAsync", "listOpsSecretValue2")
     print("Secret with name '{0}' was created.".format(bank_secret.name))
     print("Secret with name '{0}' was created.".format(storage_secret.name))
 

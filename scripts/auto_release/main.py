@@ -198,7 +198,7 @@ class CodegenTestPR:
 
     def get_package_name_with_autorest_result(self):
         generate_result = self.get_autorest_result()
-        self.package_name = generate_result["packages"][0]["packageName"].split('-')[-1]
+        self.package_name = generate_result["packages"][0]["packageName"].split('-', 2)[-1]
 
     def prepare_branch_with_readme(self):
         self.generate_code()
@@ -285,7 +285,8 @@ class CodegenTestPR:
         preview_tag = not self.tag_is_stable
         changelog = self.get_changelog()
         if changelog == '':
-            return '0.0.0'
+            msg = 'it should be stable' if self.tag_is_stable else 'it should be perview'
+            return f'0.0.0 ({msg})'
         preview_version = 'rc' in last_version or 'b' in last_version
         #                                           |   preview tag                     | stable tag
         # preview version(1.0.0rc1/1.0.0b1)         | 1.0.0rc2(track1)/1.0.0b2(track2)  |  1.0.0

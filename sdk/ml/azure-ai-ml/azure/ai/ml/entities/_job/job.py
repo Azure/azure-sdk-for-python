@@ -1,37 +1,31 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 import json
+import logging
 import traceback
 from abc import abstractclassmethod, abstractmethod
-import logging
+from collections import OrderedDict
 from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Type, Union
-from azure.ai.ml._utils.utils import load_yaml, dump_yaml_to_file
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    CommonYamlFields,
-    JobType,
-    PARAMS_OVERRIDE_KEY,
-    JobServices,
-)
-from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin
-from azure.ai.ml.entities._resource import Resource
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    JobService,
-    JobBaseData,
-    JobType as RestJobType,
-)
+
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, JobException, ValidationException
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml.entities._util import find_type_in_override
+from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData, JobService
+from azure.ai.ml._restclient.v2022_02_01_preview.models import JobType as RestJobType
+from azure.ai.ml._utils._html_utils import make_link, to_html
+from azure.ai.ml._utils.utils import dump_yaml_to_file
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields, JobServices, JobType
 from azure.ai.ml.entities._job.job_errors import JobParsingError, PipelineChildJobError
+from azure.ai.ml.entities._mixins import TelemetryMixin
+from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.entities._util import find_type_in_override
+
 from .pipeline._component_translatable import ComponentTranslatableMixin
-
-from azure.ai.ml._ml_exceptions import ErrorTarget, ErrorCategory, ValidationException, JobException
-from collections import OrderedDict
-
-from azure.ai.ml._utils._html_utils import to_html, make_link
 
 module_logger = logging.getLogger(__name__)
 
@@ -42,7 +36,7 @@ def _is_pipeline_child_job(job: JobBaseData) -> bool:
     return job.properties is None
 
 
-class Job(Resource, RestTranslatableMixin, ComponentTranslatableMixin, TelemetryMixin):
+class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     """Base class for job, can't be instantiated directly.
 
     :param name: Name of the resource.
@@ -81,7 +75,13 @@ class Job(Resource, RestTranslatableMixin, ComponentTranslatableMixin, Telemetry
         self._status = kwargs.pop("status", None)
         self._log_files = kwargs.pop("log_files", None)
 
-        super().__init__(name=name, description=description, tags=tags, properties=properties, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            tags=tags,
+            properties=properties,
+            **kwargs,
+        )
 
         self.display_name = display_name
         self.experiment_name = experiment_name
@@ -138,14 +138,14 @@ class Job(Resource, RestTranslatableMixin, ComponentTranslatableMixin, Telemetry
 
     @property
     def studio_url(self) -> Optional[str]:
-        """Azure ML studio endpoint
+        """Azure ML studio endpoint.
 
         :return: URL to the job detail page.
         :rtype: Optional[str]
         """
-
-        if self.services and self.services[JobServices.STUDIO]:
+        if self.services and (JobServices.STUDIO in self.services.keys()):
             return self.services[JobServices.STUDIO].endpoint
+        return None
 
     def dump(self, path: Union[PathLike, str]) -> None:
         """Dump the job content into a file in yaml format.
@@ -159,16 +159,22 @@ class Job(Resource, RestTranslatableMixin, ComponentTranslatableMixin, Telemetry
 
     def _get_base_info_dict(self):
         return OrderedDict(
-            [("Experiment", self.experiment_name), ("Name", self.name), ("Type", self._type), ("Status", self._status)]
+            [
+                ("Experiment", self.experiment_name),
+                ("Name", self.name),
+                ("Type", self._type),
+                ("Status", self._status),
+            ]
         )
 
     def _repr_html_(self):
         info = self._get_base_info_dict()
-        info.update(
-            [
-                ("Details Page", make_link(self.studio_url, "Link to Azure Machine Learning studio")),
-            ]
-        )
+        if self.studio_url:
+            info.update(
+                [
+                    ("Details Page", make_link(self.studio_url, "Link to Azure Machine Learning studio")),
+                ]
+            )
         return to_html(info)
 
     @abstractmethod
@@ -206,10 +212,8 @@ class Job(Resource, RestTranslatableMixin, ComponentTranslatableMixin, Telemetry
             PARAMS_OVERRIDE_KEY: params_override,
         }
 
-        from azure.ai.ml.entities import (
-            CommandJob,
-            PipelineJob,
-        )
+        from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
+        from azure.ai.ml.entities._builders.command import Command
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
         from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
 
@@ -217,7 +221,7 @@ class Job(Resource, RestTranslatableMixin, ComponentTranslatableMixin, Telemetry
         type_in_override = find_type_in_override(params_override)
         type = type_in_override or data.get(CommonYamlFields.TYPE, JobType.COMMAND)  # override takes the priority
         if type == JobType.COMMAND:
-            job_type = CommandJob
+            job_type = Command
         elif type == JobType.SWEEP:
             job_type = SweepJob
         elif type == JobType.AUTOML:
@@ -232,19 +236,23 @@ class Job(Resource, RestTranslatableMixin, ComponentTranslatableMixin, Telemetry
                 target=ErrorTarget.JOB,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        return job_type._load_from_dict(
+        job = job_type._load_from_dict(
             data=data,
             context=context,
             additional_message=f"If you are trying to configure a job that is not of type {type}, please specify the correct job type in the 'type' property.",
             **kwargs,
         )
+        if yaml_path:
+            job._source_path = yaml_path
+        return job
 
     @classmethod
     def _from_rest_object(cls, job_rest_object: Union[JobBaseData, Run]) -> "Job":
-        from azure.ai.ml.entities import CommandJob, PipelineJob
+        from azure.ai.ml.entities import PipelineJob
+        from azure.ai.ml.entities._builders.command import Command
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-        from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
         from azure.ai.ml.entities._job.base_job import _BaseJob
+        from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
 
         try:
             if isinstance(job_rest_object, Run):
@@ -253,7 +261,7 @@ class Job(Resource, RestTranslatableMixin, ComponentTranslatableMixin, Telemetry
             elif _is_pipeline_child_job(job_rest_object):
                 raise PipelineChildJobError(job_id=job_rest_object.id)
             elif job_rest_object.properties.job_type == RestJobType.COMMAND:
-                return CommandJob._load_from_rest(job_rest_object)
+                return Command._load_from_rest_job(job_rest_object)
             elif job_rest_object.properties.job_type == RestJobType.SWEEP:
                 return SweepJob._load_from_rest(job_rest_object)
             elif job_rest_object.properties.job_type == RestJobType.AUTO_ML:

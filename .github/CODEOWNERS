@@ -6,7 +6,7 @@
 ################
 
 # Git Hub integration and bot rules
-/.github/                                       @jsquire
+/.github/                                       @jsquire @ronniegeraghty
 
 ###########
 # SDK
@@ -72,7 +72,7 @@
 /sdk/loganalytics/                                                   @alexeldeib
 
 # PRLabel: %Monitor - Exporter
-/sdk/monitor/azure-monitor-opentelemetry-exporter                    @rakshith91 @lmazuel @lzchen @hectorhdzg
+/sdk/monitor/azure-monitor-opentelemetry-exporter                    @rakshith91 @lmazuel @lzchen @hectorhdzg @jeremydvoss
 
 # PRLabel: %Monitor - Log
 /sdk/monitor/azure-monitor-query                                     @rakshith91
@@ -91,7 +91,7 @@
 /sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @tjprescott @JericHunter
 
 # ServiceLabel: %Cosmos %Service Attention
-#/<NotInRepo>/                                                       @simorenoh @gahl-levy
+#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @gahl-levy
 
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
@@ -154,6 +154,9 @@
 
 # PRLabel: %Cognitive - Translator
 /sdk/translation/                                                    @kristapratico @mohamedshabanofficial
+
+# PRLabel: %Cognitive - Language
+/sdk/cognitivelanguage/                                              @kristapratico @mohamedshabanofficial
 
 # PRLabel: %Tables
 /sdk/tables/                                                         @annatisch @YalinLi0312

@@ -22,8 +22,7 @@ class FormRecognizerApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V2_0 = "2.0"
 
 
-def validate_api_version(api_version, client_kind):
-    # type: (str, str) -> None
+def validate_api_version(api_version: str, client_kind: str) -> None:
     """Raise ValueError if api_version is invalid"""
 
     if client_kind == "form":
@@ -37,9 +36,7 @@ def validate_api_version(api_version, client_kind):
                 api_version = DocumentAnalysisApiVersion(api_version)
                 err_message += (
                     "\nAPI version '{}' is only available for "
-                    "DocumentAnalysisClient and DocumentModelAdministrationClient.".format(
-                        api_version
-                    )
+                    "DocumentAnalysisClient and DocumentModelAdministrationClient.".format(api_version)
                 )
             except ValueError:
                 pass

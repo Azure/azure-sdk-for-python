@@ -1,15 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Optional, Union
-from os import PathLike
 from abc import abstractmethod
+from os import PathLike
 from pathlib import Path, PurePosixPath
+from typing import Dict, Optional, Union
 from urllib.parse import urljoin
 
+from azure.ai.ml._utils.utils import is_mlflow_uri, is_url
 from azure.ai.ml.entities._assets.asset import Asset
-from azure.ai.ml._utils._asset_utils import _is_local_path
-from azure.ai.ml._utils.utils import is_url, is_mlflow_uri
 
 
 class ArtifactStorageInfo:
@@ -76,7 +75,12 @@ class Artifact(Asset):
         **kwargs,
     ):
         super().__init__(
-            name=name, version=version, description=description, tags=tags, properties=properties, **kwargs
+            name=name,
+            version=version,
+            description=description,
+            tags=tags,
+            properties=properties,
+            **kwargs,
         )
         self.path = path
 
@@ -113,5 +117,5 @@ class Artifact(Asset):
 
     @abstractmethod
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
-        """Updates an an artifact with the remote path of a local upload"""
+        """Updates an an artifact with the remote path of a local upload."""
         pass

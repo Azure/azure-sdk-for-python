@@ -1,5 +1,11 @@
 # Release History
 
+## 6.1.0 (2022-06-29)
+
+**Features**
+
+  - Added operation group FederatedIdentityCredentialsOperations
+
 ## 6.0.1 (2022-05-05)
 
 **Other Changes**

@@ -1,10 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from typing import Optional
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import Objective as RestObjective
-from typing import Optional
 from azure.ai.ml.entities._util import SnakeToPascalDescriptor
 
 

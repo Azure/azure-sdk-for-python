@@ -1,18 +1,16 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Optional, Dict
 from pathlib import Path
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, ComputeType, ComputeDefaults, TYPE
-from azure.ai.ml.entities import Compute
-from azure.ai.ml.entities._util import load_from_dict
+from typing import Dict, Optional
+
+from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeResource
+from azure.ai.ml._restclient.v2022_01_01_preview.models import VirtualMachine as VMResource
+from azure.ai.ml._restclient.v2022_01_01_preview.models import VirtualMachineProperties, VirtualMachineSshCredentials
 from azure.ai.ml._schema.compute.virtual_machine_compute import VirtualMachineComputeSchema
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
-    ComputeResource,
-    VirtualMachineProperties,
-    VirtualMachine as VMResource,
-    VirtualMachineSshCredentials,
-)
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, TYPE, ComputeType
+from azure.ai.ml.entities._compute.compute import Compute
+from azure.ai.ml.entities._util import load_from_dict
 
 
 class VirtualMachineSshSettings:
@@ -25,7 +23,7 @@ class VirtualMachineSshSettings:
         ssh_private_key_file: str = None,
         **kwargs,
     ):
-        """SSH settings for a virtual machine
+        """SSH settings for a virtual machine.
 
         :param admin_username:  Describes the admin user name., defaults to None.
         :type admin_username: str, required
@@ -43,7 +41,7 @@ class VirtualMachineSshSettings:
 
 
 class VirtualMachineCompute(Compute):
-    """Virtual Machine Compute resource
+    """Virtual Machine Compute resource.
 
     :param name: Name of the compute
     :type name: str
@@ -67,7 +65,11 @@ class VirtualMachineCompute(Compute):
     ):
         kwargs[TYPE] = ComputeType.VIRTUALMACHINE
         super().__init__(
-            name=name, location=kwargs.pop("location", None), description=description, resource_id=resource_id, **kwargs
+            name=name,
+            location=kwargs.pop("location", None),
+            description=description,
+            resource_id=resource_id,
+            **kwargs,
         )
         self.ssh_settings = ssh_settings
         self._public_key_data = kwargs.pop("public_key_data", None)
@@ -127,6 +129,10 @@ class VirtualMachineCompute(Compute):
             private_key_data=ssh_key_value,
         )
         properties = VirtualMachineProperties(ssh_port=self.ssh_settings.ssh_port, administrator_account=credentials)
-        vm_compute = VMResource(properties=properties, resource_id=self.resource_id, description=self.description)
+        vm_compute = VMResource(
+            properties=properties,
+            resource_id=self.resource_id,
+            description=self.description,
+        )
         resource = ComputeResource(name=self.name, location=self.location, properties=vm_compute)
         return resource

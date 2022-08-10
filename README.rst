@@ -44,12 +44,6 @@ Preview packages can be installed using the ``--pre`` flag:
    $ pip install --pre azure-mgmt-compute # will install only the latest Compute Management library
 
 
-You can also install a set of Azure libraries in a single line using the ``azure`` meta-package. 
-
-.. code-block:: console
-
-   $ pip install azure
-
 The full list of available packages and their latest version can be found on our 
 `documentation on docs.microsoft.com <https://docs.microsoft.com/python/azure/>`__
 

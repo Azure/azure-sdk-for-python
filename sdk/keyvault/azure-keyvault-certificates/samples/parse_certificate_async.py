@@ -57,7 +57,7 @@ async def run_sample():
 
     # Before creating your certificate, let's create the management policy for your certificate.
     # Here we use the default policy.
-    cert_name = "PrivateKeyCertificate"
+    cert_name = "PrivateKeyCertificateAsync"
     cert_policy = CertificatePolicy.get_default()
 
     # Awaiting create_certificate will return the certificate as a KeyVaultCertificate

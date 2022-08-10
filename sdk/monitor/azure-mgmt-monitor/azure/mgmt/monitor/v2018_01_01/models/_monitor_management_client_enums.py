@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AggregationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the aggregation type of the metric.
     """
 
@@ -22,7 +21,7 @@ class AggregationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MAXIMUM = "Maximum"
     TOTAL = "Total"
 
-class MetricClass(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class MetricClass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The class of the metric.
     """
 
@@ -32,7 +31,7 @@ class MetricClass(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     LATENCY = "Latency"
     SATURATION = "Saturation"
 
-class MetricUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class MetricUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit of the metric.
     """
 
@@ -50,7 +49,7 @@ class MetricUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     NANO_CORES = "NanoCores"
     BITS_PER_SECOND = "BitsPerSecond"
 
-class ResultType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DATA = "Data"
     METADATA = "Metadata"

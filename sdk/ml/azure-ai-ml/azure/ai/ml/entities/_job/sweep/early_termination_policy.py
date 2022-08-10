@@ -3,13 +3,11 @@
 # ---------------------------------------------------------
 import copy
 
-from azure.ai.ml._restclient.v2021_10_01.models import (
-    EarlyTerminationPolicy as RestEarlyTerminationPolicy,
-    BanditPolicy as RestBanditPolicy,
-    MedianStoppingPolicy as RestMedianStoppingPolicy,
-    TruncationSelectionPolicy as RestTruncationSelectionPolicy,
-    EarlyTerminationPolicyType,
-)
+from azure.ai.ml._restclient.v2021_10_01.models import BanditPolicy as RestBanditPolicy
+from azure.ai.ml._restclient.v2021_10_01.models import EarlyTerminationPolicy as RestEarlyTerminationPolicy
+from azure.ai.ml._restclient.v2021_10_01.models import EarlyTerminationPolicyType
+from azure.ai.ml._restclient.v2021_10_01.models import MedianStoppingPolicy as RestMedianStoppingPolicy
+from azure.ai.ml._restclient.v2021_10_01.models import TruncationSelectionPolicy as RestTruncationSelectionPolicy
 from azure.ai.ml.entities._util import SnakeToPascalDescriptor
 
 
@@ -42,7 +40,7 @@ class EarlyTerminationPolicy:
 
     def _to_rest_object(self):
         base_dict = copy.deepcopy(self.__dict__)
-        for key_to_del in ["additional_properties"]:
+        for key_to_del in ["additional_properties"] + list(filter(lambda x: base_dict[x] is None, base_dict.keys())):
             if key_to_del in base_dict:
                 del base_dict[key_to_del]
         return base_dict

@@ -1,0 +1,14 @@
+# This tells Azure ML what kind of YAML this is and what to do with it
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+# The name in Azure ML where all your runs will be under
+experiment_name: debug
+# What will be run. Entrypoint command.
+command: >-
+  python main.py
+  --my_float_arg ${{inputs.my_float_arg}}
+inputs:
+  my_float_arg: 1.0
+# On what environment will the command run
+environment: azureml:myTestEnv:18.04:2022
+code: .  # The path is relative to this file
+compute: azureml:cpucluster

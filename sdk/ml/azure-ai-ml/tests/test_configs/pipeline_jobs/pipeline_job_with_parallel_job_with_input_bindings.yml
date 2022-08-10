@@ -20,12 +20,12 @@ outputs:
 
 # here the jobs in the pipeline
 jobs:
-  batch_inference:
+  hello_world:
     # We pass the trained model from the train step to use to parallel inference
     type: parallel
     compute: "azureml:cpu-cluster"
     inputs:
-      "score_input": ${{parent.inputs.job_data_path}}
+      test1: ${{parent.inputs.job_data_path}}
     outputs:
       scored_result: ${{parent.outputs.job_out_path_1}}
 
@@ -38,7 +38,7 @@ jobs:
     max_concurrency_per_instance: 2
 
     task:
-      type: function
+      type: run_function
       code: "../python"
       entry_script: pass_through.py
       append_row_to: ${{outputs.scored_result}} # optional, If Null, equals to summary_only mode in v1.

@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -115,7 +117,7 @@ class LogSettings(msrest.serialization.Model):
         *,
         enabled: bool,
         category: Optional[str] = None,
-        retention_policy: Optional["RetentionPolicy"] = None,
+        retention_policy: Optional["_models.RetentionPolicy"] = None,
         **kwargs
     ):
         """
@@ -146,9 +148,9 @@ class Metric(msrest.serialization.Model):
     :ivar name: Required. the name and the display name of the metric, i.e. it is localizable
      string.
     :vartype name: ~$(python-base-namespace).v2016_09_01.models.LocalizableString
-    :ivar unit: Required. the unit of the metric. Possible values include: "Count", "Bytes",
-     "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
-     "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
+    :ivar unit: Required. the unit of the metric. Known values are: "Count", "Bytes", "Seconds",
+     "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
+     "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
     :vartype unit: str or ~$(python-base-namespace).v2016_09_01.models.Unit
     :ivar data: Required. Array of data points representing the metric values.
     :vartype data: list[~$(python-base-namespace).v2016_09_01.models.MetricValue]
@@ -171,9 +173,9 @@ class Metric(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: "LocalizableString",
-        unit: Union[str, "Unit"],
-        data: List["MetricValue"],
+        name: "_models.LocalizableString",
+        unit: Union[str, "_models.Unit"],
+        data: List["_models.MetricValue"],
         id: Optional[str] = None,
         type: Optional[str] = None,
         **kwargs
@@ -186,9 +188,9 @@ class Metric(msrest.serialization.Model):
         :keyword name: Required. the name and the display name of the metric, i.e. it is localizable
          string.
         :paramtype name: ~$(python-base-namespace).v2016_09_01.models.LocalizableString
-        :keyword unit: Required. the unit of the metric. Possible values include: "Count", "Bytes",
-         "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
-         "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
+        :keyword unit: Required. the unit of the metric. Known values are: "Count", "Bytes", "Seconds",
+         "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
+         "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
         :paramtype unit: str or ~$(python-base-namespace).v2016_09_01.models.Unit
         :keyword data: Required. Array of data points representing the metric values.
         :paramtype data: list[~$(python-base-namespace).v2016_09_01.models.MetricValue]
@@ -221,7 +223,7 @@ class MetricCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["Metric"],
+        value: List["_models.Metric"],
         **kwargs
     ):
         """
@@ -261,7 +263,7 @@ class MetricSettings(msrest.serialization.Model):
         *,
         time_grain: datetime.timedelta,
         enabled: bool,
-        retention_policy: Optional["RetentionPolicy"] = None,
+        retention_policy: Optional["_models.RetentionPolicy"] = None,
         **kwargs
     ):
         """
@@ -508,8 +510,8 @@ class ServiceDiagnosticSettingsResource(Resource):
         storage_account_id: Optional[str] = None,
         service_bus_rule_id: Optional[str] = None,
         event_hub_authorization_rule_id: Optional[str] = None,
-        metrics: Optional[List["MetricSettings"]] = None,
-        logs: Optional[List["LogSettings"]] = None,
+        metrics: Optional[List["_models.MetricSettings"]] = None,
+        logs: Optional[List["_models.LogSettings"]] = None,
         workspace_id: Optional[str] = None,
         **kwargs
     ):
@@ -588,8 +590,8 @@ class ServiceDiagnosticSettingsResourcePatch(msrest.serialization.Model):
         storage_account_id: Optional[str] = None,
         service_bus_rule_id: Optional[str] = None,
         event_hub_authorization_rule_id: Optional[str] = None,
-        metrics: Optional[List["MetricSettings"]] = None,
-        logs: Optional[List["LogSettings"]] = None,
+        metrics: Optional[List["_models.MetricSettings"]] = None,
+        logs: Optional[List["_models.LogSettings"]] = None,
         workspace_id: Optional[str] = None,
         **kwargs
     ):

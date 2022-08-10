@@ -18,7 +18,7 @@ from azure.mgmt.storage import StorageManagementClient
 
 
 from azure.core import MatchConditions
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -148,7 +148,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # wait until the policy has gone into effect
         if self.is_live:
             self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
-            time.sleep(35)
+            time.sleep(40)
 
     def _disable_soft_delete(self):
         delete_retention_policy = RetentionPolicy(enabled=False)
@@ -1530,7 +1530,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         lease = blob.acquire_lease(lease_duration=15)
         resp = blob.upload_blob(b'hello 2', length=7, lease=lease)
-        self.sleep(15)
+        self.sleep(17)
 
         # Assert
         with self.assertRaises(HttpResponseError):
@@ -1994,6 +1994,19 @@ class StorageCommonBlobTest(StorageTestCase):
         # Assert
         self.assertEqual(blob_name, blob_properties.name)
         self.assertEqual(self.container_name, container_properties.name)
+
+    @BlobPreparer()
+    def test_azure_named_key_credential_access(self, storage_account_name, storage_account_key):
+        named_key = AzureNamedKeyCredential(storage_account_name, storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), named_key)
+        container_name = self._get_container_reference()
+
+        # Act
+        container = bsc.get_container_client(container_name)
+        created = container.create_container()
+
+        # Assert
+        self.assertTrue(created)
 
     @BlobPreparer()
     def test_get_user_delegation_key(self, storage_account_name, storage_account_key):

@@ -30,12 +30,7 @@ from ._shared.base_client import StorageAccountHostsMixin, parse_query
 from ._shared.response_handlers import return_response_headers, return_headers_and_deserialized
 
 if TYPE_CHECKING:
-    from ._models import ContentSettings
-    from ._models import FileProperties
-
-_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
-    'The require_encryption flag is set, but encryption is not supported'
-    ' for this method.')
+    from ._models import ContentSettings, FileProperties
 
 
 class PathClient(StorageAccountHostsMixin):
@@ -52,10 +47,12 @@ class PathClient(StorageAccountHostsMixin):
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -64,7 +61,7 @@ class PathClient(StorageAccountHostsMixin):
             self, account_url,  # type: str
             file_system_name,  # type: str
             path_name,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -151,9 +148,6 @@ class PathClient(StorageAccountHostsMixin):
                              metadata=None,  # type: Optional[Dict[str, str]]
                              **kwargs):
         # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
 
@@ -337,8 +331,7 @@ class PathClient(StorageAccountHostsMixin):
             The match condition to use upon the etag.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :return: A dictionary of response headers.
-        :rtype: Dict[str, Union[str, datetime]]
+        :return: None
         """
         options = self._delete_path_options(**kwargs)
         try:
@@ -722,13 +715,12 @@ class PathClient(StorageAccountHostsMixin):
             error.continuation_token = last_continuation_token
             raise error
 
-    def _rename_path_options(self, rename_source,
+    def _rename_path_options(self,  # pylint: disable=no-self-use
+                             rename_source,  # type: str
                              content_settings=None,  # type: Optional[ContentSettings]
                              metadata=None,  # type: Optional[Dict[str, str]]
                              **kwargs):
         # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if metadata or kwargs.pop('permissions', None) or kwargs.pop('umask', None):
             raise ValueError("metadata, permissions, umask is not supported for this operation")
 
