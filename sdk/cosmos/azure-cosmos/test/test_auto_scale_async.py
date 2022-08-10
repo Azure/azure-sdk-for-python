@@ -21,7 +21,7 @@
 import unittest
 from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
-from azure.cosmos import Offer, PartitionKey, http_constants
+from azure.cosmos import ThroughputProperties, PartitionKey, http_constants
 import pytest
 import test_config
 
@@ -51,92 +51,72 @@ class AutoScaleTest(unittest.TestCase):
         created_container = await self.created_database.create_container(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
+            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
 
         )
         created_container_properties = await created_container.get_throughput()
         # Testing the input value of the max_throughput
         self.assertEqual(
-            created_container_properties.properties['content']['offerAutopilotSettings']['maxThroughput'], 5000)
+            created_container_properties.auto_scale_max_throughput, 5000)
 
         await self.created_database.delete_container(created_container)
 
         # Testing the incorrect passing of an input value of the max_throughput to verify negative behavior
-        try:
+        with pytest.raises(exceptions.CosmosHttpResponseError) as e:
             created_container = await self.created_database.create_container(
                 id='container_with_wrong_auto_scale_settings',
                 partition_key=PartitionKey(path="/id"),
-                offer_throughput=Offer(auto_scale_max_throughput=200, auto_scale_increment_percent=0)
-            )
-        except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, http_constants.StatusCodes.BAD_REQUEST)
+                offer_throughput=ThroughputProperties(auto_scale_max_throughput=-200, auto_scale_increment_percent=0))
+        assert "Requested throughput -200 is less than required minimum throughput 1000" in str(e.value)
 
     async def test_auto_scale_increment_percent(self):
         created_container = await self.created_database.create_container(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percent=1)
+            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=1)
 
         )
         created_container_properties = await created_container.get_throughput()
         # Testing the input value of the max_increment_percentage
         self.assertEqual(
-            created_container_properties.properties['content']['offerAutopilotSettings']['autoUpgradePolicy']
-            ['throughputPolicy']['incrementPercent'], 1)
+            created_container_properties.auto_scale_increment_percent, 1)
 
         await self.created_database.delete_container(created_container)
 
-        # Testing the incorrect passing of an input value of the max_increment_percentage to verify negative behavior
-        try:
-            created_container = await self.created_database.create_container(
-                id='container_with_wrong_auto_scale_settings',
-                partition_key=PartitionKey(path="/id"),
-                offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percent=-25)
-
-            )
-            await self.created_database.delete_container(created_container)
-        except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, http_constants.StatusCodes.BAD_REQUEST)
-
     async def test_auto_scale_settings(self):
         # Testing for wrong attributes for the auto_scale_settings in the created container
-        try:
+        with pytest.raises(AssertionError) as e:
             created_container = await self.created_database.create_container(
                 id='container_with_wrong_auto_scale_settings',
                 partition_key=PartitionKey(path="/id"),
-                offer_throughput="wrong setting"
-
-            )
-        except exceptions.CosmosHttpResponseError:
-            print("CosmosHttpResponseError")
-        except AttributeError:
-            print("AttributeError")
+                offer_throughput="wrong setting")
+            assert "Wrong attribute" in str(e.value)
+            await self.created_database.delete_container(created_container)
 
     async def test_create_container_if_not_exist(self):
         # Testing auto_scale_settings for the create_container_if_not_exists method
         created_container = await self.created_database.create_container_if_not_exists(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            offer_throughput=Offer(auto_scale_max_throughput=1000, auto_scale_increment_percent=0)
+            offer_throughput=ThroughputProperties(auto_scale_max_throughput=1000, auto_scale_increment_percent=0)
         )
         created_container_properties = await created_container.get_throughput()
         # Testing the incorrect input value of the max_throughput
         self.assertNotEqual(
-            created_container_properties.properties['content']['offerAutopilotSettings']['maxThroughput'], 2000)
+            created_container_properties.auto_scale_max_throughput, 2000)
 
         await self.created_database.delete_container(created_container)
 
         created_container = await self.created_database.create_container_if_not_exists(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percent=2)
+            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=2)
 
         )
         created_container_properties = await created_container.get_throughput()
         # Testing the incorrect input value of the max_increment_percentage
         self.assertNotEqual(
-            created_container_properties.properties['content']['offerAutopilotSettings']['autoUpgradePolicy']
-            ['throughputPolicy']['incrementPercent'], 3)
+            created_container_properties.auto_scale_increment_percent, 3)
 
         await self.created_database.delete_container(created_container)
         await self.client.delete_database(test_config._test_config.TEST_DATABASE_ID)
@@ -150,26 +130,25 @@ class AutoScaleTest(unittest.TestCase):
         created_container = await created_database.create_container(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            offer_throughput=Offer(auto_scale_max_throughput=8000, auto_scale_increment_percent=0)
+            offer_throughput=ThroughputProperties(auto_scale_max_throughput=8000, auto_scale_increment_percent=0)
 
         )
         created_container_properties = await created_container.get_throughput()
         # Testing the correct input value of the max_throughput
         self.assertEqual(
-            created_container_properties.properties['content']['offerAutopilotSettings']['maxThroughput'], 8000)
+            created_container_properties.auto_scale_max_throughput, 8000)
 
         await self.created_database.delete_container(created_container)
 
         created_container = await self.created_database.create_container_if_not_exists(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            offer_throughput=Offer(auto_scale_max_throughput=5000, auto_scale_increment_percent=7)
+            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=7)
 
         )
         created_container_properties = await created_container.get_throughput()
         # Testing the correct input value of the max_increment_percentage
         self.assertEqual(
-            created_container_properties.properties['content']['offerAutopilotSettings']['autoUpgradePolicy']
-            ['throughputPolicy']['incrementPercent'], 7)
+            created_container_properties.auto_scale_increment_percent, 7)
 
-        await created_database.delete_container(created_container)
+        await self.created_database.delete_container(created_container)
