@@ -33,7 +33,7 @@ from azure.keyvault.certificates.aio import CertificateClient
 # ----------------------------------------------------------------------------------------------------------
 
 async def run_sample():
-    # Instantiate a backup client that will be used to call the service.
+    # Instantiate a certificate client that will be used to call the service.
     # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
     VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
