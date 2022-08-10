@@ -1,14 +1,14 @@
 # Release History
 
-## 3.0.0 (2022-08-10)
+## 2.2.0 (2022-08-10)
 
-**Features**
+### Features Added
 
   - Added operation group ReplicasOperations
 
-**Breaking changes**
+### Other Changes
 
-  - Client name is changed
+  - Changed to multiapi package(please refer to https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/multiapi.md for more info)
 
 ## 2.1.0 (2022-06-08)
 
