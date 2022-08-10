@@ -13,8 +13,9 @@ from azure.core.exceptions import (ResourceExistsError, ResourceModifiedError, H
 
 from azure.storage.blob import BlobBlock, BlobSasPermissions, generate_blob_sas
 from azure.storage.blob.aio import BlobServiceClient
+from devtools_testutils.aio import recorded_by_proxy_async
 
-from devtools_testutils.storage.aio import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase, AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
 #------------------------------------------------------------------------------
@@ -22,7 +23,7 @@ TEST_CONTAINER_PREFIX = 'container'
 TEST_BLOB_PREFIX = 'blob'
 #------------------------------------------------------------------------------
 
-class StorageBlobTagsTest(AsyncStorageTestCase):
+class TestStorageBlobTags(AsyncStorageRecordedTestCase):
 
     async def _setup(self, storage_account_name, key):
         self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key)
@@ -74,6 +75,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
     #-- test cases for blob tags ----------------------------------------------
 
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_set_blob_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -88,15 +90,15 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         # Assert
         assert resp is not None
 
-    @pytest.mark.playback_test_only
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_set_blob_tags_with_lease(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         await self._setup(storage_account_name, storage_account_key)
         blob_client, _ = await self._create_block_blob()
-        lease = await blob_client.acquire_lease()
+        lease = await blob_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         blob_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -135,6 +137,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         assert resp is not None
 
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_get_blob_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -155,6 +158,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
             assert tags[key] == value
 
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_get_blob_tags_for_a_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -175,6 +179,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
             assert tags[key] == value
 
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_upload_block_blob_with_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -190,6 +195,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         assert len(resp) == 3
 
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_get_blob_properties_returns_tags_num(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -207,6 +213,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         assert downloaded.properties.tag_count == len(tags)
 
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_create_append_blob_with_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -222,6 +229,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         assert len(resp) == 3
 
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_create_page_blob_with_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -237,6 +245,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         assert len(resp) == 3
 
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_commit_block_list_with_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -262,6 +271,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         assert len(resp) == len(tags)
 
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_start_copy_from_url_with_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -293,22 +303,26 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         assert len(resp) == len(tags)
 
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_start_copy_from_url_with_tags_copy_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop('variables', {})
 
         await self._setup(storage_account_name, storage_account_key)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         source_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         await source_blob.upload_blob(b'Hello World', overwrite=True, tags=tags)
 
-        source_sas = generate_blob_sas(
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        source_sas = self.generate_sas(
+            generate_blob_sas,
             storage_account_name,
             self.container_name,
             source_blob.blob_name,
             account_key=storage_account_key,
             permission=BlobSasPermissions(read=True, tag=True),
-            expiry=datetime.utcnow() + timedelta(hours=1),
+            expiry=expiry_time,
         )
         source_url = source_blob.url + '?' + source_sas
         dest_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
@@ -331,10 +345,14 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         assert copy_tags is not None
         assert tags == copy_tags
 
+        return variables
+
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_start_copy_from_url_with_tags_replace_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop('variables', {})
 
         await self._setup(storage_account_name, storage_account_key)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -342,13 +360,15 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         source_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         await source_blob.upload_blob(b'Hello World', overwrite=True, tags=tags)
 
-        source_sas = generate_blob_sas(
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        source_sas = self.generate_sas(
+            generate_blob_sas,
             storage_account_name,
             self.container_name,
             source_blob.blob_name,
             account_key=storage_account_key,
             permission=BlobSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1),
+            expiry=expiry_time,
         )
         source_url = source_blob.url + '?' + source_sas
         dest_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
@@ -368,7 +388,10 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         assert copy_tags is not None
         assert tags2 == copy_tags
 
+        return variables
+
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_list_blobs_returns_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -387,6 +410,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
 
     @pytest.mark.playback_test_only
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_filter_blobs(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
