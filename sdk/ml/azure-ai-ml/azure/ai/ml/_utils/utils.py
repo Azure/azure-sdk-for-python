@@ -1,34 +1,39 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 import hashlib
-import isodate
 import json
 import logging
 import os
+import random
 import re
-from pathlib import PosixPath, PureWindowsPath
-import pydash
-import requests
-import sys
-import yaml
 import string
+import sys
+import time
 from collections import OrderedDict
 from contextlib import contextmanager
 from datetime import timedelta
-from requests.adapters import HTTPAdapter
-from typing import Dict, Union, Any, Optional, Tuple, Callable, List
-from urllib.parse import urlparse
-from urllib3 import Retry
-from uuid import UUID
 from functools import singledispatch, wraps
-import time
-import random
-from azure.ai.ml._scope_dependent_operations import OperationScope
 from os import PathLike
-from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity, ListViewType
-from azure.ai.ml.constants import API_URL_KEY, AZUREML_PRIVATE_FEATURES_ENV_VAR
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from pathlib import PosixPath, PureWindowsPath
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from urllib.parse import urlparse
+from uuid import UUID
+
+import isodate
+import pydash
+import requests
+import yaml
+from requests.adapters import HTTPAdapter
+from urllib3 import Retry
+
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._restclient.v2022_05_01.models import ListViewType, ManagedServiceIdentity
+from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml.constants import API_URL_KEY, AZUREML_INTERNAL_COMPONENTS_ENV_VAR, AZUREML_PRIVATE_FEATURES_ENV_VAR
 
 module_logger = logging.getLogger(__name__)
 
@@ -83,7 +88,7 @@ def camel_to_snake(text: str) -> Optional[str]:
 # https://stackoverflow.com/questions/19053707
 def snake_to_camel(text: Optional[str]) -> Optional[str]:
     if text:
-        """convert snake name to camel"""
+        """convert snake name to camel."""
         return re.sub("_([a-zA-Z0-9])", lambda m: m.group(1).upper(), text)
 
 
@@ -93,13 +98,12 @@ def _snake_to_camel(name):
 
 
 def camel_case_transformer(key, attr_desc, value):
-    """transfer string to camel case"""
+    """transfer string to camel case."""
     return (snake_to_camel(key), value)
 
 
 def create_session_with_retry(retry=3) -> requests.Session:
-    """
-    Create requests.session with retry
+    """Create requests.session with retry.
 
     :type retry: int
     rtype: Response
@@ -208,15 +212,34 @@ def load_yaml(file_path: Union[str, os.PathLike, None]) -> Dict:
         )
 
 
+def dump_yaml(*args, **kwargs):
+    """A thin wrapper over yaml.dump which forces `OrderedDict`s to be
+    serialized as mappings
+
+    Otherwise behaves identically to yaml.dump
+    """
+
+    class OrderedDumper(yaml.Dumper):
+        """A modified yaml serializer that forces pyyaml to represent
+        an OrderedDict as a mapping instead of a sequence.
+        """
+
+        pass
+
+    OrderedDumper.add_representer(OrderedDict, yaml.representer.SafeRepresenter.represent_dict)
+
+    return yaml.dump(*args, Dumper=OrderedDumper, **kwargs)
+
+
 def dump_yaml_to_file(
     file_path: Union[str, os.PathLike, None],
-    data_dict: Dict,
+    data_dict: Union[OrderedDict, dict],
     default_flow_style=None,
 ) -> None:
     try:
         if file_path is not None:
             with open(file_path, "w") as f:
-                yaml.dump(data_dict, f, default_flow_style=default_flow_style)
+                dump_yaml(data_dict, f, default_flow_style=default_flow_style, sort_keys=False)
     except OSError:  # FileNotFoundError introduced in Python 3
         msg = "No such file or directory: {}"
         raise ValidationException(
@@ -308,7 +331,9 @@ def validate_ml_flow_folder(path: str, model_type: string) -> None:
     else:
         msg = "Error with path {}. Model of type mlflow_model cannot register a file."
         raise ValidationException(
-            message=msg.format(path), no_personal_data_message=msg.format("[path]"), target=ErrorTarget.MODEL
+            message=msg.format(path),
+            no_personal_data_message=msg.format("[path]"),
+            target=ErrorTarget.MODEL,
         )
 
 
@@ -408,7 +433,9 @@ def hash_dict(items: dict, keys_to_omit=None):
     return str(UUID(object_hash.hexdigest()))
 
 
-def convert_identity_dict(identity: ManagedServiceIdentity = None) -> ManagedServiceIdentity:
+def convert_identity_dict(
+    identity: ManagedServiceIdentity = None,
+) -> ManagedServiceIdentity:
     if identity:
         if identity.type.lower() in ("system_assigned", "none"):
             identity = ManagedServiceIdentity(type="SystemAssigned")
@@ -455,9 +482,8 @@ def map_single_brackets_and_warn(command: str):
 
 
 def transform_dict_keys(data: Dict, casing_transform: Callable[[str], str], exclude_keys=None) -> Dict:
-    """
-    Convert all keys of a nested dictionary according to the passed casing_transform function
-    """
+    """Convert all keys of a nested dictionary according to the passed
+    casing_transform function."""
     transformed_dict = {}
     for key in data.keys():
         # Modify the environment_variables separately: don't transform values in environment_variables.
@@ -467,16 +493,6 @@ def transform_dict_keys(data: Dict, casing_transform: Callable[[str], str], excl
         else:
             transformed_dict[casing_transform(key)] = transform_dict_keys(data[key], casing_transform)
     return transformed_dict
-
-
-def convert_ordered_dict_to_yaml_str(data: OrderedDict) -> str:
-    """Converts OrderedDict to string yaml.
-
-    :param data:
-    :type data: OrderedDict
-    :returns str:
-    """
-    return yaml.dump(data)
 
 
 def retry(
@@ -537,12 +553,14 @@ def get_list_view_type(include_archived: bool, archived_only: bool) -> ListViewT
 def is_data_binding_expression(
     value: str, binding_prefix: Union[str, List[str]] = "", is_singular: bool = True
 ) -> bool:
-    """Check if a value is a data-binding expression with specific binding target(prefix). Note that the function will
-    return False if the value is not a str.
-    For example, if binding_prefix is ["parent", "jobs"], then input_value is a data-binding expression only if
-    the binding target starts with "parent.jobs", like "${{parent.jobs.xxx}}"
-    if is_singular is False, return True even if input_value includes non-binding part or
-    multiple binding targets, like "${{parent.jobs.xxx}}_extra" and "${{parent.jobs.xxx}}_{{parent.jobs.xxx}}"
+    """Check if a value is a data-binding expression with specific binding
+    target(prefix). Note that the function will return False if the value is
+    not a str. For example, if binding_prefix is ["parent", "jobs"], then
+    input_value is a data-binding expression only if the binding target starts
+    with "parent.jobs", like "${{parent.jobs.xxx}}" if is_singular is False,
+    return True even if input_value includes non-binding part or multiple
+    binding targets, like "${{parent.jobs.xxx}}_extra" and
+    "${{parent.jobs.xxx}}_{{parent.jobs.xxx}}".
 
     :param value: Value to check.
     :param binding_prefix: Prefix to check for.
@@ -555,8 +573,9 @@ def is_data_binding_expression(
 def get_all_data_binding_expressions(
     value: str, binding_prefix: Union[str, List[str]] = "", is_singular: bool = True
 ) -> List[str]:
-    """Get all data-binding expressions in a value with specific binding target(prefix). Note that the function will
-    return an empty list if the value is not a str.
+    """Get all data-binding expressions in a value with specific binding
+    target(prefix). Note that the function will return an empty list if the
+    value is not a str.
 
     :param value: Value to extract.
     :param binding_prefix: Prefix to filter.
@@ -577,9 +596,18 @@ def is_private_preview_enabled():
     return os.getenv(AZUREML_PRIVATE_FEATURES_ENV_VAR) in ["True", "true", True]
 
 
+def is_internal_components_enabled():
+    return os.getenv(AZUREML_INTERNAL_COMPONENTS_ENV_VAR) in ["True", "true", True]
+
+
+def try_enable_internal_components():
+    if is_internal_components_enabled():
+        pass
+
+
 def is_valid_node_name(name):
-    """
-    Return True if the string is a valid Python identifier in lower ASCII range, False otherwise.
+    """Return True if the string is a valid Python identifier in lower ASCII
+    range, False otherwise.
 
     The regular expression match pattern is r"^[a-z_][a-z0-9_]*".
     """
@@ -587,7 +615,7 @@ def is_valid_node_name(name):
 
 
 def parse_args_description_from_docstring(docstring):
-    """Return arg descriptions in docstring with google style
+    """Return arg descriptions in docstring with google style.
 
     e.g.
         docstring =
@@ -626,7 +654,10 @@ def parse_args_description_from_docstring(docstring):
             while len(args_region) > 0 and ":" in args_region[0]:
                 arg_line = args_region[0]
                 colon_index = arg_line.index(":")
-                arg, description = arg_line[0:colon_index].strip(), arg_line[colon_index + 1 :].strip()
+                arg, description = (
+                    arg_line[0:colon_index].strip(),
+                    arg_line[colon_index + 1 :].strip(),
+                )
                 # handle case like "param (float) : xxx"
                 if "(" in arg:
                     arg = arg[0 : arg.index("(")].strip()
@@ -641,3 +672,27 @@ def parse_args_description_from_docstring(docstring):
 
 def convert_windows_path_to_unix(path: Union[str, PathLike]) -> PosixPath:
     return PureWindowsPath(path).as_posix()
+
+
+def _is_user_error_from_status_code(http_status_code):
+    return 400 <= http_status_code < 500
+
+
+def _str_to_bool(s):
+    """Returns True if literal 'true' is passed, otherwise returns False.
+
+    Can be used as a type for argument in argparse, return argument's
+    boolean value according to it's literal value.
+    """
+    if not isinstance(s, str):
+        return False
+    return s.lower() == "true"
+
+
+def _is_user_error_from_exception_type(e: Union[Exception, None]):
+    """Determine whether if an exception is user error from it's exception
+    type."""
+    # Connection error happens on user's network failure, should be user error.
+    # For OSError/IOError with error no 28: "No space left on device" should be sdk user error
+    if isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28):
+        return True

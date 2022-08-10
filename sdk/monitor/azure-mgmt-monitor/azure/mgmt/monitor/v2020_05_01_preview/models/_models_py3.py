@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class Action(msrest.serialization.Model):
@@ -54,8 +56,8 @@ class Condition(msrest.serialization.Model):
 
     :ivar query: Log query alert.
     :vartype query: str
-    :ivar time_aggregation: Required. Aggregation type. Possible values include: "Count",
-     "Average", "Minimum", "Maximum", "Total".
+    :ivar time_aggregation: Required. Aggregation type. Known values are: "Count", "Average",
+     "Minimum", "Maximum", "Total".
     :vartype time_aggregation: str or
      ~$(python-base-namespace).v2020_05_01_preview.models.TimeAggregation
     :ivar metric_measure_column: The column containing the metric measure number.
@@ -65,8 +67,8 @@ class Condition(msrest.serialization.Model):
     :vartype resource_id_column: str
     :ivar dimensions: List of Dimensions conditions.
     :vartype dimensions: list[~$(python-base-namespace).v2020_05_01_preview.models.Dimension]
-    :ivar operator: Required. The criteria operator. Possible values include: "Equals",
-     "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
+    :ivar operator: Required. The criteria operator. Known values are: "Equals", "GreaterThan",
+     "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
     :vartype operator: str or
      ~$(python-base-namespace).v2020_05_01_preview.models.ConditionOperator
     :ivar threshold: Required. the criteria threshold value that activates the alert.
@@ -97,21 +99,21 @@ class Condition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        time_aggregation: Union[str, "TimeAggregation"],
-        operator: Union[str, "ConditionOperator"],
+        time_aggregation: Union[str, "_models.TimeAggregation"],
+        operator: Union[str, "_models.ConditionOperator"],
         threshold: float,
         query: Optional[str] = None,
         metric_measure_column: Optional[str] = None,
         resource_id_column: Optional[str] = None,
-        dimensions: Optional[List["Dimension"]] = None,
-        failing_periods: Optional["ConditionFailingPeriods"] = None,
+        dimensions: Optional[List["_models.Dimension"]] = None,
+        failing_periods: Optional["_models.ConditionFailingPeriods"] = None,
         **kwargs
     ):
         """
         :keyword query: Log query alert.
         :paramtype query: str
-        :keyword time_aggregation: Required. Aggregation type. Possible values include: "Count",
-         "Average", "Minimum", "Maximum", "Total".
+        :keyword time_aggregation: Required. Aggregation type. Known values are: "Count", "Average",
+         "Minimum", "Maximum", "Total".
         :paramtype time_aggregation: str or
          ~$(python-base-namespace).v2020_05_01_preview.models.TimeAggregation
         :keyword metric_measure_column: The column containing the metric measure number.
@@ -121,8 +123,8 @@ class Condition(msrest.serialization.Model):
         :paramtype resource_id_column: str
         :keyword dimensions: List of Dimensions conditions.
         :paramtype dimensions: list[~$(python-base-namespace).v2020_05_01_preview.models.Dimension]
-        :keyword operator: Required. The criteria operator. Possible values include: "Equals",
-         "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
+        :keyword operator: Required. The criteria operator. Known values are: "Equals", "GreaterThan",
+         "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
         :paramtype operator: str or
          ~$(python-base-namespace).v2020_05_01_preview.models.ConditionOperator
         :keyword threshold: Required. the criteria threshold value that activates the alert.
@@ -188,7 +190,7 @@ class Dimension(msrest.serialization.Model):
 
     :ivar name: Required. Name of the dimension.
     :vartype name: str
-    :ivar operator: Required. Operator for dimension values. Possible values include: "Include",
+    :ivar operator: Required. Operator for dimension values. Known values are: "Include",
      "Exclude".
     :vartype operator: str or
      ~$(python-base-namespace).v2020_05_01_preview.models.DimensionOperator
@@ -212,14 +214,14 @@ class Dimension(msrest.serialization.Model):
         self,
         *,
         name: str,
-        operator: Union[str, "DimensionOperator"],
+        operator: Union[str, "_models.DimensionOperator"],
         values: List[str],
         **kwargs
     ):
         """
         :keyword name: Required. Name of the dimension.
         :paramtype name: str
-        :keyword operator: Required. Operator for dimension values. Possible values include: "Include",
+        :keyword operator: Required. Operator for dimension values. Known values are: "Include",
          "Exclude".
         :paramtype operator: str or
          ~$(python-base-namespace).v2020_05_01_preview.models.DimensionOperator
@@ -278,7 +280,7 @@ class ErrorContract(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["ErrorResponse"] = None,
+        error: Optional["_models.ErrorResponse"] = None,
         **kwargs
     ):
         """
@@ -390,7 +392,7 @@ class ScheduledQueryRuleCriteria(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        all_of: Optional[List["Condition"]] = None,
+        all_of: Optional[List["_models.Condition"]] = None,
         **kwargs
     ):
         """
@@ -493,7 +495,7 @@ class ScheduledQueryRuleResource(TrackedResource):
     :ivar display_name: The display name of the alert rule.
     :vartype display_name: str
     :ivar severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
-     severest. Possible values include: 0, 1, 2, 3, 4.
+     severest. Known values are: 0, 1, 2, 3, 4.
     :vartype severity: float or ~$(python-base-namespace).v2020_05_01_preview.models.AlertSeverity
     :ivar enabled: The flag which indicates whether this scheduled query rule is enabled. Value
      should be true or false.
@@ -566,16 +568,16 @@ class ScheduledQueryRuleResource(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
         display_name: Optional[str] = None,
-        severity: Optional[Union[float, "AlertSeverity"]] = None,
+        severity: Optional[Union[float, "_models.AlertSeverity"]] = None,
         enabled: Optional[bool] = None,
         scopes: Optional[List[str]] = None,
         evaluation_frequency: Optional[datetime.timedelta] = None,
         window_size: Optional[datetime.timedelta] = None,
         override_query_time_range: Optional[datetime.timedelta] = None,
         target_resource_types: Optional[List[str]] = None,
-        criteria: Optional["ScheduledQueryRuleCriteria"] = None,
+        criteria: Optional["_models.ScheduledQueryRuleCriteria"] = None,
         mute_actions_duration: Optional[datetime.timedelta] = None,
-        actions: Optional[List["Action"]] = None,
+        actions: Optional[List["_models.Action"]] = None,
         **kwargs
     ):
         """
@@ -588,7 +590,7 @@ class ScheduledQueryRuleResource(TrackedResource):
         :keyword display_name: The display name of the alert rule.
         :paramtype display_name: str
         :keyword severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
-         severest. Possible values include: 0, 1, 2, 3, 4.
+         severest. Known values are: 0, 1, 2, 3, 4.
         :paramtype severity: float or
          ~$(python-base-namespace).v2020_05_01_preview.models.AlertSeverity
         :keyword enabled: The flag which indicates whether this scheduled query rule is enabled. Value
@@ -653,7 +655,7 @@ class ScheduledQueryRuleResourceCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ScheduledQueryRuleResource"]] = None,
+        value: Optional[List["_models.ScheduledQueryRuleResource"]] = None,
         **kwargs
     ):
         """
@@ -681,7 +683,7 @@ class ScheduledQueryRuleResourcePatch(msrest.serialization.Model):
     :ivar display_name: The display name of the alert rule.
     :vartype display_name: str
     :ivar severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
-     severest. Possible values include: 0, 1, 2, 3, 4.
+     severest. Known values are: 0, 1, 2, 3, 4.
     :vartype severity: float or ~$(python-base-namespace).v2020_05_01_preview.models.AlertSeverity
     :ivar enabled: The flag which indicates whether this scheduled query rule is enabled. Value
      should be true or false.
@@ -741,16 +743,16 @@ class ScheduledQueryRuleResourcePatch(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
         display_name: Optional[str] = None,
-        severity: Optional[Union[float, "AlertSeverity"]] = None,
+        severity: Optional[Union[float, "_models.AlertSeverity"]] = None,
         enabled: Optional[bool] = None,
         scopes: Optional[List[str]] = None,
         evaluation_frequency: Optional[datetime.timedelta] = None,
         window_size: Optional[datetime.timedelta] = None,
         override_query_time_range: Optional[datetime.timedelta] = None,
         target_resource_types: Optional[List[str]] = None,
-        criteria: Optional["ScheduledQueryRuleCriteria"] = None,
+        criteria: Optional["_models.ScheduledQueryRuleCriteria"] = None,
         mute_actions_duration: Optional[datetime.timedelta] = None,
-        actions: Optional[List["Action"]] = None,
+        actions: Optional[List["_models.Action"]] = None,
         **kwargs
     ):
         """
@@ -761,7 +763,7 @@ class ScheduledQueryRuleResourcePatch(msrest.serialization.Model):
         :keyword display_name: The display name of the alert rule.
         :paramtype display_name: str
         :keyword severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
-         severest. Possible values include: 0, 1, 2, 3, 4.
+         severest. Known values are: 0, 1, 2, 3, 4.
         :paramtype severity: float or
          ~$(python-base-namespace).v2020_05_01_preview.models.AlertSeverity
         :keyword enabled: The flag which indicates whether this scheduled query rule is enabled. Value

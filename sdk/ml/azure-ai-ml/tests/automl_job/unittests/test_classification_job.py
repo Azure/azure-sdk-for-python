@@ -32,7 +32,7 @@ class TestAutoMLClassification:
             experiment_name="foo_exp",
             tags={"foo_tag": "bar"},
             properties={"_automl_internal_some_flag": True},
-            identity = identity,
+            identity=identity,
         )  # type: ClassificationJob
         # classification_task.set_limits(timeout=60, max_trials=100, max_concurrent_trials=4)
         classification_job.limits = {"timeout_minutes": 60, "max_trials": 100, "max_concurrent_trials": 4}

@@ -3,16 +3,16 @@
 # ---------------------------------------------------------
 
 from typing import List, Union
-from azure.ai.ml._restclient.v2022_02_01_preview.models import StackEnsembleSettings
-from azure.ai.ml._restclient.v2022_02_01_preview.models import TrainingSettings as RestTrainingSettings
+
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     ClassificationModels,
     ForecastingModels,
     RegressionModels,
+    StackEnsembleSettings,
 )
-from azure.ai.ml._utils.utils import from_iso_duration_format_mins, to_iso_duration_format_mins
+from azure.ai.ml._restclient.v2022_02_01_preview.models import TrainingSettings as RestTrainingSettings
+from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_mins, to_iso_duration_format_mins
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml._utils.utils import camel_to_snake
 
 
 class TrainingSettings(RestTranslatableMixin):
@@ -31,8 +31,7 @@ class TrainingSettings(RestTranslatableMixin):
         allowed_training_algorithms: List[str] = None,
         blocked_training_algorithms: List[str] = None,
     ):
-        """
-        TrainingSettings class for Azure Machine Learning
+        """TrainingSettings class for Azure Machine Learning.
 
         :param enable_onnx_compatible_models: If set to True, the model will be trained to be compatible with ONNX
         :param enable_dnn_training: If set to True,the model will use DNN training

@@ -1,0 +1,65 @@
+{
+  "id": "/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/sdk/providers/Microsoft.MachineLearningServices/workspaces/sdk-master/jobs/lemon_camera_67fwk0x1bb",
+  "name": "lemon_camera_67fwk0x1bb",
+  "type": "Microsoft.MachineLearningServices/workspaces/jobs",
+  "system_data": {
+    "created_by": "Long Chen",
+    "created_by_type": "User",
+    "created_at": "2022-05-16T08:45:55.06798Z"
+  },
+  "properties": {
+    "description": "AutoML Clasiification Pipeline",
+    "properties": {
+      "mlflow.source.git.repoURL": "https://github.com/Azure/azureml-examples.git",
+      "mlflow.source.git.branch": "may-sdk-preview",
+      "mlflow.source.git.commit": "3eb5c6b9d1839471bf53f6d2d1122519c5f366b9",
+      "azureml.git.dirty": "True",
+      "azureml.runsource": "azureml.PipelineRun",
+      "runSource": "MFE",
+      "runType": "HTTP",
+      "azureml.parameters": "{}",
+      "azureml.continue_on_step_failure": "False",
+      "azureml.enforceRerun": "False",
+      "azureml.pipelineComponent": "pipelinerun"
+    },
+    "tags": {},
+    "compute_id": "/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/sdk/providers/Microsoft.MachineLearningServices/workspaces/sdk-master/computes/cpu-cluster",
+    "display_name": "automl_classification",
+    "experiment_name": "pipeline_samples",
+    "is_archived": false,
+    "job_type": "Pipeline",
+    "services": {
+      "Tracking": {
+        "endpoint": "azureml://master.api.azureml-test.ms/mlflow/v1.0/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/sdk/providers/Microsoft.MachineLearningServices/workspaces/sdk-master?",
+        "job_service_type": "Tracking"
+      },
+      "Studio": {
+        "endpoint": "https://ml.azure.com/runs/lemon_camera_67fwk0x1bb?wsid=/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourcegroups/sdk/workspaces/sdk-master",
+        "job_service_type": "Studio"
+      }
+    },
+    "status": "Completed",
+    "inputs": {
+      "classification_train_data": {
+        "mode": "ReadOnlyMount",
+        "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/3421f176a64fab3cb7e9e32b7e587316/training-mltable-folder",
+        "job_input_type": "MLTable"
+      },
+      "classification_validation_data": {
+        "mode": "ReadOnlyMount",
+        "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/ab4439bc9830f7f9b56d14019492989c/validation-mltable-folder",
+        "job_input_type": "MLTable"
+      }
+    },
+    "jobs": null,
+    "outputs": {
+      "pipeline_job_out_best_model": {
+        "mode": "ReadWriteMount",
+        "job_output_type": "UriFolder"
+      }
+    },
+    "settings": {
+      "force_rerun": false
+    }
+  }
+}

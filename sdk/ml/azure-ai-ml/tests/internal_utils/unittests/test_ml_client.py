@@ -1,7 +1,9 @@
+import os
 from unittest.mock import Mock, patch
+from azure.ai.ml._utils.utils import DEVELOPER_URL_MFE_ENV_VAR
+import mock
 
 import pytest
-
 from azure.ai.ml import (
     MLClient,
     load_job,
@@ -34,6 +36,8 @@ from azure.ai.ml.entities import (
 )
 from azure.ai.ml.sweep import SweepJob
 from test_utilities.constants import Test_Resource_Group, Test_Subscription
+from azure.ai.ml.constants import AZUREML_CLOUD_ENV_NAME
+from azure.ai.ml._azure_environments import AzureEnvironments
 
 
 @pytest.mark.unittest
@@ -68,9 +72,6 @@ class TestMachineLearningClient:
     def test_get_data(self, mock_machinelearning_client: MLClient) -> None:
         assert mock_machinelearning_client.data is not None
 
-    def test_get_dataset(self, mock_machinelearning_client: MLClient) -> None:
-        assert mock_machinelearning_client.datasets is not None
-
     def test_get_code(self, mock_machinelearning_client: MLClient) -> None:
         assert mock_machinelearning_client._code is not None
 
@@ -85,10 +86,8 @@ class TestMachineLearningClient:
         assert new_ws == new_client.workspace_name
         assert previous_ws == mock_machinelearning_client.workspace_name
 
-    @pytest.mark.skip(reason="Skipping until MFE Feb API is available in all regions")
-    @patch("azure.ai.ml._ml_client._get_mfe_url_override")
+    @patch("azure.ai.ml._ml_client._get_base_url_from_metadata")
     def test_mfe_url_overwrite(self, mock_get_mfe_url_override, mock_credential):
-        base_url = "https://management.azure.com"
         mock_url = "http://localhost:65535/mferp/managementfrontend"
         mock_get_mfe_url_override.return_value = mock_url
 
@@ -96,8 +95,8 @@ class TestMachineLearningClient:
             credential=mock_credential, subscription_id=Test_Subscription, resource_group_name=Test_Resource_Group
         )
 
-        assert ml_client.workspaces._operation._client._base_url == base_url
-        assert ml_client.compute._operation._client._base_url == base_url
+        assert ml_client.workspaces._operation._client._base_url == mock_url
+        assert ml_client.compute._operation._client._base_url == mock_url
         assert ml_client.jobs._operation_2022_02_preview._client._base_url == mock_url
         assert ml_client.jobs._kwargs["enforce_https"] is False
 
@@ -107,7 +106,6 @@ class TestMachineLearningClient:
     @patch("azure.ai.ml._ml_client.WorkspaceOperations", Mock())
     @patch("azure.ai.ml._ml_client.ModelOperations", Mock())
     @patch("azure.ai.ml._ml_client.DataOperations", Mock())
-    @patch("azure.ai.ml._ml_client.DatasetOperations", Mock())
     @patch("azure.ai.ml._ml_client.CodeOperations", Mock())
     @patch("azure.ai.ml._ml_client.EnvironmentOperations", Mock())
     @patch("azure.ai.ml._ml_client.ComponentOperations", Mock())
@@ -188,7 +186,6 @@ class TestMachineLearningClient:
     @patch("azure.ai.ml._ml_client.WorkspaceOperations", Mock())
     @patch("azure.ai.ml._ml_client.ModelOperations", Mock())
     @patch("azure.ai.ml._ml_client.DataOperations", Mock())
-    @patch("azure.ai.ml._ml_client.DatasetOperations", Mock())
     @patch("azure.ai.ml._ml_client.CodeOperations", Mock())
     @patch("azure.ai.ml._ml_client.EnvironmentOperations", Mock())
     @patch("azure.ai.ml._ml_client.ComponentOperations", Mock())
@@ -304,3 +301,79 @@ class TestMachineLearningClient:
         with pytest.raises(Exception) as e:
             MLClient.from_config(start)
         assert "could not find config.json in:" in str(e)
+
+    def test_ml_client_without_credentials(self):
+        credential = None
+        with pytest.raises(Exception) as e:
+            MLClient(
+                credential=credential,
+                subscription_id=Test_Subscription,
+                resource_group_name=Test_Resource_Group,
+                workspace_name="test-ws",
+            )
+        assert "credential can not be None" in str(e)
+
+    def test_ml_client_for_china_cloud(self, mock_credential):
+        cloud_name = AzureEnvironments.ENV_CHINA
+        base_url = "https://management.chinacloudapi.cn"
+        kwargs = {"cloud": cloud_name}
+        ml_client = MLClient(
+            credential=mock_credential,
+            subscription_id=Test_Subscription,
+            resource_group_name=Test_Resource_Group,
+            workspace_name="test-ws1",
+            **kwargs,
+        )
+        assert ml_client._cloud == cloud_name
+        assert ml_client._base_url == base_url
+        assert ml_client._kwargs["cloud"] == cloud_name
+        assert base_url in str(ml_client._kwargs["credential_scopes"])
+
+    def test_ml_client_for_govt__cloud(self, mock_credential):
+        cloud_name = AzureEnvironments.ENV_US_GOVERNMENT
+        base_url = "https://management.usgovcloudapi.net"
+        kwargs = {"cloud": cloud_name}
+        ml_client = MLClient(
+            credential=mock_credential,
+            subscription_id=Test_Subscription,
+            resource_group_name=Test_Resource_Group,
+            workspace_name="test-ws1",
+            **kwargs,
+        )
+        assert ml_client._cloud == cloud_name
+        assert ml_client._base_url == base_url
+        assert ml_client._kwargs["cloud"] == cloud_name
+        assert base_url in str(ml_client._kwargs["credential_scopes"])
+
+    def test_ml_client_for_default_cloud(self, mock_credential):
+        cloud_name = AzureEnvironments.ENV_DEFAULT
+        base_url = "https://management.azure.com"
+        kwargs = {}
+        # Remove the keys from the variables
+        key_to_remove = {AZUREML_CLOUD_ENV_NAME}
+        modified_environment = {k: v for k, v in os.environ.items() if k not in key_to_remove}
+        with mock.patch.dict(os.environ, modified_environment, clear=True):
+            ml_client = MLClient(
+                credential=mock_credential,
+                subscription_id=Test_Subscription,
+                resource_group_name=Test_Resource_Group,
+                workspace_name="test-ws1",
+                **kwargs,
+            )
+            assert ml_client._cloud == cloud_name
+            assert ml_client._base_url == base_url
+            assert ml_client._kwargs["cloud"] == cloud_name
+            assert base_url in str(ml_client._kwargs["credential_scopes"])
+
+    def test_ml_client_with_invalid_cloud(self, mock_credential):
+        kwargs = {"cloud": "SomeInvalidCloudName"}
+        with pytest.raises(Exception) as e:
+            ml_client = MLClient(
+                credential=mock_credential,
+                subscription_id=Test_Subscription,
+                resource_group_name=Test_Resource_Group,
+                workspace_name="test-ws1",
+                **kwargs,
+            )
+            assert ml_client._kwargs["cloud"] == "SomeInvalidCloudName"
+        assert "Unknown cloud environment supplied" in str(e)

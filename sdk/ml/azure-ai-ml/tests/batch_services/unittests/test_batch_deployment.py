@@ -74,7 +74,6 @@ def mock_batch_deployment_operations(
         service_client_05_2022=mock_aml_services_2022_05_01,
         service_client_09_2020_dataplanepreview=mock_aml_services_2020_09_01_dataplanepreview,
         all_operations=mock_machinelearning_client._operation_container,
-        local_endpoint_helper=mock_local_endpoint_helper,
     )
 
 

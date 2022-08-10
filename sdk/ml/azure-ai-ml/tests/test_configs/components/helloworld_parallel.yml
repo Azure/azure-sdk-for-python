@@ -21,10 +21,10 @@ outputs:
     type: mltable
 
 task:
-  type: function
+  type: run_function
   code: ../python
   entry_script: score.py
-  args: >- # optional
+  program_arguments: >- # optional
     --label ${{inputs.label}}
     --model ${{inputs.model}}
     --output ${{outputs.scored_result}}
@@ -32,4 +32,4 @@ task:
   environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
 
 mini_batch_size: "10mb"
-input_data: ${{inputs.score_input}}
+input_data: ${{inputs.component_in_path}}

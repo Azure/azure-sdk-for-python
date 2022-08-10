@@ -2,36 +2,28 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 import logging
 import time
 from typing import Any, Dict, Union
 
-from azure.identity import ChainedTokenCredential
-from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller
-from azure.ai.ml._restclient.v2022_05_01 import (
-    AzureMachineLearningWorkspaces as ServiceClient052022,
-)
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
-
+from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
-from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
-from azure.ai.ml.entities import BatchDeployment
-from azure.ai.ml._utils.utils import (
-    _get_mfe_base_url_from_discovery_service,
-    modified_operation_client,
-)
-from azure.ai.ml.constants import (
-    AzureMLResourceType,
-    LROConfigurations,
-)
-from azure.ai.ml._utils._endpoint_utils import polling_wait, upload_dependencies
-from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from ._operation_orchestrator import OperationOrchestrator
-
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._utils._azureml_polling import AzureMLPolling
+from azure.ai.ml._utils._endpoint_utils import polling_wait, upload_dependencies
+from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client
+from azure.ai.ml.constants import AzureMLResourceType, LROConfigurations
+from azure.ai.ml.entities import BatchDeployment
+from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
+from azure.identity import ChainedTokenCredential
+
+from ._operation_orchestrator import OperationOrchestrator
 
 logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
 logger.propagate = False
@@ -39,10 +31,11 @@ module_logger = logging.getLogger(__name__)
 
 
 class BatchDeploymentOperations(_ScopeDependentOperations):
-    """
-    BatchDeploymentOperations
+    """BatchDeploymentOperations.
 
-    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should
+    create an MLClient instance that instantiates it for you and
+    attaches it as an attribute.
     """
 
     def __init__(
@@ -51,7 +44,6 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         service_client_05_2022: ServiceClient052022,
         service_client_09_2020_dataplanepreview: ServiceClient092020DataplanePreview,
         all_operations: OperationsContainer,
-        local_endpoint_helper: _LocalEndpointHelper,
         credentials: ChainedTokenCredential = None,
         **kwargs: Dict,
     ):
@@ -67,7 +59,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "BatchDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, deployment: BatchDeployment, **kwargs: Any) -> Union[BatchDeployment, LROPoller]:
-        """Create or update a batch deployment
+        """Create or update a batch deployment.
 
         :param endpoint: The deployment entity.
         :type endpoint: BatchDeployment
@@ -76,14 +68,15 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         """
 
         no_wait = kwargs.get("no_wait", False)
-        module_logger.debug(f"Checking endpoint {deployment.endpoint_name} exists")
+        module_logger.debug("Checking endpoint %s exists", deployment.endpoint_name)
         self._batch_endpoint_operations.get(
             endpoint_name=deployment.endpoint_name,
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
         )
         orchestrators = OperationOrchestrator(
-            operation_container=self._all_operations, operation_scope=self._operation_scope
+            operation_container=self._all_operations,
+            operation_scope=self._operation_scope,
         )
         upload_dependencies(deployment, orchestrators)
 
@@ -102,18 +95,21 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             )
             if no_wait:
                 module_logger.info(
-                    f"Batch deployment create/update request initiated. Status can be checked using `az ml batch-deployment show -e {deployment.endpoint_name} -n {deployment.name}`\n"
+                    "Batch deployment create/update request initiated. "
+                    "Status can be checked using "
+                    "`az ml batch-deployment show -e %s -n %s`\n",
+                    deployment.endpoint_name,
+                    deployment.name,
                 )
                 return poller
-            else:
-                return BatchDeployment._from_rest_object(poller.result())
+            return BatchDeployment._from_rest_object(poller.result())
 
         except Exception as ex:
             raise ex
 
     @monitor_with_activity(logger, "BatchDeployment.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, endpoint_name: str) -> BatchDeployment:
-        """Get a deployment resource
+        """Get a deployment resource.
 
         :param name: The name of the deployment
         :type name: str
@@ -169,16 +165,19 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         )
         if no_wait:
             module_logger.info(
-                f"Delete request initiated. Status can be checked using `az ml batch-deployment show -e {endpoint_name} -n {name}`\n"
+                "Delete request initiated. "
+                "Status can be checked using "
+                "`az ml batch-deployment show -e %s -n %s`\n",
+                endpoint_name,
+                name,
             )
             return delete_poller
-        else:
-            message = f"Deleting batch deployment {name} "
-            polling_wait(poller=delete_poller, start_time=start_time, message=message)
+        message = f"Deleting batch deployment {name} "
+        polling_wait(poller=delete_poller, start_time=start_time, message=message)
 
     @monitor_with_activity(logger, "BatchDeployment.List", ActivityType.PUBLICAPI)
     def list(self, endpoint_name: str) -> ItemPaged[BatchDeployment]:
-        """List a deployment resource
+        """List a deployment resource.
 
         :param endpoint_name: The name of the endpoint
         :type endpoint_name: str
@@ -195,7 +194,8 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "BatchDeployment.ListJobs", ActivityType.PUBLICAPI)
     def list_jobs(self, endpoint_name: str, name: str = None):
-        """List jobs under the provided batch endpoint deployment. This is only valid for batch endpoint.
+        """List jobs under the provided batch endpoint deployment. This is only
+        valid for batch endpoint.
 
         :param endpoint_name: Name of endpoint.
         :type endpoint_name: str
@@ -221,7 +221,6 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             return list(result)
 
     def _get_workspace_location(self) -> str:
-        """Get the workspace location
-        TODO[TASK 1260265]: can we cache this information and only refresh when the operation_scope is changed?
-        """
+        """Get the workspace location TODO[TASK 1260265]: can we cache this
+        information and only refresh when the operation_scope is changed?"""
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location

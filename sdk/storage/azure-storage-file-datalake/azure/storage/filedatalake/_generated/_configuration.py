@@ -6,16 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, Optional
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
 VERSION = "unknown"
+
 
 class AzureDataLakeStorageRESTAPIConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for AzureDataLakeStorageRESTAPI.
@@ -24,7 +21,7 @@ class AzureDataLakeStorageRESTAPIConfiguration(Configuration):  # pylint: disabl
     attributes.
 
     :param url: The URL of the service account, container, or blob that is the target of the
-     desired operation.
+     desired operation. Required.
     :type url: str
     :param x_ms_lease_duration: The lease duration is required to acquire a lease, and specifies
      the duration of the lease in seconds.  The lease duration must be between 15 and 60 seconds or
@@ -38,16 +35,10 @@ class AzureDataLakeStorageRESTAPIConfiguration(Configuration):  # pylint: disabl
     :paramtype version: str
     """
 
-    def __init__(
-        self,
-        url,  # type: str
-        x_ms_lease_duration=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def __init__(self, url: str, x_ms_lease_duration: Optional[int] = None, **kwargs: Any) -> None:
         super(AzureDataLakeStorageRESTAPIConfiguration, self).__init__(**kwargs)
-        resource = kwargs.pop('resource', "filesystem")  # type: str
-        version = kwargs.pop('version', "2021-06-08")  # type: str
+        resource = kwargs.pop("resource", "filesystem")  # type: str
+        version = kwargs.pop("version", "2021-06-08")  # type: str
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
@@ -56,20 +47,19 @@ class AzureDataLakeStorageRESTAPIConfiguration(Configuration):  # pylint: disabl
         self.x_ms_lease_duration = x_ms_lease_duration
         self.resource = resource
         self.version = version
-        kwargs.setdefault('sdk_moniker', 'azuredatalakestoragerestapi/{}'.format(VERSION))
+        kwargs.setdefault("sdk_moniker", "azuredatalakestoragerestapi/{}".format(VERSION))
         self._configure(**kwargs)
 
     def _configure(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> None
-        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get('retry_policy') or policies.RetryPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
-        self.authentication_policy = kwargs.get('authentication_policy')
+        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
+        self.authentication_policy = kwargs.get("authentication_policy")

@@ -34,7 +34,7 @@ class FakeTokenCredential(object):
     def get_token(self, *args):
         return self.token
 
-TEST_ENDPOINT = 'https://test-resource.api.cognitive.microsoft.com'
+TEST_ENDPOINT = 'https://test-resource.api.cognitive.microsoft.com/'
 TEST_KEY = '0000000000000000'
 TEST_PROJECT = 'test-project'
 
@@ -44,6 +44,7 @@ class QuestionAnsweringTest(AzureTestCase):
 
     def __init__(self, method_name):
         super(QuestionAnsweringTest, self).__init__(method_name)
+        self.vcr.match_on = ["path", "method", "query"]
         self.scrubber.register_name_pair(os.environ.get("AZURE_QUESTIONANSWERING_ENDPOINT"), TEST_ENDPOINT)
         self.scrubber.register_name_pair(os.environ.get("AZURE_QUESTIONANSWERING_KEY"), TEST_KEY)
         self.scrubber.register_name_pair(os.environ.get("AZURE_QUESTIONANSWERING_PROJECT"), TEST_PROJECT)

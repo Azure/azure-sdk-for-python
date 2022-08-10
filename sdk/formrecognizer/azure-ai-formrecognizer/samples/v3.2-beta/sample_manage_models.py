@@ -28,7 +28,7 @@ import os
 def sample_manage_models():
     from azure.core.credentials import AzureKeyCredential
     from azure.core.exceptions import ResourceNotFoundError
-    from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentBuildMode
+    from azure.ai.formrecognizer import DocumentModelAdministrationClient, ModelBuildMode
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -53,7 +53,7 @@ def sample_manage_models():
     # [END list_models]
 
     # let's build a model to use for this sample
-    poller = document_model_admin_client.begin_build_model(container_sas_url, DocumentBuildMode.TEMPLATE, description="model for sample")
+    poller = document_model_admin_client.begin_build_model(ModelBuildMode.TEMPLATE, blob_container_url=container_sas_url, description="model for sample")
     model = poller.result()
 
     # [START get_model]
