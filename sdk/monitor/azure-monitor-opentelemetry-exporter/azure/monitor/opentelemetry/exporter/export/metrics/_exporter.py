@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 import logging
 
-from typing import Optional, Any
+from typing import Dict, Optional, Any
 
 from opentelemetry.sdk.metrics.export import (
     DataPointT,
@@ -12,6 +12,8 @@ from opentelemetry.sdk.metrics.export import (
     MetricsData as OTMetricsData,
     NumberDataPoint,
 )
+from opentelemetry.sdk.metrics.export import AggregationTemporality
+from opentelemetry.sdk.metrics.view import Aggregation
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 
@@ -34,6 +36,14 @@ __all__ = ["AzureMonitorMetricExporter"]
 
 class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
     """Azure Monitor Metric exporter for OpenTelemetry."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        BaseExporter.__init__(self, **kwargs)
+        MetricExporter.__init__(
+            self,
+            preferred_temporality=kwargs.get("preferred_temporality"),
+            preferred_aggregation=kwargs.get("preferred_aggregation"),
+        )
 
     def export(
         self,
