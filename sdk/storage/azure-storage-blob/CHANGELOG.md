@@ -6,6 +6,8 @@ This version and all future versions will require Python 3.7+. Python 3.6 is no 
 
 ### Features Added
 - Added support for `AzureNamedKeyCredential` as a valid `credential` type.
+- Added standard `read` method to `StorageStreamDownloader`.
+- Added support for async streams (classes with an async `read` method) to async `upload_blob`.
 
 ### Bugs Fixed
 - Removed dead retry meachism from async `azure.storage.blob.aio.StorageStreamDownloader`.

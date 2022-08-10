@@ -25,6 +25,10 @@ The version of this client library defaults to the API version `2022-05-01`.
 - Renamed `SingleCategoryClassifyAction` to `SingleLabelClassifyAction`
 - Renamed `MultiCategoryClassifyAction` to `MultiLabelClassifyAction`.
 
+### Bugs Fixed
+
+- A `HttpResponseError` will be immediately raised when the call quota volume is exceeded in a `F0` tier Language resource.
+
 ### Other Changes
 
 - Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, see [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
