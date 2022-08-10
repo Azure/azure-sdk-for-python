@@ -780,17 +780,25 @@ class DatabaseProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, throughput_properties)
 
+        if 'offerAutopilotSettings' in throughput_properties[0]['content'] and 'autoUpgradePolicy' in \
+                throughput_properties[0]['content']['offerAutopilotSettings']:
+            return ThroughputProperties(properties=throughput_properties[0], auto_scale_max_throughput= \
+                throughput_properties[0]['content']['offerAutopilotSettings']['maxThroughput'],
+                                        auto_scale_increment_percent=throughput_properties[0]['content']
+                                        ['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
+                                            'incrementPercent'])
+
+        elif 'offerAutopilotSettings' in throughput_properties[0]['content']:
+            return ThroughputProperties(properties=throughput_properties[0],
+                                        auto_scale_max_throughput=throughput_properties[0]['content']
+                                        ['offerAutopilotSettings']['maxThroughput'])
+
         return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
-                                    properties=throughput_properties[0],
-                                    auto_scale_max_throughput=throughput_properties[0]['content']
-                                    ['offerAutopilotSettings']['maxThroughput'],
-                                    auto_scale_increment_percent=throughput_properties[0]['content']
-                                    ['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
-                                        'incrementPercent'])
+                                    properties=throughput_properties[0])
 
     @distributed_trace
-    def replace_throughput(self, throughput, max_throughput, increment_percent, **kwargs):
-        # type: (Optional[int], Optional[int], Optional[int], Any) -> ThroughputProperties
+    def replace_throughput(self, throughput, **kwargs):
+        # type: (Optional[int], Any) -> ThroughputProperties
         """Replace the database-level throughput.
 
         :param throughput: The throughput to be set (an integer).
@@ -821,9 +829,5 @@ class DatabaseProxy(object):
                                                    offer=throughput_properties[0], **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
-        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data,
-                                    auto_scale_max_throughput=data['content']['offerAutopilotSettings'][
-                                        'maxThroughput'],
-                                    auto_scale_increment_percent=data['content']['offerAutopilotSettings']
-                                    ['autoUpgradePolicy']['throughputPolicy']['incrementPercent'])
+        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
