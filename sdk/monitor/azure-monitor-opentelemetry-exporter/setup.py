@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 
-from importlib.metadata import entry_points
 import os
 import re
 
