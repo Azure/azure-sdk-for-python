@@ -28,7 +28,7 @@ mU7AMDzlQRwGC8hpWJRT
 -----END CERTIFICATE-----"""
 
 # https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-certificates/tests/ca.key
-USER_CERTIFICATE_PRIVATE_KEY = "-----BEGIN RSA PRIVATE KEY-----\n"  #[SuppressMessage("Microsoft.Security", "CS001:SecretInline", Justification="Test secret that is found elsewhere in this repo")]
+USER_CERTIFICATE_PRIVATE_KEY = ("-----BEGIN RSA PRIVATE KEY-----\n"  #[SuppressMessage("Microsoft.Security", "CS001:SecretInline", Justification="Test secret that is found elsewhere in this repo")]
 """MIIEpQIBAAKCAQEA9GKzM+WraD5k08S7QjuvZDNxPe23YyYMgFWSUvZj9x0Mh5BT
 W9PXg3gAM3GS0eZ2F1+8sHqME1lXCHt5Pfmf7VHlawJTlXtgjmiBwFGSIYxC6v7v
 Nue//DKqmyl4bMq1jQFQ8ip3Q4L224MTbFE2zKAHvQQi/+X86MLJzy2giDAmEWkC
@@ -54,7 +54,7 @@ mc9SIC5CdqRKqIkoto264Qf82En6xXB2Q0qxe2+z8ZWhNfv1nDYEE9FeevNCx76F
 VCVbHXkCgYEA4+FD1q6iwl9wsAOKFVo+W044/MhKHDsyIED3YOzeRTAWRl2w/KX0
 c5ty2KecGu0cVXoAv2YUttHsuMZfm/QdosZr9UB4CR2lmzRys3LSx6QzCkZeMb/s
 QOMs6SYCPXggdXCAu9EVf5+TtYQg7aQNTTuYErlyq2g/tk3un8bHTwI=
------END RSA PRIVATE KEY-----"""
+-----END RSA PRIVATE KEY-----""")
 
 USER_CERTIFICATE = f"{USER_CERTIFICATE_PUBLIC_KEY}\n{USER_CERTIFICATE_PRIVATE_KEY}"
 
