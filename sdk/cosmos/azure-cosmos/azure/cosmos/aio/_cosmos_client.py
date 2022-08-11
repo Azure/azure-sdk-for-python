@@ -31,7 +31,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ..cosmos_client import _parse_connection_str, _build_auth
 from ._cosmos_client_connection_async import CosmosClientConnection
-from .._base import build_options as _build_options, _stringify_auto_scale
+from .._base import build_options as _build_options, _throughput_settings
 from ..offer import ThroughputProperties
 from ._retry_utility_async import _ConnectionRetryPolicy
 from ._database import DatabaseProxy
@@ -224,19 +224,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         offer_throughput = kwargs.pop('offer_throughput', None)
-        if offer_throughput is not None:
-            try:
-                if offer_throughput.auto_scale_max_throughput:
-                    request_options['autoUpgradePolicy'] = _stringify_auto_scale(offer=offer_throughput)
-                elif offer_throughput.auto_scale_increment_percent:
-                    raise ValueError("auto_scale_max_throughput must be supplied in "
-                                     "conjunction with auto_scale_increment_percent")
-                elif offer_throughput.offer_throughput:
-                    request_options["offerThroughput"] = offer_throughput.offer_throughput
-
-            except AttributeError:
-                if isinstance(offer_throughput, int):
-                    request_options["offerThroughput"] = offer_throughput
+        _throughput_settings(offer=offer_throughput, options=request_options)
 
         result = await self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
         if response_hook:
