@@ -82,6 +82,7 @@ class TestStorageRetry(StorageRecordedTestCase):
         # Assert
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_retry_on_timeout(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -106,6 +107,7 @@ class TestStorageRetry(StorageRecordedTestCase):
         # Assert
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_retry_callback_and_retry_context(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -174,6 +176,7 @@ class TestStorageRetry(StorageRecordedTestCase):
             service.delete_container(container_name, connection_timeout=(11, 11))
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_no_retry(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -198,6 +201,7 @@ class TestStorageRetry(StorageRecordedTestCase):
             service.delete_container(container_name)
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_linear_retry(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -223,6 +227,7 @@ class TestStorageRetry(StorageRecordedTestCase):
         # Assert
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_exponential_retry(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -250,6 +255,7 @@ class TestStorageRetry(StorageRecordedTestCase):
             service.delete_container(container_name)
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_exponential_retry_interval(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -288,6 +294,7 @@ class TestStorageRetry(StorageRecordedTestCase):
             assert 25 <= backoff <= 31
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_linear_retry_interval(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -318,6 +325,7 @@ class TestStorageRetry(StorageRecordedTestCase):
             assert 12 <= backoff <= 18
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_invalid_retry(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -341,6 +349,7 @@ class TestStorageRetry(StorageRecordedTestCase):
             service.delete_container(container_name)
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_retry_with_deserialization(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -365,6 +374,7 @@ class TestStorageRetry(StorageRecordedTestCase):
             service.delete_container(container_name)
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_retry_secondary(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -464,6 +474,7 @@ class TestStorageRetry(StorageRecordedTestCase):
         assert retry_callback.called
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_invalid_account_key(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -520,6 +531,7 @@ class TestStorageRetry(StorageRecordedTestCase):
         return inner
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_streaming_retry(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
