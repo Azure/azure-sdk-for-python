@@ -268,7 +268,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-appconfiguration msrest>=0.6.21
 #override azure-mgmt-dnsresolver msrest>=0.6.21
 #override azure-mgmt-appplatform msrest>=0.6.21
-#override azure-mgmt-cosmosdb msrest>=0.6.21
+#override azure-mgmt-cosmosdb msrest>=0.7.1
 #override azure-mgmt-mobilenetwork msrest>=0.6.21
 #override azure-mgmt-kusto msrest>=0.6.21
 #override azure-mgmt-servicelinker msrest>=0.6.21
@@ -345,7 +345,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-dashboard azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-loganalytics azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-synapse azure-mgmt-core>=1.3.0,<2.0.0
-#override azure-mgmt-cosmosdb azure-mgmt-core>=1.3.1,<2.0.0
+#override azure-mgmt-cosmosdb azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-datafactory azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-scvmm msrest>=0.6.21
 #override azure-mgmt-scvmm azure-mgmt-core>=1.3.0,<2.0.0

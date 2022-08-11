@@ -7,9 +7,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -20,9 +27,15 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._restorable_database_accounts_operations import build_get_by_location_request, build_list_by_location_request, build_list_request
-T = TypeVar('T')
+from ...operations._restorable_database_accounts_operations import (
+    build_get_by_location_request,
+    build_list_by_location_request,
+    build_list_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class RestorableDatabaseAccountsOperations:
     """
@@ -43,44 +56,41 @@ class RestorableDatabaseAccountsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def list_by_location(
-        self,
-        location: str,
-        **kwargs: Any
-    ) -> AsyncIterable[_models.RestorableDatabaseAccountsListResult]:
+        self, location: str, **kwargs: Any
+    ) -> AsyncIterable["_models.RestorableDatabaseAccountGetResult"]:
         """Lists all the restorable Azure Cosmos DB database accounts available under the subscription and
         in a region.  This call requires
         'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/read' permission.
 
         :param location: Cosmos DB region, with spaces between words and each word capitalized.
+         Required.
         :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either RestorableDatabaseAccountsListResult or the result
+        :return: An iterator like instance of either RestorableDatabaseAccountGetResult or the result
          of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.RestorableDatabaseAccountsListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.RestorableDatabaseAccountGetResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RestorableDatabaseAccountsListResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RestorableDatabaseAccountsListResult]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_by_location_request(
-                    subscription_id=self._config.subscription_id,
                     location=location,
+                    subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_location.metadata['url'],
+                    template_url=self.list_by_location.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -88,15 +98,11 @@ class RestorableDatabaseAccountsOperations:
                 request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
-                
-                request = build_list_by_location_request(
-                    subscription_id=self._config.subscription_id,
-                    location=location,
-                    api_version=api_version,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -112,10 +118,8 @@ class RestorableDatabaseAccountsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -125,44 +129,38 @@ class RestorableDatabaseAccountsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_by_location.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}/restorableDatabaseAccounts"}  # type: ignore
+    list_by_location.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}/restorableDatabaseAccounts"}  # type: ignore
 
     @distributed_trace
-    def list(
-        self,
-        **kwargs: Any
-    ) -> AsyncIterable[_models.RestorableDatabaseAccountsListResult]:
+    def list(self, **kwargs: Any) -> AsyncIterable["_models.RestorableDatabaseAccountGetResult"]:
         """Lists all the restorable Azure Cosmos DB database accounts available under the subscription.
         This call requires 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/read' permission.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either RestorableDatabaseAccountsListResult or the result
+        :return: An iterator like instance of either RestorableDatabaseAccountGetResult or the result
          of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.RestorableDatabaseAccountsListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.RestorableDatabaseAccountGetResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RestorableDatabaseAccountsListResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RestorableDatabaseAccountsListResult]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -170,14 +168,11 @@ class RestorableDatabaseAccountsOperations:
                 request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
-                
-                request = build_list_request(
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -193,10 +188,8 @@ class RestorableDatabaseAccountsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -206,49 +199,42 @@ class RestorableDatabaseAccountsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/restorableDatabaseAccounts"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/restorableDatabaseAccounts"}  # type: ignore
 
     @distributed_trace_async
     async def get_by_location(
-        self,
-        location: str,
-        instance_id: str,
-        **kwargs: Any
+        self, location: str, instance_id: str, **kwargs: Any
     ) -> _models.RestorableDatabaseAccountGetResult:
         """Retrieves the properties of an existing Azure Cosmos DB restorable database account.  This call
         requires 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/read/*' permission.
 
         :param location: Cosmos DB region, with spaces between words and each word capitalized.
+         Required.
         :type location: str
-        :param instance_id: The instanceId GUID of a restorable database account.
+        :param instance_id: The instanceId GUID of a restorable database account. Required.
         :type instance_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RestorableDatabaseAccountGetResult, or the result of cls(response)
+        :return: RestorableDatabaseAccountGetResult or the result of cls(response)
         :rtype: ~azure.mgmt.cosmosdb.models.RestorableDatabaseAccountGetResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RestorableDatabaseAccountGetResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RestorableDatabaseAccountGetResult]
 
-        
         request = build_get_by_location_request(
-            subscription_id=self._config.subscription_id,
             location=location,
             instance_id=instance_id,
+            subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_by_location.metadata['url'],
+            template_url=self.get_by_location.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -256,22 +242,20 @@ class RestorableDatabaseAccountsOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('RestorableDatabaseAccountGetResult', pipeline_response)
+        deserialized = self._deserialize("RestorableDatabaseAccountGetResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_by_location.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}/restorableDatabaseAccounts/{instanceId}"}  # type: ignore
-
+    get_by_location.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}/restorableDatabaseAccounts/{instanceId}"}  # type: ignore
