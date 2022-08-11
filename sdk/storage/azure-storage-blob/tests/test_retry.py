@@ -169,7 +169,7 @@ class TestStorageRetry(StorageRecordedTestCase):
             # 3 retries + 1 original == 4
             assert retry_transport.count == 4
             # This call should succeed on the server side, but fail on the client side due to socket timeout
-            assert 'read timeout' in str(error.exception), 'Expected socket timeout but got different exception.'
+            assert 'read timeout' in str(error.value.args[0]), 'Expected socket timeout but got different exception.'
 
         finally:
             # we must make the timeout normal again to let the delete operation succeed
@@ -194,8 +194,8 @@ class TestStorageRetry(StorageRecordedTestCase):
         try:
             with pytest.raises(HttpResponseError) as error:
                 service.create_container(container_name, raw_response_hook=callback)
-            assert error.exception.response.status_code == 408
-            assert error.exception.reason == 'Created'
+            assert error.value.status_code == 408
+            assert error.value.reason == 'Created'
 
         finally:
             service.delete_container(container_name)
@@ -343,8 +343,8 @@ class TestStorageRetry(StorageRecordedTestCase):
         try:
             with pytest.raises(HttpResponseError) as error:
                 service.create_container(container_name, raw_response_hook=callback)
-            assert error.exception.response.status_code == 418
-            assert error.exception.reason == 'Created'
+            assert error.value.status_code == 418
+            assert error.value.reason == 'Created'
         finally:
             service.delete_container(container_name)
 
