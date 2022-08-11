@@ -22,7 +22,7 @@ python -m pip install azure-communication-rooms
 
 #### Prequisites
 
-- Python 3.6 or later is required to use this package.
+- Python 3.7 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
 

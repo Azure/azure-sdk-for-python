@@ -70,9 +70,6 @@ class CommunicationUserIdentifier(object):
         self.raw_id = kwargs.get('raw_id')
         self.properties = CommunicationUserProperties(id=id)
 
-    def __eq__(self, other):
-        return self.__dict__ == other.__dict__
-
 
 PhoneNumberProperties = TypedDict(
     'PhoneNumberProperties',
@@ -82,12 +79,14 @@ PhoneNumberProperties = TypedDict(
 
 class PhoneNumberIdentifier(object):
     """Represents a phone number.
+
     :ivar str raw_id: Optional raw ID of the identifier.
     :ivar kind: The type of identifier.
     :vartype kind: str or CommunicationIdentifierKind
     :ivar Mapping properties: The properties of the identifier.
      The keys in this mapping include:
         - `value`(str): The phone number in E.164 format.
+
     :param str value: The phone number.
     """
     kind = CommunicationIdentifierKind.PHONE_NUMBER
@@ -117,9 +116,6 @@ class UnknownIdentifier(object):
         self.raw_id = identifier
         self.properties = {}
 
-    def __eq__(self, other):
-        return self.__dict__ == other.__dict__
-
 
 MicrosoftTeamsUserProperties = TypedDict(
     'MicrosoftTeamsUserProperties',
@@ -131,6 +127,7 @@ MicrosoftTeamsUserProperties = TypedDict(
 
 class MicrosoftTeamsUserIdentifier(object):
     """Represents an identifier for a Microsoft Teams user.
+
     :ivar str raw_id: Optional raw ID of the identifier.
     :ivar kind: The type of identifier.
     :vartype kind: str or CommunicationIdentifierKind
@@ -141,6 +138,7 @@ class MicrosoftTeamsUserIdentifier(object):
         - `is_anonymous` (bool): Set this to true if the user is anonymous for example when joining
           a meeting with a share link.
         - `cloud` (str): Cloud environment that this identifier belongs to.
+
     :param str user_id: Microsoft Teams user id.
     :keyword bool is_anonymous: `True` if the identifier is anonymous. Default value is `False`.
     :keyword cloud: Cloud environment that the user belongs to. Default value is `PUBLIC`.

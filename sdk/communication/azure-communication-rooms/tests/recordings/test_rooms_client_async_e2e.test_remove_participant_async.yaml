@@ -19,7 +19,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2022-06-01
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
   response:
     body:
       string: '{"identity":{"id":"sanitized"}}'
@@ -66,7 +66,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2022-06-01
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
   response:
     body:
       string: '{"identity":{"id":"sanitized"}}'
@@ -113,7 +113,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2022-06-01
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
   response:
     body:
       string: '{"identity":{"id":"sanitized"}}'
@@ -162,7 +162,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.ppe.communication.azure.net/rooms?api-version=2022-02-01
+    uri: https://sanitized.communication.azure.com/rooms?api-version=2022-02-01
   response:
     body:
       string: '{"id":"99453303631023647","createdDateTime":"2022-08-08T19:45:46.8861295+00:00","validFrom":"2022-08-08T19:45:46.8080666+00:00","validUntil":"2023-02-04T19:45:46.8080666+00:00","roomJoinPolicy":"InviteOnly","participants":[{"communicationIdentifier":{"rawId":"sanitized","communicationUser":{"id":"sanitized"}},"role":"Presenter"},{"communicationIdentifier":{"rawId":"sanitized","communicationUser":{"id":"sanitized"}},"role":"Attendee"}]}'
@@ -177,7 +177,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://sanitized.ppe.communication.azure.net/rooms?api-version=2022-02-01
+    url: https://sanitized.communication.azure.com/rooms?api-version=2022-02-01
 - request:
     body: '{"participants": [{"communicationIdentifier": {"communicationUser": {"id":
       "sanitized"}}}]}'
@@ -195,7 +195,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.ppe.communication.azure.net/rooms/99453303631023647/participants:remove?api-version=2022-02-01
+    uri: https://sanitized.communication.azure.com/rooms/99453303631023647/participants:remove?api-version=2022-02-01
   response:
     body:
       string: '{"participants":[{"communicationIdentifier":{"rawId":"sanitized","communicationUser":{"id":"sanitized"}},"role":"Attendee"}]}'
@@ -209,7 +209,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://sanitized.ppe.communication.azure.net/rooms/99453303631023647/participants:remove?api-version=2022-02-01
+    url: https://sanitized.communication.azure.com/rooms/99453303631023647/participants:remove?api-version=2022-02-01
 - request:
     body: ''
     headers:
@@ -222,7 +222,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.ppe.communication.azure.net/rooms/99453303631023647/participants?api-version=2022-02-01
+    uri: https://sanitized.communication.azure.com/rooms/99453303631023647/participants?api-version=2022-02-01
   response:
     body:
       string: '{"participants":[{"communicationIdentifier":{"rawId":"sanitized","communicationUser":{"id":"sanitized"}},"role":"Attendee"}]}'
@@ -236,7 +236,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://sanitized.ppe.communication.azure.net/rooms/99453303631023647/participants?api-version=2022-02-01
+    url: https://sanitized.communication.azure.com/rooms/99453303631023647/participants?api-version=2022-02-01
 - request:
     body: ''
     headers:
@@ -249,7 +249,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.ppe.communication.azure.net/rooms/99453303631023647?api-version=2022-02-01
+    uri: https://sanitized.communication.azure.com/rooms/99453303631023647?api-version=2022-02-01
   response:
     body:
       string: ''
@@ -261,7 +261,7 @@ interactions:
     status:
       code: 204
       message: No Content
-    url: https://sanitized.ppe.communication.azure.net/rooms/99453303631023647?api-version=2022-02-01
+    url: https://sanitized.communication.azure.com/rooms/99453303631023647?api-version=2022-02-01
 - request:
     body: null
     headers:
@@ -280,7 +280,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.ppe.communication.azure.net/identities/sanitized?api-version=2022-06-01
+    uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2022-06-01
   response:
     body:
       string: ''
@@ -321,7 +321,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.ppe.communication.azure.net/identities/sanitized?api-version=2022-06-01
+    uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2022-06-01
   response:
     body:
       string: ''
@@ -362,7 +362,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.ppe.communication.azure.net/identities/sanitized?api-version=2022-06-01
+    uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2022-06-01
   response:
     body:
       string: ''
