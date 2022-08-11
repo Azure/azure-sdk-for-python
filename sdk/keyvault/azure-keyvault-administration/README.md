@@ -14,11 +14,12 @@ and other secrets
 ([azure-keyvault-certificates](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates)) -
 create, manage, and deploy public and private SSL/TLS certificates
 
-[Package (PyPI)][pypi_package_administration] | [API reference documentation][reference_docs] | [Product documentation][keyvault_docs]
+[Source code][library_src] | [Package (PyPI)][pypi_package_administration] | [API reference documentation][reference_docs] | [Product documentation][keyvault_docs] | [Samples][administration_samples]
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_.
+
 _Python 3.7 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
 
 ## Getting started
@@ -34,126 +35,53 @@ authentication as demonstrated below.
 ### Prerequisites
 * An [Azure subscription][azure_sub]
 * Python 3.7 or later
-* A [managed HSM][managed_hsm]. If you need to create one, see the final two steps in the next section for details on creating the managed HSM with the Azure CLI.
+* An existing [Key Vault Managed HSM][managed_hsm]. If you need to create one, you can do so using the Azure CLI by following the steps in [this document][managed_hsm_cli].
 
 ### Authenticate the client
-This document demonstrates using [DefaultAzureCredential][default_cred_ref]
-to authenticate as a service principal. However, this package's clients
-accept any [azure-identity][azure_identity] credential. See the
-[azure-identity][azure_identity] documentation for more information about other
-credentials.
+In order to interact with the Azure Key Vault service, you will need an instance of either a [KeyVaultAccessControlClient](#create-a-keyvaultaccesscontrolclient) or [KeyVaultBackupClient](#create-a-keyvaultbackupclient), as well as a **vault url** (which you may see as "DNS Name" in the Azure Portal) and a credential object. This document demonstrates using a [DefaultAzureCredential][default_cred_ref], which is appropriate for most scenarios, including local development and production environments. We recommend using a [managed identity][managed_identity] for authentication in production environments.
 
-#### Create and Get credentials
-This [Azure Cloud Shell][azure_cloud_shell] snippet shows how to create a
-new service principal. Before using it, replace "your-application-name" with
-a more appropriate name for your service principal.
+See [azure-identity][azure_identity] documentation for more information about other methods of authentication and their corresponding credential types.
 
-* Create a service principal:
-    ```Bash
-    az ad sp create-for-rbac --name http://your-application-name --skip-assignment
-    ```
-
-    > Output:
-    > ```json
-    > {
-    >     "appId": "generated app id",
-    >     "displayName": "your-application-name",
-    >     "name": "http://your-application-name",
-    >     "password": "random password",
-    >     "tenant": "tenant id"
-    > }
-    > ```
-
-* Take note of the service principal objectId
-    ```Bash
-    az ad sp show --id <appId> --query objectId
-    ```
-
-
-    > Output:
-    > ```
-    > "<your-service-principal-object-id>"
-    > ```
-
-* Use the output to set **AZURE_CLIENT_ID** ("appId" above), **AZURE_CLIENT_SECRET**
-    ("password" above) and **AZURE_TENANT_ID** ("tenant" above) environment variables.
-    The following example shows a way to do this in Bash:
-    ```Bash
-    export AZURE_CLIENT_ID="generated app id"
-    export AZURE_CLIENT_SECRET="random password"
-    export AZURE_TENANT_ID="tenant id"
-    ```
-
-* Create the managed HSM and grant the above mentioned service principal authorization to perform administrative operations on the managed HSM (replace `<your-resource-group-name>` and `<your-managed-hsm-name>` with your own, unique names and `<your-service-principal-object-id>` with the value from above):
-    ```Bash
-    az keyvault create --hsm-name "<your-managed-hsm-name>" --resource-group "<your-resource-group-name>" --administrators <your-service-principal-object-id> --location "<your-azure-location>"
-    ```
-  This service principal is automatically added to the "Managed HSM Administrators" [built-in role][built_in_roles].
-
-* Activate your managed HSM to enable key and role management. Detailed instructions can be found in [this quickstart guide](https://docs.microsoft.com/azure/key-vault/managed-hsm/quick-create-cli#activate-your-managed-hsm). Create three self signed certificates and download the [Security Domain](https://docs.microsoft.com/azure/key-vault/managed-hsm/security-domain) for your managed HSM:
-    > **Important:** Create and store the RSA key pairs and security domain file generated in this step securely.
-    ```Bash
-    openssl req -newkey rsa:2048 -nodes -keyout cert_0.key -x509 -days 365 -out cert_0.cer
-    openssl req -newkey rsa:2048 -nodes -keyout cert_1.key -x509 -days 365 -out cert_1.cer
-    openssl req -newkey rsa:2048 -nodes -keyout cert_2.key -x509 -days 365 -out cert_2.cer
-    az keyvault security-domain download --hsm-name "<your-managed-hsm-name>" --sd-wrapping-keys ./certs/cert_0.cer ./certs/cert_1.cer ./certs/cert_2.cer --sd-quorum 2 --security-domain-file <your-managed-hsm-name>-SD.json
-    ```
-
-* Use the above mentioned managed HSM name to retrieve details of your managed HSM instance which also contains your manged HSM URL (`hsmUri`):
-    ```Bash
-    az keyvault show --hsm-name "<your-managed-hsm-name>"
-    ```
-
-#### Controlling access to your managed HSM
-The designated administrators assigned during creation are automatically added to the "Managed HSM Administrators" [built-in role][built_in_roles],
-who are able to download a security domain and [manage roles for data plane access][access_control], among other limited permissions.
-
-To perform other actions on keys, you need to assign principals to other roles such as "Managed HSM Crypto User", which can perform non-destructive key operations:
-
-```Bash
-az keyvault role assignment create --hsm-name <your-managed-hsm-name> --role "Managed HSM Crypto User" --scope / --assignee-object-id <principal-or-user-object-ID> --assignee-principal-type <principal-type>
-```
-
-Please read [best practices][best_practices] for properly securing your managed HSM.
-
-#### Create a client
-Once the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
-**AZURE_TENANT_ID** environment variables are set,
-[DefaultAzureCredential][default_cred_ref] will be able to authenticate the
-clients.
-
-There are two clients available in this package – below are snippets demonstrating how to construct
-each one of these clients. Constructing a client also requires your managed HSM's URL, which you can
-get from the Azure CLI (shown above).
-
-##### Create a KeyVaultAccessControlClient
+#### Create a KeyVaultAccessControlClient
+After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create an access control client (replacing the value of `vault_url` with your Managed HSM's URL):
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.administration import KeyVaultAccessControlClient
 
 credential = DefaultAzureCredential()
 
-client = KeyVaultAccessControlClient(vault_url="https://my-managed-hsm-name.managedhsm.azure.net/", credential=credential)
+client = KeyVaultAccessControlClient(
+    vault_url="https://my-managed-hsm-name.managedhsm.azure.net/",
+    credential=credential
+)
 ```
 
-##### Create a KeyVaultBackupClient
+> **NOTE:** For an asynchronous client, import `azure.keyvault.administration.aio`'s `KeyVaultAccessControlClient` instead.
+
+#### Create a KeyVaultBackupClient
+After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create a backup client (replacing the value of `vault_url` with your Managed HSM's URL):
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.administration import KeyVaultBackupClient
 
 credential = DefaultAzureCredential()
 
-client = KeyVaultBackupClient(vault_url="https://my-managed-hsm-name.managedhsm.azure.net/", credential=credential)
+client = KeyVaultBackupClient(
+    vault_url="https://my-managed-hsm-name.managedhsm.azure.net/",
+    credential=credential
+)
 ```
+
+> **NOTE:** For an asynchronous client, import `azure.keyvault.administration.aio`'s `KeyVaultBackupClient` instead.
 
 ## Key concepts
 
-### Role Definition
+### Role definition
 A role definition defines the operations that can be performed, such as read, write, and delete. It can also define the operations that are excluded from allowed operations.
 
 A role definition is specified as part of a role assignment.
 
-### Role Assignment.
+### Role assignment
 A role assignment is the association of a role definition to a service principal. They can be created, listed, fetched individually, and deleted.
 
 ### KeyVaultAccessControlClient
@@ -164,14 +92,14 @@ A `KeyVaultBackupClient` performs full key backups, full key restores, and selec
 
 ## Examples
 This section contains code snippets covering common tasks:
-* Access Control
-    * [List all role definitions](#list-all-role-definitions "List all role definitions")
-    * [Set, Get, and Delete a role definition](#set-get-and-delete-a-role-defintion "Set, Get, and Delete a role definition")
-    * [List all role assignments](#list-all-role-assignments "List all role assignments")
-    * [Create, Get, and Delete a role assignment](#create-get-and-delete-a-role-assignment "Create, Get, and Delete a role assignment")
-* Backup and Restore
-    * [Perform a full key backup](#perform-a-full-key-backup "Perform a full key backup")
-    * [Perform a full key restore](#perform-a-full-key-restore "Perform a full key restore")
+* Access control
+    * [List all role definitions](#list-all-role-definitions)
+    * [Set, get, and delete a role definition](#set-get-and-delete-a-role-defintion)
+    * [List all role assignments](#list-all-role-assignments)
+    * [Create, get, and delete a role assignment](#create-get-and-delete-a-role-assignment)
+* Backup and restore
+    * [Perform a full key backup](#perform-a-full-key-backup)
+    * [Perform a full key restore](#perform-a-full-key-restore)
 
 ### List all role definitions
 List the role definitions available for assignment.
@@ -182,7 +110,10 @@ from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultR
 
 credential = DefaultAzureCredential()
 
-client = KeyVaultAccessControlClient(vault_url="https://my-managed-hsm-name.managedhsm.azure.net/", credential=credential)
+client = KeyVaultAccessControlClient(
+    vault_url="https://my-managed-hsm-name.managedhsm.azure.net/",
+    credential=credential
+)
 
 # this will list all role definitions available for assignment
 role_definitions = client.list_role_definitions(KeyVaultRoleScope.GLOBAL)
@@ -193,7 +124,7 @@ for definition in role_definitions:
     print(definition.description)
 ```
 
-### Set, Get, and Delete a role definition
+### Set, get, and delete a role definition
 
 `set_role_definition` can be used to either create a custom role definition or update an existing definition with the specified name.
 
@@ -209,7 +140,10 @@ from azure.keyvault.administration import (
 
 credential = DefaultAzureCredential()
 
-client = KeyVaultAccessControlClient(vault_url="https://my-managed-hsm-name.managedhsm.azure.net/", credential=credential)
+client = KeyVaultAccessControlClient(
+    vault_url="https://my-managed-hsm-name.managedhsm.azure.net/",
+    credential=credential
+)
 
 # create a custom role definition
 permissions = [KeyVaultPermission(allowed_data_actions=[KeyVaultDataAction.READ_HSM_KEY])]
@@ -239,7 +173,10 @@ from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultR
 
 credential = DefaultAzureCredential()
 
-client = KeyVaultAccessControlClient(vault_url="https://my-managed-hsm-name.managedhsm.azure.net/", credential=credential)
+client = KeyVaultAccessControlClient(
+    vault_url="https://my-managed-hsm-name.managedhsm.azure.net/",
+    credential=credential
+)
 
 # this will list all role assignments
 role_assignments = client.list_role_assignments(KeyVaultRoleScope.GLOBAL)
@@ -250,8 +187,8 @@ for assignment in role_assignments:
     print(assignment.role_definition_id)
 ```
 
-### Create, Get, and Delete a role assignment
-Assign a role to a service principal. This will require a role definition id from the list retrieved in the [above snippet](#list-all-role-definitions) and the principal object id retrieved in the [Create and Get credentials](#create-and-get-credentials) section.
+### Create, get, and delete a role assignment
+Assign a role to a service principal. This will require a role definition ID and service principal object ID. You can use an ID from the retrieved [list of role definitions](#list-all-role-definitions) for the former, and an assignment's `principal_id` from the list retrieved in the [above snippet](#list-all-role-assignments) for the latter.
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -259,10 +196,15 @@ from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultR
 
 credential = DefaultAzureCredential()
 
-client = KeyVaultAccessControlClient(vault_url="https://my-managed-hsm-name.managedhsm.azure.net/", credential=credential)
+client = KeyVaultAccessControlClient(
+    vault_url="https://my-managed-hsm-name.managedhsm.azure.net/",
+    credential=credential
+)
 
-role_definition_id = "<role-definition-id>"  # Replace <role-definition-id> with the id of a definition returned from the previous example
-principal_id = "<your-service-principal-object-id>"
+# Replace <role-definition-id> with the id of a definition from the fetched list from an earlier example
+role_definition_id = "<role-definition-id>"
+# Replace <service-principal-object-id> with the principal_id of an assignment returned from the previous example
+principal_id = "<service-principal-object-id>"
 
 # first, let's create the role assignment
 role_assignment = client.create_role_assignment(KeyVaultRoleScope.GLOBAL, role_definition_id, principal_id)
@@ -363,12 +305,16 @@ except ResourceNotFoundError as e:
 Clients from the Administration library can only be used to perform operations on a managed HSM, so attempting to do so on a Key Vault will raise an error.
 
 ## Next steps
+Several samples are available in the Azure SDK for Python GitHub repository. These samples provide example code for additional Key Vault scenarios:
+| File | Description |
+|-------------|-------------|
+| [access_control_operations.py][access_control_operations_sample] | create/update/delete role definitions and role assignments |
+| [access_control_operations_async.py][access_control_operations_async_sample] | create/update/delete role definitions and role assignments with an async client |
+| [backup_restore_operations.py][backup_operations_sample] | full backup and restore |
+| [backup_restore_operations_async.py][backup_operations_async_sample] | full backup and restore with an async client |
 
-Content forthcoming
-
-###  Additional Documentation
-For more extensive documentation on Azure Key Vault, see the
-[API reference documentation][reference_docs].
+###  Additional documentation
+For more extensive documentation on Azure Key Vault, see the [API reference documentation][reference_docs].
 
 For more extensive documentation on Managed HSM, see the [service documentation][managed_hsm].
 
@@ -388,21 +334,38 @@ For more information, see the
 [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact opencode@microsoft.com with any additional questions or comments.
 
+
 <!-- LINKS -->
 [access_control]: https://docs.microsoft.com/azure/key-vault/managed-hsm/access-control
+[access_control_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/access_control_operations.py
+[access_control_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/access_control_operations_async.py
+[administration_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples
 [azure_cloud_shell]: https://shell.azure.com/bash
 [azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core#azure-core-library-exceptions
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [azure_identity_pypi]: https://pypi.org/project/azure-identity/
 [azure_sub]: https://azure.microsoft.com/free/
+
+[backup_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/backup_restore_operations.py
+[backup_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/backup_restore_operations_async.py
 [best_practices]: https://docs.microsoft.com/azure/key-vault/managed-hsm/best-practices
 [built_in_roles]: https://docs.microsoft.com/azure/key-vault/managed-hsm/built-in-roles
+
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
+
 [default_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
+
 [keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
-[managed_hsm]: https://docs.microsoft.com/azure/key-vault/managed-hsm/
+
+[library_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/azure/keyvault/administration
+
+[managed_hsm]: https://docs.microsoft.com/azure/key-vault/managed-hsm/overview
+[managed_hsm_cli]: https://docs.microsoft.com/azure/key-vault/managed-hsm/quick-create-cli
+[managed_identity]: https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview
+
 [pip]: https://pypi.org/project/pip/
 [pypi_package_administration]: https://pypi.org/project/azure-keyvault-administration
+
 [reference_docs]: https://aka.ms/azsdk/python/keyvault-administration/docs
 
 
