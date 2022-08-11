@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Moved OpenTelemetry `entry_points` to setup.py
+    ([#XXXXX](https://github.com/Azure/azure-sdk-for-python/pull/XXXXX))
 - Added storage configuration options
     ([#25633](https://github.com/Azure/azure-sdk-for-python/pull/25633))
 
