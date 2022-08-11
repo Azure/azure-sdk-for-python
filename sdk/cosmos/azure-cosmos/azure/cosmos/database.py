@@ -28,7 +28,7 @@ import warnings
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
-from ._base import build_options, _throughput_settings, _deserialize_throughput
+from ._base import build_options, _set_throughput_options, _deserialize_throughput
 from .container import ContainerProxy
 from .offer import ThroughputProperties
 from .http_constants import StatusCodes
@@ -232,7 +232,7 @@ class DatabaseProxy(object):
                 UserWarning,
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
-        _throughput_settings(offer=offer_throughput, options=request_options)
+        _set_throughput_options(offer=offer_throughput, options=request_options)
         data = self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )

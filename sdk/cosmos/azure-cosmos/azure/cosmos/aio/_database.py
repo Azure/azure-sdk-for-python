@@ -30,7 +30,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection
-from .._base import build_options as _build_options, _throughput_settings, _deserialize_throughput
+from .._base import build_options as _build_options, _set_throughput_options, _deserialize_throughput
 from ._container import ContainerProxy
 from ..offer import ThroughputProperties
 from ..http_constants import StatusCodes
@@ -227,7 +227,7 @@ class DatabaseProxy(object):
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         offer_throughput = kwargs.pop('offer_throughput', None)
-        _throughput_settings(offer=offer_throughput, options=request_options)
+        _set_throughput_options(offer=offer_throughput, options=request_options)
 
         data = await self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs

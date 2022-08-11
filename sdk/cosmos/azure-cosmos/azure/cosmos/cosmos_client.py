@@ -27,7 +27,7 @@ import warnings
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
-from ._base import build_options, _throughput_settings
+from ._base import build_options, _set_throughput_options
 from .offer import ThroughputProperties
 from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy
@@ -269,7 +269,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
                 UserWarning,
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
-        _throughput_settings(offer=offer_throughput, options=request_options)
+        _set_throughput_options(offer=offer_throughput, options=request_options)
 
         result = self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
         if response_hook:

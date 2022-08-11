@@ -690,7 +690,7 @@ def _stringify_auto_scale(offer):
     return auto_scale_settings
 
 
-def _throughput_settings(offer, options):
+def _set_throughput_options(offer, options):
     offer_throughput = offer
     request_options = options
     if offer_throughput is not None:
