@@ -2875,7 +2875,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         container_client = self.bsc.get_container_client(self.container_name)
         await container_client.upload_blob(blob_name, b"", validate_content=True)
 
-        blob_client: BlobClient = container_client.get_blob_client(blob_name)
+        blob_client = container_client.get_blob_client(blob_name)
 
         assert await blob_client.exists()
         assert (await blob_client.get_blob_properties()).size == 0
