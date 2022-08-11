@@ -2,6 +2,9 @@
 """
 
 from requests.structures import CaseInsensitiveDict
+import platform
+import os
+from . import exceptions
 
 
 class CosmosDiagnostics(object):
@@ -58,15 +61,16 @@ class CosmosDiagnostics(object):
         self._headers = CaseInsensitiveDict()
         self._body = None
         self._request_charge = 0
-        self._error_code = 0
-        self._error_message = ""
+        self._status_code = 200
+        self._status_message = "Standard response for successful HTTP requests"
+        self._system_information = self.get_system_info()
 
     @property
     def headers(self):
         return CaseInsensitiveDict(self._headers)
 
     @headers.setter
-    def header(self, value: dict):
+    def headers(self, value: dict):
         self._headers = value
         self._request_charge += float(value.get("x-ms-request-charge", 0))
 
@@ -79,20 +83,20 @@ class CosmosDiagnostics(object):
         self._body = value
 
     @property
-    def error_code(self):
-        return self._error_code
+    def status_code(self):
+        return self._status_code
 
-    @error_code.setter
-    def error_code(self, value: int):
-        self._error_code = value
+    @status_code.setter
+    def status_code(self, value: int):
+        self._status_code = value
 
     @property
-    def error_message(self):
-        return self._error_message
+    def status_message(self):
+        return self._status_message
 
-    @error_message.setter
-    def error_message(self, value: str):
-        self._error_message = value
+    @status_message.setter
+    def status_message(self, value: str):
+        self._status_message = value
 
     @property
     def request_charge(self):
@@ -101,16 +105,53 @@ class CosmosDiagnostics(object):
     def clear(self):
         self._request_charge = 0
 
+    def update_header_and_body(self, header, body):
+        self.header(header)
+        self.body(body)
+
+    def update_diagnostics(self, header: dict, body: dict, e: exceptions.CosmosHttpResponseError, **kwargs):
+        self.headers = header
+        self.body = body
+        #Note: Plan is to use kwargs to be able to easily modify this function to update with needed information
+        #notes figure out how to just get status information instead of just relying on exceptions being passed
+        if e:
+            self.status_code = e.status_code
+            self.status_message = e.message
+        else:
+            #cureent hacky way to get succesful status code
+            self.status_code = 200
+            self.status_message = "Standard response for successful HTTP requests"
+
+    #Note: Planning to add a flag to print it in a pretty format instead of just returning a dictionary
     def __call__(self):
         #This will format all the properties into a dictionary
         return {
-            key: value
-            for key, value in self.__dict__.items()
-            if isinstance(value, property)
+            key: getattr(self, key)
+            for key in vars(self)
         }
+        # return {
+        #     key: value
+        #     for key, value in self.__dict__.items()
+        #     if isinstance(value, property)
+        # }
 
     def __getattr__(self, name):
-        key = "x-ms-" + name.replace("_", "-")
+        temp_name = name
+        key = "x-ms-" + temp_name.replace("_", "-")
         if key in self._common:
             return self._headers[key]
+        else:
+            return getattr(self, name)
         raise AttributeError(name)
+
+    #Current System info I was able to get
+    def get_system_info(self):
+        ret = {}
+        ret["system"] = platform.system()
+        ret["python version"] = platform.python_version()
+        ret["architecture"] = platform.architecture()
+        ret["cpu"] = platform.processor()
+        ret["cpu count"] = os.cpu_count()
+        ret["machine"] = platform.machine()
+
+        return ret

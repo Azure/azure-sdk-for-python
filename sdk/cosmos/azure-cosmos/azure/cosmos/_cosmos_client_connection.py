@@ -144,6 +144,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         # Keeps the latest response headers from the server.
         self.last_response_headers = None
+        # Keep Track of Last Exceptions
+        self.last_exceptions = None
 
         self._useMultipleWriteLocations = False
         self._global_endpoint_manager = global_endpoint_manager._GlobalEndpointManager(self)

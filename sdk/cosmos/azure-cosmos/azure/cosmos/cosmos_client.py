@@ -32,6 +32,7 @@ from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy
 from .documents import ConnectionPolicy, DatabaseAccount
 from .exceptions import CosmosResourceNotFoundError
+from .cosmos_diagnostics import CosmosDiagnostics
 
 __all__ = ("CosmosClient",)
 
@@ -178,6 +179,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         self.client_connection = CosmosClientConnection(
             url, auth=auth, consistency_level=consistency_level, connection_policy=connection_policy, **kwargs
         )
+        self.diagnostics = CosmosDiagnostics()
 
     def __repr__(self):  # pylint:disable=client-method-name-no-double-underscore
         # type () -> str
@@ -274,6 +276,8 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         result = self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
+        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result,
+                                            self.client_connection.last_exceptions)
         return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
 
     @distributed_trace
@@ -373,6 +377,8 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
+        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result,
+                                            self.client_connection.last_exceptions)
         return result
 
     @distributed_trace
@@ -424,6 +430,8 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
             result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
+        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result,
+                                            self.client_connection.last_exceptions)
         return result
 
     @distributed_trace
@@ -461,6 +469,9 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
+        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, None,
+                                            self.client_connection.last_exceptions)
+
 
     @distributed_trace
     def get_database_account(self, **kwargs):
@@ -475,4 +486,6 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         result = self.client_connection.GetDatabaseAccount(**kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
+        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result,
+                                            self.client_connection.last_exceptions)
         return result

@@ -69,6 +69,9 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
     )
     partition_key_range_gone_retry_policy = _gone_retry_policy.PartitionKeyRangeGoneRetryPolicy(client, *args)
 
+    #on a new execution, erase last exception from client, currently always ovverides even if there is exception
+    # client.last_exceptions = None
+
     while True:
         try:
             client_timeout = kwargs.get('timeout')
@@ -87,10 +90,12 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             client.last_response_headers[
                 HttpHeaders.ThrottleRetryWaitTimeInMs
             ] = resourceThrottle_retry_policy.cummulative_wait_time_in_milliseconds
-
+            client.last_exceptions = None
             return result
         except exceptions.CosmosHttpResponseError as e:
             retry_policy = None
+            #Current way of passing status code and message up, only works for exceptions though
+            client.last_exceptions = e
             if e.status_code == StatusCodes.FORBIDDEN and e.sub_status == SubStatusCodes.WRITE_FORBIDDEN:
                 retry_policy = endpointDiscovery_retry_policy
             elif e.status_code == StatusCodes.TOO_MANY_REQUESTS:

@@ -31,6 +31,7 @@ from azure.core.tracing.decorator import distributed_trace  # type: ignore
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
 from .permission import Permission
+from .cosmos_diagnostics import CosmosDiagnostics
 
 
 class UserProxy(object):
@@ -46,6 +47,7 @@ class UserProxy(object):
         self.id = id
         self.user_link = u"{}/users/{}".format(database_link, id)
         self._properties = properties
+        self.diagnostics = CosmosDiagnostics()
 
     def __repr__(self):
         # type () -> str
@@ -84,6 +86,8 @@ class UserProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
+        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, self._properties,
+                                            self.client_connection.last_exceptions)
 
         return cast('Dict[str, Any]', self._properties)
 
@@ -106,6 +110,8 @@ class UserProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
+        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result,
+                                            self.client_connection.last_exceptions)
 
         return result
 
@@ -141,6 +147,8 @@ class UserProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
+        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result,
+                                            self.client_connection.last_exceptions)
 
         return result
 
@@ -165,6 +173,8 @@ class UserProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission_resp)
+        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, permission_resp,
+                                            self.client_connection.last_exceptions)
 
         return Permission(
             id=permission_resp["id"],
@@ -196,6 +206,8 @@ class UserProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission)
+        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, permission,
+                                            self.client_connection.last_exceptions)
 
         return Permission(
             id=permission["id"],
@@ -228,6 +240,8 @@ class UserProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission)
+        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, permission,
+                                            self.client_connection.last_exceptions)
 
         return Permission(
             id=permission["id"],
@@ -262,6 +276,8 @@ class UserProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission_resp)
+        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, permission_resp,
+                                            self.client_connection.last_exceptions)
 
         return Permission(
             id=permission_resp["id"],
@@ -294,3 +310,5 @@ class UserProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
+        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result,
+                                            self.client_connection.last_exceptions)

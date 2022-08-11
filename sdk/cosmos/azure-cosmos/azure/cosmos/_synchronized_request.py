@@ -136,7 +136,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
             connection_verify=kwargs.pop("connection_verify", is_ssl_enabled),
             **kwargs
         )
-
+    #Find a way to leverage this information
     response = response.http_response
     headers = dict(response.headers)
 
