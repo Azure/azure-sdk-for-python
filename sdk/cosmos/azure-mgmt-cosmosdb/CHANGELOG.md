@@ -1,5 +1,12 @@
 # Release History
 
+## 8.0.0b2 (2022-08-11)
+
+### Features Added
+
+  - Added model CassandraClusterDataCenterNodeItem
+  - Added model ManagedServiceIdentityUserAssignedIdentity
+
 ## 8.0.0b1 (2022-08-03)
 
 **Features**
