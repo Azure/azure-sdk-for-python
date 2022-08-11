@@ -70,7 +70,7 @@ steps:
 
     - bash: |
         conda env create --name ${{ artifact.name }} --file $(Build.SourcesDirectory)/eng/conda_env.yml
-        conda install --yes --quiet --name ${{ artifact.name }} conda-build
+        conda install --yes --quiet --name ${{ artifact.name }} conda-build conda-verify typing-extensions
       displayName: 'Prepare Conda Environment for building ${{ artifact.name }}'
 
     - bash: |
@@ -84,13 +84,15 @@ steps:
       ArtifactPath: '$(Agent.BuildDirectory)/conda/output'
       ArtifactName: 'conda'
 
-  - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-    displayName: 'Upload Conda Package SBOM'
-    condition: succeededOrFailed()
-    inputs:
-      BuildDropPath: '$(Agent.BuildDirectory)/conda/manifest'
 
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-    parameters:
-      ArtifactPath: '$(Agent.BuildDirectory)/conda/manifest/_manifest'
-      ArtifactName: 'conda_manifest'
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+      displayName: 'Upload Conda Package SBOM'
+      condition: succeededOrFailed()
+      inputs:
+        BuildDropPath: '$(Agent.BuildDirectory)/conda/manifest'
+
+    - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+      parameters:
+        ArtifactPath: '$(Agent.BuildDirectory)/conda/manifest/_manifest'
+        ArtifactName: 'conda_manifest'
