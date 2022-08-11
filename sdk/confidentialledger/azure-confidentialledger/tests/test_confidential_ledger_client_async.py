@@ -2,6 +2,7 @@ import asyncio
 import hashlib
 import os
 from typing import Dict, List, Union
+from urllib.parse import urlparse
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import (
@@ -35,6 +36,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         # to the recording options for the Confidential Ledger endpoint.
         function_recording_options: Dict[str, Union[str, List[PemCertificate]]] = {
             "tls_certificate": network_cert,
+            "tls_certificate_host": urlparse(endpoint).netloc,
         }
         set_function_recording_options(**function_recording_options)
 
