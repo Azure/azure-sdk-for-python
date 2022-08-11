@@ -489,7 +489,7 @@ def _get_recording_option_args(**kwargs: "Any") -> dict:
             transport["TLSValidationCert"] = tls_certificate
 
         if tls_certificate_host:
-            transport["TLSValidationCertHost"] = tls_certificate_host
+            transport["TSLValidationCertHost"] = tls_certificate_host
 
         request_args["Transport"] = transport
 
