@@ -9,20 +9,60 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
 from . import models
 from ._configuration import CosmosDBManagementClientConfiguration
-from .operations import CassandraClustersOperations, CassandraDataCentersOperations, CassandraResourcesOperations, CollectionOperations, CollectionPartitionOperations, CollectionPartitionRegionOperations, CollectionRegionOperations, DataTransferJobsOperations, DatabaseAccountRegionOperations, DatabaseAccountsOperations, DatabaseOperations, GraphResourcesOperations, GremlinResourcesOperations, LocationsOperations, MongoDBResourcesOperations, NotebookWorkspacesOperations, Operations, PartitionKeyRangeIdOperations, PartitionKeyRangeIdRegionOperations, PercentileOperations, PercentileSourceTargetOperations, PercentileTargetOperations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, RestorableDatabaseAccountsOperations, RestorableGremlinDatabasesOperations, RestorableGremlinGraphsOperations, RestorableGremlinResourcesOperations, RestorableMongodbCollectionsOperations, RestorableMongodbDatabasesOperations, RestorableMongodbResourcesOperations, RestorableSqlContainersOperations, RestorableSqlDatabasesOperations, RestorableSqlResourcesOperations, RestorableTableResourcesOperations, RestorableTablesOperations, ServiceOperations, SqlResourcesOperations, TableResourcesOperations
+from ._serialization import Deserializer, Serializer
+from .operations import (
+    CassandraClustersOperations,
+    CassandraDataCentersOperations,
+    CassandraResourcesOperations,
+    CollectionOperations,
+    CollectionPartitionOperations,
+    CollectionPartitionRegionOperations,
+    CollectionRegionOperations,
+    DataTransferJobsOperations,
+    DatabaseAccountRegionOperations,
+    DatabaseAccountsOperations,
+    DatabaseOperations,
+    GraphResourcesOperations,
+    GremlinResourcesOperations,
+    LocationsOperations,
+    MongoDBResourcesOperations,
+    NotebookWorkspacesOperations,
+    Operations,
+    PartitionKeyRangeIdOperations,
+    PartitionKeyRangeIdRegionOperations,
+    PercentileOperations,
+    PercentileSourceTargetOperations,
+    PercentileTargetOperations,
+    PrivateEndpointConnectionsOperations,
+    PrivateLinkResourcesOperations,
+    RestorableDatabaseAccountsOperations,
+    RestorableGremlinDatabasesOperations,
+    RestorableGremlinGraphsOperations,
+    RestorableGremlinResourcesOperations,
+    RestorableMongodbCollectionsOperations,
+    RestorableMongodbDatabasesOperations,
+    RestorableMongodbResourcesOperations,
+    RestorableSqlContainersOperations,
+    RestorableSqlDatabasesOperations,
+    RestorableSqlResourcesOperations,
+    RestorableTableResourcesOperations,
+    RestorableTablesOperations,
+    ServiceOperations,
+    SqlResourcesOperations,
+    TableResourcesOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class CosmosDBManagementClient:    # pylint: disable=too-many-instance-attributes
+
+class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Azure Cosmos DB Database Service Resource Provider REST API.
 
     :ivar database_accounts: DatabaseAccountsOperations operations
@@ -119,9 +159,9 @@ class CosmosDBManagementClient:    # pylint: disable=too-many-instance-attribute
      azure.mgmt.cosmosdb.operations.RestorableTableResourcesOperations
     :ivar service: ServiceOperations operations
     :vartype service: azure.mgmt.cosmosdb.operations.ServiceOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
@@ -139,7 +179,9 @@ class CosmosDBManagementClient:    # pylint: disable=too-many-instance-attribute
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = CosmosDBManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = CosmosDBManagementClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -149,15 +191,9 @@ class CosmosDBManagementClient:    # pylint: disable=too-many-instance-attribute
         self.database_accounts = DatabaseAccountsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.database = DatabaseOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.collection = CollectionOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.database = DatabaseOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.collection = CollectionOperations(self._client, self._config, self._serialize, self._deserialize)
         self.collection_region = CollectionRegionOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -170,9 +206,7 @@ class CosmosDBManagementClient:    # pylint: disable=too-many-instance-attribute
         self.percentile_target = PercentileTargetOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.percentile = PercentileOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.percentile = PercentileOperations(self._client, self._config, self._serialize, self._deserialize)
         self.collection_partition_region = CollectionPartitionRegionOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -185,27 +219,19 @@ class CosmosDBManagementClient:    # pylint: disable=too-many-instance-attribute
         self.partition_key_range_id_region = PartitionKeyRangeIdRegionOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.graph_resources = GraphResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.sql_resources = SqlResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.graph_resources = GraphResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.sql_resources = SqlResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.mongo_db_resources = MongoDBResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.table_resources = TableResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.table_resources = TableResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.cassandra_resources = CassandraResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.gremlin_resources = GremlinResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.locations = LocationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.locations = LocationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.data_transfer_jobs = DataTransferJobsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -260,16 +286,9 @@ class CosmosDBManagementClient:    # pylint: disable=too-many-instance-attribute
         self.restorable_table_resources = RestorableTableResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.service = ServiceOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -278,7 +297,7 @@ class CosmosDBManagementClient:    # pylint: disable=too-many-instance-attribute
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
