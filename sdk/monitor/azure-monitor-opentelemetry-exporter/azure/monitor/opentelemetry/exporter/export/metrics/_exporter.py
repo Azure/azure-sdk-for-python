@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 import logging
 
-from typing import Dict, Optional, Any
+from typing import Optional, Any
 
 from opentelemetry.sdk.metrics.export import (
     DataPointT,
@@ -12,8 +12,6 @@ from opentelemetry.sdk.metrics.export import (
     MetricsData as OTMetricsData,
     NumberDataPoint,
 )
-from opentelemetry.sdk.metrics.export import AggregationTemporality
-from opentelemetry.sdk.metrics.view import Aggregation
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 
@@ -89,7 +87,6 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         are completed as soon as possible.
         """
         # TODO
-        pass
 
     def shutdown(
         self,

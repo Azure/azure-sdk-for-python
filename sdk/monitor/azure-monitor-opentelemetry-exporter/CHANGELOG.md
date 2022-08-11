@@ -9,15 +9,15 @@
 
 ### Breaking Changes
 
+- Update to OpenTelemetry api/sdk v1.12.0
+    ([#25659](https://github.com/Azure/azure-sdk-for-python/pull/25659))
+
 ### Bugs Fixed
 
 - Opentelemetry span events have wrong ParentId in Azure Monitor logs
     ([#25369](https://github.com/Azure/azure-sdk-for-python/pull/25369))
 
 ### Other Changes
-
-- Update to OpenTelemetry api/sdk v1.12.0
-    ([#25633](https://github.com/Azure/azure-sdk-for-python/pull/25633))
 
 ## 1.0.0b6 (2022-06-10)
 
