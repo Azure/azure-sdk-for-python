@@ -49,6 +49,7 @@ class UamqpReceiveEventTest(EventPerfTest):
             timeout=0,
             debug=False
         )
+
     def _get_eh_connection_config(self):
         connection_string = self.get_from_env("AZURE_EVENTHUB_CONNECTION_STRING")
         auth_info = parse_connection_string(connection_string)

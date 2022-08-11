@@ -58,7 +58,7 @@ setup(
             "GitPython",
             "requests>=2.0",
         ],
-        "systemperf": ["aiohttp>=3.0", "requests>=2.0", "tornado==6.0.3", "httpx>=0.21", "azure-core", "uamqp"],
+        "systemperf": ["aiohttp>=3.0", "requests>=2.0", "tornado==6.0.3", "httpx>=0.21", "azure-core"],
     },
     package_dir={"": "src"},
     install_requires=DEPENDENCIES,
