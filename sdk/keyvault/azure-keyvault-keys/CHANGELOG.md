@@ -1,5 +1,15 @@
 # Release History
 
+## 4.6.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 4.6.1 (2022-08-11)
 
 ### Other Changes
