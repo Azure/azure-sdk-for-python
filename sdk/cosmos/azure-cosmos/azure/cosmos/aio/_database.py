@@ -30,7 +30,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection
-from .._base import build_options as _build_options, _stringify_auto_scale
+from .._base import build_options as _build_options, _stringify_auto_scale, _deserialize_throughput
 from ._container import ContainerProxy
 from ..offer import ThroughputProperties
 from ..http_constants import StatusCodes
@@ -755,21 +755,7 @@ class DatabaseProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, throughput_properties)
 
-        if 'offerAutopilotSettings' in throughput_properties[0]['content'] and 'autoUpgradePolicy' in \
-                throughput_properties[0]['content']['offerAutopilotSettings']:
-            return ThroughputProperties(properties=throughput_properties[0], auto_scale_max_throughput= \
-                throughput_properties[0]['content']['offerAutopilotSettings']['maxThroughput'],
-                                        auto_scale_increment_percent=throughput_properties[0]['content']
-                                        ['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
-                                            'incrementPercent'])
-
-        elif 'offerAutopilotSettings' in throughput_properties[0]['content']:
-            return ThroughputProperties(properties=throughput_properties[0],
-                                        auto_scale_max_throughput=throughput_properties[0]['content']
-                                        ['offerAutopilotSettings']['maxThroughput'])
-
-        return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
-                                    properties=throughput_properties[0])
+        return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace_async
     async def replace_throughput(self, throughput: int, **kwargs: Any) -> ThroughputProperties:

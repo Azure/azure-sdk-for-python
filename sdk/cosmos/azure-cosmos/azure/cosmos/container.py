@@ -29,7 +29,7 @@ import warnings
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
-from ._base import build_options, validate_cache_staleness_value
+from ._base import build_options, validate_cache_staleness_value, _deserialize_throughput
 from .exceptions import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
 from .offer import ThroughputProperties
@@ -668,22 +668,7 @@ class ContainerProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, throughput_properties)
 
-        if 'offerAutopilotSettings' in throughput_properties[0]['content'] and 'autoUpgradePolicy' in \
-                throughput_properties[0]['content']['offerAutopilotSettings']:
-            return ThroughputProperties(properties=throughput_properties[0], auto_scale_max_throughput= \
-                throughput_properties[0]['content']['offerAutopilotSettings']['maxThroughput'],
-                                        auto_scale_increment_percent=throughput_properties[0]['content']
-                                        ['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
-                                            'incrementPercent'])
-
-        elif 'offerAutopilotSettings' in throughput_properties[0]['content']:
-            return ThroughputProperties(properties=throughput_properties[0],
-                                        auto_scale_max_throughput=throughput_properties[0]['content']
-                                        ['offerAutopilotSettings']['maxThroughput'])
-
-        return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
-                                    properties=throughput_properties[0])
-
+        return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace
     def replace_throughput(self, throughput, **kwargs):
