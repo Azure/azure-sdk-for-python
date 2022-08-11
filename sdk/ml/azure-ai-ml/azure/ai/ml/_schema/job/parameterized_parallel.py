@@ -2,19 +2,21 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._schema import NestedField, PathAwareSchema, StringTransformedEnum
-from marshmallow import fields, INCLUDE
-from azure.ai.ml.constants import LoggingLevel
+from marshmallow import INCLUDE, fields
+
+from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
+from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.component.parallel_task import ComponentParallelTaskSchema
-from azure.ai.ml._schema.resource_configuration import ResourceConfigurationSchema
 from azure.ai.ml._schema.component.retry_settings import RetrySettingsSchema
+from azure.ai.ml._schema.resource_configuration import ResourceConfigurationSchema
+from azure.ai.ml.constants import LoggingLevel
 
 
 class ParameterizedParallelSchema(PathAwareSchema):
     logging_level = StringTransformedEnum(
         allowed_values=[LoggingLevel.DEBUG, LoggingLevel.INFO, LoggingLevel.WARN],
         casing_transform=lambda *args: None,
-        default=LoggingLevel.INFO,
+        dump_default=LoggingLevel.INFO,
         metadata={
             "description": "A string of the logging level name, which is defined in 'logging'. Possible values are 'WARNING', 'INFO', and 'DEBUG'."
         },
@@ -27,17 +29,17 @@ class ParameterizedParallelSchema(PathAwareSchema):
     resources = NestedField(ResourceConfigurationSchema)
     retry_settings = NestedField(RetrySettingsSchema, unknown=INCLUDE)
     max_concurrency_per_instance = fields.Integer(
-        default=1,
+        dump_default=1,
         metadata={"description": "The max parallellism that each compute instance has."},
     )
     error_threshold = fields.Integer(
-        default=-1,
+        dump_default=-1,
         metadata={
             "description": "The number of item processing failures should be ignored. If the error_threshold is reached, the job terminates. For a list of files as inputs, one item means one file reference. This setting doesn't apply to command parallelization."
         },
     )
     mini_batch_error_threshold = fields.Integer(
-        default=-1,
+        dump_default=-1,
         metadata={
             "description": "The number of mini batch processing failures should be ignored. If the mini_batch_error_threshold is reached, the job terminates. For a list of files as inputs, one item means one file reference. This setting can be used by either command or python function parallelization. Only one error_threshold setting can be used in one job."
         },

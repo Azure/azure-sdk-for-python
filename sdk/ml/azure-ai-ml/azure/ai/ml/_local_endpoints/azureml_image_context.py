@@ -5,8 +5,8 @@
 
 import logging
 from pathlib import Path
-from azure.ai.ml.constants import LocalEndpointConstants
 
+from azure.ai.ml.constants import LocalEndpointConstants
 
 module_logger = logging.getLogger(__name__)
 
@@ -38,7 +38,7 @@ class AzureMlImageContext(object):
         model_directory_path: str,
         model_mount_path: str = "",
     ):
-        """Constructor for AzureMlImageContext
+        """Constructor for AzureMlImageContext.
 
         :param endpoint_name: the name of the online endpoint
         :type endpoint_name: str
@@ -106,7 +106,8 @@ class AzureMlImageContext(object):
 
     @property
     def volumes(self) -> dict:
-        """Returns the volumes to mount when running the Azure ML Image locally.
+        """Returns the volumes to mount when running the Azure ML Image
+        locally.
 
         :return: dict
         """
@@ -114,7 +115,8 @@ class AzureMlImageContext(object):
 
     @property
     def environment(self) -> dict:
-        """Returns the environment variables to set when running the Azure ML Image locally.
+        """Returns the environment variables to set when running the Azure ML
+        Image locally.
 
         :return: dict
         """

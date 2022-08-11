@@ -1,6 +1,16 @@
 # Release History
 
-## 5.2.0b5 (2022-08-09)
+## 5.2.0b6 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 5.2.0b5 (2022-08-11)
 
 The version of this client library defaults to the API version `2022-05-01`.
 
@@ -24,6 +34,10 @@ The version of this client library defaults to the API version `2022-05-01`.
 - `SingleCategoryClassifyResult` and `MultiCategoryClassifyResult` models have been merged into one model: `ClassifyDocumentResult`.
 - Renamed `SingleCategoryClassifyAction` to `SingleLabelClassifyAction`
 - Renamed `MultiCategoryClassifyAction` to `MultiLabelClassifyAction`.
+
+### Bugs Fixed
+
+- A `HttpResponseError` will be immediately raised when the call quota volume is exceeded in a `F0` tier Language resource.
 
 ### Other Changes
 

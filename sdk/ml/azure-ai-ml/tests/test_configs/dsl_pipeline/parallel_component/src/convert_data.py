@@ -1,8 +1,6 @@
-
 import argparse
 import os
 from pathlib import Path
-import shutil
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input_data", type=str)
@@ -27,9 +25,7 @@ for file_name in arr:
     data_path = Path(args.input_data + "/" + file_name)
     print("Processing {}".format(data_path))
     (output_dir / data_path.name).write_text(file_name)
-    with MLTable.open(mode='a') as f:
+    with MLTable.open(mode="a") as f:
         f.write(f"\n  - file: ./{data_path.name}")
     # shutil.move(data_path, Path(output_dir / data_path.name))
     # MLTable.write_text(f"\t\t-\tfile:\t./{data_path.name}")
-
-

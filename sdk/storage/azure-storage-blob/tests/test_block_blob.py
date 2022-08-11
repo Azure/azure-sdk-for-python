@@ -87,10 +87,6 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         actual_data = blob.download_blob()
         assert actual_data.readall() == expected_data
 
-    def _get_datetime_variable(self, variables, name, dt):
-        dt_string = variables.setdefault(name, dt.isoformat())
-        return datetime.strptime(dt_string, "%Y-%m-%dT%H:%M:%S.%f")
-
     #--Test cases for block blobs --------------------------------------------
     @BlobPreparer()
     @recorded_by_proxy
@@ -244,9 +240,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         # Act
         self._setup(storage_account_name, storage_account_key)
         source_blob = self._create_blob()
-        early_test_datetime = self._get_datetime_variable(
+        early_test_datetime = self.get_datetime_variable(
             variables, "early_test_dt", (datetime.utcnow() - timedelta(minutes=15)))
-        late_test_datetime = self._get_datetime_variable(
+        late_test_datetime = self.get_datetime_variable(
             variables, "late_test_dt", (datetime.utcnow() + timedelta(minutes=15)))
         sas = self.generate_sas(
             generate_blob_sas,
@@ -574,7 +570,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob.stage_block('3', b'CCC')
 
         # Act
-        expiry_time = self._get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5))
+        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5))
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
         immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
                                                  policy_mode=BlobImmutabilityPolicyMode.Unlocked)

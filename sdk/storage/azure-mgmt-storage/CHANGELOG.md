@@ -1,5 +1,12 @@
 # Release History
 
+## 20.1.0 (2022-08-09)
+
+**Features**
+
+  - Added model AllowedMethods
+  - Added model LeaseContainerRequestEnum
+
 ## 20.0.0 (2022-04-06)
 
 **Features**

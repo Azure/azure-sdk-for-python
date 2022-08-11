@@ -6,6 +6,7 @@ import functools
 import os
 
 from azure.core.pipeline.transport import HttpRequest
+
 from .._internal.managed_identity_base import ManagedIdentityBase
 from .._internal.managed_identity_client import ManagedIdentityClient
 

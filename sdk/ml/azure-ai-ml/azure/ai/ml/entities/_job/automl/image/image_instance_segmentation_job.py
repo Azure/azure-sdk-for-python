@@ -2,36 +2,29 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 from typing import Dict, Union
 
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml._restclient.v2022_02_01_preview.models import AutoMLJob as RestAutoMLJob
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    AutoMLJob as RestAutoMLJob,
-    InstanceSegmentationPrimaryMetrics,
     ImageInstanceSegmentation as RestImageInstanceSegmentation,
-    JobBaseData,
-    TaskType,
 )
-from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
-from azure.ai.ml.entities._job.automl.image.image_limit_settings import ImageLimitSettings
-from azure.ai.ml.entities._job.automl.image.image_object_detection_search_space import (
-    ImageObjectDetectionSearchSpace,
-)
-from azure.ai.ml.entities._job.automl.image.image_sweep_settings import ImageSweepSettings
-from azure.ai.ml.entities._job.automl.image.automl_image_object_detection_base import (
-    AutoMLImageObjectDetectionBase,
-)
-from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
+from azure.ai.ml._restclient.v2022_02_01_preview.models import InstanceSegmentationPrimaryMetrics, JobBaseData, TaskType
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, AutoMLConstants
+from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
+from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+from azure.ai.ml.entities._job.automl.image.automl_image_object_detection_base import AutoMLImageObjectDetectionBase
+from azure.ai.ml.entities._job.automl.image.image_limit_settings import ImageLimitSettings
+from azure.ai.ml.entities._job.automl.image.image_sweep_settings import ImageSweepSettings
+from azure.ai.ml.entities._util import load_from_dict
 
 
 @experimental
 class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
-    """
-    Configuration for AutoML Image Instance Segmentation job.
-    """
+    """Configuration for AutoML Image Instance Segmentation job."""
 
     _DEFAULT_PRIMARY_METRIC = InstanceSegmentationPrimaryMetrics.MEAN_AVERAGE_PRECISION
 
@@ -41,8 +34,7 @@ class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
         primary_metric: Union[str, InstanceSegmentationPrimaryMetrics] = None,
         **kwargs,
     ) -> None:
-        """
-        Initialize a new AutoML Image Instance Segmentation job.
+        """Initialize a new AutoML Image Instance Segmentation job.
 
         :param primary_metric: The primary metric to use for optimization
         :param kwargs: Job-specific arguments
@@ -164,15 +156,49 @@ class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
 
     @classmethod
     def _load_from_dict(
-        cls, data: Dict, context: Dict, additional_message: str, inside_pipeline=False, **kwargs
+        cls,
+        data: Dict,
+        context: Dict,
+        additional_message: str,
+        inside_pipeline=False,
+        **kwargs,
     ) -> "AutoMLJob":
         from azure.ai.ml._schema.automl.image_vertical.image_object_detection import ImageInstanceSegmentationSchema
         from azure.ai.ml._schema.pipeline.automl_node import ImageInstanceSegmentationNodeSchema
 
         if inside_pipeline:
-            return load_from_dict(ImageInstanceSegmentationNodeSchema, data, context, additional_message, **kwargs)
+            loaded_data = load_from_dict(
+                ImageInstanceSegmentationNodeSchema,
+                data,
+                context,
+                additional_message,
+                **kwargs,
+            )
         else:
-            return load_from_dict(ImageInstanceSegmentationSchema, data, context, additional_message, **kwargs)
+            loaded_data = load_from_dict(
+                ImageInstanceSegmentationSchema,
+                data,
+                context,
+                additional_message,
+                **kwargs,
+            )
+        job_instance = cls._create_instance_from_schema_dict(loaded_data)
+        return job_instance
+
+    @classmethod
+    def _create_instance_from_schema_dict(cls, loaded_data: Dict) -> "ImageInstanceSegmentationJob":
+        loaded_data.pop(AutoMLConstants.TASK_TYPE_YAML, None)
+        search_space_val = loaded_data.pop("search_space", None)
+        search_space = ImageInstanceSegmentationJob._get_search_space_from_str(search_space_val)
+        data_settings = {
+            "training_data": loaded_data.pop("training_data"),
+            "target_column_name": loaded_data.pop("target_column_name"),
+            "validation_data": loaded_data.pop("validation_data", None),
+            "validation_data_size": loaded_data.pop("validation_data_size", None),
+        }
+        job = ImageInstanceSegmentationJob(search_space=search_space, **loaded_data)
+        job.set_data(**data_settings)
+        return job
 
     def _to_dict(self, inside_pipeline=False) -> Dict:
         from azure.ai.ml._schema.automl.image_vertical.image_object_detection import ImageInstanceSegmentationSchema
