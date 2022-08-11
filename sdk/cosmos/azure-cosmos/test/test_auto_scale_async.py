@@ -121,34 +121,32 @@ class AutoScaleTest(unittest.TestCase):
         await self.created_database.delete_container(created_container)
         await self.client.delete_database(test_config._test_config.TEST_DATABASE_ID)
 
+    async def test_create_database(self):
+        # Testing auto_scale_settings for the create_database method
+        created_database = await self.client.create_database("db1", offer_throughput=ThroughputProperties(
+                                                                    auto_scale_max_throughput=5000,
+                                                                    auto_scale_increment_percent=0))
+        created_db_properties = await created_database.get_throughput()
+        # Testing the input value of the max_throughput
+        self.assertEqual(
+            created_db_properties.auto_scale_max_throughput, 5000)
+        # Testing the input value of the increment_percentage
+        self.assertEqual(
+            created_db_properties.auto_scale_increment_percent, 0)
+
+        await self.client.delete_database("db1")
+
     async def test_create_database_if_not_exists(self):
         # Testing auto_scale_settings for the create_database_if_not_exists method
-        client = CosmosClient(self.host, self.masterKey, consistency_level="Session",
-                                   connection_policy=self.connectionPolicy)
-        created_database = await client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
-
-        created_container = await created_database.create_container(
-            id='container_with_auto_scale_settings',
-            partition_key=PartitionKey(path="/id"),
-            offer_throughput=ThroughputProperties(auto_scale_max_throughput=8000, auto_scale_increment_percent=0)
-
-        )
-        created_container_properties = await created_container.get_throughput()
-        # Testing the correct input value of the max_throughput
+        created_database = await self.client.create_database_if_not_exists("db2", offer_throughput=ThroughputProperties(
+                                                                    auto_scale_max_throughput=9000,
+                                                                    auto_scale_increment_percent=11))
+        created_db_properties = await created_database.get_throughput()
+        # Testing the input value of the max_throughput
+        self.assertNotEqual(
+            created_db_properties.auto_scale_max_throughput, 8000)
+        # Testing the input value of the increment_percentage
         self.assertEqual(
-            created_container_properties.auto_scale_max_throughput, 8000)
+            created_db_properties.auto_scale_increment_percent, 11)
 
-        await self.created_database.delete_container(created_container)
-
-        created_container = await self.created_database.create_container_if_not_exists(
-            id='container_with_auto_scale_settings',
-            partition_key=PartitionKey(path="/id"),
-            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=7)
-
-        )
-        created_container_properties = await created_container.get_throughput()
-        # Testing the correct input value of the max_increment_percentage
-        self.assertEqual(
-            created_container_properties.auto_scale_increment_percent, 7)
-
-        await self.created_database.delete_container(created_container)
+        await self.client.delete_database("db2")
