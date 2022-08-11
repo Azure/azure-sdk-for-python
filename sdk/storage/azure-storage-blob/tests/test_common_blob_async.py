@@ -2866,4 +2866,18 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             await blob.delete_blob()
             await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
 
+    @BlobPreparer()
+    async def test_validate_empty_blob(self, storage_account_name, storage_account_key):
+        """Test that we can upload an empty blob with validate=True."""
+        await self._setup(storage_account_name, storage_account_key)
+
+        blob_name = self.get_resource_name("utcontainer")
+        container_client = self.bsc.get_container_client(self.container_name)
+        await container_client.upload_blob(blob_name, b"", validate_content=True)
+
+        blob_client: BlobClient = container_client.get_blob_client(blob_name)
+
+        assert await blob_client.exists()
+        assert (await blob_client.get_blob_properties()).size == 0
+
 # ------------------------------------------------------------------------------

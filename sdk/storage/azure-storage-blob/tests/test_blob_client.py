@@ -711,24 +711,4 @@ class TestStorageClient(StorageRecordedTestCase):
                 self.account_url(storage_account_name, "blob"), credential=storage_account_key, container_name='foo', blob_name='bar')
             service.close()
 
-    @BlobPreparer()
-    def test_validate_empty_blob(self, **kwargs):
-        """Test that we can upload an empty blob with validate=True."""
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        service = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), credential=storage_account_key) 
-
-        container_name = "utcontainermycontainer"
-        container: ContainerClient = service.get_container_client(container_name)
-        container.create_container()
-        assert container.exists()
-
-        blob_name = "myblob"
-        container.upload_blob(blob_name, b"", validate_content=True)
-        blob_client: BlobClient = container.get_blob_client(blob_name)
-        assert blob_client.exists()
-        assert blob_client.get_blob_properties().size == 0
-
 # ------------------------------------------------------------------------------
