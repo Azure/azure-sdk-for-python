@@ -209,8 +209,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-ai-translation-document azure-core<2.0.0,>=1.14.0
 #override azure-monitor-opentelemetry-exporter azure-core<2.0.0,>=1.23.0
 #override azure-monitor-opentelemetry-exporter msrest>=0.6.10
-#override azure-monitor-opentelemetry-exporter opentelemetry-api==1.12.0rc1
-#override azure-monitor-opentelemetry-exporter opentelemetry-sdk==1.12.0rc1
+#override azure-monitor-opentelemetry-exporter opentelemetry-api<2.0.0,>=1.12.0
+#override azure-monitor-opentelemetry-exporter opentelemetry-sdk<2.0.0,>=1.12.0
 #override azure-core-tracing-opentelemetry opentelemetry-api<2.0.0,>=1.0.0
 #override azure-identity six>=1.12.0
 #override azure-keyvault-keys six>=1.12.0
