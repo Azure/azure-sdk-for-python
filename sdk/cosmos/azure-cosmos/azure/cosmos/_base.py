@@ -38,6 +38,7 @@ from . import partition_key
 from . import http_constants
 from . import _runtime_constants
 from .offer import ThroughputProperties
+
 # pylint: disable=protected-access
 
 _COMMON_OPTIONS = {
@@ -687,6 +688,24 @@ def _stringify_auto_scale(offer):
     auto_scale_settings = json.dumps(auto_scale_params)
 
     return auto_scale_settings
+
+
+def _throughput_settings(offer, options):
+    offer_throughput = offer
+    request_options = options
+    if offer_throughput is not None:
+        try:
+            if offer_throughput.auto_scale_max_throughput:
+                request_options['autoUpgradePolicy'] = _stringify_auto_scale(offer=offer_throughput)
+            elif offer_throughput.auto_scale_increment_percent:
+                raise ValueError("auto_scale_max_throughput must be supplied in "
+                                 "conjunction with auto_scale_increment_percent")
+            elif offer_throughput.offer_throughput:
+                request_options["offerThroughput"] = offer_throughput.offer_throughput
+
+        except AttributeError:
+            if isinstance(offer_throughput, int):
+                request_options["offerThroughput"] = offer_throughput
 
 
 def _deserialize_throughput(throughput):
