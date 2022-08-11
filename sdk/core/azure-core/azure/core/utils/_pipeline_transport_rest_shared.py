@@ -54,8 +54,7 @@ if TYPE_CHECKING:
     ]
     from ..pipeline.policies import SansIOHTTPPolicy
     from azure.core.pipeline.transport import (
-        HttpResponse as PipelineTransportHttpResponse,
-        AioHttpTransportResponse as PipelineTransportAioHttpTransportResponse,
+        HttpResponse as PipelineTransportHttpResponse
     )
     from azure.core.pipeline.transport._base import (
         _HttpResponseBase as PipelineTransportHttpResponseBase
