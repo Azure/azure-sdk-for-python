@@ -141,7 +141,7 @@ directive:
       $["responses"]["200"] = {
         "description": "dummy schema to get poller response when calling .result()",
         "schema": {
-          "$ref": "#/definitions/TextAnalysisAuthoringDeploymentJobState"
+          "$ref": "#/definitions/TextAnalysisAuthoringProjectDeployment"
         }
       };
   - where-operation: TextAnalysisAuthoring_SwapDeployments
@@ -176,31 +176,19 @@ directive:
 directive:
   - where-operation: TextAnalysisAuthoring_CreateProject
     transform: >
-        $.parameters[1]["x-ms-client-name"] = "project_parameters";
+        $.parameters[1]["x-ms-client-name"] = "project_options";
   - where-operation: TextAnalysisAuthoring_Import
     transform: >
         $.parameters[1]["x-ms-client-name"] = "project_data";
   - where-operation: TextAnalysisAuthoring_Train
     transform: >
-        $.parameters[1]["x-ms-client-name"] = "training_parameters";
+        $.parameters[1]["x-ms-client-name"] = "training_options";
   - where-operation: TextAnalysisAuthoring_SwapDeployments
     transform: >
-        $.parameters[1]["x-ms-client-name"] = "deployment_names";
+        $.parameters[1]["x-ms-client-name"] = "deployments";
   - where-operation: TextAnalysisAuthoring_DeployProject
     transform: >
-        $.parameters[2]["x-ms-client-name"] = "deployment_label";
-```
-
-## Remove status operations
-
-```yaml $(tag) == 'release_authoring_2022_05_01'
-directive:
-  - remove-operation: TextAnalysisAuthoring_GetDeploymentStatus
-  - remove-operation: TextAnalysisAuthoring_GetSwapDeploymentsStatus
-  - remove-operation: TextAnalysisAuthoring_GetExportStatus
-  - remove-operation: TextAnalysisAuthoring_GetImportStatus
-  - remove-operation: TextAnalysisAuthoring_GetTrainingStatus
-  - remove-operation: TextAnalysisAuthoring_GetProjectDeletionStatus
+        $.parameters[2]["x-ms-client-name"] = "deployment_options";
 ```
 
 ## Rename Authoring client operations
@@ -270,5 +258,23 @@ directive:
   - rename-operation:
       from: TextAnalysisAuthoring_ListTrainingConfigVersions
       to: ListTrainingConfigVersions
+    - rename-operation:
+      from: TextAnalysisAuthoring_GetProjectDeletionStatus
+      to: GetProjectDeletionJobStatus
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetTrainingStatus
+      to: GetTrainingJobStatus
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetDeploymentStatus
+      to: GetDeploymentJobStatus
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetSwapDeploymentsStatus
+      to: GetSwapDeploymentsJobStatus
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetExportStatus
+      to: GetExportProjectJobStatus
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetImportStatus
+      to: GetImportProjectJobStatus
   
 ```

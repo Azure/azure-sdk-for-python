@@ -1,4 +1,4 @@
-dummy_project = {
+{
   "projectFileVersion": "2022-05-01",
   "stringIndexType": "Utf16CodeUnit",
   "metadata": {
@@ -6,7 +6,7 @@ dummy_project = {
     "storageInputContainerName": "storage_container",
     "settings": {},
     "projectName": "LoanAgreements",
-    "multilingual": False,
+    "multilingual": false,
     "description": "This is a sample dataset provided by the Azure Language service team to help users get started with [Custom named entity recognition](https://aka.ms/ct-docs). The provided sample dataset contains 20 loan agreements drawn up between two entities.",
     "language": "en-us"
   },
