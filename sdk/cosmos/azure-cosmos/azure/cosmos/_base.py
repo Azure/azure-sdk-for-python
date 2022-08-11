@@ -31,15 +31,13 @@ from typing import Dict, Any
 
 from urllib.parse import quote as urllib_quote
 from urllib.parse import urlsplit
-
 from azure.core import MatchConditions
-
 from . import auth
 from . import documents
 from . import partition_key
 from . import http_constants
 from . import _runtime_constants
-
+from .offer import ThroughputProperties
 # pylint: disable=protected-access
 
 _COMMON_OPTIONS = {
@@ -689,3 +687,22 @@ def _stringify_auto_scale(offer):
     auto_scale_settings = json.dumps(auto_scale_params)
 
     return auto_scale_settings
+
+
+def _deserialize_throughput(throughput):
+    throughput_properties = throughput
+    if 'offerAutopilotSettings' in throughput_properties[0]['content'] and 'autoUpgradePolicy' in \
+            throughput_properties[0]['content']['offerAutopilotSettings']:
+        return ThroughputProperties(properties=throughput_properties[0], auto_scale_max_throughput= \
+            throughput_properties[0]['content']['offerAutopilotSettings']['maxThroughput'],
+                                    auto_scale_increment_percent=throughput_properties[0]['content']
+                                    ['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
+                                        'incrementPercent'])
+
+    elif 'offerAutopilotSettings' in throughput_properties[0]['content']:
+        return ThroughputProperties(properties=throughput_properties[0],
+                                    auto_scale_max_throughput=throughput_properties[0]['content']
+                                    ['offerAutopilotSettings']['maxThroughput'])
+    else:
+        return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
+                                    properties=throughput_properties[0])
