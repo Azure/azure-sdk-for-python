@@ -37,7 +37,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Optional, Union, Callable, List, Type, Generator
+    from typing import Any, Optional, Callable, List, Type, Generator
 
 
 __all__ = [

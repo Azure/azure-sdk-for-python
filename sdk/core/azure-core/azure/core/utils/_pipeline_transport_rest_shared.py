@@ -34,7 +34,6 @@ from ..pipeline._tools import await_result as _await_result
 
 if TYPE_CHECKING:
     from typing import (  # pylint: disable=ungrouped-imports
-        Dict,
         List,
         Union,
         Tuple,
@@ -53,10 +52,7 @@ if TYPE_CHECKING:
         RestHttpRequestPy3, RestHttpRequestPy2, PipelineTransportHttpRequest
     ]
     from ..pipeline.policies import SansIOHTTPPolicy
-    from azure.core.pipeline.transport import (
-        HttpResponse as PipelineTransportHttpResponse,
-        AioHttpTransportResponse as PipelineTransportAioHttpTransportResponse,
-    )
+    from azure.core.pipeline.transport import HttpResponse as PipelineTransportHttpResponse
     from azure.core.pipeline.transport._base import (
         _HttpResponseBase as PipelineTransportHttpResponseBase
     )
