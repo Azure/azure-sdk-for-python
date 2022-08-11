@@ -475,6 +475,7 @@ def _get_recording_option_args(**kwargs: "Any") -> dict:
 
     certificates = kwargs.pop("certificates", None)
     tls_certificate = kwargs.pop("tls_certificate", None)
+    tls_certificate_host = kwargs.pop("tls_certificate_host", None)
     request_args = _get_request_args(**kwargs)
 
     if certificates or tls_certificate:
@@ -486,6 +487,9 @@ def _get_recording_option_args(**kwargs: "Any") -> dict:
 
         if tls_certificate:
             transport["TLSValidationCert"] = tls_certificate
+
+        if tls_certificate_host:
+            transport["TLSValidationCertHost"] = tls_certificate_host
 
         request_args["Transport"] = transport
 
