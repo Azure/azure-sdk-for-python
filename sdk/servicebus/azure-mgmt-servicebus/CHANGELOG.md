@@ -1,5 +1,12 @@
 # Release History
 
+## 8.1.0 (2022-08-10)
+
+### Features Added
+
+  - Model SBNamespace has a new parameter minimum_tls_version
+  - Model SBNamespace has a new parameter public_network_access
+
 ## 8.0.0 (2022-08-08)
 
 **Features**
