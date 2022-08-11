@@ -86,7 +86,8 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         if loop and sys.version_info >= (3, 8):
-            warnings.warn("The 'loop' parameter was deprecated from asyncio's high-level APIs in Python 3.8 and is no longer supported.", DeprecationWarning)
+            warnings.warn("The 'loop' parameter was deprecated from asyncio's high-level"
+            "APIs in Python 3.8 and is no longer supported.", DeprecationWarning)
         super(ShareDirectoryClient, self).__init__(
             account_url,
             share_name=share_name,
