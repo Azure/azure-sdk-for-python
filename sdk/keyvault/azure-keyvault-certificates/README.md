@@ -379,7 +379,6 @@ contact opencode@microsoft.com with any additional questions or comments.
 [pip]: https://pypi.org/project/pip/
 [pypi_package_certificates]: https://pypi.org/project/azure-keyvault-certificates/
 
-[rbac_guide]: https://docs.microsoft.com/azure/key-vault/general/rbac-guide
 [recover_purge_operations_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-certificates/samples/recover_purge_operations.py
 [recover_purge_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-certificates/samples/recover_purge_operations_async.py
 [reference_docs]: https://aka.ms/azsdk/python/keyvault-certificates/docs
