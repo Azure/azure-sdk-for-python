@@ -83,7 +83,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
             # Update the options to account for certificate-based authentication.
             function_recording_options["certificates"] = [
-                PemCertificate(data=USER_CERTIFICATE_PRIVATE_KEY, key=USER_CERTIFICATE_PUBLIC_KEY)
+                PemCertificate(key=USER_CERTIFICATE_PRIVATE_KEY, data=USER_CERTIFICATE_PUBLIC_KEY)
             ]
             set_function_recording_options(**function_recording_options)
 
