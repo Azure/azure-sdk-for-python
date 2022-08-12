@@ -1,14 +1,14 @@
 # Release History
 
-## 4.6.2 (Unreleased)
+## 4.7.0b1 (2022-08-12)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+- An attempt will be made to generate an IV if one isn't provided for local encryption
+  ([#25380](https://github.com/Azure/azure-sdk-for-python/pull/25380))
 
 ### Other Changes
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+- Updated minimum `azure-core` version to 1.24.0
 
 ## 4.6.1 (2022-08-11)
 
