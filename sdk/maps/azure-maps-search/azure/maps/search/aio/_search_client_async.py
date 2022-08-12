@@ -15,7 +15,6 @@ from ._base_client_async import AsyncMapsSearchClientBase
 from .._generated.models import (
     PointOfInterestCategory,
     ReverseSearchCrossStreetAddressResult,
-    GeoJsonObject,
     SearchAddressBatchResult,
     Polygon,
 )
@@ -26,6 +25,10 @@ from ..models import (
     SearchAlongRouteOptions,
     ReverseSearchAddressResult,
     ReverseSearchAddressBatchProcessResult,
+)
+
+from .._shared import (
+    parse_geometry_input
 )
 
 if TYPE_CHECKING:
@@ -52,9 +55,13 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.AsyncTokenCredential or ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version:
-            The API version of the service to use for requests. It defaults to the latest service version.
-            Setting to an older version may result in reduced feature compatibility.
+    :keyword str base_url: Supported Maps Services or Language resource
+     base_url (protocol and hostname, for example: 'https://<resource-name>.mapsservices.azure.com').
+    :keyword str client_id: Specifies which account is intended for usage with the Azure AD security model.
+     It represents a unique ID for the Azure Maps account.
+    :keyword api_version: The API version of the service to use for requests.
+     It defaults to the latest service version.
+     Setting to an older version may result in reduced feature compatibility.
     :paramtype api_version: str
     """
     def __init__(
@@ -182,8 +189,8 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
 
         result = await self._search_client.fuzzy_search(
             query,
-            lat=coordinates.lat,
-            lon=coordinates.lon,
+            lat=coordinates[0],
+            lon=coordinates[1],
             btm_right=latlon_to_string(bounding_box.bottom_right),
             top_left=latlon_to_string(bounding_box.top_left),
             **kwargs
@@ -375,7 +382,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
     async def search_inside_geometry(
         self,
         query,  # type: str
-        geometry,  # type: "GeoJsonObject"
+        geometry,  # type: Union[object, str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -388,7 +395,8 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         :type query: str
         :param geometry: This represents the geometry for one or more geographical features (parks,
          state boundary etc.) to search in and should be a GeoJSON compliant type.
-        :type geometry: ~azure.maps.search.models.SearchInsideGeometryRequest
+         We are accepting GeoJson object or geo_interface
+        :type geometry: obejct or str
         :keyword int top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
          maximum: 100.
         :keyword str language: Language in which search results should be returned. Should be one of
@@ -425,7 +433,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         """
         result = await self._search_client.search_inside_geometry(
             query,
-            geometry,
+            geometry=parse_geometry_input(geometry),
             **kwargs
         )
         return SearchAddressResult(result.summary, result.results)

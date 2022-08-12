@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Union, TYPE_CHECKING
+from typing import Union, TYPE_CHECKING, Any
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
 from ._generated import SearchClient as _MapsSearchClient
@@ -30,14 +30,16 @@ def _authentication_policy(credential):
 class MapsSearchClientBase:
     def __init__(
         self,
-        credential, #type: Union[AzureKeyCredential, TokenCredential]
-        **kwargs #type Any
+        credential, # type: Union[AzureKeyCredential, TokenCredential]
+        **kwargs # type: Any
     ):
         # type: (...) -> None
 
         self._maps_client = _MapsSearchClient(
             credential=credential,  # type: ignore
             api_version=kwargs.pop("api_version", VERSION),
+            base_url=kwargs.pop("base_url", None),
+            client_id=kwargs.pop("client_id", None),
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             **kwargs
         )

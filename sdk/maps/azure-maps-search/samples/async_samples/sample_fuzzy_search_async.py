@@ -25,12 +25,10 @@ async def fuzzy_search_async():
     # [START fuzzy_search_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search.aio import MapsSearchClient
-    from collections import namedtuple
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
-    LatLon = namedtuple("LatLon", "lat lon")
     async with maps_search_client:
-        result = await maps_search_client.fuzzy_search("seattle", coordinates=LatLon(47.60323, -122.33028))
+        result = await maps_search_client.fuzzy_search("seattle", coordinates=(47.60323, -122.33028))
 
     print("Get Search Fuzzy with coordinates with search query: " + result.query)
     print("Fuzzy level: {}".format(result.fuzzy_level))

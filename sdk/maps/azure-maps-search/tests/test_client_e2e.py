@@ -145,6 +145,119 @@ class AzureMapsSearchClientE2ETest(AzureTestCase):
         assert top_answer.address.postal_code == "111"
         assert top_answer.address.country_code_iso3 == "TWN"
 
+    @pytest.mark.live_test_only
+    def test_get_geometries(self):
+        result = self.client.get_geometries(geometry_ids=["8bceafe8-3d98-4445-b29b-fd81d3e9adf5"])
+        assert len(result) > 0
+        assert result[0].provider_id == "8bceafe8-3d98-4445-b29b-fd81d3e9adf5"
+        top_answer = result[0]
+        assert top_answer.geometry_data.type == "FeatureCollection"
+        assert len(top_answer.geometry_data.features) > 0
+
+    @pytest.mark.live_test_only
+    def test_get_point_of_interest_categories(self):
+        result = self.client.get_point_of_interest_categories()
+        assert len(result) > 0
+        assert result[0].name == 'Sports Center'
+        assert result[0].id == 7320
+
+    @pytest.mark.live_test_only
+    def test_reverse_search_address(self):
+        result = self.client.reverse_search_address(coordinates=(25.0338053, 121.5640089))
+        assert len(result.results) > 0
+        top_answer = result.results[0]
+        assert top_answer.address.building_number == '45'
+        assert top_answer.address.postal_code == "110"
+        assert top_answer.address.country_code_iso3 == "TWN"
+
+    @pytest.mark.live_test_only
+    def test_reverse_search_cross_street_address(self):
+        result = self.client.reverse_search_cross_street_address(coordinates=(25.0338053, 121.5640089))
+        assert len(result.addresses) > 0
+        top_answer = result.addresses[0]
+        assert top_answer.address.postal_code == "110"
+        assert top_answer.address.country_code_iso3 == "TWN"
+
+    @pytest.mark.live_test_only
+    def test_search_inside_geometry(self):
+        geo_json_obj = {
+            'type': 'Polygon',
+            'coordinates': [
+                [[-122.43576049804686, 37.7524152343544],
+                [-122.43301391601562, 37.70660472542312],
+                [-122.36434936523438, 37.712059855877314],
+                [-122.43576049804686, 37.7524152343544]]
+            ]
+        }
+        result = self.client.search_inside_geometry(
+            query="pizza",
+            geometry=geo_json_obj
+        )
+        assert len(result.results) > 0
+        top_answer = result.results[0]
+        assert top_answer.id == "840069019806542"
+        assert top_answer.score == 2.1455464363
+        assert top_answer.address.country_subdivision == "CA"
+        assert top_answer.address.local_name == "San Francisco"
+
+    @pytest.mark.live_test_only
+    def test_search_along_route(self):
+        route_obj = {
+            "route": {
+                "type": "LineString",
+                "coordinates": [
+                    [-122.143035,47.653536],
+                    [-122.187164,47.617556],
+                    [-122.114981,47.570599],
+                    [-122.132756,47.654009]
+                ]
+            }
+        }
+        result = self.client.search_along_route(
+            query="burger",
+            route=route_obj,
+            max_detour_time=1000
+        )
+        assert len(result.results) > 0
+        top_answer = result.results[0]
+        assert top_answer.address.country_subdivision_name == "Washington"
+        assert top_answer.address.country_subdivision == "WA"
+        assert top_answer.address.country_code == "US"
+
+    @pytest.mark.live_test_only
+    def test_search_address(self):
+        result = self.client.search_address(query="15127 NE 24th Street, Redmond, WA 98052")
+        assert len(result.results) > 0
+        top_answer = result.results[0]
+        assert top_answer.type == 'Point Address'
+        assert top_answer.address.country_subdivision == "WA"
+        assert top_answer.address.country_code == "US"
+
+    @pytest.mark.live_test_only
+    def fuzzy_search_batch(self):
+        result = self.client.fuzzy_search_batch(
+            search_queries=[
+                "350 5th Ave, New York, NY 10118&limit=1",
+                "400 Broad St, Seattle, WA 98109&limit=3"
+            ]
+        )
+        assert len(result.items) > 0
+        top_answer = result.items[0]
+        assert top_answer.response.results[0].address.country_subdivision == "NY"
+        assert top_answer.response.results[0].address.country_code == "US"
+
+    @pytest.mark.live_test_only
+    def search_address_batch(self):
+        result = self.client.search_address_batch(
+            search_queries=[
+                "350 5th Ave, New York, NY 10118&limit=1",
+                "400 Broad St, Seattle, WA 98109&limit=3"
+            ]
+        )
+        assert len(result.items) > 0
+        top_answer = result.items[0]
+        assert top_answer.response.results[0].address.country_subdivision == "NY"
+        assert top_answer.response.results[0].address.country_code == "US"
 
 if __name__ == "__main__" :
     testArgs = [ "-v" , "-s" ] if len(sys.argv) == 1 else sys.argv[1:]

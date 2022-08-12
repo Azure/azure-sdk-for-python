@@ -31,7 +31,7 @@ def get_point_of_interest_categories():
     result = maps_search_client.get_point_of_interest_categories()
 
     print("Get Search POI Categories:")
-    print(result)
+    print(result[0])
 
     # [END get_point_of_interest_categories]
 

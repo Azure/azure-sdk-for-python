@@ -30,7 +30,7 @@ def reverse_search_cross_street_address():
 
     result = maps_search_client.reverse_search_cross_street_address(coordinates=(25.0338053, 121.5640089))
     print("Get Search Address Reverse Cross Street:")
-    print(result)
+    print(result.addresses[0].address)
     # [END reverse_search_cross_street_address]
 
 if __name__ == '__main__':

@@ -4,7 +4,7 @@
 # ------------------------------------
 
 # pylint: disable=unused-import,ungrouped-imports, R0904, C0302
-from typing import TYPE_CHECKING, Union, Any, List, Optional, Tuple, NamedTuple, overload
+from typing import TYPE_CHECKING, Union, Any, List, Tuple
 from collections import namedtuple
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
@@ -18,13 +18,16 @@ from ._generated.models import (
 )
 from .models import (
     BoundingBox,
-    GeoJsonObject,
     StructuredAddress,
     SearchAddressResult,
     SearchAlongRouteOptions,
     SearchAddressBatchResult,
     ReverseSearchAddressResult,
     ReverseSearchAddressBatchProcessResult,
+)
+
+from ._shared import (
+    parse_geometry_input
 )
 
 if TYPE_CHECKING:
@@ -43,9 +46,13 @@ class MapsSearchClient(MapsSearchClientBase):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version:
-            The API version of the service to use for requests. It defaults to the latest service version.
-            Setting to an older version may result in reduced feature compatibility.
+    :keyword str base_url: Supported Maps Services or Language resource base_url
+     (protocol and hostname, for example: 'https://<resource-name>.mapsservices.azure.com').
+    :keyword str client_id: Specifies which account is intended for usage with the Azure AD security model.
+     It represents a unique ID for the Azure Maps account.
+    :keyword api_version: The API version of the service to use for requests.
+     It defaults to the latest service version.
+     Setting to an older version may result in reduced feature compatibility.
     :paramtype api_version: str
     """
 
@@ -370,7 +377,7 @@ class MapsSearchClient(MapsSearchClientBase):
     def search_inside_geometry(
         self,
         query,  # type: str
-        geometry,  # type: "GeoJsonObject"
+        geometry,  # type: Union[object, str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -383,7 +390,8 @@ class MapsSearchClient(MapsSearchClientBase):
         :type query: str
         :param geometry: This represents the geometry for one or more geographical features (parks,
          state boundary etc.) to search in and should be a GeoJSON compliant type.
-        :type geometry: ~azure.maps.search._models.GeoJsonObject
+         We are accepting GeoJson object or geo_interface
+        :type geometry: obejct or str
         :keyword int top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
          maximum: 100.
         :keyword str language: Language in which search results should be returned. Should be one of
@@ -420,7 +428,7 @@ class MapsSearchClient(MapsSearchClientBase):
         """
         result = self._search_client.search_inside_geometry(
             query,
-            geometry,
+            geometry=parse_geometry_input(geometry),
             **kwargs
         )
         return SearchAddressResult(result.summary, result.results)
@@ -750,7 +758,7 @@ class MapsSearchClient(MapsSearchClientBase):
         search_queries,  # type: List[str]
         **kwargs
     ):
-        # type: (Union[List[str], str]) -> LROPoller["SearchAddressBatchResult"]
+        # type: (...) -> LROPoller["SearchAddressBatchResult"]
         """**Begin Search Fuzzy Batch API Request**
 
         Sends batches of fuzzy search requests.

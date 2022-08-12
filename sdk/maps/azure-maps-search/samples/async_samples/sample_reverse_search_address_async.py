@@ -26,7 +26,6 @@ async def reverse_search_address_async():
     # [START reverse_search_address_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search.aio import MapsSearchClient
-    from azure.maps.search.models import LatLon
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 

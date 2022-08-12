@@ -7,32 +7,45 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_reverse_search_address.py
+FILE: sample_search_along_route.py
 DESCRIPTION:
-    This sample demonstrates how to perform reverse search by given coordinates.
+    This sample demonstrates how to perform search along route
 USAGE:
-    python sample_reverse_search_address.py
+    python sample_search_along_route.py
 
     Set the environment variables with your own values before running the sample:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
 """
-
 import os
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
-def reverse_search_address():
-    # [START reverse_search_address]
+def search_along_route():
+    # [START search_along_route]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
-    result = maps_search_client.reverse_search_address(coordinates=(25.0338053, 121.5640089))
+    route_obj = {
+        "route": {
+            "type": "LineString",
+            "coordinates": [
+                [-122.143035,47.653536],
+                [-122.187164,47.617556],
+                [-122.114981,47.570599],
+                [-122.132756,47.654009]
+            ]
+        }
+    }
+    result = maps_search_client.search_along_route(
+        query="burger",
+        route=route_obj,
+        max_detour_time=1000
+    )
 
-    print("Get Search Address Reverse:")
-    print(result.results[0].address)
-    # [END reverse_search_address]
+    print(result.results[0].address.__dict__)
+    # [END search_along_route]
 
 if __name__ == '__main__':
-   reverse_search_address()
+    search_along_route()

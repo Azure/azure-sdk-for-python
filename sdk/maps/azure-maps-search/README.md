@@ -107,6 +107,7 @@ The following sections provide several code snippets covering some of the most c
 - [Translate coordinate location into a human understandable cross street](#translate-coordinate-location-into-a-human-understandable-cross-street)
 - [Get async fuzzy search batch with param and batchid](#get-async-fuzzy-search-batch-with-param-and-batchid)
 - [Fail to get fuzzy search batch sync](#fail-to-get-fuzzy-search-batch-sync)
+- [Search inside Geometry](#search-inside-geometry)
 
 ### Request latitude and longitude coordinates for an address
 
@@ -209,6 +210,73 @@ for item in result.items:
         count = count+1
         print(f"Error: {item.response.error.message}")
 print(f"There are total of {count} search queries failed.")
+```
+
+### Search inside Geometry
+
+This sample demonstrates how to perform search inside geometry by given target such as `pizza` and multiple different geometry as input with GeoJson object.
+
+```python
+maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+
+geo_json_obj1 = {
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[
+                    [-122.143035,47.653536],
+                    [-122.187164,47.617556],
+                    [-122.114981,47.570599],
+                    [-122.132756,47.654009],
+                    [-122.143035,47.653536]
+                    ]]
+            },
+            "properties": {}
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [-122.126986,47.639754]
+            },
+            "properties": {
+                "subType": "Circle",
+                "radius": 100
+            }
+        }
+    ]
+}
+result1 = maps_search_client.search_inside_geometry(
+    query="pizza",
+    geometry=geo_json_obj1
+)
+print("Search inside geometry with standard GeoJson obejct as input, FeatureCollection:")
+print(result1)
+```
+
+This sample demonstrates how to perform search inside geometry by given target such as `pizza` and  geo_interface property from other existing packages such as `shapely`.
+
+```python
+maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+
+from shapely.geometry import Polygon
+
+geo_interface_obj = Polygon([
+    [-122.43576049804686, 37.7524152343544],
+    [-122.43301391601562, 37.70660472542312],
+    [-122.36434936523438, 37.712059855877314],
+    [-122.43576049804686, 37.7524152343544]
+]).__geo_interface__
+
+result3 = maps_search_client.search_inside_geometry(
+    query="pizza",
+    geometry=geo_interface_obj
+)
+print("Search inside geometry with Polygon from third party library `shapely` with geo_interface as result 3:")
+print(result2)
 ```
 
 ## Troubleshooting

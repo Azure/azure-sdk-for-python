@@ -25,7 +25,6 @@ def search_nearby_point_of_interest():
     # [START search_nearby_point_of_interest]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
-    from azure.maps.search.models import LatLon
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 

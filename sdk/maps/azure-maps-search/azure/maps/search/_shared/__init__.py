@@ -1,11 +1,10 @@
 
-from .models import (
-    LatLon,
-    BoundingBox
+from .converter import (
+    geo_interface_to_geojson,
+    parse_geometry_input
 )
 
-
 __all__ = [
-    'LatLon',
-    'BoundingBox'
+    'geo_interface_to_geojson',
+    'parse_geometry_input'
 ]

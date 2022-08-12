@@ -33,6 +33,8 @@ Then for common Azure Maps Search operations:
 
 * Perform search with structured address: [sample_search_structured_address.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_search_structured_address.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_search_structured_address_async.py))
 
+* Search inside Geometry: [sample_search_inside_geometry.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_search_inside_geometry.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_search_inside_geometry_async.py))
+
 ## Prerequisites
 
 * Python 3.6 or later is required to use this package

@@ -4,7 +4,7 @@
 # ------------------------------------
 
 # pylint: disable=unused-import,ungrouped-imports, C0302, C0203
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Tuple
 import msrest.serialization
 
 from .._generated.models import (
@@ -1054,8 +1054,6 @@ class GeoJsonPoint(GeoJsonObject, GeoJsonPointData):
         super(GeoJsonPoint, self).__init__(coordinates=coordinates, **kwargs)
         self.coordinates = coordinates
         self.type = 'Point'  # type: str
-        self.type = 'Point'  # type: str
-
 
 class GeoJsonPolygonData(msrest.serialization.Model):
     """GeoJsonPolygonData.
