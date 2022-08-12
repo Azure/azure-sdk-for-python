@@ -118,7 +118,8 @@ class BufferedProducer:
                 self._buffered_queue.put(self._cur_batch)
             self._cur_batch = EventDataBatch(self._max_message_size_on_link)
             self._cur_batch.add(events)
-        self._cur_buffered_len += new_events_len
+        async with self._lock:
+            self._cur_buffered_len += new_events_len
 
     def failsafe_callback(self, callback):
         async def wrapper_callback(*args, **kwargs):
