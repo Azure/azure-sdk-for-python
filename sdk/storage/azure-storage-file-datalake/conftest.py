@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import os
+import platform
 
 import pytest
 
@@ -15,6 +16,11 @@ from devtools_testutils import (
     add_uri_string_sanitizer,
     test_proxy
 )
+
+# Ignore async tests for PyPy
+collect_ignore_glob = []
+if platform.python_implementation() == "PyPy":
+    collect_ignore_glob.append("tests/*_async.py")
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
