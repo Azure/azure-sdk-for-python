@@ -721,8 +721,8 @@ def _deserialize_throughput(throughput):
 
     if 'offerAutopilotSettings' in throughput_properties[0]['content']:
         return ThroughputProperties(properties=throughput_properties[0],
-                                    auto_scale_max_throughput=throughput_properties[0]['content']
-                                    ['offerAutopilotSettings']['maxThroughput'])                                  
-    
+                                    auto_scale_max_throughput=throughput_properties[0]['content'][
+                                        'offerAutopilotSettings']['maxThroughput'])
+
     return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
-                                    properties=throughput_properties[0])
+                                properties=throughput_properties[0])
