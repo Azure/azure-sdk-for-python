@@ -8,12 +8,16 @@ from devtools_testutils import recorded_by_proxy
 from devtools_testutils import (
     PemCertificate,
     set_function_recording_options,
+    create_combined_bundle,
+    is_live_and_not_recording
 )
 
 from azure.confidentialledger import (
     ConfidentialLedgerCertificateCredential,
     ConfidentialLedgerClient,
 )
+
+test_proxy_cert = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", 'eng', 'common', 'testproxy', 'dotnet-devcert.crt'))
 
 from _shared.constants import (
     USER_CERTIFICATE_THUMBPRINT,
@@ -28,7 +32,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         # Always explicitly fetch the TLS certificate.
         network_cert = self.set_ledger_identity(ledger_id)
         if not fetch_tls_cert:
-            # For some test scenarios, emove the file so the client sees it doesn't exist and
+            # For some test scenarios, remove the file so the client sees it doesn't exist and
             # creates it auto-magically.
             os.remove(self.network_certificate_path)
 
@@ -42,6 +46,11 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
         # The ACL instance should already have the potential AAD user added as an Administrator.
         credential = self.get_credential(ConfidentialLedgerClient)
+
+        if not is_live_and_not_recording():
+            # inject the test-proxy dev-cert into the path where the identity TLS certificate currently exists
+            create_combined_bundle([self.network_certificate_path, test_proxy_cert], self.network_certificate_path)
+
         aad_based_client = self.create_client_from_credential(
             ConfidentialLedgerClient,
             credential=credential,
