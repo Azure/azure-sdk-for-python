@@ -26,6 +26,7 @@ from .cosmos_client import CosmosClient
 from .database import DatabaseProxy
 from .user import UserProxy
 from .scripts import ScriptsProxy
+from .offer import Offer
 from .offer import ThroughputProperties
 from .documents import (
     ConsistencyLevel,
@@ -50,6 +51,7 @@ __all__ = (
     "Permission",
     "ScriptsProxy",
     "UserProxy",
+    "Offer",
     "DatabaseAccount",
     "ConsistencyLevel",
     "DataType",
