@@ -7,32 +7,31 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessRuleDirection(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AccessRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Direction that specifies whether the access rules is inbound/outbound.
     """
 
     INBOUND = "Inbound"
     OUTBOUND = "Outbound"
 
-class AddressPrefixType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AddressPrefixType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Address prefix type.
     """
 
     IP_PREFIX = "IPPrefix"
     SERVICE_TAG = "ServiceTag"
 
-class AdminRuleKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AdminRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether the rule is custom or default.
     """
 
     CUSTOM = "Custom"
     DEFAULT = "Default"
 
-class AssociationAccessMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AssociationAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Access mode on the association.
     """
 
@@ -40,7 +39,7 @@ class AssociationAccessMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ENFORCED = "Enforced"
     AUDIT = "Audit"
 
-class ConfigurationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Configuration Deployment Type.
     """
 
@@ -48,14 +47,14 @@ class ConfigurationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SECURITY_USER = "SecurityUser"
     CONNECTIVITY = "Connectivity"
 
-class ConnectivityTopology(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ConnectivityTopology(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Connectivity topology type.
     """
 
     HUB_AND_SPOKE = "HubAndSpoke"
     MESH = "Mesh"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource.
     """
 
@@ -64,21 +63,21 @@ class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DeleteExistingNSGs(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DeleteExistingNSGs(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Flag if need to delete existing network security groups.
     """
 
     FALSE = "False"
     TRUE = "True"
 
-class DeleteExistingPeering(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DeleteExistingPeering(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Flag if need to remove current existing peerings.
     """
 
     FALSE = "False"
     TRUE = "True"
 
-class DeploymentStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DeploymentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Deployment Status.
     """
 
@@ -87,42 +86,49 @@ class DeploymentStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DEPLOYED = "Deployed"
     FAILED = "Failed"
 
-class EffectiveAdminRuleKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EffectiveAdminRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether the rule is custom or default.
     """
 
     CUSTOM = "Custom"
     DEFAULT = "Default"
 
-class EffectiveUserRuleKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EffectiveUserRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether the rule is custom or default.
     """
 
     CUSTOM = "Custom"
     DEFAULT = "Default"
 
-class GroupConnectivity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class GroupConnectivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Group connectivity type.
     """
 
     NONE = "None"
     DIRECTLY_CONNECTED = "DirectlyConnected"
 
-class IsGlobal(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class IsGlobal(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Flag if global mesh is supported.
     """
 
     FALSE = "False"
     TRUE = "True"
 
-class MembershipType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class IsMember(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """yes/no, if it is member or not.
+    """
+
+    YES = "yes"
+    NO = "no"
+
+class MembershipType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Membership Type.
     """
 
     STATIC = "Static"
     DYNAMIC = "Dynamic"
 
-class NspProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class NspProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current provisioning state.
     """
 
@@ -133,7 +139,7 @@ class NspProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ACCEPTED = "Accepted"
     FAILED = "Failed"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current provisioning state.
     """
 
@@ -142,7 +148,7 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DELETING = "Deleting"
     FAILED = "Failed"
 
-class SecurityConfigurationRuleAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SecurityConfigurationRuleAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether network traffic is allowed or denied.
     """
 
@@ -150,7 +156,7 @@ class SecurityConfigurationRuleAccess(with_metaclass(CaseInsensitiveEnumMeta, st
     DENY = "Deny"
     ALWAYS_ALLOW = "AlwaysAllow"
 
-class SecurityConfigurationRuleDirection(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SecurityConfigurationRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The direction of the rule. The direction specifies if the rule will be evaluated on incoming or
     outgoing traffic.
     """
@@ -158,7 +164,7 @@ class SecurityConfigurationRuleDirection(with_metaclass(CaseInsensitiveEnumMeta,
     INBOUND = "Inbound"
     OUTBOUND = "Outbound"
 
-class SecurityConfigurationRuleProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SecurityConfigurationRuleProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Network protocol this rule applies to.
     """
 
@@ -169,21 +175,21 @@ class SecurityConfigurationRuleProtocol(with_metaclass(CaseInsensitiveEnumMeta, 
     ANY = "Any"
     AH = "Ah"
 
-class SecurityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SecurityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Security Type.
     """
 
     ADMIN_POLICY = "AdminPolicy"
     USER_POLICY = "UserPolicy"
 
-class UseHubGateway(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class UseHubGateway(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Flag if need to use hub gateway.
     """
 
     FALSE = "False"
     TRUE = "True"
 
-class UserRuleKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class UserRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether the rule is custom or default.
     """
 

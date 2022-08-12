@@ -7,11 +7,6 @@ log_verbosity: debug
 task: regression
 primary_metric: r2_score
 
-properties:
-  _automl_internal_enable_mltable_quick_profile: "true"
-  _automl_internal_label: "latest"
-  _automl_internal_save_mlflow: "true"
-
 limits:
   timeout_minutes: 180
   trial_timeout_minutes: 20
@@ -22,7 +17,7 @@ limits:
 
 target_column_name: ERP
 training_data:
-  path: tests/test_configs/automl_job/test_datasets/machine_data/train
+  path: src/azure-ai-ml/tests/test_configs/automl_job/test_datasets/machine_data/train
   type: mltable
 
 featurization:
@@ -38,3 +33,5 @@ training:
     - elastic_net
     - lasso_lars
     - xg_boost_regressor
+  enable_stack_ensemble: False
+  enable_vote_ensemble: False

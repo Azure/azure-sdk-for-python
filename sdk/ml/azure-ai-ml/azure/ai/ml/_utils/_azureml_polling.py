@@ -4,30 +4,30 @@
 
 
 import logging
-from typing import Union, Optional, Any
-from time import time
 from concurrent.futures import Future
+from time import time
+from typing import Any, Optional, Union
 
-from azure.mgmt.core.polling.arm_polling import ARMPolling
 from azure.ai.ml.constants import LROConfigurations
 from azure.core.polling import LROPoller
-
+from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 module_logger = logging.getLogger(__name__)
 
 
 class AzureMLPolling(ARMPolling):
-    """
-    A polling class for azure machine learning
-    """
+    """A polling class for azure machine learning."""
 
     def update_status(self):
         """Update the current status of the LRO."""
         super(ARMPolling, self).update_status()
+        print(".", end="", flush=True)
 
 
 def polling_wait(
-    poller: Union[LROPoller, Future], message: Optional[str] = None, start_time: Optional[float] = None
+    poller: Union[LROPoller, Future],
+    message: Optional[str] = None,
+    start_time: Optional[float] = None,
 ) -> Any:
     """Print out status while polling and time of operation once completed.
 

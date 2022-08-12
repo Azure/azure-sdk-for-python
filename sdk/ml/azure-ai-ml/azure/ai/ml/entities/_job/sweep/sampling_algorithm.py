@@ -3,13 +3,12 @@
 # ---------------------------------------------------------
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    SamplingAlgorithm as RestSamplingAlgorithm,
-    RandomSamplingAlgorithm as RestRandomSamplingAlgorithm,
-    GridSamplingAlgorithm as RestGridSamplingAlgorithm,
     BayesianSamplingAlgorithm as RestBayesianSamplingAlgorithm,
-    SamplingAlgorithmType,
 )
-
+from azure.ai.ml._restclient.v2022_02_01_preview.models import GridSamplingAlgorithm as RestGridSamplingAlgorithm
+from azure.ai.ml._restclient.v2022_02_01_preview.models import RandomSamplingAlgorithm as RestRandomSamplingAlgorithm
+from azure.ai.ml._restclient.v2022_02_01_preview.models import SamplingAlgorithm as RestSamplingAlgorithm
+from azure.ai.ml._restclient.v2022_02_01_preview.models import SamplingAlgorithmType
 from azure.ai.ml.entities._util import SnakeToPascalDescriptor
 
 

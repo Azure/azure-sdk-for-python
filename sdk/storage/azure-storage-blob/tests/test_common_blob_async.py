@@ -55,6 +55,7 @@ from azure.storage.blob import (
 
 from settings.testcase import BlobPreparer
 from devtools_testutils.storage.aio import AsyncStorageTestCase
+from test_helpers_async import AsyncStream
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -311,6 +312,61 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
 
         # Assert
         self.assertEqual(data, blob_data)
+
+    @BlobPreparer()
+    async def test_upload_blob_from_async_stream_single_chunk(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        data = b"Hello Async World!"
+        stream = AsyncStream(data)
+
+        # Act
+        await blob.upload_blob(stream, overwrite=True)
+        blob_data = await (await blob.download_blob()).readall()
+
+        # Assert
+        assert data == blob_data
+
+    @BlobPreparer()
+    async def test_upload_blob_from_async_stream_chunks(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        self.bsc._config.max_single_put_size = 1024
+        self.bsc._config.max_block_size = 1024
+
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        data = b"12345" * 1024
+        stream = AsyncStream(data)
+
+        # Act
+        await blob.upload_blob(stream, overwrite=True)
+        blob_data = await (await blob.download_blob()).readall()
+
+        # Assert
+        assert data == blob_data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_upload_blob_from_async_stream_chunks_parallel(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        self.bsc._config.max_single_put_size = 1024
+        self.bsc._config.max_block_size = 1024
+
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        data = b"12345" * 1024
+        stream = AsyncStream(data)
+
+        # Act
+        await blob.upload_blob(stream, overwrite=True, max_concurrency=3)
+        blob_data = await (await blob.download_blob()).readall()
+
+        # Assert
+        assert data == blob_data
 
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -2809,5 +2865,19 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             await blob.set_legal_hold(False)
             await blob.delete_blob()
             await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
+
+    @BlobPreparer()
+    async def test_validate_empty_blob(self, storage_account_name, storage_account_key):
+        """Test that we can upload an empty blob with validate=True."""
+        await self._setup(storage_account_name, storage_account_key)
+
+        blob_name = self.get_resource_name("utcontainer")
+        container_client = self.bsc.get_container_client(self.container_name)
+        await container_client.upload_blob(blob_name, b"", validate_content=True)
+
+        blob_client = container_client.get_blob_client(blob_name)
+
+        assert await blob_client.exists()
+        assert (await blob_client.get_blob_properties()).size == 0
 
 # ------------------------------------------------------------------------------

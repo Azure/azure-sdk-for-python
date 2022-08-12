@@ -56,7 +56,6 @@ class TestComputeOperation:
         mock_compute_operation.begin_delete("randstr")
         mock_compute_operation._operation.begin_delete.assert_called_once()
 
-    @pytest.mark.skip(reason=": TODO 1776012: Broken by Warning logging. Re-enable when logging removed")
     def test_show(self, randstr: Callable[[], str], mock_compute_operation: ComputeOperations) -> None:
         mock_compute_operation.get("randstr")
         mock_compute_operation._operation.get.assert_called_once()

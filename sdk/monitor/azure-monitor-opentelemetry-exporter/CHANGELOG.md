@@ -4,9 +4,18 @@
 
 ### Features Added
 
+- Moved OpenTelemetry `entry_points` to setup.py
+    ([#25674](https://github.com/Azure/azure-sdk-for-python/pull/25674))
+- Added storage configuration options
+    ([#25633](https://github.com/Azure/azure-sdk-for-python/pull/25633))
+
 ### Breaking Changes
 
+- Update to OpenTelemetry api/sdk v1.12.0
+    ([#25659](https://github.com/Azure/azure-sdk-for-python/pull/25659))
+
 ### Bugs Fixed
+
 - Opentelemetry span events have wrong ParentId in Azure Monitor logs
     ([#25369](https://github.com/Azure/azure-sdk-for-python/pull/25369))
 
@@ -15,6 +24,7 @@
 ## 1.0.0b6 (2022-06-10)
 
 ### Features Added
+
 - Added OpenTelemetry entry points for auto-instrumentation of Azure Monitor exporters
     ([#25368](https://github.com/Azure/azure-sdk-for-python/pull/25368))
 - Implement log exporter using experimental OT logging sdk
@@ -27,64 +37,72 @@
     ([#23960](https://github.com/Azure/azure-sdk-for-python/pull/23960))
 
 ### Breaking Changes
+
 - Update to OpenTelemetry api/sdk 1.12.0rc1
     ([#24619](https://github.com/Azure/azure-sdk-for-python/pull/24619))
 
 ## 1.0.0b5 (2021-10-05)
 
 ### Features Added
+
 - Support stamp specific redirect in exporters
     ([#20489](https://github.com/Azure/azure-sdk-for-python/pull/20489))
 
 ### Breaking Changes
+
 - Change exporter OT to AI mapping fields following common schema
     ([#20445](https://github.com/Azure/azure-sdk-for-python/pull/20445))
 
 ## 1.0.0b4 (2021-04-06)
 
-  **Features**
-  - Add `from_connection_string` method to instantiate exporters
-      ([#16818](https://github.com/Azure/azure-sdk-for-python/pull/16818))
+### Features Added
 
-  - Remove support for Python 3.5
-      ([#17747](https://github.com/Azure/azure-sdk-for-python/pull/17747))
+- Add `from_connection_string` method to instantiate exporters
+    ([#16818](https://github.com/Azure/azure-sdk-for-python/pull/16818))
+
+- Remove support for Python 3.5
+    ([#17747](https://github.com/Azure/azure-sdk-for-python/pull/17747))
 
 ## 1.0.0b3 (2021-02-11)
 
-  **Breaking Changes**
-  - The package has been renamed to `azure-monitor-opentelemetry-exporter`
-      ([#16621](https://github.com/Azure/azure-sdk-for-python/pull/16621))
-  - Remove `ExporterOptions`
-      ([#16669](https://github.com/Azure/azure-sdk-for-python/pull/16669))
+### Breaking Changes
 
-  **Features**
-  - Add azure servicebus samples and docstrings to samples
-      ([#16580](https://github.com/Azure/azure-sdk-for-python/pull/16580))
-  - Support configuration of `api_version` in exporter
-      ([#16669](https://github.com/Azure/azure-sdk-for-python/pull/16669))
+- The package has been renamed to `azure-monitor-opentelemetry-exporter`
+    ([#16621](https://github.com/Azure/azure-sdk-for-python/pull/16621))
+- Remove `ExporterOptions`
+    ([#16669](https://github.com/Azure/azure-sdk-for-python/pull/16669))
+
+### Features Added
+
+- Add azure servicebus samples and docstrings to samples
+    ([#16580](https://github.com/Azure/azure-sdk-for-python/pull/16580))
+- Support configuration of `api_version` in exporter
+    ([#16669](https://github.com/Azure/azure-sdk-for-python/pull/16669))
 
 ## 1.0.0b2 (2021-01-13)
 
-  **Breaking Changes**
-  - Rename Azure Trace exporter class, only allow connection string configuration
-    ([#15349](https://github.com/Azure/azure-sdk-for-python/pull/15349))
+### Breaking Changes
 
-  - OpenTelemetry Exporter use Resources API to retrieve cloud role props
-    ([#15816](https://github.com/Azure/azure-sdk-for-python/pull/15816))
+- Rename Azure Trace exporter class, only allow connection string configuration
+  ([#15349](https://github.com/Azure/azure-sdk-for-python/pull/15349))
 
-  - Change span to envelope conversion to adhere to common schema and other languages
-    ([#15344](https://github.com/Azure/azure-sdk-for-python/pull/15344))
+- OpenTelemetry Exporter use Resources API to retrieve cloud role props
+  ([#15816](https://github.com/Azure/azure-sdk-for-python/pull/15816))
 
-  - This library is renamed to `azure-opentelemetry-exporter-azuremonitor`.
-    ([#16030](https://github.com/Azure/azure-sdk-for-python/pull/16030))
+- Change span to envelope conversion to adhere to common schema and other languages
+  ([#15344](https://github.com/Azure/azure-sdk-for-python/pull/15344))
 
-  - Fix to only retry upon request error
-    ([#16087](https://github.com/Azure/azure-sdk-for-python/pull/16087))
+- This library is renamed to `azure-opentelemetry-exporter-azuremonitor`.
+  ([#16030](https://github.com/Azure/azure-sdk-for-python/pull/16030))
+
+- Fix to only retry upon request error
+  ([#16087](https://github.com/Azure/azure-sdk-for-python/pull/16087))
 
 ## 1.0.0b1 (2020-11-13)
 
-  **Breaking Changes**
-  - This library is renamed to `microsoft-opentelemetry-exporter-azuremonitor`.
+### Breaking Changes
+
+- This library is renamed to `microsoft-opentelemetry-exporter-azuremonitor`.
 
 ## 0.5b.0 (2020-09-24)
 
@@ -93,7 +111,7 @@
 - Dropping support for Python 3.4
   ([#117](https://github.com/microsoft/opentelemetry-azure-monitor-python/pull/117))
 
-## 0.4b.0 (2020-06-29) 
+## 0.4b.0 (2020-06-29)
 
 - Added live metrics
   ([#96](https://github.com/microsoft/opentelemetry-azure-monitor-python/pull/96))

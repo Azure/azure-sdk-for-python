@@ -2,13 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 import functools
 import logging
-import yaml
-from collections import OrderedDict
-from typing import Any, Callable, Optional, cast, Dict, TypeVar
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from typing import Any, Callable, Dict, Optional, TypeVar, cast
 
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 T = TypeVar("T")
 module_logger = logging.getLogger(__name__)
@@ -74,20 +74,6 @@ class _ScopeDependentOperations(object):
         self._scope_kwargs = {
             "resource_group_name": self._operation_scope.resource_group_name,
         }
-        # Marshmallow supports load/dump of ordered dicts, but pollutes the yaml to tag dicts as ordered dicts
-        # Setting these load/dump functions make ordered dict the default in place of dict, allowing for clean yaml
-        _mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
-
-        def dict_representer(dumper: yaml.Dumper, data) -> yaml.representer.Representer:  # type: ignore
-            return dumper.represent_mapping(_mapping_tag, data.items())
-
-        def dict_constructor(loader, node) -> OrderedDict:  # type: ignore
-            loader.flatten_mapping(node)
-            return OrderedDict(loader.construct_pairs(node))
-
-        # setup yaml to load and dump in order
-        yaml.add_representer(OrderedDict, dict_representer)
-        yaml.add_constructor(_mapping_tag, dict_constructor, Loader=yaml.SafeLoader)
 
     @property  # type: ignore
     @workspace_none_check
@@ -125,19 +111,17 @@ class OperationsContainer(object):
 
             if isinstance(operation, MagicMock) or type_check(operation):
                 return operation
-            else:
-                msg = f"{resource_type} operations are initialized with wrong type: {type(operation)}."
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    error_category=ErrorCategory.USER_ERROR,
-                    target=ErrorTarget.JOB,
-                )
-        else:
-            msg = f"Operation {resource_type} is not available for this client."
+            msg = f"{resource_type} operations are initialized with wrong type: {type(operation)}."
             raise ValidationException(
                 message=msg,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
                 target=ErrorTarget.JOB,
             )
+        msg = f"Operation {resource_type} is not available for this client."
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            error_category=ErrorCategory.USER_ERROR,
+            target=ErrorTarget.JOB,
+        )

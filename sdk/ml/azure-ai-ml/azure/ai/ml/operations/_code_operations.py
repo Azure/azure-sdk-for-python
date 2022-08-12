@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 import logging
 from typing import Dict, Union
 
@@ -11,16 +13,17 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
-from azure.ai.ml.operations._datastore_operations import DatastoreOperations
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDependentOperations
-from azure.ai.ml.entities._assets import Code
+from azure.ai.ml._ml_exceptions import AssetPathException, ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
+from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
-from azure.ai.ml._utils._registry_utils import get_sas_uri_for_registry_asset, get_asset_body_for_registry_storage
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget, AssetPathException
+from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
+from azure.ai.ml.entities._assets import Code
+from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+from azure.core.exceptions import HttpResponseError
 
 logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
 logger.propagate = False
@@ -28,10 +31,10 @@ module_logger = logging.getLogger(__name__)
 
 
 class CodeOperations(_ScopeDependentOperations):
-    """Represents a client for performing operations on code assets
+    """Represents a client for performing operations on code assets.
 
-    You should not instantiate this class directly. Instead, you should create MLClient and
-    use this client via the property MLClient.code
+    You should not instantiate this class directly. Instead, you should
+    create MLClient and use this client via the property MLClient.code
     """
 
     def __init__(
@@ -102,7 +105,7 @@ class CodeOperations(_ScopeDependentOperations):
                     **self._init_kwargs,
                 )
             )
-        except Exception as e:
+        except HttpResponseError as e:
             # service side raises an exception if we attempt to update an existing asset's asset path
             if str(e) == ASSET_PATH_ERROR:
                 raise AssetPathException(
@@ -111,13 +114,11 @@ class CodeOperations(_ScopeDependentOperations):
                     no_personal_data_message=CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
                     error_category=ErrorCategory.USER_ERROR,
                 )
-            else:
-                raise e
+            raise e
 
         if not result:
             return self.get(name=name, version=version)
-        else:
-            return Code._from_rest_object(result)
+        return Code._from_rest_object(result)
 
     @monitor_with_activity(logger, "Code.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: str) -> Code:
@@ -132,26 +133,25 @@ class CodeOperations(_ScopeDependentOperations):
             msg = "Code asset version must be specified as part of name parameter, in format 'name:version'."
             raise ValidationException(
                 message=msg,
-                tartget=ErrorTarget.CODE,
+                target=ErrorTarget.CODE,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        else:
-            code_version_resource = (
-                self._version_operation.get(
-                    name=name,
-                    version=version,
-                    resource_group_name=self._operation_scope.resource_group_name,
-                    registry_name=self._registry_name,
-                    **self._init_kwargs,
-                )
-                if self._registry_name
-                else self._version_operation.get(
-                    name=name,
-                    version=version,
-                    resource_group_name=self._operation_scope.resource_group_name,
-                    workspace_name=self._workspace_name,
-                    **self._init_kwargs,
-                )
+        code_version_resource = (
+            self._version_operation.get(
+                name=name,
+                version=version,
+                resource_group_name=self._operation_scope.resource_group_name,
+                registry_name=self._registry_name,
+                **self._init_kwargs,
             )
-            return Code._from_rest_object(code_version_resource)
+            if self._registry_name
+            else self._version_operation.get(
+                name=name,
+                version=version,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                **self._init_kwargs,
+            )
+        )
+        return Code._from_rest_object(code_version_resource)

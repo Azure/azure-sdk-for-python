@@ -2,14 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 from abc import ABC
 from typing import List, Union
 
-from azure.ai.ml.constants import SearchSpace, TYPE
-
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
-
 from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, JobException
+from azure.ai.ml.constants import TYPE, SearchSpace
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class SweepDistribution(ABC, RestTranslatableMixin):
@@ -171,7 +171,11 @@ class LogUniform(Uniform):
 
 class QUniform(Uniform):
     def __init__(
-        self, min_value: Union[int, float] = None, max_value: Union[int, float] = None, q: int = None, **kwargs
+        self,
+        min_value: Union[int, float] = None,
+        max_value: Union[int, float] = None,
+        q: int = None,
+        **kwargs,
     ):
         kwargs.setdefault(TYPE, SearchSpace.QUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, **kwargs)

@@ -7,9 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union
+from typing import Any, AsyncIterator, Callable, Dict, Optional, TypeVar, Union
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -18,9 +24,36 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._blob_operations import build_abort_copy_from_url_request, build_acquire_lease_request, build_break_lease_request, build_change_lease_request, build_copy_from_url_request, build_create_snapshot_request, build_delete_immutability_policy_request, build_delete_request, build_download_request, build_get_account_info_request, build_get_properties_request, build_get_tags_request, build_query_request, build_release_lease_request, build_renew_lease_request, build_set_expiry_request, build_set_http_headers_request, build_set_immutability_policy_request, build_set_legal_hold_request, build_set_metadata_request, build_set_tags_request, build_set_tier_request, build_start_copy_from_url_request, build_undelete_request
-T = TypeVar('T')
+from ...operations._blob_operations import (
+    build_abort_copy_from_url_request,
+    build_acquire_lease_request,
+    build_break_lease_request,
+    build_change_lease_request,
+    build_copy_from_url_request,
+    build_create_snapshot_request,
+    build_delete_immutability_policy_request,
+    build_delete_request,
+    build_download_request,
+    build_get_account_info_request,
+    build_get_properties_request,
+    build_get_tags_request,
+    build_query_request,
+    build_release_lease_request,
+    build_renew_lease_request,
+    build_set_expiry_request,
+    build_set_http_headers_request,
+    build_set_immutability_policy_request,
+    build_set_legal_hold_request,
+    build_set_metadata_request,
+    build_set_tags_request,
+    build_set_tier_request,
+    build_start_copy_from_url_request,
+    build_undelete_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class BlobOperations:  # pylint: disable=too-many-public-methods
     """
@@ -41,7 +74,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace_async
     async def download(
         self,
@@ -56,7 +88,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         cpk_info: Optional[_models.CpkInfo] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
-    ) -> IO:
+    ) -> AsyncIterator[bytes]:
         """The Download operation reads or downloads a blob from the system, including its metadata and
         properties. You can also call Download to read a snapshot.
 
@@ -96,19 +128,17 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: IO, or the result of cls(response)
-        :rtype: IO
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: Async iterator of the response bytes or the result of cls(response)
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
+        cls = kwargs.pop("cls", None)  # type: ClsType[AsyncIterator[bytes]]
 
         _lease_id = None
         _encryption_key = None
@@ -122,19 +152,18 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if cpk_info is not None:
+            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
-            _encryption_algorithm = cpk_info.encryption_algorithm
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_download_request(
             url=self._config.url,
-            version=self._config.version,
             snapshot=snapshot,
             version_id=version_id,
             timeout=timeout,
@@ -151,7 +180,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            template_url=self.download.metadata['url'],
+            version=self._config.version,
+            template_url=self.download.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -159,10 +189,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=True,
-            **kwargs
+            request, stream=True, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 206]:
@@ -172,96 +201,162 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         response_headers = {}
         if response.status_code == 200:
-            response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-            response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
-            response_headers['x-ms-or-policy-id']=self._deserialize('str', response.headers.get('x-ms-or-policy-id'))
-            response_headers['x-ms-or']=self._deserialize('{str}', response.headers.get('x-ms-or'))
-            response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
-            response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
-            response_headers['Content-Range']=self._deserialize('str', response.headers.get('Content-Range'))
-            response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-            response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
-            response_headers['Content-Encoding']=self._deserialize('str', response.headers.get('Content-Encoding'))
-            response_headers['Cache-Control']=self._deserialize('str', response.headers.get('Cache-Control'))
-            response_headers['Content-Disposition']=self._deserialize('str', response.headers.get('Content-Disposition'))
-            response_headers['Content-Language']=self._deserialize('str', response.headers.get('Content-Language'))
-            response_headers['x-ms-blob-sequence-number']=self._deserialize('long', response.headers.get('x-ms-blob-sequence-number'))
-            response_headers['x-ms-blob-type']=self._deserialize('str', response.headers.get('x-ms-blob-type'))
-            response_headers['x-ms-copy-completion-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-copy-completion-time'))
-            response_headers['x-ms-copy-status-description']=self._deserialize('str', response.headers.get('x-ms-copy-status-description'))
-            response_headers['x-ms-copy-id']=self._deserialize('str', response.headers.get('x-ms-copy-id'))
-            response_headers['x-ms-copy-progress']=self._deserialize('str', response.headers.get('x-ms-copy-progress'))
-            response_headers['x-ms-copy-source']=self._deserialize('str', response.headers.get('x-ms-copy-source'))
-            response_headers['x-ms-copy-status']=self._deserialize('str', response.headers.get('x-ms-copy-status'))
-            response_headers['x-ms-lease-duration']=self._deserialize('str', response.headers.get('x-ms-lease-duration'))
-            response_headers['x-ms-lease-state']=self._deserialize('str', response.headers.get('x-ms-lease-state'))
-            response_headers['x-ms-lease-status']=self._deserialize('str', response.headers.get('x-ms-lease-status'))
-            response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-            response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-            response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-            response_headers['x-ms-version-id']=self._deserialize('str', response.headers.get('x-ms-version-id'))
-            response_headers['x-ms-is-current-version']=self._deserialize('bool', response.headers.get('x-ms-is-current-version'))
-            response_headers['Accept-Ranges']=self._deserialize('str', response.headers.get('Accept-Ranges'))
-            response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-            response_headers['x-ms-blob-committed-block-count']=self._deserialize('int', response.headers.get('x-ms-blob-committed-block-count'))
-            response_headers['x-ms-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-server-encrypted'))
-            response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
-            response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
-            response_headers['x-ms-blob-content-md5']=self._deserialize('bytearray', response.headers.get('x-ms-blob-content-md5'))
-            response_headers['x-ms-tag-count']=self._deserialize('long', response.headers.get('x-ms-tag-count'))
-            response_headers['x-ms-blob-sealed']=self._deserialize('bool', response.headers.get('x-ms-blob-sealed'))
-            response_headers['x-ms-last-access-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-last-access-time'))
-            response_headers['x-ms-immutability-policy-until-date']=self._deserialize('rfc-1123', response.headers.get('x-ms-immutability-policy-until-date'))
-            response_headers['x-ms-immutability-policy-mode']=self._deserialize('str', response.headers.get('x-ms-immutability-policy-mode'))
-            response_headers['x-ms-legal-hold']=self._deserialize('bool', response.headers.get('x-ms-legal-hold'))
-            
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+            response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
+            response_headers["x-ms-or-policy-id"] = self._deserialize("str", response.headers.get("x-ms-or-policy-id"))
+            response_headers["x-ms-or"] = self._deserialize("{str}", response.headers.get("x-ms-or"))
+            response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+            response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+            response_headers["Content-Range"] = self._deserialize("str", response.headers.get("Content-Range"))
+            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+            response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+            response_headers["Content-Encoding"] = self._deserialize("str", response.headers.get("Content-Encoding"))
+            response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
+            response_headers["Content-Disposition"] = self._deserialize(
+                "str", response.headers.get("Content-Disposition")
+            )
+            response_headers["Content-Language"] = self._deserialize("str", response.headers.get("Content-Language"))
+            response_headers["x-ms-blob-sequence-number"] = self._deserialize(
+                "int", response.headers.get("x-ms-blob-sequence-number")
+            )
+            response_headers["x-ms-blob-type"] = self._deserialize("str", response.headers.get("x-ms-blob-type"))
+            response_headers["x-ms-copy-completion-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-copy-completion-time")
+            )
+            response_headers["x-ms-copy-status-description"] = self._deserialize(
+                "str", response.headers.get("x-ms-copy-status-description")
+            )
+            response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
+            response_headers["x-ms-copy-progress"] = self._deserialize(
+                "str", response.headers.get("x-ms-copy-progress")
+            )
+            response_headers["x-ms-copy-source"] = self._deserialize("str", response.headers.get("x-ms-copy-source"))
+            response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
+            response_headers["x-ms-lease-duration"] = self._deserialize(
+                "str", response.headers.get("x-ms-lease-duration")
+            )
+            response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
+            response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
+            response_headers["x-ms-client-request-id"] = self._deserialize(
+                "str", response.headers.get("x-ms-client-request-id")
+            )
+            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+            response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
+            response_headers["x-ms-is-current-version"] = self._deserialize(
+                "bool", response.headers.get("x-ms-is-current-version")
+            )
+            response_headers["Accept-Ranges"] = self._deserialize("str", response.headers.get("Accept-Ranges"))
+            response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+            response_headers["x-ms-blob-committed-block-count"] = self._deserialize(
+                "int", response.headers.get("x-ms-blob-committed-block-count")
+            )
+            response_headers["x-ms-server-encrypted"] = self._deserialize(
+                "bool", response.headers.get("x-ms-server-encrypted")
+            )
+            response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
+                "str", response.headers.get("x-ms-encryption-key-sha256")
+            )
+            response_headers["x-ms-encryption-scope"] = self._deserialize(
+                "str", response.headers.get("x-ms-encryption-scope")
+            )
+            response_headers["x-ms-blob-content-md5"] = self._deserialize(
+                "bytearray", response.headers.get("x-ms-blob-content-md5")
+            )
+            response_headers["x-ms-tag-count"] = self._deserialize("int", response.headers.get("x-ms-tag-count"))
+            response_headers["x-ms-blob-sealed"] = self._deserialize("bool", response.headers.get("x-ms-blob-sealed"))
+            response_headers["x-ms-last-access-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-last-access-time")
+            )
+            response_headers["x-ms-immutability-policy-until-date"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-immutability-policy-until-date")
+            )
+            response_headers["x-ms-immutability-policy-mode"] = self._deserialize(
+                "str", response.headers.get("x-ms-immutability-policy-mode")
+            )
+            response_headers["x-ms-legal-hold"] = self._deserialize("bool", response.headers.get("x-ms-legal-hold"))
+
             deserialized = response.stream_download(self._client._pipeline)
 
         if response.status_code == 206:
-            response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-            response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
-            response_headers['x-ms-or-policy-id']=self._deserialize('str', response.headers.get('x-ms-or-policy-id'))
-            response_headers['x-ms-or']=self._deserialize('{str}', response.headers.get('x-ms-or'))
-            response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
-            response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
-            response_headers['Content-Range']=self._deserialize('str', response.headers.get('Content-Range'))
-            response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-            response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
-            response_headers['Content-Encoding']=self._deserialize('str', response.headers.get('Content-Encoding'))
-            response_headers['Cache-Control']=self._deserialize('str', response.headers.get('Cache-Control'))
-            response_headers['Content-Disposition']=self._deserialize('str', response.headers.get('Content-Disposition'))
-            response_headers['Content-Language']=self._deserialize('str', response.headers.get('Content-Language'))
-            response_headers['x-ms-blob-sequence-number']=self._deserialize('long', response.headers.get('x-ms-blob-sequence-number'))
-            response_headers['x-ms-blob-type']=self._deserialize('str', response.headers.get('x-ms-blob-type'))
-            response_headers['x-ms-content-crc64']=self._deserialize('bytearray', response.headers.get('x-ms-content-crc64'))
-            response_headers['x-ms-copy-completion-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-copy-completion-time'))
-            response_headers['x-ms-copy-status-description']=self._deserialize('str', response.headers.get('x-ms-copy-status-description'))
-            response_headers['x-ms-copy-id']=self._deserialize('str', response.headers.get('x-ms-copy-id'))
-            response_headers['x-ms-copy-progress']=self._deserialize('str', response.headers.get('x-ms-copy-progress'))
-            response_headers['x-ms-copy-source']=self._deserialize('str', response.headers.get('x-ms-copy-source'))
-            response_headers['x-ms-copy-status']=self._deserialize('str', response.headers.get('x-ms-copy-status'))
-            response_headers['x-ms-lease-duration']=self._deserialize('str', response.headers.get('x-ms-lease-duration'))
-            response_headers['x-ms-lease-state']=self._deserialize('str', response.headers.get('x-ms-lease-state'))
-            response_headers['x-ms-lease-status']=self._deserialize('str', response.headers.get('x-ms-lease-status'))
-            response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-            response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-            response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-            response_headers['x-ms-version-id']=self._deserialize('str', response.headers.get('x-ms-version-id'))
-            response_headers['x-ms-is-current-version']=self._deserialize('bool', response.headers.get('x-ms-is-current-version'))
-            response_headers['Accept-Ranges']=self._deserialize('str', response.headers.get('Accept-Ranges'))
-            response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-            response_headers['x-ms-blob-committed-block-count']=self._deserialize('int', response.headers.get('x-ms-blob-committed-block-count'))
-            response_headers['x-ms-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-server-encrypted'))
-            response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
-            response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
-            response_headers['x-ms-blob-content-md5']=self._deserialize('bytearray', response.headers.get('x-ms-blob-content-md5'))
-            response_headers['x-ms-tag-count']=self._deserialize('long', response.headers.get('x-ms-tag-count'))
-            response_headers['x-ms-blob-sealed']=self._deserialize('bool', response.headers.get('x-ms-blob-sealed'))
-            response_headers['x-ms-last-access-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-last-access-time'))
-            response_headers['x-ms-immutability-policy-until-date']=self._deserialize('rfc-1123', response.headers.get('x-ms-immutability-policy-until-date'))
-            response_headers['x-ms-immutability-policy-mode']=self._deserialize('str', response.headers.get('x-ms-immutability-policy-mode'))
-            response_headers['x-ms-legal-hold']=self._deserialize('bool', response.headers.get('x-ms-legal-hold'))
-            
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+            response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
+            response_headers["x-ms-or-policy-id"] = self._deserialize("str", response.headers.get("x-ms-or-policy-id"))
+            response_headers["x-ms-or"] = self._deserialize("{str}", response.headers.get("x-ms-or"))
+            response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+            response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+            response_headers["Content-Range"] = self._deserialize("str", response.headers.get("Content-Range"))
+            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+            response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+            response_headers["Content-Encoding"] = self._deserialize("str", response.headers.get("Content-Encoding"))
+            response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
+            response_headers["Content-Disposition"] = self._deserialize(
+                "str", response.headers.get("Content-Disposition")
+            )
+            response_headers["Content-Language"] = self._deserialize("str", response.headers.get("Content-Language"))
+            response_headers["x-ms-blob-sequence-number"] = self._deserialize(
+                "int", response.headers.get("x-ms-blob-sequence-number")
+            )
+            response_headers["x-ms-blob-type"] = self._deserialize("str", response.headers.get("x-ms-blob-type"))
+            response_headers["x-ms-content-crc64"] = self._deserialize(
+                "bytearray", response.headers.get("x-ms-content-crc64")
+            )
+            response_headers["x-ms-copy-completion-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-copy-completion-time")
+            )
+            response_headers["x-ms-copy-status-description"] = self._deserialize(
+                "str", response.headers.get("x-ms-copy-status-description")
+            )
+            response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
+            response_headers["x-ms-copy-progress"] = self._deserialize(
+                "str", response.headers.get("x-ms-copy-progress")
+            )
+            response_headers["x-ms-copy-source"] = self._deserialize("str", response.headers.get("x-ms-copy-source"))
+            response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
+            response_headers["x-ms-lease-duration"] = self._deserialize(
+                "str", response.headers.get("x-ms-lease-duration")
+            )
+            response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
+            response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
+            response_headers["x-ms-client-request-id"] = self._deserialize(
+                "str", response.headers.get("x-ms-client-request-id")
+            )
+            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+            response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
+            response_headers["x-ms-is-current-version"] = self._deserialize(
+                "bool", response.headers.get("x-ms-is-current-version")
+            )
+            response_headers["Accept-Ranges"] = self._deserialize("str", response.headers.get("Accept-Ranges"))
+            response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+            response_headers["x-ms-blob-committed-block-count"] = self._deserialize(
+                "int", response.headers.get("x-ms-blob-committed-block-count")
+            )
+            response_headers["x-ms-server-encrypted"] = self._deserialize(
+                "bool", response.headers.get("x-ms-server-encrypted")
+            )
+            response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
+                "str", response.headers.get("x-ms-encryption-key-sha256")
+            )
+            response_headers["x-ms-encryption-scope"] = self._deserialize(
+                "str", response.headers.get("x-ms-encryption-scope")
+            )
+            response_headers["x-ms-blob-content-md5"] = self._deserialize(
+                "bytearray", response.headers.get("x-ms-blob-content-md5")
+            )
+            response_headers["x-ms-tag-count"] = self._deserialize("int", response.headers.get("x-ms-tag-count"))
+            response_headers["x-ms-blob-sealed"] = self._deserialize("bool", response.headers.get("x-ms-blob-sealed"))
+            response_headers["x-ms-last-access-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-last-access-time")
+            )
+            response_headers["x-ms-immutability-policy-until-date"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-immutability-policy-until-date")
+            )
+            response_headers["x-ms-immutability-policy-mode"] = self._deserialize(
+                "str", response.headers.get("x-ms-immutability-policy-mode")
+            )
+            response_headers["x-ms-legal-hold"] = self._deserialize("bool", response.headers.get("x-ms-legal-hold"))
+
             deserialized = response.stream_download(self._client._pipeline)
 
         if cls:
@@ -269,8 +364,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    download.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    download.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def get_properties(  # pylint: disable=inconsistent-return-statements
@@ -313,19 +407,17 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _lease_id = None
         _encryption_key = None
@@ -339,19 +431,18 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if cpk_info is not None:
+            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
-            _encryption_algorithm = cpk_info.encryption_algorithm
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_get_properties_request(
             url=self._config.url,
-            version=self._config.version,
             snapshot=snapshot,
             version_id=version_id,
             timeout=timeout,
@@ -365,7 +456,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            template_url=self.get_properties.metadata['url'],
+            version=self._config.version,
+            template_url=self.get_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -373,10 +465,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -385,62 +476,96 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-creation-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-creation-time'))
-        response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
-        response_headers['x-ms-or-policy-id']=self._deserialize('str', response.headers.get('x-ms-or-policy-id'))
-        response_headers['x-ms-or']=self._deserialize('{str}', response.headers.get('x-ms-or'))
-        response_headers['x-ms-blob-type']=self._deserialize('str', response.headers.get('x-ms-blob-type'))
-        response_headers['x-ms-copy-completion-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-copy-completion-time'))
-        response_headers['x-ms-copy-status-description']=self._deserialize('str', response.headers.get('x-ms-copy-status-description'))
-        response_headers['x-ms-copy-id']=self._deserialize('str', response.headers.get('x-ms-copy-id'))
-        response_headers['x-ms-copy-progress']=self._deserialize('str', response.headers.get('x-ms-copy-progress'))
-        response_headers['x-ms-copy-source']=self._deserialize('str', response.headers.get('x-ms-copy-source'))
-        response_headers['x-ms-copy-status']=self._deserialize('str', response.headers.get('x-ms-copy-status'))
-        response_headers['x-ms-incremental-copy']=self._deserialize('bool', response.headers.get('x-ms-incremental-copy'))
-        response_headers['x-ms-copy-destination-snapshot']=self._deserialize('str', response.headers.get('x-ms-copy-destination-snapshot'))
-        response_headers['x-ms-lease-duration']=self._deserialize('str', response.headers.get('x-ms-lease-duration'))
-        response_headers['x-ms-lease-state']=self._deserialize('str', response.headers.get('x-ms-lease-state'))
-        response_headers['x-ms-lease-status']=self._deserialize('str', response.headers.get('x-ms-lease-status'))
-        response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
-        response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
-        response_headers['Content-Encoding']=self._deserialize('str', response.headers.get('Content-Encoding'))
-        response_headers['Content-Disposition']=self._deserialize('str', response.headers.get('Content-Disposition'))
-        response_headers['Content-Language']=self._deserialize('str', response.headers.get('Content-Language'))
-        response_headers['Cache-Control']=self._deserialize('str', response.headers.get('Cache-Control'))
-        response_headers['x-ms-blob-sequence-number']=self._deserialize('long', response.headers.get('x-ms-blob-sequence-number'))
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['Accept-Ranges']=self._deserialize('str', response.headers.get('Accept-Ranges'))
-        response_headers['x-ms-blob-committed-block-count']=self._deserialize('int', response.headers.get('x-ms-blob-committed-block-count'))
-        response_headers['x-ms-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-server-encrypted'))
-        response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
-        response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
-        response_headers['x-ms-access-tier']=self._deserialize('str', response.headers.get('x-ms-access-tier'))
-        response_headers['x-ms-access-tier-inferred']=self._deserialize('bool', response.headers.get('x-ms-access-tier-inferred'))
-        response_headers['x-ms-archive-status']=self._deserialize('str', response.headers.get('x-ms-archive-status'))
-        response_headers['x-ms-access-tier-change-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-access-tier-change-time'))
-        response_headers['x-ms-version-id']=self._deserialize('str', response.headers.get('x-ms-version-id'))
-        response_headers['x-ms-is-current-version']=self._deserialize('bool', response.headers.get('x-ms-is-current-version'))
-        response_headers['x-ms-tag-count']=self._deserialize('long', response.headers.get('x-ms-tag-count'))
-        response_headers['x-ms-expiry-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-expiry-time'))
-        response_headers['x-ms-blob-sealed']=self._deserialize('bool', response.headers.get('x-ms-blob-sealed'))
-        response_headers['x-ms-rehydrate-priority']=self._deserialize('str', response.headers.get('x-ms-rehydrate-priority'))
-        response_headers['x-ms-last-access-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-last-access-time'))
-        response_headers['x-ms-immutability-policy-until-date']=self._deserialize('rfc-1123', response.headers.get('x-ms-immutability-policy-until-date'))
-        response_headers['x-ms-immutability-policy-mode']=self._deserialize('str', response.headers.get('x-ms-immutability-policy-mode'))
-        response_headers['x-ms-legal-hold']=self._deserialize('bool', response.headers.get('x-ms-legal-hold'))
-
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-creation-time"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-creation-time")
+        )
+        response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
+        response_headers["x-ms-or-policy-id"] = self._deserialize("str", response.headers.get("x-ms-or-policy-id"))
+        response_headers["x-ms-or"] = self._deserialize("{str}", response.headers.get("x-ms-or"))
+        response_headers["x-ms-blob-type"] = self._deserialize("str", response.headers.get("x-ms-blob-type"))
+        response_headers["x-ms-copy-completion-time"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-copy-completion-time")
+        )
+        response_headers["x-ms-copy-status-description"] = self._deserialize(
+            "str", response.headers.get("x-ms-copy-status-description")
+        )
+        response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
+        response_headers["x-ms-copy-progress"] = self._deserialize("str", response.headers.get("x-ms-copy-progress"))
+        response_headers["x-ms-copy-source"] = self._deserialize("str", response.headers.get("x-ms-copy-source"))
+        response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
+        response_headers["x-ms-incremental-copy"] = self._deserialize(
+            "bool", response.headers.get("x-ms-incremental-copy")
+        )
+        response_headers["x-ms-copy-destination-snapshot"] = self._deserialize(
+            "str", response.headers.get("x-ms-copy-destination-snapshot")
+        )
+        response_headers["x-ms-lease-duration"] = self._deserialize("str", response.headers.get("x-ms-lease-duration"))
+        response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
+        response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+        response_headers["Content-Encoding"] = self._deserialize("str", response.headers.get("Content-Encoding"))
+        response_headers["Content-Disposition"] = self._deserialize("str", response.headers.get("Content-Disposition"))
+        response_headers["Content-Language"] = self._deserialize("str", response.headers.get("Content-Language"))
+        response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
+        response_headers["x-ms-blob-sequence-number"] = self._deserialize(
+            "int", response.headers.get("x-ms-blob-sequence-number")
+        )
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["Accept-Ranges"] = self._deserialize("str", response.headers.get("Accept-Ranges"))
+        response_headers["x-ms-blob-committed-block-count"] = self._deserialize(
+            "int", response.headers.get("x-ms-blob-committed-block-count")
+        )
+        response_headers["x-ms-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-server-encrypted")
+        )
+        response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
+            "str", response.headers.get("x-ms-encryption-key-sha256")
+        )
+        response_headers["x-ms-encryption-scope"] = self._deserialize(
+            "str", response.headers.get("x-ms-encryption-scope")
+        )
+        response_headers["x-ms-access-tier"] = self._deserialize("str", response.headers.get("x-ms-access-tier"))
+        response_headers["x-ms-access-tier-inferred"] = self._deserialize(
+            "bool", response.headers.get("x-ms-access-tier-inferred")
+        )
+        response_headers["x-ms-archive-status"] = self._deserialize("str", response.headers.get("x-ms-archive-status"))
+        response_headers["x-ms-access-tier-change-time"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-access-tier-change-time")
+        )
+        response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
+        response_headers["x-ms-is-current-version"] = self._deserialize(
+            "bool", response.headers.get("x-ms-is-current-version")
+        )
+        response_headers["x-ms-tag-count"] = self._deserialize("int", response.headers.get("x-ms-tag-count"))
+        response_headers["x-ms-expiry-time"] = self._deserialize("rfc-1123", response.headers.get("x-ms-expiry-time"))
+        response_headers["x-ms-blob-sealed"] = self._deserialize("bool", response.headers.get("x-ms-blob-sealed"))
+        response_headers["x-ms-rehydrate-priority"] = self._deserialize(
+            "str", response.headers.get("x-ms-rehydrate-priority")
+        )
+        response_headers["x-ms-last-access-time"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-last-access-time")
+        )
+        response_headers["x-ms-immutability-policy-until-date"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-immutability-policy-until-date")
+        )
+        response_headers["x-ms-immutability-policy-mode"] = self._deserialize(
+            "str", response.headers.get("x-ms-immutability-policy-mode")
+        )
+        response_headers["x-ms-legal-hold"] = self._deserialize("bool", response.headers.get("x-ms-legal-hold"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    get_properties.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -450,7 +575,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         timeout: Optional[int] = None,
         delete_snapshots: Optional[Union[str, "_models.DeleteSnapshotsOptionType"]] = None,
         request_id_parameter: Optional[str] = None,
-        blob_delete_type: Optional[str] = "Permanent",
+        blob_delete_type: str = "Permanent",
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
@@ -485,34 +610,33 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type timeout: int
         :param delete_snapshots: Required if the blob has associated snapshots. Specify one of the
          following two options: include: Delete the base blob and all of its snapshots. only: Delete
-         only the blob's snapshots and not the blob itself. Default value is None.
+         only the blob's snapshots and not the blob itself. Known values are: "include" and "only".
+         Default value is None.
         :type delete_snapshots: str or ~azure.storage.blob.models.DeleteSnapshotsOptionType
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
         :param blob_delete_type: Optional.  Only possible value is 'permanent', which specifies to
-         permanently delete a blob if blob soft delete is enabled. Known values are "Permanent" or None.
-         Default value is "Permanent".
+         permanently delete a blob if blob soft delete is enabled. Known values are "Permanent" and
+         None. Default value is "Permanent".
         :type blob_delete_type: str
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _lease_id = None
         _if_modified_since = None
@@ -523,15 +647,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_delete_request(
             url=self._config.url,
-            version=self._config.version,
             snapshot=snapshot,
             version_id=version_id,
             timeout=timeout,
@@ -544,7 +667,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             blob_delete_type=blob_delete_type,
-            template_url=self.delete.metadata['url'],
+            version=self._config.version,
+            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -552,10 +676,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -564,24 +687,21 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    delete.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def undelete(  # pylint: disable=inconsistent-return-statements
-        self,
-        timeout: Optional[int] = None,
-        request_id_parameter: Optional[str] = None,
-        **kwargs: Any
+        self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Undelete a blob that was previously soft deleted.
 
@@ -598,29 +718,26 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop('comp', _params.pop('comp', "undelete"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop("comp", _params.pop("comp", "undelete"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_undelete_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            template_url=self.undelete.metadata['url'],
+            comp=comp,
+            version=self._config.version,
+            template_url=self.undelete.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -628,10 +745,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -640,17 +756,17 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    undelete.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    undelete.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def set_expiry(  # pylint: disable=inconsistent-return-statements
@@ -663,7 +779,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     ) -> None:
         """Sets the time a blob will expire and be deleted.
 
-        :param expiry_options: Required. Indicates mode of the expiry time.
+        :param expiry_options: Required. Indicates mode of the expiry time. Known values are:
+         "NeverExpire", "RelativeToCreation", "RelativeToNow", and "Absolute". Required.
         :type expiry_options: str or ~azure.storage.blob.models.BlobExpiryOptions
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -680,31 +797,28 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop('comp', _params.pop('comp', "expiry"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop("comp", _params.pop("comp", "expiry"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_set_expiry_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             expiry_options=expiry_options,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             expires_on=expires_on,
-            template_url=self.set_expiry.metadata['url'],
+            comp=comp,
+            version=self._config.version,
+            template_url=self.set_expiry.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -712,10 +826,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -724,19 +837,19 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_expiry.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    set_expiry.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def set_http_headers(  # pylint: disable=inconsistent-return-statements
@@ -769,20 +882,18 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _blob_cache_control = None
         _blob_content_type = None
@@ -798,25 +909,22 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _blob_content_disposition = None
         if blob_http_headers is not None:
             _blob_cache_control = blob_http_headers.blob_cache_control
-            _blob_content_type = blob_http_headers.blob_content_type
-            _blob_content_md5 = blob_http_headers.blob_content_md5
+            _blob_content_disposition = blob_http_headers.blob_content_disposition
             _blob_content_encoding = blob_http_headers.blob_content_encoding
             _blob_content_language = blob_http_headers.blob_content_language
+            _blob_content_md5 = blob_http_headers.blob_content_md5
+            _blob_content_type = blob_http_headers.blob_content_type
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
-        if blob_http_headers is not None:
-            _blob_content_disposition = blob_http_headers.blob_content_disposition
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_set_http_headers_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             timeout=timeout,
             blob_cache_control=_blob_cache_control,
             blob_content_type=_blob_content_type,
@@ -831,7 +939,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             blob_content_disposition=_blob_content_disposition,
             request_id_parameter=request_id_parameter,
-            template_url=self.set_http_headers.metadata['url'],
+            comp=comp,
+            version=self._config.version,
+            template_url=self.set_http_headers.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -839,10 +949,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -851,20 +960,22 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-blob-sequence-number']=self._deserialize('long', response.headers.get('x-ms-blob-sequence-number'))
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-blob-sequence-number"] = self._deserialize(
+            "int", response.headers.get("x-ms-blob-sequence-number")
+        )
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_http_headers.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    set_http_headers.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def set_immutability_policy(  # pylint: disable=inconsistent-return-statements
@@ -891,7 +1002,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          is set to expire. Default value is None.
         :type immutability_policy_expiry: ~datetime.datetime
         :param immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
-         Default value is None.
+         Known values are: "Mutable", "Unlocked", and "Locked". Default value is None.
         :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
@@ -899,20 +1010,18 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          value may result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop('comp', _params.pop('comp', "immutabilityPolicies"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop("comp", _params.pop("comp", "immutabilityPolicies"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _if_unmodified_since = None
         if modified_access_conditions is not None:
@@ -920,14 +1029,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         request = build_set_immutability_policy_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             if_unmodified_since=_if_unmodified_since,
             immutability_policy_expiry=immutability_policy_expiry,
             immutability_policy_mode=immutability_policy_mode,
-            template_url=self.set_immutability_policy.metadata['url'],
+            comp=comp,
+            version=self._config.version,
+            template_url=self.set_immutability_policy.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -935,10 +1044,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -947,26 +1055,27 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['x-ms-immutability-policy-until-date']=self._deserialize('rfc-1123', response.headers.get('x-ms-immutability-policy-until-date'))
-        response_headers['x-ms-immutability-policy-mode']=self._deserialize('str', response.headers.get('x-ms-immutability-policy-mode'))
-
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-immutability-policy-until-date"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-immutability-policy-until-date")
+        )
+        response_headers["x-ms-immutability-policy-mode"] = self._deserialize(
+            "str", response.headers.get("x-ms-immutability-policy-mode")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_immutability_policy.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    set_immutability_policy.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def delete_immutability_policy(  # pylint: disable=inconsistent-return-statements
-        self,
-        timeout: Optional[int] = None,
-        request_id_parameter: Optional[str] = None,
-        **kwargs: Any
+        self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> None:
         """The Delete Immutability Policy operation deletes the immutability policy on the blob.
 
@@ -983,29 +1092,26 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          value may result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop('comp', _params.pop('comp', "immutabilityPolicies"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop("comp", _params.pop("comp", "immutabilityPolicies"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_delete_immutability_policy_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            template_url=self.delete_immutability_policy.metadata['url'],
+            comp=comp,
+            version=self._config.version,
+            template_url=self.delete_immutability_policy.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -1013,10 +1119,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1025,29 +1130,25 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete_immutability_policy.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    delete_immutability_policy.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def set_legal_hold(  # pylint: disable=inconsistent-return-statements
-        self,
-        legal_hold: bool,
-        timeout: Optional[int] = None,
-        request_id_parameter: Optional[str] = None,
-        **kwargs: Any
+        self, legal_hold: bool, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> None:
         """The Set Legal Hold operation sets a legal hold on the blob.
 
-        :param legal_hold: Specified if a legal hold should be set on the blob.
+        :param legal_hold: Specified if a legal hold should be set on the blob. Required.
         :type legal_hold: bool
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -1062,30 +1163,27 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop('comp', _params.pop('comp', "legalhold"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop("comp", _params.pop("comp", "legalhold"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_set_legal_hold_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             legal_hold=legal_hold,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            template_url=self.set_legal_hold.metadata['url'],
+            comp=comp,
+            version=self._config.version,
+            template_url=self.set_legal_hold.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -1093,10 +1191,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1105,18 +1202,18 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['x-ms-legal-hold']=self._deserialize('bool', response.headers.get('x-ms-legal-hold'))
-
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-legal-hold"] = self._deserialize("bool", response.headers.get("x-ms-legal-hold"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_legal_hold.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    set_legal_hold.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def set_metadata(  # pylint: disable=inconsistent-return-statements
@@ -1162,20 +1259,18 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop('comp', _params.pop('comp', "metadata"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop("comp", _params.pop("comp", "metadata"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _lease_id = None
         _encryption_key = None
@@ -1190,22 +1285,20 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if cpk_info is not None:
+            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
-            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_set_metadata_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             lease_id=_lease_id,
@@ -1219,7 +1312,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            template_url=self.set_metadata.metadata['url'],
+            comp=comp,
+            version=self._config.version,
+            template_url=self.set_metadata.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -1227,10 +1322,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1239,23 +1333,29 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['x-ms-version-id']=self._deserialize('str', response.headers.get('x-ms-version-id'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
-        response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
-        response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
-
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-request-server-encrypted")
+        )
+        response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
+            "str", response.headers.get("x-ms-encryption-key-sha256")
+        )
+        response_headers["x-ms-encryption-scope"] = self._deserialize(
+            "str", response.headers.get("x-ms-encryption-scope")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_metadata.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    set_metadata.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def acquire_lease(  # pylint: disable=inconsistent-return-statements
@@ -1296,21 +1396,19 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "acquire"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
+        action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1318,17 +1416,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _if_none_match = None
         _if_tags = None
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_acquire_lease_request(
             url=self._config.url,
-            comp=comp,
-            action=action,
-            version=self._config.version,
             timeout=timeout,
             duration=duration,
             proposed_lease_id=proposed_lease_id,
@@ -1338,7 +1433,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            template_url=self.acquire_lease.metadata['url'],
+            comp=comp,
+            action=action,
+            version=self._config.version,
+            template_url=self.acquire_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -1346,10 +1444,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -1358,20 +1455,20 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-lease-id']=self._deserialize('str', response.headers.get('x-ms-lease-id'))
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-lease-id"] = self._deserialize("str", response.headers.get("x-ms-lease-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    acquire_lease.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    acquire_lease.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def release_lease(  # pylint: disable=inconsistent-return-statements
@@ -1385,7 +1482,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
-        :param lease_id: Specifies the current lease ID on the resource.
+        :param lease_id: Specifies the current lease ID on the resource. Required.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -1405,21 +1502,19 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "release"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
+        action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1427,17 +1522,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _if_none_match = None
         _if_tags = None
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_release_lease_request(
             url=self._config.url,
-            comp=comp,
-            action=action,
-            version=self._config.version,
             lease_id=lease_id,
             timeout=timeout,
             if_modified_since=_if_modified_since,
@@ -1446,7 +1538,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            template_url=self.release_lease.metadata['url'],
+            comp=comp,
+            action=action,
+            version=self._config.version,
+            template_url=self.release_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -1454,10 +1549,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1466,19 +1560,19 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    release_lease.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    release_lease.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def renew_lease(  # pylint: disable=inconsistent-return-statements
@@ -1492,7 +1586,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
-        :param lease_id: Specifies the current lease ID on the resource.
+        :param lease_id: Specifies the current lease ID on the resource. Required.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -1512,21 +1606,19 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "renew"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
+        action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1534,17 +1626,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _if_none_match = None
         _if_tags = None
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_renew_lease_request(
             url=self._config.url,
-            comp=comp,
-            action=action,
-            version=self._config.version,
             lease_id=lease_id,
             timeout=timeout,
             if_modified_since=_if_modified_since,
@@ -1553,7 +1642,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            template_url=self.renew_lease.metadata['url'],
+            comp=comp,
+            action=action,
+            version=self._config.version,
+            template_url=self.renew_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -1561,10 +1653,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1573,20 +1664,20 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-lease-id']=self._deserialize('str', response.headers.get('x-ms-lease-id'))
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-lease-id"] = self._deserialize("str", response.headers.get("x-ms-lease-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    renew_lease.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    renew_lease.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def change_lease(  # pylint: disable=inconsistent-return-statements
@@ -1601,11 +1692,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
-        :param lease_id: Specifies the current lease ID on the resource.
+        :param lease_id: Specifies the current lease ID on the resource. Required.
         :type lease_id: str
         :param proposed_lease_id: Proposed lease ID, in a GUID string format. The Blob service returns
          400 (Invalid request) if the proposed lease ID is not in the correct format. See Guid
-         Constructor (String) for a list of valid GUID string formats.
+         Constructor (String) for a list of valid GUID string formats. Required.
         :type proposed_lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -1625,21 +1716,19 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "change"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
+        action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1647,17 +1736,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _if_none_match = None
         _if_tags = None
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_change_lease_request(
             url=self._config.url,
-            comp=comp,
-            action=action,
-            version=self._config.version,
             lease_id=lease_id,
             proposed_lease_id=proposed_lease_id,
             timeout=timeout,
@@ -1667,7 +1753,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            template_url=self.change_lease.metadata['url'],
+            comp=comp,
+            action=action,
+            version=self._config.version,
+            template_url=self.change_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -1675,10 +1764,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1687,20 +1775,20 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-lease-id']=self._deserialize('str', response.headers.get('x-ms-lease-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-lease-id"] = self._deserialize("str", response.headers.get("x-ms-lease-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    change_lease.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    change_lease.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def break_lease(  # pylint: disable=inconsistent-return-statements
@@ -1740,21 +1828,19 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "break"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
+        action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1762,17 +1848,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _if_none_match = None
         _if_tags = None
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_break_lease_request(
             url=self._config.url,
-            comp=comp,
-            action=action,
-            version=self._config.version,
             timeout=timeout,
             break_period=break_period,
             if_modified_since=_if_modified_since,
@@ -1781,7 +1864,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            template_url=self.break_lease.metadata['url'],
+            comp=comp,
+            action=action,
+            version=self._config.version,
+            template_url=self.break_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -1789,10 +1875,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -1801,20 +1886,20 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-lease-time']=self._deserialize('int', response.headers.get('x-ms-lease-time'))
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-lease-time"] = self._deserialize("int", response.headers.get("x-ms-lease-time"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    break_lease.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    break_lease.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def create_snapshot(  # pylint: disable=inconsistent-return-statements
@@ -1859,20 +1944,18 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop('comp', _params.pop('comp', "snapshot"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop("comp", _params.pop("comp", "snapshot"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _encryption_key = None
         _encryption_key_sha256 = None
@@ -1885,24 +1968,22 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _if_tags = None
         _lease_id = None
         if cpk_info is not None:
+            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
-            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
         request = build_create_snapshot_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             encryption_key=_encryption_key,
@@ -1916,7 +1997,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
-            template_url=self.create_snapshot.metadata['url'],
+            comp=comp,
+            version=self._config.version,
+            template_url=self.create_snapshot.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -1924,10 +2007,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -1936,22 +2018,24 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-snapshot']=self._deserialize('str', response.headers.get('x-ms-snapshot'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['x-ms-version-id']=self._deserialize('str', response.headers.get('x-ms-version-id'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
-
+        response_headers["x-ms-snapshot"] = self._deserialize("str", response.headers.get("x-ms-snapshot"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-request-server-encrypted")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create_snapshot.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    create_snapshot.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def start_copy_from_url(  # pylint: disable=inconsistent-return-statements
@@ -1977,7 +2061,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :param copy_source: Specifies the name of the source page blob snapshot. This value is a URL of
          up to 2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as it
          would appear in a request URI. The source blob must either be public or must be authenticated
-         via a shared access signature.
+         via a shared access signature. Required.
         :type copy_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -1992,10 +2076,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information. Default value is None.
         :type metadata: dict[str, str]
-        :param tier: Optional. Indicates the tier to be set on the blob. Default value is None.
+        :param tier: Optional. Indicates the tier to be set on the blob. Known values are: "P4", "P6",
+         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", and "Archive".
+         Default value is None.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param rehydrate_priority: Optional: Indicates the priority with which to rehydrate an archived
-         blob. Default value is None.
+         blob. Known values are: "High" and "Standard". Default value is None.
         :type rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -2011,7 +2097,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          is set to expire. Default value is None.
         :type immutability_policy_expiry: ~datetime.datetime
         :param immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
-         Default value is None.
+         Known values are: "Mutable", "Unlocked", and "Locked". Default value is None.
         :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
         :param legal_hold: Specified if a legal hold should be set on the blob. Default value is None.
         :type legal_hold: bool
@@ -2023,19 +2109,17 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _source_if_modified_since = None
         _source_if_unmodified_since = None
@@ -2049,23 +2133,22 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _if_tags = None
         _lease_id = None
         if source_modified_access_conditions is not None:
-            _source_if_modified_since = source_modified_access_conditions.source_if_modified_since
-            _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
             _source_if_match = source_modified_access_conditions.source_if_match
+            _source_if_modified_since = source_modified_access_conditions.source_if_modified_since
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
             _source_if_tags = source_modified_access_conditions.source_if_tags
+            _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
         request = build_start_copy_from_url_request(
             url=self._config.url,
-            version=self._config.version,
             copy_source=copy_source,
             timeout=timeout,
             metadata=metadata,
@@ -2088,7 +2171,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             immutability_policy_expiry=immutability_policy_expiry,
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
-            template_url=self.start_copy_from_url.metadata['url'],
+            version=self._config.version,
+            template_url=self.start_copy_from_url.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -2096,10 +2180,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -2108,22 +2191,22 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['x-ms-version-id']=self._deserialize('str', response.headers.get('x-ms-version-id'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['x-ms-copy-id']=self._deserialize('str', response.headers.get('x-ms-copy-id'))
-        response_headers['x-ms-copy-status']=self._deserialize('str', response.headers.get('x-ms-copy-status'))
-
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
+        response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    start_copy_from_url.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    start_copy_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def copy_from_url(  # pylint: disable=inconsistent-return-statements
@@ -2133,7 +2216,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         metadata: Optional[Dict[str, str]] = None,
         tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
         request_id_parameter: Optional[str] = None,
-        source_content_md5: Optional[bytearray] = None,
+        source_content_md5: Optional[bytes] = None,
         blob_tags_string: Optional[str] = None,
         immutability_policy_expiry: Optional[datetime.datetime] = None,
         immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
@@ -2152,7 +2235,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :param copy_source: Specifies the name of the source page blob snapshot. This value is a URL of
          up to 2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as it
          would appear in a request URI. The source blob must either be public or must be authenticated
-         via a shared access signature.
+         via a shared access signature. Required.
         :type copy_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -2167,7 +2250,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information. Default value is None.
         :type metadata: dict[str, str]
-        :param tier: Optional. Indicates the tier to be set on the blob. Default value is None.
+        :param tier: Optional. Indicates the tier to be set on the blob. Known values are: "P4", "P6",
+         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", and "Archive".
+         Default value is None.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -2175,7 +2260,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type request_id_parameter: str
         :param source_content_md5: Specify the md5 calculated for the range of bytes that must be read
          from the copy source. Default value is None.
-        :type source_content_md5: bytearray
+        :type source_content_md5: bytes
         :param blob_tags_string: Optional.  Used to set blob tags in various blob operations. Default
          value is None.
         :type blob_tags_string: str
@@ -2183,7 +2268,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          is set to expire. Default value is None.
         :type immutability_policy_expiry: ~datetime.datetime
         :param immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
-         Default value is None.
+         Known values are: "Mutable", "Unlocked", and "Locked". Default value is None.
         :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
         :param legal_hold: Specified if a legal hold should be set on the blob. Default value is None.
         :type legal_hold: bool
@@ -2191,7 +2276,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          OAuth access token to copy source. Default value is None.
         :type copy_source_authorization: str
         :param copy_source_tags: Optional, default 'replace'.  Indicates if source tags should be
-         copied or replaced with the tags specified by x-ms-tags. Default value is None.
+         copied or replaced with the tags specified by x-ms-tags. Known values are: "REPLACE" and
+         "COPY". Default value is None.
         :type copy_source_tags: str or ~azure.storage.blob.models.BlobCopySourceTags
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
@@ -2207,20 +2293,18 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          default value may result in unsupported behavior.
         :paramtype x_ms_requires_sync: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        x_ms_requires_sync = kwargs.pop('x_ms_requires_sync', _headers.pop('x-ms-requires-sync', "true"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        x_ms_requires_sync = kwargs.pop("x_ms_requires_sync", _headers.pop("x-ms-requires-sync", "true"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _source_if_modified_since = None
         _source_if_unmodified_since = None
@@ -2234,16 +2318,16 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _lease_id = None
         _encryption_scope = None
         if source_modified_access_conditions is not None:
-            _source_if_modified_since = source_modified_access_conditions.source_if_modified_since
-            _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
             _source_if_match = source_modified_access_conditions.source_if_match
+            _source_if_modified_since = source_modified_access_conditions.source_if_modified_since
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
+            _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if cpk_scope_info is not None:
@@ -2251,8 +2335,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         request = build_copy_from_url_request(
             url=self._config.url,
-            x_ms_requires_sync=x_ms_requires_sync,
-            version=self._config.version,
             copy_source=copy_source,
             timeout=timeout,
             metadata=metadata,
@@ -2276,7 +2358,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             copy_source_authorization=copy_source_authorization,
             encryption_scope=_encryption_scope,
             copy_source_tags=copy_source_tags,
-            template_url=self.copy_from_url.metadata['url'],
+            x_ms_requires_sync=x_ms_requires_sync,
+            version=self._config.version,
+            template_url=self.copy_from_url.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -2284,10 +2368,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -2296,25 +2379,29 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['x-ms-version-id']=self._deserialize('str', response.headers.get('x-ms-version-id'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['x-ms-copy-id']=self._deserialize('str', response.headers.get('x-ms-copy-id'))
-        response_headers['x-ms-copy-status']=self._deserialize('str', response.headers.get('x-ms-copy-status'))
-        response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
-        response_headers['x-ms-content-crc64']=self._deserialize('bytearray', response.headers.get('x-ms-content-crc64'))
-        response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
-
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
+        response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
+        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+        response_headers["x-ms-content-crc64"] = self._deserialize(
+            "bytearray", response.headers.get("x-ms-content-crc64")
+        )
+        response_headers["x-ms-encryption-scope"] = self._deserialize(
+            "str", response.headers.get("x-ms-encryption-scope")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    copy_from_url.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    copy_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def abort_copy_from_url(  # pylint: disable=inconsistent-return-statements
@@ -2329,7 +2416,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         destination blob with zero length and full metadata.
 
         :param copy_id: The copy identifier provided in the x-ms-copy-id header of the original Copy
-         Blob operation.
+         Blob operation. Required.
         :type copy_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -2349,21 +2436,21 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          overriding this default value may result in unsupported behavior.
         :paramtype copy_action_abort_constant: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop('comp', _params.pop('comp', "copy"))  # type: str
-        copy_action_abort_constant = kwargs.pop('copy_action_abort_constant', _headers.pop('x-ms-copy-action', "abort"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop("comp", _params.pop("comp", "copy"))  # type: str
+        copy_action_abort_constant = kwargs.pop(
+            "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
+        )  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _lease_id = None
         if lease_access_conditions is not None:
@@ -2371,14 +2458,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         request = build_abort_copy_from_url_request(
             url=self._config.url,
-            comp=comp,
-            copy_action_abort_constant=copy_action_abort_constant,
-            version=self._config.version,
             copy_id=copy_id,
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
-            template_url=self.abort_copy_from_url.metadata['url'],
+            comp=comp,
+            copy_action_abort_constant=copy_action_abort_constant,
+            version=self._config.version,
+            template_url=self.abort_copy_from_url.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -2386,10 +2473,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -2398,17 +2484,17 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    abort_copy_from_url.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    abort_copy_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def set_tier(  # pylint: disable=inconsistent-return-statements
@@ -2429,7 +2515,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         the blob. A block blob's tier determines Hot/Cool/Archive storage type. This operation does not
         update the blob's ETag.
 
-        :param tier: Indicates the tier to be set on the blob.
+        :param tier: Indicates the tier to be set on the blob. Known values are: "P4", "P6", "P10",
+         "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", and "Archive". Required.
         :type tier: str or ~azure.storage.blob.models.AccessTierRequired
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
@@ -2447,7 +2534,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param rehydrate_priority: Optional: Indicates the priority with which to rehydrate an archived
-         blob. Default value is None.
+         blob. Known values are: "High" and "Standard". Default value is None.
         :type rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -2461,20 +2548,18 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop('comp', _params.pop('comp', "tier"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop("comp", _params.pop("comp", "tier"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _lease_id = None
         _if_tags = None
@@ -2485,8 +2570,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         request = build_set_tier_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             tier=tier,
             snapshot=snapshot,
             version_id=version_id,
@@ -2495,7 +2578,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             lease_id=_lease_id,
             if_tags=_if_tags,
-            template_url=self.set_tier.metadata['url'],
+            comp=comp,
+            version=self._config.version,
+            template_url=self.set_tier.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -2503,10 +2588,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -2516,28 +2600,26 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         response_headers = {}
         if response.status_code == 200:
-            response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-            response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-            response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-            
+            response_headers["x-ms-client-request-id"] = self._deserialize(
+                "str", response.headers.get("x-ms-client-request-id")
+            )
+            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
         if response.status_code == 202:
-            response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-            response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-            response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-            
+            response_headers["x-ms-client-request-id"] = self._deserialize(
+                "str", response.headers.get("x-ms-client-request-id")
+            )
+            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_tier.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    set_tier.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
-    async def get_account_info(  # pylint: disable=inconsistent-return-statements
-        self,
-        **kwargs: Any
-    ) -> None:
+    async def get_account_info(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Returns the sku name and account kind.
 
         :keyword restype: restype. Default value is "account". Note that overriding this default value
@@ -2547,29 +2629,26 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype = kwargs.pop('restype', _params.pop('restype', "account"))  # type: str
-        comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        restype = kwargs.pop("restype", _params.pop("restype", "account"))  # type: str
+        comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_get_account_info_request(
             url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_account_info.metadata['url'],
+            template_url=self.get_account_info.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -2577,10 +2656,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2589,19 +2667,19 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['x-ms-sku-name']=self._deserialize('str', response.headers.get('x-ms-sku-name'))
-        response_headers['x-ms-account-kind']=self._deserialize('str', response.headers.get('x-ms-account-kind'))
-
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-sku-name"] = self._deserialize("str", response.headers.get("x-ms-sku-name"))
+        response_headers["x-ms-account-kind"] = self._deserialize("str", response.headers.get("x-ms-account-kind"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_account_info.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    get_account_info.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def query(
@@ -2609,12 +2687,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         snapshot: Optional[str] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        query_request: Optional[_models.QueryRequest] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        query_request: Optional[_models.QueryRequest] = None,
         **kwargs: Any
-    ) -> IO:
+    ) -> AsyncIterator[bytes]:
         """The Query operation enables users to select/project on blob data by providing simple query
         expressions.
 
@@ -2633,33 +2711,31 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :param query_request: the query request. Default value is None.
-        :type query_request: ~azure.storage.blob.models.QueryRequest
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :param query_request: the query request. Default value is None.
+        :type query_request: ~azure.storage.blob.models.QueryRequest
         :keyword comp: comp. Default value is "query". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: IO, or the result of cls(response)
-        :rtype: IO
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: Async iterator of the response bytes or the result of cls(response)
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop('comp', _params.pop('comp', "query"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/xml"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
+        comp = kwargs.pop("comp", _params.pop("comp", "query"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[AsyncIterator[bytes]]
 
         _lease_id = None
         _encryption_key = None
@@ -2673,26 +2749,22 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if cpk_info is not None:
+            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
-            _encryption_algorithm = cpk_info.encryption_algorithm
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
         if query_request is not None:
-            _content = self._serialize.body(query_request, 'QueryRequest', is_xml=True)
+            _content = self._serialize.body(query_request, "QueryRequest", is_xml=True)
         else:
             _content = None
 
         request = build_query_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
-            content_type=content_type,
-            content=_content,
             snapshot=snapshot,
             timeout=timeout,
             lease_id=_lease_id,
@@ -2705,7 +2777,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            template_url=self.query.metadata['url'],
+            comp=comp,
+            content_type=content_type,
+            version=self._config.version,
+            content=_content,
+            template_url=self.query.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -2713,10 +2789,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=True,
-            **kwargs
+            request, stream=True, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 206]:
@@ -2726,76 +2801,126 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         response_headers = {}
         if response.status_code == 200:
-            response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-            response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
-            response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
-            response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
-            response_headers['Content-Range']=self._deserialize('str', response.headers.get('Content-Range'))
-            response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-            response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
-            response_headers['Content-Encoding']=self._deserialize('str', response.headers.get('Content-Encoding'))
-            response_headers['Cache-Control']=self._deserialize('str', response.headers.get('Cache-Control'))
-            response_headers['Content-Disposition']=self._deserialize('str', response.headers.get('Content-Disposition'))
-            response_headers['Content-Language']=self._deserialize('str', response.headers.get('Content-Language'))
-            response_headers['x-ms-blob-sequence-number']=self._deserialize('long', response.headers.get('x-ms-blob-sequence-number'))
-            response_headers['x-ms-blob-type']=self._deserialize('str', response.headers.get('x-ms-blob-type'))
-            response_headers['x-ms-copy-completion-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-copy-completion-time'))
-            response_headers['x-ms-copy-status-description']=self._deserialize('str', response.headers.get('x-ms-copy-status-description'))
-            response_headers['x-ms-copy-id']=self._deserialize('str', response.headers.get('x-ms-copy-id'))
-            response_headers['x-ms-copy-progress']=self._deserialize('str', response.headers.get('x-ms-copy-progress'))
-            response_headers['x-ms-copy-source']=self._deserialize('str', response.headers.get('x-ms-copy-source'))
-            response_headers['x-ms-copy-status']=self._deserialize('str', response.headers.get('x-ms-copy-status'))
-            response_headers['x-ms-lease-duration']=self._deserialize('str', response.headers.get('x-ms-lease-duration'))
-            response_headers['x-ms-lease-state']=self._deserialize('str', response.headers.get('x-ms-lease-state'))
-            response_headers['x-ms-lease-status']=self._deserialize('str', response.headers.get('x-ms-lease-status'))
-            response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-            response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-            response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-            response_headers['Accept-Ranges']=self._deserialize('str', response.headers.get('Accept-Ranges'))
-            response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-            response_headers['x-ms-blob-committed-block-count']=self._deserialize('int', response.headers.get('x-ms-blob-committed-block-count'))
-            response_headers['x-ms-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-server-encrypted'))
-            response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
-            response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
-            response_headers['x-ms-blob-content-md5']=self._deserialize('bytearray', response.headers.get('x-ms-blob-content-md5'))
-            
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+            response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
+            response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+            response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+            response_headers["Content-Range"] = self._deserialize("str", response.headers.get("Content-Range"))
+            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+            response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+            response_headers["Content-Encoding"] = self._deserialize("str", response.headers.get("Content-Encoding"))
+            response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
+            response_headers["Content-Disposition"] = self._deserialize(
+                "str", response.headers.get("Content-Disposition")
+            )
+            response_headers["Content-Language"] = self._deserialize("str", response.headers.get("Content-Language"))
+            response_headers["x-ms-blob-sequence-number"] = self._deserialize(
+                "int", response.headers.get("x-ms-blob-sequence-number")
+            )
+            response_headers["x-ms-blob-type"] = self._deserialize("str", response.headers.get("x-ms-blob-type"))
+            response_headers["x-ms-copy-completion-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-copy-completion-time")
+            )
+            response_headers["x-ms-copy-status-description"] = self._deserialize(
+                "str", response.headers.get("x-ms-copy-status-description")
+            )
+            response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
+            response_headers["x-ms-copy-progress"] = self._deserialize(
+                "str", response.headers.get("x-ms-copy-progress")
+            )
+            response_headers["x-ms-copy-source"] = self._deserialize("str", response.headers.get("x-ms-copy-source"))
+            response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
+            response_headers["x-ms-lease-duration"] = self._deserialize(
+                "str", response.headers.get("x-ms-lease-duration")
+            )
+            response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
+            response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
+            response_headers["x-ms-client-request-id"] = self._deserialize(
+                "str", response.headers.get("x-ms-client-request-id")
+            )
+            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+            response_headers["Accept-Ranges"] = self._deserialize("str", response.headers.get("Accept-Ranges"))
+            response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+            response_headers["x-ms-blob-committed-block-count"] = self._deserialize(
+                "int", response.headers.get("x-ms-blob-committed-block-count")
+            )
+            response_headers["x-ms-server-encrypted"] = self._deserialize(
+                "bool", response.headers.get("x-ms-server-encrypted")
+            )
+            response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
+                "str", response.headers.get("x-ms-encryption-key-sha256")
+            )
+            response_headers["x-ms-encryption-scope"] = self._deserialize(
+                "str", response.headers.get("x-ms-encryption-scope")
+            )
+            response_headers["x-ms-blob-content-md5"] = self._deserialize(
+                "bytearray", response.headers.get("x-ms-blob-content-md5")
+            )
+
             deserialized = response.stream_download(self._client._pipeline)
 
         if response.status_code == 206:
-            response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-            response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
-            response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
-            response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
-            response_headers['Content-Range']=self._deserialize('str', response.headers.get('Content-Range'))
-            response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-            response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
-            response_headers['Content-Encoding']=self._deserialize('str', response.headers.get('Content-Encoding'))
-            response_headers['Cache-Control']=self._deserialize('str', response.headers.get('Cache-Control'))
-            response_headers['Content-Disposition']=self._deserialize('str', response.headers.get('Content-Disposition'))
-            response_headers['Content-Language']=self._deserialize('str', response.headers.get('Content-Language'))
-            response_headers['x-ms-blob-sequence-number']=self._deserialize('long', response.headers.get('x-ms-blob-sequence-number'))
-            response_headers['x-ms-blob-type']=self._deserialize('str', response.headers.get('x-ms-blob-type'))
-            response_headers['x-ms-content-crc64']=self._deserialize('bytearray', response.headers.get('x-ms-content-crc64'))
-            response_headers['x-ms-copy-completion-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-copy-completion-time'))
-            response_headers['x-ms-copy-status-description']=self._deserialize('str', response.headers.get('x-ms-copy-status-description'))
-            response_headers['x-ms-copy-id']=self._deserialize('str', response.headers.get('x-ms-copy-id'))
-            response_headers['x-ms-copy-progress']=self._deserialize('str', response.headers.get('x-ms-copy-progress'))
-            response_headers['x-ms-copy-source']=self._deserialize('str', response.headers.get('x-ms-copy-source'))
-            response_headers['x-ms-copy-status']=self._deserialize('str', response.headers.get('x-ms-copy-status'))
-            response_headers['x-ms-lease-duration']=self._deserialize('str', response.headers.get('x-ms-lease-duration'))
-            response_headers['x-ms-lease-state']=self._deserialize('str', response.headers.get('x-ms-lease-state'))
-            response_headers['x-ms-lease-status']=self._deserialize('str', response.headers.get('x-ms-lease-status'))
-            response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-            response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-            response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-            response_headers['Accept-Ranges']=self._deserialize('str', response.headers.get('Accept-Ranges'))
-            response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-            response_headers['x-ms-blob-committed-block-count']=self._deserialize('int', response.headers.get('x-ms-blob-committed-block-count'))
-            response_headers['x-ms-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-server-encrypted'))
-            response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
-            response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
-            response_headers['x-ms-blob-content-md5']=self._deserialize('bytearray', response.headers.get('x-ms-blob-content-md5'))
-            
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+            response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
+            response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+            response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+            response_headers["Content-Range"] = self._deserialize("str", response.headers.get("Content-Range"))
+            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+            response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+            response_headers["Content-Encoding"] = self._deserialize("str", response.headers.get("Content-Encoding"))
+            response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
+            response_headers["Content-Disposition"] = self._deserialize(
+                "str", response.headers.get("Content-Disposition")
+            )
+            response_headers["Content-Language"] = self._deserialize("str", response.headers.get("Content-Language"))
+            response_headers["x-ms-blob-sequence-number"] = self._deserialize(
+                "int", response.headers.get("x-ms-blob-sequence-number")
+            )
+            response_headers["x-ms-blob-type"] = self._deserialize("str", response.headers.get("x-ms-blob-type"))
+            response_headers["x-ms-content-crc64"] = self._deserialize(
+                "bytearray", response.headers.get("x-ms-content-crc64")
+            )
+            response_headers["x-ms-copy-completion-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-copy-completion-time")
+            )
+            response_headers["x-ms-copy-status-description"] = self._deserialize(
+                "str", response.headers.get("x-ms-copy-status-description")
+            )
+            response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
+            response_headers["x-ms-copy-progress"] = self._deserialize(
+                "str", response.headers.get("x-ms-copy-progress")
+            )
+            response_headers["x-ms-copy-source"] = self._deserialize("str", response.headers.get("x-ms-copy-source"))
+            response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
+            response_headers["x-ms-lease-duration"] = self._deserialize(
+                "str", response.headers.get("x-ms-lease-duration")
+            )
+            response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
+            response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
+            response_headers["x-ms-client-request-id"] = self._deserialize(
+                "str", response.headers.get("x-ms-client-request-id")
+            )
+            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+            response_headers["Accept-Ranges"] = self._deserialize("str", response.headers.get("Accept-Ranges"))
+            response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+            response_headers["x-ms-blob-committed-block-count"] = self._deserialize(
+                "int", response.headers.get("x-ms-blob-committed-block-count")
+            )
+            response_headers["x-ms-server-encrypted"] = self._deserialize(
+                "bool", response.headers.get("x-ms-server-encrypted")
+            )
+            response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
+                "str", response.headers.get("x-ms-encryption-key-sha256")
+            )
+            response_headers["x-ms-encryption-scope"] = self._deserialize(
+                "str", response.headers.get("x-ms-encryption-scope")
+            )
+            response_headers["x-ms-blob-content-md5"] = self._deserialize(
+                "bytearray", response.headers.get("x-ms-blob-content-md5")
+            )
+
             deserialized = response.stream_download(self._client._pipeline)
 
         if cls:
@@ -2803,8 +2928,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    query.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    query.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def get_tags(
@@ -2846,20 +2970,18 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BlobTags, or the result of cls(response)
+        :return: BlobTags or the result of cls(response)
         :rtype: ~azure.storage.blob.models.BlobTags
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop('comp', _params.pop('comp', "tags"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BlobTags]
+        comp = kwargs.pop("comp", _params.pop("comp", "tags"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BlobTags]
 
         _if_tags = None
         _lease_id = None
@@ -2870,15 +2992,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         request = build_get_tags_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             snapshot=snapshot,
             version_id=version_id,
             if_tags=_if_tags,
             lease_id=_lease_id,
-            template_url=self.get_tags.metadata['url'],
+            comp=comp,
+            version=self._config.version,
+            template_url=self.get_tags.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -2886,10 +3008,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2898,32 +3019,33 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
-        deserialized = self._deserialize('BlobTags', pipeline_response)
+        deserialized = self._deserialize("BlobTags", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    get_tags.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    get_tags.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def set_tags(  # pylint: disable=inconsistent-return-statements
         self,
         timeout: Optional[int] = None,
         version_id: Optional[str] = None,
-        transactional_content_md5: Optional[bytearray] = None,
-        transactional_content_crc64: Optional[bytearray] = None,
+        transactional_content_md5: Optional[bytes] = None,
+        transactional_content_crc64: Optional[bytes] = None,
         request_id_parameter: Optional[str] = None,
-        tags: Optional[_models.BlobTags] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        tags: Optional[_models.BlobTags] = None,
         **kwargs: Any
     ) -> None:
         """The Set Tags operation enables users to set tags on a blob.
@@ -2939,39 +3061,37 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type version_id: str
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
          by the service. Default value is None.
-        :type transactional_content_md5: bytearray
+        :type transactional_content_md5: bytes
         :param transactional_content_crc64: Specify the transactional crc64 for the body, to be
          validated by the service. Default value is None.
-        :type transactional_content_crc64: bytearray
+        :type transactional_content_crc64: bytes
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :param tags: Blob tags. Default value is None.
-        :type tags: ~azure.storage.blob.models.BlobTags
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
+        :param tags: Blob tags. Default value is None.
+        :type tags: ~azure.storage.blob.models.BlobTags
         :keyword comp: comp. Default value is "tags". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop('comp', _params.pop('comp', "tags"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/xml"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop("comp", _params.pop("comp", "tags"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _if_tags = None
         _lease_id = None
@@ -2980,16 +3100,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if tags is not None:
-            _content = self._serialize.body(tags, 'BlobTags', is_xml=True)
+            _content = self._serialize.body(tags, "BlobTags", is_xml=True)
         else:
             _content = None
 
         request = build_set_tags_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
-            content_type=content_type,
-            content=_content,
             timeout=timeout,
             version_id=version_id,
             transactional_content_md5=transactional_content_md5,
@@ -2997,7 +3113,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             if_tags=_if_tags,
             lease_id=_lease_id,
-            template_url=self.set_tags.metadata['url'],
+            comp=comp,
+            content_type=content_type,
+            version=self._config.version,
+            content=_content,
+            template_url=self.set_tags.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -3005,10 +3125,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -3017,14 +3136,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_tags.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
-
+    set_tags.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
