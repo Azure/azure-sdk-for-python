@@ -70,7 +70,7 @@ class LocalCryptographyProvider(ABC):
             try:
                 iv = os.urandom(16)
             except NotImplementedError as ex:
-                raise RuntimeError(
+                raise ValueError(
                     "An IV could not be generated on this OS. Please provide your own cryptographically random, "
                     "non-repeating IV for local cryptography."
                 ) from ex

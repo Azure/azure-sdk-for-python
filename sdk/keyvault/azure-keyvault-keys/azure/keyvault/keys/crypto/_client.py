@@ -229,9 +229,8 @@ class CryptographyClient(KeyVaultClientBase):
         :keyword bytes additional_authenticated_data: Optional data that is authenticated but not encrypted. For use
             with AES-GCM encryption.
         :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
-        :raises:
-            ValueError if parameters that are incompatible with the specified algorithm are provided,
-            RuntimeError if an IV cannot be generated
+        :raises ValueError: if parameters that are incompatible with the specified algorithm are provided, or if
+            generating an IV fails on the current platform.
 
         .. literalinclude:: ../tests/test_examples_crypto.py
             :start-after: [START encrypt]
