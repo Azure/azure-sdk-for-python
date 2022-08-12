@@ -8,16 +8,16 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Wed, 10 Aug 2022 19:31:43 GMT",
+        "x-ms-date": "Fri, 12 Aug 2022 20:59:24 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Wed, 10 Aug 2022 19:31:42 GMT",
-        "ETag": "\u00220x8DA7B06F47232CA\u0022",
-        "Last-Modified": "Wed, 10 Aug 2022 19:31:42 GMT",
+        "Date": "Fri, 12 Aug 2022 20:59:24 GMT",
+        "ETag": "\u00220x8DA7CA589DE4FE1\u0022",
+        "Last-Modified": "Fri, 12 Aug 2022 20:59:25 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -36,7 +36,7 @@
         "Content-Type": "application/octet-stream",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-date": "Wed, 10 Aug 2022 19:31:43 GMT",
+        "x-ms-date": "Fri, 12 Aug 2022 20:59:25 GMT",
         "x-ms-tags": "tag1=firsttag\u0026tag2=secondtag\u0026tag3=thirdtag",
         "x-ms-version": "2021-08-06"
       },
@@ -45,9 +45,9 @@
       "ResponseHeaders": {
         "Content-Length": "0",
         "Content-MD5": "sQqNsWTgdUEFt6mb5y4/5Q==",
-        "Date": "Wed, 10 Aug 2022 19:31:42 GMT",
-        "ETag": "\u00220x8DA7B06F47F4C08\u0022",
-        "Last-Modified": "Wed, 10 Aug 2022 19:31:42 GMT",
+        "Date": "Fri, 12 Aug 2022 20:59:24 GMT",
+        "ETag": "\u00220x8DA7CA589F06433\u0022",
+        "Last-Modified": "Fri, 12 Aug 2022 20:59:25 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -67,7 +67,7 @@
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
         "x-ms-copy-source": "https://storagename.blob.core.windows.net/container7da535b2/blob7da535b2?se=end\u0026sp=r\u0026sv=2021-08-06\u0026sr=b\u0026sig=fake_token_value",
-        "x-ms-date": "Wed, 10 Aug 2022 19:31:43 GMT",
+        "x-ms-date": "Fri, 12 Aug 2022 20:59:25 GMT",
         "x-ms-requires-sync": "True",
         "x-ms-tags": "hello=world",
         "x-ms-version": "2021-08-06"
@@ -76,15 +76,15 @@
       "StatusCode": 202,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Wed, 10 Aug 2022 19:31:42 GMT",
-        "ETag": "\u00220x8DA7B06F49B1421\u0022",
-        "Last-Modified": "Wed, 10 Aug 2022 19:31:43 GMT",
+        "Date": "Fri, 12 Aug 2022 20:59:24 GMT",
+        "ETag": "\u00220x8DA7CA58A1846B7\u0022",
+        "Last-Modified": "Fri, 12 Aug 2022 20:59:25 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "x-ms-content-crc64": "YeJLfssylmU=",
-        "x-ms-copy-id": "7a3740bd-cac7-4ca7-bf36-3202e9bb97e0",
+        "x-ms-copy-id": "e79cc177-0df5-4757-96b6-5a5cb1bd7973",
         "x-ms-copy-status": "success",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2021-08-06"
@@ -98,7 +98,7 @@
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Wed, 10 Aug 2022 19:31:43 GMT",
+        "x-ms-date": "Fri, 12 Aug 2022 20:59:25 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
@@ -106,7 +106,7 @@
       "ResponseHeaders": {
         "Content-Length": "119",
         "Content-Type": "application/xml",
-        "Date": "Wed, 10 Aug 2022 19:31:42 GMT",
+        "Date": "Fri, 12 Aug 2022 20:59:25 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -120,7 +120,5 @@
       ]
     }
   ],
-  "Variables": {
-    "expiry_time": "2022-08-10T20:31:43.587960"
-  }
+  "Variables": {}
 }

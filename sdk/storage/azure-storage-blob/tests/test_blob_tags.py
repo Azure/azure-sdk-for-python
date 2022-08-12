@@ -131,8 +131,8 @@ class TestStorageBlobTags(StorageRecordedTestCase):
 
         blob_client.delete_blob(lease=lease)
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
+    @recorded_by_proxy
     def test_set_blob_tags_for_a_version(self, **kwargs):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
@@ -141,7 +141,6 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         # use this version to set tag
         blob_client, resp = self._create_block_blob()
         self._create_block_blob()
-        # TODO: enable versionid for this account and test set tag for a version
 
         # Act
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -321,14 +320,12 @@ class TestStorageBlobTags(StorageRecordedTestCase):
     def test_start_copy_from_url_with_tags_copy_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        variables = kwargs.pop('variables', {})
 
         self._setup(storage_account_name, storage_account_key)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         source_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         source_blob.upload_blob(b'Hello World', overwrite=True, tags=tags)
 
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         source_sas = self.generate_sas(
             generate_blob_sas,
             storage_account_name,
@@ -336,7 +333,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
             source_blob.blob_name,
             account_key=storage_account_key,
             permission=BlobSasPermissions(read=True, tag=True),
-            expiry=expiry_time,
+            expiry=datetime.utcnow() + timedelta(hours=1),
         )
         source_url = source_blob.url + '?' + source_sas
         dest_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
@@ -359,14 +356,11 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         assert copy_tags is not None
         assert tags == copy_tags
 
-        return variables
-
     @BlobPreparer()
     @recorded_by_proxy
     def test_start_copy_from_url_with_tags_replace_tags(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        variables = kwargs.pop('variables', {})
 
         self._setup(storage_account_name, storage_account_key)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -374,7 +368,6 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         source_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         source_blob.upload_blob(b'Hello World', overwrite=True, tags=tags)
 
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         source_sas = self.generate_sas(
             generate_blob_sas,
             storage_account_name,
@@ -382,7 +375,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
             source_blob.blob_name,
             account_key=storage_account_key,
             permission=BlobSasPermissions(read=True),
-            expiry=expiry_time,
+            expiry=datetime.utcnow() + timedelta(hours=1),
         )
         source_url = source_blob.url + '?' + source_sas
         dest_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
@@ -401,8 +394,6 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         # Assert
         assert copy_tags is not None
         assert tags2 == copy_tags
-
-        return variables
 
     @BlobPreparer()
     @recorded_by_proxy
