@@ -1,6 +1,6 @@
 # Release History
 
-## 4.1.2 (Unreleased)
+## 4.2.0b1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Updated minimum `azure-core` version to 1.24.0
 
 ## 4.1.1 (2022-08-11)
 
