@@ -1,5 +1,14 @@
 # Release History
 
+## 2.3.0 (2022-08-12)
+
+### Features Added
+
+  - Model IotHubProperties has a new parameter device_streams
+  - Model IotHubProperties has a new parameter encryption
+  - Model IotHubProperties has a new parameter root_certificate
+  - Model RoutingEndpoints has a new parameter cosmos_db_sql_collections
+
 ## 2.2.0 (2022-01-29)
 
 **Features**

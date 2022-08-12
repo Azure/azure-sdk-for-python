@@ -36,58 +36,60 @@ from ._models_py3 import SharedAccessSignatureAuthorizationRule
 from ._models_py3 import SharedAccessSignatureAuthorizationRuleListResult
 from ._models_py3 import StorageEndpointProperties
 
-
-from ._iot_hub_client_enums import (
-    AccessRights,
-    Capabilities,
-    IotHubNameUnavailabilityReason,
-    IotHubScaleType,
-    IotHubSku,
-    IotHubSkuTier,
-    IpFilterActionType,
-    JobStatus,
-    JobType,
-    OperationMonitoringLevel,
-)
+from ._iot_hub_client_enums import AccessRights
+from ._iot_hub_client_enums import Capabilities
+from ._iot_hub_client_enums import IotHubNameUnavailabilityReason
+from ._iot_hub_client_enums import IotHubScaleType
+from ._iot_hub_client_enums import IotHubSku
+from ._iot_hub_client_enums import IotHubSkuTier
+from ._iot_hub_client_enums import IpFilterActionType
+from ._iot_hub_client_enums import JobStatus
+from ._iot_hub_client_enums import JobType
+from ._iot_hub_client_enums import OperationMonitoringLevel
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'CloudToDeviceProperties',
-    'ErrorDetails',
-    'EventHubConsumerGroupInfo',
-    'EventHubConsumerGroupsListResult',
-    'EventHubProperties',
-    'ExportDevicesRequest',
-    'FeedbackProperties',
-    'ImportDevicesRequest',
-    'IotHubCapacity',
-    'IotHubDescription',
-    'IotHubDescriptionListResult',
-    'IotHubNameAvailabilityInfo',
-    'IotHubProperties',
-    'IotHubQuotaMetricInfo',
-    'IotHubQuotaMetricInfoListResult',
-    'IotHubSkuDescription',
-    'IotHubSkuDescriptionListResult',
-    'IotHubSkuInfo',
-    'IpFilterRule',
-    'JobResponse',
-    'JobResponseListResult',
-    'MessagingEndpointProperties',
-    'OperationInputs',
-    'OperationsMonitoringProperties',
-    'RegistryStatistics',
-    'Resource',
-    'SharedAccessSignatureAuthorizationRule',
-    'SharedAccessSignatureAuthorizationRuleListResult',
-    'StorageEndpointProperties',
-    'AccessRights',
-    'Capabilities',
-    'IotHubNameUnavailabilityReason',
-    'IotHubScaleType',
-    'IotHubSku',
-    'IotHubSkuTier',
-    'IpFilterActionType',
-    'JobStatus',
-    'JobType',
-    'OperationMonitoringLevel',
+    "CloudToDeviceProperties",
+    "ErrorDetails",
+    "EventHubConsumerGroupInfo",
+    "EventHubConsumerGroupsListResult",
+    "EventHubProperties",
+    "ExportDevicesRequest",
+    "FeedbackProperties",
+    "ImportDevicesRequest",
+    "IotHubCapacity",
+    "IotHubDescription",
+    "IotHubDescriptionListResult",
+    "IotHubNameAvailabilityInfo",
+    "IotHubProperties",
+    "IotHubQuotaMetricInfo",
+    "IotHubQuotaMetricInfoListResult",
+    "IotHubSkuDescription",
+    "IotHubSkuDescriptionListResult",
+    "IotHubSkuInfo",
+    "IpFilterRule",
+    "JobResponse",
+    "JobResponseListResult",
+    "MessagingEndpointProperties",
+    "OperationInputs",
+    "OperationsMonitoringProperties",
+    "RegistryStatistics",
+    "Resource",
+    "SharedAccessSignatureAuthorizationRule",
+    "SharedAccessSignatureAuthorizationRuleListResult",
+    "StorageEndpointProperties",
+    "AccessRights",
+    "Capabilities",
+    "IotHubNameUnavailabilityReason",
+    "IotHubScaleType",
+    "IotHubSku",
+    "IotHubSkuTier",
+    "IpFilterActionType",
+    "JobStatus",
+    "JobType",
+    "OperationMonitoringLevel",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
