@@ -88,10 +88,10 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         self.bsc2 = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key)
         self.remote_container_name = 'rmt'
 
-    def _teardown(self, FILE_PATH):
-        if os.path.isfile(FILE_PATH):
+    def _teardown(self, file_path):
+        if os.path.isfile(file_path):
             try:
-                os.remove(FILE_PATH)
+                os.remove(file_path)
             except:
                 pass
 
@@ -2712,16 +2712,16 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         blob = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
-        FILE_PATH = 'download_to_file_with_sas.temp.{}.dat'.format(str(uuid.uuid4()))
+        file_path = 'download_to_file_with_sas.temp.{}.dat'.format(str(uuid.uuid4()))
 
         # Act
-        download_blob_from_url(blob.url, FILE_PATH)
+        download_blob_from_url(blob.url, file_path)
 
         # Assert
-        with open(FILE_PATH, 'rb') as stream:
+        with open(file_path, 'rb') as stream:
             actual = stream.read()
             assert data == actual
-        self._teardown(FILE_PATH)
+        self._teardown(file_path)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -2737,7 +2737,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Act
         download_blob_from_url(
             source_blob.url, file_path,
-            max_concurrency=2,
             credential=storage_account_key)
 
         # Assert
@@ -2761,7 +2760,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         with open(file_path, 'wb') as stream:
             download_blob_from_url(
                 source_blob.url, stream,
-                max_concurrency=2,
                 credential=storage_account_key)
 
         # Assert
@@ -3068,7 +3066,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(container_name, blob_name)
         blob.upload_blob(b"abc", overwrite=True)
 
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time3', datetime.utcnow() + timedelta(seconds=5))
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
         immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
                                                  policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         resp = blob.set_immutability_policy(immutability_policy=immutability_policy)
@@ -3162,7 +3160,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(container_name, blob_name)
         content = b"abcedfg"
 
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time3', datetime.utcnow() + timedelta(seconds=5))
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
         immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
                                                  policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         blob.upload_blob(content,
@@ -3212,7 +3210,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(container_name, blob_name)
         content = b"abcedfg"
 
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time3', datetime.utcnow() + timedelta(seconds=5))
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
         immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
                                                  policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         blob.upload_blob(content,immutability_policy=immutability_policy,
@@ -3236,10 +3234,10 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
     @BlobPreparer()
     @recorded_by_proxy
     def test_validate_empty_blob(self, **kwargs):
+        """Test that we can upload an empty blob with validate=True."""
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        """Test that we can upload an empty blob with validate=True."""
         self._setup(storage_account_name, storage_account_key)
 
         blob_name = self.get_resource_name("utcontainer")
