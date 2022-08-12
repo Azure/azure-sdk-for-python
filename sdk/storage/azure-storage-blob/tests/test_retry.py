@@ -3,36 +3,31 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import pytest
 from unittest import mock
 from functools import wraps
-import pytest
 
 from azure.core.exceptions import (
-    HttpResponseError,
-    ResourceExistsError,
     AzureError,
     ClientAuthenticationError,
-    ServiceResponseError
+    HttpResponseError,
+    ResourceExistsError
 )
-from azure.core.pipeline.transport import(
-    RequestsTransport
-)
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, RetryCounter, ResponseCallback, \
-    recorded_by_proxy
+from azure.core.pipeline.transport import RequestsTransport
 from azure.storage.blob import (
+    BlobClient,
     BlobServiceClient,
     ContainerClient,
-    BlobClient,
-    LocationMode,
-    LinearRetry,
     ExponentialRetry,
+    LinearRetry,
+    LocationMode
 )
 from requests import Response
 from requests.exceptions import ContentDecodingError, ChunkedEncodingError
-from azure.core.exceptions import DecodeError
 
+from devtools_testutils import RetryCounter, ResponseCallback, recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
-from devtools_testutils.storage import StorageTestCase, StorageRecordedTestCase
 
 
 class RetryRequestTransport(RequestsTransport):
