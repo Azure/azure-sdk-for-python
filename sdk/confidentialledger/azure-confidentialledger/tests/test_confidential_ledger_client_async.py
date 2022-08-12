@@ -84,7 +84,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             # the logic for overriding the default certificate verification) is still tested when
             # the test-proxy is involved.
             #
-            # Note the combined bundle should be created *after* an os.remove calls so we don't 
+            # Note the combined bundle should be created *after* any os.remove calls so we don't 
             # interfere with auto-magic certificate retrieval tests.
             create_combined_bundle(
                 [self.network_certificate_path, TEST_PROXY_CERT],
