@@ -61,8 +61,12 @@ class CosmosDiagnostics(object):
         self._headers = CaseInsensitiveDict()
         self._body = None
         self._request_charge = 0
-        self._status_code = 200
-        self._status_message = "Standard response for successful HTTP requests"
+        self._status_code = 0
+        self._status_reason = ""
+        self._substatus_code = 0
+        self._status_message = ""
+        self._elapsed_time = None
+
         self._system_information = self.get_system_info()
 
     @property
@@ -91,6 +95,27 @@ class CosmosDiagnostics(object):
         self._status_code = value
 
     @property
+    def substatus_code(self):
+        return self._substatus_code
+    @substatus_code.setter
+    def substatus_code(self, value: int):
+        self._substatus_code = value
+
+    @property
+    def status_reason(self):
+        return self._status_reason
+    @status_reason.setter
+    def status_reason(self, value: str):
+        self._status_reason = value
+
+    @property
+    def elapsed_time(self):
+        return self._elapsed_time
+    @elapsed_time.setter
+    def elapsed_time(self, value):
+        self._elapsed_time = value
+
+    @property
     def status_message(self):
         return self._status_message
 
@@ -109,26 +134,51 @@ class CosmosDiagnostics(object):
         self.header(header)
         self.body(body)
 
-    def update_diagnostics(self, header: dict, body: dict, e: exceptions.CosmosHttpResponseError, **kwargs):
+    def update_diagnostics(self, header: dict, body: dict, **kwargs):
         self.headers = header
         self.body = body
         #Note: Plan is to use kwargs to be able to easily modify this function to update with needed information
         #notes figure out how to just get status information instead of just relying on exceptions being passed
+        eTime = kwargs.get("elapsed_time")
+        if eTime:
+            self.elapsed_time = eTime
+        e = kwargs.get("exception")
+        sc = kwargs.get("status_code")
+        if sc:
+            self.status_code = sc
+        sr = kwargs.get("status_reason")
+        if sr:
+            self.status_reason = sr
+        sm = kwargs.get("response_text")
+        if sm:
+            self.status_message = sm
+        ssc = kwargs.get("substatus_code")
+        if ssc:
+            self.substatus_code = ssc
+        else:
+            self.substatus_code = 0
         if e:
             self.status_code = e.status_code
             self.status_message = e.message
-        else:
-            #cureent hacky way to get succesful status code
-            self.status_code = 200
-            self.status_message = "Standard response for successful HTTP requests"
 
     #Note: Planning to add a flag to print it in a pretty format instead of just returning a dictionary
-    def __call__(self):
+    def __call__(self, p=False):
         #This will format all the properties into a dictionary
-        return {
+        ret = {
             key: getattr(self, key)
             for key in vars(self)
         }
+        if p:
+            print("DIAGNOSTICS")
+            for key, value in ret.items():
+                if type(value) is dict:
+                    print(str(key)+":")
+                    for k, v in value.items():
+                        print("    " + str(k) + ": " + str(v))
+                else:
+                    print(str(key)+": "+str(value))
+        else:
+            return ret
         # return {
         #     key: value
         #     for key, value in self.__dict__.items()

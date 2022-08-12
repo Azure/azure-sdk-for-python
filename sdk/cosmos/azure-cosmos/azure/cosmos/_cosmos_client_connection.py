@@ -59,6 +59,7 @@ from . import _session
 from . import _utils
 from .partition_key import _Undefined, _Empty
 from ._auth_policy import CosmosBearerTokenCredentialPolicy
+from .cosmos_diagnostics import CosmosDiagnostics
 
 ClassType = TypeVar("ClassType")
 # pylint: disable=protected-access
@@ -141,7 +142,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             # We need to set continuation as not expected.
             http_constants.HttpHeaders.IsContinuationExpected: False,
         }
-
+        self.diagnostics = CosmosDiagnostics()
         # Keeps the latest response headers from the server.
         self.last_response_headers = None
         # Keep Track of Last Exceptions

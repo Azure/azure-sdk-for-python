@@ -79,7 +79,7 @@ class DatabaseProxy(object):
         self.id = id
         self.database_link = u"dbs/{}".format(self.id)
         self._properties = properties
-        self.diagnostics = CosmosDiagnostics()
+        # self.diagnostics = CosmosDiagnostics()
 
     def __repr__(self):
         # type () -> str
@@ -146,7 +146,7 @@ class DatabaseProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, self._properties, self.client_connection.last_exceptions)
+        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, self._properties, self.client_connection.last_exceptions)
 
         return cast('Dict[str, Any]', self._properties)
 
@@ -244,7 +244,7 @@ class DatabaseProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, data, self.client_connection.last_exceptions)
+        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, data, self.client_connection.last_exceptions)
 
         return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
 
@@ -346,7 +346,7 @@ class DatabaseProxy(object):
         result = self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result, self.client_connection.last_exceptions)
+        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result, self.client_connection.last_exceptions)
 
     def get_container_client(self, container):
         # type: (Union[str, ContainerProxy, Dict[str, Any]]) -> ContainerProxy
@@ -415,7 +415,7 @@ class DatabaseProxy(object):
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result, self.client_connection.last_exceptions)
+        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result, self.client_connection.last_exceptions)
         return result
 
     @distributed_trace
@@ -458,7 +458,7 @@ class DatabaseProxy(object):
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result, self.client_connection.last_exceptions)
+        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result, self.client_connection.last_exceptions)
 
         return result
 
@@ -538,7 +538,7 @@ class DatabaseProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, container_properties)
 
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, container_properties, self.client_connection.last_exceptions)
+        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, container_properties, self.client_connection.last_exceptions)
 
         return ContainerProxy(
             self.client_connection, self.database_link, container_properties["id"], properties=container_properties
@@ -564,7 +564,7 @@ class DatabaseProxy(object):
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result, self.client_connection.last_exceptions)
+        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result, self.client_connection.last_exceptions)
         return result
 
     @distributed_trace
@@ -592,7 +592,7 @@ class DatabaseProxy(object):
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result, self.client_connection.last_exceptions)
+        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result, self.client_connection.last_exceptions)
         return result
 
     def get_user_client(self, user):
@@ -648,7 +648,7 @@ class DatabaseProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, user)
 
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, user, self.client_connection.last_exceptions)
+        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, user, self.client_connection.last_exceptions)
 
         return UserProxy(
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
@@ -678,7 +678,7 @@ class DatabaseProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, user)
 
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, user, self.client_connection.last_exceptions)
+        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, user, self.client_connection.last_exceptions)
 
         return UserProxy(
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
@@ -713,7 +713,7 @@ class DatabaseProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, replaced_user)
 
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, replaced_user, self.client_connection.last_exceptions)
+        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, replaced_user, self.client_connection.last_exceptions)
 
         return UserProxy(
             client_connection=self.client_connection,
@@ -743,7 +743,7 @@ class DatabaseProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
 
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result, self.client_connection.last_exceptions)
+        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result, self.client_connection.last_exceptions)
 
     @distributed_trace
     def read_offer(self, **kwargs):
@@ -789,7 +789,7 @@ class DatabaseProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, throughput_properties)
 
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, throughput_properties, self.client_connection.last_exceptions)
+        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, throughput_properties, self.client_connection.last_exceptions)
 
         return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
                                     properties=throughput_properties[0])
@@ -827,5 +827,5 @@ class DatabaseProxy(object):
                                                    offer=throughput_properties[0], **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, data, self.client_connection.last_exceptions)
+
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
