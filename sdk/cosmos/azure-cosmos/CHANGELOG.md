@@ -4,6 +4,7 @@
 
 #### Features Added
 - Added the ability to create containers and databases with autoscale properties for the sync and async clients.
+- GA release of integrated cache functionality [See PR #25391](https://github.com/Azure/azure-sdk-for-python/pull/25391).
 #### Breaking Changes
 
 #### Bugs Fixed

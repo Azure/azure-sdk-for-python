@@ -673,8 +673,9 @@ def create_scope_from_url(url):
 
 def validate_cache_staleness_value(max_integrated_cache_staleness):
     int(max_integrated_cache_staleness)  # Will throw error if data type cant be converted to int
-    if max_integrated_cache_staleness <= 0:
-        raise ValueError("Parameter 'max_integrated_cache_staleness_in_ms' can only be a positive integer.")
+    if max_integrated_cache_staleness < 0:
+        raise ValueError("Parameter 'max_integrated_cache_staleness_in_ms' can only be an "
+                         "integer greater than or equal to zero")
 
 
 def _stringify_auto_scale(offer):
