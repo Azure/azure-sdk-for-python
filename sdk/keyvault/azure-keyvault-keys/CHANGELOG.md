@@ -7,6 +7,8 @@
   ([#25380](https://github.com/Azure/azure-sdk-for-python/pull/25380))
 
 ### Other Changes
+- The most recent release was version 4.6.1 instead of the intended version, 4.5.2.
+  The next stable release is planned to be version 4.7.0.
 - Python 3.6 is no longer supported. Please use Python version 3.7 or later.
 - Updated minimum `azure-core` version to 1.24.0
 
