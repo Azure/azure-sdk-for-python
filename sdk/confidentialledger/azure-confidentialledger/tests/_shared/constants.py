@@ -3,6 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import os
+
+TEST_PROXY_CERT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..", 'eng', 'common', 'testproxy', 'dotnet-devcert.crt'))
+
 # Duplicate certificate from KeyVault.
 # https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-certificates/tests/ca.crt
 USER_CERTIFICATE_PUBLIC_KEY = """-----BEGIN CERTIFICATE-----

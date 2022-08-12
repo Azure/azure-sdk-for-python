@@ -7,6 +7,8 @@ from urllib.parse import urlparse
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import (
     PemCertificate,
+    create_combined_bundle,
+    is_live_and_not_recording,
     set_function_recording_options,
 )
 
@@ -14,6 +16,7 @@ from azure.confidentialledger.aio import ConfidentialLedgerClient
 from azure.confidentialledger import ConfidentialLedgerCertificateCredential
 
 from _shared.constants import (
+    TEST_PROXY_CERT,
     USER_CERTIFICATE_THUMBPRINT,
     USER_CERTIFICATE_PRIVATE_KEY,
     USER_CERTIFICATE_PUBLIC_KEY,
@@ -28,17 +31,9 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         # Always explicitly fetch the TLS certificate.
         network_cert = self.set_ledger_identity(ledger_id)
         if not fetch_tls_cert:
-            # For some test scenarios, emove the file so the client sees it doesn't exist and
+            # For some test scenarios, remove the file so the client sees it doesn't exist and
             # creates it auto-magically.
             os.remove(self.network_certificate_path)
-
-        # The Confidential Ledger always presents a self-signed certificate, so add that certificate
-        # to the recording options for the Confidential Ledger endpoint.
-        function_recording_options: Dict[str, Union[str, List[PemCertificate]]] = {
-            "tls_certificate": network_cert,
-            "tls_certificate_host": urlparse(endpoint).netloc,
-        }
-        set_function_recording_options(**function_recording_options)
 
         # The ACL instance should already have the potential AAD user added as an Administrator.
         credential = self.get_credential(ConfidentialLedgerClient, is_async=True)
@@ -68,6 +63,33 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             # self.network_certificate_path is set via self.set_ledger_identity
             ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
+
+        # The Confidential Ledger always presents a self-signed certificate, so add that certificate
+        # to the recording options for the Confidential Ledger endpoint.
+        function_recording_options: Dict[str, Union[str, List[PemCertificate]]] = {
+            "tls_certificate": network_cert,
+            "tls_certificate_host": urlparse(endpoint).netloc,
+        }
+        set_function_recording_options(**function_recording_options)
+
+        if not is_live_and_not_recording():
+            # For live, non-recorded tests, we want to test normal client behavior so the only
+            # certificate used for TLS verification is the Confidential Ledger identity certificate.
+            #
+            # However, in this case outbound connections are to the proxy, so the certificate used
+            # for verifying the TLS connection should actually be the test proxy's certificate.
+            # With that in mind, we'll update the file at self.network_certificate_path to be a
+            # certificate bundle including both the ledger's TLS certificate (though technically
+            # unnecessary I think) and the test-proxy certificate. This way the client setup (i.e.
+            # the logic for overriding the default certificate verification) is still tested when
+            # the test-proxy is involved.
+            #
+            # Note the combined bundle should be created *after* an os.remove calls so we don't 
+            # interfere with auto-magic certificate retrieval tests.
+            create_combined_bundle(
+                [self.network_certificate_path, TEST_PROXY_CERT],
+                self.network_certificate_path
+            )
 
         if not is_aad:
             # We need to add the certificate-based user as an Administrator.

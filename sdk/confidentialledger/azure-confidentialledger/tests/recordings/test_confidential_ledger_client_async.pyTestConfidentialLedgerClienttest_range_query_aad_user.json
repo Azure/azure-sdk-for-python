@@ -1,0 +1,632 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "192",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.11.0b2 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": "client_id=ad1ac7bf-b0ea-4c73-9b8d-a3de3fde2b2d\u0026client_secret=9d88Q~P4KI3Oc7wuRN.ngX-Z0uNN8VEObNhL2bUJ\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fconfidential-ledger.azure.com%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "92",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 12 Aug 2022 20:51:49 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": [
+          "fpc=Av7QOaFlJ0NGoud2shH1XS2b7eLaAQAAAGa0iNoOAAAA; expires=Sun, 11-Sep-2022 20:51:50 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.13481.9 - NCUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "access_token": "Sanitized"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "25",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": {
+        "contents": "message-0"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "20",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28513"
+      },
+      "ResponseBody": {
+        "collectionId": "0"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=1",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "25",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": {
+        "contents": "message-1"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "20",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28515"
+      },
+      "ResponseBody": {
+        "collectionId": "1"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=2",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "25",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": {
+        "contents": "message-2"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "20",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28516"
+      },
+      "ResponseBody": {
+        "collectionId": "2"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "25",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": {
+        "contents": "message-3"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "20",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28517"
+      },
+      "ResponseBody": {
+        "collectionId": "3"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=4",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "25",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": {
+        "contents": "message-4"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "20",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28518"
+      },
+      "ResponseBody": {
+        "collectionId": "4"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "25",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": {
+        "contents": "message-5"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "20",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28519"
+      },
+      "ResponseBody": {
+        "collectionId": "0"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=1",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "25",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": {
+        "contents": "message-6"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "20",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28520"
+      },
+      "ResponseBody": {
+        "collectionId": "1"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=2",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "25",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": {
+        "contents": "message-7"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "20",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28521"
+      },
+      "ResponseBody": {
+        "collectionId": "2"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "25",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": {
+        "contents": "message-8"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "20",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28523"
+      },
+      "ResponseBody": {
+        "collectionId": "3"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=4",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "25",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": {
+        "contents": "message-9"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "20",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28524"
+      },
+      "ResponseBody": {
+        "collectionId": "4"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.28524/status?api-version=2022-05-13",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "45",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28524"
+      },
+      "ResponseBody": {
+        "state": "Pending",
+        "transactionId": "8.28524"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.28524/status?api-version=2022-05-13",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "45",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28524"
+      },
+      "ResponseBody": {
+        "state": "Pending",
+        "transactionId": "8.28524"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.28524/status?api-version=2022-05-13",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "45",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28524"
+      },
+      "ResponseBody": {
+        "state": "Pending",
+        "transactionId": "8.28524"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.28524/status?api-version=2022-05-13",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "45",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28524"
+      },
+      "ResponseBody": {
+        "state": "Pending",
+        "transactionId": "8.28524"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.28524/status?api-version=2022-05-13",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "47",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28525"
+      },
+      "ResponseBody": {
+        "state": "Committed",
+        "transactionId": "8.28524"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=0\u0026fromTransactionId=8.28513\u0026toTransactionId=8.28519",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "164",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28525"
+      },
+      "ResponseBody": {
+        "entries": [],
+        "nextLink": "/app/transactions?api-version=2022-05-13\u0026collectionId=0\u0026fromTransactionId=8.28513\u0026toTransactionId=8.28519",
+        "state": "Loading"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=0\u0026fromTransactionId=8.28513\u0026toTransactionId=8.28519",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "249",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28525"
+      },
+      "ResponseBody": {
+        "entries": [
+          {
+            "collectionId": "0",
+            "contents": "message-0",
+            "transactionId": "8.28513"
+          },
+          {
+            "collectionId": "0",
+            "contents": "message-5",
+            "transactionId": "8.28519"
+          }
+        ],
+        "state": "Ready"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=1\u0026fromTransactionId=8.28515\u0026toTransactionId=8.28520",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "164",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28525"
+      },
+      "ResponseBody": {
+        "entries": [],
+        "nextLink": "/app/transactions?api-version=2022-05-13\u0026collectionId=1\u0026fromTransactionId=8.28515\u0026toTransactionId=8.28520",
+        "state": "Loading"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=1\u0026fromTransactionId=8.28515\u0026toTransactionId=8.28520",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "249",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28525"
+      },
+      "ResponseBody": {
+        "entries": [
+          {
+            "collectionId": "1",
+            "contents": "message-1",
+            "transactionId": "8.28515"
+          },
+          {
+            "collectionId": "1",
+            "contents": "message-6",
+            "transactionId": "8.28520"
+          }
+        ],
+        "state": "Ready"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=2\u0026fromTransactionId=8.28516\u0026toTransactionId=8.28521",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "164",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28525"
+      },
+      "ResponseBody": {
+        "entries": [],
+        "nextLink": "/app/transactions?api-version=2022-05-13\u0026collectionId=2\u0026fromTransactionId=8.28516\u0026toTransactionId=8.28521",
+        "state": "Loading"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=2\u0026fromTransactionId=8.28516\u0026toTransactionId=8.28521",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "249",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28525"
+      },
+      "ResponseBody": {
+        "entries": [
+          {
+            "collectionId": "2",
+            "contents": "message-2",
+            "transactionId": "8.28516"
+          },
+          {
+            "collectionId": "2",
+            "contents": "message-7",
+            "transactionId": "8.28521"
+          }
+        ],
+        "state": "Ready"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=3\u0026fromTransactionId=8.28517\u0026toTransactionId=8.28523",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "164",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28525"
+      },
+      "ResponseBody": {
+        "entries": [],
+        "nextLink": "/app/transactions?api-version=2022-05-13\u0026collectionId=3\u0026fromTransactionId=8.28517\u0026toTransactionId=8.28523",
+        "state": "Loading"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=3\u0026fromTransactionId=8.28517\u0026toTransactionId=8.28523",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "249",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28525"
+      },
+      "ResponseBody": {
+        "entries": [
+          {
+            "collectionId": "3",
+            "contents": "message-3",
+            "transactionId": "8.28517"
+          },
+          {
+            "collectionId": "3",
+            "contents": "message-8",
+            "transactionId": "8.28523"
+          }
+        ],
+        "state": "Ready"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=4\u0026fromTransactionId=8.28518\u0026toTransactionId=8.28524",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "164",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28525"
+      },
+      "ResponseBody": {
+        "entries": [],
+        "nextLink": "/app/transactions?api-version=2022-05-13\u0026collectionId=4\u0026fromTransactionId=8.28518\u0026toTransactionId=8.28524",
+        "state": "Loading"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions?api-version=2022-05-13\u0026collectionId=4\u0026fromTransactionId=8.28518\u0026toTransactionId=8.28524",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "249",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.28525"
+      },
+      "ResponseBody": {
+        "entries": [
+          {
+            "collectionId": "4",
+            "contents": "message-4",
+            "transactionId": "8.28518"
+          },
+          {
+            "collectionId": "4",
+            "contents": "message-9",
+            "transactionId": "8.28524"
+          }
+        ],
+        "state": "Ready"
+      }
+    }
+  ],
+  "Variables": {}
+}
