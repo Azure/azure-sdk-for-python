@@ -7,8 +7,10 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+* Fix handling of client-side exceptions that get raised during service requests (such as [#21416](https://github.com/Azure/azure-sdk-for-python/issues/21416)) ([#24788](https://github.com/Azure/azure-sdk-for-python/pull/24788))
 
 ### Other Changes
+* Bumped minimum dependency on `azure-core` to `>=1.23.0`
 
 ## 12.4.0 (2022-05-10)
 

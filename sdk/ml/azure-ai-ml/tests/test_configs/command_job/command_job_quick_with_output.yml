@@ -1,5 +1,7 @@
 $schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
-command: echo "hello world" > ${{outputs.hello_output}}/helloworld.txt
+command: |
+  mkdir ${{outputs.hello_output}}/helloworld
+  echo "hello world" > ${{outputs.hello_output}}/helloworld/helloworld.txt
 outputs:
   hello_output:
     mode: upload

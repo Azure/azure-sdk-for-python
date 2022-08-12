@@ -165,6 +165,7 @@ def merge_report(report_paths):
         merged_report["models"]["exceptions"].update(report_json["models"]["exceptions"])
         merged_report["models"]["models"].update(report_json["models"]["models"])
         merged_report["operations"].update(report_json["operations"])
+        merged_report["client"] = report_json["client"]
     return merged_report
 
 

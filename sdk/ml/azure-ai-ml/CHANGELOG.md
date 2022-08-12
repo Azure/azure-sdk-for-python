@@ -1,15 +1,50 @@
-## Release History
+# Release History
 
-### 0.1.0b4 (unreleased)
+## 0.1.0b6
 
-#### Features Added
+### Features Added
 
-#### Breaking Changes
+- Support for AutoML Component
+- Added skip_validation for Job/Component create_or_update
 
-#### Bugs Fixed
+### Breaking Changes
 
-#### Other Changes
+- Dataset removed from public interface.
 
+### Bugs Fixed
 
-### 0.1.0b3 (2022-05-24)
+- Fixed mismatch errors when updating scale_settings for KubernetesOnlineDeployment.
+- Removed az CLI command that was printed when deleting OnlineEndpoint
+
+### Other Changes
+
+## 0.1.0b5 (2022-07-15)
+
+### Features Added
+
+- Allow Input/Output objects to be used by CommandComponent.
+- Added MoonCake cloud support.
+- Unified inputs/outputs building and validation logic in BaseNode.
+- Allow Git repo URLs to be used as code for jobs and components.
+- Updated AutoML YAML schema to use InputSchema.
+- Added end_time to job schedule.
+- MIR and pipeline job now support registry assets.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Have mldesigner use argparser to parse incoming args.
+- Bumped pyjwt version to <3.0.0.
+- Reverted "upload support for symlinks".
+- Error message improvement when a YAML UnionField fails to match.
+- Reintroduced support for symlinks when uploading.
+- Hard coded registry base URL to eastus region to support preview.
+
+## 0.1.0b4 (2022-06-16)
+
+## 0.1.0b3 (2022-05-24)
+
+### Features Added
+
 - First preview.

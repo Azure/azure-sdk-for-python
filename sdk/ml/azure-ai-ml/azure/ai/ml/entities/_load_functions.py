@@ -2,9 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
 
 from os import PathLike
-from typing import Union, Type
+from typing import Type, Union
+
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._utils.utils import load_yaml
+from azure.ai.ml.entities._component.command_component import CommandComponent
+from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._assets._artifacts.data import Data
 from azure.ai.ml.entities._assets._artifacts.model import Model
@@ -16,13 +22,11 @@ from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 from azure.ai.ml.entities._deployment.online_deployment import OnlineDeployment
 from azure.ai.ml.entities._endpoint.batch_endpoint import BatchEndpoint
 from azure.ai.ml.entities._endpoint.online_endpoint import OnlineEndpoint
-
 from azure.ai.ml.entities._job.job import Job
+from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.entities._schedule.schedule import JobSchedule
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.ai.ml.entities._workspace.workspace import Workspace
-from azure.ai.ml.entities import CommandComponent, ParallelComponent, Resource
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
-from azure.ai.ml._utils.utils import load_yaml
 
 
 def load_common(cls: Type[Resource], path: Union[PathLike, str], params_override: list = None, **kwargs) -> Resource:
@@ -291,3 +295,17 @@ def load_workspace_connection(path: Union[PathLike, str], **kwargs) -> Workspace
     :rtype: WorkspaceConnection
     """
     return load_common(WorkspaceConnection, path, **kwargs)
+
+
+def load_schedule(path: Union[PathLike, str], **kwargs) -> JobSchedule:
+    """Construct a schedule object from yaml file.
+
+    :param path: Path to a local file as the source.
+    :type path: str
+    :param params_override: Fields to overwrite on top of the yaml file. Format is [{"field1": "value1"}, {"field2": "value2"}]
+    :type params_override: List[Dict]
+
+    :return: Constructed schedule object.
+    :rtype: JobSchedule
+    """
+    return load_common(JobSchedule, path, **kwargs)

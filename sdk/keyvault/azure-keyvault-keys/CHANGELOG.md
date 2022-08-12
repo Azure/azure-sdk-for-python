@@ -1,6 +1,6 @@
 # Release History
 
-## 4.6.0b2 (Unreleased)
+## 4.6.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.6.1 (2022-08-11)
+
+### Other Changes
+- Documentation improvements 
+  ([#25039](https://github.com/Azure/azure-sdk-for-python/issues/25039))
 
 ## 4.6.0b1 (2022-06-07)
 

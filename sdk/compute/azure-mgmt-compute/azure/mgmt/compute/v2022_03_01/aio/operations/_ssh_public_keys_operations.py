@@ -15,6 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
@@ -24,32 +25,30 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class SshPublicKeysOperations:
-    """SshPublicKeysOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.compute.v2022_03_01.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.compute.v2022_03_01.aio.ComputeManagementClient`'s
+        :attr:`ssh_public_keys` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def list_by_subscription(
         self,
         **kwargs: Any
-    ) -> AsyncIterable["_models.SshPublicKeysGroupListResult"]:
+    ) -> AsyncIterable[_models.SshPublicKeysGroupListResult]:
         """Lists all of the SSH public keys in the subscription. Use the nextLink property in the response
         to get the next page of SSH public keys.
 
@@ -60,13 +59,16 @@ class SshPublicKeysOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2022_03_01.models.SshPublicKeysGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SshPublicKeysGroupListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SshPublicKeysGroupListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -74,9 +76,11 @@ class SshPublicKeysOperations:
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list_by_subscription.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -84,9 +88,11 @@ class SshPublicKeysOperations:
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -124,7 +130,7 @@ class SshPublicKeysOperations:
         self,
         resource_group_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.SshPublicKeysGroupListResult"]:
+    ) -> AsyncIterable[_models.SshPublicKeysGroupListResult]:
         """Lists all of the SSH public keys in the specified resource group. Use the nextLink property in
         the response to get the next page of SSH public keys.
 
@@ -137,13 +143,16 @@ class SshPublicKeysOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2022_03_01.models.SshPublicKeysGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SshPublicKeysGroupListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SshPublicKeysGroupListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -152,9 +161,11 @@ class SshPublicKeysOperations:
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list_by_resource_group.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -163,9 +174,11 @@ class SshPublicKeysOperations:
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -203,9 +216,9 @@ class SshPublicKeysOperations:
         self,
         resource_group_name: str,
         ssh_public_key_name: str,
-        parameters: "_models.SshPublicKeyResource",
+        parameters: _models.SshPublicKeyResource,
         **kwargs: Any
-    ) -> "_models.SshPublicKeyResource":
+    ) -> _models.SshPublicKeyResource:
         """Creates a new SSH public key resource.
 
         :param resource_group_name: The name of the resource group.
@@ -219,14 +232,17 @@ class SshPublicKeysOperations:
         :rtype: ~azure.mgmt.compute.v2022_03_01.models.SshPublicKeyResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SshPublicKeyResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SshPublicKeyResource]
 
         _json = self._serialize.body(parameters, 'SshPublicKeyResource')
 
@@ -238,11 +254,13 @@ class SshPublicKeysOperations:
             content_type=content_type,
             json=_json,
             template_url=self.create.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -272,9 +290,9 @@ class SshPublicKeysOperations:
         self,
         resource_group_name: str,
         ssh_public_key_name: str,
-        parameters: "_models.SshPublicKeyUpdateResource",
+        parameters: _models.SshPublicKeyUpdateResource,
         **kwargs: Any
-    ) -> "_models.SshPublicKeyResource":
+    ) -> _models.SshPublicKeyResource:
         """Updates a new SSH public key resource.
 
         :param resource_group_name: The name of the resource group.
@@ -288,14 +306,17 @@ class SshPublicKeysOperations:
         :rtype: ~azure.mgmt.compute.v2022_03_01.models.SshPublicKeyResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SshPublicKeyResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SshPublicKeyResource]
 
         _json = self._serialize.body(parameters, 'SshPublicKeyUpdateResource')
 
@@ -307,11 +328,13 @@ class SshPublicKeysOperations:
             content_type=content_type,
             json=_json,
             template_url=self.update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -350,13 +373,16 @@ class SshPublicKeysOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_delete_request(
@@ -365,11 +391,13 @@ class SshPublicKeysOperations:
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -392,7 +420,7 @@ class SshPublicKeysOperations:
         resource_group_name: str,
         ssh_public_key_name: str,
         **kwargs: Any
-    ) -> "_models.SshPublicKeyResource":
+    ) -> _models.SshPublicKeyResource:
         """Retrieves information about an SSH public key.
 
         :param resource_group_name: The name of the resource group.
@@ -404,13 +432,16 @@ class SshPublicKeysOperations:
         :rtype: ~azure.mgmt.compute.v2022_03_01.models.SshPublicKeyResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SshPublicKeyResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SshPublicKeyResource]
 
         
         request = build_get_request(
@@ -419,11 +450,13 @@ class SshPublicKeysOperations:
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -450,7 +483,7 @@ class SshPublicKeysOperations:
         resource_group_name: str,
         ssh_public_key_name: str,
         **kwargs: Any
-    ) -> "_models.SshPublicKeyGenerateKeyPairResult":
+    ) -> _models.SshPublicKeyGenerateKeyPairResult:
         """Generates and returns a public/private key pair and populates the SSH public key resource with
         the public key. The length of the key will be 3072 bits. This operation can only be performed
         once per SSH public key resource.
@@ -464,13 +497,16 @@ class SshPublicKeysOperations:
         :rtype: ~azure.mgmt.compute.v2022_03_01.models.SshPublicKeyGenerateKeyPairResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SshPublicKeyGenerateKeyPairResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SshPublicKeyGenerateKeyPairResult]
 
         
         request = build_generate_key_pair_request(
@@ -479,11 +515,13 @@ class SshPublicKeysOperations:
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.generate_key_pair.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs

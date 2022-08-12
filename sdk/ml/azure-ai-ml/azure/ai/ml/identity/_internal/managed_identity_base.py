@@ -3,18 +3,19 @@
 # ---------------------------------------------------------
 
 import abc
-from typing import cast, TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from azure.identity import CredentialUnavailableError
-from .._internal.managed_identity_client import ManagedIdentityClient
+
 from .._internal.get_token_mixin import GetTokenMixin
+from .._internal.managed_identity_client import ManagedIdentityClient
 
 if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
 
 
 class ManagedIdentityBase(GetTokenMixin):
-    """Base class for internal credentials using ManagedIdentityClient"""
+    """Base class for internal credentials using ManagedIdentityClient."""
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None

@@ -2,38 +2,42 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 import logging
-from typing import Iterable, Union, Dict
+from os import PathLike, getcwd, path
+from typing import Dict, Iterable, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import (
     _check_and_upload_path,
-    _update_metadata,
     _get_default_datastore_info,
+    _update_metadata,
 )
 from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
-from azure.ai.ml.operations._datastore_operations import DatastoreOperations
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ModelVersionData, ListViewType
-from azure.ai.ml._utils._registry_utils import get_sas_uri_for_registry_asset, get_asset_body_for_registry_storage
-
-from azure.ai.ml._utils._asset_utils import _create_or_update_autoincrement
-from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDependentOperations
-from azure.ai.ml.entities._assets import Model
-from azure.ai.ml.entities._datastore.credentials import AccountKeyCredentials
-from os import path, PathLike, getcwd
-from azure.ai.ml._utils._storage_utils import get_storage_client, get_ds_name_and_path_prefix
-from azure.ai.ml._utils._asset_utils import _get_latest, _resolve_label_to_asset, _archive_or_restore
-from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
+from azure.ai.ml._ml_exceptions import AssetPathException, ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-
+from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType, ModelVersionData
+from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
-from azure.ai.ml._ml_exceptions import ErrorCategory, AssetPathException, ErrorTarget, ValidationException
+from azure.ai.ml._utils._asset_utils import (
+    _archive_or_restore,
+    _create_or_update_autoincrement,
+    _get_latest,
+    _resolve_label_to_asset,
+)
+from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
+from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
+from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
+from azure.ai.ml.entities._assets import Model
+from azure.ai.ml.entities._datastore.credentials import AccountKeyCredentials
+from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 
 logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
 logger.propagate = False
@@ -41,10 +45,11 @@ module_logger = logging.getLogger(__name__)
 
 
 class ModelOperations(_ScopeDependentOperations):
-    """
-    ModelOperations
+    """ModelOperations.
 
-    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should
+    create an MLClient instance that instantiates it for you and
+    attaches it as an attribute.
     """
 
     def __init__(
@@ -69,6 +74,8 @@ class ModelOperations(_ScopeDependentOperations):
     @monitor_with_activity(logger, "Model.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, model: Model) -> Model:  # TODO: Are we going to implement job_name?
         name = model.name
+        if not model.version and self._registry_name:
+            raise Exception("Model version is required for registry")
         version = model.version
 
         sas_uri = None
@@ -147,11 +154,17 @@ class ModelOperations(_ScopeDependentOperations):
         if version:
             return (
                 self._model_versions_operation.get(
-                    name=name, version=version, registry_name=self._registry_name, **self._scope_kwargs
+                    name=name,
+                    version=version,
+                    registry_name=self._registry_name,
+                    **self._scope_kwargs,
                 )
                 if self._registry_name
                 else self._model_versions_operation.get(
-                    name=name, version=version, workspace_name=self._workspace_name, **self._scope_kwargs
+                    name=name,
+                    version=version,
+                    workspace_name=self._workspace_name,
+                    **self._scope_kwargs,
                 )
             )
         else:
@@ -228,7 +241,10 @@ class ModelOperations(_ScopeDependentOperations):
         datastore_type = ds.type
 
         storage_client = get_storage_client(
-            credential=credential, container_name=container, storage_account=acc_name, storage_type=datastore_type
+            credential=credential,
+            container_name=container,
+            storage_account=acc_name,
+            storage_type=datastore_type,
         )
 
         path_file = "{}{}{}".format(download_path, path.sep, name)
@@ -281,7 +297,12 @@ class ModelOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(logger, "Model.List", ActivityType.PUBLICAPI)
-    def list(self, name: str = None, *, list_view_type: ListViewType = ListViewType.ACTIVE_ONLY) -> Iterable[Model]:
+    def list(
+        self,
+        name: str = None,
+        *,
+        list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
+    ) -> Iterable[Model]:
         """List all model assets in workspace.
 
         :param name: Name of the model.
@@ -328,7 +349,13 @@ class ModelOperations(_ScopeDependentOperations):
     def _get_latest_version(self, name: str) -> Model:
         """Returns the latest version of the asset with the given name.
 
-        Latest is defined as the most recently created, not the most recently updated.
+        Latest is defined as the most recently created, not the most
+        recently updated.
         """
-        result = _get_latest(name, self._model_versions_operation, self._resource_group_name, self._workspace_name)
+        result = _get_latest(
+            name,
+            self._model_versions_operation,
+            self._resource_group_name,
+            self._workspace_name,
+        )
         return Model._from_rest_object(result)

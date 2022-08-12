@@ -1,35 +1,25 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import json
 import os
 from pathlib import Path
-from marshmallow import INCLUDE, Schema
 from typing import Dict, Union
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    ComponentVersionData,
-    ComponentVersionDetails,
-)
-from azure.ai.ml._schema.component.command_component import CommandComponentSchema, RestCommandComponentSchema
-from azure.ai.ml.entities._job.distribution import (
-    DistributionConfiguration,
-    MpiDistribution,
-    TensorFlowDistribution,
-    PyTorchDistribution,
-)
-from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
-from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
+from marshmallow import Schema
+
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._schema.component.command_component import CommandComponentSchema
+from azure.ai.ml.constants import COMPONENT_TYPE, NodeType
 from azure.ai.ml.entities._assets import Environment
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, COMPONENT_TYPE, ComponentSource
-from azure.ai.ml.constants import NodeType
-from azure.ai.ml.entities._component.input_output import ComponentInput, ComponentOutput
-from .component import Component
-from .._util import validate_attribute_type
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
-from .._validation import ValidationResult, _ValidationResultBuilder
+from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
+from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+
 from ..._schema import PathAwareSchema
 from ..._utils.utils import get_all_data_binding_expressions, parse_args_description_from_docstring
+from .._util import convert_ordered_dict_to_dict, validate_attribute_type
+from .._validation import ValidationResult
+from .component import Component
 
 
 class CommandComponent(Component, ParameterizedCommand):
@@ -61,6 +51,8 @@ class CommandComponent(Component, ParameterizedCommand):
     :type outputs: dict
     :param instance_count: promoted property from resources.instance_count
     :type instance_count: int
+    :param is_deterministic: Whether the command component is deterministic.
+    :type is_deterministic: bool
     """
 
     def __init__(
@@ -79,6 +71,7 @@ class CommandComponent(Component, ParameterizedCommand):
         inputs: Dict = None,
         outputs: Dict = None,
         instance_count: int = None,  # promoted property from resources.instance_count
+        is_deterministic: bool = True,
         **kwargs,
     ):
         # validate init params are valid type
@@ -101,6 +94,7 @@ class CommandComponent(Component, ParameterizedCommand):
             display_name=display_name,
             inputs=inputs,
             outputs=outputs,
+            is_deterministic=is_deterministic,
             **kwargs,
         )
 
@@ -126,8 +120,7 @@ class CommandComponent(Component, ParameterizedCommand):
 
     @property
     def instance_count(self) -> int:
-        """
-        Return value of promoted property resources.instance_count.
+        """Return value of promoted property resources.instance_count.
 
         :return: Value of resources.instance_count.
         :rtype: Optional[int]
@@ -154,12 +147,7 @@ class CommandComponent(Component, ParameterizedCommand):
 
     def _to_dict(self) -> Dict:
         """Dump the command component content into a dictionary."""
-
-        # Distribution inherits from autorest generated class, use as_dist() to dump to json
-        # Replace the name of $schema to schema.
-        component_schema_dict = self._dump_for_validation()
-        component_schema_dict.pop("base_path", None)
-        return {**self._other_parameter, **component_schema_dict}
+        return convert_ordered_dict_to_dict({**self._other_parameter, **super(CommandComponent, self)._to_dict()})
 
     def _get_environment_id(self) -> Union[str, None]:
         # Return environment id of environment
@@ -174,9 +162,10 @@ class CommandComponent(Component, ParameterizedCommand):
         return CommandComponentSchema(context=context)
 
     def _customized_validate(self):
-        return self._validate_command()
+        return super(CommandComponent, self)._customized_validate().merge_with(self._validate_command())
 
     def _validate_command(self) -> ValidationResult:
+        validation_result = self._create_empty_validation_result()
         # command
         if self.command:
             invalid_expressions = []
@@ -185,9 +174,11 @@ class CommandComponent(Component, ParameterizedCommand):
                     invalid_expressions.append(data_binding_expression)
 
             if invalid_expressions:
-                error_msg = "Invalid data binding expression: {}".format(", ".join(invalid_expressions))
-                return _ValidationResultBuilder.from_single_message(error_msg, "command")
-        return _ValidationResultBuilder.success()
+                validation_result.append_error(
+                    yaml_path="command",
+                    message="Invalid data binding expression: {}".format(", ".join(invalid_expressions)),
+                )
+        return validation_result
 
     def _is_valid_data_binding_expression(self, data_binding_expression: str) -> bool:
         current_obj = self
@@ -202,68 +193,11 @@ class CommandComponent(Component, ParameterizedCommand):
         return True
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "CommandComponent":
-        return CommandComponent(
-            yaml_str=kwargs.pop("yaml_str", None),
-            _source=kwargs.pop("_source", ComponentSource.YAML),
-            **(CommandComponentSchema(context=context).load(data, unknown=INCLUDE, **kwargs)),
-        )
-
-    def _to_rest_object(self) -> ComponentVersionData:
-        # Convert nested ordered dict to dict.
-        # TODO: we may need to use original dict from component YAML(only change code and environment), returning
-        # parsed dict might add default value for some field, eg: if we add property "optional" with default value
-        # to ComponentInput, it will add field "optional" to all inputs even if user doesn't specify one
-        component = json.loads(json.dumps(self._to_dict()))
-
-        properties = ComponentVersionDetails(
-            component_spec=component,
-            description=self.description,
-            is_anonymous=self._is_anonymous,
-            properties=self.properties,
-            tags=self.tags,
-        )
-        result = ComponentVersionData(properties=properties)
-        result.name = self.name
-        return result
-
-    @classmethod
-    def _load_from_rest(cls, obj: ComponentVersionData) -> "CommandComponent":
-        rest_component_version = obj.properties
-        inputs = {
-            k: ComponentInput._from_rest_object(v)
-            for k, v in rest_component_version.component_spec.pop("inputs", {}).items()
-        }
-        outputs = {
-            k: ComponentOutput._from_rest_object(v)
-            for k, v in rest_component_version.component_spec.pop("outputs", {}).items()
-        }
-
-        distribution = rest_component_version.component_spec.pop("distribution", None)
-        if distribution:
-            distribution = DistributionConfiguration._from_rest_object(distribution)
-
-        command_component = CommandComponent(
-            id=obj.id,
-            is_anonymous=rest_component_version.is_anonymous,
-            creation_context=obj.system_data,
-            inputs=inputs,
-            outputs=outputs,
-            distribution=distribution,
-            # use different schema for component from rest since name may be "invalid"
-            **RestCommandComponentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).load(
-                rest_component_version.component_spec, unknown=INCLUDE
-            ),
-            _source=ComponentSource.REST,
-        )
-        return command_component
-
-    @classmethod
     def _parse_args_description_from_docstring(cls, docstring):
         return parse_args_description_from_docstring(docstring)
 
     def __str__(self):
         try:
-            return self._ordered_yaml()
+            return self._to_yaml()
         except BaseException:
             return super(CommandComponent, self).__str__()

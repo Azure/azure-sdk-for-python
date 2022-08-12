@@ -20,7 +20,6 @@ class ErrorTarget:
     CODE = "Code"
     COMPONENT = "Component"
     DATA = "Data"
-    DATASET = "Dataset"
     ENVIRONMENT = "Environment"
     JOB = "Job"
     COMMAND_JOB = "CommandJob"
@@ -42,17 +41,19 @@ class ErrorTarget:
     ARM_DEPLOYMENT = "ArmDeployment"
     ARM_RESOURCE = "ArmResource"
     ARTIFACT = "Artifact"
+    SCHEDULE = "Schedule"
     UNKNOWN = "Unknown"
 
 
 class MlException(AzureError):
-    """
-    The base class for all exceptions raised in AzureML SDK code base. If there is a need to define a custom exception type,
-    that custom exception type should extend from this class.
+    """The base class for all exceptions raised in AzureML SDK code base. If
+    there is a need to define a custom exception type, that custom exception
+    type should extend from this class.
 
     :param message: A message describing the error. This is the error message the user will see.
     :type message: str
-    :param  no_personal_data_message: The error message without any personal data. This will be pushed to telemetry logs.
+    :param  no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
     :type no_personal_data_message: str
     :param target: The name of the element that caused the exception to be thrown.
     :type target: ErrorTarget
@@ -66,9 +67,9 @@ class MlException(AzureError):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs
     ):
         self._error_category = error_category
@@ -121,9 +122,9 @@ class DeploymentException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs
     ):
         super(DeploymentException, self).__init__(
@@ -141,9 +142,9 @@ class ComponentException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs
     ):
         super(ComponentException, self).__init__(
@@ -161,9 +162,9 @@ class DataException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs
     ):
         super(DataException, self).__init__(
@@ -181,9 +182,9 @@ class DatastoreException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs
     ):
         super(DatastoreException, self).__init__(
@@ -201,9 +202,9 @@ class JobException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs
     ):
         super(JobException, self).__init__(
@@ -221,9 +222,9 @@ class ModelException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs
     ):
         super(ModelException, self).__init__(
@@ -240,13 +241,33 @@ class AssetException(MlException):
     def __init__(
         self,
         message: str,
+        *args,
+        no_personal_data_message: str,
+        target: ErrorTarget = ErrorTarget.UNKNOWN,
+        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        **kwargs
+    ):
+        super(AssetException, self).__init__(
+            message=message,
+            target=target,
+            error_category=error_category,
+            no_personal_data_message=no_personal_data_message,
+            *args,
+            **kwargs
+        )
+
+
+class ScheduleException(MlException):
+    def __init__(
+        self,
+        message: str,
         no_personal_data_message: str,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
         *args,
         **kwargs
     ):
-        super(AssetException, self).__init__(
+        super(ScheduleException, self).__init__(
             message=message,
             target=target,
             error_category=error_category,
@@ -261,9 +282,9 @@ class ValidationException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
         *args,
+        target: ErrorTarget = ErrorTarget.UNKNOWN,
+        error_category: ErrorCategory = ErrorCategory.USER_ERROR,
         **kwargs
     ):
         super(ValidationException, self).__init__(
@@ -281,9 +302,9 @@ class AssetPathException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs
     ):
         super(AssetPathException, self).__init__(
@@ -301,9 +322,9 @@ class ImportException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs
     ):
         super(ImportException, self).__init__(

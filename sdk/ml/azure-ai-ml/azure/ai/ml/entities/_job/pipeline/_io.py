@@ -1,28 +1,29 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from abc import ABC, abstractmethod
-from typing import Union, Dict
-import copy
 
+# pylint: disable=protected-access
+
+import copy
+from abc import ABC, abstractmethod
+from typing import Dict, Union
+
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._restclient.v2022_02_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2022_02_01_preview.models import JobOutput as RestJobOutput
 from azure.ai.ml._utils.utils import is_data_binding_expression
-from azure.ai.ml.entities import Data
-from azure.ai.ml.constants import ComponentJobConstants
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
-from azure.ai.ml.entities._component.input_output import ComponentInput, ComponentOutput
+from azure.ai.ml.constants import AssetTypes, ComponentJobConstants, IOConstants
+from azure.ai.ml.entities._assets._artifacts.data import Data
+from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpressionMixin
 from azure.ai.ml.entities._job._input_output_helpers import (
+    from_rest_data_outputs,
+    from_rest_inputs_to_dataset_literal,
     to_rest_data_outputs,
     to_rest_dataset_literal_inputs,
-    from_rest_inputs_to_dataset_literal,
-    from_rest_data_outputs,
 )
-from azure.ai.ml.entities._job.pipeline._pipeline_job_helpers import process_sdk_component_job_io, from_dict_to_rest_io
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
-from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    JobInput as RestJobInput,
-    JobOutput as RestJobOutput,
-)
+from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
+from azure.ai.ml.entities._job.pipeline._pipeline_job_helpers import from_dict_to_rest_io, process_sdk_component_job_io
 
 """Classes in this file converts input & output set by user to pipeline job input & output."""
 
@@ -57,11 +58,11 @@ def _resolve_builders_2_data_bindings(data: Union[list, dict]) -> Union[list, di
 
 
 class InputOutputBase(ABC):
-    def __init__(self, meta: Union[ComponentInput, ComponentOutput], data, **kwargs):
-        """Base class of input & output
+    def __init__(self, meta: Union[Input, Output], data, **kwargs):
+        """Base class of input & output.
 
         :param meta: Metadata of this input/output, eg: type, min, max, etc.
-        :type meta: Union[ComponentInput, ComponentOutput]
+        :type meta: Union[Input, Output]
         :param data: Actual value of input/output, None means un-configured data.
         :type data: Union[None, int, bool, float, str
                           azure.ai.ml.Input,
@@ -73,7 +74,7 @@ class InputOutputBase(ABC):
         self._mode = self._data.mode if self._data and hasattr(self._data, "mode") else kwargs.pop("mode", None)
         self._description = (
             self._data.description
-            if self._data and hasattr(self._data, "description") and not self._data.description
+            if self._data and hasattr(self._data, "description") and self._data.description
             else kwargs.pop("description", None)
         )
         # TODO: remove this
@@ -82,7 +83,8 @@ class InputOutputBase(ABC):
 
     @abstractmethod
     def _build_data(self, data):
-        """Validate if data matches type and translate it to Input/Output acceptable type."""
+        """Validate if data matches type and translate it to Input/Output
+        acceptable type."""
 
     @abstractmethod
     def _build_default_data(self):
@@ -98,7 +100,7 @@ class InputOutputBase(ABC):
         # For un-configured input/output, we build a default data entry for them.
         self._build_default_data()
         self._type = type
-        if isinstance(self._data, Output) or isinstance(self._data, Input):
+        if isinstance(self._data, (Input, Output)):
             self._data.type = type
         else:  # when type of self._data is InputOutputBase or its child class
             self._data._type = type
@@ -112,7 +114,7 @@ class InputOutputBase(ABC):
         # For un-configured input/output, we build a default data entry for them.
         self._build_default_data()
         self._mode = mode
-        if isinstance(self._data, Output) or isinstance(self._data, Input):
+        if isinstance(self._data, (Input, Output)):
             self._data.mode = mode
         else:
             self._data._mode = mode
@@ -169,7 +171,7 @@ class PipelineInputBase(InputOutputBase):
     def __init__(
         self,
         name: str,
-        meta: ComponentInput,
+        meta: Input,
         *,
         data: Union[int, bool, float, str, Output, "PipelineInput", Input] = None,
         owner: Union["BaseComponent", "PipelineJob"] = None,
@@ -180,7 +182,7 @@ class PipelineInputBase(InputOutputBase):
         :param name: The name of the input.
         :type name: str
         :param meta: Metadata of this input, eg: type, min, max, etc.
-        :type meta: ComponentInput
+        :type meta: Input
         :param data: The input data. Valid types include int, bool, float, str,
             Output of another component or pipeline input and Input.
             Note that the output of another component or pipeline input associated should be reachable in the scope
@@ -231,22 +233,24 @@ class PipelineInputBase(InputOutputBase):
                 )
             else:
                 return data
-        elif isinstance(data, Input) or is_data_binding_expression(data):
+        # for data binding case, set is_singular=False for case like "${{parent.inputs.job_in_folder}}/sample1.csv"
+        elif isinstance(data, Input) or is_data_binding_expression(data, is_singular=False):
             return data
-        elif self._meta and self._meta._is_path():
-            # To support passing azure.ai.ml.entities.Data for path input, we will wrap it to Input.
+        elif isinstance(self._meta, Input) and not self._meta._is_primitive_type:
             if isinstance(data, str):
-                return Input(path=data)
+                return Input(type=self._meta.type, path=data)
             else:
                 msg = "only path input is supported now but get {}: {}."
                 raise UserErrorException(
-                    message=msg.format(type(data), data), no_personal_data_message=msg.format(type(data), "[data]")
+                    message=msg.format(type(data), data),
+                    no_personal_data_message=msg.format(type(data), "[data]"),
                 )
         else:
             return data
 
     def _to_job_input(self):
-        """convert the input to ComponentInput, this logic will change if backend contract changes"""
+        """convert the input to Input, this logic will change if backend
+        contract changes."""
         if self._data is None:
             # None data means this input is not configured.
             result = None
@@ -297,7 +301,7 @@ class PipelineOutputBase(InputOutputBase):
     def __init__(
         self,
         name: str,
-        meta: ComponentOutput,
+        meta: Output,
         *,
         data: Union[Output, str] = None,
         owner: Union["BaseComponent", "PipelineJob"] = None,
@@ -321,7 +325,9 @@ class PipelineOutputBase(InputOutputBase):
         if data and not isinstance(data, (Output, str)):
             msg = "Got unexpected type for output: {}."
             raise ValidationException(
-                message=msg.format(data), target=ErrorTarget.PIPELINE, no_personal_data_message=msg.format("[data]")
+                message=msg.format(data),
+                target=ErrorTarget.PIPELINE,
+                no_personal_data_message=msg.format("[data]"),
             )
         super().__init__(meta=meta, data=data, **kwargs)
         self._name = name
@@ -347,7 +353,8 @@ class PipelineOutputBase(InputOutputBase):
         return data
 
     def _to_job_output(self):
-        """Convert the output to ComponentOutput, this logic will change if backend contract changes"""
+        """Convert the output to Output, this logic will change if backend
+        contract changes."""
         if self._data is None:
             # None data means this output is not configured.
             result = None
@@ -386,11 +393,14 @@ class PipelineOutputBase(InputOutputBase):
         )
 
 
-class PipelineInput(PipelineInputBase):
+class PipelineInput(PipelineInputBase, PipelineExpressionMixin):
     """Define one input of a Pipeline."""
 
-    def __init__(self, name: str, meta: ComponentInput, **kwargs):
+    def __init__(self, name: str, meta: Input, **kwargs):
         super(PipelineInput, self).__init__(name=name, meta=meta, **kwargs)
+
+    def __str__(self) -> str:
+        return self._data_binding()
 
     def _build_data(self, data):
         """Build data according to input type."""
@@ -420,6 +430,33 @@ class PipelineInput(PipelineInputBase):
     def _data_binding(self):
         return f"${{{{parent.inputs.{self._name}}}}}"
 
+    def _to_input(self) -> Input:
+        """Convert pipeline input to component input for pipeline component."""
+        if self._data is None:
+            # None data means this input is not configured.
+            return None
+        if isinstance(self._meta, Input):
+            return self._meta
+        data_type = self._data.type if isinstance(self._data, Input) else None
+        # If type is asset type, return data type without default.
+        # Else infer type from data and set it as default.
+        if data_type and data_type.lower() in AssetTypes.__dict__.values():
+            result = Input(type=data_type, mode=self._data.mode)
+        elif type(self._data) in IOConstants.PRIMITIVE_TYPE_2_STR:
+            result = Input(
+                type=IOConstants.PRIMITIVE_TYPE_2_STR[type(self._data)],
+                default=self._data,
+            )
+        else:
+            msg = f"Unsupported Input type {type(self._data)} detected when translate job to component."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.PIPELINE,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+        return result
+
 
 class PipelineOutput(PipelineOutputBase):
     """Define one output of a Pipeline."""
@@ -432,6 +469,17 @@ class PipelineOutput(PipelineOutputBase):
 
     def _data_binding(self):
         return f"${{{{parent.outputs.{self._name}}}}}"
+
+    def _to_output(self) -> Output:
+        """Convert pipeline output to component output for pipeline
+        component."""
+        if self._data is None:
+            # None data means this input is not configured.
+            return None
+        if isinstance(self._meta, Output):
+            return self._meta
+        # Assign type directly as we didn't have primitive output type for now.
+        return Output(type=self._data.type, mode=self._data.mode)
 
 
 class InputsAttrDict(dict):
@@ -447,7 +495,11 @@ class InputsAttrDict(dict):
                 )
         super(InputsAttrDict, self).__init__(**inputs, **kwargs)
 
-    def __setattr__(self, key: str, value: Union[int, bool, float, str, PipelineOutputBase, PipelineInput, Input]):
+    def __setattr__(
+        self,
+        key: str,
+        value: Union[int, bool, float, str, PipelineOutputBase, PipelineInput, Input],
+    ):
         original_input = self.__getattr__(key)  # Note that an exception will be raised if the keyword is invalid.
         original_input._data = original_input._build_data(value)
 
@@ -472,6 +524,7 @@ class OutputsAttrDict(dict):
         super(OutputsAttrDict, self).__init__(**outputs, **kwargs)
 
     def __getitem__(self, item) -> PipelineOutputBase:
+        # TODO: Handle key error here?
         return super().__getitem__(item)
 
     def __getattr__(self, item) -> PipelineOutputBase:
@@ -479,7 +532,7 @@ class OutputsAttrDict(dict):
 
     def __setattr__(self, key: str, value: Union[Data, Output]):
         if isinstance(value, Output):
-            mode = value.mode if value.mode is not None else "rw_mount"
+            mode = value.mode
             value = Output(type=value.type, path=value.path, mode=mode)
         original_output = self.__getattr__(key)  # Note that an exception will be raised if the keyword is invalid.
         original_output._data = original_output._build_data(value)
@@ -489,15 +542,16 @@ class OutputsAttrDict(dict):
 
 
 class NodeIOMixin:
-    """Provides ability to warp node inputs/outputs and build data bindings dynamically."""
+    """Provides ability to warp node inputs/outputs and build data bindings
+    dynamically."""
 
     def __init__(self, **kwargs):
         super(NodeIOMixin, self).__init__(**kwargs)
 
-    def _build_input(self, name, meta: ComponentInput, data) -> PipelineInputBase:
+    def _build_input(self, name, meta: Input, data) -> PipelineInputBase:
         return PipelineInputBase(name=name, meta=meta, data=data, owner=self)
 
-    def _build_output(self, name, meta: ComponentOutput, data) -> PipelineOutputBase:
+    def _build_output(self, name, meta: Output, data) -> PipelineOutputBase:
         # For un-configured outputs, settings it to None so we won't passing extra fields(eg: default mode)
         return PipelineOutputBase(name=name, meta=meta, data=data, owner=self)
 
@@ -507,9 +561,12 @@ class NodeIOMixin:
         return None
 
     def _build_inputs_dict(
-        self, input_definition_dict: dict, inputs: Dict[str, Union[Input, str, bool, int, float]]
+        self,
+        input_definition_dict: dict,
+        inputs: Dict[str, Union[Input, str, bool, int, float]],
     ) -> InputsAttrDict:
-        """Build a input attribute dict so user can get/set inputs by accessing attribute, eg: node1.inputs.xxx.
+        """Build an input attribute dict so user can get/set inputs by
+        accessing attribute, eg: node1.inputs.xxx.
 
         :param input_definition_dict: Input definition dict from component entity.
         :param inputs: Provided kwargs when parameterizing component func.
@@ -529,23 +586,23 @@ class NodeIOMixin:
         return InputsAttrDict(input_dict)
 
     def _build_outputs_dict(self, output_definition_dict: dict, outputs: Dict[str, Output]) -> OutputsAttrDict:
-        """Build a output attribute dict so user can get/set outputs by accessing attribute, eg: node1.outputs.xxx.
+        """Build a output attribute dict so user can get/set outputs by
+        accessing attribute, eg: node1.outputs.xxx.
 
         :param output_definition_dict: Output definition dict from component entity.
         :return: Built output attribute dict.
         """
         # TODO: check if we need another way to mark a un-configured output instead of just set None.
         # Create None as data placeholder for all outputs.
-        input_dict = {}
+        output_dict = {}
         for key, val in output_definition_dict.items():
             if key in outputs.keys():
-                # If output has given value, create a output object with real value.
+                # If output has given value, create an output object with real value.
                 val = self._build_output(name=key, meta=val, data=outputs[key])
             else:
-                # Otherwise create None as data placeholder for unfilled inputs.
                 val = self._build_output(name=key, meta=val, data=None)
-            input_dict[key] = val
-        return OutputsAttrDict(input_dict)
+            output_dict[key] = val
+        return OutputsAttrDict(output_dict)
 
     def _build_inputs_dict_without_meta(self, inputs: Dict[str, Union[Input, str, bool, int, float]]) -> InputsAttrDict:
         input_dict = {key: self._build_input(name=key, meta=None, data=val) for key, val in inputs.items()}
@@ -556,7 +613,8 @@ class NodeIOMixin:
         return OutputsAttrDict(output_dict)
 
     def _build_inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:
-        """Build inputs of this component to a dict dict which maps output to actual value.
+        """Build inputs of this component to a dict dict which maps output to
+        actual value.
 
         The built input dict will have same input format as other jobs, eg:
         {
@@ -569,7 +627,8 @@ class NodeIOMixin:
         return inputs
 
     def _build_outputs(self) -> Dict[str, Output]:
-        """Build outputs of this component to a dict which maps output to actual value.
+        """Build outputs of this component to a dict which maps output to
+        actual value.
 
         The built output dict will have same output format as other jobs, eg:
         {
@@ -624,10 +683,12 @@ class NodeIOMixin:
         rest_data_outputs = to_rest_data_outputs(data_outputs)
 
         # convert rest io to dict
-        # parse output_bindings to {"value": binding, "type": "Literal"} since there's no model for it
-        rest_output_bindings = {
-            key: {"value": binding["value"], "type": "Literal"} for key, binding in output_bindings.items()
-        }
+        # parse output_bindings to {"value": binding, "type": "Literal"} since there's no mode for it
+        rest_output_bindings = {}
+        for key, binding in output_bindings.items():
+            rest_output_bindings[key] = {"value": binding["value"], "type": "Literal"}
+            if "mode" in binding:
+                rest_output_bindings[key].update({"mode": binding["mode"].value})
         rest_data_outputs = {name: val.as_dict() for name, val in rest_data_outputs.items()}
         rest_data_outputs.update(rest_output_bindings)
         return rest_data_outputs
@@ -660,17 +721,19 @@ class NodeIOMixin:
 
 
 class PipelineIOMixin(NodeIOMixin):
-    """Provides ability to warp pipeline inputs/outputs and build data bindings dynamically."""
+    """Provides ability to warp pipeline inputs/outputs and build data bindings
+    dynamically."""
 
-    def _build_input(self, name, meta: ComponentInput, data) -> "PipelineInput":
+    def _build_input(self, name, meta: Input, data) -> "PipelineInput":
         return PipelineInput(name=name, meta=meta, data=data, owner=self)
 
-    def _build_output(self, name, meta: ComponentOutput, data) -> "PipelineOutput":
+    def _build_output(self, name, meta: Output, data) -> "PipelineOutput":
         # TODO: settings data to None for un-configured outputs so we won't passing extra fields(eg: default mode)
         return PipelineOutput(name=name, meta=meta, data=data, owner=self)
 
     def _build_outputs(self) -> Dict[str, Output]:
-        """Build outputs of this pipeline to a dict which maps output to actual value.
+        """Build outputs of this pipeline to a dict which maps output to actual
+        value.
 
         The built dictionary's format aligns with component job's output yaml,
         un-configured outputs will be None, eg:

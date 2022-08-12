@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -42,7 +41,7 @@ from ._models import (
     BoundingRegion,
     AddressValue,
     CurrencyValue,
-    DocumentBuildMode,
+    ModelBuildMode,
     DocumentContentElement,
     DocumentField,
     DocumentKeyValuePair,
@@ -56,14 +55,15 @@ from ._models import (
     DocumentTable,
     DocumentTableCell,
     DocumentWord,
-    ModelOperationInfo,
-    ModelOperation,
-    DocumentModel,
-    DocumentModelInfo,
-    DocTypeInfo,
-    AccountInfo,
+    DocumentModelOperationSummary,
+    DocumentModelOperationDetails,
+    DocumentModelDetails,
+    DocumentModelSummary,
+    DocumentTypeDetails,
+    ResourceDetails,
     DocumentAnalysisError,
     DocumentAnalysisInnerError,
+    TargetAuthorization,
 )
 from ._api_versions import FormRecognizerApiVersion, DocumentAnalysisApiVersion
 
@@ -105,7 +105,7 @@ __all__ = [
     "BoundingRegion",
     "AddressValue",
     "CurrencyValue",
-    "DocumentBuildMode",
+    "ModelBuildMode",
     "DocumentContentElement",
     "DocumentField",
     "DocumentKeyValueElement",
@@ -120,15 +120,16 @@ __all__ = [
     "DocumentTableCell",
     "DocumentWord",
     "DocumentModelAdministrationLROPoller",
-    "ModelOperationInfo",
-    "ModelOperation",
+    "DocumentModelOperationSummary",
+    "DocumentModelOperationDetails",
     "DocumentAnalysisApiVersion",
-    "DocumentModel",
-    "DocumentModelInfo",
-    "DocTypeInfo",
-    "AccountInfo",
+    "DocumentModelDetails",
+    "DocumentModelSummary",
+    "DocumentTypeDetails",
+    "ResourceDetails",
     "DocumentAnalysisError",
     "DocumentAnalysisInnerError",
+    "TargetAuthorization",
 ]
 
 __VERSION__ = VERSION

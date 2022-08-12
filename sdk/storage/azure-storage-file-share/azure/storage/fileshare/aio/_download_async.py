@@ -6,41 +6,25 @@
 # pylint: disable=invalid-overridden-method
 import asyncio
 import sys
+import warnings
 from io import BytesIO
 from itertools import islice
-import warnings
-
 from typing import AsyncIterator
+
 from azure.core.exceptions import HttpResponseError, ResourceModifiedError
-from .._shared.encryption import decrypt_blob
+from .._download import _ChunkDownloader
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
-from .._download import process_range_and_offset, _ChunkDownloader
 
 
-async def process_content(data, start_offset, end_offset, encryption):
+async def process_content(data):
     if data is None:
         raise ValueError("Response cannot be None.")
+
     try:
-        content = data.response.body()
+        return data.response.body()
     except Exception as error:
         raise HttpResponseError(message="Download stream interrupted.", response=data.response, error=error)
-    if encryption.get('key') is not None or encryption.get('resolver') is not None:
-        try:
-            return decrypt_blob(
-                encryption.get('required'),
-                encryption.get('key'),
-                encryption.get('resolver'),
-                content,
-                start_offset,
-                end_offset,
-                data.response.headers)
-        except Exception as error:
-            raise HttpResponseError(
-                message="Decryption failed.",
-                response=data.response,
-                error=error)
-    return content
 
 
 class _AsyncChunkDownloader(_ChunkDownloader):
@@ -68,6 +52,9 @@ class _AsyncChunkDownloader(_ChunkDownloader):
         else:
             self.progress_total += length
 
+        if self.progress_hook:
+            await self.progress_hook(self.progress_total, self.total_size)
+
     async def _write_to_stream(self, chunk_data, chunk_start):
         if self.stream_lock:
             async with self.stream_lock:  # pylint: disable=not-async-context-manager
@@ -77,12 +64,9 @@ class _AsyncChunkDownloader(_ChunkDownloader):
             self.stream.write(chunk_data)
 
     async def _download_chunk(self, chunk_start, chunk_end):
-        download_range, offset = process_range_and_offset(
-            chunk_start, chunk_end, chunk_end, self.encryption_options
-        )
         range_header, range_validation = validate_and_format_range_headers(
-            download_range[0],
-            download_range[1],
+            chunk_start,
+            chunk_end,
             check_content_md5=self.validate_content
         )
         try:
@@ -99,7 +83,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
         except HttpResponseError as error:
             process_storage_error(error)
 
-        chunk_data = await process_content(response, offset[0], offset[1], self.encryption_options)
+        chunk_data = await process_content(response)
         return chunk_data
 
 
@@ -183,7 +167,6 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             start_range=None,
             end_range=None,
             validate_content=None,
-            encryption_options=None,
             max_concurrency=1,
             name=None,
             path=None,
@@ -204,7 +187,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._max_concurrency = max_concurrency
         self._encoding = encoding
         self._validate_content = validate_content
-        self._encryption_options = encryption_options or {}
+        self._progress_hook = kwargs.pop('progress_hook', None)
         self._request_options = kwargs
         self._location_mode = None
         self._download_complete = False
@@ -224,9 +207,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         else:
             initial_request_end = initial_request_start + self._first_get_size - 1
 
-        self._initial_range, self._initial_offset = process_range_and_offset(
-            initial_request_start, initial_request_end, self._end_range, self._encryption_options
-        )
+        self._initial_range = (initial_request_start, initial_request_end)
 
     def __len__(self):
         return self.size
@@ -257,12 +238,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         if self.size == 0:
             self._current_content = b""
         else:
-            self._current_content = await process_content(
-                self._response,
-                self._initial_offset[0],
-                self._initial_offset[1],
-                self._encryption_options
-            )
+            self._current_content = await process_content(self._response)
 
     async def _initial_request(self):
         range_header, range_validation = validate_and_format_range_headers(
@@ -288,6 +264,9 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             # Parse the total file size and adjust the download size if ranges
             # were specified
             self._file_size = parse_length_from_content_range(response.properties.content_range)
+            if not self._file_size:
+                raise ValueError("Required Content-Range response header is missing or malformed.")
+
             if self._end_range is not None:
                 # Use the length unless it is over the end of the file
                 self.size = min(self._file_size, self._end_range - self._start_range + 1)
@@ -346,7 +325,6 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 stream=None,
                 parallel=False,
                 validate_content=self._validate_content,
-                encryption_options=self._encryption_options,
                 use_location=self._location_mode,
                 etag=self._etag,
                 **self._request_options)
@@ -358,10 +336,11 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         )
 
     async def readall(self):
+        # type: () -> bytes
         """Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
-        :rtype: bytes or str
+        :rtype: bytes
         """
         stream = BytesIO()
         await self.readinto(stream)
@@ -429,6 +408,9 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         # Write the content to the user stream
         stream.write(self._current_content)
+        if self._progress_hook:
+            await self._progress_hook(len(self._current_content), self.size)
+
         if self._download_complete:
             return self.size
 
@@ -447,8 +429,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             stream=stream,
             parallel=parallel,
             validate_content=self._validate_content,
-            encryption_options=self._encryption_options,
             use_location=self._location_mode,
+            progress_hook=self._progress_hook,
             etag=self._etag,
             **self._request_options)
 

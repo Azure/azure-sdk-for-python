@@ -54,9 +54,9 @@ def preview_version_plus(preview_label: str, last_version: str) -> str:
 
 def stable_version_plus(changelog: str, last_version: str):
     flag = [False, False, False]  # breaking, feature, bugfix
-    flag[0] = '**Breaking changes**' in changelog
-    flag[1] = '**Features**' in changelog
-    flag[2] = '**Bugfixes**' in changelog
+    flag[0] = '### Breaking Changes' in changelog
+    flag[1] = '### Features Added' in changelog
+    flag[2] = '### Bugs Fixed' in changelog
 
     num = last_version.split('.')
     if flag[0]:
@@ -198,7 +198,7 @@ class CodegenTestPR:
 
     def get_package_name_with_autorest_result(self):
         generate_result = self.get_autorest_result()
-        self.package_name = generate_result["packages"][0]["packageName"].split('-')[-1]
+        self.package_name = generate_result["packages"][0]["packageName"].split('-', 2)[-1]
 
     def prepare_branch_with_readme(self):
         self.generate_code()
@@ -285,7 +285,8 @@ class CodegenTestPR:
         preview_tag = not self.tag_is_stable
         changelog = self.get_changelog()
         if changelog == '':
-            return '0.0.0'
+            msg = 'it should be stable' if self.tag_is_stable else 'it should be perview'
+            return f'0.0.0 ({msg})'
         preview_version = 'rc' in last_version or 'b' in last_version
         #                                           |   preview tag                     | stable tag
         # preview version(1.0.0rc1/1.0.0b1)         | 1.0.0rc2(track1)/1.0.0b2(track2)  |  1.0.0
@@ -379,6 +380,16 @@ class CodegenTestPR:
                     target_mgmt_core = line.strip().strip(',').strip('\'')
                     yield target_mgmt_core
 
+    @staticmethod
+    def insert_line_num(content: List[str]) -> int:
+        start_num = 0
+        end_num = len(content)
+        for i in range(end_num):
+            if content[i].find("#override azure-mgmt-") > -1:
+                start_num = i
+                break
+        return (int(str(time.time()).split('.')[-1]) % max(end_num - start_num, 1)) + start_num
+
     def check_ci_file_proc(self, dependency: str):
         def edit_ci_file(content: List[str]):
             new_line = f'#override azure-mgmt-{self.package_name} {dependency}'
@@ -390,7 +401,7 @@ class CodegenTestPR:
                     content[i] = new_line + '\n'
                     return
             prefix = '' if '\n' in content[-1] else '\n'
-            content.append(prefix + new_line + '\n')
+            content.insert(self.insert_line_num(content), prefix + new_line + '\n')
 
         modify_file(str(Path('shared_requirements.txt')), edit_ci_file)
         print_exec('git add shared_requirements.txt')

@@ -7,11 +7,13 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._compute_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ApiError(msrest.serialization.Model):
@@ -40,8 +42,8 @@ class ApiError(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        details: Optional[List["ApiErrorBase"]] = None,
-        innererror: Optional["InnerError"] = None,
+        details: Optional[List["_models.ApiErrorBase"]] = None,
+        innererror: Optional["_models.InnerError"] = None,
         code: Optional[str] = None,
         target: Optional[str] = None,
         message: Optional[str] = None,
@@ -207,11 +209,11 @@ class CommunityGalleryImage(PirCommunityGalleryResource):
     :vartype unique_id: str
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-     include: "Windows", "Linux".
+     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+     "Windows", "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     :ivar os_state: This property allows the user to specify whether the virtual machines created
-     under this image are 'Generalized' or 'Specialized'. Possible values include: "Generalized",
+     under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized",
      "Specialized".
     :vartype os_state: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemStateTypes
     :ivar end_of_life_date: The end of life date of the gallery image definition. This property can
@@ -225,15 +227,15 @@ class CommunityGalleryImage(PirCommunityGalleryResource):
     :ivar disallowed: Describes the disallowed disk types.
     :vartype disallowed: ~azure.mgmt.compute.v2022_01_03.models.Disallowed
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Possible values include: "V1", "V2".
+     disks only. Known values are: "V1", "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2022_01_03.models.HyperVGeneration
     :ivar features: A list of gallery image features.
     :vartype features: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImageFeature]
     :ivar purchase_plan: Describes the gallery image definition purchase plan. This is used by
      marketplace images.
     :vartype purchase_plan: ~azure.mgmt.compute.v2022_01_03.models.ImagePurchasePlan
-    :ivar architecture: The architecture of the image. Applicable to OS disks only. Possible values
-     include: "x64", "Arm64".
+    :ivar architecture: The architecture of the image. Applicable to OS disks only. Known values
+     are: "x64", "Arm64".
     :vartype architecture: str or ~azure.mgmt.compute.v2022_01_03.models.Architecture
     :ivar privacy_statement_uri: Privacy statement uri for the current community gallery image.
     :vartype privacy_statement_uri: str
@@ -270,16 +272,16 @@ class CommunityGalleryImage(PirCommunityGalleryResource):
         self,
         *,
         unique_id: Optional[str] = None,
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
-        os_state: Optional[Union[str, "OperatingSystemStateTypes"]] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        os_state: Optional[Union[str, "_models.OperatingSystemStateTypes"]] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        identifier: Optional["GalleryImageIdentifier"] = None,
-        recommended: Optional["RecommendedMachineConfiguration"] = None,
-        disallowed: Optional["Disallowed"] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGeneration"]] = None,
-        features: Optional[List["GalleryImageFeature"]] = None,
-        purchase_plan: Optional["ImagePurchasePlan"] = None,
-        architecture: Optional[Union[str, "Architecture"]] = None,
+        identifier: Optional["_models.GalleryImageIdentifier"] = None,
+        recommended: Optional["_models.RecommendedMachineConfiguration"] = None,
+        disallowed: Optional["_models.Disallowed"] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
+        features: Optional[List["_models.GalleryImageFeature"]] = None,
+        purchase_plan: Optional["_models.ImagePurchasePlan"] = None,
+        architecture: Optional[Union[str, "_models.Architecture"]] = None,
         privacy_statement_uri: Optional[str] = None,
         eula: Optional[str] = None,
         **kwargs
@@ -289,12 +291,12 @@ class CommunityGalleryImage(PirCommunityGalleryResource):
         :paramtype unique_id: str
         :keyword os_type: This property allows you to specify the type of the OS that is included in
          the disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-         include: "Windows", "Linux".
+         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+         "Windows", "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         :keyword os_state: This property allows the user to specify whether the virtual machines
-         created under this image are 'Generalized' or 'Specialized'. Possible values include:
-         "Generalized", "Specialized".
+         created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized",
+         "Specialized".
         :paramtype os_state: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemStateTypes
         :keyword end_of_life_date: The end of life date of the gallery image definition. This property
          can be used for decommissioning purposes. This property is updatable.
@@ -307,15 +309,15 @@ class CommunityGalleryImage(PirCommunityGalleryResource):
         :keyword disallowed: Describes the disallowed disk types.
         :paramtype disallowed: ~azure.mgmt.compute.v2022_01_03.models.Disallowed
         :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-         disks only. Possible values include: "V1", "V2".
+         disks only. Known values are: "V1", "V2".
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2022_01_03.models.HyperVGeneration
         :keyword features: A list of gallery image features.
         :paramtype features: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImageFeature]
         :keyword purchase_plan: Describes the gallery image definition purchase plan. This is used by
          marketplace images.
         :paramtype purchase_plan: ~azure.mgmt.compute.v2022_01_03.models.ImagePurchasePlan
-        :keyword architecture: The architecture of the image. Applicable to OS disks only. Possible
-         values include: "x64", "Arm64".
+        :keyword architecture: The architecture of the image. Applicable to OS disks only. Known values
+         are: "x64", "Arm64".
         :paramtype architecture: str or ~azure.mgmt.compute.v2022_01_03.models.Architecture
         :keyword privacy_statement_uri: Privacy statement uri for the current community gallery image.
         :paramtype privacy_statement_uri: str
@@ -361,7 +363,7 @@ class CommunityGalleryImageList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["CommunityGalleryImage"],
+        value: List["_models.CommunityGalleryImage"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -428,7 +430,7 @@ class CommunityGalleryImageVersion(PirCommunityGalleryResource):
         published_date: Optional[datetime.datetime] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
         exclude_from_latest: Optional[bool] = None,
-        storage_profile: Optional["SharedGalleryImageVersionStorageProfile"] = None,
+        storage_profile: Optional["_models.SharedGalleryImageVersionStorageProfile"] = None,
         **kwargs
     ):
         """
@@ -478,7 +480,7 @@ class CommunityGalleryImageVersionList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["CommunityGalleryImageVersion"],
+        value: List["_models.CommunityGalleryImageVersion"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -672,8 +674,8 @@ class EncryptionImages(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        os_disk_image: Optional["OSDiskImageEncryption"] = None,
-        data_disk_images: Optional[List["DataDiskImageEncryption"]] = None,
+        os_disk_image: Optional["_models.OSDiskImageEncryption"] = None,
+        data_disk_images: Optional[List["_models.DataDiskImageEncryption"]] = None,
         **kwargs
     ):
         """
@@ -693,7 +695,7 @@ class ExtendedLocation(msrest.serialization.Model):
 
     :ivar name: The name of the extended location.
     :vartype name: str
-    :ivar type: The type of the extended location. Possible values include: "EdgeZone".
+    :ivar type: The type of the extended location. Known values are: "EdgeZone".
     :vartype type: str or ~azure.mgmt.compute.v2022_01_03.models.ExtendedLocationTypes
     """
 
@@ -706,13 +708,13 @@ class ExtendedLocation(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        type: Optional[Union[str, "ExtendedLocationTypes"]] = None,
+        type: Optional[Union[str, "_models.ExtendedLocationTypes"]] = None,
         **kwargs
     ):
         """
         :keyword name: The name of the extended location.
         :paramtype name: str
-        :keyword type: The type of the extended location. Possible values include: "EdgeZone".
+        :keyword type: The type of the extended location. Known values are: "EdgeZone".
         :paramtype type: str or ~azure.mgmt.compute.v2022_01_03.models.ExtendedLocationTypes
         """
         super(ExtendedLocation, self).__init__(**kwargs)
@@ -797,8 +799,8 @@ class Gallery(Resource):
     :vartype description: str
     :ivar identifier: Describes the gallery unique name.
     :vartype identifier: ~azure.mgmt.compute.v2022_01_03.models.GalleryIdentifier
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
-     values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2022_01_03.models.GalleryProvisioningState
     :ivar sharing_profile: Profile for gallery sharing to subscription or tenant.
@@ -838,9 +840,9 @@ class Gallery(Resource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
-        identifier: Optional["GalleryIdentifier"] = None,
-        sharing_profile: Optional["SharingProfile"] = None,
-        soft_delete_policy: Optional["SoftDeletePolicy"] = None,
+        identifier: Optional["_models.GalleryIdentifier"] = None,
+        sharing_profile: Optional["_models.SharingProfile"] = None,
+        soft_delete_policy: Optional["_models.SoftDeletePolicy"] = None,
         **kwargs
     ):
         """
@@ -899,8 +901,8 @@ class GalleryApplication(Resource):
     :vartype end_of_life_date: ~datetime.datetime
     :ivar supported_os_type: This property allows you to specify the supported type of the OS that
      application is built for. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-     include: "Windows", "Linux".
+     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+     "Windows", "Linux".
     :vartype supported_os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     """
 
@@ -935,7 +937,7 @@ class GalleryApplication(Resource):
         privacy_statement_uri: Optional[str] = None,
         release_note_uri: Optional[str] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        supported_os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
+        supported_os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
         **kwargs
     ):
         """
@@ -957,8 +959,8 @@ class GalleryApplication(Resource):
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword supported_os_type: This property allows you to specify the supported type of the OS
          that application is built for. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-         include: "Windows", "Linux".
+         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+         "Windows", "Linux".
         :paramtype supported_os_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         """
@@ -995,7 +997,7 @@ class GalleryApplicationList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["GalleryApplication"],
+        value: List["_models.GalleryApplication"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1084,8 +1086,8 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
     :vartype end_of_life_date: ~datetime.datetime
     :ivar supported_os_type: This property allows you to specify the supported type of the OS that
      application is built for. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-     include: "Windows", "Linux".
+     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+     "Windows", "Linux".
     :vartype supported_os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     """
 
@@ -1117,7 +1119,7 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
         privacy_statement_uri: Optional[str] = None,
         release_note_uri: Optional[str] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        supported_os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
+        supported_os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
         **kwargs
     ):
         """
@@ -1137,8 +1139,8 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword supported_os_type: This property allows you to specify the supported type of the OS
          that application is built for. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-         include: "Windows", "Linux".
+         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+         "Windows", "Linux".
         :paramtype supported_os_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         """
@@ -1171,8 +1173,8 @@ class GalleryApplicationVersion(Resource):
     :ivar publishing_profile: The publishing profile of a gallery image version.
     :vartype publishing_profile:
      ~azure.mgmt.compute.v2022_01_03.models.GalleryApplicationVersionPublishingProfile
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
-     values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2022_01_03.models.GalleryProvisioningState
     :ivar replication_status: This is the replication status of the gallery image version.
@@ -1204,7 +1206,7 @@ class GalleryApplicationVersion(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        publishing_profile: Optional["GalleryApplicationVersionPublishingProfile"] = None,
+        publishing_profile: Optional["_models.GalleryApplicationVersionPublishingProfile"] = None,
         **kwargs
     ):
         """
@@ -1246,7 +1248,7 @@ class GalleryApplicationVersionList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["GalleryApplicationVersion"],
+        value: List["_models.GalleryApplicationVersion"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1283,11 +1285,11 @@ class GalleryArtifactPublishingProfileBase(msrest.serialization.Model):
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
      "Premium_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
     :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
-     This property is not updatable. Possible values include: "Full", "Shallow".
+     This property is not updatable. Known values are: "Full", "Shallow".
     :vartype replication_mode: str or ~azure.mgmt.compute.v2022_01_03.models.ReplicationMode
     :ivar target_extended_locations: The target extended locations where the Image Version is going
      to be replicated to. This property is updatable.
@@ -1313,13 +1315,13 @@ class GalleryArtifactPublishingProfileBase(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        target_regions: Optional[List["TargetRegion"]] = None,
+        target_regions: Optional[List["_models.TargetRegion"]] = None,
         replica_count: Optional[int] = None,
         exclude_from_latest: Optional[bool] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountType"]] = None,
-        replication_mode: Optional[Union[str, "ReplicationMode"]] = None,
-        target_extended_locations: Optional[List["GalleryTargetExtendedLocation"]] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
+        replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
+        target_extended_locations: Optional[List["_models.GalleryTargetExtendedLocation"]] = None,
         **kwargs
     ):
         """
@@ -1337,12 +1339,12 @@ class GalleryArtifactPublishingProfileBase(msrest.serialization.Model):
          be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
          "Premium_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
         :keyword replication_mode: Optional parameter which specifies the mode to be used for
-         replication. This property is not updatable. Possible values include: "Full", "Shallow".
+         replication. This property is not updatable. Known values are: "Full", "Shallow".
         :paramtype replication_mode: str or ~azure.mgmt.compute.v2022_01_03.models.ReplicationMode
         :keyword target_extended_locations: The target extended locations where the Image Version is
          going to be replicated to. This property is updatable.
@@ -1383,11 +1385,11 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
      "Premium_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
     :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
-     This property is not updatable. Possible values include: "Full", "Shallow".
+     This property is not updatable. Known values are: "Full", "Shallow".
     :vartype replication_mode: str or ~azure.mgmt.compute.v2022_01_03.models.ReplicationMode
     :ivar target_extended_locations: The target extended locations where the Image Version is going
      to be replicated to. This property is updatable.
@@ -1431,16 +1433,16 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
     def __init__(
         self,
         *,
-        source: "UserArtifactSource",
-        target_regions: Optional[List["TargetRegion"]] = None,
+        source: "_models.UserArtifactSource",
+        target_regions: Optional[List["_models.TargetRegion"]] = None,
         replica_count: Optional[int] = None,
         exclude_from_latest: Optional[bool] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountType"]] = None,
-        replication_mode: Optional[Union[str, "ReplicationMode"]] = None,
-        target_extended_locations: Optional[List["GalleryTargetExtendedLocation"]] = None,
-        manage_actions: Optional["UserArtifactManage"] = None,
-        settings: Optional["UserArtifactSettings"] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
+        replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
+        target_extended_locations: Optional[List["_models.GalleryTargetExtendedLocation"]] = None,
+        manage_actions: Optional["_models.UserArtifactManage"] = None,
+        settings: Optional["_models.UserArtifactSettings"] = None,
         advanced_settings: Optional[Dict[str, str]] = None,
         enable_health_check: Optional[bool] = None,
         **kwargs
@@ -1460,12 +1462,12 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
          be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
          "Premium_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
         :keyword replication_mode: Optional parameter which specifies the mode to be used for
-         replication. This property is not updatable. Possible values include: "Full", "Shallow".
+         replication. This property is not updatable. Known values are: "Full", "Shallow".
         :paramtype replication_mode: str or ~azure.mgmt.compute.v2022_01_03.models.ReplicationMode
         :keyword target_extended_locations: The target extended locations where the Image Version is
          going to be replicated to. This property is updatable.
@@ -1509,8 +1511,8 @@ class GalleryApplicationVersionUpdate(UpdateResourceDefinition):
     :ivar publishing_profile: The publishing profile of a gallery image version.
     :vartype publishing_profile:
      ~azure.mgmt.compute.v2022_01_03.models.GalleryApplicationVersionPublishingProfile
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
-     values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2022_01_03.models.GalleryProvisioningState
     :ivar replication_status: This is the replication status of the gallery image version.
@@ -1539,7 +1541,7 @@ class GalleryApplicationVersionUpdate(UpdateResourceDefinition):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        publishing_profile: Optional["GalleryApplicationVersionPublishingProfile"] = None,
+        publishing_profile: Optional["_models.GalleryApplicationVersionPublishingProfile"] = None,
         **kwargs
     ):
         """
@@ -1575,7 +1577,7 @@ class GalleryArtifactSource(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        managed_image: "ManagedArtifact",
+        managed_image: "_models.ManagedArtifact",
         **kwargs
     ):
         """
@@ -1630,7 +1632,7 @@ class GalleryDiskImage(msrest.serialization.Model):
     :ivar size_in_gb: This property indicates the size of the VHD to be created.
     :vartype size_in_gb: int
     :ivar host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-     'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+     'ReadWrite'. Known values are: "None", "ReadOnly", "ReadWrite".
     :vartype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.HostCaching
     :ivar source: The gallery artifact version source.
     :vartype source: ~azure.mgmt.compute.v2022_01_03.models.GalleryArtifactVersionSource
@@ -1649,13 +1651,13 @@ class GalleryDiskImage(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        host_caching: Optional[Union[str, "HostCaching"]] = None,
-        source: Optional["GalleryArtifactVersionSource"] = None,
+        host_caching: Optional[Union[str, "_models.HostCaching"]] = None,
+        source: Optional["_models.GalleryArtifactVersionSource"] = None,
         **kwargs
     ):
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-         'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+         'ReadWrite'. Known values are: "None", "ReadOnly", "ReadWrite".
         :paramtype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.HostCaching
         :keyword source: The gallery artifact version source.
         :paramtype source: ~azure.mgmt.compute.v2022_01_03.models.GalleryArtifactVersionSource
@@ -1676,7 +1678,7 @@ class GalleryDataDiskImage(GalleryDiskImage):
     :ivar size_in_gb: This property indicates the size of the VHD to be created.
     :vartype size_in_gb: int
     :ivar host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-     'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+     'ReadWrite'. Known values are: "None", "ReadOnly", "ReadWrite".
     :vartype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.HostCaching
     :ivar source: The gallery artifact version source.
     :vartype source: ~azure.mgmt.compute.v2022_01_03.models.GalleryArtifactVersionSource
@@ -1702,13 +1704,13 @@ class GalleryDataDiskImage(GalleryDiskImage):
         self,
         *,
         lun: int,
-        host_caching: Optional[Union[str, "HostCaching"]] = None,
-        source: Optional["GalleryArtifactVersionSource"] = None,
+        host_caching: Optional[Union[str, "_models.HostCaching"]] = None,
+        source: Optional["_models.GalleryArtifactVersionSource"] = None,
         **kwargs
     ):
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-         'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+         'ReadWrite'. Known values are: "None", "ReadOnly", "ReadWrite".
         :paramtype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.HostCaching
         :keyword source: The gallery artifact version source.
         :paramtype source: ~azure.mgmt.compute.v2022_01_03.models.GalleryArtifactVersionSource
@@ -1726,8 +1728,7 @@ class GalleryExtendedLocation(msrest.serialization.Model):
 
     :ivar name:
     :vartype name: str
-    :ivar type: It is type of the extended location. Possible values include: "EdgeZone",
-     "Unknown".
+    :ivar type: It is type of the extended location. Known values are: "EdgeZone", "Unknown".
     :vartype type: str or ~azure.mgmt.compute.v2022_01_03.models.GalleryExtendedLocationType
     """
 
@@ -1740,14 +1741,13 @@ class GalleryExtendedLocation(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        type: Optional[Union[str, "GalleryExtendedLocationType"]] = None,
+        type: Optional[Union[str, "_models.GalleryExtendedLocationType"]] = None,
         **kwargs
     ):
         """
         :keyword name:
         :paramtype name: str
-        :keyword type: It is type of the extended location. Possible values include: "EdgeZone",
-         "Unknown".
+        :keyword type: It is type of the extended location. Known values are: "EdgeZone", "Unknown".
         :paramtype type: str or ~azure.mgmt.compute.v2022_01_03.models.GalleryExtendedLocationType
         """
         super(GalleryExtendedLocation, self).__init__(**kwargs)
@@ -1811,15 +1811,15 @@ class GalleryImage(Resource):
     :vartype release_note_uri: str
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-     include: "Windows", "Linux".
+     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+     "Windows", "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     :ivar os_state: This property allows the user to specify whether the virtual machines created
-     under this image are 'Generalized' or 'Specialized'. Possible values include: "Generalized",
+     under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized",
      "Specialized".
     :vartype os_state: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemStateTypes
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Possible values include: "V1", "V2".
+     disks only. Known values are: "V1", "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2022_01_03.models.HyperVGeneration
     :ivar end_of_life_date: The end of life date of the gallery image definition. This property can
      be used for decommissioning purposes. This property is updatable.
@@ -1834,14 +1834,14 @@ class GalleryImage(Resource):
     :ivar purchase_plan: Describes the gallery image definition purchase plan. This is used by
      marketplace images.
     :vartype purchase_plan: ~azure.mgmt.compute.v2022_01_03.models.ImagePurchasePlan
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
-     values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2022_01_03.models.GalleryProvisioningState
     :ivar features: A list of gallery image features.
     :vartype features: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImageFeature]
-    :ivar architecture: The architecture of the image. Applicable to OS disks only. Possible values
-     include: "x64", "Arm64".
+    :ivar architecture: The architecture of the image. Applicable to OS disks only. Known values
+     are: "x64", "Arm64".
     :vartype architecture: str or ~azure.mgmt.compute.v2022_01_03.models.Architecture
     """
 
@@ -1885,16 +1885,16 @@ class GalleryImage(Resource):
         eula: Optional[str] = None,
         privacy_statement_uri: Optional[str] = None,
         release_note_uri: Optional[str] = None,
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
-        os_state: Optional[Union[str, "OperatingSystemStateTypes"]] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGeneration"]] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        os_state: Optional[Union[str, "_models.OperatingSystemStateTypes"]] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        identifier: Optional["GalleryImageIdentifier"] = None,
-        recommended: Optional["RecommendedMachineConfiguration"] = None,
-        disallowed: Optional["Disallowed"] = None,
-        purchase_plan: Optional["ImagePurchasePlan"] = None,
-        features: Optional[List["GalleryImageFeature"]] = None,
-        architecture: Optional[Union[str, "Architecture"]] = None,
+        identifier: Optional["_models.GalleryImageIdentifier"] = None,
+        recommended: Optional["_models.RecommendedMachineConfiguration"] = None,
+        disallowed: Optional["_models.Disallowed"] = None,
+        purchase_plan: Optional["_models.ImagePurchasePlan"] = None,
+        features: Optional[List["_models.GalleryImageFeature"]] = None,
+        architecture: Optional[Union[str, "_models.Architecture"]] = None,
         **kwargs
     ):
         """
@@ -1913,15 +1913,15 @@ class GalleryImage(Resource):
         :paramtype release_note_uri: str
         :keyword os_type: This property allows you to specify the type of the OS that is included in
          the disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-         include: "Windows", "Linux".
+         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+         "Windows", "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         :keyword os_state: This property allows the user to specify whether the virtual machines
-         created under this image are 'Generalized' or 'Specialized'. Possible values include:
-         "Generalized", "Specialized".
+         created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized",
+         "Specialized".
         :paramtype os_state: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemStateTypes
         :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-         disks only. Possible values include: "V1", "V2".
+         disks only. Known values are: "V1", "V2".
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2022_01_03.models.HyperVGeneration
         :keyword end_of_life_date: The end of life date of the gallery image definition. This property
          can be used for decommissioning purposes. This property is updatable.
@@ -1938,8 +1938,8 @@ class GalleryImage(Resource):
         :paramtype purchase_plan: ~azure.mgmt.compute.v2022_01_03.models.ImagePurchasePlan
         :keyword features: A list of gallery image features.
         :paramtype features: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImageFeature]
-        :keyword architecture: The architecture of the image. Applicable to OS disks only. Possible
-         values include: "x64", "Arm64".
+        :keyword architecture: The architecture of the image. Applicable to OS disks only. Known values
+         are: "x64", "Arm64".
         :paramtype architecture: str or ~azure.mgmt.compute.v2022_01_03.models.Architecture
         """
         super(GalleryImage, self).__init__(location=location, tags=tags, **kwargs)
@@ -2063,7 +2063,7 @@ class GalleryImageList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["GalleryImage"],
+        value: List["_models.GalleryImage"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -2103,15 +2103,15 @@ class GalleryImageUpdate(UpdateResourceDefinition):
     :vartype release_note_uri: str
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-     include: "Windows", "Linux".
+     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+     "Windows", "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     :ivar os_state: This property allows the user to specify whether the virtual machines created
-     under this image are 'Generalized' or 'Specialized'. Possible values include: "Generalized",
+     under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized",
      "Specialized".
     :vartype os_state: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemStateTypes
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Possible values include: "V1", "V2".
+     disks only. Known values are: "V1", "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2022_01_03.models.HyperVGeneration
     :ivar end_of_life_date: The end of life date of the gallery image definition. This property can
      be used for decommissioning purposes. This property is updatable.
@@ -2126,14 +2126,14 @@ class GalleryImageUpdate(UpdateResourceDefinition):
     :ivar purchase_plan: Describes the gallery image definition purchase plan. This is used by
      marketplace images.
     :vartype purchase_plan: ~azure.mgmt.compute.v2022_01_03.models.ImagePurchasePlan
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
-     values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2022_01_03.models.GalleryProvisioningState
     :ivar features: A list of gallery image features.
     :vartype features: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImageFeature]
-    :ivar architecture: The architecture of the image. Applicable to OS disks only. Possible values
-     include: "x64", "Arm64".
+    :ivar architecture: The architecture of the image. Applicable to OS disks only. Known values
+     are: "x64", "Arm64".
     :vartype architecture: str or ~azure.mgmt.compute.v2022_01_03.models.Architecture
     """
 
@@ -2174,16 +2174,16 @@ class GalleryImageUpdate(UpdateResourceDefinition):
         eula: Optional[str] = None,
         privacy_statement_uri: Optional[str] = None,
         release_note_uri: Optional[str] = None,
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
-        os_state: Optional[Union[str, "OperatingSystemStateTypes"]] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGeneration"]] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        os_state: Optional[Union[str, "_models.OperatingSystemStateTypes"]] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        identifier: Optional["GalleryImageIdentifier"] = None,
-        recommended: Optional["RecommendedMachineConfiguration"] = None,
-        disallowed: Optional["Disallowed"] = None,
-        purchase_plan: Optional["ImagePurchasePlan"] = None,
-        features: Optional[List["GalleryImageFeature"]] = None,
-        architecture: Optional[Union[str, "Architecture"]] = None,
+        identifier: Optional["_models.GalleryImageIdentifier"] = None,
+        recommended: Optional["_models.RecommendedMachineConfiguration"] = None,
+        disallowed: Optional["_models.Disallowed"] = None,
+        purchase_plan: Optional["_models.ImagePurchasePlan"] = None,
+        features: Optional[List["_models.GalleryImageFeature"]] = None,
+        architecture: Optional[Union[str, "_models.Architecture"]] = None,
         **kwargs
     ):
         """
@@ -2200,15 +2200,15 @@ class GalleryImageUpdate(UpdateResourceDefinition):
         :paramtype release_note_uri: str
         :keyword os_type: This property allows you to specify the type of the OS that is included in
          the disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-         include: "Windows", "Linux".
+         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+         "Windows", "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         :keyword os_state: This property allows the user to specify whether the virtual machines
-         created under this image are 'Generalized' or 'Specialized'. Possible values include:
-         "Generalized", "Specialized".
+         created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized",
+         "Specialized".
         :paramtype os_state: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemStateTypes
         :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-         disks only. Possible values include: "V1", "V2".
+         disks only. Known values are: "V1", "V2".
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2022_01_03.models.HyperVGeneration
         :keyword end_of_life_date: The end of life date of the gallery image definition. This property
          can be used for decommissioning purposes. This property is updatable.
@@ -2225,8 +2225,8 @@ class GalleryImageUpdate(UpdateResourceDefinition):
         :paramtype purchase_plan: ~azure.mgmt.compute.v2022_01_03.models.ImagePurchasePlan
         :keyword features: A list of gallery image features.
         :paramtype features: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImageFeature]
-        :keyword architecture: The architecture of the image. Applicable to OS disks only. Possible
-         values include: "x64", "Arm64".
+        :keyword architecture: The architecture of the image. Applicable to OS disks only. Known values
+         are: "x64", "Arm64".
         :paramtype architecture: str or ~azure.mgmt.compute.v2022_01_03.models.Architecture
         """
         super(GalleryImageUpdate, self).__init__(tags=tags, **kwargs)
@@ -2267,8 +2267,8 @@ class GalleryImageVersion(Resource):
     :ivar publishing_profile: The publishing profile of a gallery image Version.
     :vartype publishing_profile:
      ~azure.mgmt.compute.v2022_01_03.models.GalleryImageVersionPublishingProfile
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
-     values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2022_01_03.models.GalleryProvisioningState
     :ivar storage_profile: This is the storage profile of a Gallery Image Version.
@@ -2304,8 +2304,8 @@ class GalleryImageVersion(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        publishing_profile: Optional["GalleryImageVersionPublishingProfile"] = None,
-        storage_profile: Optional["GalleryImageVersionStorageProfile"] = None,
+        publishing_profile: Optional["_models.GalleryImageVersionPublishingProfile"] = None,
+        storage_profile: Optional["_models.GalleryImageVersionStorageProfile"] = None,
         **kwargs
     ):
         """
@@ -2351,7 +2351,7 @@ class GalleryImageVersionList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["GalleryImageVersion"],
+        value: List["_models.GalleryImageVersion"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -2388,11 +2388,11 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
      "Premium_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
     :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
-     This property is not updatable. Possible values include: "Full", "Shallow".
+     This property is not updatable. Known values are: "Full", "Shallow".
     :vartype replication_mode: str or ~azure.mgmt.compute.v2022_01_03.models.ReplicationMode
     :ivar target_extended_locations: The target extended locations where the Image Version is going
      to be replicated to. This property is updatable.
@@ -2418,13 +2418,13 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
     def __init__(
         self,
         *,
-        target_regions: Optional[List["TargetRegion"]] = None,
+        target_regions: Optional[List["_models.TargetRegion"]] = None,
         replica_count: Optional[int] = None,
         exclude_from_latest: Optional[bool] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountType"]] = None,
-        replication_mode: Optional[Union[str, "ReplicationMode"]] = None,
-        target_extended_locations: Optional[List["GalleryTargetExtendedLocation"]] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
+        replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
+        target_extended_locations: Optional[List["_models.GalleryTargetExtendedLocation"]] = None,
         **kwargs
     ):
         """
@@ -2442,12 +2442,12 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
          be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
          "Premium_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
         :keyword replication_mode: Optional parameter which specifies the mode to be used for
-         replication. This property is not updatable. Possible values include: "Full", "Shallow".
+         replication. This property is not updatable. Known values are: "Full", "Shallow".
         :paramtype replication_mode: str or ~azure.mgmt.compute.v2022_01_03.models.ReplicationMode
         :keyword target_extended_locations: The target extended locations where the Image Version is
          going to be replicated to. This property is updatable.
@@ -2477,9 +2477,9 @@ class GalleryImageVersionStorageProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        source: Optional["GalleryArtifactVersionSource"] = None,
-        os_disk_image: Optional["GalleryOSDiskImage"] = None,
-        data_disk_images: Optional[List["GalleryDataDiskImage"]] = None,
+        source: Optional["_models.GalleryArtifactVersionSource"] = None,
+        os_disk_image: Optional["_models.GalleryOSDiskImage"] = None,
+        data_disk_images: Optional[List["_models.GalleryDataDiskImage"]] = None,
         **kwargs
     ):
         """
@@ -2512,8 +2512,8 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
     :ivar publishing_profile: The publishing profile of a gallery image Version.
     :vartype publishing_profile:
      ~azure.mgmt.compute.v2022_01_03.models.GalleryImageVersionPublishingProfile
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
-     values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2022_01_03.models.GalleryProvisioningState
     :ivar storage_profile: This is the storage profile of a Gallery Image Version.
@@ -2546,8 +2546,8 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        publishing_profile: Optional["GalleryImageVersionPublishingProfile"] = None,
-        storage_profile: Optional["GalleryImageVersionStorageProfile"] = None,
+        publishing_profile: Optional["_models.GalleryImageVersionPublishingProfile"] = None,
+        storage_profile: Optional["_models.GalleryImageVersionStorageProfile"] = None,
         **kwargs
     ):
         """
@@ -2591,7 +2591,7 @@ class GalleryList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["Gallery"],
+        value: List["_models.Gallery"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -2615,7 +2615,7 @@ class GalleryOSDiskImage(GalleryDiskImage):
     :ivar size_in_gb: This property indicates the size of the VHD to be created.
     :vartype size_in_gb: int
     :ivar host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-     'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+     'ReadWrite'. Known values are: "None", "ReadOnly", "ReadWrite".
     :vartype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.HostCaching
     :ivar source: The gallery artifact version source.
     :vartype source: ~azure.mgmt.compute.v2022_01_03.models.GalleryArtifactVersionSource
@@ -2634,13 +2634,13 @@ class GalleryOSDiskImage(GalleryDiskImage):
     def __init__(
         self,
         *,
-        host_caching: Optional[Union[str, "HostCaching"]] = None,
-        source: Optional["GalleryArtifactVersionSource"] = None,
+        host_caching: Optional[Union[str, "_models.HostCaching"]] = None,
+        source: Optional["_models.GalleryArtifactVersionSource"] = None,
         **kwargs
     ):
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-         'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+         'ReadWrite'. Known values are: "None", "ReadOnly", "ReadWrite".
         :paramtype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.HostCaching
         :keyword source: The gallery artifact version source.
         :paramtype source: ~azure.mgmt.compute.v2022_01_03.models.GalleryArtifactVersionSource
@@ -2659,7 +2659,7 @@ class GalleryTargetExtendedLocation(msrest.serialization.Model):
      created per extended location. This property is updatable.
     :vartype extended_location_replica_count: int
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
      "Premium_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
     :ivar encryption: Optional. Allows users to provide customer managed keys for encrypting the OS
@@ -2679,10 +2679,10 @@ class GalleryTargetExtendedLocation(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        extended_location: Optional["GalleryExtendedLocation"] = None,
+        extended_location: Optional["_models.GalleryExtendedLocation"] = None,
         extended_location_replica_count: Optional[int] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountType"]] = None,
-        encryption: Optional["EncryptionImages"] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
+        encryption: Optional["_models.EncryptionImages"] = None,
         **kwargs
     ):
         """
@@ -2694,7 +2694,7 @@ class GalleryTargetExtendedLocation(msrest.serialization.Model):
          created per extended location. This property is updatable.
         :paramtype extended_location_replica_count: int
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
          "Premium_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
@@ -2728,8 +2728,8 @@ class GalleryUpdate(UpdateResourceDefinition):
     :vartype description: str
     :ivar identifier: Describes the gallery unique name.
     :vartype identifier: ~azure.mgmt.compute.v2022_01_03.models.GalleryIdentifier
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
-     values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2022_01_03.models.GalleryProvisioningState
     :ivar sharing_profile: Profile for gallery sharing to subscription or tenant.
@@ -2766,9 +2766,9 @@ class GalleryUpdate(UpdateResourceDefinition):
         *,
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
-        identifier: Optional["GalleryIdentifier"] = None,
-        sharing_profile: Optional["SharingProfile"] = None,
-        soft_delete_policy: Optional["SoftDeletePolicy"] = None,
+        identifier: Optional["_models.GalleryIdentifier"] = None,
+        sharing_profile: Optional["_models.SharingProfile"] = None,
+        soft_delete_policy: Optional["_models.SoftDeletePolicy"] = None,
         **kwargs
     ):
         """
@@ -2915,7 +2915,7 @@ class OSDiskImageEncryption(DiskImageEncryption):
         self,
         *,
         disk_encryption_set_id: Optional[str] = None,
-        security_profile: Optional["OSDiskImageSecurityProfile"] = None,
+        security_profile: Optional["_models.OSDiskImageSecurityProfile"] = None,
         **kwargs
     ):
         """
@@ -2932,8 +2932,8 @@ class OSDiskImageEncryption(DiskImageEncryption):
 class OSDiskImageSecurityProfile(msrest.serialization.Model):
     """Contains security profile for an OS disk image.
 
-    :ivar confidential_vm_encryption_type: confidential VM encryption types. Possible values
-     include: "EncryptedVMGuestStateOnlyWithPmk", "EncryptedWithPmk", "EncryptedWithCmk".
+    :ivar confidential_vm_encryption_type: confidential VM encryption types. Known values are:
+     "EncryptedVMGuestStateOnlyWithPmk", "EncryptedWithPmk", "EncryptedWithCmk".
     :vartype confidential_vm_encryption_type: str or
      ~azure.mgmt.compute.v2022_01_03.models.ConfidentialVMEncryptionType
     :ivar secure_vm_disk_encryption_set_id: secure VM disk encryption set id.
@@ -2948,13 +2948,13 @@ class OSDiskImageSecurityProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        confidential_vm_encryption_type: Optional[Union[str, "ConfidentialVMEncryptionType"]] = None,
+        confidential_vm_encryption_type: Optional[Union[str, "_models.ConfidentialVMEncryptionType"]] = None,
         secure_vm_disk_encryption_set_id: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword confidential_vm_encryption_type: confidential VM encryption types. Possible values
-         include: "EncryptedVMGuestStateOnlyWithPmk", "EncryptedWithPmk", "EncryptedWithCmk".
+        :keyword confidential_vm_encryption_type: confidential VM encryption types. Known values are:
+         "EncryptedVMGuestStateOnlyWithPmk", "EncryptedWithPmk", "EncryptedWithCmk".
         :paramtype confidential_vm_encryption_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.ConfidentialVMEncryptionType
         :keyword secure_vm_disk_encryption_set_id: secure VM disk encryption set id.
@@ -3052,8 +3052,8 @@ class RecommendedMachineConfiguration(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        v_cp_us: Optional["ResourceRange"] = None,
-        memory: Optional["ResourceRange"] = None,
+        v_cp_us: Optional["_models.ResourceRange"] = None,
+        memory: Optional["_models.ResourceRange"] = None,
         **kwargs
     ):
         """
@@ -3074,7 +3074,7 @@ class RegionalReplicationStatus(msrest.serialization.Model):
 
     :ivar region: The region to which the gallery image version is being replicated to.
     :vartype region: str
-    :ivar state: This is the regional replication state. Possible values include: "Unknown",
+    :ivar state: This is the regional replication state. Known values are: "Unknown",
      "Replicating", "Completed", "Failed".
     :vartype state: str or ~azure.mgmt.compute.v2022_01_03.models.ReplicationState
     :ivar details: The details of the replication status.
@@ -3117,7 +3117,7 @@ class RegionalSharingStatus(msrest.serialization.Model):
 
     :ivar region: Region name.
     :vartype region: str
-    :ivar state: Gallery sharing state in current region. Possible values include: "Succeeded",
+    :ivar state: Gallery sharing state in current region. Known values are: "Succeeded",
      "InProgress", "Failed", "Unknown".
     :vartype state: str or ~azure.mgmt.compute.v2022_01_03.models.SharingState
     :ivar details: Details of gallery regional sharing failure.
@@ -3159,8 +3159,7 @@ class ReplicationStatus(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar aggregated_state: This is the aggregated replication status based on all the regional
-     replication status flags. Possible values include: "Unknown", "InProgress", "Completed",
-     "Failed".
+     replication status flags. Known values are: "Unknown", "InProgress", "Completed", "Failed".
     :vartype aggregated_state: str or
      ~azure.mgmt.compute.v2022_01_03.models.AggregatedReplicationState
     :ivar summary: This is a summary of replication status for each region.
@@ -3317,7 +3316,7 @@ class SharedGalleryDiskImage(msrest.serialization.Model):
     :ivar disk_size_gb: This property indicates the size of the VHD to be created.
     :vartype disk_size_gb: int
     :ivar host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-     'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+     'ReadWrite'. Known values are: "None", "ReadOnly", "ReadWrite".
     :vartype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.SharedGalleryHostCaching
     """
 
@@ -3333,12 +3332,12 @@ class SharedGalleryDiskImage(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        host_caching: Optional[Union[str, "SharedGalleryHostCaching"]] = None,
+        host_caching: Optional[Union[str, "_models.SharedGalleryHostCaching"]] = None,
         **kwargs
     ):
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-         'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+         'ReadWrite'. Known values are: "None", "ReadOnly", "ReadWrite".
         :paramtype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.SharedGalleryHostCaching
         """
         super(SharedGalleryDiskImage, self).__init__(**kwargs)
@@ -3356,7 +3355,7 @@ class SharedGalleryDataDiskImage(SharedGalleryDiskImage):
     :ivar disk_size_gb: This property indicates the size of the VHD to be created.
     :vartype disk_size_gb: int
     :ivar host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-     'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+     'ReadWrite'. Known values are: "None", "ReadOnly", "ReadWrite".
     :vartype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.SharedGalleryHostCaching
     :ivar lun: Required. This property specifies the logical unit number of the data disk. This
      value is used to identify data disks within the Virtual Machine and therefore must be unique
@@ -3379,12 +3378,12 @@ class SharedGalleryDataDiskImage(SharedGalleryDiskImage):
         self,
         *,
         lun: int,
-        host_caching: Optional[Union[str, "SharedGalleryHostCaching"]] = None,
+        host_caching: Optional[Union[str, "_models.SharedGalleryHostCaching"]] = None,
         **kwargs
     ):
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-         'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+         'ReadWrite'. Known values are: "None", "ReadOnly", "ReadWrite".
         :paramtype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.SharedGalleryHostCaching
         :keyword lun: Required. This property specifies the logical unit number of the data disk. This
          value is used to identify data disks within the Virtual Machine and therefore must be unique
@@ -3408,11 +3407,11 @@ class SharedGalleryImage(PirSharedGalleryResource):
     :vartype unique_id: str
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-     include: "Windows", "Linux".
+     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+     "Windows", "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     :ivar os_state: This property allows the user to specify whether the virtual machines created
-     under this image are 'Generalized' or 'Specialized'. Possible values include: "Generalized",
+     under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized",
      "Specialized".
     :vartype os_state: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemStateTypes
     :ivar end_of_life_date: The end of life date of the gallery image definition. This property can
@@ -3426,15 +3425,15 @@ class SharedGalleryImage(PirSharedGalleryResource):
     :ivar disallowed: Describes the disallowed disk types.
     :vartype disallowed: ~azure.mgmt.compute.v2022_01_03.models.Disallowed
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Possible values include: "V1", "V2".
+     disks only. Known values are: "V1", "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2022_01_03.models.HyperVGeneration
     :ivar features: A list of gallery image features.
     :vartype features: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImageFeature]
     :ivar purchase_plan: Describes the gallery image definition purchase plan. This is used by
      marketplace images.
     :vartype purchase_plan: ~azure.mgmt.compute.v2022_01_03.models.ImagePurchasePlan
-    :ivar architecture: The architecture of the image. Applicable to OS disks only. Possible values
-     include: "x64", "Arm64".
+    :ivar architecture: The architecture of the image. Applicable to OS disks only. Known values
+     are: "x64", "Arm64".
     :vartype architecture: str or ~azure.mgmt.compute.v2022_01_03.models.Architecture
     """
 
@@ -3463,16 +3462,16 @@ class SharedGalleryImage(PirSharedGalleryResource):
         self,
         *,
         unique_id: Optional[str] = None,
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
-        os_state: Optional[Union[str, "OperatingSystemStateTypes"]] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        os_state: Optional[Union[str, "_models.OperatingSystemStateTypes"]] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        identifier: Optional["GalleryImageIdentifier"] = None,
-        recommended: Optional["RecommendedMachineConfiguration"] = None,
-        disallowed: Optional["Disallowed"] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGeneration"]] = None,
-        features: Optional[List["GalleryImageFeature"]] = None,
-        purchase_plan: Optional["ImagePurchasePlan"] = None,
-        architecture: Optional[Union[str, "Architecture"]] = None,
+        identifier: Optional["_models.GalleryImageIdentifier"] = None,
+        recommended: Optional["_models.RecommendedMachineConfiguration"] = None,
+        disallowed: Optional["_models.Disallowed"] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
+        features: Optional[List["_models.GalleryImageFeature"]] = None,
+        purchase_plan: Optional["_models.ImagePurchasePlan"] = None,
+        architecture: Optional[Union[str, "_models.Architecture"]] = None,
         **kwargs
     ):
         """
@@ -3480,12 +3479,12 @@ class SharedGalleryImage(PirSharedGalleryResource):
         :paramtype unique_id: str
         :keyword os_type: This property allows you to specify the type of the OS that is included in
          the disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
-         include: "Windows", "Linux".
+         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
+         "Windows", "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         :keyword os_state: This property allows the user to specify whether the virtual machines
-         created under this image are 'Generalized' or 'Specialized'. Possible values include:
-         "Generalized", "Specialized".
+         created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized",
+         "Specialized".
         :paramtype os_state: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemStateTypes
         :keyword end_of_life_date: The end of life date of the gallery image definition. This property
          can be used for decommissioning purposes. This property is updatable.
@@ -3498,15 +3497,15 @@ class SharedGalleryImage(PirSharedGalleryResource):
         :keyword disallowed: Describes the disallowed disk types.
         :paramtype disallowed: ~azure.mgmt.compute.v2022_01_03.models.Disallowed
         :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-         disks only. Possible values include: "V1", "V2".
+         disks only. Known values are: "V1", "V2".
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2022_01_03.models.HyperVGeneration
         :keyword features: A list of gallery image features.
         :paramtype features: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImageFeature]
         :keyword purchase_plan: Describes the gallery image definition purchase plan. This is used by
          marketplace images.
         :paramtype purchase_plan: ~azure.mgmt.compute.v2022_01_03.models.ImagePurchasePlan
-        :keyword architecture: The architecture of the image. Applicable to OS disks only. Possible
-         values include: "x64", "Arm64".
+        :keyword architecture: The architecture of the image. Applicable to OS disks only. Known values
+         are: "x64", "Arm64".
         :paramtype architecture: str or ~azure.mgmt.compute.v2022_01_03.models.Architecture
         """
         super(SharedGalleryImage, self).__init__(unique_id=unique_id, **kwargs)
@@ -3546,7 +3545,7 @@ class SharedGalleryImageList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["SharedGalleryImage"],
+        value: List["_models.SharedGalleryImage"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -3609,7 +3608,7 @@ class SharedGalleryImageVersion(PirSharedGalleryResource):
         published_date: Optional[datetime.datetime] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
         exclude_from_latest: Optional[bool] = None,
-        storage_profile: Optional["SharedGalleryImageVersionStorageProfile"] = None,
+        storage_profile: Optional["_models.SharedGalleryImageVersionStorageProfile"] = None,
         **kwargs
     ):
         """
@@ -3659,7 +3658,7 @@ class SharedGalleryImageVersionList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["SharedGalleryImageVersion"],
+        value: List["_models.SharedGalleryImageVersion"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -3693,8 +3692,8 @@ class SharedGalleryImageVersionStorageProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        os_disk_image: Optional["SharedGalleryOSDiskImage"] = None,
-        data_disk_images: Optional[List["SharedGalleryDataDiskImage"]] = None,
+        os_disk_image: Optional["_models.SharedGalleryOSDiskImage"] = None,
+        data_disk_images: Optional[List["_models.SharedGalleryDataDiskImage"]] = None,
         **kwargs
     ):
         """
@@ -3733,7 +3732,7 @@ class SharedGalleryList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["SharedGallery"],
+        value: List["_models.SharedGallery"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -3757,7 +3756,7 @@ class SharedGalleryOSDiskImage(SharedGalleryDiskImage):
     :ivar disk_size_gb: This property indicates the size of the VHD to be created.
     :vartype disk_size_gb: int
     :ivar host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-     'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+     'ReadWrite'. Known values are: "None", "ReadOnly", "ReadWrite".
     :vartype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.SharedGalleryHostCaching
     """
 
@@ -3773,12 +3772,12 @@ class SharedGalleryOSDiskImage(SharedGalleryDiskImage):
     def __init__(
         self,
         *,
-        host_caching: Optional[Union[str, "SharedGalleryHostCaching"]] = None,
+        host_caching: Optional[Union[str, "_models.SharedGalleryHostCaching"]] = None,
         **kwargs
     ):
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-         'ReadWrite'. Possible values include: "None", "ReadOnly", "ReadWrite".
+         'ReadWrite'. Known values are: "None", "ReadOnly", "ReadWrite".
         :paramtype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.SharedGalleryHostCaching
         """
         super(SharedGalleryOSDiskImage, self).__init__(host_caching=host_caching, **kwargs)
@@ -3791,8 +3790,8 @@ class SharingProfile(msrest.serialization.Model):
 
     :ivar permissions: This property allows you to specify the permission of sharing gallery.
      :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Private**
-     :code:`<br>`:code:`<br>` **Groups** :code:`<br>`:code:`<br>` **Community**. Possible values
-     include: "Private", "Groups", "Community".
+     :code:`<br>`:code:`<br>` **Groups** :code:`<br>`:code:`<br>` **Community**. Known values are:
+     "Private", "Groups", "Community".
     :vartype permissions: str or
      ~azure.mgmt.compute.v2022_01_03.models.GallerySharingPermissionTypes
     :ivar groups: A list of sharing profile groups.
@@ -3815,15 +3814,15 @@ class SharingProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        permissions: Optional[Union[str, "GallerySharingPermissionTypes"]] = None,
+        permissions: Optional[Union[str, "_models.GallerySharingPermissionTypes"]] = None,
         community_gallery_info: Optional[Any] = None,
         **kwargs
     ):
         """
         :keyword permissions: This property allows you to specify the permission of sharing gallery.
          :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Private**
-         :code:`<br>`:code:`<br>` **Groups** :code:`<br>`:code:`<br>` **Community**. Possible values
-         include: "Private", "Groups", "Community".
+         :code:`<br>`:code:`<br>` **Groups** :code:`<br>`:code:`<br>` **Community**. Known values are:
+         "Private", "Groups", "Community".
         :paramtype permissions: str or
          ~azure.mgmt.compute.v2022_01_03.models.GallerySharingPermissionTypes
         :keyword community_gallery_info: Information of community gallery if current gallery is shared
@@ -3841,8 +3840,7 @@ class SharingProfileGroup(msrest.serialization.Model):
 
     :ivar type: This property allows you to specify the type of sharing group.
      :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Subscriptions**
-     :code:`<br>`:code:`<br>` **AADTenants**. Possible values include: "Subscriptions",
-     "AADTenants".
+     :code:`<br>`:code:`<br>` **AADTenants**. Known values are: "Subscriptions", "AADTenants".
     :vartype type: str or ~azure.mgmt.compute.v2022_01_03.models.SharingProfileGroupTypes
     :ivar ids: A list of subscription/tenant ids the gallery is aimed to be shared to.
     :vartype ids: list[str]
@@ -3856,15 +3854,14 @@ class SharingProfileGroup(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "SharingProfileGroupTypes"]] = None,
+        type: Optional[Union[str, "_models.SharingProfileGroupTypes"]] = None,
         ids: Optional[List[str]] = None,
         **kwargs
     ):
         """
         :keyword type: This property allows you to specify the type of sharing group.
          :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Subscriptions**
-         :code:`<br>`:code:`<br>` **AADTenants**. Possible values include: "Subscriptions",
-         "AADTenants".
+         :code:`<br>`:code:`<br>` **AADTenants**. Known values are: "Subscriptions", "AADTenants".
         :paramtype type: str or ~azure.mgmt.compute.v2022_01_03.models.SharingProfileGroupTypes
         :keyword ids: A list of subscription/tenant ids the gallery is aimed to be shared to.
         :paramtype ids: list[str]
@@ -3879,7 +3876,7 @@ class SharingStatus(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar aggregated_state: Aggregated sharing state of current gallery. Possible values include:
+    :ivar aggregated_state: Aggregated sharing state of current gallery. Known values are:
      "Succeeded", "InProgress", "Failed", "Unknown".
     :vartype aggregated_state: str or ~azure.mgmt.compute.v2022_01_03.models.SharingState
     :ivar summary: Summary of all regional sharing status.
@@ -3898,7 +3895,7 @@ class SharingStatus(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        summary: Optional[List["RegionalSharingStatus"]] = None,
+        summary: Optional[List["_models.RegionalSharingStatus"]] = None,
         **kwargs
     ):
         """
@@ -3917,8 +3914,8 @@ class SharingUpdate(msrest.serialization.Model):
 
     :ivar operation_type: Required. This property allows you to specify the operation type of
      gallery sharing update. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>`
-     **Add** :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**. Possible values
-     include: "Add", "Remove", "Reset", "EnableCommunity".
+     **Add** :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**. Known values
+     are: "Add", "Remove", "Reset", "EnableCommunity".
     :vartype operation_type: str or
      ~azure.mgmt.compute.v2022_01_03.models.SharingUpdateOperationTypes
     :ivar groups: A list of sharing profile groups.
@@ -3937,15 +3934,15 @@ class SharingUpdate(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        operation_type: Union[str, "SharingUpdateOperationTypes"],
-        groups: Optional[List["SharingProfileGroup"]] = None,
+        operation_type: Union[str, "_models.SharingUpdateOperationTypes"],
+        groups: Optional[List["_models.SharingProfileGroup"]] = None,
         **kwargs
     ):
         """
         :keyword operation_type: Required. This property allows you to specify the operation type of
          gallery sharing update. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>`
-         **Add** :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**. Possible values
-         include: "Add", "Remove", "Reset", "EnableCommunity".
+         **Add** :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**. Known values
+         are: "Add", "Remove", "Reset", "EnableCommunity".
         :paramtype operation_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.SharingUpdateOperationTypes
         :keyword groups: A list of sharing profile groups.
@@ -4046,7 +4043,7 @@ class TargetRegion(msrest.serialization.Model):
      region. This property is updatable.
     :vartype regional_replica_count: int
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
      "Premium_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
     :ivar encryption: Optional. Allows users to provide customer managed keys for encrypting the OS
@@ -4070,8 +4067,8 @@ class TargetRegion(msrest.serialization.Model):
         *,
         name: str,
         regional_replica_count: Optional[int] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountType"]] = None,
-        encryption: Optional["EncryptionImages"] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
+        encryption: Optional["_models.EncryptionImages"] = None,
         **kwargs
     ):
         """
@@ -4081,7 +4078,7 @@ class TargetRegion(msrest.serialization.Model):
          region. This property is updatable.
         :paramtype regional_replica_count: int
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Possible values include: "Standard_LRS", "Standard_ZRS",
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
          "Premium_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType

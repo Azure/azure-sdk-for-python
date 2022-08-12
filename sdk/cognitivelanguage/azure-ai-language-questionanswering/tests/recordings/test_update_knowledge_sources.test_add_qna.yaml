@@ -14,31 +14,31 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: PATCH
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
   response:
     body:
       string: "{\n  \"projectName\": \"IssacNewton\",\n  \"description\": \"biography
         of Sir Issac Newton\",\n  \"language\": \"en\",\n  \"multilingualResource\":
-        false,\n  \"createdDateTime\": \"2022-02-10T19:42:15Z\",\n  \"lastModifiedDateTime\":
-        \"2022-02-10T19:42:47Z\",\n  \"settings\": {\n    \"defaultAnswer\": \"no
+        false,\n  \"createdDateTime\": \"2022-08-02T22:32:19Z\",\n  \"lastModifiedDateTime\":
+        \"2022-08-02T23:40:16Z\",\n  \"settings\": {\n    \"defaultAnswer\": \"no
         answer\"\n  }\n}"
     headers:
       apim-request-id:
-      - 964d7846-b4c1-4e50-8657-8e200711343d
+      - 0ddd8357-4755-4ec5-8f65-05e4300268f5
       content-length:
       - '286'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 10 Feb 2022 19:42:47 GMT
+      - Tue, 02 Aug 2022 23:40:16 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '22'
+      - '37'
     status:
       code: 200
       message: OK
@@ -57,7 +57,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: PATCH
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/qnas?api-version=2021-10-01
   response:
@@ -65,19 +65,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 6c6a2a7e-7629-4975-b735-f1894952f38a
+      - bc88350c-5e7b-4e3c-8ac4-2f3ec14947ef
       content-length:
       - '0'
       date:
-      - Thu, 10 Feb 2022 19:42:47 GMT
+      - Tue, 02 Aug 2022 23:40:17 GMT
       operation-location:
-      - https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/qnas/jobs/5b62257c-7c0a-48e1-87e1-0fd51fb33598?api-version=2021-10-01
+      - https://languagesdkresource.cognitiveservices.azure.com:443/language/query-knowledgebases/projects/IssacNewton/qnas/jobs/b5750448-c521-4066-a58a-48d395615205?api-version=2021-10-01
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '55'
+      - '215'
     status:
       code: 202
       message: Accepted
@@ -91,30 +91,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/qnas/jobs/5b62257c-7c0a-48e1-87e1-0fd51fb33598?api-version=2021-10-01
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/qnas/jobs/b5750448-c521-4066-a58a-48d395615205?api-version=2021-10-01
   response:
     body:
-      string: "{\n  \"createdDateTime\": \"2022-02-10T19:42:47+00:00\",\n  \"expirationDateTime\":
-        \"2022-02-11T01:42:47+00:00\",\n  \"jobId\": \"5b62257c-7c0a-48e1-87e1-0fd51fb33598\",\n
-        \ \"lastUpdatedDateTime\": \"2022-02-10T19:42:50+00:00\",\n  \"status\": \"succeeded\",\n
-        \ \"resultUrl\": \"/knowledgebases/IssacNewton\"\n}"
+      string: "{\n  \"createdDateTime\": \"2022-08-02T23:40:16+00:00\",\n  \"expirationDateTime\":
+        \"2022-08-03T05:40:16+00:00\",\n  \"jobId\": \"b5750448-c521-4066-a58a-48d395615205\",\n
+        \ \"lastUpdatedDateTime\": \"2022-08-02T23:40:16+00:00\",\n  \"status\": \"notStarted\"\n}"
     headers:
       apim-request-id:
-      - ae044905-a59e-4ee7-ad09-7e2fe7d3bb6c
+      - fec34ae7-f4ee-477f-9766-a0d0a3b8b0c6
       content-length:
-      - '281'
+      - '236'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 10 Feb 2022 19:43:17 GMT
+      - Tue, 02 Aug 2022 23:40:17 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '30'
+      - '19'
     status:
       code: 200
       message: OK
@@ -128,7 +127,44 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/qnas/jobs/b5750448-c521-4066-a58a-48d395615205?api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"createdDateTime\": \"2022-08-02T23:40:16+00:00\",\n  \"expirationDateTime\":
+        \"2022-08-03T05:40:16+00:00\",\n  \"jobId\": \"b5750448-c521-4066-a58a-48d395615205\",\n
+        \ \"lastUpdatedDateTime\": \"2022-08-02T23:40:21+00:00\",\n  \"status\": \"succeeded\",\n
+        \ \"resultUrl\": \"/knowledgebases/IssacNewton\"\n}"
+    headers:
+      apim-request-id:
+      - 40921827-f173-41f3-85c9-bf9166f07ade
+      content-length:
+      - '281'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 02 Aug 2022 23:40:46 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '13'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/qnas?api-version=2021-10-01
   response:
@@ -139,23 +175,23 @@ interactions:
         \     ],\n      \"metadata\": {\n        \"system_metadata_qna_edited_manually\":
         \"true\"\n      },\n      \"dialog\": {\n        \"isContextOnly\": false,\n
         \       \"prompts\": []\n      },\n      \"activeLearningSuggestions\": [],\n
-        \     \"isDocumentText\": false,\n      \"lastUpdatedDateTime\": \"02/10/2022
-        19:42:48 +00:00\"\n    }\n  ]\n}"
+        \     \"isDocumentText\": false,\n      \"lastUpdatedDateTime\": \"08/02/2022
+        23:40:19 +00:00\"\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 92f41914-52c7-435e-aebd-a775f623b627
+      - e3a4ad21-d369-4a67-98ab-3a082d68cfdc
       content-length:
       - '522'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 10 Feb 2022 19:43:18 GMT
+      - Tue, 02 Aug 2022 23:40:47 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '345'
+      - '260'
     status:
       code: 200
       message: OK
@@ -169,7 +205,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/qnas?api-version=2021-10-01
   response:
@@ -180,23 +216,23 @@ interactions:
         \     ],\n      \"metadata\": {\n        \"system_metadata_qna_edited_manually\":
         \"true\"\n      },\n      \"dialog\": {\n        \"isContextOnly\": false,\n
         \       \"prompts\": []\n      },\n      \"activeLearningSuggestions\": [],\n
-        \     \"isDocumentText\": false,\n      \"lastUpdatedDateTime\": \"02/10/2022
-        19:42:48 +00:00\"\n    }\n  ]\n}"
+        \     \"isDocumentText\": false,\n      \"lastUpdatedDateTime\": \"08/02/2022
+        23:40:19 +00:00\"\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 431d651e-4708-4353-a278-b415492e2f1d
+      - b7831675-b21e-4a7a-ac3e-5b64c713a411
       content-length:
       - '522'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 10 Feb 2022 19:43:18 GMT
+      - Tue, 02 Aug 2022 23:40:47 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '77'
+      - '63'
     status:
       code: 200
       message: OK

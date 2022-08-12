@@ -7,53 +7,48 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO, Iterator,
-    TYPE_CHECKING,
-    TypeVar)
-
-
-try:
-    from urllib.parse import urlparse, quote, unquote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import quote, unquote # type: ignore
+    Any, AnyStr, Dict, List, IO, Iterable, Iterator, Optional, overload, TypeVar, Union,
+    TYPE_CHECKING
+)
+from urllib.parse import urlparse, quote, unquote
 
 import six
-
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
-    return_headers_and_deserialized)
+    return_headers_and_deserialized
+)
 from ._generated import AzureBlobStorage
 from ._generated.models import SignedIdentifier
+from ._blob_client import BlobClient
 from ._deserialize import deserialize_container_properties
-from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
-from ._models import ( # pylint: disable=unused-import
+from ._download import StorageStreamDownloader
+from ._encryption import StorageEncryptionMixin
+from ._lease import BlobLeaseClient
+from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged, FilteredBlobPaged
+from ._models import (
     ContainerProperties,
     BlobProperties,
     BlobType,
-    FilteredBlob)
-from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged, FilteredBlobPaged
-from ._lease import BlobLeaseClient
-from ._blob_client import BlobClient
+    FilteredBlob
+)
+from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpTransport, HttpResponse  # pylint: disable=ungrouped-imports
-    from azure.core.pipeline.policies import HTTPPolicy # pylint: disable=ungrouped-imports
+    from azure.core.pipeline.transport import HttpResponse  # pylint: disable=ungrouped-imports
     from datetime import datetime
     from ._models import (  # pylint: disable=unused-import
         PublicAccess,
         AccessPolicy,
-        ContentSettings,
         StandardBlobTier,
         PremiumPageBlobTier)
 
@@ -73,7 +68,7 @@ def _get_blob_name(blob):
 ClassType = TypeVar("ClassType")
 
 
-class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-public-methods
+class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # pylint: disable=too-many-public-methods
     """A client to interact with a specific container, although that container
     may not yet exist.
 
@@ -93,10 +88,12 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -138,7 +135,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
     def __init__(
             self, account_url,  # type: str
             container_name,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -161,6 +158,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
+        self._configure_encryption(kwargs)
 
     def _format_url(self, hostname):
         container_name = self.container_name
@@ -173,8 +171,12 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             self._query_str)
 
     @classmethod
-    def from_container_url(cls, container_url, credential=None, **kwargs):
-        # type: (Type[ClassType], str, Optional[Any], Any) -> ClassType
+    def from_container_url(
+            cls,  # type: Type[ClassType]
+            container_url,  # type: str
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+            **kwargs  # type: Any
+        ):  # type: (...) -> ClassType
         """Create ContainerClient from a container url.
 
         :param str container_url:
@@ -185,10 +187,12 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
             If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
         :returns: A container client.
         :rtype: ~azure.storage.blob.ContainerClient
         """
@@ -220,7 +224,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             cls,  # type: Type[ClassType]
             conn_str,  # type: str
             container_name,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):  # type: (...) -> ClassType
         """Create ContainerClient from a Connection String.
@@ -234,9 +238,11 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
         :returns: A container client.
         :rtype: ~azure.storage.blob.ContainerClient
 
@@ -746,10 +752,11 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         :param str name_starts_with:
             Filters the results to return only blobs whose names
             begin with the specified prefix.
-        :param list[str] or str include:
+        :param include:
             Specifies one or more additional datasets to include in the response.
             Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'deletedwithversions',
             'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
+        :paramtype include: list[str] or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of BlobProperties.
@@ -1065,9 +1072,34 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             timeout=timeout,
             **kwargs)
 
+    @overload
+    def download_blob(
+            self, blob: Union[str, BlobProperties],
+            offset: int = None,
+            length: int = None,
+            *,
+            encoding: str,
+            **kwargs) -> StorageStreamDownloader[str]:
+        ...
+
+    @overload
+    def download_blob(
+            self, blob: Union[str, BlobProperties],
+            offset: int = None,
+            length: int = None,
+            *,
+            encoding: None = None,
+            **kwargs) -> StorageStreamDownloader[bytes]:
+        ...
+
     @distributed_trace
-    def download_blob(self, blob, offset=None, length=None, **kwargs):
-        # type: (Union[str, BlobProperties], Optional[int], Optional[int], **Any) -> StorageStreamDownloader
+    def download_blob(
+            self, blob: Union[str, BlobProperties],
+            offset: int = None,
+            length: int = None,
+            *,
+            encoding: Optional[str] = None,
+            **kwargs) -> StorageStreamDownloader:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
@@ -1148,7 +1180,11 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         """
         blob_client = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
-        return blob_client.download_blob(offset=offset, length=length, **kwargs)
+        return blob_client.download_blob(
+            offset=offset,
+            length=length,
+            encoding=encoding,
+            **kwargs)
 
     def _generate_delete_blobs_subrequest_options(
         self, snapshot=None,

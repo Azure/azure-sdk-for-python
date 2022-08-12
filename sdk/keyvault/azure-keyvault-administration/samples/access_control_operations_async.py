@@ -17,9 +17,8 @@ from azure.identity.aio import DefaultAzureCredential
 #
 # 3. Set environment variable MANAGED_HSM_URL with the URL of your managed HSM
 #    
-# 4. Set up your environment to use azure-identity's DefaultAzureCredential. To authenticate a service principal with
-#    environment variables, set AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration#authenticate-the-client)
+# 4. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
+#    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates role definition and assignment operations for Managed HSM

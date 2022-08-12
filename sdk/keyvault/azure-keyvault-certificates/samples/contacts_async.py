@@ -7,16 +7,15 @@ import asyncio
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.keyvault.certificates import CertificateContact
-from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
+# 1. An Azure Key Vault (https://docs.microsoft.com/azure/key-vault/quick-create-cli)
 #
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
+# 3. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
+#    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates basic CRUD operations for the certificate contacts for a key vault.
@@ -31,9 +30,7 @@ from azure.core.exceptions import HttpResponseError
 
 async def run_sample():
     # Instantiate a certificate client that will be used to call the service.
-    # Notice that the client is using default Azure credentials.
-    # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
-    # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
+    # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
     VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
     client = CertificateClient(vault_url=VAULT_URL, credential=credential)
