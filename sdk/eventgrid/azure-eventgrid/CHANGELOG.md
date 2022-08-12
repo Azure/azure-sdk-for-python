@@ -1,6 +1,28 @@
 # Release History
 
-## 4.8.0 (2022-04-05)
+## 4.9.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 4.9.0 (2022-07-05)
+
+### Features Added
+
+- Added support for publishing events to a channel.
+
+## 4.9.0b1 (2022-04-07)
+
+### Features Added
+
+- Added support for publishing events to a channel.
+
+## 4.8.0 (2022-04-06)
 
 - This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
 

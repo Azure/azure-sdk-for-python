@@ -1,10 +1,9 @@
-
 import argparse
 import os
 from pathlib import Path
 import shutil
 
-print ("Get file and tabular data")
+print("Get file and tabular data")
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input_data", type=str)
@@ -52,5 +51,3 @@ for folder_name in arr:
             shutil.move(file_source, file_destination)
     else:
         pass
-
-

@@ -3,21 +3,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
-import pytest
 import asyncio
+import functools
+from unittest import mock
+import pytest
 
 from azure.core.exceptions import (
     HttpResponseError,
+    IncompleteReadError,
     ResourceExistsError,
     AzureError,
-    ClientAuthenticationError
-)
-from azure.core.pipeline.transport import (
-    AioHttpTransport
+    ClientAuthenticationError,
 )
 
-from azure.core.pipeline.transport import AioHttpTransport
+from azure.core.pipeline.transport import AsyncHttpResponse, AioHttpTransportResponse, AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
 from azure.storage.blob import LocationMode
@@ -32,6 +31,9 @@ from settings.testcase import BlobPreparer
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, RetryCounter, ResponseCallback
 from devtools_testutils.storage.aio import AsyncStorageTestCase
 
+from aiohttp.client_exceptions import ClientPayloadError
+from aiohttp.streams import StreamReader
+from aiohttp.client import ClientResponse
 
 class AiohttpTestTransport(AioHttpTransport):
     """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
@@ -144,11 +146,18 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
     async def test_retry_on_socket_timeout_async(self, storage_account_name, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
-        retry = LinearRetry(backoff=1)
+        blob_name = self.get_resource_name('blob')
+        # Upload a blob that can be downloaded to test read timeout
+        service = self._create_storage_service(BlobServiceClient, storage_account_name, storage_account_key)
+        container = await service.create_container(container_name)
+        await container.upload_blob(blob_name, b'a' * 5 * 1025, overwrite=True)
+
+        retry = LinearRetry(backoff=1, random_jitter_range=1)
         retry_transport = AiohttpRetryTestTransport(connection_timeout=11, read_timeout=0.000000000001)
         # make the connect timeout reasonable, but packet timeout truly small, to make sure the request always times out
         service = self._create_storage_service(
             BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry, transport=retry_transport)
+        blob = service.get_blob_client(container_name, blob_name)
 
         assert service._client._client._pipeline._transport.connection_config.timeout == 11
         assert service._client._client._pipeline._transport.connection_config.read_timeout == 0.000000000001
@@ -156,9 +165,7 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
         # Act
         try:
             with self.assertRaises(AzureError) as error:
-                await service.create_container(container_name)
-
-
+                await blob.download_blob()
             # Assert
             # 3 retries + 1 original == 4
             assert retry_transport.count == 4
@@ -170,10 +177,7 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
 
         finally:
             # we must make the timeout normal again to let the delete operation succeed
-            try:
-                await service.delete_container(container_name, connection_timeout=11)
-            except:
-                pass
+            await service.delete_container(container_name, connection_timeout=11, read_timeout=11)
 
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -470,5 +474,40 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
         # Assert
         # No retry should be performed since the signing error is fatal
         self.assertEqual(retry_counter.count, 0)
+
+    @staticmethod
+    def _count_wrapper(counter, func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            counter[0] += 1
+            return func(*args, **kwargs)
+        return wrapper
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_streaming_retry_async(self, storage_account_name, storage_account_key):
+        """Test that retry mechanisms are working when streaming data."""
+        container_name = self.get_resource_name('utcontainer') 
+        retry = LinearRetry(backoff = 0.1, random_jitter_range=0)
+
+        service = self._create_storage_service(
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry)
+        container = service.get_container_client(container_name)
+        await container.create_container()
+        assert await container.exists()
+        blob_name = "myblob"
+        await container.upload_blob(blob_name, b"abcde")
+
+        stream_reader_read_mock = mock.MagicMock()
+        future = asyncio.Future()
+        future.set_exception(ClientPayloadError())
+        stream_reader_read_mock.return_value = future
+        with mock.patch.object(StreamReader, "read", stream_reader_read_mock), pytest.raises(HttpResponseError):
+            blob = container.get_blob_client(blob=blob_name)
+            count = [0]
+            blob._pipeline._transport.send = self._count_wrapper(count, blob._pipeline._transport.send)
+            await blob.download_blob()
+        assert stream_reader_read_mock.call_count == count[0] == 4
 
 # ------------------------------------------------------------------------------

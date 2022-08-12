@@ -1,61 +1,40 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 import copy
 import logging
-import uuid
-from typing import Dict, List, Union
-from enum import Enum
 import re
+from enum import Enum
+from typing import Dict, List, Union
 
 from marshmallow import Schema
 
-from .base_node import BaseNode
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    JobInput as RestJobInput,
-    JobOutput as RestJobOutput,
-)
-from azure.ai.ml.constants import (
-    ComponentJobConstants,
-    BASE_PATH_CONTEXT_KEY,
-    NodeType,
-    ComponentSource,
-    ARM_ID_PREFIX,
-)
-
-from azure.ai.ml.entities._job._input_output_helpers import (
-    to_rest_dataset_literal_inputs,
-    from_rest_inputs_to_dataset_literal,
-    to_rest_data_outputs,
-    from_rest_data_outputs,
-)
-from azure.ai.ml.entities._job.pipeline._pipeline_job_helpers import (
-    process_sdk_component_job_io,
-    from_dict_to_rest_io,
-)
-from azure.ai.ml.entities import (
-    Component,
-    ParallelComponent,
-    ParallelJob,
-    ResourceConfiguration,
-    Environment,
-)
-from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ResourceConfiguration as RestResourceConfiguration
-from .._job.pipeline._io import PipelineInput, PipelineOutputBase
-from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
+from azure.ai.ml.constants import ARM_ID_PREFIX, NodeType
+from azure.ai.ml.entities._component.component import Component
+from azure.ai.ml.entities._component.parallel_component import ParallelComponent
+from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
+from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.parallel.parallel_task import ParallelTask
 from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
-from azure.ai.ml.entities._job.parallel.parameterized_parallel import ParameterizedParallel
-from .._util import validate_attribute_type, convert_ordered_dict_to_dict, get_rest_dict
+
 from ..._schema import PathAwareSchema
-from ..._utils._arm_id_utils import get_resource_name_from_arm_id_safe
+from .._job.distribution import DistributionConfiguration
+from .._job.pipeline._io import PipelineInput, PipelineOutputBase
+from .._job.pipeline._pipeline_expression import PipelineExpression
+from .._util import convert_ordered_dict_to_dict, get_rest_dict, validate_attribute_type
+from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
 
 
 class Parallel(BaseNode):
-    """Base class for parallel node, used for parallel component version consumption.
+    """Base class for parallel node, used for parallel component version
+    consumption.
 
     :param component: Id or instance of the parallel component/job to be run for the step
     :type component: parallelComponent
@@ -100,7 +79,20 @@ class Parallel(BaseNode):
         *,
         component: Union[ParallelComponent, str],
         compute: str = None,
-        inputs: Dict[str, Union[PipelineInput, PipelineOutputBase, Input, str, bool, int, float, Enum, "Input"]] = None,
+        inputs: Dict[
+            str,
+            Union[
+                PipelineInput,
+                PipelineOutputBase,
+                Input,
+                str,
+                bool,
+                int,
+                float,
+                Enum,
+                "Input",
+            ],
+        ] = None,
         outputs: Dict[str, Union[str, Output, "Output"]] = None,
         retry_settings: Dict[str, Union[RetrySettings, str]] = None,
         logging_level: str = None,
@@ -116,11 +108,19 @@ class Parallel(BaseNode):
     ):
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
-        self._init = True
         kwargs.pop("type", None)
-        _from_component_func = kwargs.pop("_from_component_func", False)
 
-        BaseNode.__init__(self, type=NodeType.PARALLEL, component=component, compute=compute, **kwargs)
+        BaseNode.__init__(
+            self,
+            type=NodeType.PARALLEL,
+            component=component,
+            inputs=inputs,
+            outputs=outputs,
+            compute=compute,
+            **kwargs,
+        )
+        # init mark for _AttrDict
+        self._init = True
 
         self._task = task
 
@@ -165,10 +165,12 @@ class Parallel(BaseNode):
             self.mini_batch_size = self.mini_batch_size or self.component.mini_batch_size
             self._task = self._task or self.component.task
 
-        # initialize io
-        inputs, outputs = inputs or {}, outputs or {}
+        self._init = False
+
+    @classmethod
+    def _get_supported_inputs_types(cls):
         # when command node is constructed inside dsl.pipeline, inputs can be PipelineInput or Output of another node
-        supported_input_types = (
+        return (
             PipelineInput,
             PipelineOutputBase,
             Input,
@@ -177,33 +179,12 @@ class Parallel(BaseNode):
             int,
             float,
             Enum,
+            PipelineExpression,
         )
-        self._validate_io(inputs, supported_input_types, Input)
-        supported_output_types = (str, Output)
-        self._validate_io(outputs, supported_output_types, Output)
-        # parse empty dict to None so we won't pass default mode, type to backend
-        for k, v in inputs.items():
-            if v == {}:
-                inputs[k] = None
-        # TODO: get rid of self._job_inputs, self._job_outputs once we have unified Input
-        self._job_inputs, self._job_outputs = inputs, outputs
-        if isinstance(component, Component):
-            # Build the inputs from component input definition and given inputs, unfilled inputs will be None
-            self._inputs = self._build_inputs_dict(component.inputs, inputs or {})
-            # Build the outputs from component output definition and given outputs, unfilled outputs will be None
-            self._outputs = self._build_outputs_dict(component.outputs, outputs or {})
-        else:
-            # Build inputs/outputs dict without meta when definition not available
-            self._inputs = self._build_inputs_dict_without_meta(inputs or {})
-            self._outputs = self._build_outputs_dict_without_meta(outputs or {})
 
-        # Generate an id for every component instance
-        self._instance_id = str(uuid.uuid4())
-        if _from_component_func:
-            # add current component in pipeline stack for dsl scenario
-            self._register_in_current_pipeline_component_builder()
-
-        self._init = False
+    @classmethod
+    def _get_supported_outputs_types(cls):
+        return str, Output
 
     @property
     def retry_settings(self) -> RetrySettings:
@@ -262,29 +243,6 @@ class Parallel(BaseNode):
         if isinstance(self.component, Component):
             self.component.resources = self.resources
 
-    def _initializing(self) -> bool:
-        # use this to indicate ongoing init process so all attributes set during init process won't be set as
-        # arbitrary attribute in _AttrDict
-        # TODO: replace this hack
-        return self._init
-
-    @classmethod
-    def _validate_io(cls, io_dict: dict, allowed_types: tuple, parse_cls):
-        for key, value in io_dict.items():
-            # output mode of last node should not affect input mode of next node
-            if isinstance(value, PipelineOutputBase):
-                # value = copy.deepcopy(value)
-                value = value._deepcopy()  # Decoupled input and output
-                io_dict[key] = value
-                value.mode = None
-            if value is None or isinstance(value, allowed_types):
-                pass
-            elif isinstance(value, dict):
-                # parse dict to allowed type
-                io_dict[key] = parse_cls(**value)
-            else:
-                raise Exception(f"Expecting {allowed_types} for input/output {key}, got {type(value)} instead.")
-
     @classmethod
     def _attr_type_map(cls) -> dict:
         return {
@@ -335,7 +293,7 @@ class Parallel(BaseNode):
         return convert_ordered_dict_to_dict(rest_attr)
 
     @classmethod
-    def _picked_fields_in_to_rest(cls) -> List[str]:
+    def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
         return [
             "type",
             "resources",
@@ -347,44 +305,24 @@ class Parallel(BaseNode):
             "input_data",
         ]
 
-    def _node_specified_pre_to_rest_operations(self, rest_obj):
-        for key in self._picked_fields_in_to_rest():
-            if key not in rest_obj:
-                rest_obj[key] = None
-
+    def _to_rest_object(self, **kwargs) -> dict:
+        rest_obj = super(Parallel, self)._to_rest_object(**kwargs)
         rest_obj.update(
-            dict(
-                componentId=self._get_component_id(),
-                retry_settings=get_rest_dict(self.retry_settings),
-                logging_level=self.logging_level,
-                mini_batch_size=self.mini_batch_size,
-                resources=self.resources._to_rest_object().as_dict() if self.resources else None,
+            convert_ordered_dict_to_dict(
+                dict(
+                    componentId=self._get_component_id(),
+                    retry_settings=get_rest_dict(self.retry_settings),
+                    logging_level=self.logging_level,
+                    mini_batch_size=self.mini_batch_size,
+                    resources=self.resources._to_rest_object().as_dict() if self.resources else None,
+                )
             )
         )
+        return rest_obj
 
     @classmethod
     def _from_rest_object(cls, obj: dict) -> "Parallel":
-        inputs = obj.get("inputs", {})
-        outputs = obj.get("outputs", {})
-
-        # JObject -> RestJobInput/RestJobOutput
-        input_bindings, rest_inputs = from_dict_to_rest_io(inputs, RestJobInput, [ComponentJobConstants.INPUT_PATTERN])
-        output_bindings, rest_outputs = from_dict_to_rest_io(
-            outputs, RestJobOutput, [ComponentJobConstants.OUTPUT_PATTERN]
-        )
-
-        # RestJobInput/RestJobOutput -> JobInput/JobOutput
-        dataset_literal_inputs = from_rest_inputs_to_dataset_literal(rest_inputs)
-        data_outputs = from_rest_data_outputs(rest_outputs)
-
-        obj["inputs"] = {**dataset_literal_inputs, **input_bindings}
-        obj["outputs"] = {**data_outputs, **output_bindings}
-
-        # resources
-        if "resources" in obj and obj["resources"]:
-            resources = RestResourceConfiguration.from_dict(obj["resources"])
-            obj["resources"] = ResourceConfiguration._from_rest_object(resources)
-
+        obj = BaseNode._rest_object_to_init_params(obj)
         # retry_settings
         if "retry_settings" in obj and obj["retry_settings"]:
             obj["retry_settings"] = RetrySettings.from_dict(obj["retry_settings"])
@@ -399,11 +337,19 @@ class Parallel(BaseNode):
             if task_env and isinstance(task_env, str) and task_env.startswith(ARM_ID_PREFIX):
                 obj["task"].environment = task_env[len(ARM_ID_PREFIX) :]
 
-        # Change componentId -> component, computeId -> compute
+        # resources, sweep won't have resources
+        if "resources" in obj and obj["resources"]:
+            resources = RestResourceConfiguration.from_dict(obj["resources"])
+            obj["resources"] = ResourceConfiguration._from_rest_object(resources)
+
+        # Change componentId -> component
         component_id = obj.pop("componentId", None)
-        compute_id = obj.pop("computeId", None)
         obj["component"] = component_id
-        obj["compute"] = get_resource_name_from_arm_id_safe(compute_id)
+
+        # distribution, sweep won't have distribution
+        if "distribution" in obj and obj["distribution"]:
+            obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
+
         return Parallel(**obj)
 
     def _build_inputs(self):
@@ -457,10 +403,3 @@ class Parallel(BaseNode):
                 f"Parallel can be called as a function only when referenced component is {type(Component)}, "
                 f"currently got {self._component}."
             )
-
-    @property
-    def _extra_skip_fields_in_validation(self) -> List[str]:
-        """
-        Extra fields that should be skipped in validation.
-        """
-        return ["component"]

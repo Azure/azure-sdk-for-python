@@ -3,14 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
+from unittest import mock
+from functools import wraps
 import pytest
 
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     AzureError,
-    ClientAuthenticationError
+    ClientAuthenticationError,
+    ServiceResponseError
 )
 from azure.core.pipeline.transport import(
     RequestsTransport
@@ -24,6 +26,9 @@ from azure.storage.blob import (
     LinearRetry,
     ExponentialRetry,
 )
+from requests import Response
+from requests.exceptions import ContentDecodingError, ChunkedEncodingError
+from azure.core.exceptions import DecodeError
 
 from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
@@ -123,11 +128,18 @@ class StorageRetryTest(StorageTestCase):
     def test_retry_on_socket_timeout(self, storage_account_name, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
-        retry = LinearRetry(backoff=1)
+        blob_name = self.get_resource_name('blob')
+        # Upload a blob that can be downloaded to test read timeout
+        service = self._create_storage_service(BlobServiceClient, storage_account_name, storage_account_key)
+        container = service.create_container(container_name)
+        container.upload_blob(blob_name, b'a' * 5 * 1025, overwrite=True)
+
+        retry = LinearRetry(backoff=1, random_jitter_range=1)
         retry_transport = RetryRequestTransport(connection_timeout=11, read_timeout=0.000000000001)
         # make the connect timeout reasonable, but packet timeout truly small, to make sure the request always times out
         service = self._create_storage_service(
             BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry, transport=retry_transport)
+        blob = service.get_blob_client(container_name, blob_name)
 
         assert service._client._client._pipeline._transport.connection_config.timeout == 11
         assert service._client._client._pipeline._transport.connection_config.read_timeout == 0.000000000001
@@ -135,7 +147,7 @@ class StorageRetryTest(StorageTestCase):
         # Act
         try:
             with self.assertRaises(AzureError) as error:
-                service.create_container(container_name)
+                blob.download_blob()
             # Assert
             # 3 retries + 1 original == 4
             assert retry_transport.count == 4
@@ -434,6 +446,60 @@ class StorageRetryTest(StorageTestCase):
         # No retry should be performed since the signing error is fatal
         self.assertEqual(retry_counter.count, 0)
 
+    @staticmethod
+    def count_wrapper(counter, func):
+        """Wrapper to count how many times a function is called.
+        :param List[int] counter:
+            A singleton list. Will usually be `[0]`.
+        :param callable func:
+            The function to wrap.
+        :return Callable:
+            The wrapped function.
 
-# ------------------------------------------------------------------------------
+        Example:
+            ```python
+            class MyClass:
+                def hello(self):
+                    pass
+            
+            obj = MyClass()
+            counter = [0]
+            obj.hello()
+            obj.hello = count_wrapper(counter, obj.hello)
+            obj.hello()
+            obj.hello()
+            print(counter[0])  # 2
+            ```
+        """
+        @wraps(func)
+        def inner(*args, **kwargs):
+            counter[0] += 1
+            return func(*args, **kwargs)
+        return inner
 
+    @BlobPreparer()
+    def test_streaming_retry(self, storage_account_name, storage_account_key):
+        """Test that retry mechanisms are working when streaming data."""
+        # Should check that multiple requests went through the pipeline
+        container_name = self.get_resource_name('utcontainer')
+        service = self._create_storage_service(
+            BlobServiceClient, storage_account_name, storage_account_key)
+        container = service.get_container_client(container_name)
+        container.create_container()
+        assert container.exists()
+        blob_name = "myblob"
+        container.upload_blob(blob_name, b"abcde")
+
+        for error in (ContentDecodingError(), ChunkedEncodingError(), ChunkedEncodingError("IncompleteRead")):
+            iterator_mock = mock.MagicMock()
+            iterator_mock.__next__.side_effect = error
+            iter_content_mock = mock.Mock()
+            iter_content_mock.return_value = iterator_mock
+            with mock.patch.object(Response, "iter_content", iter_content_mock), pytest.raises(HttpResponseError):
+                blob = container.get_blob_client(blob=blob_name)
+                count = [0]
+                blob._pipeline._transport.send = self.count_wrapper(count, blob._pipeline._transport.send)
+                blob.download_blob()
+            assert iterator_mock.__next__.call_count == count[0] == 3
+
+    # ------------------------------------------------------------------------------

@@ -302,7 +302,7 @@ class DatabaseProxy(object):
                 offer_throughput=offer_throughput,
                 unique_key_policy=unique_key_policy,
                 conflict_resolution_policy=conflict_resolution_policy,
-                analytical_storage_ttl=analytical_storage_ttl,
+                analytical_storage_ttl=analytical_storage_ttl
             )
 
     @distributed_trace

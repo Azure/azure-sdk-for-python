@@ -6,12 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AzureMonitorMetricsDestination(msrest.serialization.Model):
@@ -62,7 +64,7 @@ class DataCollectionRule(msrest.serialization.Model):
      ~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleDestinations
     :ivar data_flows: The specification of data flows.
     :vartype data_flows: list[~$(python-base-namespace).v2019_11_01_preview.models.DataFlow]
-    :ivar provisioning_state: The resource provisioning state. Possible values include: "Creating",
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
      ~$(python-base-namespace).v2019_11_01_preview.models.KnownDataCollectionRuleProvisioningState
@@ -86,9 +88,9 @@ class DataCollectionRule(msrest.serialization.Model):
         self,
         *,
         description: Optional[str] = None,
-        data_sources: Optional["DataCollectionRuleDataSources"] = None,
-        destinations: Optional["DataCollectionRuleDestinations"] = None,
-        data_flows: Optional[List["DataFlow"]] = None,
+        data_sources: Optional["_models.DataCollectionRuleDataSources"] = None,
+        destinations: Optional["_models.DataCollectionRuleDestinations"] = None,
+        data_flows: Optional[List["_models.DataFlow"]] = None,
         **kwargs
     ):
         """
@@ -124,7 +126,7 @@ class DataCollectionRuleAssociation(msrest.serialization.Model):
     :ivar data_collection_rule_id: The resource ID of the data collection rule that is to be
      associated.
     :vartype data_collection_rule_id: str
-    :ivar provisioning_state: The resource provisioning state. Possible values include: "Creating",
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
      ~$(python-base-namespace).v2019_11_01_preview.models.KnownDataCollectionRuleAssociationProvisioningState
@@ -178,7 +180,7 @@ class DataCollectionRuleAssociationProxyOnlyResource(msrest.serialization.Model)
     :ivar data_collection_rule_id: The resource ID of the data collection rule that is to be
      associated.
     :vartype data_collection_rule_id: str
-    :ivar provisioning_state: The resource provisioning state. Possible values include: "Creating",
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
      ~$(python-base-namespace).v2019_11_01_preview.models.KnownDataCollectionRuleAssociationProvisioningState
@@ -250,7 +252,7 @@ class DataCollectionRuleAssociationProxyOnlyResourceListResult(msrest.serializat
     def __init__(
         self,
         *,
-        value: List["DataCollectionRuleAssociationProxyOnlyResource"],
+        value: List["_models.DataCollectionRuleAssociationProxyOnlyResource"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -276,7 +278,7 @@ class DataCollectionRuleAssociationProxyOnlyResourceProperties(DataCollectionRul
     :ivar data_collection_rule_id: The resource ID of the data collection rule that is to be
      associated.
     :vartype data_collection_rule_id: str
-    :ivar provisioning_state: The resource provisioning state. Possible values include: "Creating",
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
      ~$(python-base-namespace).v2019_11_01_preview.models.KnownDataCollectionRuleAssociationProvisioningState
@@ -335,10 +337,10 @@ class DataSourcesSpec(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        performance_counters: Optional[List["PerfCounterDataSource"]] = None,
-        windows_event_logs: Optional[List["WindowsEventLogDataSource"]] = None,
-        syslog: Optional[List["SyslogDataSource"]] = None,
-        extensions: Optional[List["ExtensionDataSource"]] = None,
+        performance_counters: Optional[List["_models.PerfCounterDataSource"]] = None,
+        windows_event_logs: Optional[List["_models.WindowsEventLogDataSource"]] = None,
+        syslog: Optional[List["_models.SyslogDataSource"]] = None,
+        extensions: Optional[List["_models.ExtensionDataSource"]] = None,
         **kwargs
     ):
         """
@@ -388,10 +390,10 @@ This property is optional and can be omitted if the rule is meant to be used via
     def __init__(
         self,
         *,
-        performance_counters: Optional[List["PerfCounterDataSource"]] = None,
-        windows_event_logs: Optional[List["WindowsEventLogDataSource"]] = None,
-        syslog: Optional[List["SyslogDataSource"]] = None,
-        extensions: Optional[List["ExtensionDataSource"]] = None,
+        performance_counters: Optional[List["_models.PerfCounterDataSource"]] = None,
+        windows_event_logs: Optional[List["_models.WindowsEventLogDataSource"]] = None,
+        syslog: Optional[List["_models.SyslogDataSource"]] = None,
+        extensions: Optional[List["_models.ExtensionDataSource"]] = None,
         **kwargs
     ):
         """
@@ -429,8 +431,8 @@ class DestinationsSpec(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        log_analytics: Optional[List["LogAnalyticsDestination"]] = None,
-        azure_monitor_metrics: Optional["DestinationsSpecAzureMonitorMetrics"] = None,
+        log_analytics: Optional[List["_models.LogAnalyticsDestination"]] = None,
+        azure_monitor_metrics: Optional["_models.DestinationsSpecAzureMonitorMetrics"] = None,
         **kwargs
     ):
         """
@@ -465,8 +467,8 @@ class DataCollectionRuleDestinations(DestinationsSpec):
     def __init__(
         self,
         *,
-        log_analytics: Optional[List["LogAnalyticsDestination"]] = None,
-        azure_monitor_metrics: Optional["DestinationsSpecAzureMonitorMetrics"] = None,
+        log_analytics: Optional[List["_models.LogAnalyticsDestination"]] = None,
+        azure_monitor_metrics: Optional["_models.DestinationsSpecAzureMonitorMetrics"] = None,
         **kwargs
     ):
         """
@@ -491,7 +493,7 @@ class DataCollectionRuleResource(msrest.serialization.Model):
     :vartype location: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: The kind of the resource. Possible values include: "Linux", "Windows".
+    :ivar kind: The kind of the resource. Known values are: "Linux", "Windows".
     :vartype kind: str or
      ~$(python-base-namespace).v2019_11_01_preview.models.KnownDataCollectionRuleResourceKind
     :ivar id: Fully qualified ID of the resource.
@@ -516,7 +518,7 @@ class DataCollectionRuleResource(msrest.serialization.Model):
      ~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleDestinations
     :ivar data_flows: The specification of data flows.
     :vartype data_flows: list[~$(python-base-namespace).v2019_11_01_preview.models.DataFlow]
-    :ivar provisioning_state: The resource provisioning state. Possible values include: "Creating",
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
      ~$(python-base-namespace).v2019_11_01_preview.models.KnownDataCollectionRuleProvisioningState
@@ -553,11 +555,11 @@ class DataCollectionRuleResource(msrest.serialization.Model):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        kind: Optional[Union[str, "KnownDataCollectionRuleResourceKind"]] = None,
+        kind: Optional[Union[str, "_models.KnownDataCollectionRuleResourceKind"]] = None,
         description: Optional[str] = None,
-        data_sources: Optional["DataCollectionRuleDataSources"] = None,
-        destinations: Optional["DataCollectionRuleDestinations"] = None,
-        data_flows: Optional[List["DataFlow"]] = None,
+        data_sources: Optional["_models.DataCollectionRuleDataSources"] = None,
+        destinations: Optional["_models.DataCollectionRuleDestinations"] = None,
+        data_flows: Optional[List["_models.DataFlow"]] = None,
         **kwargs
     ):
         """
@@ -565,7 +567,7 @@ class DataCollectionRuleResource(msrest.serialization.Model):
         :paramtype location: str
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword kind: The kind of the resource. Possible values include: "Linux", "Windows".
+        :keyword kind: The kind of the resource. Known values are: "Linux", "Windows".
         :paramtype kind: str or
          ~$(python-base-namespace).v2019_11_01_preview.models.KnownDataCollectionRuleResourceKind
         :keyword description: Description of the data collection rule.
@@ -621,7 +623,7 @@ class DataCollectionRuleResourceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["DataCollectionRuleResource"],
+        value: List["_models.DataCollectionRuleResource"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -656,7 +658,7 @@ class DataCollectionRuleResourceProperties(DataCollectionRule):
      ~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleDestinations
     :ivar data_flows: The specification of data flows.
     :vartype data_flows: list[~$(python-base-namespace).v2019_11_01_preview.models.DataFlow]
-    :ivar provisioning_state: The resource provisioning state. Possible values include: "Creating",
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
      ~$(python-base-namespace).v2019_11_01_preview.models.KnownDataCollectionRuleProvisioningState
@@ -680,9 +682,9 @@ class DataCollectionRuleResourceProperties(DataCollectionRule):
         self,
         *,
         description: Optional[str] = None,
-        data_sources: Optional["DataCollectionRuleDataSources"] = None,
-        destinations: Optional["DataCollectionRuleDestinations"] = None,
-        data_flows: Optional[List["DataFlow"]] = None,
+        data_sources: Optional["_models.DataCollectionRuleDataSources"] = None,
+        destinations: Optional["_models.DataCollectionRuleDestinations"] = None,
+        data_flows: Optional[List["_models.DataFlow"]] = None,
         **kwargs
     ):
         """
@@ -720,7 +722,7 @@ class DataFlow(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        streams: Optional[List[Union[str, "KnownDataFlowStreams"]]] = None,
+        streams: Optional[List[Union[str, "_models.KnownDataFlowStreams"]]] = None,
         destinations: Optional[List[str]] = None,
         **kwargs
     ):
@@ -858,7 +860,7 @@ class ErrorResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["ErrorDetail"] = None,
+        error: Optional["_models.ErrorDetail"] = None,
         **kwargs
     ):
         """
@@ -909,7 +911,7 @@ Collected from either Windows and Linux machines, depending on which extension i
         self,
         *,
         extension_name: str,
-        streams: Optional[List[Union[str, "KnownExtensionDataSourceStreams"]]] = None,
+        streams: Optional[List[Union[str, "_models.KnownExtensionDataSourceStreams"]]] = None,
         extension_settings: Optional[Any] = None,
         input_data_sources: Optional[List[str]] = None,
         name: Optional[str] = None,
@@ -1020,7 +1022,7 @@ Collected from both Windows and Linux machines where the counter is present.
     def __init__(
         self,
         *,
-        streams: Optional[List[Union[str, "KnownPerfCounterDataSourceStreams"]]] = None,
+        streams: Optional[List[Union[str, "_models.KnownPerfCounterDataSourceStreams"]]] = None,
         sampling_frequency_in_seconds: Optional[int] = None,
         counter_specifiers: Optional[List[str]] = None,
         name: Optional[str] = None,
@@ -1108,9 +1110,9 @@ Only collected from Linux machines.
     def __init__(
         self,
         *,
-        streams: Optional[List[Union[str, "KnownSyslogDataSourceStreams"]]] = None,
-        facility_names: Optional[List[Union[str, "KnownSyslogDataSourceFacilityNames"]]] = None,
-        log_levels: Optional[List[Union[str, "KnownSyslogDataSourceLogLevels"]]] = None,
+        streams: Optional[List[Union[str, "_models.KnownSyslogDataSourceStreams"]]] = None,
+        facility_names: Optional[List[Union[str, "_models.KnownSyslogDataSourceFacilityNames"]]] = None,
+        log_levels: Optional[List[Union[str, "_models.KnownSyslogDataSourceLogLevels"]]] = None,
         name: Optional[str] = None,
         **kwargs
     ):
@@ -1164,7 +1166,7 @@ Only collected from Windows machines.
     def __init__(
         self,
         *,
-        streams: Optional[List[Union[str, "KnownWindowsEventLogDataSourceStreams"]]] = None,
+        streams: Optional[List[Union[str, "_models.KnownWindowsEventLogDataSourceStreams"]]] = None,
         x_path_queries: Optional[List[str]] = None,
         name: Optional[str] = None,
         **kwargs

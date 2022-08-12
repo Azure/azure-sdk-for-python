@@ -1,10 +1,10 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Any, Union, TYPE_CHECKING
+from typing import Any, Union
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import HttpLoggingPolicy
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._api_versions import validate_api_version
@@ -16,13 +16,9 @@ from ._helpers import (
 )
 from ._user_agent import USER_AGENT
 
-if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential, TokenCredential
 
-
-class FormRecognizerClientBase(object):
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
+class FormRecognizerClientBase:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
         try:
             endpoint = endpoint.rstrip("/")
         except AttributeError:
@@ -74,9 +70,7 @@ class FormRecognizerClientBase(object):
             credential=credential,  # type: ignore
             api_version=self._api_version,
             sdk_moniker=USER_AGENT,
-            authentication_policy=kwargs.get(
-                "authentication_policy", authentication_policy
-            ),
+            authentication_policy=kwargs.get("authentication_policy", authentication_policy),
             http_logging_policy=kwargs.get("http_logging_policy", http_logging_policy),
             per_retry_policies=kwargs.get("per_retry_policies", QuotaExceededPolicy()),
             polling_interval=polling_interval,

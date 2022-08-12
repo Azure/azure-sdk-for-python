@@ -60,7 +60,7 @@ async def analyze_custom_documents_async(custom_model_id):
         # Make sure your document's type is included in the list of document types the custom model can analyze
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_analysis_client.begin_analyze_document(
-                model=model_id, document=f
+                model_id=model_id, document=f
             )
         result = await poller.result()
 
@@ -113,7 +113,7 @@ async def main():
 
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
-        from azure.ai.formrecognizer import DocumentBuildMode
+        from azure.ai.formrecognizer import ModelBuildMode
 
         endpoint = os.getenv("AZURE_FORM_RECOGNIZER_ENDPOINT")
         key = os.getenv("AZURE_FORM_RECOGNIZER_KEY")
@@ -126,7 +126,7 @@ async def main():
         )
         async with document_model_admin_client:
             poller = await document_model_admin_client.begin_build_model(
-                os.getenv("CONTAINER_SAS_URL"), DocumentBuildMode.TEMPLATE
+                ModelBuildMode.TEMPLATE, blob_container_url=os.getenv("CONTAINER_SAS_URL")
             )
             model = await poller.result()
             model_id = model.model_id

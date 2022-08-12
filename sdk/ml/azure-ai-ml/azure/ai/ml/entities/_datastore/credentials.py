@@ -2,20 +2,22 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from ._constants import DEFAULT_AUTHORITY_URL
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
+# pylint: disable=protected-access
+
+from azure.ai.ml._azure_environments import _get_active_directory_url_from_metadata
 from azure.ai.ml._restclient.v2022_05_01.models import (
     AccountKeyDatastoreCredentials,
     AccountKeyDatastoreSecrets,
+    CertificateDatastoreCredentials,
+    CertificateDatastoreSecrets,
+    CredentialsType,
+    NoneDatastoreCredentials,
     SasDatastoreCredentials,
     SasDatastoreSecrets,
     ServicePrincipalDatastoreCredentials,
     ServicePrincipalDatastoreSecrets,
-    CertificateDatastoreCredentials,
-    CertificateDatastoreSecrets,
-    NoneDatastoreCredentials,
-    CredentialsType,
 )
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class DatastoreCredentials(RestTranslatableMixin):
@@ -100,7 +102,7 @@ class SasTokenCredentials(DatastoreCredentials):
 class BaseTenantCredentials(DatastoreCredentials):
     def __init__(
         self,
-        authority_url: str = DEFAULT_AUTHORITY_URL,
+        authority_url: str = _get_active_directory_url_from_metadata(),
         resource_url: str = None,
         tenant_id: str = None,
         client_id: str = None,
