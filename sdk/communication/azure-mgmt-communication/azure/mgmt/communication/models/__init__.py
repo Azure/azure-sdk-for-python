@@ -38,64 +38,66 @@ from ._models_py3 import UpdateDomainRequestParameters
 from ._models_py3 import VerificationParameter
 from ._models_py3 import VerificationStatusRecord
 
-
-from ._communication_service_management_client_enums import (
-    ActionType,
-    CheckNameAvailabilityReason,
-    CommunicationServicesProvisioningState,
-    CreatedByType,
-    DomainManagement,
-    DomainsProvisioningState,
-    EmailServicesProvisioningState,
-    KeyType,
-    Origin,
-    UserEngagementTracking,
-    VerificationStatus,
-    VerificationType,
-)
+from ._communication_service_management_client_enums import ActionType
+from ._communication_service_management_client_enums import CheckNameAvailabilityReason
+from ._communication_service_management_client_enums import CommunicationServicesProvisioningState
+from ._communication_service_management_client_enums import CreatedByType
+from ._communication_service_management_client_enums import DomainManagement
+from ._communication_service_management_client_enums import DomainsProvisioningState
+from ._communication_service_management_client_enums import EmailServicesProvisioningState
+from ._communication_service_management_client_enums import KeyType
+from ._communication_service_management_client_enums import Origin
+from ._communication_service_management_client_enums import UserEngagementTracking
+from ._communication_service_management_client_enums import VerificationStatus
+from ._communication_service_management_client_enums import VerificationType
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'CheckNameAvailabilityRequest',
-    'CheckNameAvailabilityResponse',
-    'CommunicationServiceKeys',
-    'CommunicationServiceResource',
-    'CommunicationServiceResourceList',
-    'CommunicationServiceResourceUpdate',
-    'DnsRecord',
-    'DomainPropertiesVerificationRecords',
-    'DomainPropertiesVerificationStates',
-    'DomainResource',
-    'DomainResourceList',
-    'EmailServiceResource',
-    'EmailServiceResourceList',
-    'EmailServiceResourceUpdate',
-    'ErrorAdditionalInfo',
-    'ErrorDetail',
-    'ErrorResponse',
-    'LinkNotificationHubParameters',
-    'LinkedNotificationHub',
-    'NameAvailabilityParameters',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'RegenerateKeyParameters',
-    'Resource',
-    'SystemData',
-    'TaggedResource',
-    'TrackedResource',
-    'UpdateDomainRequestParameters',
-    'VerificationParameter',
-    'VerificationStatusRecord',
-    'ActionType',
-    'CheckNameAvailabilityReason',
-    'CommunicationServicesProvisioningState',
-    'CreatedByType',
-    'DomainManagement',
-    'DomainsProvisioningState',
-    'EmailServicesProvisioningState',
-    'KeyType',
-    'Origin',
-    'UserEngagementTracking',
-    'VerificationStatus',
-    'VerificationType',
+    "CheckNameAvailabilityRequest",
+    "CheckNameAvailabilityResponse",
+    "CommunicationServiceKeys",
+    "CommunicationServiceResource",
+    "CommunicationServiceResourceList",
+    "CommunicationServiceResourceUpdate",
+    "DnsRecord",
+    "DomainPropertiesVerificationRecords",
+    "DomainPropertiesVerificationStates",
+    "DomainResource",
+    "DomainResourceList",
+    "EmailServiceResource",
+    "EmailServiceResourceList",
+    "EmailServiceResourceUpdate",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "LinkNotificationHubParameters",
+    "LinkedNotificationHub",
+    "NameAvailabilityParameters",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "RegenerateKeyParameters",
+    "Resource",
+    "SystemData",
+    "TaggedResource",
+    "TrackedResource",
+    "UpdateDomainRequestParameters",
+    "VerificationParameter",
+    "VerificationStatusRecord",
+    "ActionType",
+    "CheckNameAvailabilityReason",
+    "CommunicationServicesProvisioningState",
+    "CreatedByType",
+    "DomainManagement",
+    "DomainsProvisioningState",
+    "EmailServicesProvisioningState",
+    "KeyType",
+    "Origin",
+    "UserEngagementTracking",
+    "VerificationStatus",
+    "VerificationType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

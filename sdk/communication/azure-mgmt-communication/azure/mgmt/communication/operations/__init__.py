@@ -11,9 +11,15 @@ from ._communication_services_operations import CommunicationServicesOperations
 from ._domains_operations import DomainsOperations
 from ._email_services_operations import EmailServicesOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'Operations',
-    'CommunicationServicesOperations',
-    'DomainsOperations',
-    'EmailServicesOperations',
+    "Operations",
+    "CommunicationServicesOperations",
+    "DomainsOperations",
+    "EmailServicesOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

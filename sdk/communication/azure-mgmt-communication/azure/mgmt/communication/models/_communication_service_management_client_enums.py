@@ -7,26 +7,24 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
-    """
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
 
     INTERNAL = "Internal"
 
-class CheckNameAvailabilityReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The reason why the given name is not available.
-    """
+
+class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason why the given name is not available."""
 
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class CommunicationServicesProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the resource.
-    """
+
+class CommunicationServicesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the resource."""
 
     UNKNOWN = "Unknown"
     SUCCEEDED = "Succeeded"
@@ -38,26 +36,26 @@ class CommunicationServicesProvisioningState(with_metaclass(CaseInsensitiveEnumM
     DELETING = "Deleting"
     MOVING = "Moving"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DomainManagement(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Describes how a Domains resource is being managed.
-    """
+
+class DomainManagement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes how a Domains resource is being managed."""
 
     AZURE_MANAGED = "AzureManaged"
     CUSTOMER_MANAGED = "CustomerManaged"
     CUSTOMER_MANAGED_IN_EXCHANGE_ONLINE = "CustomerManagedInExchangeOnline"
 
-class DomainsProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the resource.
-    """
+
+class DomainsProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the resource."""
 
     UNKNOWN = "Unknown"
     SUCCEEDED = "Succeeded"
@@ -69,9 +67,9 @@ class DomainsProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     DELETING = "Deleting"
     MOVING = "Moving"
 
-class EmailServicesProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the resource.
-    """
+
+class EmailServicesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the resource."""
 
     UNKNOWN = "Unknown"
     SUCCEEDED = "Succeeded"
@@ -83,32 +81,33 @@ class EmailServicesProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str
     DELETING = "Deleting"
     MOVING = "Moving"
 
-class KeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The keyType to regenerate. Must be either 'primary' or 'secondary'(case-insensitive).
-    """
+
+class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The keyType to regenerate. Must be either 'primary' or 'secondary'(case-insensitive)."""
 
     PRIMARY = "Primary"
     SECONDARY = "Secondary"
 
-class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system"
+    logs UX. Default value is "user,system".
     """
 
     USER = "user"
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
 
-class UserEngagementTracking(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Describes whether user engagement tracking is enabled or disabled.
-    """
+
+class UserEngagementTracking(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes whether user engagement tracking is enabled or disabled."""
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
 
-class VerificationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of the verification operation.
-    """
+
+class VerificationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the verification operation."""
 
     NOT_STARTED = "NotStarted"
     VERIFICATION_REQUESTED = "VerificationRequested"
@@ -117,9 +116,9 @@ class VerificationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     VERIFIED = "Verified"
     CANCELLATION_REQUESTED = "CancellationRequested"
 
-class VerificationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of verification.
-    """
+
+class VerificationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of verification."""
 
     DOMAIN = "Domain"
     SPF = "SPF"
