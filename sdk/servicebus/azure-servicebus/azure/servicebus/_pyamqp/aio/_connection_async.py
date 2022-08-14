@@ -177,7 +177,7 @@ class Connection(object): # pylint:disable=too-many-instance-attributes
                     raise ValueError("Did not receive reciprocal protocol header. Disconnecting.")
             else:
                 await self._set_state(ConnectionState.HDR_SENT)
-        except (OSError, IOError, SSLError, socket.error) as exc:
+        except (OSError, IOError, SSLError, socket.error, asyncio.TimeoutError) as exc:
             raise AMQPConnectionError(
                 ErrorCondition.SocketError,
                 description="Failed to initiate the connection due to exception: " + str(exc),
@@ -209,7 +209,13 @@ class Connection(object): # pylint:disable=too-many-instance-attributes
          descriptor and field values.
         """
         if self._can_read():
-            return await self._transport.receive_frame(**kwargs)
+            if wait is False:
+                timeout = 1  # TODO: What should this default be?
+            elif wait is True:
+                timeout = None
+            else:
+                timeout = wait
+            return await self._transport.receive_frame(timeout=timeout, **kwargs)
         _LOGGER.warning("Cannot read frame in current state: %r", self.state)
 
     def _can_write(self):
@@ -634,7 +640,7 @@ class Connection(object): # pylint:disable=too-many-instance-attributes
                 )
                 return
             for _ in range(batch):
-                if await asyncio.ensure_future(self._listen_one_frame(**kwargs)):
+                if await asyncio.ensure_future(self._listen_one_frame(wait=wait, **kwargs)):
                     # TODO: compare the perf difference between ensure_future and direct await
                     break
         except (OSError, IOError, SSLError, socket.error) as exc:

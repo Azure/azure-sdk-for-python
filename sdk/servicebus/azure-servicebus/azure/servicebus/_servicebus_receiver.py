@@ -49,14 +49,11 @@ from ._common.constants import (
     MGMT_REQUEST_DEAD_LETTER_REASON,
     MGMT_REQUEST_DEAD_LETTER_ERROR_DESCRIPTION,
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
-    ServiceBusToAMQPReceiveModeMap,
-    SESSION_FILTER,
-    SESSION_LOCKED_UNTIL,
-    DATETIMEOFFSET_EPOCH
+    ServiceBusToAMQPReceiveModeMap
 )
 from ._common import mgmt_handlers
 from ._common.receiver_mixins import ReceiverMixin
-from ._common.utils import utc_from_timestamp, utc_now
+from ._common.utils import utc_from_timestamp
 from ._servicebus_session import ServiceBusSession
 
 if TYPE_CHECKING:
@@ -335,21 +332,6 @@ class ServiceBusReceiver(
                 "Subscription name is missing for the topic. Please specify subscription_name."
             )
         return cls(**constructor_args)
-
-    async def _on_attach(self, attach_frame):
-        # pylint: disable=protected-access, unused-argument
-        if self._session and attach_frame.source.address.decode(self._config.encoding) == self._entity_uri:
-            # This has to live on the session object so that autorenew has access to it.
-            self._session._session_start = utc_now()
-            expiry_in_seconds = attach_frame.properties.get(SESSION_LOCKED_UNTIL)
-            if expiry_in_seconds:
-                expiry_in_seconds = (
-                    expiry_in_seconds - DATETIMEOFFSET_EPOCH
-                ) / 10000000
-                self._session._locked_until_utc = utc_from_timestamp(expiry_in_seconds)
-            session_filter = attach_frame.source.filters[SESSION_FILTER]
-            self._session_id = session_filter.decode(self._config.encoding)
-            self._session._session_id = self._session_id
 
     def _create_handler(self, auth):
         # type: (AMQPAuth) -> None

@@ -52,14 +52,18 @@ from .._common.constants import (
     SPAN_NAME_RECEIVE_DEFERRED,
     SPAN_NAME_PEEK,
     ServiceBusToAMQPReceiveModeMap,
+    SESSION_FILTER,
+    SESSION_LOCKED_UNTIL,
+    DATETIMEOFFSET_EPOCH
 )
 from .._common import mgmt_handlers
 from .._common.utils import (
     receive_trace_context_manager,
     utc_from_timestamp,
-    get_receive_links
+    get_receive_links,
+    utc_now
 )
-from ._async_utils import create_authentication, get_running_loop
+from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -333,6 +337,21 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             )
         return cls(**constructor_args)
 
+    async def _on_attach(self, attach_frame):
+        # pylint: disable=protected-access, unused-argument
+        if self._session and attach_frame.source.address.decode(self._config.encoding) == self._entity_uri:
+            # This has to live on the session object so that autorenew has access to it.
+            self._session._session_start = utc_now()
+            expiry_in_seconds = attach_frame.properties.get(SESSION_LOCKED_UNTIL)
+            if expiry_in_seconds:
+                expiry_in_seconds = (
+                    expiry_in_seconds - DATETIMEOFFSET_EPOCH
+                ) / 10000000
+                self._session._locked_until_utc = utc_from_timestamp(expiry_in_seconds)
+            session_filter = attach_frame.source.filters[SESSION_FILTER]
+            self._session_id = session_filter.decode(self._config.encoding)
+            self._session._session_id = self._session_id
+
     def _create_handler(self, auth):
         custom_endpoint_address = self._config.custom_endpoint_address # pylint:disable=protected-access
         transport_type = self._config.transport_type # pylint:disable=protected-access
@@ -355,7 +374,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             send_settle_mode=SenderSettleMode.Settled
             if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
             else SenderSettleMode.Unsettled,
-            timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
+            #timeout=self._max_wait_time * 1000 if self._max_wait_time else 0, TODO: This is not working
             link_credit=self._prefetch_count,
             # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
             keep_alive_interval=self._config.keep_alive if self._prefetch_count != 1 else 5,
