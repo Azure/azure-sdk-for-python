@@ -33,7 +33,7 @@ try:
         os.environ['LOGS_WORKSPACE_ID'],
         query,
         timespan=timedelta(days=1),
-        server_timeout=3
+        server_timeout=600
     )
     if response.status == LogsQueryStatus.PARTIAL:
         error = response.partial_error
