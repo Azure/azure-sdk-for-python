@@ -9,8 +9,7 @@ from uuid import uuid4
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
-from .._shared.utils import parse_connection_str, get_current_utc_time
-from .._shared.policy import HMACCredentialsPolicy
+from .._shared.utils import parse_connection_str, get_authentication_policy, get_current_utc_time
 from .._generated.aio._azure_communication_email_service import AzureCommunicationEmailService
 from .._version import SDK_MONIKER
 from .._generated.models import SendEmailResult, SendStatusResult, EmailMessage
@@ -47,7 +46,7 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
 
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
-        authentication_policy = HMACCredentialsPolicy(endpoint, credential)
+        authentication_policy = get_authentication_policy(endpoint, credential, decode_url=True, is_async=True)
 
         self._generated_client = AzureCommunicationEmailService(
             endpoint,
