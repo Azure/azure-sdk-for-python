@@ -511,7 +511,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         assert len(tags_on_blob) == len(tags)
 
         if self.is_live:
-            sleep(10)
+            sleep(15)
 
         # To filter in a specific container use:
         # where = "@container='{}' and tag1='1000' and tag2 = 'secondtag'".format(container_name1)
