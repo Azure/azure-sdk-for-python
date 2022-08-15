@@ -1,4 +1,4 @@
 -e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
 ../../nspkg/azure-search-nspkg
-aiohttp>=3.0,<=3.7.4; python_version >= '3.5'
+aiohttp>=3.0
