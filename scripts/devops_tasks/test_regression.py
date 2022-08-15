@@ -320,20 +320,23 @@ class RegressionTest:
 
 
 # This method identifies package dependency map for all packages in azure sdk
-def find_package_dependency(glob_string, repo_root_dir):
+def find_package_dependency(glob_string, repo_root_dir, dependent_service):
     package_paths = discover_targeted_packages(glob_string, repo_root_dir, "", "Regression")
+    dependent_service_filter = os.path.join('sdk', dependent_service.lower())
+
     dependency_map = {}
     for pkg_root in package_paths:
-        parsed = ParsedSetup.from_path(pkg_root)
+        if dependent_service_filter in pkg_root:
+            parsed = ParsedSetup.from_path(pkg_root)
 
-        # Get a list of package names from install requires
-        required_pkgs = [parse_require(r)[0] for r in parsed.requires]
-        required_pkgs = [p for p in required_pkgs if p.startswith("azure")]
+            # Get a list of package names from install requires
+            required_pkgs = [parse_require(r)[0] for r in parsed.requires]
+            required_pkgs = [p for p in required_pkgs if p.startswith("azure")]
 
-        for req_pkg in required_pkgs:
-            if req_pkg not in dependency_map:
-                dependency_map[req_pkg] = []
-            dependency_map[req_pkg].append(pkg_root)
+            for req_pkg in required_pkgs:
+                if req_pkg not in dependency_map:
+                    dependency_map[req_pkg] = []
+                dependency_map[req_pkg].append(pkg_root)
 
     return dependency_map
 
