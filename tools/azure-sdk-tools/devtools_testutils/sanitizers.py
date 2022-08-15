@@ -604,7 +604,7 @@ def _send_sanitizer_request(sanitizer: str, parameters: dict) -> None:
     if is_live_and_not_recording():
         return
 
-    requests.post(
+    response = requests.post(
         "{}/Admin/AddSanitizer".format(PROXY_URL),
         headers={
             "x-abstraction-identifier": sanitizer,
