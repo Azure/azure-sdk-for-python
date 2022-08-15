@@ -91,7 +91,7 @@ class EventHubConsumer(
         self._retry_policy = self._amqp_transport.create_retry_policy(self._client._config)
         self._reconnect_backoff = 1
         self._timeout = 0
-        self._idle_timeout = (idle_timeout * self._amqp_transport.IDLE_TIMEOUT_FACTOR) if idle_timeout else None
+        self._idle_timeout = (idle_timeout * self._amqp_transport.TIMEOUT_FACTOR) if idle_timeout else None
         link_properties: Dict[types.AMQPType, types.AMQPType] = {}
         self._partition = self._source.split("/")[-1]
         self._name = f"EHReceiver-{uuid.uuid4()}-partition{self._partition}"
@@ -100,7 +100,7 @@ class EventHubConsumer(
         link_property_timeout_ms = (
             self._client._config.receive_timeout
             or self._timeout  # pylint:disable=protected-access
-        ) * self._amqp_transport.IDLE_TIMEOUT_FACTOR
+        ) * self._amqp_transport.TIMEOUT_FACTOR
         link_properties[TIMEOUT_SYMBOL] = int(link_property_timeout_ms)
         self._link_properties = self._amqp_transport.create_link_properties(link_properties)
         self._handler: Optional[ReceiveClientAsync] = None

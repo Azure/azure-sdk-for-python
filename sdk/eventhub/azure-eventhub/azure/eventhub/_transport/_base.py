@@ -11,7 +11,7 @@ class AmqpTransport(ABC):
     # define constants
     MAX_FRAME_SIZE_BYTES = None
     MAX_MESSAGE_LENGTH_BYTES = None
-    IDLE_TIMEOUT_FACTOR = None
+    TIMEOUT_FACTOR = None
     CONNECTION_CLOSING_STATES = None
 
     # define symbols

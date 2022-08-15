@@ -115,7 +115,7 @@ def test_event_data_batch(uamqp_transport):
             expected_result = 93
     else:
         pass
-    batch = EventDataBatch(max_size_in_bytes=110, partition_key="par", amqp_transport=amqp_transport)
+    batch = EventDataBatch(max_size_in_bytes=110, partition_key="par")
     batch.add(EventData("A"))
     assert str(batch) == "EventDataBatch(max_size_in_bytes=110, partition_id=None, partition_key='par', event_count=1)"
     assert repr(batch) == "EventDataBatch(max_size_in_bytes=110, partition_id=None, partition_key='par', event_count=1)"

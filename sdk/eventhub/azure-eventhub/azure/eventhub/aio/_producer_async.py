@@ -79,7 +79,7 @@ class EventHubProducer(
         self._auto_reconnect = auto_reconnect
         self._timeout = send_timeout
         self._idle_timeout = (
-            (idle_timeout * self._amqp_transport.IDLE_TIMEOUT_FACTOR)
+            (idle_timeout * self._amqp_transport.TIMEOUT_FACTOR)
             if idle_timeout
             else None
         )
