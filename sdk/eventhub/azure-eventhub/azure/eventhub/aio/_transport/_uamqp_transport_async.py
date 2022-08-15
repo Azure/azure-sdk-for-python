@@ -199,7 +199,7 @@ class UamqpTransportAsync(UamqpTransport, AmqpTransportAsync):
                 try:
                     await consumer._open()
                     await cast(
-                        ReceiveClientAsync, consumer._consumer
+                        ReceiveClientAsync, consumer._handler
                     ).do_work_async()  # uamqp sleeps 0.05 if none received
                     break
                 except asyncio.CancelledError:  # pylint: disable=try-except-raise

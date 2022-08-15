@@ -17,6 +17,7 @@ from urllib.parse import urlencode, quote_plus
 import time
 from typing import (
     TYPE_CHECKING,
+    cast,
     Type,
     Optional,
     Dict,
@@ -100,7 +101,7 @@ def create_properties(
 
     :rtype: dict
     """
-    properties = {}
+    properties: Dict[Any, str] = {}
     properties[amqp_transport.PRODUCT_SYMBOL] = USER_AGENT_PREFIX
     properties[amqp_transport.VERSION_SYMBOL] = VERSION
     framework = f"Python/{sys.version_info[0]}.{sys.version_info[1]}.{sys.version_info[2]}"
@@ -295,6 +296,7 @@ def transform_outbound_single_message(message, message_type, to_outgoing_amqp_me
     try:
         # pylint: disable=protected-access
         # If EventData, set EventData._message to uamqp/pyamqp.Message right before sending.
+        message = cast("EventData", message)
         message._message = to_outgoing_amqp_message(message.raw_amqp_message)
         return message  # type: ignore
     except AttributeError:
@@ -302,6 +304,7 @@ def transform_outbound_single_message(message, message_type, to_outgoing_amqp_me
         # If AmqpAnnotatedMessage, create EventData object with _from_message.
         # event_data._message will be set to outgoing uamqp/pyamqp.Message.
         # event_data.raw_amqp_message will be set to AmqpAnnotatedMessage.
+        message = cast(AmqpAnnotatedMessage, message)
         amqp_message = to_outgoing_amqp_message(message)
         return message_type._from_message(
             message=amqp_message, raw_amqp_message=message  # type: ignore

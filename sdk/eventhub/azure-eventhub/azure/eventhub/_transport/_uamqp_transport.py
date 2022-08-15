@@ -5,7 +5,7 @@
 
 import time
 import logging
-from typing import Optional, Union, Any
+from typing import Optional, Union, Any, Tuple
 
 try:
     from uamqp import (
@@ -77,7 +77,7 @@ if uamqp_installed:
         return errors.ErrorAction(retry=True)
 
 
-    class UamqpTransport(AmqpTransport):
+    class UamqpTransport(AmqpTransport):    # pylint: disable=too-many-public-methods
         """
         Class which defines uamqp-based methods used by the producer and consumer.
         """
@@ -85,7 +85,7 @@ if uamqp_installed:
         MAX_FRAME_SIZE_BYTES = constants.MAX_FRAME_SIZE_BYTES
         MAX_MESSAGE_LENGTH_BYTES = constants.MAX_MESSAGE_LENGTH_BYTES
         TIMEOUT_FACTOR = 1000
-        CONNECTION_CLOSING_STATES = (  # pylint:disable=protected-access
+        CONNECTION_CLOSING_STATES: Tuple = (  # pylint:disable=protected-access
                 c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
                 c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
                 c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
@@ -260,7 +260,7 @@ if uamqp_installed:
             Gets connection state.
             :param connection: uamqp or pyamqp Connection.
             """
-            return connection._state
+            return connection._state    # pylint:disable=protected-access
 
         @staticmethod
         def create_send_client(*, config, **kwargs): # pylint:disable=unused-argument
@@ -284,7 +284,7 @@ if uamqp_installed:
 
             return SendClient(
                 target,
-                debug=network_trace,  # pylint:disable=protected-access
+                debug=network_trace,
                 error_policy=retry_policy,
                 **kwargs
             )

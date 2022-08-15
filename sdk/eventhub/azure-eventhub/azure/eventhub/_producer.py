@@ -182,7 +182,7 @@ class EventHubProducer(
 
     def _wrap_eventdata(
         self,
-        event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+        event_data: Union[EventData, EventDataBatch, Iterable[EventData], AmqpAnnotatedMessage],
         span: Optional["AbstractSpan"],
         partition_key: Optional[AnyStr],
     ) -> Union[EventData, EventDataBatch]:
@@ -228,7 +228,7 @@ class EventHubProducer(
 
     def send(
         self,
-        event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+        event_data: Union[EventData, EventDataBatch, Iterable[EventData], AmqpAnnotatedMessage],
         partition_key: Optional[AnyStr] = None,
         timeout: Optional[float] = None,
     ) -> None:
@@ -237,7 +237,7 @@ class EventHubProducer(
         received or operation times out.
 
         :param event_data: The event to be sent. It can be an EventData object, or iterable of EventData objects
-        :type event_data: ~azure.eventhub.common.EventData, Iterator, Generator, list
+        :type event_data: ~azure.eventhub.common.EventData, Iterator, Generator, list or AmqpAnnotatedMessage
         :param partition_key: With the given partition_key, event data will land to
          a particular partition of the Event Hub decided by the service. partition_key
          could be omitted if event_data is of type ~azure.eventhub.EventDataBatch.

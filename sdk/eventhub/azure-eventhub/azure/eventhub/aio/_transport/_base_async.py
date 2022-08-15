@@ -2,24 +2,31 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from __future__ import annotations
+from typing import Tuple, Union, TYPE_CHECKING
 from abc import ABC, abstractmethod
 
-class AmqpTransportAsync(ABC):
+if TYPE_CHECKING:
+    from uamqp import types as uamqp_types
+
+class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     """
     Abstract class that defines a set of common methods needed by producer and consumer.
     """
     # define constants
-    MAX_FRAME_SIZE_BYTES = None
-    MAX_MESSAGE_LENGTH_BYTES = None
-    TIMEOUT_FACTOR = None
+    MAX_FRAME_SIZE_BYTES: int
+    MAX_MESSAGE_LENGTH_BYTES: int
+    TIMEOUT_FACTOR: int
+    CONNECTION_CLOSING_STATES: Tuple
 
     # define symbols
-    PRODUCT_SYMBOL = None
-    VERSION_SYMBOL = None
-    FRAMEWORK_SYMBOL = None
-    PLATFORM_SYMBOL = None
-    USER_AGENT_SYMBOL = None
-    PROP_PARTITION_KEY_AMQP_SYMBOL = None
+    PRODUCT_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
+    VERSION_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
+    FRAMEWORK_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
+    PLATFORM_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
+    USER_AGENT_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
+    PROP_PARTITION_KEY_AMQP_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
+
 
     @staticmethod
     @abstractmethod

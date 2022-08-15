@@ -21,8 +21,9 @@ if TYPE_CHECKING:
         Protocol = object  # type: ignore
 
     class ConnectionManager(Protocol):
-        def get_connection(self, host, auth):
-            # type: (str, 'JWTTokenAuth') -> Connection
+        def get_connection(
+            self, *, host: Optional[str] = None, auth: Optional[JWTTokenAuth] = None, endpoint: Optional[str] = None
+        ) -> Connection:
             pass
 
         def close_connection(self):
@@ -97,8 +98,9 @@ class _SeparateConnectionManager(object):
     def __init__(self, **kwargs):
         pass
 
-    def get_connection(self, host, auth):  # pylint:disable=unused-argument, no-self-use
-        # type: (str, JWTTokenAuth) -> None
+    def get_connection(  # pylint:disable=unused-argument, no-self-use
+        self, *, host: Optional[str] = None, auth: Optional[JWTTokenAuth] = None, endpoint: Optional[str] = None
+    ) -> None:
         return None
 
     def close_connection(self):
@@ -112,7 +114,7 @@ class _SeparateConnectionManager(object):
 
 def get_connection_manager(**kwargs):
     # type: (...) -> 'ConnectionManager'
-    connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
+    connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection) # type: ignore
     if connection_mode == _ConnectionMode.ShareConnection:
         return _SharedConnectionManager(**kwargs)
     return _SeparateConnectionManager(**kwargs)

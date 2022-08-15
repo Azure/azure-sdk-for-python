@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
     class ConnectionManager(Protocol):
         async def get_connection(
-            self, host: str, auth: JWTTokenAsync
+            self, *, host: Optional[str] = None, auth: Optional[JWTTokenAsync] = None, endpoint: Optional[str] = None
         ) -> ConnectionAsync:
             pass
 
@@ -93,7 +93,9 @@ class _SeparateConnectionManager(object):
     def __init__(self, **kwargs) -> None:
         pass
 
-    async def get_connection(self, host: str, auth: JWTTokenAsync) -> None:
+    async def get_connection(
+        self, *, host: Optional[str] = None, auth: Optional[JWTTokenAsync] = None, endpoint: Optional[str] = None
+    ) -> None:
         pass  # return None
 
     async def close_connection(self) -> None:
@@ -104,7 +106,7 @@ class _SeparateConnectionManager(object):
 
 
 def get_connection_manager(**kwargs) -> "ConnectionManager":
-    connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
+    connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection) # type: ignore
     if connection_mode == _ConnectionMode.ShareConnection:
         return _SharedConnectionManager(**kwargs)
     return _SeparateConnectionManager(**kwargs)

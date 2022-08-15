@@ -9,9 +9,9 @@ import uuid
 import time
 import functools
 import collections
-from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
+from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, TypeAlias, cast, Union
 from datetime import timedelta
-from urllib.parse import urlparse, quote_plus
+from urllib.parse import urlparse
 
 from azure.core.credentials import (
     AccessToken,
@@ -41,13 +41,6 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from uamqp import Message as uamqp_Message
     from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
-
-    CredentialTypes = Union[
-        AzureSasCredential,
-        AzureNamedKeyCredential,
-        "EventHubSharedKeyCredential",
-        TokenCredential,
-    ]
 
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
@@ -268,7 +261,7 @@ class EventhubAzureSasTokenCredential(object):
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
-    CredentialTypes = Union[
+    CredentialTypes: TypeAlias = Union[
         AzureSasCredential,
         AzureNamedKeyCredential,
         EventHubSharedKeyCredential,

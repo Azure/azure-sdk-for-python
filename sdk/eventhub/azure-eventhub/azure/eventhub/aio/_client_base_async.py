@@ -10,13 +10,6 @@ import time
 import functools
 from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union, cast
 
-import six
-from uamqp import (
-    authentication,
-    constants,
-    Message,
-    AMQPClientAsync,
-)
 from azure.core.credentials import (
     AccessToken,
     AzureSasCredential,
@@ -44,6 +37,11 @@ from ._connection_manager_async import get_connection_manager
 from ._transport._uamqp_transport_async import UamqpTransportAsync
 
 if TYPE_CHECKING:
+    from uamqp import (
+        authentication,
+        Message,
+        AMQPClientAsync,
+    )
     from azure.core.credentials_async import AsyncTokenCredential
 
     CredentialTypes = Union[
@@ -337,7 +335,7 @@ class ClientBaseAsync(ClientBase):
                 description = response.application_properties.get(
                     MGMT_STATUS_DESC
                 )  # type: Optional[Union[str, bytes]]
-                if description and isinstance(description, six.binary_type):
+                if description and isinstance(description, bytes):
                     description = description.decode("utf-8")
                 if status_code < 400:
                     return response
@@ -444,15 +442,16 @@ class ConsumerProducerMixin(_MIXIN_BASE):
                 await self._handler.close_async()
             auth = await self._client._create_auth_async()
             self._create_handler(auth)
-            conn = await self._conn_manager_async.get_connection(
-                host=self._address.hostname, auth=auth
+            conn = await self._client._conn_manager_async.get_connection(
+                host=self._client._address.hostname, auth=auth
             )
             await self._handler.open_async(connection=conn)
             while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05, **self._internal_kwargs)
+            # pylint: disable=protected-access
             self._max_message_size_on_link = (
-                self._amqp_transport.get_remote_max_message_size(self._handler)
-                or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
+                self._client._amqp_transport.get_remote_max_message_size(self._handler)
+                or self._client._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
             )
             self.running = True
 
@@ -467,8 +466,9 @@ class ConsumerProducerMixin(_MIXIN_BASE):
         await self._client._conn_manager_async.reset_connection_if_broken()  # pylint:disable=protected-access
 
     async def _handle_exception(self, exception: Exception) -> Exception:
-        exception = self._amqp_transport.check_timeout_exception(self, exception)
-        return await self._amqp_transport._handle_exception_async(  # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        exception = self._client._amqp_transport.check_timeout_exception(self, exception)
+        return await self._client._amqp_transport._handle_exception_async(
             exception, self
         )
 

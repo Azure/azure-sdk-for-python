@@ -8,7 +8,6 @@ import time
 
 from typing import Any, Union, List, Optional, Dict, Callable, cast
 from typing_extensions import TYPE_CHECKING, Literal, Awaitable, overload
-from uamqp import constants
 
 from ..exceptions import ConnectError, EventHubError
 from ..amqp import AmqpAnnotatedMessage

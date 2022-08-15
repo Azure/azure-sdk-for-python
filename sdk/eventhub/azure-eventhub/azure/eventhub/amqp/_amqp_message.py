@@ -181,9 +181,9 @@ class AmqpAnnotatedMessage(object):
         :rtype: Any
         """
         if self._body_type == AmqpMessageBodyType.DATA: # pylint:disable=no-else-return
-            return (i for i in self._data_body) # type: ignore
+            return (i for i in cast(List, self._data_body)) # type: ignore
         elif self._body_type == AmqpMessageBodyType.SEQUENCE:
-            return (i for i in self._sequence_body)
+            return (i for i in cast(List, self._sequence_body))
         elif self._body_type == AmqpMessageBodyType.VALUE:
             return self._value_body
         return None
