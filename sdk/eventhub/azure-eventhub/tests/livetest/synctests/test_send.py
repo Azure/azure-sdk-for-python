@@ -211,30 +211,36 @@ def test_send_partition(connstr_receivers):
         batch = client.create_batch()
         batch.add(EventData(b"Data"))
         client.send_batch(batch)
+        client.send_event(EventData(b"Data"))
 
     with client:
         batch = client.create_batch(partition_id="1")
         batch.add(EventData(b"Data"))
         client.send_batch(batch)
+        client.send_event(EventData(b"Data"), partition_id="1")
 
-    partition_0 = receivers[0].receive_message_batch(timeout=5)
-    partition_1 = receivers[1].receive_message_batch(timeout=5)
-    assert len(partition_0) + len(partition_1) == 2
+    partition_0 = receivers[0].receive_message_batch(timeout=5000)
+    partition_1 = receivers[1].receive_message_batch(timeout=5000)
+    assert len(partition_1) >= 2
+    assert len(partition_0) + len(partition_1) == 4
 
     with client:
         batch = client.create_batch()
         batch.add(EventData(b"Data"))
         client.send_batch(batch)
+        client.send_event(EventData(b"Data"))
 
     with client:
-        batch = client.create_batch(partition_id="1")
+        batch = client.create_batch(partition_id="0")
         batch.add(EventData(b"Data"))
         client.send_batch(batch)
+        client.send_event(EventData(b"Data"), partition_id="0")
 
-    partition_0 = receivers[0].receive_message_batch(timeout=5)
-    partition_1 = receivers[1].receive_message_batch(timeout=5)
-    assert len(partition_0) + len(partition_1) == 2
-
+    time.sleep(5)
+    partition_0 = receivers[0].receive_message_batch(timeout=5000)
+    partition_1 = receivers[1].receive_message_batch(timeout=5000)
+    assert len(partition_0) >= 2
+    assert len(partition_0) + len(partition_1) == 4
 
 @pytest.mark.liveTest
 def test_send_non_ascii(connstr_receivers):
