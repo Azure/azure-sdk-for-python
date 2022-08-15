@@ -145,7 +145,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     data = response.body()
     if data:
         data = data.decode("utf-8")
-    global_endpoint_manager.Client.diagnostics.update_diagnostics(header=headers, body=data, elapsed_time=ir.elapsed, status_code=ir.status_code, status_reason=ir.reason, response_text=ir.text)
+    global_endpoint_manager.Client.diagnostics.update_diagnostics(header=headers, body=data, elapsed_time=ir.elapsed, status_code=ir.status_code, status_reason=ir.reason, response_text=ir.text, request_headers=ir.request.headers)
     if response.status_code == 404:
         raise exceptions.CosmosResourceNotFoundError(message=data, response=response)
     if response.status_code == 409:

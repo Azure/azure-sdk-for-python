@@ -105,14 +105,14 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
             connection_verify=kwargs.pop("connection_verify", is_ssl_enabled),
             **kwargs
         )
-
+    ir = response.http_response.internal_response
     response = response.http_response
     headers = dict(response.headers)
 
     data = response.body()
     if data:
         data = data.decode("utf-8")
-
+    global_endpoint_manager.client.diagnostics.update_diagnostics(header=headers, body=data, status_code=ir.status, status_reason=ir.reason, response_text=ir._body.decode("utf-8"), request_headers=ir.request_info.headers)
     if response.status_code == 404:
         raise exceptions.CosmosResourceNotFoundError(message=data, response=response)
     if response.status_code == 409:

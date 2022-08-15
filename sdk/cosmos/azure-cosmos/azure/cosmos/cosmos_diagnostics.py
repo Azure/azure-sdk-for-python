@@ -4,6 +4,7 @@
 from requests.structures import CaseInsensitiveDict
 import platform
 import os
+from ._utils import get_user_agent
 from . import exceptions
 
 
@@ -57,10 +58,11 @@ class CosmosDiagnostics(object):
         "x-ms-retry-after-ms",
     }
 
-    def __init__(self):
-        self._headers = CaseInsensitiveDict()
+    def __init__(self, ua):
+        self._user_agent = ua
+        self._request_headers = CaseInsensitiveDict()
+        self._response_headers = CaseInsensitiveDict()
         self._body = None
-        self._request_charge = 0
         self._status_code = 0
         self._status_reason = ""
         self._substatus_code = 0
@@ -70,13 +72,20 @@ class CosmosDiagnostics(object):
         self._system_information = self.get_system_info()
 
     @property
-    def headers(self):
-        return CaseInsensitiveDict(self._headers)
+    def response_headers(self):
+        return CaseInsensitiveDict(self._response_headers)
 
-    @headers.setter
-    def headers(self, value: dict):
-        self._headers = value
-        self._request_charge += float(value.get("x-ms-request-charge", 0))
+    @response_headers.setter
+    def response_headers(self, value: dict):
+        self._response_headers = value
+
+    @property
+    def request_headers(self):
+        return CaseInsensitiveDict(self._request_headers)
+
+    @request_headers.setter
+    def request_headers(self, value: dict):
+        self._request_headers = value
 
     @property
     def body(self):
@@ -123,19 +132,23 @@ class CosmosDiagnostics(object):
     def status_message(self, value: str):
         self._status_message = value
 
-    @property
-    def request_charge(self):
-        return self._request_charge
 
-    def clear(self):
-        self._request_charge = 0
+
+    @property
+    def user_agent(self):
+        return self._user_agent
+    @user_agent.setter
+    def user_agent(self, value: str):
+        self._user_agent = value
+
 
     def update_header_and_body(self, header, body):
         self.header(header)
         self.body(body)
 
     def update_diagnostics(self, header: dict, body: dict, **kwargs):
-        self.headers = header
+        self.clear()
+        self.response_headers = header
         self.body = body
         #Note: Plan is to use kwargs to be able to easily modify this function to update with needed information
         #notes figure out how to just get status information instead of just relying on exceptions being passed
@@ -157,6 +170,12 @@ class CosmosDiagnostics(object):
             self.substatus_code = ssc
         else:
             self.substatus_code = 0
+        ua = kwargs.get("user_agent")
+        if ua:
+            self.user_agent = ua
+        rh = kwargs.get("request_headers")
+        if rh:
+            self.request_headers = dict(rh)
         if e:
             self.status_code = e.status_code
             self.status_message = e.message
@@ -205,3 +224,14 @@ class CosmosDiagnostics(object):
         ret["machine"] = platform.machine()
 
         return ret
+
+    def clear(self):
+        self.response_headers = CaseInsensitiveDict()
+        self.request_headers = CaseInsensitiveDict()
+        self.body = None
+        self.status_code = 0
+        self.status_reason = ""
+        self.substatus_code = 0
+        self.status_message = ""
+        self.elapsed_time = None
+        pass

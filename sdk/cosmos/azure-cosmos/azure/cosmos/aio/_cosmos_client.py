@@ -394,3 +394,6 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
         return result
+
+    async def diagnostics(self,p=False):
+        return self.client_connection.diagnostics(p=p)

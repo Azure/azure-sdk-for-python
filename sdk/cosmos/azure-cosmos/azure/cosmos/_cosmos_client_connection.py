@@ -142,7 +142,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             # We need to set continuation as not expected.
             http_constants.HttpHeaders.IsContinuationExpected: False,
         }
-        self.diagnostics = CosmosDiagnostics()
+        self._user_agent = _utils.get_user_agent()
+        self.diagnostics = CosmosDiagnostics(ua=self._user_agent)
         # Keeps the latest response headers from the server.
         self.last_response_headers = None
         # Keep Track of Last Exceptions
@@ -178,7 +179,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             proxy = host if url.port else host + ":" + str(self.connection_policy.ProxyConfiguration.Port)
             proxies.update({url.scheme: proxy})
 
-        self._user_agent = _utils.get_user_agent()
 
         credentials_policy = None
         if self.aad_credentials:
@@ -214,6 +214,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         # Use database_account if no consistency passed in to verify consistency level to be used
         self._set_client_consistency_level(database_account, consistency_level)
+        # initialize diagnostics
+
+
 
     def _set_client_consistency_level(
             self,
