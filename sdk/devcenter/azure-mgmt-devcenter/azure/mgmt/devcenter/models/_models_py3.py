@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9,14 +10,14 @@
 import datetime
 from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from .. import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -35,26 +36,22 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -85,47 +82,42 @@ class AttachedNetworkConnection(Resource):
      specified in 'networkConnectionResourceId' property lives.
     :vartype network_connection_location: str
     :ivar health_check_status: Health check status values. Known values are: "Pending", "Running",
-     "Passed", "Failed", "Warning", "Unknown".
+     "Passed", "Failed", "Warning", and "Unknown".
     :vartype health_check_status: str or ~azure.mgmt.devcenter.models.HealthCheckStatus
     :ivar domain_join_type: AAD Join type of the network. This is populated based on the referenced
-     Network Connection. Known values are: "HybridAzureADJoin", "AzureADJoin".
+     Network Connection. Known values are: "HybridAzureADJoin" and "AzureADJoin".
     :vartype domain_join_type: str or ~azure.mgmt.devcenter.models.DomainJoinType
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'network_connection_location': {'readonly': True},
-        'health_check_status': {'readonly': True},
-        'domain_join_type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "network_connection_location": {"readonly": True},
+        "health_check_status": {"readonly": True},
+        "domain_join_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'network_connection_id': {'key': 'properties.networkConnectionId', 'type': 'str'},
-        'network_connection_location': {'key': 'properties.networkConnectionLocation', 'type': 'str'},
-        'health_check_status': {'key': 'properties.healthCheckStatus', 'type': 'str'},
-        'domain_join_type': {'key': 'properties.domainJoinType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "network_connection_id": {"key": "properties.networkConnectionId", "type": "str"},
+        "network_connection_location": {"key": "properties.networkConnectionLocation", "type": "str"},
+        "health_check_status": {"key": "properties.healthCheckStatus", "type": "str"},
+        "domain_join_type": {"key": "properties.domainJoinType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        network_connection_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, network_connection_id: Optional[str] = None, **kwargs):
         """
         :keyword network_connection_id: The resource ID of the NetworkConnection you want to attach.
         :paramtype network_connection_id: str
         """
-        super(AttachedNetworkConnection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provisioning_state = None
         self.network_connection_id = network_connection_id
         self.network_connection_location = None
@@ -133,7 +125,7 @@ class AttachedNetworkConnection(Resource):
         self.domain_join_type = None
 
 
-class AttachedNetworkListResult(msrest.serialization.Model):
+class AttachedNetworkListResult(_serialization.Model):
     """Results of the Attached Networks list operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -145,27 +137,23 @@ class AttachedNetworkListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AttachedNetworkConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AttachedNetworkConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AttachedNetworkListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class Capability(msrest.serialization.Model):
+class Capability(_serialization.Model):
     """A name/value pair to describe a capability.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -177,22 +165,18 @@ class Capability(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'value': {'readonly': True},
+        "name": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Capability, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.value = None
 
@@ -224,23 +208,23 @@ class Catalog(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'last_sync_time': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "last_sync_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'git_hub': {'key': 'properties.gitHub', 'type': 'GitCatalog'},
-        'ado_git': {'key': 'properties.adoGit', 'type': 'GitCatalog'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'last_sync_time': {'key': 'properties.lastSyncTime', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "git_hub": {"key": "properties.gitHub", "type": "GitCatalog"},
+        "ado_git": {"key": "properties.adoGit", "type": "GitCatalog"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "last_sync_time": {"key": "properties.lastSyncTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -256,14 +240,14 @@ class Catalog(Resource):
         :keyword ado_git: Properties for an Azure DevOps catalog type.
         :paramtype ado_git: ~azure.mgmt.devcenter.models.GitCatalog
         """
-        super(Catalog, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.git_hub = git_hub
         self.ado_git = ado_git
         self.provisioning_state = None
         self.last_sync_time = None
 
 
-class CatalogListResult(msrest.serialization.Model):
+class CatalogListResult(_serialization.Model):
     """Results of the catalog list operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -275,27 +259,23 @@ class CatalogListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Catalog]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Catalog]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CatalogListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class CatalogUpdateProperties(msrest.serialization.Model):
+class CatalogUpdateProperties(_serialization.Model):
     """Properties of a catalog. These properties can be updated after the resource has been created.
 
     :ivar git_hub: Properties for a GitHub catalog type.
@@ -305,8 +285,8 @@ class CatalogUpdateProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'git_hub': {'key': 'gitHub', 'type': 'GitCatalog'},
-        'ado_git': {'key': 'adoGit', 'type': 'GitCatalog'},
+        "git_hub": {"key": "gitHub", "type": "GitCatalog"},
+        "ado_git": {"key": "adoGit", "type": "GitCatalog"},
     }
 
     def __init__(
@@ -322,7 +302,7 @@ class CatalogUpdateProperties(msrest.serialization.Model):
         :keyword ado_git: Properties for an Azure DevOps catalog type.
         :paramtype ado_git: ~azure.mgmt.devcenter.models.GitCatalog
         """
-        super(CatalogUpdateProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.git_hub = git_hub
         self.ado_git = ado_git
 
@@ -343,15 +323,15 @@ class CatalogProperties(CatalogUpdateProperties):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'last_sync_time': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "last_sync_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'git_hub': {'key': 'gitHub', 'type': 'GitCatalog'},
-        'ado_git': {'key': 'adoGit', 'type': 'GitCatalog'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'last_sync_time': {'key': 'lastSyncTime', 'type': 'iso-8601'},
+        "git_hub": {"key": "gitHub", "type": "GitCatalog"},
+        "ado_git": {"key": "adoGit", "type": "GitCatalog"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "last_sync_time": {"key": "lastSyncTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -367,15 +347,15 @@ class CatalogProperties(CatalogUpdateProperties):
         :keyword ado_git: Properties for an Azure DevOps catalog type.
         :paramtype ado_git: ~azure.mgmt.devcenter.models.GitCatalog
         """
-        super(CatalogProperties, self).__init__(git_hub=git_hub, ado_git=ado_git, **kwargs)
+        super().__init__(git_hub=git_hub, ado_git=ado_git, **kwargs)
         self.provisioning_state = None
         self.last_sync_time = None
 
 
-class CatalogUpdate(msrest.serialization.Model):
+class CatalogUpdate(_serialization.Model):
     """The catalog's properties for partial update. Properties not provided in the update request will not be changed.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar git_hub: Properties for a GitHub catalog type.
     :vartype git_hub: ~azure.mgmt.devcenter.models.GitCatalog
@@ -384,9 +364,9 @@ class CatalogUpdate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'git_hub': {'key': 'properties.gitHub', 'type': 'GitCatalog'},
-        'ado_git': {'key': 'properties.adoGit', 'type': 'GitCatalog'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "git_hub": {"key": "properties.gitHub", "type": "GitCatalog"},
+        "ado_git": {"key": "properties.adoGit", "type": "GitCatalog"},
     }
 
     def __init__(
@@ -398,29 +378,29 @@ class CatalogUpdate(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword git_hub: Properties for a GitHub catalog type.
         :paramtype git_hub: ~azure.mgmt.devcenter.models.GitCatalog
         :keyword ado_git: Properties for an Azure DevOps catalog type.
         :paramtype ado_git: ~azure.mgmt.devcenter.models.GitCatalog
         """
-        super(CatalogUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.git_hub = git_hub
         self.ado_git = ado_git
 
 
-class CloudErrorBody(msrest.serialization.Model):
+class CloudErrorBody(_serialization.Model):
     """An error response from the DevCenter service.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Required. An identifier for the error. Codes are invariant and are intended to be
-     consumed programmatically.
+    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
+     programmatically. Required.
     :vartype code: str
-    :ivar message: Required. A message describing the error, intended to be suitable for display in
-     a user interface.
+    :ivar message: A message describing the error, intended to be suitable for display in a user
+     interface. Required.
     :vartype message: str
     :ivar target: The target of the particular error. For example, the name of the property in
      error.
@@ -430,15 +410,15 @@ class CloudErrorBody(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[CloudErrorBody]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBody]"},
     }
 
     def __init__(
@@ -451,11 +431,11 @@ class CloudErrorBody(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword code: Required. An identifier for the error. Codes are invariant and are intended to
-         be consumed programmatically.
+        :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
+         programmatically. Required.
         :paramtype code: str
-        :keyword message: Required. A message describing the error, intended to be suitable for display
-         in a user interface.
+        :keyword message: A message describing the error, intended to be suitable for display in a user
+         interface. Required.
         :paramtype message: str
         :keyword target: The target of the particular error. For example, the name of the property in
          error.
@@ -463,7 +443,7 @@ class CloudErrorBody(msrest.serialization.Model):
         :keyword details: A list of additional details about the error.
         :paramtype details: list[~azure.mgmt.devcenter.models.CloudErrorBody]
         """
-        super(CloudErrorBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
@@ -488,48 +468,42 @@ class TrackedResource(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         """
-        super(TrackedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
 
-class DevBoxDefinition(TrackedResource):
+class DevBoxDefinition(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Represents a definition for a Developer Machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -547,9 +521,9 @@ class DevBoxDefinition(TrackedResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar image_reference: Image reference information.
     :vartype image_reference: ~azure.mgmt.devcenter.models.ImageReference
@@ -561,7 +535,7 @@ class DevBoxDefinition(TrackedResource):
     :ivar provisioning_state: The provisioning state of the resource.
     :vartype provisioning_state: str
     :ivar image_validation_status: Validation status of the configured image. Known values are:
-     "Unknown", "Pending", "Succeeded", "Failed", "TimedOut".
+     "Unknown", "Pending", "Succeeded", "Failed", and "TimedOut".
     :vartype image_validation_status: str or ~azure.mgmt.devcenter.models.ImageValidationStatus
     :ivar image_validation_error_details: Details for image validator error. Populated when the
      image validation is not successful.
@@ -573,31 +547,34 @@ class DevBoxDefinition(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'image_validation_status': {'readonly': True},
-        'image_validation_error_details': {'readonly': True},
-        'active_image_reference': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "image_validation_status": {"readonly": True},
+        "image_validation_error_details": {"readonly": True},
+        "active_image_reference": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'image_reference': {'key': 'properties.imageReference', 'type': 'ImageReference'},
-        'sku': {'key': 'properties.sku', 'type': 'Sku'},
-        'os_storage_type': {'key': 'properties.osStorageType', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'image_validation_status': {'key': 'properties.imageValidationStatus', 'type': 'str'},
-        'image_validation_error_details': {'key': 'properties.imageValidationErrorDetails', 'type': 'ImageValidationErrorDetails'},
-        'active_image_reference': {'key': 'properties.activeImageReference', 'type': 'ImageReference'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "image_reference": {"key": "properties.imageReference", "type": "ImageReference"},
+        "sku": {"key": "properties.sku", "type": "Sku"},
+        "os_storage_type": {"key": "properties.osStorageType", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "image_validation_status": {"key": "properties.imageValidationStatus", "type": "str"},
+        "image_validation_error_details": {
+            "key": "properties.imageValidationErrorDetails",
+            "type": "ImageValidationErrorDetails",
+        },
+        "active_image_reference": {"key": "properties.activeImageReference", "type": "ImageReference"},
     }
 
     def __init__(
@@ -611,9 +588,9 @@ class DevBoxDefinition(TrackedResource):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword image_reference: Image reference information.
         :paramtype image_reference: ~azure.mgmt.devcenter.models.ImageReference
@@ -623,7 +600,7 @@ class DevBoxDefinition(TrackedResource):
          created using this definition.
         :paramtype os_storage_type: str
         """
-        super(DevBoxDefinition, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.image_reference = image_reference
         self.sku = sku
         self.os_storage_type = os_storage_type
@@ -633,7 +610,7 @@ class DevBoxDefinition(TrackedResource):
         self.active_image_reference = None
 
 
-class DevBoxDefinitionListResult(msrest.serialization.Model):
+class DevBoxDefinitionListResult(_serialization.Model):
     """Results of the Dev Box definition list operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -645,27 +622,23 @@ class DevBoxDefinitionListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DevBoxDefinition]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DevBoxDefinition]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DevBoxDefinitionListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class DevBoxDefinitionUpdateProperties(msrest.serialization.Model):
+class DevBoxDefinitionUpdateProperties(_serialization.Model):
     """Properties of a Dev Box definition. These properties can be updated after the resource has been created.
 
     :ivar image_reference: Image reference information.
@@ -678,9 +651,9 @@ class DevBoxDefinitionUpdateProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'os_storage_type': {'key': 'osStorageType', 'type': 'str'},
+        "image_reference": {"key": "imageReference", "type": "ImageReference"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "os_storage_type": {"key": "osStorageType", "type": "str"},
     }
 
     def __init__(
@@ -700,7 +673,7 @@ class DevBoxDefinitionUpdateProperties(msrest.serialization.Model):
          created using this definition.
         :paramtype os_storage_type: str
         """
-        super(DevBoxDefinitionUpdateProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.image_reference = image_reference
         self.sku = sku
         self.os_storage_type = os_storage_type
@@ -721,7 +694,7 @@ class DevBoxDefinitionProperties(DevBoxDefinitionUpdateProperties):
     :ivar provisioning_state: The provisioning state of the resource.
     :vartype provisioning_state: str
     :ivar image_validation_status: Validation status of the configured image. Known values are:
-     "Unknown", "Pending", "Succeeded", "Failed", "TimedOut".
+     "Unknown", "Pending", "Succeeded", "Failed", and "TimedOut".
     :vartype image_validation_status: str or ~azure.mgmt.devcenter.models.ImageValidationStatus
     :ivar image_validation_error_details: Details for image validator error. Populated when the
      image validation is not successful.
@@ -733,20 +706,20 @@ class DevBoxDefinitionProperties(DevBoxDefinitionUpdateProperties):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'image_validation_status': {'readonly': True},
-        'image_validation_error_details': {'readonly': True},
-        'active_image_reference': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "image_validation_status": {"readonly": True},
+        "image_validation_error_details": {"readonly": True},
+        "active_image_reference": {"readonly": True},
     }
 
     _attribute_map = {
-        'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'os_storage_type': {'key': 'osStorageType', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'image_validation_status': {'key': 'imageValidationStatus', 'type': 'str'},
-        'image_validation_error_details': {'key': 'imageValidationErrorDetails', 'type': 'ImageValidationErrorDetails'},
-        'active_image_reference': {'key': 'activeImageReference', 'type': 'ImageReference'},
+        "image_reference": {"key": "imageReference", "type": "ImageReference"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "os_storage_type": {"key": "osStorageType", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "image_validation_status": {"key": "imageValidationStatus", "type": "str"},
+        "image_validation_error_details": {"key": "imageValidationErrorDetails", "type": "ImageValidationErrorDetails"},
+        "active_image_reference": {"key": "activeImageReference", "type": "ImageReference"},
     }
 
     def __init__(
@@ -766,41 +739,35 @@ class DevBoxDefinitionProperties(DevBoxDefinitionUpdateProperties):
          created using this definition.
         :paramtype os_storage_type: str
         """
-        super(DevBoxDefinitionProperties, self).__init__(image_reference=image_reference, sku=sku, os_storage_type=os_storage_type, **kwargs)
+        super().__init__(image_reference=image_reference, sku=sku, os_storage_type=os_storage_type, **kwargs)
         self.provisioning_state = None
         self.image_validation_status = None
         self.image_validation_error_details = None
         self.active_image_reference = None
 
 
-class TrackedResourceUpdate(msrest.serialization.Model):
+class TrackedResourceUpdate(_serialization.Model):
     """Base tracked resource type for PATCH updates.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives.
     :vartype location: str
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        location: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, location: Optional[str] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives.
         :paramtype location: str
         """
-        super(TrackedResourceUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
@@ -808,7 +775,7 @@ class TrackedResourceUpdate(msrest.serialization.Model):
 class DevBoxDefinitionUpdate(TrackedResourceUpdate):
     """Partial update of a Dev Box definition resource.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives.
     :vartype location: str
@@ -822,11 +789,11 @@ class DevBoxDefinitionUpdate(TrackedResourceUpdate):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'image_reference': {'key': 'properties.imageReference', 'type': 'ImageReference'},
-        'sku': {'key': 'properties.sku', 'type': 'Sku'},
-        'os_storage_type': {'key': 'properties.osStorageType', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "image_reference": {"key": "properties.imageReference", "type": "ImageReference"},
+        "sku": {"key": "properties.sku", "type": "Sku"},
+        "os_storage_type": {"key": "properties.osStorageType", "type": "str"},
     }
 
     def __init__(
@@ -840,7 +807,7 @@ class DevBoxDefinitionUpdate(TrackedResourceUpdate):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives.
         :paramtype location: str
@@ -852,7 +819,7 @@ class DevBoxDefinitionUpdate(TrackedResourceUpdate):
          created using this definition.
         :paramtype os_storage_type: str
         """
-        super(DevBoxDefinitionUpdate, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.image_reference = image_reference
         self.sku = sku
         self.os_storage_type = os_storage_type
@@ -876,9 +843,9 @@ class DevCenter(TrackedResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar identity: Managed identity properties.
     :vartype identity: ~azure.mgmt.devcenter.models.ManagedServiceIdentity
@@ -887,23 +854,23 @@ class DevCenter(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -915,19 +882,19 @@ class DevCenter(TrackedResource):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword identity: Managed identity properties.
         :paramtype identity: ~azure.mgmt.devcenter.models.ManagedServiceIdentity
         """
-        super(DevCenter, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.provisioning_state = None
 
 
-class DevCenterListResult(msrest.serialization.Model):
+class DevCenterListResult(_serialization.Model):
     """Result of the list devcenters operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -939,36 +906,32 @@ class DevCenterListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DevCenter]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DevCenter]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DevCenterListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class Sku(msrest.serialization.Model):
+class Sku(_serialization.Model):
     """The resource model definition representing SKU.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the SKU. Ex - P3. It is typically a letter+number code.
+    :ivar name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
     :vartype name: str
     :ivar tier: This field is required to be implemented by the Resource Provider if the service
      has more than one tier, but is not required on a PUT. Known values are: "Free", "Basic",
-     "Standard", "Premium".
+     "Standard", and "Premium".
     :vartype tier: str or ~azure.mgmt.devcenter.models.SkuTier
     :ivar size: The SKU size. When the name field is the combination of tier and some other value,
      this would be the standalone code.
@@ -982,15 +945,15 @@ class Sku(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'size': {'key': 'size', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "size": {"key": "size", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
     def __init__(
@@ -1004,11 +967,11 @@ class Sku(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. The name of the SKU. Ex - P3. It is typically a letter+number code.
+        :keyword name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
         :paramtype name: str
         :keyword tier: This field is required to be implemented by the Resource Provider if the service
          has more than one tier, but is not required on a PUT. Known values are: "Free", "Basic",
-         "Standard", "Premium".
+         "Standard", and "Premium".
         :paramtype tier: str or ~azure.mgmt.devcenter.models.SkuTier
         :keyword size: The SKU size. When the name field is the combination of tier and some other
          value, this would be the standalone code.
@@ -1020,7 +983,7 @@ class Sku(msrest.serialization.Model):
          included. If scale out/in is not possible for the resource this may be omitted.
         :paramtype capacity: int
         """
-        super(Sku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tier = tier
         self.size = size
@@ -1035,11 +998,11 @@ class DevCenterSku(Sku):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the SKU. Ex - P3. It is typically a letter+number code.
+    :ivar name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
     :vartype name: str
     :ivar tier: This field is required to be implemented by the Resource Provider if the service
      has more than one tier, but is not required on a PUT. Known values are: "Free", "Basic",
-     "Standard", "Premium".
+     "Standard", and "Premium".
     :vartype tier: str or ~azure.mgmt.devcenter.models.SkuTier
     :ivar size: The SKU size. When the name field is the combination of tier and some other value,
      this would be the standalone code.
@@ -1059,21 +1022,21 @@ class DevCenterSku(Sku):
     """
 
     _validation = {
-        'name': {'required': True},
-        'resource_type': {'readonly': True},
-        'locations': {'readonly': True},
-        'capabilities': {'readonly': True},
+        "name": {"required": True},
+        "resource_type": {"readonly": True},
+        "locations": {"readonly": True},
+        "capabilities": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'size': {'key': 'size', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'locations': {'key': 'locations', 'type': '[str]'},
-        'capabilities': {'key': 'capabilities', 'type': '[Capability]'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "size": {"key": "size", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "locations": {"key": "locations", "type": "[str]"},
+        "capabilities": {"key": "capabilities", "type": "[Capability]"},
     }
 
     def __init__(
@@ -1087,11 +1050,11 @@ class DevCenterSku(Sku):
         **kwargs
     ):
         """
-        :keyword name: Required. The name of the SKU. Ex - P3. It is typically a letter+number code.
+        :keyword name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
         :paramtype name: str
         :keyword tier: This field is required to be implemented by the Resource Provider if the service
          has more than one tier, but is not required on a PUT. Known values are: "Free", "Basic",
-         "Standard", "Premium".
+         "Standard", and "Premium".
         :paramtype tier: str or ~azure.mgmt.devcenter.models.SkuTier
         :keyword size: The SKU size. When the name field is the combination of tier and some other
          value, this would be the standalone code.
@@ -1103,7 +1066,7 @@ class DevCenterSku(Sku):
          included. If scale out/in is not possible for the resource this may be omitted.
         :paramtype capacity: int
         """
-        super(DevCenterSku, self).__init__(name=name, tier=tier, size=size, family=family, capacity=capacity, **kwargs)
+        super().__init__(name=name, tier=tier, size=size, family=family, capacity=capacity, **kwargs)
         self.resource_type = None
         self.locations = None
         self.capabilities = None
@@ -1112,7 +1075,7 @@ class DevCenterSku(Sku):
 class DevCenterUpdate(TrackedResourceUpdate):
     """The devcenter resource for partial updates. Properties not provided in the update request will not be changed.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives.
     :vartype location: str
@@ -1121,9 +1084,9 @@ class DevCenterUpdate(TrackedResourceUpdate):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
     }
 
     def __init__(
@@ -1135,18 +1098,18 @@ class DevCenterUpdate(TrackedResourceUpdate):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives.
         :paramtype location: str
         :keyword identity: Managed identity properties.
         :paramtype identity: ~azure.mgmt.devcenter.models.ManagedServiceIdentity
         """
-        super(DevCenterUpdate, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
 
 
-class EnvironmentRole(msrest.serialization.Model):
+class EnvironmentRole(_serialization.Model):
     """A role that can be assigned to a user.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1159,22 +1122,18 @@ class EnvironmentRole(msrest.serialization.Model):
     """
 
     _validation = {
-        'role_name': {'readonly': True},
-        'description': {'readonly': True},
+        "role_name": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'role_name': {'key': 'roleName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "role_name": {"key": "roleName", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(EnvironmentRole, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.role_name = None
         self.description = None
 
@@ -1195,45 +1154,40 @@ class EnvironmentType(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar provisioning_state: The provisioning state of the resource.
     :vartype provisioning_state: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(EnvironmentType, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.provisioning_state = None
 
 
-class EnvironmentTypeListResult(msrest.serialization.Model):
+class EnvironmentTypeListResult(_serialization.Model):
     """Result of the environment type list operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1245,48 +1199,39 @@ class EnvironmentTypeListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EnvironmentType]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[EnvironmentType]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(EnvironmentTypeListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class EnvironmentTypeUpdate(msrest.serialization.Model):
+class EnvironmentTypeUpdate(_serialization.Model):
     """The environment type for partial update. Properties not provided in the update request will not be changed.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(EnvironmentTypeUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
@@ -1313,38 +1258,33 @@ class Gallery(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'gallery_resource_id': {'key': 'properties.galleryResourceId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "gallery_resource_id": {"key": "properties.galleryResourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        gallery_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, gallery_resource_id: Optional[str] = None, **kwargs):
         """
         :keyword gallery_resource_id: The resource ID of the backing Azure Compute Gallery.
         :paramtype gallery_resource_id: str
         """
-        super(Gallery, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provisioning_state = None
         self.gallery_resource_id = gallery_resource_id
 
 
-class GalleryListResult(msrest.serialization.Model):
+class GalleryListResult(_serialization.Model):
     """Results of the gallery list operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1356,27 +1296,23 @@ class GalleryListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Gallery]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Gallery]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(GalleryListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class GitCatalog(msrest.serialization.Model):
+class GitCatalog(_serialization.Model):
     """Properties for a Git repository catalog.
 
     :ivar uri: Git URI.
@@ -1391,10 +1327,10 @@ class GitCatalog(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'uri': {'key': 'uri', 'type': 'str'},
-        'branch': {'key': 'branch', 'type': 'str'},
-        'secret_identifier': {'key': 'secretIdentifier', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
+        "uri": {"key": "uri", "type": "str"},
+        "branch": {"key": "branch", "type": "str"},
+        "secret_identifier": {"key": "secretIdentifier", "type": "str"},
+        "path": {"key": "path", "type": "str"},
     }
 
     def __init__(
@@ -1417,20 +1353,20 @@ class GitCatalog(msrest.serialization.Model):
         :keyword path: The folder where the catalog items can be found inside the repository.
         :paramtype path: str
         """
-        super(GitCatalog, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.uri = uri
         self.branch = branch
         self.secret_identifier = secret_identifier
         self.path = path
 
 
-class HealthCheck(msrest.serialization.Model):
+class HealthCheck(_serialization.Model):
     """An individual health check item.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar status: The status of the health check item. Known values are: "Pending", "Running",
-     "Passed", "Failed", "Warning", "Unknown".
+     "Passed", "Failed", "Warning", and "Unknown".
     :vartype status: str or ~azure.mgmt.devcenter.models.HealthCheckStatus
     :ivar display_name: The display name of this health check item.
     :vartype display_name: str
@@ -1447,32 +1383,28 @@ class HealthCheck(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'readonly': True},
-        'display_name': {'readonly': True},
-        'start_date_time': {'readonly': True},
-        'end_date_time': {'readonly': True},
-        'error_type': {'readonly': True},
-        'recommended_action': {'readonly': True},
-        'additional_details': {'readonly': True},
+        "status": {"readonly": True},
+        "display_name": {"readonly": True},
+        "start_date_time": {"readonly": True},
+        "end_date_time": {"readonly": True},
+        "error_type": {"readonly": True},
+        "recommended_action": {"readonly": True},
+        "additional_details": {"readonly": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'start_date_time': {'key': 'startDateTime', 'type': 'iso-8601'},
-        'end_date_time': {'key': 'endDateTime', 'type': 'iso-8601'},
-        'error_type': {'key': 'errorType', 'type': 'str'},
-        'recommended_action': {'key': 'recommendedAction', 'type': 'str'},
-        'additional_details': {'key': 'additionalDetails', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "start_date_time": {"key": "startDateTime", "type": "iso-8601"},
+        "end_date_time": {"key": "endDateTime", "type": "iso-8601"},
+        "error_type": {"key": "errorType", "type": "str"},
+        "recommended_action": {"key": "recommendedAction", "type": "str"},
+        "additional_details": {"key": "additionalDetails", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(HealthCheck, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.status = None
         self.display_name = None
         self.start_date_time = None
@@ -1507,38 +1439,34 @@ class HealthCheckStatusDetails(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'start_date_time': {'readonly': True},
-        'end_date_time': {'readonly': True},
-        'health_checks': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "start_date_time": {"readonly": True},
+        "end_date_time": {"readonly": True},
+        "health_checks": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'start_date_time': {'key': 'properties.startDateTime', 'type': 'iso-8601'},
-        'end_date_time': {'key': 'properties.endDateTime', 'type': 'iso-8601'},
-        'health_checks': {'key': 'properties.healthChecks', 'type': '[HealthCheck]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "start_date_time": {"key": "properties.startDateTime", "type": "iso-8601"},
+        "end_date_time": {"key": "properties.endDateTime", "type": "iso-8601"},
+        "health_checks": {"key": "properties.healthChecks", "type": "[HealthCheck]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(HealthCheckStatusDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.start_date_time = None
         self.end_date_time = None
         self.health_checks = None
 
 
-class HealthCheckStatusDetailsListResult(msrest.serialization.Model):
+class HealthCheckStatusDetailsListResult(_serialization.Model):
     """Result of the network health check list operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1550,22 +1478,18 @@ class HealthCheckStatusDetailsListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[HealthCheckStatusDetails]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[HealthCheckStatusDetails]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(HealthCheckStatusDetailsListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -1589,26 +1513,22 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
 class Image(ProxyResource):
@@ -1644,38 +1564,37 @@ class Image(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'description': {'readonly': True},
-        'publisher': {'readonly': True},
-        'offer': {'readonly': True},
-        'sku': {'readonly': True},
-        'recommended_machine_configuration': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "description": {"readonly": True},
+        "publisher": {"readonly": True},
+        "offer": {"readonly": True},
+        "sku": {"readonly": True},
+        "recommended_machine_configuration": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'offer': {'key': 'properties.offer', 'type': 'str'},
-        'sku': {'key': 'properties.sku', 'type': 'str'},
-        'recommended_machine_configuration': {'key': 'properties.recommendedMachineConfiguration', 'type': 'RecommendedMachineConfiguration'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "description": {"key": "properties.description", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "offer": {"key": "properties.offer", "type": "str"},
+        "sku": {"key": "properties.sku", "type": "str"},
+        "recommended_machine_configuration": {
+            "key": "properties.recommendedMachineConfiguration",
+            "type": "RecommendedMachineConfiguration",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Image, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.description = None
         self.publisher = None
         self.offer = None
@@ -1684,7 +1603,7 @@ class Image(ProxyResource):
         self.provisioning_state = None
 
 
-class ImageListResult(msrest.serialization.Model):
+class ImageListResult(_serialization.Model):
     """Results of the image list operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1696,27 +1615,23 @@ class ImageListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Image]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Image]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ImageListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ImageReference(msrest.serialization.Model):
+class ImageReference(_serialization.Model):
     """Image reference information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1736,21 +1651,21 @@ class ImageReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'exact_version': {'readonly': True},
+        "exact_version": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'exact_version': {'key': 'exactVersion', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'offer': {'key': 'offer', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "exact_version": {"key": "exactVersion", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "offer": {"key": "offer", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         publisher: Optional[str] = None,
         offer: Optional[str] = None,
         sku: Optional[str] = None,
@@ -1767,7 +1682,7 @@ class ImageReference(msrest.serialization.Model):
         :keyword sku: The image sku.
         :paramtype sku: str
         """
-        super(ImageReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.exact_version = None
         self.publisher = publisher
@@ -1775,7 +1690,7 @@ class ImageReference(msrest.serialization.Model):
         self.sku = sku
 
 
-class ImageValidationErrorDetails(msrest.serialization.Model):
+class ImageValidationErrorDetails(_serialization.Model):
     """Image validation error details.
 
     :ivar code: An identifier for the error.
@@ -1785,24 +1700,18 @@ class ImageValidationErrorDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
         """
         :keyword code: An identifier for the error.
         :paramtype code: str
         :keyword message: A message describing the error.
         :paramtype message: str
         """
-        super(ImageValidationErrorDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
@@ -1837,36 +1746,32 @@ class ImageVersion(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'name_properties_name': {'readonly': True},
-        'published_date': {'readonly': True},
-        'exclude_from_latest': {'readonly': True},
-        'os_disk_image_size_in_gb': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "name_properties_name": {"readonly": True},
+        "published_date": {"readonly": True},
+        "exclude_from_latest": {"readonly": True},
+        "os_disk_image_size_in_gb": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
-        'published_date': {'key': 'properties.publishedDate', 'type': 'iso-8601'},
-        'exclude_from_latest': {'key': 'properties.excludeFromLatest', 'type': 'bool'},
-        'os_disk_image_size_in_gb': {'key': 'properties.osDiskImageSizeInGb', 'type': 'int'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "name_properties_name": {"key": "properties.name", "type": "str"},
+        "published_date": {"key": "properties.publishedDate", "type": "iso-8601"},
+        "exclude_from_latest": {"key": "properties.excludeFromLatest", "type": "bool"},
+        "os_disk_image_size_in_gb": {"key": "properties.osDiskImageSizeInGb", "type": "int"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ImageVersion, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name_properties_name = None
         self.published_date = None
         self.exclude_from_latest = None
@@ -1874,7 +1779,7 @@ class ImageVersion(ProxyResource):
         self.provisioning_state = None
 
 
-class ImageVersionListResult(msrest.serialization.Model):
+class ImageVersionListResult(_serialization.Model):
     """Results of the image version list operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1886,27 +1791,23 @@ class ImageVersionListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ImageVersion]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ImageVersion]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ImageVersionListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ListUsagesResult(msrest.serialization.Model):
+class ListUsagesResult(_serialization.Model):
     """List of Core Usages.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1918,27 +1819,23 @@ class ListUsagesResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Usage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Usage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ListUsagesResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ManagedServiceIdentity(msrest.serialization.Model):
+class ManagedServiceIdentity(_serialization.Model):
     """Managed service identity (system assigned and/or user assigned identities).
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1951,8 +1848,8 @@ class ManagedServiceIdentity(msrest.serialization.Model):
     :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
     :vartype tenant_id: str
-    :ivar type: Required. Type of managed service identity (where both SystemAssigned and
-     UserAssigned types are allowed). Known values are: "None", "SystemAssigned", "UserAssigned",
+    :ivar type: Type of managed service identity (where both SystemAssigned and UserAssigned types
+     are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
      "SystemAssigned, UserAssigned".
     :vartype type: str or ~azure.mgmt.devcenter.models.ManagedServiceIdentityType
     :ivar user_assigned_identities: The set of user assigned identities associated with the
@@ -1963,16 +1860,16 @@ class ManagedServiceIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-        'type': {'required': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
     }
 
     def __init__(
@@ -1983,8 +1880,8 @@ class ManagedServiceIdentity(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword type: Required. Type of managed service identity (where both SystemAssigned and
-         UserAssigned types are allowed). Known values are: "None", "SystemAssigned", "UserAssigned",
+        :keyword type: Type of managed service identity (where both SystemAssigned and UserAssigned
+         types are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
          "SystemAssigned, UserAssigned".
         :paramtype type: str or ~azure.mgmt.devcenter.models.ManagedServiceIdentityType
         :keyword user_assigned_identities: The set of user assigned identities associated with the
@@ -1994,14 +1891,14 @@ class ManagedServiceIdentity(msrest.serialization.Model):
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.devcenter.models.UserAssignedIdentity]
         """
-        super(ManagedServiceIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
 
-class NetworkConnection(TrackedResource):
+class NetworkConnection(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Network related settings.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2019,9 +1916,9 @@ class NetworkConnection(TrackedResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar subnet_id: The subnet to attach Virtual Machines to.
     :vartype subnet_id: str
@@ -2039,40 +1936,40 @@ class NetworkConnection(TrackedResource):
     :vartype provisioning_state: str
     :ivar health_check_status: Overall health status of the network connection. Health checks are
      run on creation, update, and periodically to validate the network connection. Known values are:
-     "Pending", "Running", "Passed", "Failed", "Warning", "Unknown".
+     "Pending", "Running", "Passed", "Failed", "Warning", and "Unknown".
     :vartype health_check_status: str or ~azure.mgmt.devcenter.models.HealthCheckStatus
     :ivar networking_resource_group_name: The name for resource group where NICs will be placed.
     :vartype networking_resource_group_name: str
-    :ivar domain_join_type: AAD Join type. Known values are: "HybridAzureADJoin", "AzureADJoin".
+    :ivar domain_join_type: AAD Join type. Known values are: "HybridAzureADJoin" and "AzureADJoin".
     :vartype domain_join_type: str or ~azure.mgmt.devcenter.models.DomainJoinType
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'health_check_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "health_check_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
-        'domain_name': {'key': 'properties.domainName', 'type': 'str'},
-        'organization_unit': {'key': 'properties.organizationUnit', 'type': 'str'},
-        'domain_username': {'key': 'properties.domainUsername', 'type': 'str'},
-        'domain_password': {'key': 'properties.domainPassword', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'health_check_status': {'key': 'properties.healthCheckStatus', 'type': 'str'},
-        'networking_resource_group_name': {'key': 'properties.networkingResourceGroupName', 'type': 'str'},
-        'domain_join_type': {'key': 'properties.domainJoinType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "subnet_id": {"key": "properties.subnetId", "type": "str"},
+        "domain_name": {"key": "properties.domainName", "type": "str"},
+        "organization_unit": {"key": "properties.organizationUnit", "type": "str"},
+        "domain_username": {"key": "properties.domainUsername", "type": "str"},
+        "domain_password": {"key": "properties.domainPassword", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "health_check_status": {"key": "properties.healthCheckStatus", "type": "str"},
+        "networking_resource_group_name": {"key": "properties.networkingResourceGroupName", "type": "str"},
+        "domain_join_type": {"key": "properties.domainJoinType", "type": "str"},
     }
 
     def __init__(
@@ -2090,9 +1987,9 @@ class NetworkConnection(TrackedResource):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword subnet_id: The subnet to attach Virtual Machines to.
         :paramtype subnet_id: str
@@ -2108,10 +2005,11 @@ class NetworkConnection(TrackedResource):
         :paramtype domain_password: str
         :keyword networking_resource_group_name: The name for resource group where NICs will be placed.
         :paramtype networking_resource_group_name: str
-        :keyword domain_join_type: AAD Join type. Known values are: "HybridAzureADJoin", "AzureADJoin".
+        :keyword domain_join_type: AAD Join type. Known values are: "HybridAzureADJoin" and
+         "AzureADJoin".
         :paramtype domain_join_type: str or ~azure.mgmt.devcenter.models.DomainJoinType
         """
-        super(NetworkConnection, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.subnet_id = subnet_id
         self.domain_name = domain_name
         self.organization_unit = organization_unit
@@ -2123,7 +2021,7 @@ class NetworkConnection(TrackedResource):
         self.domain_join_type = domain_join_type
 
 
-class NetworkConnectionListResult(msrest.serialization.Model):
+class NetworkConnectionListResult(_serialization.Model):
     """Result of the network connection list operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2135,22 +2033,18 @@ class NetworkConnectionListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NetworkConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(NetworkConnectionListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -2158,7 +2052,7 @@ class NetworkConnectionListResult(msrest.serialization.Model):
 class NetworkConnectionUpdate(TrackedResourceUpdate):
     """The network connection properties for partial update. Properties not provided in the update request will not be changed.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives.
     :vartype location: str
@@ -2177,13 +2071,13 @@ class NetworkConnectionUpdate(TrackedResourceUpdate):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
-        'domain_name': {'key': 'properties.domainName', 'type': 'str'},
-        'organization_unit': {'key': 'properties.organizationUnit', 'type': 'str'},
-        'domain_username': {'key': 'properties.domainUsername', 'type': 'str'},
-        'domain_password': {'key': 'properties.domainPassword', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "subnet_id": {"key": "properties.subnetId", "type": "str"},
+        "domain_name": {"key": "properties.domainName", "type": "str"},
+        "organization_unit": {"key": "properties.organizationUnit", "type": "str"},
+        "domain_username": {"key": "properties.domainUsername", "type": "str"},
+        "domain_password": {"key": "properties.domainPassword", "type": "str"},
     }
 
     def __init__(
@@ -2199,7 +2093,7 @@ class NetworkConnectionUpdate(TrackedResourceUpdate):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives.
         :paramtype location: str
@@ -2216,7 +2110,7 @@ class NetworkConnectionUpdate(TrackedResourceUpdate):
         :keyword domain_password: The password for the account used to join domain.
         :paramtype domain_password: str
         """
-        super(NetworkConnectionUpdate, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.subnet_id = subnet_id
         self.domain_name = domain_name
         self.organization_unit = organization_unit
@@ -2224,7 +2118,7 @@ class NetworkConnectionUpdate(TrackedResourceUpdate):
         self.domain_password = domain_password
 
 
-class NetworkConnectionUpdateProperties(msrest.serialization.Model):
+class NetworkConnectionUpdateProperties(_serialization.Model):
     """Properties of network connection. These properties can be updated after the resource has been created.
 
     :ivar subnet_id: The subnet to attach Virtual Machines to.
@@ -2242,11 +2136,11 @@ class NetworkConnectionUpdateProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'domain_name': {'key': 'domainName', 'type': 'str'},
-        'organization_unit': {'key': 'organizationUnit', 'type': 'str'},
-        'domain_username': {'key': 'domainUsername', 'type': 'str'},
-        'domain_password': {'key': 'domainPassword', 'type': 'str'},
+        "subnet_id": {"key": "subnetId", "type": "str"},
+        "domain_name": {"key": "domainName", "type": "str"},
+        "organization_unit": {"key": "organizationUnit", "type": "str"},
+        "domain_username": {"key": "domainUsername", "type": "str"},
+        "domain_password": {"key": "domainPassword", "type": "str"},
     }
 
     def __init__(
@@ -2273,7 +2167,7 @@ class NetworkConnectionUpdateProperties(msrest.serialization.Model):
         :keyword domain_password: The password for the account used to join domain.
         :paramtype domain_password: str
         """
-        super(NetworkConnectionUpdateProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.subnet_id = subnet_id
         self.domain_name = domain_name
         self.organization_unit = organization_unit
@@ -2304,31 +2198,31 @@ class NetworkProperties(NetworkConnectionUpdateProperties):
     :vartype provisioning_state: str
     :ivar health_check_status: Overall health status of the network connection. Health checks are
      run on creation, update, and periodically to validate the network connection. Known values are:
-     "Pending", "Running", "Passed", "Failed", "Warning", "Unknown".
+     "Pending", "Running", "Passed", "Failed", "Warning", and "Unknown".
     :vartype health_check_status: str or ~azure.mgmt.devcenter.models.HealthCheckStatus
     :ivar networking_resource_group_name: The name for resource group where NICs will be placed.
     :vartype networking_resource_group_name: str
-    :ivar domain_join_type: Required. AAD Join type. Known values are: "HybridAzureADJoin",
+    :ivar domain_join_type: AAD Join type. Required. Known values are: "HybridAzureADJoin" and
      "AzureADJoin".
     :vartype domain_join_type: str or ~azure.mgmt.devcenter.models.DomainJoinType
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'health_check_status': {'readonly': True},
-        'domain_join_type': {'required': True},
+        "provisioning_state": {"readonly": True},
+        "health_check_status": {"readonly": True},
+        "domain_join_type": {"required": True},
     }
 
     _attribute_map = {
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'domain_name': {'key': 'domainName', 'type': 'str'},
-        'organization_unit': {'key': 'organizationUnit', 'type': 'str'},
-        'domain_username': {'key': 'domainUsername', 'type': 'str'},
-        'domain_password': {'key': 'domainPassword', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'health_check_status': {'key': 'healthCheckStatus', 'type': 'str'},
-        'networking_resource_group_name': {'key': 'networkingResourceGroupName', 'type': 'str'},
-        'domain_join_type': {'key': 'domainJoinType', 'type': 'str'},
+        "subnet_id": {"key": "subnetId", "type": "str"},
+        "domain_name": {"key": "domainName", "type": "str"},
+        "organization_unit": {"key": "organizationUnit", "type": "str"},
+        "domain_username": {"key": "domainUsername", "type": "str"},
+        "domain_password": {"key": "domainPassword", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "health_check_status": {"key": "healthCheckStatus", "type": "str"},
+        "networking_resource_group_name": {"key": "networkingResourceGroupName", "type": "str"},
+        "domain_join_type": {"key": "domainJoinType", "type": "str"},
     }
 
     def __init__(
@@ -2358,18 +2252,25 @@ class NetworkProperties(NetworkConnectionUpdateProperties):
         :paramtype domain_password: str
         :keyword networking_resource_group_name: The name for resource group where NICs will be placed.
         :paramtype networking_resource_group_name: str
-        :keyword domain_join_type: Required. AAD Join type. Known values are: "HybridAzureADJoin",
+        :keyword domain_join_type: AAD Join type. Required. Known values are: "HybridAzureADJoin" and
          "AzureADJoin".
         :paramtype domain_join_type: str or ~azure.mgmt.devcenter.models.DomainJoinType
         """
-        super(NetworkProperties, self).__init__(subnet_id=subnet_id, domain_name=domain_name, organization_unit=organization_unit, domain_username=domain_username, domain_password=domain_password, **kwargs)
+        super().__init__(
+            subnet_id=subnet_id,
+            domain_name=domain_name,
+            organization_unit=organization_unit,
+            domain_username=domain_username,
+            domain_password=domain_password,
+            **kwargs
+        )
         self.provisioning_state = None
         self.health_check_status = None
         self.networking_resource_group_name = networking_resource_group_name
         self.domain_join_type = domain_join_type
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Details of a REST API operation, returned from the Resource Provider Operations API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2384,39 +2285,34 @@ class Operation(msrest.serialization.Model):
     :vartype display: ~azure.mgmt.devcenter.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
      (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
-     "user,system".
+     and "user,system".
     :vartype origin: str or ~azure.mgmt.devcenter.models.Origin
     :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
-     internal only APIs. Known values are: "Internal".
+     internal only APIs. "Internal"
     :vartype action_type: str or ~azure.mgmt.devcenter.models.ActionType
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'is_data_action': {'readonly': True},
-        'origin': {'readonly': True},
-        'action_type': {'readonly': True},
+        "name": {"readonly": True},
+        "is_data_action": {"readonly": True},
+        "origin": {"readonly": True},
+        "action_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'action_type': {'key': 'actionType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        display: Optional["_models.OperationDisplay"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
         """
         :keyword display: Localized display information for this particular operation.
         :paramtype display: ~azure.mgmt.devcenter.models.OperationDisplay
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.is_data_action = None
         self.display = display
@@ -2424,7 +2320,7 @@ class Operation(msrest.serialization.Model):
         self.action_type = None
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """Localized display information for this particular operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2444,33 +2340,29 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationDisplay, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
         self.description = None
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2482,27 +2374,23 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class OperationStatus(msrest.serialization.Model):
+class OperationStatus(_serialization.Model):
     """The current status of an async operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2520,43 +2408,38 @@ class OperationStatus(msrest.serialization.Model):
     :ivar percent_complete: Percent of the operation that is complete.
     :vartype percent_complete: float
     :ivar properties: Custom operation properties, populated only for a successful operation.
-    :vartype properties: any
+    :vartype properties: JSON
     :ivar error: Operation Error message.
     :vartype error: ~azure.mgmt.devcenter.models.OperationStatusError
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'status': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'percent_complete': {'readonly': True, 'maximum': 100, 'minimum': 0},
-        'properties': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "status": {"readonly": True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
+        "percent_complete": {"readonly": True, "maximum": 100, "minimum": 0},
+        "properties": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'percent_complete': {'key': 'percentComplete', 'type': 'float'},
-        'properties': {'key': 'properties', 'type': 'object'},
-        'error': {'key': 'error', 'type': 'OperationStatusError'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "percent_complete": {"key": "percentComplete", "type": "float"},
+        "properties": {"key": "properties", "type": "object"},
+        "error": {"key": "error", "type": "OperationStatusError"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.OperationStatusError"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.OperationStatusError"] = None, **kwargs):
         """
         :keyword error: Operation Error message.
         :paramtype error: ~azure.mgmt.devcenter.models.OperationStatusError
         """
-        super(OperationStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.status = None
@@ -2567,7 +2450,7 @@ class OperationStatus(msrest.serialization.Model):
         self.error = error
 
 
-class OperationStatusError(msrest.serialization.Model):
+class OperationStatusError(_serialization.Model):
     """Operation Error message.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2579,27 +2462,23 @@ class OperationStatusError(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationStatusError, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
 
 
-class Pool(TrackedResource):
+class Pool(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """A pool of Virtual Machines.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2617,45 +2496,45 @@ class Pool(TrackedResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar dev_box_definition_name: Name of a Dev Box definition in parent Project of this Pool.
     :vartype dev_box_definition_name: str
     :ivar network_connection_name: Name of a Network Connection in parent Project of this Pool.
     :vartype network_connection_name: str
     :ivar license_type: Specifies the license type indicating the caller has already acquired
-     licenses for the Dev Boxes that will be created. Known values are: "Windows_Client".
+     licenses for the Dev Boxes that will be created. "Windows_Client"
     :vartype license_type: str or ~azure.mgmt.devcenter.models.LicenseType
     :ivar local_administrator: Indicates whether owners of Dev Boxes in this pool are added as
-     local administrators on the Dev Box. Known values are: "Disabled", "Enabled".
+     local administrators on the Dev Box. Known values are: "Disabled" and "Enabled".
     :vartype local_administrator: str or ~azure.mgmt.devcenter.models.LocalAdminStatus
     :ivar provisioning_state: The provisioning state of the resource.
     :vartype provisioning_state: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'dev_box_definition_name': {'key': 'properties.devBoxDefinitionName', 'type': 'str'},
-        'network_connection_name': {'key': 'properties.networkConnectionName', 'type': 'str'},
-        'license_type': {'key': 'properties.licenseType', 'type': 'str'},
-        'local_administrator': {'key': 'properties.localAdministrator', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "dev_box_definition_name": {"key": "properties.devBoxDefinitionName", "type": "str"},
+        "network_connection_name": {"key": "properties.networkConnectionName", "type": "str"},
+        "license_type": {"key": "properties.licenseType", "type": "str"},
+        "local_administrator": {"key": "properties.localAdministrator", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -2670,22 +2549,22 @@ class Pool(TrackedResource):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword dev_box_definition_name: Name of a Dev Box definition in parent Project of this Pool.
         :paramtype dev_box_definition_name: str
         :keyword network_connection_name: Name of a Network Connection in parent Project of this Pool.
         :paramtype network_connection_name: str
         :keyword license_type: Specifies the license type indicating the caller has already acquired
-         licenses for the Dev Boxes that will be created. Known values are: "Windows_Client".
+         licenses for the Dev Boxes that will be created. "Windows_Client"
         :paramtype license_type: str or ~azure.mgmt.devcenter.models.LicenseType
         :keyword local_administrator: Indicates whether owners of Dev Boxes in this pool are added as
-         local administrators on the Dev Box. Known values are: "Disabled", "Enabled".
+         local administrators on the Dev Box. Known values are: "Disabled" and "Enabled".
         :paramtype local_administrator: str or ~azure.mgmt.devcenter.models.LocalAdminStatus
         """
-        super(Pool, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.dev_box_definition_name = dev_box_definition_name
         self.network_connection_name = network_connection_name
         self.license_type = license_type
@@ -2693,7 +2572,7 @@ class Pool(TrackedResource):
         self.provisioning_state = None
 
 
-class PoolListResult(msrest.serialization.Model):
+class PoolListResult(_serialization.Model):
     """Results of the machine pool list operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2705,27 +2584,23 @@ class PoolListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Pool]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Pool]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(PoolListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class PoolUpdateProperties(msrest.serialization.Model):
+class PoolUpdateProperties(_serialization.Model):
     """Properties of a Pool. These properties can be updated after the resource has been created.
 
     :ivar dev_box_definition_name: Name of a Dev Box definition in parent Project of this Pool.
@@ -2733,18 +2608,18 @@ class PoolUpdateProperties(msrest.serialization.Model):
     :ivar network_connection_name: Name of a Network Connection in parent Project of this Pool.
     :vartype network_connection_name: str
     :ivar license_type: Specifies the license type indicating the caller has already acquired
-     licenses for the Dev Boxes that will be created. Known values are: "Windows_Client".
+     licenses for the Dev Boxes that will be created. "Windows_Client"
     :vartype license_type: str or ~azure.mgmt.devcenter.models.LicenseType
     :ivar local_administrator: Indicates whether owners of Dev Boxes in this pool are added as
-     local administrators on the Dev Box. Known values are: "Disabled", "Enabled".
+     local administrators on the Dev Box. Known values are: "Disabled" and "Enabled".
     :vartype local_administrator: str or ~azure.mgmt.devcenter.models.LocalAdminStatus
     """
 
     _attribute_map = {
-        'dev_box_definition_name': {'key': 'devBoxDefinitionName', 'type': 'str'},
-        'network_connection_name': {'key': 'networkConnectionName', 'type': 'str'},
-        'license_type': {'key': 'licenseType', 'type': 'str'},
-        'local_administrator': {'key': 'localAdministrator', 'type': 'str'},
+        "dev_box_definition_name": {"key": "devBoxDefinitionName", "type": "str"},
+        "network_connection_name": {"key": "networkConnectionName", "type": "str"},
+        "license_type": {"key": "licenseType", "type": "str"},
+        "local_administrator": {"key": "localAdministrator", "type": "str"},
     }
 
     def __init__(
@@ -2762,13 +2637,13 @@ class PoolUpdateProperties(msrest.serialization.Model):
         :keyword network_connection_name: Name of a Network Connection in parent Project of this Pool.
         :paramtype network_connection_name: str
         :keyword license_type: Specifies the license type indicating the caller has already acquired
-         licenses for the Dev Boxes that will be created. Known values are: "Windows_Client".
+         licenses for the Dev Boxes that will be created. "Windows_Client"
         :paramtype license_type: str or ~azure.mgmt.devcenter.models.LicenseType
         :keyword local_administrator: Indicates whether owners of Dev Boxes in this pool are added as
-         local administrators on the Dev Box. Known values are: "Disabled", "Enabled".
+         local administrators on the Dev Box. Known values are: "Disabled" and "Enabled".
         :paramtype local_administrator: str or ~azure.mgmt.devcenter.models.LocalAdminStatus
         """
-        super(PoolUpdateProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.dev_box_definition_name = dev_box_definition_name
         self.network_connection_name = network_connection_name
         self.license_type = license_type
@@ -2785,25 +2660,25 @@ class PoolProperties(PoolUpdateProperties):
     :ivar network_connection_name: Name of a Network Connection in parent Project of this Pool.
     :vartype network_connection_name: str
     :ivar license_type: Specifies the license type indicating the caller has already acquired
-     licenses for the Dev Boxes that will be created. Known values are: "Windows_Client".
+     licenses for the Dev Boxes that will be created. "Windows_Client"
     :vartype license_type: str or ~azure.mgmt.devcenter.models.LicenseType
     :ivar local_administrator: Indicates whether owners of Dev Boxes in this pool are added as
-     local administrators on the Dev Box. Known values are: "Disabled", "Enabled".
+     local administrators on the Dev Box. Known values are: "Disabled" and "Enabled".
     :vartype local_administrator: str or ~azure.mgmt.devcenter.models.LocalAdminStatus
     :ivar provisioning_state: The provisioning state of the resource.
     :vartype provisioning_state: str
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'dev_box_definition_name': {'key': 'devBoxDefinitionName', 'type': 'str'},
-        'network_connection_name': {'key': 'networkConnectionName', 'type': 'str'},
-        'license_type': {'key': 'licenseType', 'type': 'str'},
-        'local_administrator': {'key': 'localAdministrator', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "dev_box_definition_name": {"key": "devBoxDefinitionName", "type": "str"},
+        "network_connection_name": {"key": "networkConnectionName", "type": "str"},
+        "license_type": {"key": "licenseType", "type": "str"},
+        "local_administrator": {"key": "localAdministrator", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -2821,20 +2696,26 @@ class PoolProperties(PoolUpdateProperties):
         :keyword network_connection_name: Name of a Network Connection in parent Project of this Pool.
         :paramtype network_connection_name: str
         :keyword license_type: Specifies the license type indicating the caller has already acquired
-         licenses for the Dev Boxes that will be created. Known values are: "Windows_Client".
+         licenses for the Dev Boxes that will be created. "Windows_Client"
         :paramtype license_type: str or ~azure.mgmt.devcenter.models.LicenseType
         :keyword local_administrator: Indicates whether owners of Dev Boxes in this pool are added as
-         local administrators on the Dev Box. Known values are: "Disabled", "Enabled".
+         local administrators on the Dev Box. Known values are: "Disabled" and "Enabled".
         :paramtype local_administrator: str or ~azure.mgmt.devcenter.models.LocalAdminStatus
         """
-        super(PoolProperties, self).__init__(dev_box_definition_name=dev_box_definition_name, network_connection_name=network_connection_name, license_type=license_type, local_administrator=local_administrator, **kwargs)
+        super().__init__(
+            dev_box_definition_name=dev_box_definition_name,
+            network_connection_name=network_connection_name,
+            license_type=license_type,
+            local_administrator=local_administrator,
+            **kwargs
+        )
         self.provisioning_state = None
 
 
 class PoolUpdate(TrackedResourceUpdate):
     """The pool properties for partial update. Properties not provided in the update request will not be changed.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives.
     :vartype location: str
@@ -2843,20 +2724,20 @@ class PoolUpdate(TrackedResourceUpdate):
     :ivar network_connection_name: Name of a Network Connection in parent Project of this Pool.
     :vartype network_connection_name: str
     :ivar license_type: Specifies the license type indicating the caller has already acquired
-     licenses for the Dev Boxes that will be created. Known values are: "Windows_Client".
+     licenses for the Dev Boxes that will be created. "Windows_Client"
     :vartype license_type: str or ~azure.mgmt.devcenter.models.LicenseType
     :ivar local_administrator: Indicates whether owners of Dev Boxes in this pool are added as
-     local administrators on the Dev Box. Known values are: "Disabled", "Enabled".
+     local administrators on the Dev Box. Known values are: "Disabled" and "Enabled".
     :vartype local_administrator: str or ~azure.mgmt.devcenter.models.LocalAdminStatus
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'dev_box_definition_name': {'key': 'properties.devBoxDefinitionName', 'type': 'str'},
-        'network_connection_name': {'key': 'properties.networkConnectionName', 'type': 'str'},
-        'license_type': {'key': 'properties.licenseType', 'type': 'str'},
-        'local_administrator': {'key': 'properties.localAdministrator', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "dev_box_definition_name": {"key": "properties.devBoxDefinitionName", "type": "str"},
+        "network_connection_name": {"key": "properties.networkConnectionName", "type": "str"},
+        "license_type": {"key": "properties.licenseType", "type": "str"},
+        "local_administrator": {"key": "properties.localAdministrator", "type": "str"},
     }
 
     def __init__(
@@ -2871,7 +2752,7 @@ class PoolUpdate(TrackedResourceUpdate):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives.
         :paramtype location: str
@@ -2880,13 +2761,13 @@ class PoolUpdate(TrackedResourceUpdate):
         :keyword network_connection_name: Name of a Network Connection in parent Project of this Pool.
         :paramtype network_connection_name: str
         :keyword license_type: Specifies the license type indicating the caller has already acquired
-         licenses for the Dev Boxes that will be created. Known values are: "Windows_Client".
+         licenses for the Dev Boxes that will be created. "Windows_Client"
         :paramtype license_type: str or ~azure.mgmt.devcenter.models.LicenseType
         :keyword local_administrator: Indicates whether owners of Dev Boxes in this pool are added as
-         local administrators on the Dev Box. Known values are: "Disabled", "Enabled".
+         local administrators on the Dev Box. Known values are: "Disabled" and "Enabled".
         :paramtype local_administrator: str or ~azure.mgmt.devcenter.models.LocalAdminStatus
         """
-        super(PoolUpdate, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.dev_box_definition_name = dev_box_definition_name
         self.network_connection_name = network_connection_name
         self.license_type = license_type
@@ -2911,9 +2792,9 @@ class Project(TrackedResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar dev_center_id: Resource Id of an associated DevCenter.
     :vartype dev_center_id: str
@@ -2924,24 +2805,24 @@ class Project(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'dev_center_id': {'key': 'properties.devCenterId', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "dev_center_id": {"key": "properties.devCenterId", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -2954,22 +2835,22 @@ class Project(TrackedResource):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword dev_center_id: Resource Id of an associated DevCenter.
         :paramtype dev_center_id: str
         :keyword description: Description of the project.
         :paramtype description: str
         """
-        super(Project, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.dev_center_id = dev_center_id
         self.description = description
         self.provisioning_state = None
 
 
-class ProjectEnvironmentType(Resource):
+class ProjectEnvironmentType(Resource):  # pylint: disable=too-many-instance-attributes
     """Represents an environment type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2985,7 +2866,7 @@ class ProjectEnvironmentType(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar identity: Managed identity properties.
     :vartype identity: ~azure.mgmt.devcenter.models.ManagedServiceIdentity
@@ -2995,7 +2876,7 @@ class ProjectEnvironmentType(Resource):
      The environment's resources will be deployed into this subscription.
     :vartype deployment_target_id: str
     :ivar status: Defines whether this Environment Type can be used in this Project. Known values
-     are: "Enabled", "Disabled".
+     are: "Enabled" and "Disabled".
     :vartype status: str or ~azure.mgmt.devcenter.models.EnableStatus
     :ivar creator_role_assignment: The role definition assigned to the environment creator on
      backing resources.
@@ -3009,26 +2890,29 @@ class ProjectEnvironmentType(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'location': {'key': 'location', 'type': 'str'},
-        'deployment_target_id': {'key': 'properties.deploymentTargetId', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'creator_role_assignment': {'key': 'properties.creatorRoleAssignment', 'type': 'ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment'},
-        'user_role_assignments': {'key': 'properties.userRoleAssignments', 'type': '{UserRoleAssignmentValue}'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "location": {"key": "location", "type": "str"},
+        "deployment_target_id": {"key": "properties.deploymentTargetId", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "creator_role_assignment": {
+            "key": "properties.creatorRoleAssignment",
+            "type": "ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment",
+        },
+        "user_role_assignments": {"key": "properties.userRoleAssignments", "type": "{UserRoleAssignmentValue}"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -3044,7 +2928,7 @@ class ProjectEnvironmentType(Resource):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword identity: Managed identity properties.
         :paramtype identity: ~azure.mgmt.devcenter.models.ManagedServiceIdentity
@@ -3054,7 +2938,7 @@ class ProjectEnvironmentType(Resource):
          to. The environment's resources will be deployed into this subscription.
         :paramtype deployment_target_id: str
         :keyword status: Defines whether this Environment Type can be used in this Project. Known
-         values are: "Enabled", "Disabled".
+         values are: "Enabled" and "Disabled".
         :paramtype status: str or ~azure.mgmt.devcenter.models.EnableStatus
         :keyword creator_role_assignment: The role definition assigned to the environment creator on
          backing resources.
@@ -3065,7 +2949,7 @@ class ProjectEnvironmentType(Resource):
         :paramtype user_role_assignments: dict[str,
          ~azure.mgmt.devcenter.models.UserRoleAssignmentValue]
         """
-        super(ProjectEnvironmentType, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.identity = identity
         self.location = location
@@ -3076,7 +2960,7 @@ class ProjectEnvironmentType(Resource):
         self.provisioning_state = None
 
 
-class ProjectEnvironmentTypeListResult(msrest.serialization.Model):
+class ProjectEnvironmentTypeListResult(_serialization.Model):
     """Result of the project environment type list operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3088,34 +2972,30 @@ class ProjectEnvironmentTypeListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ProjectEnvironmentType]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ProjectEnvironmentType]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProjectEnvironmentTypeListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ProjectEnvironmentTypeUpdateProperties(msrest.serialization.Model):
+class ProjectEnvironmentTypeUpdateProperties(_serialization.Model):
     """Properties of a project environment type. These properties can be updated after the resource has been created.
 
     :ivar deployment_target_id: Id of a subscription that the environment type will be mapped to.
      The environment's resources will be deployed into this subscription.
     :vartype deployment_target_id: str
     :ivar status: Defines whether this Environment Type can be used in this Project. Known values
-     are: "Enabled", "Disabled".
+     are: "Enabled" and "Disabled".
     :vartype status: str or ~azure.mgmt.devcenter.models.EnableStatus
     :ivar creator_role_assignment: The role definition assigned to the environment creator on
      backing resources.
@@ -3127,10 +3007,13 @@ class ProjectEnvironmentTypeUpdateProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'deployment_target_id': {'key': 'deploymentTargetId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'creator_role_assignment': {'key': 'creatorRoleAssignment', 'type': 'ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment'},
-        'user_role_assignments': {'key': 'userRoleAssignments', 'type': '{UserRoleAssignmentValue}'},
+        "deployment_target_id": {"key": "deploymentTargetId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "creator_role_assignment": {
+            "key": "creatorRoleAssignment",
+            "type": "ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment",
+        },
+        "user_role_assignments": {"key": "userRoleAssignments", "type": "{UserRoleAssignmentValue}"},
     }
 
     def __init__(
@@ -3147,7 +3030,7 @@ class ProjectEnvironmentTypeUpdateProperties(msrest.serialization.Model):
          to. The environment's resources will be deployed into this subscription.
         :paramtype deployment_target_id: str
         :keyword status: Defines whether this Environment Type can be used in this Project. Known
-         values are: "Enabled", "Disabled".
+         values are: "Enabled" and "Disabled".
         :paramtype status: str or ~azure.mgmt.devcenter.models.EnableStatus
         :keyword creator_role_assignment: The role definition assigned to the environment creator on
          backing resources.
@@ -3158,7 +3041,7 @@ class ProjectEnvironmentTypeUpdateProperties(msrest.serialization.Model):
         :paramtype user_role_assignments: dict[str,
          ~azure.mgmt.devcenter.models.UserRoleAssignmentValue]
         """
-        super(ProjectEnvironmentTypeUpdateProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.deployment_target_id = deployment_target_id
         self.status = status
         self.creator_role_assignment = creator_role_assignment
@@ -3174,7 +3057,7 @@ class ProjectEnvironmentTypeProperties(ProjectEnvironmentTypeUpdateProperties):
      The environment's resources will be deployed into this subscription.
     :vartype deployment_target_id: str
     :ivar status: Defines whether this Environment Type can be used in this Project. Known values
-     are: "Enabled", "Disabled".
+     are: "Enabled" and "Disabled".
     :vartype status: str or ~azure.mgmt.devcenter.models.EnableStatus
     :ivar creator_role_assignment: The role definition assigned to the environment creator on
      backing resources.
@@ -3188,15 +3071,18 @@ class ProjectEnvironmentTypeProperties(ProjectEnvironmentTypeUpdateProperties):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'deployment_target_id': {'key': 'deploymentTargetId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'creator_role_assignment': {'key': 'creatorRoleAssignment', 'type': 'ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment'},
-        'user_role_assignments': {'key': 'userRoleAssignments', 'type': '{UserRoleAssignmentValue}'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "deployment_target_id": {"key": "deploymentTargetId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "creator_role_assignment": {
+            "key": "creatorRoleAssignment",
+            "type": "ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment",
+        },
+        "user_role_assignments": {"key": "userRoleAssignments", "type": "{UserRoleAssignmentValue}"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -3213,7 +3099,7 @@ class ProjectEnvironmentTypeProperties(ProjectEnvironmentTypeUpdateProperties):
          to. The environment's resources will be deployed into this subscription.
         :paramtype deployment_target_id: str
         :keyword status: Defines whether this Environment Type can be used in this Project. Known
-         values are: "Enabled", "Disabled".
+         values are: "Enabled" and "Disabled".
         :paramtype status: str or ~azure.mgmt.devcenter.models.EnableStatus
         :keyword creator_role_assignment: The role definition assigned to the environment creator on
          backing resources.
@@ -3224,14 +3110,20 @@ class ProjectEnvironmentTypeProperties(ProjectEnvironmentTypeUpdateProperties):
         :paramtype user_role_assignments: dict[str,
          ~azure.mgmt.devcenter.models.UserRoleAssignmentValue]
         """
-        super(ProjectEnvironmentTypeProperties, self).__init__(deployment_target_id=deployment_target_id, status=status, creator_role_assignment=creator_role_assignment, user_role_assignments=user_role_assignments, **kwargs)
+        super().__init__(
+            deployment_target_id=deployment_target_id,
+            status=status,
+            creator_role_assignment=creator_role_assignment,
+            user_role_assignments=user_role_assignments,
+            **kwargs
+        )
         self.provisioning_state = None
 
 
-class ProjectEnvironmentTypeUpdate(msrest.serialization.Model):
+class ProjectEnvironmentTypeUpdate(_serialization.Model):
     """The project environment type for partial update. Properties not provided in the update request will not be changed.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar identity: Managed identity properties.
     :vartype identity: ~azure.mgmt.devcenter.models.ManagedServiceIdentity
@@ -3239,7 +3131,7 @@ class ProjectEnvironmentTypeUpdate(msrest.serialization.Model):
      The environment's resources will be deployed into this subscription.
     :vartype deployment_target_id: str
     :ivar status: Defines whether this Environment Type can be used in this Project. Known values
-     are: "Enabled", "Disabled".
+     are: "Enabled" and "Disabled".
     :vartype status: str or ~azure.mgmt.devcenter.models.EnableStatus
     :ivar creator_role_assignment: The role definition assigned to the environment creator on
      backing resources.
@@ -3251,12 +3143,15 @@ class ProjectEnvironmentTypeUpdate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'deployment_target_id': {'key': 'properties.deploymentTargetId', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'creator_role_assignment': {'key': 'properties.creatorRoleAssignment', 'type': 'ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment'},
-        'user_role_assignments': {'key': 'properties.userRoleAssignments', 'type': '{UserRoleAssignmentValue}'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "deployment_target_id": {"key": "properties.deploymentTargetId", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "creator_role_assignment": {
+            "key": "properties.creatorRoleAssignment",
+            "type": "ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment",
+        },
+        "user_role_assignments": {"key": "properties.userRoleAssignments", "type": "{UserRoleAssignmentValue}"},
     }
 
     def __init__(
@@ -3271,7 +3166,7 @@ class ProjectEnvironmentTypeUpdate(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword identity: Managed identity properties.
         :paramtype identity: ~azure.mgmt.devcenter.models.ManagedServiceIdentity
@@ -3279,7 +3174,7 @@ class ProjectEnvironmentTypeUpdate(msrest.serialization.Model):
          to. The environment's resources will be deployed into this subscription.
         :paramtype deployment_target_id: str
         :keyword status: Defines whether this Environment Type can be used in this Project. Known
-         values are: "Enabled", "Disabled".
+         values are: "Enabled" and "Disabled".
         :paramtype status: str or ~azure.mgmt.devcenter.models.EnableStatus
         :keyword creator_role_assignment: The role definition assigned to the environment creator on
          backing resources.
@@ -3290,7 +3185,7 @@ class ProjectEnvironmentTypeUpdate(msrest.serialization.Model):
         :paramtype user_role_assignments: dict[str,
          ~azure.mgmt.devcenter.models.UserRoleAssignmentValue]
         """
-        super(ProjectEnvironmentTypeUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.identity = identity
         self.deployment_target_id = deployment_target_id
@@ -3299,7 +3194,7 @@ class ProjectEnvironmentTypeUpdate(msrest.serialization.Model):
         self.user_role_assignments = user_role_assignments
 
 
-class ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment(msrest.serialization.Model):
+class ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment(_serialization.Model):
     """The role definition assigned to the environment creator on backing resources.
 
     :ivar roles: A map of roles to assign to the environment creator.
@@ -3307,24 +3202,19 @@ class ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment(msrest.seriali
     """
 
     _attribute_map = {
-        'roles': {'key': 'roles', 'type': '{EnvironmentRole}'},
+        "roles": {"key": "roles", "type": "{EnvironmentRole}"},
     }
 
-    def __init__(
-        self,
-        *,
-        roles: Optional[Dict[str, "_models.EnvironmentRole"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, roles: Optional[Dict[str, "_models.EnvironmentRole"]] = None, **kwargs):
         """
         :keyword roles: A map of roles to assign to the environment creator.
         :paramtype roles: dict[str, ~azure.mgmt.devcenter.models.EnvironmentRole]
         """
-        super(ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.roles = roles
 
 
-class ProjectListResult(msrest.serialization.Model):
+class ProjectListResult(_serialization.Model):
     """Results of the project list operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3336,27 +3226,23 @@ class ProjectListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Project]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Project]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProjectListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ProjectUpdateProperties(msrest.serialization.Model):
+class ProjectUpdateProperties(_serialization.Model):
     """Properties of a project. These properties can be updated after the resource has been created.
 
     :ivar dev_center_id: Resource Id of an associated DevCenter.
@@ -3366,24 +3252,18 @@ class ProjectUpdateProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'dev_center_id': {'key': 'devCenterId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "dev_center_id": {"key": "devCenterId", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        dev_center_id: Optional[str] = None,
-        description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, dev_center_id: Optional[str] = None, description: Optional[str] = None, **kwargs):
         """
         :keyword dev_center_id: Resource Id of an associated DevCenter.
         :paramtype dev_center_id: str
         :keyword description: Description of the project.
         :paramtype description: str
         """
-        super(ProjectUpdateProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.dev_center_id = dev_center_id
         self.description = description
 
@@ -3402,36 +3282,30 @@ class ProjectProperties(ProjectUpdateProperties):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'dev_center_id': {'key': 'devCenterId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "dev_center_id": {"key": "devCenterId", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        dev_center_id: Optional[str] = None,
-        description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, dev_center_id: Optional[str] = None, description: Optional[str] = None, **kwargs):
         """
         :keyword dev_center_id: Resource Id of an associated DevCenter.
         :paramtype dev_center_id: str
         :keyword description: Description of the project.
         :paramtype description: str
         """
-        super(ProjectProperties, self).__init__(dev_center_id=dev_center_id, description=description, **kwargs)
+        super().__init__(dev_center_id=dev_center_id, description=description, **kwargs)
         self.provisioning_state = None
 
 
 class ProjectUpdate(TrackedResourceUpdate):
     """The project properties for partial update. Properties not provided in the update request will not be changed.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives.
     :vartype location: str
@@ -3442,10 +3316,10 @@ class ProjectUpdate(TrackedResourceUpdate):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'dev_center_id': {'key': 'properties.devCenterId', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "dev_center_id": {"key": "properties.devCenterId", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
@@ -3458,7 +3332,7 @@ class ProjectUpdate(TrackedResourceUpdate):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives.
         :paramtype location: str
@@ -3467,12 +3341,12 @@ class ProjectUpdate(TrackedResourceUpdate):
         :keyword description: Description of the project.
         :paramtype description: str
         """
-        super(ProjectUpdate, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.dev_center_id = dev_center_id
         self.description = description
 
 
-class RecommendedMachineConfiguration(msrest.serialization.Model):
+class RecommendedMachineConfiguration(_serialization.Model):
     """Properties for a recommended machine configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3484,27 +3358,23 @@ class RecommendedMachineConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'memory': {'readonly': True},
-        'v_cp_us': {'readonly': True},
+        "memory": {"readonly": True},
+        "v_cp_us": {"readonly": True},
     }
 
     _attribute_map = {
-        'memory': {'key': 'memory', 'type': 'ResourceRange'},
-        'v_cp_us': {'key': 'vCPUs', 'type': 'ResourceRange'},
+        "memory": {"key": "memory", "type": "ResourceRange"},
+        "v_cp_us": {"key": "vCPUs", "type": "ResourceRange"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(RecommendedMachineConfiguration, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.memory = None
         self.v_cp_us = None
 
 
-class ResourceRange(msrest.serialization.Model):
+class ResourceRange(_serialization.Model):
     """Properties for a range of values.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3516,22 +3386,18 @@ class ResourceRange(msrest.serialization.Model):
     """
 
     _validation = {
-        'min': {'readonly': True},
-        'max': {'readonly': True},
+        "min": {"readonly": True},
+        "max": {"readonly": True},
     }
 
     _attribute_map = {
-        'min': {'key': 'min', 'type': 'int'},
-        'max': {'key': 'max', 'type': 'int'},
+        "min": {"key": "min", "type": "int"},
+        "max": {"key": "max", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceRange, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.min = None
         self.max = None
 
@@ -3552,41 +3418,40 @@ class Schedule(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
-    :ivar type_properties_type: Supported type this scheduled task represents. Known values are:
-     "StopDevBox".
+    :ivar type_properties_type: Supported type this scheduled task represents. "StopDevBox"
     :vartype type_properties_type: str or ~azure.mgmt.devcenter.models.ScheduledType
-    :ivar frequency: The frequency of this scheduled task. Known values are: "Daily".
+    :ivar frequency: The frequency of this scheduled task. "Daily"
     :vartype frequency: str or ~azure.mgmt.devcenter.models.ScheduledFrequency
     :ivar time: The target time to trigger the action. The format is HH:MM.
     :vartype time: str
     :ivar time_zone: The IANA timezone id at which the schedule should execute.
     :vartype time_zone: str
     :ivar state: Indicates whether or not this scheduled task is enabled. Known values are:
-     "Enabled", "Disabled".
+     "Enabled" and "Disabled".
     :vartype state: str or ~azure.mgmt.devcenter.models.EnableStatus
     :ivar provisioning_state: The provisioning state of the resource.
     :vartype provisioning_state: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'frequency': {'key': 'properties.frequency', 'type': 'str'},
-        'time': {'key': 'properties.time', 'type': 'str'},
-        'time_zone': {'key': 'properties.timeZone', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "frequency": {"key": "properties.frequency", "type": "str"},
+        "time": {"key": "properties.time", "type": "str"},
+        "time_zone": {"key": "properties.timeZone", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -3600,20 +3465,19 @@ class Schedule(Resource):
         **kwargs
     ):
         """
-        :keyword type_properties_type: Supported type this scheduled task represents. Known values are:
-         "StopDevBox".
+        :keyword type_properties_type: Supported type this scheduled task represents. "StopDevBox"
         :paramtype type_properties_type: str or ~azure.mgmt.devcenter.models.ScheduledType
-        :keyword frequency: The frequency of this scheduled task. Known values are: "Daily".
+        :keyword frequency: The frequency of this scheduled task. "Daily"
         :paramtype frequency: str or ~azure.mgmt.devcenter.models.ScheduledFrequency
         :keyword time: The target time to trigger the action. The format is HH:MM.
         :paramtype time: str
         :keyword time_zone: The IANA timezone id at which the schedule should execute.
         :paramtype time_zone: str
         :keyword state: Indicates whether or not this scheduled task is enabled. Known values are:
-         "Enabled", "Disabled".
+         "Enabled" and "Disabled".
         :paramtype state: str or ~azure.mgmt.devcenter.models.EnableStatus
         """
-        super(Schedule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type_properties_type = type_properties_type
         self.frequency = frequency
         self.time = time
@@ -3622,7 +3486,7 @@ class Schedule(Resource):
         self.provisioning_state = None
 
 
-class ScheduleListResult(msrest.serialization.Model):
+class ScheduleListResult(_serialization.Model):
     """Result of the schedule list operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3634,48 +3498,44 @@ class ScheduleListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Schedule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Schedule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ScheduleListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ScheduleUpdateProperties(msrest.serialization.Model):
+class ScheduleUpdateProperties(_serialization.Model):
     """Updatable properties of a Schedule.
 
-    :ivar type: Supported type this scheduled task represents. Known values are: "StopDevBox".
+    :ivar type: Supported type this scheduled task represents. "StopDevBox"
     :vartype type: str or ~azure.mgmt.devcenter.models.ScheduledType
-    :ivar frequency: The frequency of this scheduled task. Known values are: "Daily".
+    :ivar frequency: The frequency of this scheduled task. "Daily"
     :vartype frequency: str or ~azure.mgmt.devcenter.models.ScheduledFrequency
     :ivar time: The target time to trigger the action. The format is HH:MM.
     :vartype time: str
     :ivar time_zone: The IANA timezone id at which the schedule should execute.
     :vartype time_zone: str
     :ivar state: Indicates whether or not this scheduled task is enabled. Known values are:
-     "Enabled", "Disabled".
+     "Enabled" and "Disabled".
     :vartype state: str or ~azure.mgmt.devcenter.models.EnableStatus
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'frequency': {'key': 'frequency', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'str'},
-        'time_zone': {'key': 'timeZone', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "frequency": {"key": "frequency", "type": "str"},
+        "time": {"key": "time", "type": "str"},
+        "time_zone": {"key": "timeZone", "type": "str"},
+        "state": {"key": "state", "type": "str"},
     }
 
     def __init__(
@@ -3689,19 +3549,19 @@ class ScheduleUpdateProperties(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword type: Supported type this scheduled task represents. Known values are: "StopDevBox".
+        :keyword type: Supported type this scheduled task represents. "StopDevBox"
         :paramtype type: str or ~azure.mgmt.devcenter.models.ScheduledType
-        :keyword frequency: The frequency of this scheduled task. Known values are: "Daily".
+        :keyword frequency: The frequency of this scheduled task. "Daily"
         :paramtype frequency: str or ~azure.mgmt.devcenter.models.ScheduledFrequency
         :keyword time: The target time to trigger the action. The format is HH:MM.
         :paramtype time: str
         :keyword time_zone: The IANA timezone id at which the schedule should execute.
         :paramtype time_zone: str
         :keyword state: Indicates whether or not this scheduled task is enabled. Known values are:
-         "Enabled", "Disabled".
+         "Enabled" and "Disabled".
         :paramtype state: str or ~azure.mgmt.devcenter.models.EnableStatus
         """
-        super(ScheduleUpdateProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.frequency = frequency
         self.time = time
@@ -3714,32 +3574,32 @@ class ScheduleProperties(ScheduleUpdateProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: Supported type this scheduled task represents. Known values are: "StopDevBox".
+    :ivar type: Supported type this scheduled task represents. "StopDevBox"
     :vartype type: str or ~azure.mgmt.devcenter.models.ScheduledType
-    :ivar frequency: The frequency of this scheduled task. Known values are: "Daily".
+    :ivar frequency: The frequency of this scheduled task. "Daily"
     :vartype frequency: str or ~azure.mgmt.devcenter.models.ScheduledFrequency
     :ivar time: The target time to trigger the action. The format is HH:MM.
     :vartype time: str
     :ivar time_zone: The IANA timezone id at which the schedule should execute.
     :vartype time_zone: str
     :ivar state: Indicates whether or not this scheduled task is enabled. Known values are:
-     "Enabled", "Disabled".
+     "Enabled" and "Disabled".
     :vartype state: str or ~azure.mgmt.devcenter.models.EnableStatus
     :ivar provisioning_state: The provisioning state of the resource.
     :vartype provisioning_state: str
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'frequency': {'key': 'frequency', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'str'},
-        'time_zone': {'key': 'timeZone', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "frequency": {"key": "frequency", "type": "str"},
+        "time": {"key": "time", "type": "str"},
+        "time_zone": {"key": "timeZone", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -3753,50 +3613,50 @@ class ScheduleProperties(ScheduleUpdateProperties):
         **kwargs
     ):
         """
-        :keyword type: Supported type this scheduled task represents. Known values are: "StopDevBox".
+        :keyword type: Supported type this scheduled task represents. "StopDevBox"
         :paramtype type: str or ~azure.mgmt.devcenter.models.ScheduledType
-        :keyword frequency: The frequency of this scheduled task. Known values are: "Daily".
+        :keyword frequency: The frequency of this scheduled task. "Daily"
         :paramtype frequency: str or ~azure.mgmt.devcenter.models.ScheduledFrequency
         :keyword time: The target time to trigger the action. The format is HH:MM.
         :paramtype time: str
         :keyword time_zone: The IANA timezone id at which the schedule should execute.
         :paramtype time_zone: str
         :keyword state: Indicates whether or not this scheduled task is enabled. Known values are:
-         "Enabled", "Disabled".
+         "Enabled" and "Disabled".
         :paramtype state: str or ~azure.mgmt.devcenter.models.EnableStatus
         """
-        super(ScheduleProperties, self).__init__(type=type, frequency=frequency, time=time, time_zone=time_zone, state=state, **kwargs)
+        super().__init__(type=type, frequency=frequency, time=time, time_zone=time_zone, state=state, **kwargs)
         self.provisioning_state = None
 
 
 class ScheduleUpdate(TrackedResourceUpdate):
     """The schedule properties for partial update. Properties not provided in the update request will not be changed.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives.
     :vartype location: str
-    :ivar type: Supported type this scheduled task represents. Known values are: "StopDevBox".
+    :ivar type: Supported type this scheduled task represents. "StopDevBox"
     :vartype type: str or ~azure.mgmt.devcenter.models.ScheduledType
-    :ivar frequency: The frequency of this scheduled task. Known values are: "Daily".
+    :ivar frequency: The frequency of this scheduled task. "Daily"
     :vartype frequency: str or ~azure.mgmt.devcenter.models.ScheduledFrequency
     :ivar time: The target time to trigger the action. The format is HH:MM.
     :vartype time: str
     :ivar time_zone: The IANA timezone id at which the schedule should execute.
     :vartype time_zone: str
     :ivar state: Indicates whether or not this scheduled task is enabled. Known values are:
-     "Enabled", "Disabled".
+     "Enabled" and "Disabled".
     :vartype state: str or ~azure.mgmt.devcenter.models.EnableStatus
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'type': {'key': 'properties.type', 'type': 'str'},
-        'frequency': {'key': 'properties.frequency', 'type': 'str'},
-        'time': {'key': 'properties.time', 'type': 'str'},
-        'time_zone': {'key': 'properties.timeZone', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "type": {"key": "properties.type", "type": "str"},
+        "frequency": {"key": "properties.frequency", "type": "str"},
+        "time": {"key": "properties.time", "type": "str"},
+        "time_zone": {"key": "properties.timeZone", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
     }
 
     def __init__(
@@ -3812,23 +3672,23 @@ class ScheduleUpdate(TrackedResourceUpdate):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives.
         :paramtype location: str
-        :keyword type: Supported type this scheduled task represents. Known values are: "StopDevBox".
+        :keyword type: Supported type this scheduled task represents. "StopDevBox"
         :paramtype type: str or ~azure.mgmt.devcenter.models.ScheduledType
-        :keyword frequency: The frequency of this scheduled task. Known values are: "Daily".
+        :keyword frequency: The frequency of this scheduled task. "Daily"
         :paramtype frequency: str or ~azure.mgmt.devcenter.models.ScheduledFrequency
         :keyword time: The target time to trigger the action. The format is HH:MM.
         :paramtype time: str
         :keyword time_zone: The IANA timezone id at which the schedule should execute.
         :paramtype time_zone: str
         :keyword state: Indicates whether or not this scheduled task is enabled. Known values are:
-         "Enabled", "Disabled".
+         "Enabled" and "Disabled".
         :paramtype state: str or ~azure.mgmt.devcenter.models.EnableStatus
         """
-        super(ScheduleUpdate, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.type = type
         self.frequency = frequency
         self.time = time
@@ -3836,7 +3696,7 @@ class ScheduleUpdate(TrackedResourceUpdate):
         self.state = state
 
 
-class SkuListResult(msrest.serialization.Model):
+class SkuListResult(_serialization.Model):
     """Results of the Microsoft.DevCenter SKU list operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3848,52 +3708,48 @@ class SkuListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DevCenterSku]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DevCenterSku]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SkuListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", "Key".
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.devcenter.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
-     are: "User", "Application", "ManagedIdentity", "Key".
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.devcenter.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
@@ -3911,19 +3767,19 @@ class SystemData(msrest.serialization.Model):
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
         :keyword created_by_type: The type of identity that created the resource. Known values are:
-         "User", "Application", "ManagedIdentity", "Key".
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or ~azure.mgmt.devcenter.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
         :keyword last_modified_by_type: The type of identity that last modified the resource. Known
-         values are: "User", "Application", "ManagedIdentity", "Key".
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or ~azure.mgmt.devcenter.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -3932,24 +3788,24 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class Usage(msrest.serialization.Model):
+class Usage(_serialization.Model):
     """The core usage details.
 
     :ivar current_value: The current usage.
-    :vartype current_value: long
+    :vartype current_value: int
     :ivar limit: The limit integer.
-    :vartype limit: long
-    :ivar unit: The unit details. Known values are: "Count".
+    :vartype limit: int
+    :ivar unit: The unit details. "Count"
     :vartype unit: str or ~azure.mgmt.devcenter.models.UsageUnit
     :ivar name: The name.
     :vartype name: ~azure.mgmt.devcenter.models.UsageName
     """
 
     _attribute_map = {
-        'current_value': {'key': 'currentValue', 'type': 'long'},
-        'limit': {'key': 'limit', 'type': 'long'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'UsageName'},
+        "current_value": {"key": "currentValue", "type": "int"},
+        "limit": {"key": "limit", "type": "int"},
+        "unit": {"key": "unit", "type": "str"},
+        "name": {"key": "name", "type": "UsageName"},
     }
 
     def __init__(
@@ -3963,22 +3819,22 @@ class Usage(msrest.serialization.Model):
     ):
         """
         :keyword current_value: The current usage.
-        :paramtype current_value: long
+        :paramtype current_value: int
         :keyword limit: The limit integer.
-        :paramtype limit: long
-        :keyword unit: The unit details. Known values are: "Count".
+        :paramtype limit: int
+        :keyword unit: The unit details. "Count"
         :paramtype unit: str or ~azure.mgmt.devcenter.models.UsageUnit
         :keyword name: The name.
         :paramtype name: ~azure.mgmt.devcenter.models.UsageName
         """
-        super(Usage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.current_value = current_value
         self.limit = limit
         self.unit = unit
         self.name = name
 
 
-class UsageName(msrest.serialization.Model):
+class UsageName(_serialization.Model):
     """The Usage Names.
 
     :ivar localized_value: The localized name of the resource.
@@ -3988,29 +3844,23 @@ class UsageName(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "localized_value": {"key": "localizedValue", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        localized_value: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, localized_value: Optional[str] = None, value: Optional[str] = None, **kwargs):
         """
         :keyword localized_value: The localized name of the resource.
         :paramtype localized_value: str
         :keyword value: The name of the resource.
         :paramtype value: str
         """
-        super(UsageName, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.localized_value = localized_value
         self.value = value
 
 
-class UserAssignedIdentity(msrest.serialization.Model):
+class UserAssignedIdentity(_serialization.Model):
     """User assigned identity properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4022,27 +3872,23 @@ class UserAssignedIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UserAssignedIdentity, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
 
 
-class UserRoleAssignmentValue(msrest.serialization.Model):
+class UserRoleAssignmentValue(_serialization.Model):
     """Mapping of user object ID to role assignments.
 
     :ivar roles: A map of roles to assign to the parent user.
@@ -4050,18 +3896,13 @@ class UserRoleAssignmentValue(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'roles': {'key': 'roles', 'type': '{EnvironmentRole}'},
+        "roles": {"key": "roles", "type": "{EnvironmentRole}"},
     }
 
-    def __init__(
-        self,
-        *,
-        roles: Optional[Dict[str, "_models.EnvironmentRole"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, roles: Optional[Dict[str, "_models.EnvironmentRole"]] = None, **kwargs):
         """
         :keyword roles: A map of roles to assign to the parent user.
         :paramtype roles: dict[str, ~azure.mgmt.devcenter.models.EnvironmentRole]
         """
-        super(UserRoleAssignmentValue, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.roles = roles
