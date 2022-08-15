@@ -35,6 +35,14 @@ __all__ = ["AzureMonitorMetricExporter"]
 class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
     """Azure Monitor Metric exporter for OpenTelemetry."""
 
+    def __init__(self, **kwargs: Any) -> None:
+        BaseExporter.__init__(self, **kwargs)
+        MetricExporter.__init__(
+            self,
+            preferred_temporality=kwargs.get("preferred_temporality"),
+            preferred_aggregation=kwargs.get("preferred_aggregation"),
+        )
+
     def export(
         self,
         metrics_data: OTMetricsData,
@@ -64,16 +72,21 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
                             )
         try:
             result = self._transmit(envelopes)
-            if result == ExportResult.FAILED_RETRYABLE:
-                envelopes_to_store = [x.as_dict() for x in envelopes]
-                self.storage.put(envelopes_to_store, 1)
-            if result == ExportResult.SUCCESS:
-                # Try to send any cached events
-                self._transmit_from_storage()
+            self._handle_transmit_from_storage(envelopes, result)
             return _get_metric_export_result(result)
         except Exception:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while exporting the data.")
             return _get_metric_export_result(ExportResult.FAILED_NOT_RETRYABLE)
+
+    def force_flush(
+        self,
+        timeout_millis: float = 10_000,
+    ) -> None:
+        """
+        Ensure that export of any metrics currently received by the exporter
+        are completed as soon as possible.
+        """
+        # TODO
 
     def shutdown(
         self,

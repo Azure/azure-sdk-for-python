@@ -7,12 +7,14 @@ import logging
 import time
 from typing import TYPE_CHECKING
 
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+
 from ..._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports,unused-import
     from typing import Any, Optional
+
     from azure.core.credentials import AccessToken
 
 _LOGGER = logging.getLogger(__name__)
@@ -27,11 +29,12 @@ class GetTokenMixin(abc.ABC):
 
     @abc.abstractmethod
     async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
-        """Attempt to acquire an access token from a cache or by redeeming a refresh token"""
+        """Attempt to acquire an access token from a cache or by redeeming a
+        refresh token."""
 
     @abc.abstractmethod
     async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
-        """Request an access token from the STS"""
+        """Request an access token from the STS."""
 
     def _should_refresh(self, token: "AccessToken") -> bool:
         now = int(time.time())

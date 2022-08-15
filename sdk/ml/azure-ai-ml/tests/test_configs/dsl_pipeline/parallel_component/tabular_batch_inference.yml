@@ -30,7 +30,7 @@ retry_settings:
 input_data: ${{inputs.job_data_path}}
 
 task:
-  type: function
+  type: run_function
   code: ./src
   entry_script: tabular_batch_inference.py
   environment:
@@ -38,6 +38,6 @@ task:
     version: 1
     image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
     conda_file: ./environment_parallel.yml
-  args: >-
+  program_arguments: >-
     --model ${{inputs.score_model}}
   append_row_to: ${{outputs.job_out_path}}

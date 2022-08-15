@@ -2,7 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 import logging
+
 from azure.ai.ml._restclient.v2021_10_01.models import ContainerResourceRequirements
 from azure.ai.ml.entities._deployment.container_resource_settings import ResourceSettings
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -31,7 +34,8 @@ class ResourceRequirementsSettings(RestTranslatableMixin):
         limits = settings.container_resource_limits
         return (
             ResourceRequirementsSettings(
-                requests=ResourceSettings._from_rest_object(requests), limits=ResourceSettings._from_rest_object(limits)
+                requests=ResourceSettings._from_rest_object(requests),
+                limits=ResourceSettings._from_rest_object(limits),
             )
             if settings
             else None

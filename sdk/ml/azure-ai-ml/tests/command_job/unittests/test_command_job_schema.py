@@ -1,6 +1,6 @@
 from azure.ai.ml._schema import CommandJobSchema
 from azure.ai.ml._utils.utils import load_yaml, is_valid_uuid
-from azure.ai.ml.constants import InputOutputModes, BASE_PATH_CONTEXT_KEY, AssetTypes
+from azure.ai.ml.constants import ANONYMOUS_ENV_NAME, InputOutputModes, BASE_PATH_CONTEXT_KEY, AssetTypes
 from azure.ai.ml.entities import CommandJob, Job
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
@@ -122,13 +122,13 @@ class TestCommandJob:
 
         # anonymous environments are created with name CliV2AnonymousEnvironment and a guid as the version
         assert internal_representation.environment.name != envName
-        assert internal_representation.environment.name == "CliV2AnonymousEnvironment"
+        assert internal_representation.environment.name == ANONYMOUS_ENV_NAME
         assert internal_representation.environment._is_anonymous
-        assert internal_representation.environment.version == "559c904a18d86cc54f2f6a9d6ac26c0d"
+        assert internal_representation.environment.version == "79a6980e14dbe0dac98ed0e902413f88"
 
         assert internal_representation.inputs["test1"].path == input_path
         # Validate default dataset is mounted
-        assert internal_representation.inputs["test1"].mode == "ro_mount"
+        assert internal_representation.inputs["test1"].mode is None
         assert internal_representation.code == code
 
     def test_deserialize_amltoken_identity(self):
@@ -209,10 +209,10 @@ class TestCommandJob:
         rest_representation = to_rest_job_object(original_entity)
         reconstructed_entity = Job._from_rest_object(rest_representation)
 
-        assert original_entity.inputs["test_dataset"].mode == InputOutputModes.RO_MOUNT
+        assert original_entity.inputs["test_dataset"].mode is None
         assert rest_representation.properties.inputs["test_dataset"].job_input_type == JobInputType.URI_FOLDER
-        assert rest_representation.properties.inputs["test_dataset"].mode == InputDeliveryMode.READ_ONLY_MOUNT
-        assert reconstructed_entity.inputs["test_dataset"].mode == InputOutputModes.RO_MOUNT
+        assert rest_representation.properties.inputs["test_dataset"].mode is None
+        assert reconstructed_entity.inputs["test_dataset"].mode is None
 
         assert original_entity.inputs["test_url"].mode == InputOutputModes.RO_MOUNT
         assert original_entity.inputs["test_url"].type == AssetTypes.URI_FILE
@@ -224,11 +224,15 @@ class TestCommandJob:
         assert reconstructed_entity.inputs["test_url"].type == AssetTypes.URI_FILE
         assert reconstructed_entity.inputs["test_url"].path == "azureml://fake/url.json"
 
+        # assert original_entity.inputs["test_string_literal"] == "literal string"
         assert rest_representation.properties.inputs["test_string_literal"].job_input_type == JobInputType.LITERAL
         assert rest_representation.properties.inputs["test_string_literal"].value == "literal string"
+        # assert reconstructed_entity.inputs["test_string_literal"] == "literal string"
 
+        # assert original_entity.inputs["test_literal_valued_int"] == 42
         assert rest_representation.properties.inputs["test_literal_valued_int"].job_input_type == JobInputType.LITERAL
         assert rest_representation.properties.inputs["test_literal_valued_int"].value == "42"
+        # assert reconstructed_entity.inputs["test_literal_valued_int"] == "42"
 
     def test_outputs_types_standalone_jobs(self):
         original_entity = load_job(Path("./tests/test_configs/command_job/command_job_output_types.yml"))
@@ -237,8 +241,9 @@ class TestCommandJob:
         rest_representation.properties.outputs["default"] = dummy_default
         reconstructed_entity = Job._from_rest_object(rest_representation)
 
+        # assert original_entity.outputs["test1"] is None
         assert rest_representation.properties.outputs["test1"].job_output_type == JobOutputType.URI_FOLDER
-        assert rest_representation.properties.outputs["test1"].mode == OutputDeliveryMode.READ_WRITE_MOUNT
+        assert rest_representation.properties.outputs["test1"].mode is None
 
         assert original_entity.outputs["test2"].mode == InputOutputModes.UPLOAD
         assert rest_representation.properties.outputs["test2"].job_output_type == JobOutputType.URI_FOLDER
@@ -248,3 +253,8 @@ class TestCommandJob:
         assert rest_representation.properties.outputs["test3"].job_output_type == JobOutputType.URI_FOLDER
         assert rest_representation.properties.outputs["test3"].mode == OutputDeliveryMode.READ_WRITE_MOUNT
         assert reconstructed_entity.outputs["default"].path == "azureml://foo"
+
+    def test_float_deserialized(self):
+        job = load_job(Path("./tests/test_configs/command_job/command_job_float_type.yml"))
+        float_arg = job.inputs.get("my_float_arg")
+        assert isinstance(float_arg._data, float)

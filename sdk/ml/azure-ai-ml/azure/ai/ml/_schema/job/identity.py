@@ -2,18 +2,20 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use
 
 import logging
 
+from marshmallow import fields, post_load
+
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     AmlToken,
+    IdentityConfigurationType,
     ManagedIdentity,
     UserIdentity,
-    IdentityConfigurationType,
 )
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._utils.utils import camel_to_snake
-from marshmallow import fields, post_load
 
 from ..core.schema import PatchedSchemaMeta
 
@@ -23,7 +25,6 @@ module_logger = logging.getLogger(__name__)
 class ManagedIdentitySchema(metaclass=PatchedSchemaMeta):
     identity_type = StringTransformedEnum(
         data_key="type",
-        name="type",
         required=True,
         allowed_values=IdentityConfigurationType.MANAGED,
         casing_transform=camel_to_snake,
@@ -40,7 +41,6 @@ class ManagedIdentitySchema(metaclass=PatchedSchemaMeta):
 class AMLTokenIdentitySchema(metaclass=PatchedSchemaMeta):
     identity_type = StringTransformedEnum(
         data_key="type",
-        name="type",
         required=True,
         allowed_values=IdentityConfigurationType.AML_TOKEN,
         casing_transform=camel_to_snake,
@@ -54,7 +54,6 @@ class AMLTokenIdentitySchema(metaclass=PatchedSchemaMeta):
 class UserIdentitySchema(metaclass=PatchedSchemaMeta):
     identity_type = StringTransformedEnum(
         data_key="type",
-        name="type",
         required=True,
         allowed_values=IdentityConfigurationType.USER_IDENTITY,
         casing_transform=camel_to_snake,

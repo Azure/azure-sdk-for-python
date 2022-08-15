@@ -2,19 +2,30 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 from typing import Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    ImageSweepSettings as RestImageSweepSettings,
-    ImageSweepLimitSettings,
-    SamplingAlgorithmType,
-)
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._restclient.v2022_02_01_preview.models import ImageSweepLimitSettings
+from azure.ai.ml._restclient.v2022_02_01_preview.models import ImageSweepSettings as RestImageSweepSettings
+from azure.ai.ml._restclient.v2022_02_01_preview.models import SamplingAlgorithmType
 from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class ImageSweepSettings(RestTranslatableMixin):
-    """Sweep settings for all AutoML Image Verticals."""
+    """Sweep settings for all AutoML Image Verticals.
+
+    :param sampling_algorithm: Required. [Required] Type of the hyperparameter sampling
+        algorithms. Possible values include: "Grid", "Random", "Bayesian".
+    :type sampling_algorithm: str or ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType
+    :param max_concurrent_trials: Maximum Concurrent iterations.
+    :type max_concurrent_trials: int
+    :param max_trials: Number of iterations.
+    :type max_trials: int
+    :param early_termination: Type of early termination policy.
+    :type early_termination: ~azure.mgmt.machinelearningservices.models.EarlyTerminationPolicy
+    """
 
     def __init__(
         self,
@@ -32,7 +43,8 @@ class ImageSweepSettings(RestTranslatableMixin):
     def _to_rest_object(self) -> RestImageSweepSettings:
         return RestImageSweepSettings(
             limits=ImageSweepLimitSettings(
-                max_concurrent_trials=self.max_concurrent_trials, max_trials=self.max_trials
+                max_concurrent_trials=self.max_concurrent_trials,
+                max_trials=self.max_trials,
             ),
             sampling_algorithm=self.sampling_algorithm,
             early_termination=self.early_termination,

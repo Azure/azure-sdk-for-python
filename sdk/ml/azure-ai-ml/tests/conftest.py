@@ -18,10 +18,12 @@ from datetime import datetime
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.mgmt.storage import StorageManagementClient
 from azure.core.exceptions import ResourceNotFoundError
-from azure.ai.ml.entities import Job, Component, AzureBlobDatastore
-from azure.ai.ml.entities._assets import Model, Data, Dataset
-from azure.ai.ml.entities._datastore.credentials import NoneCredentials
+from azure.ai.ml.entities import Job, Component, AzureBlobDatastore, CommandComponent
+from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 
+from azure.ai.ml.entities._assets import Model, Data
+from azure.ai.ml.entities._datastore.credentials import NoneCredentials
+from azure.ai.ml import load_job, load_component
 
 E2E_TEST_LOGGING_ENABLED = "E2E_TEST_LOGGING_ENABLED"
 test_folder = Path(os.path.abspath(__file__)).parent.absolute()
@@ -91,7 +93,7 @@ def mock_registry_discovery_client(mock_credential: DefaultAzureCredential) -> S
 
 
 @pytest.fixture
-def mock_aml_services_2022_05_01(mocker: MockFixture) -> ServiceClientRegistryDiscovery:
+def mock_aml_services_2022_05_01(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_05_01")
 
 
@@ -148,6 +150,18 @@ def registry_client(e2e_ws_scope: OperationScope) -> MLClient:
 
 
 @pytest.fixture
+def only_registry_client(e2e_ws_scope: OperationScope) -> MLClient:
+    """return a machine learning client using default e2e testing workspace"""
+    return MLClient(
+        credential=get_auth(),
+        subscription_id=e2e_ws_scope.subscription_id,
+        resource_group_name=e2e_ws_scope.resource_group_name,
+        logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
+        registry_name="testFeed",
+    )
+
+
+@pytest.fixture
 def client_fixture(request, client) -> MLClient:
     """return a machine learning client using default e2e testing workspace"""
     request.cls.client = client
@@ -180,27 +194,6 @@ def data_with_2_versions(client: MLClient) -> str:
 
 
 @pytest.fixture
-def dataset_with_2_versions(client: MLClient) -> str:
-    name = "list_dataset_test"
-
-    try:
-        client.datasets.get(name, "1")
-    except ResourceNotFoundError:
-        # Create the data version if not exits
-        dataset = Dataset(name=name, version="1", local_path="samples/yaml/data/mltable-folder/iris.csv")
-        client.datasets.create_or_update(dataset)
-
-    try:
-        client.datasets.get(name, "2")
-    except ResourceNotFoundError:
-        # Create the data version if not exits
-        dataset = Dataset(name=name, version="2", local_path="samples/yaml/data/mltable-folder/iris.csv")
-        client.datasets.create_or_update(dataset)
-
-    return name
-
-
-@pytest.fixture
 def batch_endpoint_model(client: MLClient) -> Model:
     name = "sklearn_regression_model"
     model = Model(name=name, version="1", path="tests/test_configs/batch_setup/batch_endpoint_model")
@@ -223,7 +216,7 @@ def light_gbm_model(client: MLClient) -> Model:
     try:
         client.models.get(name=model_name, version="1")
     except ResourceNotFoundError:
-        job = Job.load(path="./tests/test_configs/batch_setup/lgb.yml")
+        job = load_job(path="./tests/test_configs/batch_setup/lgb.yml")
         job.name = job_name
         print(f"Starting new job with name {job_name}")
         job = client.jobs.create_or_update(job)
@@ -250,23 +243,30 @@ def helloworld_component_with_paths(client: MLClient) -> Component:
 
 
 @pytest.fixture
+def batch_inference(client: MLClient) -> ParallelComponent:
+    return _load_or_create_component(
+        client, path="./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/score.yml"
+    )
+
+
+@pytest.fixture
 def pipeline_samples_e2e_registered_train_components(client: MLClient) -> Component:
     return _load_or_create_component(
-        client, path=test_folder / "../test_configs/dsl_pipeline/e2e_registered_components/train.yml"
+        client, path=test_folder / "./test_configs/dsl_pipeline/e2e_registered_components/train.yml"
     )
 
 
 @pytest.fixture
 def pipeline_samples_e2e_registered_score_components(client: MLClient) -> Component:
     return _load_or_create_component(
-        client, path=test_folder / "../test_configs/dsl_pipeline/e2e_registered_components/score.yml"
+        client, path=test_folder / "./test_configs/dsl_pipeline/e2e_registered_components/score.yml"
     )
 
 
 @pytest.fixture
 def pipeline_samples_e2e_registered_eval_components(client: MLClient) -> Component:
     return _load_or_create_component(
-        client, path=test_folder / "../test_configs/dsl_pipeline/e2e_registered_components/eval.yml"
+        client, path=test_folder / "./test_configs/dsl_pipeline/e2e_registered_components/eval.yml"
     )
 
 
@@ -277,7 +277,7 @@ def mock_code_hash(mocker: MockFixture) -> None:
 
 def _load_or_create_component(client: MLClient, path: str) -> Component:
     try:
-        component = Component.load(path)
+        component = load_component(path)
         return client.components.get(name=component.name, version=component.version)
     except ResourceNotFoundError:
         return client.components.create_or_update(component)
@@ -351,3 +351,14 @@ def credentialless_datastore(client: MLClient, storage_account_name: str) -> Azu
 @pytest.fixture()
 def enable_pipeline_private_preview_features(mocker: MockFixture):
     mocker.patch("azure.ai.ml.entities._job.pipeline.pipeline_job.is_private_preview_enabled", return_value=True)
+
+
+@pytest.fixture()
+def enable_internal_components():
+    from azure.ai.ml.dsl._utils import environment_variable_overwrite
+    from azure.ai.ml._utils.utils import try_enable_internal_components
+    from azure.ai.ml.constants import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
+
+    with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "True"):
+        # need to call _try_init_internal_components manually as environment variable is set after _internal is imported
+        try_enable_internal_components()

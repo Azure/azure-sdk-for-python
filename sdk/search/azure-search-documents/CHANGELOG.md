@@ -10,6 +10,7 @@
 - Fixed issue where async `search` call would fail with a 403 error when retrieving large number of documents.
 
 ### Other Changes
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later.
 
 ## 11.3.0b8 (2022-03-08)
 
@@ -108,6 +109,15 @@
 - Added AAD support
 - Added support for semantic search
 - Added normalizer support
+
+## 11.2.2 (2022-04-14)
+
+### Bugs Fixed
+- Fixes a bug allowing users to set keys for cognitive service skills using the API. Exposes `DefaultCognitiveServicesAccount` and `CognitiveServicesAccountKey`
+
+## 11.2.1 (2022-01-10)
+
+Minor updates.
 
 ## 11.2.0 (2021-06-08)
 

@@ -2,48 +2,40 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 import logging
-from typing import Dict, Any, Union
+from typing import Any, Dict, Union
+
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, JobException
+from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken, JobBaseData, ManagedIdentity
+from azure.ai.ml._restclient.v2022_02_01_preview.models import SweepJob as RestSweepJob
+from azure.ai.ml._restclient.v2022_02_01_preview.models import TrialComponent, UserIdentity
 from azure.ai.ml._schema._sweep.sweep_job import SweepJobSchema
-
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    TYPE,
-    JobType,
-)
-
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    SweepJob as RestSweepJob,
-    SamplingAlgorithm as RestSamplingAlgorithm,
-    JobBaseData,
-    TrialComponent,
-    ManagedIdentity,
-    UserIdentity,
-    AmlToken,
-)
-
-from azure.ai.ml.entities import Job, CommandJob
-from ..parameterized_command import ParameterizedCommand
+from azure.ai.ml._utils.utils import map_single_brackets_and_warn
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, TYPE, JobType
+from azure.ai.ml.entities._job.command_job import CommandJob
+from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.sweep.sampling_algorithm import SamplingAlgorithm
-from azure.ai.ml.entities._util import load_from_dict
-from .objective import Objective
-from .parameterized_sweep import SAMPLING_ALGORITHM_CONSTRUCTOR, ParameterizedSweep
-from .search_space import SweepDistribution
-from .early_termination_policy import EarlyTerminationPolicy
 from azure.ai.ml.entities._job._input_output_helpers import (
-    to_rest_dataset_literal_inputs,
-    from_rest_inputs_to_dataset_literal,
-    validate_inputs_for_command,
     from_rest_data_outputs,
+    from_rest_inputs_to_dataset_literal,
     to_rest_data_outputs,
+    to_rest_dataset_literal_inputs,
+    validate_inputs_for_command,
     validate_key_contains_allowed_characters,
 )
-from azure.ai.ml._utils.utils import map_single_brackets_and_warn
 from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
+from azure.ai.ml.entities._job.sweep.sampling_algorithm import SamplingAlgorithm
+from azure.ai.ml.entities._util import load_from_dict
+
 from ..job_limits import SweepJobLimits
-from azure.ai.ml._ml_exceptions import ErrorTarget, JobException
+from ..parameterized_command import ParameterizedCommand
+from .early_termination_policy import EarlyTerminationPolicy
+from .objective import Objective
+from .parameterized_sweep import ParameterizedSweep
+from .search_space import SweepDistribution
 
 module_logger = logging.getLogger(__name__)
 
@@ -176,7 +168,12 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
 
     def _to_component(self, context: Dict = None, **kwargs):
         msg = "no sweep component entity"
-        raise JobException(message=msg, no_personal_data_message=msg, target=ErrorTarget.SWEEP_JOB)
+        raise JobException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.SWEEP_JOB,
+            error_category=ErrorCategory.USER_ERROR,
+        )
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "SweepJob":

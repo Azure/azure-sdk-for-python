@@ -6,6 +6,8 @@ from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.operations import ComponentOperations
 from azure.ai.ml._scope_dependent_operations import OperationScope
 
+from .._util import _COMPONENT_TIMEOUT_SECOND
+
 
 @pytest.fixture
 def mock_component_operation(
@@ -20,11 +22,12 @@ def mock_component_operation(
     )
 
 
+@pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
 class TestComponentOperation:
     def test_create(self, mock_component_operation: ComponentOperations, randstr: Callable[[], str]) -> None:
         task = {
-            "type": "function",
+            "type": "run_function",
             "model": {"name": "sore_model", "type": "mlflow_model"},
             "code_configuration": {"code": "./src", "scoring_script": "score.py"},
             "environment": "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
@@ -40,7 +43,7 @@ class TestComponentOperation:
             task=task,
         )
 
-        with patch.object(ComponentOperations, "_upload_dependencies") as mock_thing, patch(
+        with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies") as mock_thing, patch(
             "azure.ai.ml.operations._component_operations.Component._from_rest_object",
             return_value=ParallelComponent(),
         ):
@@ -59,7 +62,7 @@ class TestComponentOperation:
         self, mock_component_operation: ComponentOperations, randstr: Callable[[], str]
     ) -> None:
         task = {
-            "type": "function",
+            "type": "run_function",
             "model": {"name": "sore_model", "type": "mlflow_model"},
             "code_configuration": {"code": "./src", "scoring_script": "score.py"},
             "environment": "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
@@ -75,7 +78,7 @@ class TestComponentOperation:
             task=task,
         )
         assert component._auto_increment_version
-        with patch.object(ComponentOperations, "_upload_dependencies") as mock_thing, patch(
+        with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies") as mock_thing, patch(
             "azure.ai.ml.operations._component_operations.Component._from_rest_object",
             return_value=component,
         ):

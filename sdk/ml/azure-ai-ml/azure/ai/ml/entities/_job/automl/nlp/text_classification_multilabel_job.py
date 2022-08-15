@@ -1,32 +1,35 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 from typing import Dict, Optional, Union
 
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml._restclient.v2022_02_01_preview.models import AutoMLJob as RestAutoMLJob
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    AutoMLJob as RestAutoMLJob,
     ClassificationMultilabelPrimaryMetrics,
     JobBaseData,
     TaskType,
+)
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     TextClassificationMultilabel as RestTextClassificationMultilabel,
 )
-from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, AutoMLConstants
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
+from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.automl.nlp.automl_nlp_job import AutoMLNLPJob
 from azure.ai.ml.entities._job.automl.nlp.nlp_featurization_settings import NlpFeaturizationSettings
 from azure.ai.ml.entities._job.automl.nlp.nlp_limit_settings import NlpLimitSettings
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
-from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
 class TextClassificationMultilabelJob(AutoMLNLPJob):
-    """
-    Configuration for AutoML Text Classification Multilabel Job.
-    """
+    """Configuration for AutoML Text Classification Multilabel Job."""
 
     _DEFAULT_PRIMARY_METRIC = ClassificationMultilabelPrimaryMetrics.ACCURACY
 
@@ -40,8 +43,7 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
         log_verbosity: Optional[str] = None,
         **kwargs
     ):
-        """
-        Initializes a new AutoML Text Classification Multilabel task.
+        """Initializes a new AutoML Text Classification Multilabel task.
 
         :param target_column_name: The name of the target column
         :param training_data: Training data to be used for training
@@ -165,15 +167,34 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
         if inside_pipeline:
             from azure.ai.ml._schema.pipeline.automl_node import AutoMLTextClassificationMultilabelNode
 
-            return load_from_dict(AutoMLTextClassificationMultilabelNode, data, context, additional_message, **kwargs)
+            loaded_data = load_from_dict(
+                AutoMLTextClassificationMultilabelNode,
+                data,
+                context,
+                additional_message,
+                **kwargs,
+            )
+        else:
+            loaded_data = load_from_dict(
+                TextClassificationMultilabelSchema,
+                data,
+                context,
+                additional_message,
+                **kwargs,
+            )
+        job_instance = cls._create_instance_from_schema_dict(loaded_data)
+        return job_instance
 
-        return load_from_dict(TextClassificationMultilabelSchema, data, context, additional_message, **kwargs)
+    @classmethod
+    def _create_instance_from_schema_dict(cls, loaded_data: Dict) -> "TextClassificationMultilabelJob":
+        loaded_data.pop(AutoMLConstants.TASK_TYPE_YAML, None)
+        return TextClassificationMultilabelJob(**loaded_data)
 
     def _to_dict(self, inside_pipeline=False) -> Dict:
-        from azure.ai.ml._schema.pipeline.automl_node import AutoMLTextClassificationMultilabelNode
         from azure.ai.ml._schema.automl.nlp_vertical.text_classification_multilabel import (
             TextClassificationMultilabelSchema,
         )
+        from azure.ai.ml._schema.pipeline.automl_node import AutoMLTextClassificationMultilabelNode
 
         if inside_pipeline:
             return AutoMLTextClassificationMultilabelNode(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
