@@ -59,58 +59,55 @@ class Cluster(msrest.serialization.Model):
     """
 
     _validation = {
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'uuid': {'readonly': True},
-        'mo_name': {'readonly': True},
-        'statuses': {'readonly': True},
-        'custom_resource_name': {'readonly': True},
-        'datastore_ids': {'readonly': True},
-        'network_ids': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "uuid": {"readonly": True},
+        "mo_name": {"readonly": True},
+        "statuses": {"readonly": True},
+        "custom_resource_name": {"readonly": True},
+        "datastore_ids": {"readonly": True},
+        "network_ids": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'uuid': {'key': 'properties.uuid', 'type': 'str'},
-        'v_center_id': {'key': 'properties.vCenterId', 'type': 'str'},
-        'mo_ref_id': {'key': 'properties.moRefId', 'type': 'str'},
-        'inventory_item_id': {'key': 'properties.inventoryItemId', 'type': 'str'},
-        'mo_name': {'key': 'properties.moName', 'type': 'str'},
-        'statuses': {'key': 'properties.statuses', 'type': '[ResourceStatus]'},
-        'custom_resource_name': {'key': 'properties.customResourceName', 'type': 'str'},
-        'datastore_ids': {'key': 'properties.datastoreIds', 'type': '[str]'},
-        'network_ids': {'key': 'properties.networkIds', 'type': '[str]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "uuid": {"key": "properties.uuid", "type": "str"},
+        "v_center_id": {"key": "properties.vCenterId", "type": "str"},
+        "mo_ref_id": {"key": "properties.moRefId", "type": "str"},
+        "inventory_item_id": {"key": "properties.inventoryItemId", "type": "str"},
+        "mo_name": {"key": "properties.moName", "type": "str"},
+        "statuses": {"key": "properties.statuses", "type": "[ResourceStatus]"},
+        "custom_resource_name": {"key": "properties.customResourceName", "type": "str"},
+        "datastore_ids": {"key": "properties.datastoreIds", "type": "[str]"},
+        "network_ids": {"key": "properties.networkIds", "type": "[str]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Cluster, self).__init__(**kwargs)
-        self.location = kwargs['location']
-        self.extended_location = kwargs.get('extended_location', None)
+        self.location = kwargs["location"]
+        self.extended_location = kwargs.get("extended_location", None)
         self.system_data = None
-        self.tags = kwargs.get('tags', None)
+        self.tags = kwargs.get("tags", None)
         self.name = None
         self.id = None
         self.type = None
-        self.kind = kwargs.get('kind', None)
+        self.kind = kwargs.get("kind", None)
         self.uuid = None
-        self.v_center_id = kwargs.get('v_center_id', None)
-        self.mo_ref_id = kwargs.get('mo_ref_id', None)
-        self.inventory_item_id = kwargs.get('inventory_item_id', None)
+        self.v_center_id = kwargs.get("v_center_id", None)
+        self.mo_ref_id = kwargs.get("mo_ref_id", None)
+        self.inventory_item_id = kwargs.get("inventory_item_id", None)
         self.mo_name = None
         self.statuses = None
         self.custom_resource_name = None
@@ -145,31 +142,36 @@ class InventoryItemProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'inventory_type': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "inventory_type": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'inventory_type': {'key': 'inventoryType', 'type': 'str'},
-        'managed_resource_id': {'key': 'managedResourceId', 'type': 'str'},
-        'mo_ref_id': {'key': 'moRefId', 'type': 'str'},
-        'mo_name': {'key': 'moName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "inventory_type": {"key": "inventoryType", "type": "str"},
+        "managed_resource_id": {"key": "managedResourceId", "type": "str"},
+        "mo_ref_id": {"key": "moRefId", "type": "str"},
+        "mo_name": {"key": "moName", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     _subtype_map = {
-        'inventory_type': {'Cluster': 'ClusterInventoryItem', 'Datastore': 'DatastoreInventoryItem', 'Host': 'HostInventoryItem', 'ResourcePool': 'ResourcePoolInventoryItem', 'VirtualMachine': 'VirtualMachineInventoryItem', 'VirtualMachineTemplate': 'VirtualMachineTemplateInventoryItem', 'VirtualNetwork': 'VirtualNetworkInventoryItem'}
+        "inventory_type": {
+            "Cluster": "ClusterInventoryItem",
+            "Datastore": "DatastoreInventoryItem",
+            "Host": "HostInventoryItem",
+            "ResourcePool": "ResourcePoolInventoryItem",
+            "VirtualMachine": "VirtualMachineInventoryItem",
+            "VirtualMachineTemplate": "VirtualMachineTemplateInventoryItem",
+            "VirtualNetwork": "VirtualNetworkInventoryItem",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(InventoryItemProperties, self).__init__(**kwargs)
         self.inventory_type = None  # type: Optional[str]
-        self.managed_resource_id = kwargs.get('managed_resource_id', None)
-        self.mo_ref_id = kwargs.get('mo_ref_id', None)
-        self.mo_name = kwargs.get('mo_name', None)
+        self.managed_resource_id = kwargs.get("managed_resource_id", None)
+        self.mo_ref_id = kwargs.get("mo_ref_id", None)
+        self.mo_name = kwargs.get("mo_name", None)
         self.provisioning_state = None
 
 
@@ -196,24 +198,21 @@ class ClusterInventoryItem(InventoryItemProperties):
     """
 
     _validation = {
-        'inventory_type': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "inventory_type": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'inventory_type': {'key': 'inventoryType', 'type': 'str'},
-        'managed_resource_id': {'key': 'managedResourceId', 'type': 'str'},
-        'mo_ref_id': {'key': 'moRefId', 'type': 'str'},
-        'mo_name': {'key': 'moName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "inventory_type": {"key": "inventoryType", "type": "str"},
+        "managed_resource_id": {"key": "managedResourceId", "type": "str"},
+        "mo_ref_id": {"key": "moRefId", "type": "str"},
+        "mo_name": {"key": "moName", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ClusterInventoryItem, self).__init__(**kwargs)
-        self.inventory_type = 'Cluster'  # type: str
+        self.inventory_type = "Cluster"  # type: str
 
 
 class ClustersList(msrest.serialization.Model):
@@ -228,21 +227,18 @@ class ClustersList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[Cluster]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[Cluster]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ClustersList, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs['value']
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs["value"]
 
 
 class Condition(msrest.serialization.Model):
@@ -261,23 +257,20 @@ class Condition(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'readonly': True},
-        'reason': {'readonly': True},
-        'message': {'readonly': True},
-        'severity': {'readonly': True},
+        "status": {"readonly": True},
+        "reason": {"readonly": True},
+        "message": {"readonly": True},
+        "severity": {"readonly": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'severity': {'key': 'severity', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "severity": {"key": "severity", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Condition, self).__init__(**kwargs)
         self.status = None
         self.reason = None
@@ -333,54 +326,51 @@ class Datastore(msrest.serialization.Model):
     """
 
     _validation = {
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'uuid': {'readonly': True},
-        'mo_name': {'readonly': True},
-        'statuses': {'readonly': True},
-        'custom_resource_name': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "uuid": {"readonly": True},
+        "mo_name": {"readonly": True},
+        "statuses": {"readonly": True},
+        "custom_resource_name": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'uuid': {'key': 'properties.uuid', 'type': 'str'},
-        'v_center_id': {'key': 'properties.vCenterId', 'type': 'str'},
-        'mo_ref_id': {'key': 'properties.moRefId', 'type': 'str'},
-        'inventory_item_id': {'key': 'properties.inventoryItemId', 'type': 'str'},
-        'mo_name': {'key': 'properties.moName', 'type': 'str'},
-        'statuses': {'key': 'properties.statuses', 'type': '[ResourceStatus]'},
-        'custom_resource_name': {'key': 'properties.customResourceName', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "uuid": {"key": "properties.uuid", "type": "str"},
+        "v_center_id": {"key": "properties.vCenterId", "type": "str"},
+        "mo_ref_id": {"key": "properties.moRefId", "type": "str"},
+        "inventory_item_id": {"key": "properties.inventoryItemId", "type": "str"},
+        "mo_name": {"key": "properties.moName", "type": "str"},
+        "statuses": {"key": "properties.statuses", "type": "[ResourceStatus]"},
+        "custom_resource_name": {"key": "properties.customResourceName", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Datastore, self).__init__(**kwargs)
-        self.location = kwargs['location']
-        self.extended_location = kwargs.get('extended_location', None)
+        self.location = kwargs["location"]
+        self.extended_location = kwargs.get("extended_location", None)
         self.system_data = None
-        self.tags = kwargs.get('tags', None)
+        self.tags = kwargs.get("tags", None)
         self.name = None
         self.id = None
         self.type = None
-        self.kind = kwargs.get('kind', None)
+        self.kind = kwargs.get("kind", None)
         self.uuid = None
-        self.v_center_id = kwargs.get('v_center_id', None)
-        self.mo_ref_id = kwargs.get('mo_ref_id', None)
-        self.inventory_item_id = kwargs.get('inventory_item_id', None)
+        self.v_center_id = kwargs.get("v_center_id", None)
+        self.mo_ref_id = kwargs.get("mo_ref_id", None)
+        self.inventory_item_id = kwargs.get("inventory_item_id", None)
         self.mo_name = None
         self.statuses = None
         self.custom_resource_name = None
@@ -414,28 +404,25 @@ class DatastoreInventoryItem(InventoryItemProperties):
     """
 
     _validation = {
-        'inventory_type': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "inventory_type": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'inventory_type': {'key': 'inventoryType', 'type': 'str'},
-        'managed_resource_id': {'key': 'managedResourceId', 'type': 'str'},
-        'mo_ref_id': {'key': 'moRefId', 'type': 'str'},
-        'mo_name': {'key': 'moName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'capacity_gb': {'key': 'capacityGB', 'type': 'long'},
-        'free_space_gb': {'key': 'freeSpaceGB', 'type': 'long'},
+        "inventory_type": {"key": "inventoryType", "type": "str"},
+        "managed_resource_id": {"key": "managedResourceId", "type": "str"},
+        "mo_ref_id": {"key": "moRefId", "type": "str"},
+        "mo_name": {"key": "moName", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "capacity_gb": {"key": "capacityGB", "type": "long"},
+        "free_space_gb": {"key": "freeSpaceGB", "type": "long"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(DatastoreInventoryItem, self).__init__(**kwargs)
-        self.inventory_type = 'Datastore'  # type: str
-        self.capacity_gb = kwargs.get('capacity_gb', None)
-        self.free_space_gb = kwargs.get('free_space_gb', None)
+        self.inventory_type = "Datastore"  # type: str
+        self.capacity_gb = kwargs.get("capacity_gb", None)
+        self.free_space_gb = kwargs.get("free_space_gb", None)
 
 
 class DatastoresList(msrest.serialization.Model):
@@ -450,21 +437,18 @@ class DatastoresList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[Datastore]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[Datastore]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(DatastoresList, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs['value']
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs["value"]
 
 
 class ErrorDefinition(msrest.serialization.Model):
@@ -481,21 +465,18 @@ class ErrorDefinition(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'details': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "details": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDefinition]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDefinition]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorDefinition, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -518,26 +499,23 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorDetail, self).__init__(**kwargs)
-        self.code = kwargs['code']
-        self.message = kwargs['message']
-        self.target = kwargs.get('target', None)
-        self.details = kwargs.get('details', None)
+        self.code = kwargs["code"]
+        self.message = kwargs["message"]
+        self.target = kwargs.get("target", None)
+        self.details = kwargs.get("details", None)
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -548,15 +526,12 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDefinition'},
+        "error": {"key": "error", "type": "ErrorDefinition"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = kwargs.get("error", None)
 
 
 class ExtendedLocation(msrest.serialization.Model):
@@ -569,17 +544,14 @@ class ExtendedLocation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExtendedLocation, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
-        self.name = kwargs.get('name', None)
+        self.type = kwargs.get("type", None)
+        self.name = kwargs.get("name", None)
 
 
 class Resource(msrest.serialization.Model):
@@ -598,21 +570,18 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -635,21 +604,18 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ProxyResource, self).__init__(**kwargs)
 
 
@@ -688,42 +654,39 @@ class GuestAgent(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'uuid': {'readonly': True},
-        'status': {'readonly': True},
-        'custom_resource_name': {'readonly': True},
-        'statuses': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "uuid": {"readonly": True},
+        "status": {"readonly": True},
+        "custom_resource_name": {"readonly": True},
+        "statuses": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'uuid': {'key': 'properties.uuid', 'type': 'str'},
-        'credentials': {'key': 'properties.credentials', 'type': 'GuestCredential'},
-        'http_proxy_config': {'key': 'properties.httpProxyConfig', 'type': 'HttpProxyConfiguration'},
-        'provisioning_action': {'key': 'properties.provisioningAction', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'custom_resource_name': {'key': 'properties.customResourceName', 'type': 'str'},
-        'statuses': {'key': 'properties.statuses', 'type': '[ResourceStatus]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "uuid": {"key": "properties.uuid", "type": "str"},
+        "credentials": {"key": "properties.credentials", "type": "GuestCredential"},
+        "http_proxy_config": {"key": "properties.httpProxyConfig", "type": "HttpProxyConfiguration"},
+        "provisioning_action": {"key": "properties.provisioningAction", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "custom_resource_name": {"key": "properties.customResourceName", "type": "str"},
+        "statuses": {"key": "properties.statuses", "type": "[ResourceStatus]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(GuestAgent, self).__init__(**kwargs)
         self.system_data = None
         self.uuid = None
-        self.credentials = kwargs.get('credentials', None)
-        self.http_proxy_config = kwargs.get('http_proxy_config', None)
-        self.provisioning_action = kwargs.get('provisioning_action', None)
+        self.credentials = kwargs.get("credentials", None)
+        self.http_proxy_config = kwargs.get("http_proxy_config", None)
+        self.provisioning_action = kwargs.get("provisioning_action", None)
         self.status = None
         self.custom_resource_name = None
         self.statuses = None
@@ -742,21 +705,18 @@ class GuestAgentList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[GuestAgent]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[GuestAgent]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(GuestAgentList, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs['value']
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs["value"]
 
 
 class GuestAgentProfile(msrest.serialization.Model):
@@ -778,25 +738,22 @@ class GuestAgentProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'vm_uuid': {'readonly': True},
-        'status': {'readonly': True},
-        'last_status_change': {'readonly': True},
-        'agent_version': {'readonly': True},
-        'error_details': {'readonly': True},
+        "vm_uuid": {"readonly": True},
+        "status": {"readonly": True},
+        "last_status_change": {"readonly": True},
+        "agent_version": {"readonly": True},
+        "error_details": {"readonly": True},
     }
 
     _attribute_map = {
-        'vm_uuid': {'key': 'vmUuid', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'last_status_change': {'key': 'lastStatusChange', 'type': 'iso-8601'},
-        'agent_version': {'key': 'agentVersion', 'type': 'str'},
-        'error_details': {'key': 'errorDetails', 'type': '[ErrorDetail]'},
+        "vm_uuid": {"key": "vmUuid", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "last_status_change": {"key": "lastStatusChange", "type": "iso-8601"},
+        "agent_version": {"key": "agentVersion", "type": "str"},
+        "error_details": {"key": "errorDetails", "type": "[ErrorDetail]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(GuestAgentProfile, self).__init__(**kwargs)
         self.vm_uuid = None
         self.status = None
@@ -815,17 +772,14 @@ class GuestCredential(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(GuestCredential, self).__init__(**kwargs)
-        self.username = kwargs.get('username', None)
-        self.password = kwargs.get('password', None)
+        self.username = kwargs.get("username", None)
+        self.password = kwargs.get("password", None)
 
 
 class HardwareProfile(msrest.serialization.Model):
@@ -852,28 +806,25 @@ class HardwareProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'cpu_hot_add_enabled': {'readonly': True},
-        'cpu_hot_remove_enabled': {'readonly': True},
-        'memory_hot_add_enabled': {'readonly': True},
+        "cpu_hot_add_enabled": {"readonly": True},
+        "cpu_hot_remove_enabled": {"readonly": True},
+        "memory_hot_add_enabled": {"readonly": True},
     }
 
     _attribute_map = {
-        'memory_size_mb': {'key': 'memorySizeMB', 'type': 'int'},
-        'num_cp_us': {'key': 'numCPUs', 'type': 'int'},
-        'num_cores_per_socket': {'key': 'numCoresPerSocket', 'type': 'int'},
-        'cpu_hot_add_enabled': {'key': 'cpuHotAddEnabled', 'type': 'bool'},
-        'cpu_hot_remove_enabled': {'key': 'cpuHotRemoveEnabled', 'type': 'bool'},
-        'memory_hot_add_enabled': {'key': 'memoryHotAddEnabled', 'type': 'bool'},
+        "memory_size_mb": {"key": "memorySizeMB", "type": "int"},
+        "num_cp_us": {"key": "numCPUs", "type": "int"},
+        "num_cores_per_socket": {"key": "numCoresPerSocket", "type": "int"},
+        "cpu_hot_add_enabled": {"key": "cpuHotAddEnabled", "type": "bool"},
+        "cpu_hot_remove_enabled": {"key": "cpuHotRemoveEnabled", "type": "bool"},
+        "memory_hot_add_enabled": {"key": "memoryHotAddEnabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(HardwareProfile, self).__init__(**kwargs)
-        self.memory_size_mb = kwargs.get('memory_size_mb', None)
-        self.num_cp_us = kwargs.get('num_cp_us', None)
-        self.num_cores_per_socket = kwargs.get('num_cores_per_socket', None)
+        self.memory_size_mb = kwargs.get("memory_size_mb", None)
+        self.num_cp_us = kwargs.get("num_cp_us", None)
+        self.num_cores_per_socket = kwargs.get("num_cores_per_socket", None)
         self.cpu_hot_add_enabled = None
         self.cpu_hot_remove_enabled = None
         self.memory_hot_add_enabled = None
@@ -923,54 +874,51 @@ class Host(msrest.serialization.Model):
     """
 
     _validation = {
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'uuid': {'readonly': True},
-        'mo_name': {'readonly': True},
-        'statuses': {'readonly': True},
-        'custom_resource_name': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "uuid": {"readonly": True},
+        "mo_name": {"readonly": True},
+        "statuses": {"readonly": True},
+        "custom_resource_name": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'uuid': {'key': 'properties.uuid', 'type': 'str'},
-        'v_center_id': {'key': 'properties.vCenterId', 'type': 'str'},
-        'mo_ref_id': {'key': 'properties.moRefId', 'type': 'str'},
-        'inventory_item_id': {'key': 'properties.inventoryItemId', 'type': 'str'},
-        'mo_name': {'key': 'properties.moName', 'type': 'str'},
-        'statuses': {'key': 'properties.statuses', 'type': '[ResourceStatus]'},
-        'custom_resource_name': {'key': 'properties.customResourceName', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "uuid": {"key": "properties.uuid", "type": "str"},
+        "v_center_id": {"key": "properties.vCenterId", "type": "str"},
+        "mo_ref_id": {"key": "properties.moRefId", "type": "str"},
+        "inventory_item_id": {"key": "properties.inventoryItemId", "type": "str"},
+        "mo_name": {"key": "properties.moName", "type": "str"},
+        "statuses": {"key": "properties.statuses", "type": "[ResourceStatus]"},
+        "custom_resource_name": {"key": "properties.customResourceName", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Host, self).__init__(**kwargs)
-        self.location = kwargs['location']
-        self.extended_location = kwargs.get('extended_location', None)
+        self.location = kwargs["location"]
+        self.extended_location = kwargs.get("extended_location", None)
         self.system_data = None
-        self.tags = kwargs.get('tags', None)
+        self.tags = kwargs.get("tags", None)
         self.name = None
         self.id = None
         self.type = None
-        self.kind = kwargs.get('kind', None)
+        self.kind = kwargs.get("kind", None)
         self.uuid = None
-        self.v_center_id = kwargs.get('v_center_id', None)
-        self.mo_ref_id = kwargs.get('mo_ref_id', None)
-        self.inventory_item_id = kwargs.get('inventory_item_id', None)
+        self.v_center_id = kwargs.get("v_center_id", None)
+        self.mo_ref_id = kwargs.get("mo_ref_id", None)
+        self.inventory_item_id = kwargs.get("inventory_item_id", None)
         self.mo_name = None
         self.statuses = None
         self.custom_resource_name = None
@@ -1002,26 +950,23 @@ class HostInventoryItem(InventoryItemProperties):
     """
 
     _validation = {
-        'inventory_type': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "inventory_type": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'inventory_type': {'key': 'inventoryType', 'type': 'str'},
-        'managed_resource_id': {'key': 'managedResourceId', 'type': 'str'},
-        'mo_ref_id': {'key': 'moRefId', 'type': 'str'},
-        'mo_name': {'key': 'moName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'parent': {'key': 'parent', 'type': 'InventoryItemDetails'},
+        "inventory_type": {"key": "inventoryType", "type": "str"},
+        "managed_resource_id": {"key": "managedResourceId", "type": "str"},
+        "mo_ref_id": {"key": "moRefId", "type": "str"},
+        "mo_name": {"key": "moName", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "parent": {"key": "parent", "type": "InventoryItemDetails"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(HostInventoryItem, self).__init__(**kwargs)
-        self.inventory_type = 'Host'  # type: str
-        self.parent = kwargs.get('parent', None)
+        self.inventory_type = "Host"  # type: str
+        self.parent = kwargs.get("parent", None)
 
 
 class HostsList(msrest.serialization.Model):
@@ -1036,21 +981,18 @@ class HostsList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[Host]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[Host]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(HostsList, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs['value']
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs["value"]
 
 
 class HttpProxyConfiguration(msrest.serialization.Model):
@@ -1061,15 +1003,12 @@ class HttpProxyConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'https_proxy': {'key': 'httpsProxy', 'type': 'str'},
+        "https_proxy": {"key": "httpsProxy", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(HttpProxyConfiguration, self).__init__(**kwargs)
-        self.https_proxy = kwargs.get('https_proxy', None)
+        self.https_proxy = kwargs.get("https_proxy", None)
 
 
 class HybridIdentityMetadata(ProxyResource):
@@ -1098,33 +1037,30 @@ class HybridIdentityMetadata(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'identity': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "identity": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'vm_id': {'key': 'properties.vmId', 'type': 'str'},
-        'public_key': {'key': 'properties.publicKey', 'type': 'str'},
-        'identity': {'key': 'properties.identity', 'type': 'Identity'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "vm_id": {"key": "properties.vmId", "type": "str"},
+        "public_key": {"key": "properties.publicKey", "type": "str"},
+        "identity": {"key": "properties.identity", "type": "Identity"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(HybridIdentityMetadata, self).__init__(**kwargs)
         self.system_data = None
-        self.vm_id = kwargs.get('vm_id', None)
-        self.public_key = kwargs.get('public_key', None)
+        self.vm_id = kwargs.get("vm_id", None)
+        self.public_key = kwargs.get("public_key", None)
         self.identity = None
         self.provisioning_state = None
 
@@ -1141,21 +1077,18 @@ class HybridIdentityMetadataList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[HybridIdentityMetadata]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[HybridIdentityMetadata]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(HybridIdentityMetadataList, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs['value']
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs["value"]
 
 
 class Identity(msrest.serialization.Model):
@@ -1175,25 +1108,22 @@ class Identity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-        'type': {'required': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
-        self.type = kwargs['type']
+        self.type = kwargs["type"]
 
 
 class InventoryItem(ProxyResource):
@@ -1233,38 +1163,35 @@ class InventoryItem(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'inventory_type': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "inventory_type": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'inventory_type': {'key': 'properties.inventoryType', 'type': 'str'},
-        'managed_resource_id': {'key': 'properties.managedResourceId', 'type': 'str'},
-        'mo_ref_id': {'key': 'properties.moRefId', 'type': 'str'},
-        'mo_name': {'key': 'properties.moName', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "kind": {"key": "kind", "type": "str"},
+        "inventory_type": {"key": "properties.inventoryType", "type": "str"},
+        "managed_resource_id": {"key": "properties.managedResourceId", "type": "str"},
+        "mo_ref_id": {"key": "properties.moRefId", "type": "str"},
+        "mo_name": {"key": "properties.moName", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(InventoryItem, self).__init__(**kwargs)
         self.system_data = None
-        self.kind = kwargs.get('kind', None)
+        self.kind = kwargs.get("kind", None)
         self.inventory_type = None  # type: Optional[str]
-        self.managed_resource_id = kwargs.get('managed_resource_id', None)
-        self.mo_ref_id = kwargs.get('mo_ref_id', None)
-        self.mo_name = kwargs.get('mo_name', None)
+        self.managed_resource_id = kwargs.get("managed_resource_id", None)
+        self.mo_ref_id = kwargs.get("mo_ref_id", None)
+        self.mo_name = kwargs.get("mo_name", None)
         self.provisioning_state = None
 
 
@@ -1278,17 +1205,14 @@ class InventoryItemDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'inventory_item_id': {'key': 'inventoryItemId', 'type': 'str'},
-        'mo_name': {'key': 'moName', 'type': 'str'},
+        "inventory_item_id": {"key": "inventoryItemId", "type": "str"},
+        "mo_name": {"key": "moName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(InventoryItemDetails, self).__init__(**kwargs)
-        self.inventory_item_id = kwargs.get('inventory_item_id', None)
-        self.mo_name = kwargs.get('mo_name', None)
+        self.inventory_item_id = kwargs.get("inventory_item_id", None)
+        self.mo_name = kwargs.get("mo_name", None)
 
 
 class InventoryItemsList(msrest.serialization.Model):
@@ -1303,21 +1227,18 @@ class InventoryItemsList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[InventoryItem]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[InventoryItem]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(InventoryItemsList, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs['value']
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs["value"]
 
 
 class MachineExtension(msrest.serialization.Model):
@@ -1363,51 +1284,48 @@ class MachineExtension(msrest.serialization.Model):
     """
 
     _validation = {
-        'system_data': {'readonly': True},
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "system_data": {"readonly": True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
-        'settings': {'key': 'properties.settings', 'type': 'object'},
-        'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'MachineExtensionPropertiesInstanceView'},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "force_update_tag": {"key": "properties.forceUpdateTag", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "type_handler_version": {"key": "properties.typeHandlerVersion", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "properties.autoUpgradeMinorVersion", "type": "bool"},
+        "settings": {"key": "properties.settings", "type": "object"},
+        "protected_settings": {"key": "properties.protectedSettings", "type": "object"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "instance_view": {"key": "properties.instanceView", "type": "MachineExtensionPropertiesInstanceView"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(MachineExtension, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
+        self.location = kwargs.get("location", None)
         self.system_data = None
-        self.tags = kwargs.get('tags', None)
+        self.tags = kwargs.get("tags", None)
         self.name = None
         self.id = None
         self.type = None
-        self.force_update_tag = kwargs.get('force_update_tag', None)
-        self.publisher = kwargs.get('publisher', None)
-        self.type_properties_type = kwargs.get('type_properties_type', None)
-        self.type_handler_version = kwargs.get('type_handler_version', None)
-        self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
-        self.settings = kwargs.get('settings', None)
-        self.protected_settings = kwargs.get('protected_settings', None)
+        self.force_update_tag = kwargs.get("force_update_tag", None)
+        self.publisher = kwargs.get("publisher", None)
+        self.type_properties_type = kwargs.get("type_properties_type", None)
+        self.type_handler_version = kwargs.get("type_handler_version", None)
+        self.auto_upgrade_minor_version = kwargs.get("auto_upgrade_minor_version", None)
+        self.settings = kwargs.get("settings", None)
+        self.protected_settings = kwargs.get("protected_settings", None)
         self.provisioning_state = None
-        self.instance_view = kwargs.get('instance_view', None)
+        self.instance_view = kwargs.get("instance_view", None)
 
 
 class MachineExtensionInstanceView(msrest.serialization.Model):
@@ -1426,27 +1344,24 @@ class MachineExtensionInstanceView(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'type_handler_version': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "type_handler_version": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'type_handler_version': {'key': 'typeHandlerVersion', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'MachineExtensionInstanceViewStatus'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "type_handler_version": {"key": "typeHandlerVersion", "type": "str"},
+        "status": {"key": "status", "type": "MachineExtensionInstanceViewStatus"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(MachineExtensionInstanceView, self).__init__(**kwargs)
         self.name = None
         self.type = None
         self.type_handler_version = None
-        self.status = kwargs.get('status', None)
+        self.status = kwargs.get("status", None)
 
 
 class MachineExtensionInstanceViewStatus(msrest.serialization.Model):
@@ -1467,25 +1382,22 @@ class MachineExtensionInstanceViewStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'level': {'readonly': True},
-        'display_status': {'readonly': True},
-        'message': {'readonly': True},
-        'time': {'readonly': True},
+        "code": {"readonly": True},
+        "level": {"readonly": True},
+        "display_status": {"readonly": True},
+        "message": {"readonly": True},
+        "time": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'level': {'key': 'level', 'type': 'str'},
-        'display_status': {'key': 'displayStatus', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'iso-8601'},
+        "code": {"key": "code", "type": "str"},
+        "level": {"key": "level", "type": "str"},
+        "display_status": {"key": "displayStatus", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "time": {"key": "time", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(MachineExtensionInstanceViewStatus, self).__init__(**kwargs)
         self.code = None
         self.level = None
@@ -1510,22 +1422,19 @@ class MachineExtensionPropertiesInstanceView(MachineExtensionInstanceView):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'type_handler_version': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "type_handler_version": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'type_handler_version': {'key': 'typeHandlerVersion', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'MachineExtensionInstanceViewStatus'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "type_handler_version": {"key": "typeHandlerVersion", "type": "str"},
+        "status": {"key": "status", "type": "MachineExtensionInstanceViewStatus"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(MachineExtensionPropertiesInstanceView, self).__init__(**kwargs)
 
 
@@ -1540,17 +1449,14 @@ class MachineExtensionsListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MachineExtension]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[MachineExtension]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(MachineExtensionsListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class ResourcePatch(msrest.serialization.Model):
@@ -1561,15 +1467,12 @@ class ResourcePatch(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourcePatch, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
+        self.tags = kwargs.get("tags", None)
 
 
 class MachineExtensionUpdate(ResourcePatch):
@@ -1598,28 +1501,25 @@ class MachineExtensionUpdate(ResourcePatch):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'type': {'key': 'properties.type', 'type': 'str'},
-        'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
-        'settings': {'key': 'properties.settings', 'type': 'object'},
-        'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "force_update_tag": {"key": "properties.forceUpdateTag", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "type": {"key": "properties.type", "type": "str"},
+        "type_handler_version": {"key": "properties.typeHandlerVersion", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "properties.autoUpgradeMinorVersion", "type": "bool"},
+        "settings": {"key": "properties.settings", "type": "object"},
+        "protected_settings": {"key": "properties.protectedSettings", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(MachineExtensionUpdate, self).__init__(**kwargs)
-        self.force_update_tag = kwargs.get('force_update_tag', None)
-        self.publisher = kwargs.get('publisher', None)
-        self.type = kwargs.get('type', None)
-        self.type_handler_version = kwargs.get('type_handler_version', None)
-        self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
-        self.settings = kwargs.get('settings', None)
-        self.protected_settings = kwargs.get('protected_settings', None)
+        self.force_update_tag = kwargs.get("force_update_tag", None)
+        self.publisher = kwargs.get("publisher", None)
+        self.type = kwargs.get("type", None)
+        self.type_handler_version = kwargs.get("type_handler_version", None)
+        self.auto_upgrade_minor_version = kwargs.get("auto_upgrade_minor_version", None)
+        self.settings = kwargs.get("settings", None)
+        self.protected_settings = kwargs.get("protected_settings", None)
 
 
 class NetworkInterface(msrest.serialization.Model):
@@ -1659,43 +1559,40 @@ class NetworkInterface(msrest.serialization.Model):
     """
 
     _validation = {
-        'label': {'readonly': True},
-        'ip_addresses': {'readonly': True},
-        'mac_address': {'readonly': True},
-        'network_mo_ref_id': {'readonly': True},
-        'network_mo_name': {'readonly': True},
+        "label": {"readonly": True},
+        "ip_addresses": {"readonly": True},
+        "mac_address": {"readonly": True},
+        "network_mo_ref_id": {"readonly": True},
+        "network_mo_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'ip_addresses': {'key': 'ipAddresses', 'type': '[str]'},
-        'mac_address': {'key': 'macAddress', 'type': 'str'},
-        'network_id': {'key': 'networkId', 'type': 'str'},
-        'nic_type': {'key': 'nicType', 'type': 'str'},
-        'power_on_boot': {'key': 'powerOnBoot', 'type': 'str'},
-        'network_mo_ref_id': {'key': 'networkMoRefId', 'type': 'str'},
-        'network_mo_name': {'key': 'networkMoName', 'type': 'str'},
-        'device_key': {'key': 'deviceKey', 'type': 'int'},
-        'ip_settings': {'key': 'ipSettings', 'type': 'NicIPSettings'},
+        "name": {"key": "name", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "ip_addresses": {"key": "ipAddresses", "type": "[str]"},
+        "mac_address": {"key": "macAddress", "type": "str"},
+        "network_id": {"key": "networkId", "type": "str"},
+        "nic_type": {"key": "nicType", "type": "str"},
+        "power_on_boot": {"key": "powerOnBoot", "type": "str"},
+        "network_mo_ref_id": {"key": "networkMoRefId", "type": "str"},
+        "network_mo_name": {"key": "networkMoName", "type": "str"},
+        "device_key": {"key": "deviceKey", "type": "int"},
+        "ip_settings": {"key": "ipSettings", "type": "NicIPSettings"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(NetworkInterface, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs.get("name", None)
         self.label = None
         self.ip_addresses = None
         self.mac_address = None
-        self.network_id = kwargs.get('network_id', None)
-        self.nic_type = kwargs.get('nic_type', None)
-        self.power_on_boot = kwargs.get('power_on_boot', None)
+        self.network_id = kwargs.get("network_id", None)
+        self.nic_type = kwargs.get("nic_type", None)
+        self.power_on_boot = kwargs.get("power_on_boot", None)
         self.network_mo_ref_id = None
         self.network_mo_name = None
-        self.device_key = kwargs.get('device_key', None)
-        self.ip_settings = kwargs.get('ip_settings', None)
+        self.device_key = kwargs.get("device_key", None)
+        self.ip_settings = kwargs.get("ip_settings", None)
 
 
 class NetworkInterfaceUpdate(msrest.serialization.Model):
@@ -1717,23 +1614,20 @@ class NetworkInterfaceUpdate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'network_id': {'key': 'networkId', 'type': 'str'},
-        'nic_type': {'key': 'nicType', 'type': 'str'},
-        'power_on_boot': {'key': 'powerOnBoot', 'type': 'str'},
-        'device_key': {'key': 'deviceKey', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "network_id": {"key": "networkId", "type": "str"},
+        "nic_type": {"key": "nicType", "type": "str"},
+        "power_on_boot": {"key": "powerOnBoot", "type": "str"},
+        "device_key": {"key": "deviceKey", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(NetworkInterfaceUpdate, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.network_id = kwargs.get('network_id', None)
-        self.nic_type = kwargs.get('nic_type', None)
-        self.power_on_boot = kwargs.get('power_on_boot', None)
-        self.device_key = kwargs.get('device_key', None)
+        self.name = kwargs.get("name", None)
+        self.network_id = kwargs.get("network_id", None)
+        self.nic_type = kwargs.get("nic_type", None)
+        self.power_on_boot = kwargs.get("power_on_boot", None)
+        self.device_key = kwargs.get("device_key", None)
 
 
 class NetworkProfile(msrest.serialization.Model):
@@ -1745,15 +1639,12 @@ class NetworkProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'network_interfaces': {'key': 'networkInterfaces', 'type': '[NetworkInterface]'},
+        "network_interfaces": {"key": "networkInterfaces", "type": "[NetworkInterface]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(NetworkProfile, self).__init__(**kwargs)
-        self.network_interfaces = kwargs.get('network_interfaces', None)
+        self.network_interfaces = kwargs.get("network_interfaces", None)
 
 
 class NetworkProfileUpdate(msrest.serialization.Model):
@@ -1765,15 +1656,12 @@ class NetworkProfileUpdate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'network_interfaces': {'key': 'networkInterfaces', 'type': '[NetworkInterfaceUpdate]'},
+        "network_interfaces": {"key": "networkInterfaces", "type": "[NetworkInterfaceUpdate]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(NetworkProfileUpdate, self).__init__(**kwargs)
-        self.network_interfaces = kwargs.get('network_interfaces', None)
+        self.network_interfaces = kwargs.get("network_interfaces", None)
 
 
 class NicIPAddressSettings(msrest.serialization.Model):
@@ -1790,21 +1678,18 @@ class NicIPAddressSettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'allocation_method': {'readonly': True},
-        'ip_address': {'readonly': True},
-        'subnet_mask': {'readonly': True},
+        "allocation_method": {"readonly": True},
+        "ip_address": {"readonly": True},
+        "subnet_mask": {"readonly": True},
     }
 
     _attribute_map = {
-        'allocation_method': {'key': 'allocationMethod', 'type': 'str'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
-        'subnet_mask': {'key': 'subnetMask', 'type': 'str'},
+        "allocation_method": {"key": "allocationMethod", "type": "str"},
+        "ip_address": {"key": "ipAddress", "type": "str"},
+        "subnet_mask": {"key": "subnetMask", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(NicIPAddressSettings, self).__init__(**kwargs)
         self.allocation_method = None
         self.ip_address = None
@@ -1837,32 +1722,29 @@ class NicIPSettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'primary_wins_server': {'readonly': True},
-        'secondary_wins_server': {'readonly': True},
-        'ip_address_info': {'readonly': True},
+        "primary_wins_server": {"readonly": True},
+        "secondary_wins_server": {"readonly": True},
+        "ip_address_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'allocation_method': {'key': 'allocationMethod', 'type': 'str'},
-        'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
-        'gateway': {'key': 'gateway', 'type': '[str]'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
-        'subnet_mask': {'key': 'subnetMask', 'type': 'str'},
-        'primary_wins_server': {'key': 'primaryWinsServer', 'type': 'str'},
-        'secondary_wins_server': {'key': 'secondaryWinsServer', 'type': 'str'},
-        'ip_address_info': {'key': 'ipAddressInfo', 'type': '[NicIPAddressSettings]'},
+        "allocation_method": {"key": "allocationMethod", "type": "str"},
+        "dns_servers": {"key": "dnsServers", "type": "[str]"},
+        "gateway": {"key": "gateway", "type": "[str]"},
+        "ip_address": {"key": "ipAddress", "type": "str"},
+        "subnet_mask": {"key": "subnetMask", "type": "str"},
+        "primary_wins_server": {"key": "primaryWinsServer", "type": "str"},
+        "secondary_wins_server": {"key": "secondaryWinsServer", "type": "str"},
+        "ip_address_info": {"key": "ipAddressInfo", "type": "[NicIPAddressSettings]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(NicIPSettings, self).__init__(**kwargs)
-        self.allocation_method = kwargs.get('allocation_method', None)
-        self.dns_servers = kwargs.get('dns_servers', None)
-        self.gateway = kwargs.get('gateway', None)
-        self.ip_address = kwargs.get('ip_address', None)
-        self.subnet_mask = kwargs.get('subnet_mask', None)
+        self.allocation_method = kwargs.get("allocation_method", None)
+        self.dns_servers = kwargs.get("dns_servers", None)
+        self.gateway = kwargs.get("gateway", None)
+        self.ip_address = kwargs.get("ip_address", None)
+        self.subnet_mask = kwargs.get("subnet_mask", None)
         self.primary_wins_server = None
         self.secondary_wins_server = None
         self.ip_address_info = None
@@ -1880,19 +1762,16 @@ class Operation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Operation, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.is_data_action = kwargs.get('is_data_action', None)
-        self.display = kwargs.get('display', None)
+        self.name = kwargs.get("name", None)
+        self.is_data_action = kwargs.get("is_data_action", None)
+        self.display = kwargs.get("display", None)
 
 
 class OperationDisplay(msrest.serialization.Model):
@@ -1909,21 +1788,18 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OperationDisplay, self).__init__(**kwargs)
-        self.provider = kwargs.get('provider', None)
-        self.resource = kwargs.get('resource', None)
-        self.operation = kwargs.get('operation', None)
-        self.description = kwargs.get('description', None)
+        self.provider = kwargs.get("provider", None)
+        self.resource = kwargs.get("resource", None)
+        self.operation = kwargs.get("operation", None)
+        self.description = kwargs.get("description", None)
 
 
 class OperationsList(msrest.serialization.Model):
@@ -1938,21 +1814,18 @@ class OperationsList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[Operation]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OperationsList, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs['value']
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs["value"]
 
 
 class OsProfile(msrest.serialization.Model):
@@ -1982,32 +1855,29 @@ class OsProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'os_name': {'readonly': True},
-        'tools_running_status': {'readonly': True},
-        'tools_version_status': {'readonly': True},
-        'tools_version': {'readonly': True},
+        "os_name": {"readonly": True},
+        "tools_running_status": {"readonly": True},
+        "tools_version_status": {"readonly": True},
+        "tools_version": {"readonly": True},
     }
 
     _attribute_map = {
-        'computer_name': {'key': 'computerName', 'type': 'str'},
-        'admin_username': {'key': 'adminUsername', 'type': 'str'},
-        'admin_password': {'key': 'adminPassword', 'type': 'str'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'os_name': {'key': 'osName', 'type': 'str'},
-        'tools_running_status': {'key': 'toolsRunningStatus', 'type': 'str'},
-        'tools_version_status': {'key': 'toolsVersionStatus', 'type': 'str'},
-        'tools_version': {'key': 'toolsVersion', 'type': 'str'},
+        "computer_name": {"key": "computerName", "type": "str"},
+        "admin_username": {"key": "adminUsername", "type": "str"},
+        "admin_password": {"key": "adminPassword", "type": "str"},
+        "os_type": {"key": "osType", "type": "str"},
+        "os_name": {"key": "osName", "type": "str"},
+        "tools_running_status": {"key": "toolsRunningStatus", "type": "str"},
+        "tools_version_status": {"key": "toolsVersionStatus", "type": "str"},
+        "tools_version": {"key": "toolsVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OsProfile, self).__init__(**kwargs)
-        self.computer_name = kwargs.get('computer_name', None)
-        self.admin_username = kwargs.get('admin_username', None)
-        self.admin_password = kwargs.get('admin_password', None)
-        self.os_type = kwargs.get('os_type', None)
+        self.computer_name = kwargs.get("computer_name", None)
+        self.admin_username = kwargs.get("admin_username", None)
+        self.admin_password = kwargs.get("admin_password", None)
+        self.os_type = kwargs.get("os_type", None)
         self.os_name = None
         self.tools_running_status = None
         self.tools_version_status = None
@@ -2032,21 +1902,18 @@ class PlacementProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_pool_id': {'key': 'resourcePoolId', 'type': 'str'},
-        'cluster_id': {'key': 'clusterId', 'type': 'str'},
-        'host_id': {'key': 'hostId', 'type': 'str'},
-        'datastore_id': {'key': 'datastoreId', 'type': 'str'},
+        "resource_pool_id": {"key": "resourcePoolId", "type": "str"},
+        "cluster_id": {"key": "clusterId", "type": "str"},
+        "host_id": {"key": "hostId", "type": "str"},
+        "datastore_id": {"key": "datastoreId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PlacementProfile, self).__init__(**kwargs)
-        self.resource_pool_id = kwargs.get('resource_pool_id', None)
-        self.cluster_id = kwargs.get('cluster_id', None)
-        self.host_id = kwargs.get('host_id', None)
-        self.datastore_id = kwargs.get('datastore_id', None)
+        self.resource_pool_id = kwargs.get("resource_pool_id", None)
+        self.cluster_id = kwargs.get("cluster_id", None)
+        self.host_id = kwargs.get("host_id", None)
+        self.datastore_id = kwargs.get("datastore_id", None)
 
 
 class ResourcePool(msrest.serialization.Model):
@@ -2117,66 +1984,63 @@ class ResourcePool(msrest.serialization.Model):
     """
 
     _validation = {
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'uuid': {'readonly': True},
-        'mo_name': {'readonly': True},
-        'cpu_shares_level': {'readonly': True},
-        'cpu_reservation_m_hz': {'readonly': True},
-        'cpu_limit_m_hz': {'readonly': True},
-        'mem_shares_level': {'readonly': True},
-        'mem_reservation_mb': {'readonly': True},
-        'mem_limit_mb': {'readonly': True},
-        'custom_resource_name': {'readonly': True},
-        'statuses': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "uuid": {"readonly": True},
+        "mo_name": {"readonly": True},
+        "cpu_shares_level": {"readonly": True},
+        "cpu_reservation_m_hz": {"readonly": True},
+        "cpu_limit_m_hz": {"readonly": True},
+        "mem_shares_level": {"readonly": True},
+        "mem_reservation_mb": {"readonly": True},
+        "mem_limit_mb": {"readonly": True},
+        "custom_resource_name": {"readonly": True},
+        "statuses": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'uuid': {'key': 'properties.uuid', 'type': 'str'},
-        'v_center_id': {'key': 'properties.vCenterId', 'type': 'str'},
-        'mo_ref_id': {'key': 'properties.moRefId', 'type': 'str'},
-        'inventory_item_id': {'key': 'properties.inventoryItemId', 'type': 'str'},
-        'mo_name': {'key': 'properties.moName', 'type': 'str'},
-        'cpu_shares_level': {'key': 'properties.cpuSharesLevel', 'type': 'str'},
-        'cpu_reservation_m_hz': {'key': 'properties.cpuReservationMHz', 'type': 'long'},
-        'cpu_limit_m_hz': {'key': 'properties.cpuLimitMHz', 'type': 'long'},
-        'mem_shares_level': {'key': 'properties.memSharesLevel', 'type': 'str'},
-        'mem_reservation_mb': {'key': 'properties.memReservationMB', 'type': 'long'},
-        'mem_limit_mb': {'key': 'properties.memLimitMB', 'type': 'long'},
-        'custom_resource_name': {'key': 'properties.customResourceName', 'type': 'str'},
-        'statuses': {'key': 'properties.statuses', 'type': '[ResourceStatus]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "uuid": {"key": "properties.uuid", "type": "str"},
+        "v_center_id": {"key": "properties.vCenterId", "type": "str"},
+        "mo_ref_id": {"key": "properties.moRefId", "type": "str"},
+        "inventory_item_id": {"key": "properties.inventoryItemId", "type": "str"},
+        "mo_name": {"key": "properties.moName", "type": "str"},
+        "cpu_shares_level": {"key": "properties.cpuSharesLevel", "type": "str"},
+        "cpu_reservation_m_hz": {"key": "properties.cpuReservationMHz", "type": "long"},
+        "cpu_limit_m_hz": {"key": "properties.cpuLimitMHz", "type": "long"},
+        "mem_shares_level": {"key": "properties.memSharesLevel", "type": "str"},
+        "mem_reservation_mb": {"key": "properties.memReservationMB", "type": "long"},
+        "mem_limit_mb": {"key": "properties.memLimitMB", "type": "long"},
+        "custom_resource_name": {"key": "properties.customResourceName", "type": "str"},
+        "statuses": {"key": "properties.statuses", "type": "[ResourceStatus]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourcePool, self).__init__(**kwargs)
-        self.location = kwargs['location']
-        self.extended_location = kwargs.get('extended_location', None)
+        self.location = kwargs["location"]
+        self.extended_location = kwargs.get("extended_location", None)
         self.system_data = None
-        self.tags = kwargs.get('tags', None)
+        self.tags = kwargs.get("tags", None)
         self.name = None
         self.id = None
         self.type = None
-        self.kind = kwargs.get('kind', None)
+        self.kind = kwargs.get("kind", None)
         self.uuid = None
-        self.v_center_id = kwargs.get('v_center_id', None)
-        self.mo_ref_id = kwargs.get('mo_ref_id', None)
-        self.inventory_item_id = kwargs.get('inventory_item_id', None)
+        self.v_center_id = kwargs.get("v_center_id", None)
+        self.mo_ref_id = kwargs.get("mo_ref_id", None)
+        self.inventory_item_id = kwargs.get("inventory_item_id", None)
         self.mo_name = None
         self.cpu_shares_level = None
         self.cpu_reservation_m_hz = None
@@ -2214,26 +2078,23 @@ class ResourcePoolInventoryItem(InventoryItemProperties):
     """
 
     _validation = {
-        'inventory_type': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "inventory_type": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'inventory_type': {'key': 'inventoryType', 'type': 'str'},
-        'managed_resource_id': {'key': 'managedResourceId', 'type': 'str'},
-        'mo_ref_id': {'key': 'moRefId', 'type': 'str'},
-        'mo_name': {'key': 'moName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'parent': {'key': 'parent', 'type': 'InventoryItemDetails'},
+        "inventory_type": {"key": "inventoryType", "type": "str"},
+        "managed_resource_id": {"key": "managedResourceId", "type": "str"},
+        "mo_ref_id": {"key": "moRefId", "type": "str"},
+        "mo_name": {"key": "moName", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "parent": {"key": "parent", "type": "InventoryItemDetails"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourcePoolInventoryItem, self).__init__(**kwargs)
-        self.inventory_type = 'ResourcePool'  # type: str
-        self.parent = kwargs.get('parent', None)
+        self.inventory_type = "ResourcePool"  # type: str
+        self.parent = kwargs.get("parent", None)
 
 
 class ResourcePoolsList(msrest.serialization.Model):
@@ -2248,21 +2109,18 @@ class ResourcePoolsList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[ResourcePool]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ResourcePool]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourcePoolsList, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs['value']
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs["value"]
 
 
 class ResourceStatus(msrest.serialization.Model):
@@ -2285,27 +2143,24 @@ class ResourceStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'status': {'readonly': True},
-        'reason': {'readonly': True},
-        'message': {'readonly': True},
-        'severity': {'readonly': True},
-        'last_updated_at': {'readonly': True},
+        "type": {"readonly": True},
+        "status": {"readonly": True},
+        "reason": {"readonly": True},
+        "message": {"readonly": True},
+        "severity": {"readonly": True},
+        "last_updated_at": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'severity': {'key': 'severity', 'type': 'str'},
-        'last_updated_at': {'key': 'lastUpdatedAt', 'type': 'iso-8601'},
+        "type": {"key": "type", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "severity": {"key": "severity", "type": "str"},
+        "last_updated_at": {"key": "lastUpdatedAt", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourceStatus, self).__init__(**kwargs)
         self.type = None
         self.status = None
@@ -2325,15 +2180,12 @@ class StopVirtualMachineOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'skip_shutdown': {'key': 'skipShutdown', 'type': 'bool'},
+        "skip_shutdown": {"key": "skipShutdown", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(StopVirtualMachineOptions, self).__init__(**kwargs)
-        self.skip_shutdown = kwargs.get('skip_shutdown', False)
+        self.skip_shutdown = kwargs.get("skip_shutdown", False)
 
 
 class StorageProfile(msrest.serialization.Model):
@@ -2349,20 +2201,17 @@ class StorageProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'scsi_controllers': {'readonly': True},
+        "scsi_controllers": {"readonly": True},
     }
 
     _attribute_map = {
-        'disks': {'key': 'disks', 'type': '[VirtualDisk]'},
-        'scsi_controllers': {'key': 'scsiControllers', 'type': '[VirtualSCSIController]'},
+        "disks": {"key": "disks", "type": "[VirtualDisk]"},
+        "scsi_controllers": {"key": "scsiControllers", "type": "[VirtualSCSIController]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(StorageProfile, self).__init__(**kwargs)
-        self.disks = kwargs.get('disks', None)
+        self.disks = kwargs.get("disks", None)
         self.scsi_controllers = None
 
 
@@ -2374,15 +2223,12 @@ class StorageProfileUpdate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'disks': {'key': 'disks', 'type': '[VirtualDiskUpdate]'},
+        "disks": {"key": "disks", "type": "[VirtualDiskUpdate]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(StorageProfileUpdate, self).__init__(**kwargs)
-        self.disks = kwargs.get('disks', None)
+        self.disks = kwargs.get("disks", None)
 
 
 class SystemData(msrest.serialization.Model):
@@ -2405,25 +2251,22 @@ class SystemData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SystemData, self).__init__(**kwargs)
-        self.created_by = kwargs.get('created_by', None)
-        self.created_by_type = kwargs.get('created_by_type', None)
-        self.created_at = kwargs.get('created_at', None)
-        self.last_modified_by = kwargs.get('last_modified_by', None)
-        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
-        self.last_modified_at = kwargs.get('last_modified_at', None)
+        self.created_by = kwargs.get("created_by", None)
+        self.created_by_type = kwargs.get("created_by_type", None)
+        self.created_at = kwargs.get("created_at", None)
+        self.last_modified_by = kwargs.get("last_modified_by", None)
+        self.last_modified_by_type = kwargs.get("last_modified_by_type", None)
+        self.last_modified_at = kwargs.get("last_modified_at", None)
 
 
 class VCenter(msrest.serialization.Model):
@@ -2474,64 +2317,61 @@ class VCenter(msrest.serialization.Model):
     """
 
     _validation = {
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'uuid': {'readonly': True},
-        'fqdn': {'required': True},
-        'port': {'maximum': 65535, 'minimum': 1},
-        'version': {'readonly': True},
-        'instance_uuid': {'readonly': True},
-        'connection_status': {'readonly': True},
-        'custom_resource_name': {'readonly': True},
-        'statuses': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "uuid": {"readonly": True},
+        "fqdn": {"required": True},
+        "port": {"maximum": 65535, "minimum": 1},
+        "version": {"readonly": True},
+        "instance_uuid": {"readonly": True},
+        "connection_status": {"readonly": True},
+        "custom_resource_name": {"readonly": True},
+        "statuses": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'uuid': {'key': 'properties.uuid', 'type': 'str'},
-        'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
-        'port': {'key': 'properties.port', 'type': 'int'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'instance_uuid': {'key': 'properties.instanceUuid', 'type': 'str'},
-        'connection_status': {'key': 'properties.connectionStatus', 'type': 'str'},
-        'custom_resource_name': {'key': 'properties.customResourceName', 'type': 'str'},
-        'credentials': {'key': 'properties.credentials', 'type': 'VICredential'},
-        'statuses': {'key': 'properties.statuses', 'type': '[ResourceStatus]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "uuid": {"key": "properties.uuid", "type": "str"},
+        "fqdn": {"key": "properties.fqdn", "type": "str"},
+        "port": {"key": "properties.port", "type": "int"},
+        "version": {"key": "properties.version", "type": "str"},
+        "instance_uuid": {"key": "properties.instanceUuid", "type": "str"},
+        "connection_status": {"key": "properties.connectionStatus", "type": "str"},
+        "custom_resource_name": {"key": "properties.customResourceName", "type": "str"},
+        "credentials": {"key": "properties.credentials", "type": "VICredential"},
+        "statuses": {"key": "properties.statuses", "type": "[ResourceStatus]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VCenter, self).__init__(**kwargs)
-        self.location = kwargs['location']
-        self.extended_location = kwargs.get('extended_location', None)
+        self.location = kwargs["location"]
+        self.extended_location = kwargs.get("extended_location", None)
         self.system_data = None
-        self.tags = kwargs.get('tags', None)
+        self.tags = kwargs.get("tags", None)
         self.name = None
         self.id = None
         self.type = None
-        self.kind = kwargs.get('kind', None)
+        self.kind = kwargs.get("kind", None)
         self.uuid = None
-        self.fqdn = kwargs['fqdn']
-        self.port = kwargs.get('port', None)
+        self.fqdn = kwargs["fqdn"]
+        self.port = kwargs.get("port", None)
         self.version = None
         self.instance_uuid = None
         self.connection_status = None
         self.custom_resource_name = None
-        self.credentials = kwargs.get('credentials', None)
+        self.credentials = kwargs.get("credentials", None)
         self.statuses = None
         self.provisioning_state = None
 
@@ -2548,21 +2388,18 @@ class VCentersList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[VCenter]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[VCenter]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VCentersList, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs['value']
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs["value"]
 
 
 class VICredential(msrest.serialization.Model):
@@ -2575,17 +2412,14 @@ class VICredential(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VICredential, self).__init__(**kwargs)
-        self.username = kwargs.get('username', None)
-        self.password = kwargs.get('password', None)
+        self.username = kwargs.get("username", None)
+        self.password = kwargs.get("password", None)
 
 
 class VirtualDisk(msrest.serialization.Model):
@@ -2618,38 +2452,35 @@ class VirtualDisk(msrest.serialization.Model):
     """
 
     _validation = {
-        'label': {'readonly': True},
-        'disk_object_id': {'readonly': True},
+        "label": {"readonly": True},
+        "disk_object_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'disk_object_id': {'key': 'diskObjectId', 'type': 'str'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'device_key': {'key': 'deviceKey', 'type': 'int'},
-        'disk_mode': {'key': 'diskMode', 'type': 'str'},
-        'controller_key': {'key': 'controllerKey', 'type': 'int'},
-        'unit_number': {'key': 'unitNumber', 'type': 'int'},
-        'device_name': {'key': 'deviceName', 'type': 'str'},
-        'disk_type': {'key': 'diskType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "disk_object_id": {"key": "diskObjectId", "type": "str"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "device_key": {"key": "deviceKey", "type": "int"},
+        "disk_mode": {"key": "diskMode", "type": "str"},
+        "controller_key": {"key": "controllerKey", "type": "int"},
+        "unit_number": {"key": "unitNumber", "type": "int"},
+        "device_name": {"key": "deviceName", "type": "str"},
+        "disk_type": {"key": "diskType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualDisk, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs.get("name", None)
         self.label = None
         self.disk_object_id = None
-        self.disk_size_gb = kwargs.get('disk_size_gb', None)
-        self.device_key = kwargs.get('device_key', None)
-        self.disk_mode = kwargs.get('disk_mode', None)
-        self.controller_key = kwargs.get('controller_key', None)
-        self.unit_number = kwargs.get('unit_number', None)
-        self.device_name = kwargs.get('device_name', None)
-        self.disk_type = kwargs.get('disk_type', None)
+        self.disk_size_gb = kwargs.get("disk_size_gb", None)
+        self.device_key = kwargs.get("device_key", None)
+        self.disk_mode = kwargs.get("disk_mode", None)
+        self.controller_key = kwargs.get("controller_key", None)
+        self.unit_number = kwargs.get("unit_number", None)
+        self.device_name = kwargs.get("device_name", None)
+        self.disk_type = kwargs.get("disk_type", None)
 
 
 class VirtualDiskUpdate(msrest.serialization.Model):
@@ -2676,29 +2507,26 @@ class VirtualDiskUpdate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'device_key': {'key': 'deviceKey', 'type': 'int'},
-        'disk_mode': {'key': 'diskMode', 'type': 'str'},
-        'controller_key': {'key': 'controllerKey', 'type': 'int'},
-        'unit_number': {'key': 'unitNumber', 'type': 'int'},
-        'device_name': {'key': 'deviceName', 'type': 'str'},
-        'disk_type': {'key': 'diskType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "device_key": {"key": "deviceKey", "type": "int"},
+        "disk_mode": {"key": "diskMode", "type": "str"},
+        "controller_key": {"key": "controllerKey", "type": "int"},
+        "unit_number": {"key": "unitNumber", "type": "int"},
+        "device_name": {"key": "deviceName", "type": "str"},
+        "disk_type": {"key": "diskType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualDiskUpdate, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.disk_size_gb = kwargs.get('disk_size_gb', None)
-        self.device_key = kwargs.get('device_key', None)
-        self.disk_mode = kwargs.get('disk_mode', None)
-        self.controller_key = kwargs.get('controller_key', None)
-        self.unit_number = kwargs.get('unit_number', None)
-        self.device_name = kwargs.get('device_name', None)
-        self.disk_type = kwargs.get('disk_type', None)
+        self.name = kwargs.get("name", None)
+        self.disk_size_gb = kwargs.get("disk_size_gb", None)
+        self.device_key = kwargs.get("device_key", None)
+        self.disk_mode = kwargs.get("disk_mode", None)
+        self.controller_key = kwargs.get("controller_key", None)
+        self.unit_number = kwargs.get("unit_number", None)
+        self.device_name = kwargs.get("device_name", None)
+        self.disk_type = kwargs.get("disk_type", None)
 
 
 class VirtualMachine(msrest.serialization.Model):
@@ -2780,86 +2608,83 @@ class VirtualMachine(msrest.serialization.Model):
     """
 
     _validation = {
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'mo_name': {'readonly': True},
-        'folder_path': {'readonly': True},
-        'instance_uuid': {'readonly': True},
-        'power_state': {'readonly': True},
-        'custom_resource_name': {'readonly': True},
-        'uuid': {'readonly': True},
-        'statuses': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'vm_id': {'readonly': True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "mo_name": {"readonly": True},
+        "folder_path": {"readonly": True},
+        "instance_uuid": {"readonly": True},
+        "power_state": {"readonly": True},
+        "custom_resource_name": {"readonly": True},
+        "uuid": {"readonly": True},
+        "statuses": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "vm_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'resource_pool_id': {'key': 'properties.resourcePoolId', 'type': 'str'},
-        'template_id': {'key': 'properties.templateId', 'type': 'str'},
-        'v_center_id': {'key': 'properties.vCenterId', 'type': 'str'},
-        'placement_profile': {'key': 'properties.placementProfile', 'type': 'PlacementProfile'},
-        'os_profile': {'key': 'properties.osProfile', 'type': 'OsProfile'},
-        'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
-        'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
-        'guest_agent_profile': {'key': 'properties.guestAgentProfile', 'type': 'GuestAgentProfile'},
-        'mo_ref_id': {'key': 'properties.moRefId', 'type': 'str'},
-        'inventory_item_id': {'key': 'properties.inventoryItemId', 'type': 'str'},
-        'mo_name': {'key': 'properties.moName', 'type': 'str'},
-        'folder_path': {'key': 'properties.folderPath', 'type': 'str'},
-        'instance_uuid': {'key': 'properties.instanceUuid', 'type': 'str'},
-        'smbios_uuid': {'key': 'properties.smbiosUuid', 'type': 'str'},
-        'firmware_type': {'key': 'properties.firmwareType', 'type': 'str'},
-        'power_state': {'key': 'properties.powerState', 'type': 'str'},
-        'custom_resource_name': {'key': 'properties.customResourceName', 'type': 'str'},
-        'uuid': {'key': 'properties.uuid', 'type': 'str'},
-        'statuses': {'key': 'properties.statuses', 'type': '[ResourceStatus]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'vm_id': {'key': 'properties.vmId', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "resource_pool_id": {"key": "properties.resourcePoolId", "type": "str"},
+        "template_id": {"key": "properties.templateId", "type": "str"},
+        "v_center_id": {"key": "properties.vCenterId", "type": "str"},
+        "placement_profile": {"key": "properties.placementProfile", "type": "PlacementProfile"},
+        "os_profile": {"key": "properties.osProfile", "type": "OsProfile"},
+        "hardware_profile": {"key": "properties.hardwareProfile", "type": "HardwareProfile"},
+        "network_profile": {"key": "properties.networkProfile", "type": "NetworkProfile"},
+        "storage_profile": {"key": "properties.storageProfile", "type": "StorageProfile"},
+        "guest_agent_profile": {"key": "properties.guestAgentProfile", "type": "GuestAgentProfile"},
+        "mo_ref_id": {"key": "properties.moRefId", "type": "str"},
+        "inventory_item_id": {"key": "properties.inventoryItemId", "type": "str"},
+        "mo_name": {"key": "properties.moName", "type": "str"},
+        "folder_path": {"key": "properties.folderPath", "type": "str"},
+        "instance_uuid": {"key": "properties.instanceUuid", "type": "str"},
+        "smbios_uuid": {"key": "properties.smbiosUuid", "type": "str"},
+        "firmware_type": {"key": "properties.firmwareType", "type": "str"},
+        "power_state": {"key": "properties.powerState", "type": "str"},
+        "custom_resource_name": {"key": "properties.customResourceName", "type": "str"},
+        "uuid": {"key": "properties.uuid", "type": "str"},
+        "statuses": {"key": "properties.statuses", "type": "[ResourceStatus]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "vm_id": {"key": "properties.vmId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachine, self).__init__(**kwargs)
-        self.location = kwargs['location']
-        self.extended_location = kwargs.get('extended_location', None)
+        self.location = kwargs["location"]
+        self.extended_location = kwargs.get("extended_location", None)
         self.system_data = None
-        self.tags = kwargs.get('tags', None)
+        self.tags = kwargs.get("tags", None)
         self.name = None
         self.id = None
         self.type = None
-        self.kind = kwargs.get('kind', None)
-        self.identity = kwargs.get('identity', None)
-        self.resource_pool_id = kwargs.get('resource_pool_id', None)
-        self.template_id = kwargs.get('template_id', None)
-        self.v_center_id = kwargs.get('v_center_id', None)
-        self.placement_profile = kwargs.get('placement_profile', None)
-        self.os_profile = kwargs.get('os_profile', None)
-        self.hardware_profile = kwargs.get('hardware_profile', None)
-        self.network_profile = kwargs.get('network_profile', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
-        self.guest_agent_profile = kwargs.get('guest_agent_profile', None)
-        self.mo_ref_id = kwargs.get('mo_ref_id', None)
-        self.inventory_item_id = kwargs.get('inventory_item_id', None)
+        self.kind = kwargs.get("kind", None)
+        self.identity = kwargs.get("identity", None)
+        self.resource_pool_id = kwargs.get("resource_pool_id", None)
+        self.template_id = kwargs.get("template_id", None)
+        self.v_center_id = kwargs.get("v_center_id", None)
+        self.placement_profile = kwargs.get("placement_profile", None)
+        self.os_profile = kwargs.get("os_profile", None)
+        self.hardware_profile = kwargs.get("hardware_profile", None)
+        self.network_profile = kwargs.get("network_profile", None)
+        self.storage_profile = kwargs.get("storage_profile", None)
+        self.guest_agent_profile = kwargs.get("guest_agent_profile", None)
+        self.mo_ref_id = kwargs.get("mo_ref_id", None)
+        self.inventory_item_id = kwargs.get("inventory_item_id", None)
         self.mo_name = None
         self.folder_path = None
         self.instance_uuid = None
-        self.smbios_uuid = kwargs.get('smbios_uuid', None)
-        self.firmware_type = kwargs.get('firmware_type', None)
+        self.smbios_uuid = kwargs.get("smbios_uuid", None)
+        self.firmware_type = kwargs.get("firmware_type", None)
         self.power_state = None
         self.custom_resource_name = None
         self.uuid = None
@@ -2918,48 +2743,45 @@ class VirtualMachineInventoryItem(InventoryItemProperties):
     """
 
     _validation = {
-        'inventory_type': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'power_state': {'readonly': True},
-        'tools_running_status': {'readonly': True},
-        'tools_version_status': {'readonly': True},
-        'tools_version': {'readonly': True},
+        "inventory_type": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "power_state": {"readonly": True},
+        "tools_running_status": {"readonly": True},
+        "tools_version_status": {"readonly": True},
+        "tools_version": {"readonly": True},
     }
 
     _attribute_map = {
-        'inventory_type': {'key': 'inventoryType', 'type': 'str'},
-        'managed_resource_id': {'key': 'managedResourceId', 'type': 'str'},
-        'mo_ref_id': {'key': 'moRefId', 'type': 'str'},
-        'mo_name': {'key': 'moName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'os_name': {'key': 'osName', 'type': 'str'},
-        'ip_addresses': {'key': 'ipAddresses', 'type': '[str]'},
-        'folder_path': {'key': 'folderPath', 'type': 'str'},
-        'host': {'key': 'host', 'type': 'InventoryItemDetails'},
-        'resource_pool': {'key': 'resourcePool', 'type': 'InventoryItemDetails'},
-        'instance_uuid': {'key': 'instanceUuid', 'type': 'str'},
-        'smbios_uuid': {'key': 'smbiosUuid', 'type': 'str'},
-        'power_state': {'key': 'powerState', 'type': 'str'},
-        'tools_running_status': {'key': 'toolsRunningStatus', 'type': 'str'},
-        'tools_version_status': {'key': 'toolsVersionStatus', 'type': 'str'},
-        'tools_version': {'key': 'toolsVersion', 'type': 'str'},
+        "inventory_type": {"key": "inventoryType", "type": "str"},
+        "managed_resource_id": {"key": "managedResourceId", "type": "str"},
+        "mo_ref_id": {"key": "moRefId", "type": "str"},
+        "mo_name": {"key": "moName", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "os_type": {"key": "osType", "type": "str"},
+        "os_name": {"key": "osName", "type": "str"},
+        "ip_addresses": {"key": "ipAddresses", "type": "[str]"},
+        "folder_path": {"key": "folderPath", "type": "str"},
+        "host": {"key": "host", "type": "InventoryItemDetails"},
+        "resource_pool": {"key": "resourcePool", "type": "InventoryItemDetails"},
+        "instance_uuid": {"key": "instanceUuid", "type": "str"},
+        "smbios_uuid": {"key": "smbiosUuid", "type": "str"},
+        "power_state": {"key": "powerState", "type": "str"},
+        "tools_running_status": {"key": "toolsRunningStatus", "type": "str"},
+        "tools_version_status": {"key": "toolsVersionStatus", "type": "str"},
+        "tools_version": {"key": "toolsVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineInventoryItem, self).__init__(**kwargs)
-        self.inventory_type = 'VirtualMachine'  # type: str
-        self.os_type = kwargs.get('os_type', None)
-        self.os_name = kwargs.get('os_name', None)
-        self.ip_addresses = kwargs.get('ip_addresses', None)
-        self.folder_path = kwargs.get('folder_path', None)
-        self.host = kwargs.get('host', None)
-        self.resource_pool = kwargs.get('resource_pool', None)
-        self.instance_uuid = kwargs.get('instance_uuid', None)
-        self.smbios_uuid = kwargs.get('smbios_uuid', None)
+        self.inventory_type = "VirtualMachine"  # type: str
+        self.os_type = kwargs.get("os_type", None)
+        self.os_name = kwargs.get("os_name", None)
+        self.ip_addresses = kwargs.get("ip_addresses", None)
+        self.folder_path = kwargs.get("folder_path", None)
+        self.host = kwargs.get("host", None)
+        self.resource_pool = kwargs.get("resource_pool", None)
+        self.instance_uuid = kwargs.get("instance_uuid", None)
+        self.smbios_uuid = kwargs.get("smbios_uuid", None)
         self.power_state = None
         self.tools_running_status = None
         self.tools_version_status = None
@@ -2978,21 +2800,18 @@ class VirtualMachinesList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[VirtualMachine]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[VirtualMachine]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachinesList, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs['value']
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs["value"]
 
 
 class VirtualMachineTemplate(msrest.serialization.Model):
@@ -3067,76 +2886,73 @@ class VirtualMachineTemplate(msrest.serialization.Model):
     """
 
     _validation = {
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'uuid': {'readonly': True},
-        'mo_name': {'readonly': True},
-        'memory_size_mb': {'readonly': True},
-        'num_cp_us': {'readonly': True},
-        'num_cores_per_socket': {'readonly': True},
-        'os_type': {'readonly': True},
-        'os_name': {'readonly': True},
-        'folder_path': {'readonly': True},
-        'network_interfaces': {'readonly': True},
-        'disks': {'readonly': True},
-        'custom_resource_name': {'readonly': True},
-        'tools_version_status': {'readonly': True},
-        'tools_version': {'readonly': True},
-        'firmware_type': {'readonly': True},
-        'statuses': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "uuid": {"readonly": True},
+        "mo_name": {"readonly": True},
+        "memory_size_mb": {"readonly": True},
+        "num_cp_us": {"readonly": True},
+        "num_cores_per_socket": {"readonly": True},
+        "os_type": {"readonly": True},
+        "os_name": {"readonly": True},
+        "folder_path": {"readonly": True},
+        "network_interfaces": {"readonly": True},
+        "disks": {"readonly": True},
+        "custom_resource_name": {"readonly": True},
+        "tools_version_status": {"readonly": True},
+        "tools_version": {"readonly": True},
+        "firmware_type": {"readonly": True},
+        "statuses": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'uuid': {'key': 'properties.uuid', 'type': 'str'},
-        'v_center_id': {'key': 'properties.vCenterId', 'type': 'str'},
-        'mo_ref_id': {'key': 'properties.moRefId', 'type': 'str'},
-        'inventory_item_id': {'key': 'properties.inventoryItemId', 'type': 'str'},
-        'mo_name': {'key': 'properties.moName', 'type': 'str'},
-        'memory_size_mb': {'key': 'properties.memorySizeMB', 'type': 'int'},
-        'num_cp_us': {'key': 'properties.numCPUs', 'type': 'int'},
-        'num_cores_per_socket': {'key': 'properties.numCoresPerSocket', 'type': 'int'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'os_name': {'key': 'properties.osName', 'type': 'str'},
-        'folder_path': {'key': 'properties.folderPath', 'type': 'str'},
-        'network_interfaces': {'key': 'properties.networkInterfaces', 'type': '[NetworkInterface]'},
-        'disks': {'key': 'properties.disks', 'type': '[VirtualDisk]'},
-        'custom_resource_name': {'key': 'properties.customResourceName', 'type': 'str'},
-        'tools_version_status': {'key': 'properties.toolsVersionStatus', 'type': 'str'},
-        'tools_version': {'key': 'properties.toolsVersion', 'type': 'str'},
-        'firmware_type': {'key': 'properties.firmwareType', 'type': 'str'},
-        'statuses': {'key': 'properties.statuses', 'type': '[ResourceStatus]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "uuid": {"key": "properties.uuid", "type": "str"},
+        "v_center_id": {"key": "properties.vCenterId", "type": "str"},
+        "mo_ref_id": {"key": "properties.moRefId", "type": "str"},
+        "inventory_item_id": {"key": "properties.inventoryItemId", "type": "str"},
+        "mo_name": {"key": "properties.moName", "type": "str"},
+        "memory_size_mb": {"key": "properties.memorySizeMB", "type": "int"},
+        "num_cp_us": {"key": "properties.numCPUs", "type": "int"},
+        "num_cores_per_socket": {"key": "properties.numCoresPerSocket", "type": "int"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "os_name": {"key": "properties.osName", "type": "str"},
+        "folder_path": {"key": "properties.folderPath", "type": "str"},
+        "network_interfaces": {"key": "properties.networkInterfaces", "type": "[NetworkInterface]"},
+        "disks": {"key": "properties.disks", "type": "[VirtualDisk]"},
+        "custom_resource_name": {"key": "properties.customResourceName", "type": "str"},
+        "tools_version_status": {"key": "properties.toolsVersionStatus", "type": "str"},
+        "tools_version": {"key": "properties.toolsVersion", "type": "str"},
+        "firmware_type": {"key": "properties.firmwareType", "type": "str"},
+        "statuses": {"key": "properties.statuses", "type": "[ResourceStatus]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineTemplate, self).__init__(**kwargs)
-        self.location = kwargs['location']
-        self.extended_location = kwargs.get('extended_location', None)
+        self.location = kwargs["location"]
+        self.extended_location = kwargs.get("extended_location", None)
         self.system_data = None
-        self.tags = kwargs.get('tags', None)
+        self.tags = kwargs.get("tags", None)
         self.name = None
         self.id = None
         self.type = None
-        self.kind = kwargs.get('kind', None)
+        self.kind = kwargs.get("kind", None)
         self.uuid = None
-        self.v_center_id = kwargs.get('v_center_id', None)
-        self.mo_ref_id = kwargs.get('mo_ref_id', None)
-        self.inventory_item_id = kwargs.get('inventory_item_id', None)
+        self.v_center_id = kwargs.get("v_center_id", None)
+        self.mo_ref_id = kwargs.get("mo_ref_id", None)
+        self.inventory_item_id = kwargs.get("inventory_item_id", None)
         self.mo_name = None
         self.memory_size_mb = None
         self.num_cp_us = None
@@ -3191,36 +3007,33 @@ class VirtualMachineTemplateInventoryItem(InventoryItemProperties):
     """
 
     _validation = {
-        'inventory_type': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "inventory_type": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'inventory_type': {'key': 'inventoryType', 'type': 'str'},
-        'managed_resource_id': {'key': 'managedResourceId', 'type': 'str'},
-        'mo_ref_id': {'key': 'moRefId', 'type': 'str'},
-        'mo_name': {'key': 'moName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'memory_size_mb': {'key': 'memorySizeMB', 'type': 'int'},
-        'num_cp_us': {'key': 'numCPUs', 'type': 'int'},
-        'num_cores_per_socket': {'key': 'numCoresPerSocket', 'type': 'int'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'os_name': {'key': 'osName', 'type': 'str'},
-        'folder_path': {'key': 'folderPath', 'type': 'str'},
+        "inventory_type": {"key": "inventoryType", "type": "str"},
+        "managed_resource_id": {"key": "managedResourceId", "type": "str"},
+        "mo_ref_id": {"key": "moRefId", "type": "str"},
+        "mo_name": {"key": "moName", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "memory_size_mb": {"key": "memorySizeMB", "type": "int"},
+        "num_cp_us": {"key": "numCPUs", "type": "int"},
+        "num_cores_per_socket": {"key": "numCoresPerSocket", "type": "int"},
+        "os_type": {"key": "osType", "type": "str"},
+        "os_name": {"key": "osName", "type": "str"},
+        "folder_path": {"key": "folderPath", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineTemplateInventoryItem, self).__init__(**kwargs)
-        self.inventory_type = 'VirtualMachineTemplate'  # type: str
-        self.memory_size_mb = kwargs.get('memory_size_mb', None)
-        self.num_cp_us = kwargs.get('num_cp_us', None)
-        self.num_cores_per_socket = kwargs.get('num_cores_per_socket', None)
-        self.os_type = kwargs.get('os_type', None)
-        self.os_name = kwargs.get('os_name', None)
-        self.folder_path = kwargs.get('folder_path', None)
+        self.inventory_type = "VirtualMachineTemplate"  # type: str
+        self.memory_size_mb = kwargs.get("memory_size_mb", None)
+        self.num_cp_us = kwargs.get("num_cp_us", None)
+        self.num_cores_per_socket = kwargs.get("num_cores_per_socket", None)
+        self.os_type = kwargs.get("os_type", None)
+        self.os_name = kwargs.get("os_name", None)
+        self.folder_path = kwargs.get("folder_path", None)
 
 
 class VirtualMachineTemplatesList(msrest.serialization.Model):
@@ -3235,21 +3048,18 @@ class VirtualMachineTemplatesList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[VirtualMachineTemplate]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[VirtualMachineTemplate]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineTemplatesList, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs['value']
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs["value"]
 
 
 class VirtualMachineUpdate(msrest.serialization.Model):
@@ -3268,23 +3078,20 @@ class VirtualMachineUpdate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfileUpdate'},
-        'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfileUpdate'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "hardware_profile": {"key": "properties.hardwareProfile", "type": "HardwareProfile"},
+        "storage_profile": {"key": "properties.storageProfile", "type": "StorageProfileUpdate"},
+        "network_profile": {"key": "properties.networkProfile", "type": "NetworkProfileUpdate"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineUpdate, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.identity = kwargs.get('identity', None)
-        self.hardware_profile = kwargs.get('hardware_profile', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
-        self.network_profile = kwargs.get('network_profile', None)
+        self.tags = kwargs.get("tags", None)
+        self.identity = kwargs.get("identity", None)
+        self.hardware_profile = kwargs.get("hardware_profile", None)
+        self.storage_profile = kwargs.get("storage_profile", None)
+        self.network_profile = kwargs.get("network_profile", None)
 
 
 class VirtualNetwork(msrest.serialization.Model):
@@ -3333,54 +3140,51 @@ class VirtualNetwork(msrest.serialization.Model):
     """
 
     _validation = {
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'uuid': {'readonly': True},
-        'mo_name': {'readonly': True},
-        'custom_resource_name': {'readonly': True},
-        'statuses': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "uuid": {"readonly": True},
+        "mo_name": {"readonly": True},
+        "custom_resource_name": {"readonly": True},
+        "statuses": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'uuid': {'key': 'properties.uuid', 'type': 'str'},
-        'v_center_id': {'key': 'properties.vCenterId', 'type': 'str'},
-        'mo_ref_id': {'key': 'properties.moRefId', 'type': 'str'},
-        'inventory_item_id': {'key': 'properties.inventoryItemId', 'type': 'str'},
-        'mo_name': {'key': 'properties.moName', 'type': 'str'},
-        'custom_resource_name': {'key': 'properties.customResourceName', 'type': 'str'},
-        'statuses': {'key': 'properties.statuses', 'type': '[ResourceStatus]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "uuid": {"key": "properties.uuid", "type": "str"},
+        "v_center_id": {"key": "properties.vCenterId", "type": "str"},
+        "mo_ref_id": {"key": "properties.moRefId", "type": "str"},
+        "inventory_item_id": {"key": "properties.inventoryItemId", "type": "str"},
+        "mo_name": {"key": "properties.moName", "type": "str"},
+        "custom_resource_name": {"key": "properties.customResourceName", "type": "str"},
+        "statuses": {"key": "properties.statuses", "type": "[ResourceStatus]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualNetwork, self).__init__(**kwargs)
-        self.location = kwargs['location']
-        self.extended_location = kwargs.get('extended_location', None)
+        self.location = kwargs["location"]
+        self.extended_location = kwargs.get("extended_location", None)
         self.system_data = None
-        self.tags = kwargs.get('tags', None)
+        self.tags = kwargs.get("tags", None)
         self.name = None
         self.id = None
         self.type = None
-        self.kind = kwargs.get('kind', None)
+        self.kind = kwargs.get("kind", None)
         self.uuid = None
-        self.v_center_id = kwargs.get('v_center_id', None)
-        self.mo_ref_id = kwargs.get('mo_ref_id', None)
-        self.inventory_item_id = kwargs.get('inventory_item_id', None)
+        self.v_center_id = kwargs.get("v_center_id", None)
+        self.mo_ref_id = kwargs.get("mo_ref_id", None)
+        self.inventory_item_id = kwargs.get("inventory_item_id", None)
         self.mo_name = None
         self.custom_resource_name = None
         self.statuses = None
@@ -3410,24 +3214,21 @@ class VirtualNetworkInventoryItem(InventoryItemProperties):
     """
 
     _validation = {
-        'inventory_type': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "inventory_type": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'inventory_type': {'key': 'inventoryType', 'type': 'str'},
-        'managed_resource_id': {'key': 'managedResourceId', 'type': 'str'},
-        'mo_ref_id': {'key': 'moRefId', 'type': 'str'},
-        'mo_name': {'key': 'moName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "inventory_type": {"key": "inventoryType", "type": "str"},
+        "managed_resource_id": {"key": "managedResourceId", "type": "str"},
+        "mo_ref_id": {"key": "moRefId", "type": "str"},
+        "mo_name": {"key": "moName", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualNetworkInventoryItem, self).__init__(**kwargs)
-        self.inventory_type = 'VirtualNetwork'  # type: str
+        self.inventory_type = "VirtualNetwork"  # type: str
 
 
 class VirtualNetworksList(msrest.serialization.Model):
@@ -3442,21 +3243,18 @@ class VirtualNetworksList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[VirtualNetwork]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[VirtualNetwork]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualNetworksList, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs['value']
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs["value"]
 
 
 class VirtualSCSIController(msrest.serialization.Model):
@@ -3477,20 +3275,17 @@ class VirtualSCSIController(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'controller_key': {'key': 'controllerKey', 'type': 'int'},
-        'bus_number': {'key': 'busNumber', 'type': 'int'},
-        'scsi_ctlr_unit_number': {'key': 'scsiCtlrUnitNumber', 'type': 'int'},
-        'sharing': {'key': 'sharing', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "controller_key": {"key": "controllerKey", "type": "int"},
+        "bus_number": {"key": "busNumber", "type": "int"},
+        "scsi_ctlr_unit_number": {"key": "scsiCtlrUnitNumber", "type": "int"},
+        "sharing": {"key": "sharing", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualSCSIController, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
-        self.controller_key = kwargs.get('controller_key', None)
-        self.bus_number = kwargs.get('bus_number', None)
-        self.scsi_ctlr_unit_number = kwargs.get('scsi_ctlr_unit_number', None)
-        self.sharing = kwargs.get('sharing', None)
+        self.type = kwargs.get("type", None)
+        self.controller_key = kwargs.get("controller_key", None)
+        self.bus_number = kwargs.get("bus_number", None)
+        self.scsi_ctlr_unit_number = kwargs.get("scsi_ctlr_unit_number", None)
+        self.sharing = kwargs.get("sharing", None)

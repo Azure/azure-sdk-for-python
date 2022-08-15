@@ -6,40 +6,43 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from copy import deepcopy
+from typing import Any, TYPE_CHECKING
 
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
-from msrest import Deserializer, Serializer
+
+from . import models
+from ._configuration import AzureArcVMwareManagementServiceAPIConfiguration
+from ._serialization import Deserializer, Serializer
+from .operations import (
+    ClustersOperations,
+    DatastoresOperations,
+    GuestAgentsOperations,
+    HostsOperations,
+    HybridIdentityMetadataOperations,
+    InventoryItemsOperations,
+    MachineExtensionsOperations,
+    Operations,
+    ResourcePoolsOperations,
+    VCentersOperations,
+    VirtualMachineTemplatesOperations,
+    VirtualMachinesOperations,
+    VirtualNetworksOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
-
-from ._configuration import AzureArcVMwareManagementServiceAPIConfiguration
-from .operations import Operations
-from .operations import ResourcePoolsOperations
-from .operations import ClustersOperations
-from .operations import HostsOperations
-from .operations import DatastoresOperations
-from .operations import VCentersOperations
-from .operations import VirtualMachinesOperations
-from .operations import VirtualMachineTemplatesOperations
-from .operations import VirtualNetworksOperations
-from .operations import InventoryItemsOperations
-from .operations import HybridIdentityMetadataOperations
-from .operations import MachineExtensionsOperations
-from .operations import GuestAgentsOperations
-from . import models
 
 
-class AzureArcVMwareManagementServiceAPI(object):
+class AzureArcVMwareManagementServiceAPI:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Self service experience for VMware.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.connectedvmware.operations.Operations
+    :ivar virtual_machines: VirtualMachinesOperations operations
+    :vartype virtual_machines: azure.mgmt.connectedvmware.operations.VirtualMachinesOperations
     :ivar resource_pools: ResourcePoolsOperations operations
     :vartype resource_pools: azure.mgmt.connectedvmware.operations.ResourcePoolsOperations
     :ivar clusters: ClustersOperations operations
@@ -50,90 +53,94 @@ class AzureArcVMwareManagementServiceAPI(object):
     :vartype datastores: azure.mgmt.connectedvmware.operations.DatastoresOperations
     :ivar vcenters: VCentersOperations operations
     :vartype vcenters: azure.mgmt.connectedvmware.operations.VCentersOperations
-    :ivar virtual_machines: VirtualMachinesOperations operations
-    :vartype virtual_machines: azure.mgmt.connectedvmware.operations.VirtualMachinesOperations
     :ivar virtual_machine_templates: VirtualMachineTemplatesOperations operations
-    :vartype virtual_machine_templates: azure.mgmt.connectedvmware.operations.VirtualMachineTemplatesOperations
+    :vartype virtual_machine_templates:
+     azure.mgmt.connectedvmware.operations.VirtualMachineTemplatesOperations
     :ivar virtual_networks: VirtualNetworksOperations operations
     :vartype virtual_networks: azure.mgmt.connectedvmware.operations.VirtualNetworksOperations
     :ivar inventory_items: InventoryItemsOperations operations
     :vartype inventory_items: azure.mgmt.connectedvmware.operations.InventoryItemsOperations
     :ivar hybrid_identity_metadata: HybridIdentityMetadataOperations operations
-    :vartype hybrid_identity_metadata: azure.mgmt.connectedvmware.operations.HybridIdentityMetadataOperations
+    :vartype hybrid_identity_metadata:
+     azure.mgmt.connectedvmware.operations.HybridIdentityMetadataOperations
     :ivar machine_extensions: MachineExtensionsOperations operations
     :vartype machine_extensions: azure.mgmt.connectedvmware.operations.MachineExtensionsOperations
     :ivar guest_agents: GuestAgentsOperations operations
     :vartype guest_agents: azure.mgmt.connectedvmware.operations.GuestAgentsOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The Subscription ID.
+    :param subscription_id: The Subscription ID. Required.
     :type subscription_id: str
-    :param str base_url: Service URL
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-01-10-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = AzureArcVMwareManagementServiceAPIConfiguration(credential, subscription_id, **kwargs)
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: str = "https://management.azure.com",
+        **kwargs: Any
+    ) -> None:
+        self._config = AzureArcVMwareManagementServiceAPIConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
-
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.resource_pools = ResourcePoolsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.clusters = ClustersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.hosts = HostsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.datastores = DatastoresOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.vcenters = VCentersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+        self._serialize.client_side_validation = False
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.virtual_machines = VirtualMachinesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.resource_pools = ResourcePoolsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.hosts = HostsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.datastores = DatastoresOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.vcenters = VCentersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.virtual_machine_templates = VirtualMachineTemplatesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.virtual_networks = VirtualNetworksOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.inventory_items = InventoryItemsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.inventory_items = InventoryItemsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.hybrid_identity_metadata = HybridIdentityMetadataOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.machine_extensions = MachineExtensionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.guest_agents = GuestAgentsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.guest_agents = GuestAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None
