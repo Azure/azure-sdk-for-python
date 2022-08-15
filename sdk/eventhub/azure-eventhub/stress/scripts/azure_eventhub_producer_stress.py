@@ -26,6 +26,7 @@ ENV_FILE = os.environ.get('ENV_FILE')
 
 
 def handle_exception(error, ignore_send_failure, stress_logger, azure_monitor_metric):
+    print("err")
     err_msg = "Sync send failed due to error: {}".format(repr(error))
     azure_monitor_metric.record_error(error)
     if ignore_send_failure:
@@ -183,16 +184,6 @@ class StressTestRunner(object):
                 "username": self.args.proxy_username,
                 "password": self.args.proxy_password,
             }
-        if self.args.conn_str:
-            client = client_class.from_connection_string(
-                self.args.conn_str,
-                eventhub_name=self.args.eventhub,
-                auth_timeout=self.args.auth_timeout,
-                http_proxy=http_proxy,
-                transport_type=transport_type,
-                logging_enable=self.args.pyamqp_logging_enable,
-                **retry_options
-            )
         if self.args.hostname:
             if self.args.azure_identity:
                 print('Using Azure Identity')
@@ -218,6 +209,16 @@ class StressTestRunner(object):
                     logging_enable=self.args.pyamqp_logging_enable,
                     **retry_options
                 )
+        elif self.args.conn_str:
+            client = client_class.from_connection_string(
+                self.args.conn_str,
+                eventhub_name=self.args.eventhub,
+                auth_timeout=self.args.auth_timeout,
+                http_proxy=http_proxy,
+                transport_type=transport_type,
+                logging_enable=self.args.pyamqp_logging_enable,
+                **retry_options
+            )
         elif self.args.aad_client_id:
             if is_async:
                 credential = ClientSecretCredentialAsync(self.args.tenant_id, self.args.aad_client_id, self.args.aad_secret)
