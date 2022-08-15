@@ -37,7 +37,9 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
     :param credential: A credential to authorize search client requests
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
     :keyword str api_version: The Search API version to use for requests.
-
+    :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
+     audience is not considered when using a shared key. If audience is not provided, the public cloud audience
+     will be assumed.
     """
 
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
@@ -48,6 +50,7 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = normalize_endpoint(endpoint)  # type: str
         self._credential = credential
+        audience = kwargs.pop("audience", None)
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
             self._client = _SearchServiceClient(
@@ -58,7 +61,7 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
             )  # type: _SearchServiceClient
         else:
             self._aad = True
-            authentication_policy = get_authentication_policy(credential)
+            authentication_policy = get_authentication_policy(credential, audience=audience)
             self._client = _SearchServiceClient(
                 endpoint=endpoint,
                 authentication_policy=authentication_policy,

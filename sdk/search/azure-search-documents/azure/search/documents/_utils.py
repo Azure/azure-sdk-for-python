@@ -3,9 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.core.pipeline import policies
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy, AsyncBearerTokenCredentialPolicy
 
-CREDENTIAL_SCOPES = ["https://search.azure.com/.default"]
+DEFAULT_AUDIENCE = "https://search.azure.com"
 
 
 def is_retryable_status_code(status_code):
@@ -13,8 +13,14 @@ def is_retryable_status_code(status_code):
     return status_code in [422, 409, 503]
 
 
-def get_authentication_policy(credential):
-    authentication_policy = policies.BearerTokenCredentialPolicy(
-        credential, *CREDENTIAL_SCOPES
+def get_authentication_policy(credential, **kwargs):
+    audience = kwargs.get('audience', None)
+    is_async = kwargs.get('is_async', False)
+    if not audience:
+        audience = DEFAULT_AUDIENCE
+    scope = audience.rstrip('/') + '/.default'
+    _policy = BearerTokenCredentialPolicy if not is_async else AsyncBearerTokenCredentialPolicy
+    authentication_policy = _policy(
+        credential, scope
     )
     return authentication_policy
