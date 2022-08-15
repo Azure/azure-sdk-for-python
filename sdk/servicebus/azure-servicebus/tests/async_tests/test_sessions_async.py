@@ -363,6 +363,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             with pytest.raises(ValueError):
                 await receiver.complete_message(message)
 
+    @pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
