@@ -17,6 +17,7 @@ from azure.iot.modelsrepository import (
 )
 from azure.iot.modelsrepository._resolver import HttpFetcher
 
+pytestmark = pytest.mark.usefixtures("recorded_test")
 
 LOCAL_REPO = "Local Repository"
 REMOTE_REPO = "Remote Repository"
@@ -67,25 +68,21 @@ class TestGetModelsDependencyModeEnabled(AzureRecordedTestCase):
         with pytest.raises(ValueError):
             client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_ENABLED)
 
-    @recorded_by_proxy
     def test_dtmi_mismatch_casing(self, client):
         dtmi = "dtmi:com:example:thermostat;1"
         with pytest.raises(ModelError):
             client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_ENABLED)
 
-    @recorded_by_proxy
     def test_nonexistant_dtdl_doc(self, client):
         dtmi = "dtmi:com:example:thermojax;999"
         with pytest.raises(ResourceNotFoundError):
             client.get_models(dtmi)
 
-    @recorded_by_proxy
     def test_nonexistent_dependency_dtdl_doc(self, client):
         dtmi = "dtmi:com:example:invalidmodel;1"
         with pytest.raises(ResourceNotFoundError):
             client.get_models(dtmi)
 
-    @recorded_by_proxy
     def test_single_dtmi_no_components_no_extends(self, client):
         dtmi = "dtmi:com:example:Thermostat;1"
         model_map = client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_ENABLED)
@@ -95,7 +92,6 @@ class TestGetModelsDependencyModeEnabled(AzureRecordedTestCase):
         model = model_map[dtmi]
         assert model["@id"] == dtmi
 
-    @recorded_by_proxy
     def test_multiple_dtmis_no_components_no_extends(self, client):
         dtmi1 = "dtmi:com:example:Thermostat;1"
         dtmi2 = "dtmi:azure:DeviceManagement:DeviceInformation;1"
@@ -111,7 +107,6 @@ class TestGetModelsDependencyModeEnabled(AzureRecordedTestCase):
         assert model1["@id"] == dtmi1
         assert model2["@id"] == dtmi2
 
-    @recorded_by_proxy
     def test_single_dtmi_with_component_deps(self, client):
         root_dtmi = "dtmi:com:example:TemperatureController;1"
         expected_deps = [
@@ -128,7 +123,6 @@ class TestGetModelsDependencyModeEnabled(AzureRecordedTestCase):
             assert model["@id"] == dtmi
 
     @skip_remote
-    @recorded_by_proxy
     def test_multiple_dtmis_with_component_deps(self, client):
         root_dtmi1 = "dtmi:com:example:Phone;2"
         root_dtmi2 = "dtmi:com:example:TemperatureController;1"
@@ -150,7 +144,6 @@ class TestGetModelsDependencyModeEnabled(AzureRecordedTestCase):
             assert model["@id"] == dtmi
 
     @skip_remote
-    @recorded_by_proxy
     def test_multiple_dtmis_with_extends_deps_single_dtmi(self, client, client_type):
         root_dtmi1 = "dtmi:com:example:TemperatureController;1"
         root_dtmi2 = "dtmi:com:example:ConferenceRoom;1"
@@ -192,7 +185,6 @@ class TestGetModelsDependencyModeEnabled(AzureRecordedTestCase):
             assert model["@id"] == dtmi
 
     @skip_remote
-    @recorded_by_proxy
     def test_single_dtmi_with_extends_single_model_inline(self, client, client_type):
         dtmi = "dtmi:com:example:base;1"
         model_map = client.get_models(dtmi, dependency_resolution=DEPENDENCY_MODE_ENABLED)
@@ -203,7 +195,6 @@ class TestGetModelsDependencyModeEnabled(AzureRecordedTestCase):
         assert model["@id"] == dtmi
 
     @skip_remote
-    @recorded_by_proxy
     def test_single_dtmi_with_extends_mixed_inline_and_dtmi(self, client, client_type):
         root_dtmi = "dtmi:com:example:base;2"
         expected_deps = ["dtmi:com:example:Freezer;1", "dtmi:com:example:Thermostat;1"]
