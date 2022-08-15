@@ -1,8 +1,8 @@
 # Azure SDK for Python - Engineering System
 
 - [Azure SDK for Python - Engineering System](#azure-sdk-for-python---engineering-system)
-  - [Targeting a specific package at build time](#targeting-a-specific-package-at-build-time)
-  - [Skipping a tox test environment at queue time](#skipping-a-tox-test-environment-at-queue-time)
+  - [Targeting a specific package at build queue time](#targeting-a-specific-package-at-build-queue-time)
+  - [Skipping a tox test environment at build queue time](#skipping-a-tox-test-environment-at-build-queue-time)
   - [Skipping entire sections of builds](#skipping-entire-sections-of-builds)
   - [Environment variables important to CI](#environment-variables-important-to-ci)
   - [Analyze Checks](#analyze-checks)
@@ -29,13 +29,9 @@
   - [Nightly Live Checks](#nightly-live-checks)
     - [Running Samples](#running-samples)
 
-
 There are various tests currently enabled in Azure pipeline for Python SDK and some of them are enabled only for nightly CI checks. We also run some static analysis tool to verify code completeness, security and lint check.
 
 Check the [contributing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md#building-and-testing) for an intro to `tox`. For a deeper dive into the tooling that enables the CI checks below and additional detail on reproducing builds locally please refer to the azure-sdk-tools README.md.
-
-TODO: publish github.io
-The development documentation for this repository is published at []().
 
 As a contributor, you will see the build jobs run in two modes: `Nightly Scheduled` and `Pull Request`.
 
@@ -48,7 +44,7 @@ Example PR build:
 * `Analyze` tox envs run during the `Analyze job.
 * `Test <platform>_<pyversion>` runs PR/Nightly tox envs, depending on context.
 
-## Targeting a specific package in build queue time
+## Targeting a specific package at build queue time
 
 In both `public` and `internal` projects, all builds allow a filter to be introduced at build time to narrow the set of packages build/tested.
 

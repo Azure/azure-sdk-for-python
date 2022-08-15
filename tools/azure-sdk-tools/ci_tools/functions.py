@@ -80,7 +80,6 @@ def filter_for_compatibility(package_set):
     return collected_packages
 
 
-# TODO: what is the version spec here?
 def compare_python_version(version_spec: str):
     current_sys_version = parse(platform.python_version())
     spec_set = SpecifierSet(version_spec)
@@ -162,7 +161,6 @@ def remove_omitted_packages(collected_directories):
     return packages
 
 
-# TODO: what is the type of requires_dict?
 def update_requires(setup_py_path, requires_dict):
     # This method changes package requirement by overriding the specifier
     contents = []
@@ -179,8 +177,6 @@ def update_requires(setup_py_path, requires_dict):
         setup_file.writelines(contents)
 
 
-# TODO mock pypi_tools.pypi.PyPiClient.get_ordered_versions to test different scenarios
-# TODO: what is the type of spec?
 def is_required_version_on_pypi(package_name, spec):
     client = PyPIClient()
     try:
@@ -218,7 +214,6 @@ def get_version_from_repo(pkg_name: str, repo_root: str = None):
         exit(1)
 
 
-# TODO: pull this away from the strict sdk/*/package_name/setup.py
 def get_base_version(pkg_name):
     root_dir = discover_repo_root()
     # find version for the package from source. This logic should be revisited to find version from devops feed

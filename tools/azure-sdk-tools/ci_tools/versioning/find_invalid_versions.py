@@ -97,8 +97,6 @@ def find_invalid_versions_main():
                         )
                     )
                     continue
-
-                # TODO: Try evaling __init__.py next to _version.py to ensure version match
         except:
             invalid_packages.append((package_name, "Unknown error {}".format(sys.exc_info())))
 

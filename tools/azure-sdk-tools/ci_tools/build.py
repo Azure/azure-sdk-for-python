@@ -87,9 +87,6 @@ def build() -> None:
 
     repo_root = discover_repo_root(args.repo)
 
-    # We need to support both CI builds of everything and individual service
-    # folders. This logic allows us to do both.
-    # todo, do we want to ascend to repo root if we can?
     if args.service:
         service_dir = os.path.join("sdk", args.service)
         target_dir = os.path.join(repo_root, service_dir)
@@ -110,7 +107,6 @@ def build() -> None:
     )
 
 
-# TODO: pull in build_conda_artifacts here
 def build_packages(
     targeted_packages: List[str],
     distribution_directory: str = None,
@@ -152,7 +148,6 @@ def create_package(
     if not os.path.isdir(setup_directory_or_file):
         setup_directory_or_file = os.path.dirname(setup_directory_or_file)
 
-    # TODO: prime candidates for logging updates here. should pipe off to a file that is uploaded as an artifact
     if enable_wheel:
         run([sys.executable, "setup.py", "bdist_wheel", "-d", dist], cwd=setup_directory_or_file)
     if enable_sdist:
